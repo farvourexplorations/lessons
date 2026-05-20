@@ -1,0 +1,1999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geometry Explorer 📐</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #1e3a5f;
+    --sky-mid: #2d5282;
+    --sun: #f6c343;
+    --sun-pale: #fef9e7;
+    --coral: #e8603c;
+    --coral-pale: #fdf0ec;
+    --mint: #3aaf85;
+    --mint-pale: #e8f8f2;
+    --lavender: #7c6fcd;
+    --lavender-pale: #f0eefb;
+    --paper: #fffef9;
+    --ink: #1a2332;
+    --muted: #7a8899;
+    --border: rgba(0,0,0,0.08);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: linear-gradient(160deg, #0f2540 0%, #1e3a5f 40%, #2d5282 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 45% 8%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(2px 2px at 65% 22%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 5%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 92% 35%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 35% 28%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 72% 12%, rgba(255,255,255,0.5) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 3.5rem 2rem 2rem;
+    color: white;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--sun);
+    color: var(--sky);
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    padding: 0.35rem 1.2rem;
+    border-radius: 20px;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 12px rgba(246,195,67,0.4);
+  }
+  .hero h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    line-height: 1.1;
+    margin-bottom: 0.8rem;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+  .hero h1 .accent { color: var(--sun); }
+  .hero p.intro {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    opacity: 0.88;
+    max-width: 560px;
+    margin: 0 auto 2rem;
+  }
+
+  /* ── PROGRESS PILLS ── */
+  .progress-wrap {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+  }
+  .prog-step {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(255,255,255,0.12);
+    border: 1.5px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .prog-step:hover, .prog-step.done {
+    background: rgba(255,255,255,0.22);
+    color: white;
+    border-color: rgba(255,255,255,0.4);
+  }
+  .prog-step.active {
+    background: var(--sun);
+    color: var(--sky);
+    border-color: var(--sun);
+    box-shadow: 0 2px 12px rgba(246,195,67,0.4);
+  }
+
+  /* ── SHEET ── */
+  .sheet {
+    position: relative; z-index: 1;
+    background: var(--paper);
+    border-radius: 24px 24px 0 0;
+    margin-top: 1.5rem;
+    padding: 0 0 6rem;
+    min-height: 80vh;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.25);
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    padding: 3rem 2rem 0;
+    max-width: 820px;
+    margin: 0 auto;
+    display: none;
+  }
+  .section.active { display: block; }
+
+  .section-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+  .eyebrow-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: white;
+    flex-shrink: 0;
+  }
+  .num-coral { background: var(--coral); }
+  .num-mint  { background: var(--mint); }
+  .num-sun   { background: var(--sun); color: var(--sky); }
+  .num-lav   { background: var(--lavender); }
+  .num-sky   { background: var(--sky-mid); }
+
+  .eyebrow-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .section h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    color: var(--sky);
+    margin-bottom: 0.6rem;
+    line-height: 1.2;
+  }
+  .section .lead {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: #3a4a5a;
+    margin-bottom: 1.8rem;
+  }
+  .section .lead strong { color: var(--coral); }
+
+  /* ── WONDER BOX ── */
+  .wonder-box {
+    background: linear-gradient(135deg, var(--sky) 0%, var(--sky-mid) 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 1.8rem 2rem;
+    margin-bottom: 1.8rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .wonder-box::after {
+    content: '🤔';
+    position: absolute;
+    right: 1.5rem; top: 50%;
+    transform: translateY(-50%);
+    font-size: 3rem;
+    opacity: 0.3;
+  }
+  .wonder-box p {
+    font-size: 1rem;
+    line-height: 1.7;
+    font-style: italic;
+    opacity: 0.95;
+    max-width: 85%;
+  }
+  .wonder-box strong { color: var(--sun); font-style: normal; }
+  .wonder-box.mint-box { background: linear-gradient(135deg, var(--mint) 0%, #2d9970 100%); }
+  .wonder-box.mint-box::after { content: '✏️'; }
+  .wonder-box.lav-box { background: linear-gradient(135deg, var(--lavender) 0%, #5a50a8 100%); }
+  .wonder-box.lav-box::after { content: '📐'; }
+
+  /* ── CONCEPT CHIPS ── */
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+  }
+  .chip {
+    padding: 0.45rem 1rem;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+  }
+  .chip.coral  { background: var(--coral-pale);   color: var(--coral);    border-color: #f8c5b8; }
+  .chip.mint   { background: var(--mint-pale);    color: var(--mint);     border-color: #b8ebd8; }
+  .chip.sun    { background: var(--sun-pale);     color: #b8860b;         border-color: #f8e0a0; }
+  .chip.lav    { background: var(--lavender-pale); color: var(--lavender);border-color: #d0caef; }
+  .chip.sky    { background: #e8f0f8;             color: var(--sky-mid);  border-color: #c0d4ea; }
+  .chip:hover  { transform: scale(1.05); }
+
+  .concept-reveal {
+    background: var(--paper);
+    border-left: 4px solid var(--coral);
+    border-radius: 0 10px 10px 0;
+    padding: 1rem 1.2rem;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    margin-top: 0.5rem;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .concept-reveal.show { display: block; }
+  .concept-reveal.mint-border  { border-color: var(--mint); }
+  .concept-reveal.sun-border   { border-color: var(--sun); }
+  .concept-reveal.lav-border   { border-color: var(--lavender); }
+  .concept-reveal.sky-border   { border-color: var(--sky-mid); }
+
+  @keyframes fadeIn {
+    from { opacity:0; transform:translateY(-6px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* ── PREDICT / REFLECT BOXES ── */
+  .predict-box {
+    background: var(--sun-pale);
+    border: 2px dashed var(--sun);
+    border-radius: 14px;
+    padding: 1.4rem 1.6rem;
+    margin-bottom: 1.5rem;
+  }
+  .predict-box h4 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: #b8860b;
+    margin-bottom: 0.8rem;
+  }
+  .predict-box textarea {
+    width: 100%;
+    border: 1.5px solid rgba(0,0,0,0.12);
+    border-radius: 8px;
+    padding: 0.7rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    resize: vertical;
+    min-height: 64px;
+    background: white;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .predict-box textarea:focus { border-color: var(--sun); }
+
+  /* ── DEMO ZONE ── */
+  .demo-zone {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .demo-zone h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    color: var(--sky);
+    margin-bottom: 0.3rem;
+  }
+  .demo-zone .hint {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 1.3rem;
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    border: none;
+    border-radius: 10px;
+    padding: 0.65rem 1.3rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
+  .btn:active { transform: translateY(0); }
+  .btn-coral  { background: var(--coral);    color: white; }
+  .btn-mint   { background: var(--mint);     color: white; }
+  .btn-sun    { background: var(--sun);      color: var(--sky); }
+  .btn-lav    { background: var(--lavender); color: white; }
+  .btn-ghost  { background: #f0f2f5;         color: var(--muted); }
+  .btn-sky    { background: var(--sky);      color: white; }
+
+  .action-row {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 0.8rem;
+  }
+
+  /* ── SHAPE GALLERY ── */
+  .shape-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 0.8rem;
+    margin-bottom: 1.2rem;
+  }
+  .shape-card {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 0.8rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .shape-card:hover, .shape-card.active {
+    border-color: var(--coral);
+    box-shadow: 0 3px 12px rgba(232,96,60,0.2);
+    transform: translateY(-2px);
+  }
+  .shape-card.active { background: var(--coral-pale); }
+  .shape-card svg { margin-bottom: 0.4rem; }
+  .shape-card .shape-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.82rem;
+    color: var(--sky);
+  }
+  .shape-card .shape-sides {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-top: 0.2rem;
+  }
+
+  .shape-info-panel {
+    background: var(--coral-pale);
+    border-left: 4px solid var(--coral);
+    border-radius: 0 12px 12px 0;
+    padding: 1.2rem 1.4rem;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .shape-info-panel.show { display: block; }
+  .shape-info-panel h4 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    color: var(--sky);
+    margin-bottom: 0.5rem;
+  }
+  .shape-info-panel .fact-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.6rem;
+  }
+  .fact-chip {
+    background: white;
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.76rem;
+    color: var(--coral);
+    font-weight: 600;
+    border: 1.5px solid #f8c5b8;
+  }
+
+  /* ── ANGLE EXPLORER ── */
+  .angle-canvas-wrap {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .angle-controls { flex: 1; min-width: 200px; }
+  .angle-label {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    color: var(--coral);
+    text-align: center;
+    margin-bottom: 0.4rem;
+  }
+  .angle-type {
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  .angle-slider {
+    width: 100%;
+    accent-color: var(--coral);
+    margin-bottom: 0.8rem;
+  }
+  .angle-fact {
+    background: var(--sun-pale);
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: #3a4a5a;
+    margin-top: 0.6rem;
+    min-height: 3rem;
+    transition: all 0.3s;
+  }
+
+  /* ── AREA CALCULATOR ── */
+  .area-shape-row {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.2rem;
+  }
+  .area-shape-btn {
+    background: var(--lavender-pale);
+    border: 2px solid var(--lavender);
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: var(--lavender);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .area-shape-btn.active, .area-shape-btn:hover {
+    background: var(--lavender);
+    color: white;
+  }
+
+  .area-inputs {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    margin-bottom: 1rem;
+  }
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .input-group label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .input-group input {
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 0.5rem 0.8rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    width: 100px;
+    outline: none;
+    transition: border-color 0.2s;
+    font-weight: 700;
+    color: var(--sky);
+    background: white;
+  }
+  .input-group input:focus { border-color: var(--lavender); }
+
+  .area-result {
+    background: var(--lavender-pale);
+    border: 2px solid rgba(124,111,205,0.3);
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+    margin-top: 0.5rem;
+    display: none;
+  }
+  .area-result.show { display: block; }
+  .area-result .formula {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--lavender);
+    margin-bottom: 0.4rem;
+  }
+  .area-result .answer {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.6rem;
+    color: var(--sky);
+  }
+  .area-result .unit {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .area-visual { margin-top: 1rem; }
+
+  /* ── PERIMETER BUILDER ── */
+  .perim-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 2px;
+    margin-bottom: 1rem;
+    background: #e8f0f8;
+    padding: 6px;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    cursor: crosshair;
+    user-select: none;
+  }
+  .perim-cell {
+    aspect-ratio: 1;
+    background: white;
+    border-radius: 2px;
+    transition: background 0.1s;
+  }
+  .perim-cell.filled { background: var(--mint); }
+  .perim-cell.edge   { background: var(--coral); }
+
+  .perim-stats {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .perim-stat {
+    background: var(--mint-pale);
+    border-radius: 10px;
+    padding: 0.7rem 1.1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    border: 1.5px solid #b8ebd8;
+  }
+  .perim-stat strong {
+    display: block;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem;
+    color: var(--mint);
+    line-height: 1;
+  }
+  .perim-stat span { color: var(--muted); font-size: 0.72rem; }
+
+  /* ── COORDINATE GRID ── */
+  .coord-wrap {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  canvas#coordCanvas {
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+    cursor: crosshair;
+    flex-shrink: 0;
+  }
+  .coord-right { flex: 1; min-width: 180px; }
+  .coord-right p { font-size: 0.85rem; line-height: 1.6; color: #3a4a5a; margin-bottom: 0.8rem; }
+  .coord-points {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.76rem;
+    color: var(--muted);
+    line-height: 1.9;
+    min-height: 2rem;
+    margin-bottom: 0.8rem;
+  }
+  .coord-distance {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--coral);
+    min-height: 1.2rem;
+    font-weight: 700;
+  }
+
+  /* ── REAL WORLD CARDS ── */
+  .world-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .world-card {
+    border-radius: 14px;
+    padding: 1.4rem;
+  }
+  .world-card.coral-bg { background: var(--coral-pale); }
+  .world-card.mint-bg  { background: var(--mint-pale); }
+  .world-card.lav-bg   { background: var(--lavender-pale); }
+  .world-card .wc-icon { font-size: 2rem; margin-bottom: 0.6rem; }
+  .world-card h4 { font-family: 'Fredoka One', cursive; font-size: 1rem; margin-bottom: 0.4rem; color: var(--sky); }
+  .world-card p  { font-size: 0.82rem; line-height: 1.6; color: #3a4a5a; }
+
+  /* ── DESIGN CHALLENGE ── */
+  .design-zone {
+    background: linear-gradient(135deg, var(--lavender-pale) 0%, #e8f8f2 100%);
+    border: 2px solid rgba(124,111,205,0.2);
+    border-radius: 16px;
+    padding: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .design-zone h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.15rem;
+    color: var(--lavender);
+    margin-bottom: 0.6rem;
+  }
+  .design-zone p { font-size: 0.88rem; line-height: 1.65; color: #3a4a5a; margin-bottom: 1rem; }
+
+  canvas#designCanvas {
+    border: 2px dashed var(--lavender);
+    border-radius: 10px;
+    cursor: crosshair;
+    background: white;
+    display: block;
+    margin-bottom: 0.8rem;
+  }
+  .design-stats {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--lavender);
+    min-height: 1.5rem;
+  }
+
+  /* ── REFLECTION ── */
+  .reflection-card {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 1.4rem;
+    margin-bottom: 1rem;
+  }
+  .reflection-card .q {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: var(--sky);
+    margin-bottom: 0.7rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+  }
+  .reflection-card .q .qnum {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .reflection-card textarea {
+    width: 100%;
+    border: 1.5px solid rgba(0,0,0,0.1);
+    border-radius: 8px;
+    padding: 0.7rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    resize: vertical;
+    min-height: 72px;
+    background: #fafbfc;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .reflection-card textarea:focus { border-color: var(--lavender); }
+
+  /* ── CONGRATS ── */
+  .congrats {
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+  .congrats .trophy { font-size: 4rem; margin-bottom: 1rem; animation: bounce 0.8s ease infinite alternate; }
+  @keyframes bounce { from { transform:translateY(0); } to { transform:translateY(-10px); } }
+  .congrats h2 { font-family: 'Fredoka One', cursive; font-size: 2rem; color: var(--sky); margin-bottom: 0.8rem; }
+  .congrats p  { font-size: 0.95rem; line-height: 1.7; color: #3a4a5a; max-width: 500px; margin: 0 auto 1.5rem; }
+  .summary-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; }
+  .summary-chip {
+    padding: 0.5rem 1.1rem;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    background: var(--sun-pale);
+    color: #b8860b;
+    border: 1.5px solid #f8e0a0;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 1.5rem 0;
+  }
+
+  /* ── NAV ── */
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2.5rem 2rem 0;
+    max-width: 820px;
+    margin: 0 auto;
+  }
+  .btn-next {
+    background: var(--sky);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 0.9rem 2rem;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(30,58,95,0.25);
+  }
+  .btn-next:hover { background: var(--sky-mid); transform: translateY(-2px); }
+  .btn-prev {
+    background: transparent;
+    color: var(--muted);
+    border: 2px solid var(--border);
+    border-radius: 50px;
+    padding: 0.9rem 1.6rem;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-prev:hover { border-color: var(--muted); color: var(--ink); }
+  .btn-prev:disabled, .btn-next:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+  @media (max-width: 560px) {
+    .hero { padding: 2.5rem 1.2rem 1.5rem; }
+    .section { padding: 2rem 1.2rem 0; }
+    .nav-row { padding: 2rem 1.2rem 0; }
+    .angle-canvas-wrap, .coord-wrap { flex-direction: column; align-items: center; }
+  }
+
+  /* ── STUDENT NAME BAR ── */
+  .name-bar {
+    background: rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    border-radius: 12px;
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    max-width: 420px;
+    margin: 0 auto 1rem;
+  }
+  .name-bar label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.8);
+    white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+  }
+  .name-bar input {
+    flex: 1;
+    background: rgba(255,255,255,0.15);
+    border: none;
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: white;
+    outline: none;
+  }
+  .name-bar input::placeholder { color: rgba(255,255,255,0.45); font-weight: 400; }
+
+  /* ── SUMMARY PAGE ── */
+  .summary-section {
+    background: var(--paper);
+    border-radius: 16px;
+    padding: 1.8rem;
+    margin-bottom: 1.2rem;
+    border: 2px solid var(--border);
+  }
+  .summary-section h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.05rem;
+    color: var(--sky);
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .summary-answer {
+    background: #f5f7fa;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+    font-style: italic;
+    border-left: 3px solid var(--lavender);
+    min-height: 2rem;
+  }
+  .summary-answer.empty {
+    color: var(--muted);
+    font-style: normal;
+    border-left-color: var(--border);
+  }
+  .summary-stat-row {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.4rem;
+  }
+  .summary-stat {
+    background: var(--mint-pale);
+    border: 1.5px solid #b8ebd8;
+    border-radius: 8px;
+    padding: 0.35rem 0.8rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.76rem;
+    color: var(--mint);
+    font-weight: 600;
+  }
+  .summary-stat.coral { background: var(--coral-pale); border-color: #f8c5b8; color: var(--coral); }
+  .summary-stat.lav   { background: var(--lavender-pale); border-color: #d0caef; color: var(--lavender); }
+
+  .share-buttons {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+    justify-content: center;
+  }
+  .share-btn {
+    border: none;
+    border-radius: 12px;
+    padding: 0.85rem 1.6rem;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .share-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+  .share-btn.copy  { background: var(--mint);     color: white; }
+  .share-btn.email { background: var(--lavender); color: white; }
+  .share-btn.print { background: var(--sky);      color: white; }
+
+  .copy-confirm {
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--mint);
+    min-height: 1.2rem;
+    margin-top: 0.6rem;
+    transition: all 0.3s;
+  }
+
+  @media print {
+    .hero, .nav-row, .share-buttons, .copy-confirm, .prog-step { display: none !important; }
+    .sheet { box-shadow: none; border-radius: 0; }
+    .section { display: block !important; }
+    #sec-0,#sec-1,#sec-2,#sec-3,#sec-4,#sec-5 { display: none !important; }
+    #sec-6 { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">✨ Grade 6 · Geometry Explorer</div>
+  <h1>The World is Made<br>of <span class="accent">Shapes</span> 📐</h1>
+  <p class="intro">From the tiles on your floor to the pyramids of Egypt — geometry is hiding everywhere. Today you're going to <em>see</em> it, <em>measure</em> it, and <em>build</em> with it.</p>
+
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here..." oninput="updateNameDisplay()">
+  </div>
+
+  <div class="progress-wrap">
+    <a class="prog-step active" id="pill-0" onclick="goTo(0)"><span>🔺</span> Wonder</a>
+    <a class="prog-step" id="pill-1" onclick="goTo(1)"><span>📚</span> Shapes</a>
+    <a class="prog-step" id="pill-2" onclick="goTo(2)"><span>📐</span> Angles</a>
+    <a class="prog-step" id="pill-3" onclick="goTo(3)"><span>📏</span> Area</a>
+    <a class="prog-step" id="pill-4" onclick="goTo(4)"><span>🌍</span> Real Life</a>
+    <a class="prog-step" id="pill-5" onclick="goTo(5)"><span>💭</span> Reflect</a>
+    <a class="prog-step" id="pill-6" onclick="goTo(6)"><span>📤</span> Submit</a>
+  </div>
+</div>
+
+<!-- SHEET -->
+<div class="sheet">
+
+  <!-- ══ SECTION 0: WONDER ══ -->
+  <div class="section active" id="sec-0">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-coral">1</div>
+      <span class="eyebrow-label">The Big Question</span>
+    </div>
+    <h2>Why do shapes even matter?</h2>
+    <p class="lead">Here's a challenge: look around the room right now and find something that has <strong>no geometry in it</strong>. The walls, your chair, your phone screen, the door frame... Can you find anything that isn't a shape?</p>
+
+    <div class="wonder-box">
+      <p>Every structure ever built by humans — from mud huts to skyscrapers — started as a <strong>geometry problem</strong>. Architects, engineers, artists, and game designers all think in shapes. Today, so do you.</p>
+    </div>
+
+    <p style="font-size:0.9rem; font-weight:700; color:var(--sky); margin-bottom:0.8rem;">🧠 Warm-up — how many sides does each shape have?</p>
+
+    <div style="background:white; border:2px solid var(--border); border-radius:14px; padding:1.5rem; margin-bottom:1.5rem;">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:0.8rem;" id="warmupGrid">
+        <!-- filled by JS -->
+      </div>
+      <div id="warmupFeedback" style="margin-top:1rem; font-family:'DM Mono',monospace; font-size:0.8rem; color:var(--mint); min-height:1.2rem;"></div>
+    </div>
+
+    <div class="wonder-box mint-box">
+      <p>Geometry comes from the Greek words <strong>geo</strong> (earth) and <strong>metron</strong> (measure). The ancient Egyptians used it to re-draw farmland boundaries after the Nile flooded every year. It's one of the oldest maths on Earth.</p>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 1: SHAPES EXPLORER ══ -->
+  <div class="section" id="sec-1">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-lav">2</div>
+      <span class="eyebrow-label">Shape Explorer</span>
+    </div>
+    <h2>📚 Meet the Shapes</h2>
+    <p class="lead">Click each shape to reveal its properties. Can you spot each one somewhere in the real world? <strong>Think of your own example</strong> before reading ours.</p>
+
+    <div class="shape-gallery" id="shapeGallery">
+      <!-- filled by JS -->
+    </div>
+
+    <div class="shape-info-panel" id="shapeInfoPanel">
+      <h4 id="sip-name"></h4>
+      <p id="sip-desc" style="font-size:0.88rem; line-height:1.65; color:#3a4a5a;"></p>
+      <div class="fact-row" id="sip-facts"></div>
+      <p id="sip-challenge" style="font-size:0.85rem; margin-top:0.8rem; font-style:italic; color:#3a4a5a;"></p>
+    </div>
+
+    <div class="divider"></div>
+
+    <p style="font-size:0.88rem; font-weight:700; color:var(--sky); margin-bottom:0.8rem;">🏷️ Click each vocabulary word to learn what it means:</p>
+    <div class="chip-row">
+      <span class="chip coral" onclick="revealTerm('polygon')">🔷 Polygon</span>
+      <span class="chip lav"   onclick="revealTerm('vertex')">📌 Vertex</span>
+      <span class="chip sun"   onclick="revealTerm('parallel')">〰️ Parallel</span>
+      <span class="chip mint"  onclick="revealTerm('diagonal')">↗️ Diagonal</span>
+      <span class="chip sky"   onclick="revealTerm('congruent')">🔁 Congruent</span>
+    </div>
+    <div class="concept-reveal" id="cr-polygon">
+      <strong>Polygon</strong> — a closed flat shape made of straight lines only. "Poly" means many, "gon" means angle.<br><br>
+      <em>A circle is NOT a polygon — it has no straight sides. A triangle IS a polygon — it has 3 straight sides.</em>
+    </div>
+    <div class="concept-reveal lav-border" id="cr-vertex">
+      <strong>Vertex</strong> (plural: vertices) — a corner point where two sides of a shape meet.<br><br>
+      <em>A triangle has 3 vertices. A square has 4. The more sides, the more vertices — they always match!</em>
+    </div>
+    <div class="concept-reveal sun-border" id="cr-parallel">
+      <strong>Parallel lines</strong> — lines that never meet, no matter how far they extend. Like railway tracks.<br><br>
+      <em>A rectangle has two pairs of parallel sides. A trapezium has exactly one pair.</em>
+    </div>
+    <div class="concept-reveal mint-border" id="cr-diagonal">
+      <strong>Diagonal</strong> — a line connecting two non-adjacent vertices of a polygon (not a side).<br><br>
+      <em>A square has 2 diagonals. A pentagon has 5. How many does a hexagon have? (Hint: it's 9!)</em>
+    </div>
+    <div class="concept-reveal sky-border" id="cr-congruent">
+      <strong>Congruent</strong> — exactly the same shape AND size. Like two identical puzzle pieces.<br><br>
+      <em>The sides of a regular hexagon are all congruent. So are the angles of an equilateral triangle.</em>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 2: ANGLES ══ -->
+  <div class="section" id="sec-2">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-sun">3</div>
+      <span class="eyebrow-label">Investigation 1</span>
+    </div>
+    <h2>📐 The Angle Explorer</h2>
+    <p class="lead">An angle measures how much something turns or opens. <strong>Drag the slider</strong> to change the angle and watch what happens. Can you hit each type exactly?</p>
+
+    <div class="predict-box">
+      <h4>📝 Before you explore — write your predictions:</h4>
+      <textarea id="angle-prediction" placeholder="I think a right angle is ___ degrees. A straight line is ___ degrees. A full turn must be ___ degrees. Because..."></textarea>
+    </div>
+
+    <div class="demo-zone">
+      <h3>Angle Lab</h3>
+      <div class="hint">DRAG THE SLIDER TO CHANGE THE ANGLE · WATCH THE SHAPE CHANGE</div>
+
+      <div class="angle-canvas-wrap">
+        <canvas id="angleCanvas" width="220" height="220"></canvas>
+        <div class="angle-controls">
+          <div class="angle-label" id="angleDeg">90°</div>
+          <div class="angle-type" id="angleType">Right Angle</div>
+          <input type="range" class="angle-slider" id="angleSlider" min="1" max="359" value="90" oninput="updateAngle(this.value)">
+          <div style="display:flex; justify-content:space-between; font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.8rem;">
+            <span>1°</span><span>180°</span><span>359°</span>
+          </div>
+          <div class="action-row">
+            <button class="btn btn-coral" onclick="snapAngle(45)">45°</button>
+            <button class="btn btn-mint"  onclick="snapAngle(90)">90°</button>
+            <button class="btn btn-sun"   onclick="snapAngle(180)">180°</button>
+            <button class="btn btn-lav"   onclick="snapAngle(270)">270°</button>
+          </div>
+          <div class="angle-fact" id="angleFact">A right angle is exactly 90° — like the corner of a square or the letter L.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-zone">
+      <h3>Triangle Angle Challenge</h3>
+      <div class="hint">THE THREE ANGLES OF ANY TRIANGLE ALWAYS ADD UP TO 180° — TRY IT!</div>
+
+      <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end; margin-bottom:1rem;">
+        <div class="input-group">
+          <label>Angle A</label>
+          <input type="number" id="triA" min="1" max="178" value="60" oninput="updateTriangle()"> °
+        </div>
+        <div class="input-group">
+          <label>Angle B</label>
+          <input type="number" id="triB" min="1" max="178" value="60" oninput="updateTriangle()"> °
+        </div>
+        <div class="input-group">
+          <label>Angle C (calculated)</label>
+          <input type="number" id="triC" readonly style="background:#f5f7fa; color:var(--coral);"> °
+        </div>
+      </div>
+      <canvas id="triangleCanvas" width="360" height="180" style="border-radius:10px; border:2px solid var(--border); display:block;"></canvas>
+      <div id="triangleFeedback" style="margin-top:0.8rem; font-family:'DM Mono',monospace; font-size:0.8rem; min-height:1.2rem; color:var(--mint);"></div>
+    </div>
+
+    <div class="predict-box" style="border-color:var(--mint); background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="angle-reflection" placeholder="I found out that... The thing that surprised me most was... I noticed that when I change angle A, then angle C..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 3: AREA & PERIMETER ══ -->
+  <div class="section" id="sec-3">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-mint">4</div>
+      <span class="eyebrow-label">Investigation 2</span>
+    </div>
+    <h2>📏 Area & Perimeter Lab</h2>
+    <p class="lead">Area is the <strong>space inside</strong> a shape. Perimeter is the <strong>distance around</strong> it. They sound similar — but they behave very differently. Let's find out how.</p>
+
+    <div class="predict-box">
+      <h4>📝 Predict first!</h4>
+      <textarea id="area-prediction" placeholder="If a rectangle has width 5 and height 4, I think the area will be ___ because... and the perimeter will be ___ because..."></textarea>
+    </div>
+
+    <div class="demo-zone">
+      <h3>Area Calculator</h3>
+      <div class="hint">SELECT A SHAPE · ENTER MEASUREMENTS · SEE THE FORMULA WORK IN REAL TIME</div>
+
+      <div class="area-shape-row">
+        <button class="area-shape-btn active" onclick="setAreaShape('rectangle', this)">▭ Rectangle</button>
+        <button class="area-shape-btn" onclick="setAreaShape('triangle', this)">△ Triangle</button>
+        <button class="area-shape-btn" onclick="setAreaShape('circle', this)">○ Circle</button>
+        <button class="area-shape-btn" onclick="setAreaShape('parallelogram', this)">▱ Parallelogram</button>
+      </div>
+
+      <div class="area-inputs" id="areaInputs">
+        <!-- filled by JS -->
+      </div>
+
+      <canvas id="areaCanvas" width="340" height="160" style="display:block; border-radius:10px; border:2px solid var(--border); margin-bottom:1rem;"></canvas>
+
+      <div class="area-result" id="areaResult">
+        <div class="formula" id="areaFormula"></div>
+        <div class="answer"><span id="areaValue"></span><span class="unit" id="areaUnit"></span></div>
+        <div style="margin-top:0.5rem; font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--muted);" id="perimValue"></div>
+      </div>
+    </div>
+
+    <div class="demo-zone">
+      <h3>🎨 Perimeter Grid Builder</h3>
+      <div class="hint">CLICK CELLS TO FILL · BUILD ANY SHAPE · SEE AREA & PERIMETER UPDATE LIVE</div>
+
+      <div class="perim-grid" id="perimGrid">
+        <!-- filled by JS -->
+      </div>
+
+      <div class="perim-stats">
+        <div class="perim-stat">
+          <strong id="perimArea">0</strong>
+          <span>squares (Area)</span>
+        </div>
+        <div class="perim-stat">
+          <strong id="perimPerim">0</strong>
+          <span>edges (Perimeter)</span>
+        </div>
+        <div class="perim-stat" style="background:var(--coral-pale); border-color:#f8c5b8;">
+          <strong id="perimRatio" style="color:var(--coral);">—</strong>
+          <span style="color:var(--coral);">P ÷ A ratio</span>
+        </div>
+      </div>
+      <div id="perimInsight" style="margin-top:0.8rem; font-size:0.8rem; color:var(--mint); font-family:'DM Mono',monospace; min-height:1.2rem;"></div>
+      <div class="action-row" style="margin-top:0.8rem;">
+        <button class="btn btn-ghost" onclick="clearGrid()">Clear grid</button>
+        <button class="btn btn-mint"  onclick="fillRect()">Fill 4×3 rectangle</button>
+      </div>
+    </div>
+
+    <div class="predict-box" style="border-color:var(--lavender); background:var(--lavender-pale);">
+      <h4 style="color:var(--lavender);">🔍 What did you discover about area vs. perimeter?</h4>
+      <textarea id="area-reflection" placeholder="Two shapes can have the same area but different perimeters! I noticed... The formula for a rectangle's area is... I was surprised that..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 4: REAL LIFE ══ -->
+  <div class="section" id="sec-4">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-sky">5</div>
+      <span class="eyebrow-label">Real-World Connections</span>
+    </div>
+    <h2>Geometry is everywhere 🌍</h2>
+    <p class="lead">Now that you can see shapes, angles, and measurements — you'll never look at the world the same way. Geometry is the invisible language holding everything together.</p>
+
+    <div class="world-grid">
+      <div class="world-card coral-bg">
+        <div class="wc-icon">🏛️</div>
+        <h4>Architecture</h4>
+        <p>The Parthenon, the Eiffel Tower, your own house — all designed using triangles for strength, rectangles for efficiency, and circles for beauty.</p>
+      </div>
+      <div class="world-card mint-bg">
+        <div class="wc-icon">🎮</div>
+        <h4>Game Design</h4>
+        <p>Every 3D video game world is made of triangles — millions of them. Your character, the terrain, buildings — all geometry, rendered 60 times per second.</p>
+      </div>
+      <div class="world-card lav-bg">
+        <div class="wc-icon">🌿</div>
+        <h4>Nature</h4>
+        <p>Honeycombs are perfect hexagons. Snowflakes have 6-fold symmetry. Nautilus shells follow a geometric spiral. Nature is a geometry textbook.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Design Challenge -->
+    <div class="design-zone">
+      <h3>🎨 Design Your Own Floor Plan</h3>
+      <p>You're an architect! Draw a room using the coordinate canvas below. Click to place points and build walls. Then calculate the area of your design.</p>
+
+      <div class="coord-wrap">
+        <canvas id="coordCanvas" width="280" height="280"></canvas>
+        <div class="coord-right">
+          <p>Click on the grid to place the <strong>corners</strong> of your room. Each square = 1 metre.</p>
+          <div class="coord-points" id="coordPoints">No points placed yet — click the grid!</div>
+          <div class="coord-distance" id="coordDistance"></div>
+          <div class="action-row" style="margin-top:0.8rem;">
+            <button class="btn btn-lav" onclick="closeShape()">Close Shape</button>
+            <button class="btn btn-ghost" onclick="clearCoord()">Clear</button>
+          </div>
+          <div id="coordArea" style="margin-top:0.8rem; font-family:'DM Mono',monospace; font-size:0.82rem; color:var(--lavender); min-height:1.5rem;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 5: REFLECT ══ -->
+  <div class="section" id="sec-5">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-coral">6</div>
+      <span class="eyebrow-label">Synthesis & Wonder</span>
+    </div>
+    <h2>💭 Let's think it through</h2>
+    <p class="lead">Geometry isn't just about memorising formulas — it's about <em>seeing the world differently</em>. These questions have no single right answer. Take your time.</p>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q1 /</span> What surprised you most about shapes or angles today?</div>
+      <textarea placeholder="I was surprised when... I didn't know that... The most interesting thing I discovered was..."></textarea>
+    </div>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q2 /</span> Area vs Perimeter — why can two shapes have the same area but very different perimeters?</div>
+      <textarea placeholder="I think this happens because... For example if I take a 4×4 square and a 1×16 rectangle, both have area 16 but the perimeter is..."></textarea>
+    </div>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q3 /</span> Why do you think triangles are used so much in bridges and buildings?</div>
+      <textarea placeholder="I think triangles are strong because... Compared to rectangles, a triangle... When you push on a triangle it..."></textarea>
+    </div>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q4 /</span> If you were designing a new playground, which shapes would you use and why?</div>
+      <textarea placeholder="I would use... because... I'd avoid... The area of the main space would need to be at least..."></textarea>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="congrats">
+      <div class="trophy">🎉</div>
+      <h2>You're thinking like an architect!</h2>
+      <p>Today you explored the hidden geometry of the world — shapes, angles, area, perimeter, and coordinates. These ideas are the building blocks of everything humans design and build.</p>
+      <div class="summary-chips">
+        <span class="summary-chip">Polygons have straight sides</span>
+        <span class="summary-chip">Angles sum to 180° in a triangle</span>
+        <span class="summary-chip">Area = space inside</span>
+        <span class="summary-chip">Perimeter = distance around</span>
+        <span class="summary-chip">Area ≠ Perimeter</span>
+        <span class="summary-chip">Coordinates locate any point</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 6: SUMMARY & SUBMIT ══ -->
+  <div class="section" id="sec-6">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-mint">7</div>
+      <span class="eyebrow-label">Your Completed Work</span>
+    </div>
+    <h2>📤 Ready to Share</h2>
+    <p class="lead">Here's everything you worked on today. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> directly to your teacher.</p>
+
+    <!-- STUDENT INFO -->
+    <div class="summary-section" style="background:var(--sky); color:white; border-color:var(--sky);">
+      <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+        <div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; opacity:0.6; margin-bottom:0.3rem;">STUDENT</div>
+          <div style="font-family:'Fredoka One',cursive; font-size:1.4rem;" id="summaryName">—</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; opacity:0.6; margin-bottom:0.3rem;">LESSON</div>
+          <div style="font-family:'Fredoka One',cursive; font-size:1rem;">Geometry Explorer 📐</div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.72rem; opacity:0.6;" id="summaryDate"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WARM-UP -->
+    <div class="summary-section">
+      <h3>🔺 Section 1 — Warm-Up Quiz</h3>
+      <div class="summary-stat-row" id="sum-warmup"></div>
+    </div>
+
+    <!-- ANGLE PREDICTIONS -->
+    <div class="summary-section">
+      <h3>📐 Section 3 — Angle Explorer</h3>
+      <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.4rem;">PREDICTION</div>
+      <div class="summary-answer" id="sum-angle-pred"></div>
+      <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.4rem; margin-top:0.6rem;">REFLECTION</div>
+      <div class="summary-answer" id="sum-angle-ref"></div>
+    </div>
+
+    <!-- AREA PREDICTIONS -->
+    <div class="summary-section">
+      <h3>📏 Section 4 — Area & Perimeter Lab</h3>
+      <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.4rem;">PREDICTION</div>
+      <div class="summary-answer" id="sum-area-pred"></div>
+      <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.4rem; margin-top:0.6rem;">REFLECTION</div>
+      <div class="summary-answer" id="sum-area-ref"></div>
+    </div>
+
+    <!-- REFLECTIONS -->
+    <div class="summary-section">
+      <h3>💭 Section 6 — Reflection Questions</h3>
+      <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.4rem;">Q1 — What surprised you most?</div>
+      <div class="summary-answer" id="sum-q1"></div>
+      <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.4rem; margin-top:0.6rem;">Q2 — Area vs Perimeter</div>
+      <div class="summary-answer" id="sum-q2"></div>
+      <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.4rem; margin-top:0.6rem;">Q3 — Why triangles in buildings?</div>
+      <div class="summary-answer" id="sum-q3"></div>
+      <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.4rem; margin-top:0.6rem;">Q4 — Playground design</div>
+      <div class="summary-answer" id="sum-q4"></div>
+    </div>
+
+    <!-- SHARE BUTTONS -->
+    <div class="share-buttons">
+      <button class="share-btn copy" onclick="copyResults()">📋 Copy My Results</button>
+      <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+      <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+    <div class="copy-confirm" id="copyConfirm"></div>
+
+    <div style="margin-top:1.5rem; background:var(--sun-pale); border:2px dashed var(--sun); border-radius:12px; padding:1rem 1.2rem;">
+      <p style="font-size:0.82rem; color:#b8860b; font-family:'DM Mono',monospace; line-height:1.7;">
+        💡 <strong>HOW TO SUBMIT:</strong> Click "Copy My Results" → open Google Classroom → paste into your assignment comment or document. Done!
+      </p>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div class="nav-row">
+    <button class="btn-prev" id="prevBtn" onclick="navigate(-1)" disabled>← Back</button>
+    <button class="btn-next" id="nextBtn" onclick="navigate(1)">Next <span>→</span></button>
+  </div>
+
+</div><!-- /sheet -->
+
+<script>
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+let currentSection = 0;
+const totalSections = 6;
+
+function goTo(n) {
+  document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===n));
+  document.querySelectorAll('.prog-step').forEach((p,i) => {
+    p.classList.toggle('active', i===n);
+    if (i < n) p.classList.add('done');
+    else if (i > n) p.classList.remove('done');
+  });
+  currentSection = n;
+  document.getElementById('prevBtn').disabled = n === 0;
+  if (n === totalSections - 1) {
+    document.getElementById('nextBtn').textContent = '✓ Complete!';
+    document.getElementById('nextBtn').disabled = true;
+  } else {
+    document.getElementById('nextBtn').innerHTML = 'Next <span>→</span>';
+    document.getElementById('nextBtn').disabled = false;
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // init canvases on first visit
+  if (n === 2) { initAngleCanvas(); initTriangleCanvas(); }
+  if (n === 3) { initAreaCanvas(); initPerimGrid(); }
+  if (n === 4) { initCoordCanvas(); }
+}
+function navigate(dir) { goTo(Math.min(Math.max(currentSection + dir, 0), totalSections-1)); }
+
+// ══════════════════════════════════════
+// SECTION 0 — WARM-UP QUIZ
+// ══════════════════════════════════════
+const warmupShapes = [
+  { name:'Triangle',   sides:3,  svg: '<polygon points="30,17 54.25,59 5.75,59" fill="#e8603c" stroke="#e8603c" stroke-width="1" fill-opacity="0.7"/>' },
+  { name:'Square',     sides:4,  svg: '<rect x="11" y="26" width="38" height="38" fill="#f6c343" stroke="#f6c343" stroke-width="1" fill-opacity="0.7"/>' },
+  { name:'Pentagon',   sides:5,  svg: '<polygon points="30,17 56.63,36.35 46.46,67.65 13.54,67.65 3.37,36.35" fill="#7c6fcd" stroke="#7c6fcd" stroke-width="1" fill-opacity="0.7"/>' },
+  { name:'Hexagon',    sides:6,  svg: '<polygon points="30,17 54.25,31 54.25,59 30,73 5.75,59 5.75,31" fill="#3aaf85" stroke="#3aaf85" stroke-width="1" fill-opacity="0.7"/>' },
+  { name:'Octagon',    sides:8,  svg: '<polygon points="30,17 49.8,25.2 58,45 49.8,64.8 30,73 10.2,64.8 2,45 10.2,25.2" fill="#2980b9" stroke="#2980b9" stroke-width="1" fill-opacity="0.7"/>' },
+  { name:'Decagon',    sides:10, svg: '<polygon points="30,17 46.46,22.35 56.63,36.35 56.63,53.65 46.46,67.65 30,73 13.54,67.65 3.37,53.65 3.37,36.35 13.54,22.35" fill="#e8603c" stroke="#e8603c" stroke-width="1" fill-opacity="0.7"/>' },
+];
+let warmupAnswers = {};
+
+function buildWarmup() {
+  const grid = document.getElementById('warmupGrid');
+  grid.innerHTML = warmupShapes.map((s,i) => `
+    <div style="background:#f5f7fa; border-radius:10px; padding:0.8rem; text-align:center; border:2px solid var(--border);">
+      <svg width="60" height="80" viewBox="0 0 60 80" style="display:block;margin:0 auto 0.3rem;">${s.svg}</svg>
+      <div style="font-family:'Fredoka One',cursive; font-size:0.88rem; color:var(--sky); margin-bottom:0.4rem;">${s.name}</div>
+      <input type="number" min="0" max="20" placeholder="?" oninput="checkWarmup(${i},this.value,${s.sides})"
+        style="width:50px; border:2px solid var(--border); border-radius:6px; padding:0.3rem;
+               text-align:center; font-family:'Fredoka One',cursive; font-size:1rem; outline:none;">
+      <div id="wf-${i}" style="font-size:0.7rem; font-family:'DM Mono',monospace; margin-top:0.3rem; min-height:1rem;"></div>
+    </div>
+  `).join('');
+}
+
+function checkWarmup(i, val, correct) {
+  const fb = document.getElementById(`wf-${i}`);
+  const v = parseInt(val);
+  if (!val) { fb.textContent = ''; warmupAnswers[i] = false; return; }
+  if (v === correct) {
+    fb.style.color = 'var(--mint)';
+    fb.textContent = '✓ Correct!';
+    warmupAnswers[i] = true;
+  } else {
+    fb.style.color = 'var(--coral)';
+    fb.textContent = `Try again...`;
+    warmupAnswers[i] = false;
+  }
+  const allDone = Object.keys(warmupAnswers).length === warmupShapes.length &&
+                  Object.values(warmupAnswers).every(v => v);
+  document.getElementById('warmupFeedback').textContent =
+    allDone ? '🎉 Perfect! You know your polygons!' : '';
+}
+buildWarmup();
+
+// ══════════════════════════════════════
+// SECTION 1 — SHAPES EXPLORER
+// ══════════════════════════════════════
+const shapes = [
+  {
+    id:'triangle', name:'Triangle', sides:3, angles:3, emoji:'🔺',
+    svgPath:`<polygon points="30,38 50.8,74 9.2,74" fill="#e8603c" stroke="white" stroke-width="1.5"/>`,
+    desc:'The strongest polygon. All three interior angles add up to exactly 180°.',
+    facts:['3 sides','3 vertices','Angles sum = 180°'],
+    real:'🏔️ Mountains, roof trusses, warning signs, Toblerone chocolate',
+    challenge:'Your turn: what type of triangle has all 3 sides equal?'
+  },
+  {
+    id:'square', name:'Square', sides:4, angles:4, emoji:'🟥',
+    svgPath:`<rect x="14" y="44" width="32" height="32" fill="#f6c343" stroke="white" stroke-width="1.5"/>`,
+    desc:'A special rectangle where all 4 sides are equal and all angles are 90°.',
+    facts:['4 equal sides','4 right angles','Diagonals bisect at 90°'],
+    real:'🪟 Windows, tiles, chessboard squares, post-it notes',
+    challenge:'Your turn: is every square a rectangle? Is every rectangle a square?'
+  },
+  {
+    id:'rectangle', name:'Rectangle', sides:4, angles:4, emoji:'▬',
+    svgPath:`<rect x="10" y="52" width="36" height="20" fill="#3aaf85" stroke="white" stroke-width="1.5"/>`,
+    desc:'A parallelogram with 4 right angles. Opposite sides are equal and parallel.',
+    facts:['2 pairs equal sides','4 × 90° angles','Diagonals are equal length'],
+    real:'📱 Phone screens, doors, books, football pitches',
+    challenge:'Your turn: find 5 rectangles in the room you\'re sitting in right now.'
+  },
+  {
+    id:'pentagon', name:'Pentagon', sides:5, angles:5, emoji:'⬠',
+    svgPath:`<polygon points="30,17 56.63,36.35 46.46,67.65 13.54,67.65 3.37,36.35" fill="#7c6fcd" stroke="white" stroke-width="1.5"/>`,
+    desc:'A 5-sided polygon. Interior angles sum to 540°. Used in famous buildings.',
+    facts:['5 sides','5 vertices','Interior angles = 540°'],
+    real:'🏛️ The Pentagon (US), home plate in baseball, some soccer ball panels',
+    challenge:'Your turn: divide 540° by 5. That\'s each angle in a regular pentagon!'
+  },
+  {
+    id:'hexagon', name:'Hexagon', sides:6, angles:6, emoji:'⬡',
+    svgPath:`<polygon points="30,17 54.25,31 54.25,59 30,73 5.75,59 5.75,31" fill="#f6c343" stroke="white" stroke-width="1.5"/>`,
+    desc:'Nature\'s favourite shape — perfectly efficient packing. Interior angles sum to 720°.',
+    facts:['6 sides','6 vertices','Interior angles = 720°'],
+    real:'🍯 Honeycomb cells, snowflake structure, some pencil cross-sections',
+    challenge:'Your turn: why do you think bees use hexagons and not squares?'
+  },
+  {
+    id:'circle', name:'Circle', sides:0, angles:0, emoji:'⭕',
+    svgPath:`<circle cx="30" cy="60" r="20" fill="#e8603c" stroke="white" stroke-width="1.5" fill-opacity="0.7"/>`,
+    desc:'NOT a polygon — it has no straight sides or vertices. Defined by its radius.',
+    facts:['0 straight sides','Infinite symmetry','Area = π × r²'],
+    real:'🎡 Wheels, coins, plates, clocks, the sun — everything rolls!',
+    challenge:'Your turn: if a circle\'s radius is 5cm, what is its area? (Use π ≈ 3.14)'
+  },
+];
+
+let activeShape = null;
+function buildShapeGallery() {
+  const g = document.getElementById('shapeGallery');
+  g.innerHTML = shapes.map(s => `
+    <div class="shape-card" id="sc-${s.id}" onclick="selectShape('${s.id}')">
+      <svg width="60" height="80" viewBox="0 0 60 80">${s.svgPath}</svg>
+      <div class="shape-name">${s.name}</div>
+      <div class="shape-sides">${s.sides === 0 ? 'no sides' : s.sides + ' sides'}</div>
+    </div>
+  `).join('');
+}
+
+function selectShape(id) {
+  const s = shapes.find(x => x.id === id);
+  if (!s) return;
+  document.querySelectorAll('.shape-card').forEach(c => c.classList.remove('active'));
+  document.getElementById('sc-'+id).classList.add('active');
+  document.getElementById('sip-name').textContent = s.emoji + ' ' + s.name;
+  document.getElementById('sip-desc').textContent = s.desc;
+  document.getElementById('sip-facts').innerHTML =
+    s.facts.map(f => `<span class="fact-chip">${f}</span>`).join('') +
+    `<span class="fact-chip">🌍 ${s.real}</span>`;
+  document.getElementById('sip-challenge').textContent = s.challenge;
+  const panel = document.getElementById('shapeInfoPanel');
+  panel.classList.add('show');
+  activeShape = id;
+}
+buildShapeGallery();
+
+// ── VOCABULARY REVEALS ──
+const termMap = { polygon:'cr-polygon', vertex:'cr-vertex', parallel:'cr-parallel', diagonal:'cr-diagonal', congruent:'cr-congruent' };
+let openTerm = null;
+function revealTerm(key) {
+  if (openTerm) document.getElementById(termMap[openTerm]).classList.remove('show');
+  if (openTerm === key) { openTerm = null; return; }
+  document.getElementById(termMap[key]).classList.add('show');
+  openTerm = key;
+}
+
+// ══════════════════════════════════════
+// SECTION 2 — ANGLE EXPLORER
+// ══════════════════════════════════════
+function initAngleCanvas() {
+  updateAngle(document.getElementById('angleSlider').value);
+}
+
+function drawAngleCanvas(deg) {
+  const cvs = document.getElementById('angleCanvas');
+  if (!cvs) return;
+  const ctx = cvs.getContext('2d');
+  const cx = 110, cy = 130, r = 90;
+  ctx.clearRect(0, 0, 220, 220);
+
+  const rad = deg * Math.PI / 180;
+
+  // arc fill
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.arc(cx, cy, r, -Math.PI/2, -Math.PI/2 + rad);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(232,96,60,0.15)';
+  ctx.fill();
+
+  // arc line
+  ctx.beginPath();
+  ctx.arc(cx, cy, 60, -Math.PI/2, -Math.PI/2 + rad);
+  ctx.strokeStyle = 'var(--coral)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // two arms
+  ctx.strokeStyle = '#1e3a5f';
+  ctx.lineWidth = 3;
+  ctx.lineCap = 'round';
+  // fixed arm — up
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(cx, cy - r);
+  ctx.stroke();
+  // rotating arm
+  const ex = cx + r * Math.sin(rad);
+  const ey = cy - r * Math.cos(rad);
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(ex, ey);
+  ctx.stroke();
+
+  // center dot
+  ctx.beginPath();
+  ctx.arc(cx, cy, 5, 0, 2*Math.PI);
+  ctx.fillStyle = 'var(--coral)';
+  ctx.fill();
+
+  // degree label on arc
+  const midRad = rad / 2 - Math.PI/2;
+  const lx = cx + 72 * Math.cos(midRad);
+  const ly = cy + 72 * Math.sin(midRad);
+  ctx.fillStyle = 'var(--coral)';
+  ctx.font = 'bold 13px Nunito, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(deg + '°', lx, ly);
+}
+
+function getAngleType(deg) {
+  if (deg < 90)  return { type:'Acute Angle',   fact:'An acute angle is less than 90°. Think of a sharp point — like the tip of a pencil.' };
+  if (deg === 90) return { type:'Right Angle',   fact:'A right angle is exactly 90°. It\'s the corner of every square, rectangle, and building wall.' };
+  if (deg < 180) return { type:'Obtuse Angle',  fact:'An obtuse angle is between 90° and 180°. It\'s wider than a right angle but still less than a straight line.' };
+  if (deg === 180) return { type:'Straight Angle', fact:'A straight angle is exactly 180°. It looks like a perfectly flat line.' };
+  if (deg < 360) return { type:'Reflex Angle',  fact:'A reflex angle is greater than 180°. It\'s the "outside" angle — bigger than a straight line.' };
+  return { type:'Full Rotation', fact:'A full rotation is 360°. That\'s one complete turn — like a clock\'s hands going all the way around.' };
+}
+
+function updateAngle(val) {
+  const deg = parseInt(val);
+  document.getElementById('angleDeg').textContent = deg + '°';
+  const { type, fact } = getAngleType(deg);
+  document.getElementById('angleType').textContent = type;
+  document.getElementById('angleFact').textContent = fact;
+  drawAngleCanvas(deg);
+}
+
+function snapAngle(deg) {
+  document.getElementById('angleSlider').value = deg;
+  updateAngle(deg);
+}
+
+// ── TRIANGLE ANGLES ──
+function initTriangleCanvas() { updateTriangle(); }
+
+function updateTriangle() {
+  const a = parseInt(document.getElementById('triA').value) || 0;
+  const b = parseInt(document.getElementById('triB').value) || 0;
+  const c = 180 - a - b;
+  document.getElementById('triC').value = c;
+  const fb = document.getElementById('triangleFeedback');
+  if (c <= 0) {
+    fb.style.color = 'var(--coral)';
+    fb.textContent = '⚠️ Angles A + B must be less than 180° to make a valid triangle!';
+  } else {
+    fb.style.color = 'var(--mint)';
+    fb.textContent = `✓ Valid triangle! ${a}° + ${b}° + ${c}° = 180°`;
+  }
+  drawTriangle(a, b, c);
+}
+
+function drawTriangle(a, b, c) {
+  const cvs = document.getElementById('triangleCanvas');
+  if (!cvs) return;
+  const ctx = cvs.getContext('2d');
+  ctx.clearRect(0, 0, 360, 180);
+  if (c <= 0 || a <= 0 || b <= 0) {
+    ctx.fillStyle = 'var(--coral)';
+    ctx.font = '14px Nunito, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Invalid triangle — adjust the angles!', 180, 90);
+    return;
+  }
+  // compute triangle points from angles
+  const aR = a * Math.PI/180;
+  const bR = b * Math.PI/180;
+  const cR = c * Math.PI/180;
+  // place base
+  const pad = 30;
+  const W = 360 - pad*2;
+  const x1 = pad, y1 = 150;
+  const x2 = pad + W, y2 = 150;
+  // find top vertex using angle A and B
+  const t = Math.tan(aR) * Math.tan(bR) / (Math.tan(aR) + Math.tan(bR));
+  const x3 = x1 + W * (Math.tan(bR) / (Math.tan(aR) + Math.tan(bR)));
+  const y3 = y1 - W * t;
+  const clampY = Math.max(20, y3);
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.lineTo(x3, clampY);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(124,111,205,0.15)';
+  ctx.fill();
+  ctx.strokeStyle = 'var(--lavender)';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+  // labels
+  ctx.fillStyle = 'var(--coral)';
+  ctx.font = 'bold 13px Nunito, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(a+'°', x1 + 20, y1 - 10);
+  ctx.fillText(b+'°', x2 - 20, y2 - 10);
+  ctx.fillText(c+'°', x3, clampY - 12);
+}
+
+// ══════════════════════════════════════
+// SECTION 3 — AREA CALCULATOR
+// ══════════════════════════════════════
+let currentAreaShape = 'rectangle';
+
+const areaShapes = {
+  rectangle: {
+    inputs: [
+      { id:'rectW', label:'Width (cm)', val:6 },
+      { id:'rectH', label:'Height (cm)', val:4 }
+    ],
+    calc: () => {
+      const w = parseFloat(document.getElementById('rectW').value)||0;
+      const h = parseFloat(document.getElementById('rectH').value)||0;
+      return { area: w*h, perim: 2*(w+h),
+               formula:`Area = width × height = ${w} × ${h}`,
+               unit:' cm²', perimStr:`Perimeter = 2 × (${w} + ${h}) = ${2*(w+h)} cm` };
+    },
+    draw: (ctx,w,h) => {
+      const W=Math.min(w*20,280), H=Math.min(h*20,120);
+      const x=(340-W)/2, y=(160-H)/2;
+      ctx.fillStyle='rgba(58,175,133,0.2)'; ctx.fillRect(x,y,W,H);
+      ctx.strokeStyle='var(--mint)'; ctx.lineWidth=2.5; ctx.strokeRect(x,y,W,H);
+      ctx.fillStyle='var(--sky)'; ctx.font='bold 12px Nunito,sans-serif'; ctx.textAlign='center';
+      ctx.fillText(w+' cm', 170, y+H+18);
+      ctx.save(); ctx.translate(x-16, 80); ctx.rotate(-Math.PI/2);
+      ctx.fillText(h+' cm', 0, 0); ctx.restore();
+    }
+  },
+  triangle: {
+    inputs: [
+      { id:'triBase', label:'Base (cm)', val:8 },
+      { id:'triHeight', label:'Height (cm)', val:5 }
+    ],
+    calc: () => {
+      const b = parseFloat(document.getElementById('triBase').value)||0;
+      const h = parseFloat(document.getElementById('triHeight').value)||0;
+      return { area: 0.5*b*h, perim: null,
+               formula:`Area = ½ × base × height = ½ × ${b} × ${h}`,
+               unit:' cm²', perimStr:`(Perimeter depends on side lengths)` };
+    },
+    draw: (ctx,b,h) => {
+      const W=Math.min(b*20,260), H=Math.min(h*16,120);
+      const bx=(340-W)/2, by=140;
+      ctx.beginPath(); ctx.moveTo(bx+W/2,by-H); ctx.lineTo(bx,by); ctx.lineTo(bx+W,by); ctx.closePath();
+      ctx.fillStyle='rgba(232,96,60,0.15)'; ctx.fill();
+      ctx.strokeStyle='var(--coral)'; ctx.lineWidth=2.5; ctx.stroke();
+      ctx.fillStyle='var(--sky)'; ctx.font='bold 12px Nunito,sans-serif'; ctx.textAlign='center';
+      ctx.fillText(b+' cm', bx+W/2, by+16);
+      ctx.save(); ctx.translate(bx+W/2+16, by-H/2); ctx.rotate(Math.PI/2);
+      ctx.fillText(h+' cm', 0, 0); ctx.restore();
+    }
+  },
+  circle: {
+    inputs: [
+      { id:'circR', label:'Radius (cm)', val:5 }
+    ],
+    calc: () => {
+      const r = parseFloat(document.getElementById('circR').value)||0;
+      const area = Math.PI*r*r;
+      return { area: area.toFixed(2), perim: (2*Math.PI*r).toFixed(2),
+               formula:`Area = π × r² = π × ${r}² ≈ ${area.toFixed(2)}`,
+               unit:' cm²', perimStr:`Circumference = 2π × ${r} ≈ ${(2*Math.PI*r).toFixed(2)} cm` };
+    },
+    draw: (ctx,r) => {
+      const R = Math.min(r*12, 70);
+      ctx.beginPath(); ctx.arc(170,80,R,0,2*Math.PI);
+      ctx.fillStyle='rgba(124,111,205,0.2)'; ctx.fill();
+      ctx.strokeStyle='var(--lavender)'; ctx.lineWidth=2.5; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(170,80); ctx.lineTo(170+R,80);
+      ctx.strokeStyle='var(--coral)'; ctx.lineWidth=1.5; ctx.stroke();
+      ctx.fillStyle='var(--coral)'; ctx.font='bold 11px Nunito,sans-serif'; ctx.textAlign='center';
+      ctx.fillText('r = '+r+' cm', 170+R/2, 72);
+      ctx.beginPath(); ctx.arc(170,80,3,0,2*Math.PI); ctx.fillStyle='var(--sky)'; ctx.fill();
+    }
+  },
+  parallelogram: {
+    inputs: [
+      { id:'paraBase', label:'Base (cm)', val:8 },
+      { id:'paraH', label:'Height (cm)', val:4 }
+    ],
+    calc: () => {
+      const b = parseFloat(document.getElementById('paraBase').value)||0;
+      const h = parseFloat(document.getElementById('paraH').value)||0;
+      return { area: b*h, perim: null,
+               formula:`Area = base × height = ${b} × ${h}`,
+               unit:' cm²', perimStr:`(same formula as a rectangle — cool!)` };
+    },
+    draw: (ctx,b,h) => {
+      const W=Math.min(b*20,240), H=Math.min(h*16,100);
+      const offset=30;
+      const x=(340-W-offset)/2, y=(160-H)/2;
+      ctx.beginPath();
+      ctx.moveTo(x+offset,y); ctx.lineTo(x+W+offset,y);
+      ctx.lineTo(x+W,y+H); ctx.lineTo(x,y+H);
+      ctx.closePath();
+      ctx.fillStyle='rgba(246,195,67,0.2)'; ctx.fill();
+      ctx.strokeStyle='var(--sun)'; ctx.lineWidth=2.5; ctx.stroke();
+      // height dashed line
+      ctx.setLineDash([4,3]); ctx.strokeStyle='var(--muted)';
+      ctx.beginPath(); ctx.moveTo(x+W,y); ctx.lineTo(x+W,y+H); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='var(--sky)'; ctx.font='bold 12px Nunito,sans-serif'; ctx.textAlign='center';
+      ctx.fillText(b+' cm', x+W/2+offset/2, y+H+18);
+      ctx.fillText(h+' cm', x+W+16, y+H/2);
+    }
+  }
+};
+
+function initAreaCanvas() {
+  setAreaShape('rectangle', document.querySelector('.area-shape-btn.active'));
+}
+
+function setAreaShape(shape, btn) {
+  currentAreaShape = shape;
+  document.querySelectorAll('.area-shape-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const s = areaShapes[shape];
+  document.getElementById('areaInputs').innerHTML = s.inputs.map(inp =>
+    `<div class="input-group">
+      <label>${inp.label}</label>
+      <input type="number" id="${inp.id}" value="${inp.val}" min="0.5" max="20" step="0.5" oninput="calcArea()">
+    </div>`
+  ).join('');
+  calcArea();
+}
+
+function calcArea() {
+  const s = areaShapes[currentAreaShape];
+  if (!s) return;
+  const result = s.calc();
+  const cvs = document.getElementById('areaCanvas');
+  const ctx = cvs.getContext('2d');
+  ctx.clearRect(0,0,340,160);
+  const inputs = areaShapes[currentAreaShape].inputs;
+  const vals = inputs.map(i => parseFloat(document.getElementById(i.id).value)||0);
+  s.draw(ctx, ...vals);
+  document.getElementById('areaFormula').textContent = result.formula;
+  document.getElementById('areaValue').textContent = result.area;
+  document.getElementById('areaUnit').textContent = result.unit;
+  document.getElementById('perimValue').textContent = result.perimStr;
+  document.getElementById('areaResult').classList.add('show');
+}
+
+// ── PERIMETER GRID ──
+const GRID_COLS = 12, GRID_ROWS = 8;
+let gridState = Array(GRID_ROWS).fill(null).map(() => Array(GRID_COLS).fill(false));
+let isDrawing = false;
+
+function initPerimGrid() {
+  const grid = document.getElementById('perimGrid');
+  grid.innerHTML = '';
+  for (let r=0; r<GRID_ROWS; r++) {
+    for (let c=0; c<GRID_COLS; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'perim-cell';
+      cell.dataset.r = r; cell.dataset.c = c;
+      cell.addEventListener('mousedown', e => { isDrawing = true; toggleCell(r,c); });
+      cell.addEventListener('mouseenter', e => { if(isDrawing) toggleCell(r,c); });
+      cell.addEventListener('touchstart', e => { e.preventDefault(); isDrawing = true; toggleCell(r,c); }, {passive:false});
+      grid.appendChild(cell);
+    }
+  }
+  document.addEventListener('mouseup', () => isDrawing = false);
+  document.addEventListener('touchend', () => isDrawing = false);
+}
+
+function toggleCell(r, c) {
+  gridState[r][c] = !gridState[r][c];
+  const idx = r * GRID_COLS + c;
+  const cell = document.getElementById('perimGrid').children[idx];
+  cell.classList.toggle('filled', gridState[r][c]);
+  updatePerimStats();
+}
+
+function updatePerimStats() {
+  let area = 0, perim = 0;
+  for (let r=0; r<GRID_ROWS; r++) {
+    for (let c=0; c<GRID_COLS; c++) {
+      if (!gridState[r][c]) continue;
+      area++;
+      // count exposed edges
+      if (r===0 || !gridState[r-1][c]) perim++;
+      if (r===GRID_ROWS-1 || !gridState[r+1][c]) perim++;
+      if (c===0 || !gridState[r][c-1]) perim++;
+      if (c===GRID_COLS-1 || !gridState[r][c+1]) perim++;
+    }
+  }
+  document.getElementById('perimArea').textContent = area;
+  document.getElementById('perimPerim').textContent = perim;
+  document.getElementById('perimRatio').textContent = area > 0 ? (perim/area).toFixed(2) : '—';
+  const ins = document.getElementById('perimInsight');
+  if (area > 0) {
+    if (perim/area < 2.5) ins.textContent = '🏆 Very efficient shape! Lower ratio = more area per perimeter.';
+    else if (area > 8) ins.textContent = '💡 Notice: more area doesn\'t always mean more perimeter!';
+    else ins.textContent = `📐 Area: ${area} squares | Perimeter: ${perim} edges`;
+  } else { ins.textContent = ''; }
+}
+
+function clearGrid() {
+  gridState = Array(GRID_ROWS).fill(null).map(() => Array(GRID_COLS).fill(false));
+  document.querySelectorAll('.perim-cell').forEach(c => c.classList.remove('filled','edge'));
+  updatePerimStats();
+}
+
+function fillRect() {
+  clearGrid();
+  for (let r=2; r<5; r++) for (let c=4; c<8; c++) {
+    gridState[r][c] = true;
+    const idx = r * GRID_COLS + c;
+    document.getElementById('perimGrid').children[idx].classList.add('filled');
+  }
+  updatePerimStats();
+}
+
+// ══════════════════════════════════════
+// SECTION 4 — COORDINATE CANVAS
+// ══════════════════════════════════════
+let coordPoints = [];
+let shapeClosed = false;
+
+function initCoordCanvas() {
+  drawCoordGrid();
+}
+
+function drawCoordGrid() {
+  const cvs = document.getElementById('coordCanvas');
+  if (!cvs) return;
+  const ctx = cvs.getContext('2d');
+  const size = 280, cells = 10, cell = size / cells;
+  ctx.clearRect(0,0,size,size);
+
+  // grid
+  ctx.strokeStyle = '#dde8f5';
+  ctx.lineWidth = 1;
+  for (let i=0; i<=cells; i++) {
+    ctx.beginPath(); ctx.moveTo(i*cell,0); ctx.lineTo(i*cell,size); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,i*cell); ctx.lineTo(size,i*cell); ctx.stroke();
+  }
+  // axes
+  ctx.strokeStyle = '#b8c4cc'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0,size/2); ctx.lineTo(size,size/2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(size/2,0); ctx.lineTo(size/2,size); ctx.stroke();
+
+  // axis labels
+  ctx.fillStyle = 'var(--muted)';
+  ctx.font = '9px DM Mono, monospace';
+  ctx.textAlign = 'center';
+  for (let i=-4; i<=5; i++) {
+    if (i===0) continue;
+    const x = size/2 + i*cell;
+    ctx.fillText(i, x, size/2+11);
+    ctx.fillText(-i, size/2-8, i*cell+3);
+  }
+
+  // draw shape
+  if (coordPoints.length > 1) {
+    ctx.beginPath();
+    coordPoints.forEach((p,i) => {
+      const px = size/2 + p.x*cell;
+      const py = size/2 - p.y*cell;
+      i===0 ? ctx.moveTo(px,py) : ctx.lineTo(px,py);
+    });
+    if (shapeClosed) ctx.closePath();
+    ctx.strokeStyle = 'var(--lavender)';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    if (shapeClosed) {
+      ctx.fillStyle = 'rgba(124,111,205,0.15)';
+      ctx.fill();
+    }
+  }
+
+  // draw points
+  coordPoints.forEach((p,i) => {
+    const px = size/2 + p.x*cell;
+    const py = size/2 - p.y*cell;
+    ctx.beginPath(); ctx.arc(px,py,5,0,2*Math.PI);
+    ctx.fillStyle = 'var(--coral)'; ctx.fill();
+    ctx.fillStyle = 'var(--sky)';
+    ctx.font = 'bold 10px Nunito,sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`(${p.x},${p.y})`, px+7, py-4);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const cvs = document.getElementById('coordCanvas');
+  if (!cvs) return;
+  cvs.addEventListener('click', e => {
+    if (shapeClosed) return;
+    const rect = cvs.getBoundingClientRect();
+    const size = 280, cells = 10, cell = size/cells;
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const gx = Math.round((mx - size/2) / cell);
+    const gy = Math.round((size/2 - my) / cell);
+    coordPoints.push({x:gx, y:gy});
+    updateCoordDisplay();
+    drawCoordGrid();
+  });
+});
+
+function updateCoordDisplay() {
+  document.getElementById('coordPoints').innerHTML =
+    coordPoints.map((p,i) => `Point ${i+1}: (${p.x}, ${p.y})`).join('<br>') || 'No points yet — click the grid!';
+}
+
+function closeShape() {
+  if (coordPoints.length < 3) {
+    document.getElementById('coordDistance').textContent = '⚠️ Need at least 3 points to close a shape.';
+    return;
+  }
+  shapeClosed = true;
+  drawCoordGrid();
+  // shoelace formula
+  let area = 0;
+  const n = coordPoints.length;
+  for (let i=0; i<n; i++) {
+    const j = (i+1) % n;
+    area += coordPoints[i].x * coordPoints[j].y;
+    area -= coordPoints[j].x * coordPoints[i].y;
+  }
+  area = Math.abs(area) / 2;
+  document.getElementById('coordArea').textContent =
+    `📐 Area of your shape ≈ ${area.toFixed(1)} square units (using the Shoelace Formula!)`;
+  document.getElementById('coordDistance').textContent = `✓ Shape closed — ${n} vertices`;
+}
+
+function clearCoord() {
+  coordPoints = [];
+  shapeClosed = false;
+  document.getElementById('coordPoints').textContent = 'No points placed yet — click the grid!';
+  document.getElementById('coordDistance').textContent = '';
+  document.getElementById('coordArea').textContent = '';
+  drawCoordGrid();
+}
+
+// ══════════════════════════════════════
+// INITIALISE
+// ══════════════════════════════════════
+window.addEventListener('load', () => {
+  drawAngleCanvas(90);
+  updateTriangle();
+  setAreaShape('rectangle', null);
+  initPerimGrid();
+  initCoordCanvas();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Probability Workshop 🎲</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #1e3a5f;
+    --sky-mid: #2d5282;
+    --sun: #f6c343;
+    --sun-pale: #fef9e7;
+    --coral: #e8603c;
+    --coral-pale: #fdf0ec;
+    --mint: #3aaf85;
+    --mint-pale: #e8f8f2;
+    --lavender: #7c6fcd;
+    --lavender-pale: #f0eefb;
+    --paper: #fffef9;
+    --ink: #1a2332;
+    --muted: #7a8899;
+    --border: rgba(0,0,0,0.08);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: linear-gradient(160deg, #0f2540 0%, #1e3a5f 40%, #2d5282 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* ── STARS BG ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 45% 8%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(2px 2px at 65% 22%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 5%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 92% 35%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 35% 28%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 72% 12%, rgba(255,255,255,0.5) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HERO HEADER ── */
+  .hero {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 3.5rem 2rem 2rem;
+    color: white;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--sun);
+    color: var(--sky);
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    padding: 0.35rem 1.2rem;
+    border-radius: 20px;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 12px rgba(246,195,67,0.4);
+  }
+  .hero h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    line-height: 1.1;
+    margin-bottom: 0.8rem;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+  .hero h1 .accent { color: var(--sun); }
+  .hero p.intro {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    opacity: 0.88;
+    max-width: 560px;
+    margin: 0 auto 2rem;
+    font-weight: 400;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+  }
+  .prog-step {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(255,255,255,0.12);
+    border: 1.5px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .prog-step:hover, .prog-step.done {
+    background: rgba(255,255,255,0.22);
+    color: white;
+    border-color: rgba(255,255,255,0.4);
+  }
+  .prog-step.active {
+    background: var(--sun);
+    color: var(--sky);
+    border-color: var(--sun);
+    box-shadow: 0 2px 12px rgba(246,195,67,0.4);
+  }
+  .prog-dot { font-size: 1rem; }
+
+  /* ── MAIN SHEET ── */
+  .sheet {
+    position: relative;
+    z-index: 1;
+    background: var(--paper);
+    border-radius: 24px 24px 0 0;
+    margin-top: 1.5rem;
+    padding: 0 0 6rem;
+    min-height: 80vh;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.25);
+  }
+
+  /* ── SECTION ── */
+  .section {
+    padding: 3rem 2rem 0;
+    max-width: 820px;
+    margin: 0 auto;
+    display: none;
+  }
+  .section.active { display: block; }
+
+  .section-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+  .eyebrow-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: white;
+    flex-shrink: 0;
+  }
+  .num-coral { background: var(--coral); }
+  .num-mint  { background: var(--mint); }
+  .num-sun   { background: var(--sun); color: var(--sky); }
+  .num-lav   { background: var(--lavender); }
+  .num-sky   { background: var(--sky-mid); }
+
+  .eyebrow-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .section h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    color: var(--sky);
+    margin-bottom: 0.6rem;
+    line-height: 1.2;
+  }
+  .section .lead {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: #3a4a5a;
+    margin-bottom: 1.8rem;
+  }
+  .section .lead strong { color: var(--coral); }
+
+  /* ── WONDER BOX ── */
+  .wonder-box {
+    background: linear-gradient(135deg, var(--sky) 0%, var(--sky-mid) 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 1.8rem 2rem;
+    margin-bottom: 1.8rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .wonder-box::after {
+    content: '🤔';
+    position: absolute;
+    right: 1.5rem; top: 50%;
+    transform: translateY(-50%);
+    font-size: 3rem;
+    opacity: 0.3;
+  }
+  .wonder-box p {
+    font-size: 1rem;
+    line-height: 1.7;
+    font-style: italic;
+    opacity: 0.95;
+    max-width: 85%;
+  }
+  .wonder-box strong { color: var(--sun); font-style: normal; }
+
+  /* ── SCALE ACTIVITY ── */
+  .scale-bar {
+    position: relative;
+    margin: 2rem 0 1rem;
+  }
+  .scale-track {
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #e74c3c 0%, #f39c12 25%, #2ecc71 50%, #f39c12 75%, #e74c3c 100%);
+    position: relative;
+  }
+  .scale-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+  }
+  .scale-events {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.7rem;
+    margin-top: 1.5rem;
+  }
+  @media (min-width: 560px) {
+    .scale-events { grid-template-columns: 1fr 1fr 1fr; }
+  }
+  .scale-event {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 0.9rem;
+    cursor: grab;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .scale-event:hover { border-color: var(--sun); box-shadow: 0 2px 10px rgba(246,195,67,0.3); transform: translateY(-2px); }
+  .scale-event .ev-icon { font-size: 1.4rem; display: block; margin-bottom: 0.3rem; }
+
+  /* ── PROBABILITY SCALE INTERACTIVE ── */
+  .prob-scale-wrap {
+    margin: 1.5rem 0;
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+  }
+  .prob-events-list { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+  .prob-event-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .prob-event-row label {
+    min-width: 180px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .prob-event-row input[type=range] {
+    flex: 1;
+    accent-color: var(--coral);
+  }
+  .prob-event-row .prob-val {
+    min-width: 60px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--coral);
+    font-weight: 700;
+    text-align: right;
+  }
+
+  /* ── CONCEPT CHIPS ── */
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+  }
+  .chip {
+    padding: 0.45rem 1rem;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+  }
+  .chip.coral  { background: var(--coral-pale);   color: var(--coral);     border-color: #f8c5b8; }
+  .chip.mint   { background: var(--mint-pale);    color: var(--mint);      border-color: #b8ebd8; }
+  .chip.sun    { background: var(--sun-pale);     color: #b8860b;          border-color: #f8e0a0; }
+  .chip.lav    { background: var(--lavender-pale); color: var(--lavender); border-color: #d0caef; }
+  .chip.sky    { background: #e8f0f8;             color: var(--sky-mid);   border-color: #c0d4ea; }
+  .chip:hover  { transform: scale(1.05); }
+
+  .concept-reveal {
+    background: var(--paper);
+    border-left: 4px solid var(--coral);
+    border-radius: 0 10px 10px 0;
+    padding: 1rem 1.2rem;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    margin-top: 0.5rem;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .concept-reveal.show { display: block; }
+  .concept-reveal.mint-border  { border-color: var(--mint); }
+  .concept-reveal.sun-border   { border-color: var(--sun); }
+  .concept-reveal.lav-border   { border-color: var(--lavender); }
+  .concept-reveal.sky-border   { border-color: var(--sky-mid); }
+
+  @keyframes fadeIn {
+    from { opacity:0; transform: translateY(-6px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  /* ── PREDICTION BOX ── */
+  .predict-box {
+    background: var(--sun-pale);
+    border: 2px dashed var(--sun);
+    border-radius: 14px;
+    padding: 1.4rem 1.6rem;
+    margin-bottom: 1.5rem;
+  }
+  .predict-box h4 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: #b8860b;
+    margin-bottom: 0.8rem;
+  }
+  .predict-box textarea {
+    width: 100%;
+    border: 1.5px solid rgba(0,0,0,0.12);
+    border-radius: 8px;
+    padding: 0.7rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    resize: vertical;
+    min-height: 64px;
+    background: white;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .predict-box textarea:focus { border-color: var(--sun); }
+
+  /* ── DEMO ZONE ── */
+  .demo-zone {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .demo-zone h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    color: var(--sky);
+    margin-bottom: 0.3rem;
+  }
+  .demo-zone .hint {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 1.3rem;
+  }
+
+  /* Marble */
+  .marble-controls {
+    display: flex;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+    align-items: center;
+  }
+  .marble-add-btn {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 3px solid white;
+    cursor: pointer;
+    font-size: 0;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    transition: transform 0.15s, box-shadow 0.15s;
+    position: relative;
+  }
+  .marble-add-btn::after {
+    content: '+';
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: white;
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .marble-add-btn:hover { transform: scale(1.12); box-shadow: 0 5px 15px rgba(0,0,0,0.25); }
+  .marble-add-btn.m-red    { background: #e74c3c; }
+  .marble-add-btn.m-blue   { background: #2980b9; }
+  .marble-add-btn.m-green  { background: #27ae60; }
+  .marble-add-btn.m-yellow { background: #f39c12; }
+  .marble-add-btn.m-clear  { background: var(--muted); border-radius: 8px; width: auto; padding: 0 0.9rem; font-size: 0.75rem; }
+  .marble-add-btn.m-clear::after { font-size: 0.75rem; content: 'Clear'; font-weight: 700; }
+
+  .bag-display {
+    min-height: 56px;
+    border: 2px dashed #ddd;
+    border-radius: 12px;
+    padding: 0.7rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    align-items: center;
+    background: #fafafa;
+    margin-bottom: 1rem;
+  }
+  .marble-ball {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: inset -3px -3px 6px rgba(0,0,0,0.18), 0 2px 5px rgba(0,0,0,0.12);
+    cursor: pointer;
+    transition: transform 0.15s;
+    flex-shrink: 0;
+  }
+  .marble-ball:hover { transform: scale(1.2); }
+
+  .prob-chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    min-height: 30px;
+  }
+  .live-chip {
+    border-radius: 8px;
+    padding: 0.35rem 0.75rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.76rem;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+
+  .action-row {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 0.8rem;
+  }
+  .btn {
+    border: none;
+    border-radius: 10px;
+    padding: 0.65rem 1.3rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
+  .btn:active { transform: translateY(0); }
+  .btn-coral  { background: var(--coral);     color: white; }
+  .btn-mint   { background: var(--mint);      color: white; }
+  .btn-sun    { background: var(--sun);       color: var(--sky); }
+  .btn-lav    { background: var(--lavender);  color: white; }
+  .btn-ghost  { background: #f0f2f5; color: var(--muted); }
+
+  .draw-result {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    min-height: 1.5rem;
+    margin-top: 0.5rem;
+  }
+  .draw-history {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.9;
+    margin-top: 0.3rem;
+  }
+
+  /* Spinner */
+  .spinner-wrap {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  canvas#spinnerCanvas {
+    border-radius: 50%;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+    flex-shrink: 0;
+  }
+  .spinner-right { flex: 1; min-width: 180px; }
+  .spinner-right p { font-size: 0.85rem; line-height: 1.65; color: #3a4a5a; margin-bottom: 0.8rem; }
+
+  .tally-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-top: 0.8rem;
+  }
+  .tally-cell {
+    background: #f5f7fa;
+    border-radius: 8px;
+    padding: 0.5rem 0.8rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    display: flex;
+    justify-content: space-between;
+  }
+  .tally-cell strong { color: var(--sky); }
+
+  .spinner-insight {
+    margin-top: 0.8rem;
+    font-size: 0.8rem;
+    color: var(--mint);
+    font-family: 'DM Mono', monospace;
+    min-height: 1.2rem;
+  }
+
+  /* ── REFLECTION ── */
+  .reflection-card {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 1.4rem;
+    margin-bottom: 1rem;
+  }
+  .reflection-card .q {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: var(--sky);
+    margin-bottom: 0.7rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+  }
+  .reflection-card .q .qnum {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .reflection-card textarea {
+    width: 100%;
+    border: 1.5px solid rgba(0,0,0,0.1);
+    border-radius: 8px;
+    padding: 0.7rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    resize: vertical;
+    min-height: 72px;
+    background: #fafbfc;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .reflection-card textarea:focus { border-color: var(--lavender); }
+
+  /* ── REAL WORLD CARDS ── */
+  .world-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .world-card {
+    border-radius: 14px;
+    padding: 1.4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .world-card.coral-bg { background: var(--coral-pale); }
+  .world-card.mint-bg  { background: var(--mint-pale); }
+  .world-card.lav-bg   { background: var(--lavender-pale); }
+  .world-card .wc-icon { font-size: 2rem; margin-bottom: 0.6rem; }
+  .world-card h4 { font-family: 'Fredoka One', cursive; font-size: 1rem; margin-bottom: 0.4rem; color: var(--sky); }
+  .world-card p  { font-size: 0.82rem; line-height: 1.6; color: #3a4a5a; }
+
+  /* ── DESIGN-YOUR-OWN GAME ── */
+  .game-designer {
+    background: linear-gradient(135deg, var(--lavender-pale) 0%, #e8f8f2 100%);
+    border: 2px solid rgba(124,111,205,0.2);
+    border-radius: 16px;
+    padding: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .game-designer h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.15rem;
+    color: var(--lavender);
+    margin-bottom: 0.6rem;
+  }
+  .game-designer p { font-size: 0.88rem; line-height: 1.65; color: #3a4a5a; margin-bottom: 1rem; }
+  .game-inputs { display: flex; flex-direction: column; gap: 0.8rem; }
+  .game-input-row { display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap; }
+  .game-input-row label { font-size: 0.82rem; font-weight: 700; min-width: 130px; }
+  .game-input-row input[type=number], .game-input-row input[type=text] {
+    border: 1.5px solid rgba(0,0,0,0.12);
+    border-radius: 8px;
+    padding: 0.45rem 0.8rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    width: 100px;
+    outline: none;
+    transition: border-color 0.2s;
+    background: white;
+  }
+  .game-input-row input:focus { border-color: var(--lavender); }
+  .game-result-panel {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.8;
+    display: none;
+  }
+  .game-result-panel.show { display: block; }
+
+  /* ── NEXT BUTTON ── */
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2.5rem 2rem 0;
+    max-width: 820px;
+    margin: 0 auto;
+  }
+  .btn-next {
+    background: var(--sky);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 0.9rem 2rem;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(30,58,95,0.25);
+  }
+  .btn-next:hover { background: var(--sky-mid); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(30,58,95,0.3); }
+  .btn-prev {
+    background: transparent;
+    color: var(--muted);
+    border: 2px solid var(--border);
+    border-radius: 50px;
+    padding: 0.9rem 1.6rem;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-prev:hover { border-color: var(--muted); color: var(--ink); }
+  .btn-prev:disabled, .btn-next:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+  /* ── CONGRATS ── */
+  .congrats {
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+  .congrats .trophy { font-size: 4rem; margin-bottom: 1rem; animation: bounce 0.8s ease infinite alternate; }
+  @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+  .congrats h2 { font-family: 'Fredoka One', cursive; font-size: 2rem; color: var(--sky); margin-bottom: 0.8rem; }
+  .congrats p  { font-size: 0.95rem; line-height: 1.7; color: #3a4a5a; max-width: 500px; margin: 0 auto 1.5rem; }
+  .summary-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; }
+  .summary-chip {
+    padding: 0.5rem 1.1rem;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    background: var(--sun-pale);
+    color: #b8860b;
+    border: 1.5px solid #f8e0a0;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 1.5rem 0;
+  }
+
+  @media (max-width: 560px) {
+    .hero { padding: 2.5rem 1.2rem 1.5rem; }
+    .section { padding: 2rem 1.2rem 0; }
+    .nav-row { padding: 2rem 1.2rem 0; }
+    .spinner-wrap { flex-direction: column; align-items: center; }
+  }
+
+  /* ── NAME BAR ── */
+  .name-bar {
+    background: rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    border-radius: 12px;
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    max-width: 420px;
+    margin: 0 auto 1rem;
+  }
+  .name-bar label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.8);
+    white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+  }
+  .name-bar input {
+    flex: 1;
+    background: rgba(255,255,255,0.15);
+    border: none;
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: white;
+    outline: none;
+  }
+  .name-bar input::placeholder { color: rgba(255,255,255,0.45); font-weight: 400; }
+
+  /* ── SUMMARY PAGE ── */
+  .summary-section {
+    background: white;
+    border-radius: 16px;
+    padding: 1.8rem;
+    margin-bottom: 1.2rem;
+    border: 2px solid var(--border);
+  }
+  .summary-section h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.05rem;
+    color: var(--sky);
+    margin-bottom: 0.8rem;
+  }
+  .summary-answer {
+    background: #f5f7fa;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+    font-style: italic;
+    border-left: 3px solid var(--lavender);
+    min-height: 2rem;
+  }
+  .summary-answer.empty { color: var(--muted); font-style: normal; border-left-color: var(--border); }
+  .sum-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+    margin-top: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .s-chip {
+    display: inline-block;
+    background: var(--mint-pale);
+    border: 1.5px solid #b8ebd8;
+    border-radius: 8px;
+    padding: 0.35rem 0.8rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.76rem;
+    color: var(--mint);
+    font-weight: 600;
+    margin: 0.2rem;
+  }
+  .s-chip.coral { background: var(--coral-pale); border-color: #f8c5b8; color: var(--coral); }
+  .s-chip.lav   { background: var(--lavender-pale); border-color: #d0caef; color: var(--lavender); }
+  .share-buttons {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+    justify-content: center;
+  }
+  .share-btn {
+    border: none;
+    border-radius: 12px;
+    padding: 0.85rem 1.6rem;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .share-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+  .share-btn.copy  { background: var(--mint);     color: white; }
+  .share-btn.email { background: var(--lavender); color: white; }
+  .share-btn.print { background: var(--sky);      color: white; }
+  .copy-confirm {
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--mint);
+    min-height: 1.2rem;
+    margin-top: 0.6rem;
+  }
+  @media print {
+    .hero, .nav-row, .share-buttons, .copy-confirm { display: none !important; }
+    .sheet { box-shadow: none; border-radius: 0; }
+    .section { display: none !important; }
+    #sec-7 { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">✨ Grade 6 · Probability Workshop</div>
+  <h1>The Science of<br><span class="accent">Lucky Guesses</span> 🎲</h1>
+  <p class="intro">What if you could <em>measure</em> uncertainty? Today we're going to do exactly that — with marbles, spinners, and some seriously surprising maths.</p>
+
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+
+  <div class="progress-wrap">
+    <a class="prog-step active" id="pill-0" onclick="goTo(0)"><span class="prog-dot">🪙</span> Wonder</a>
+    <a class="prog-step" id="pill-1" onclick="goTo(1)"><span class="prog-dot">📍</span> Discover</a>
+    <a class="prog-step" id="pill-2" onclick="goTo(2)"><span class="prog-dot">🫙</span> Marbles</a>
+    <a class="prog-step" id="pill-3" onclick="goTo(3)"><span class="prog-dot">🎡</span> Spinner</a>
+    <a class="prog-step" id="pill-4" onclick="goTo(4)"><span class="prog-dot">🌍</span> Real Life</a>
+    <a class="prog-step" id="pill-5" onclick="goTo(5)"><span class="prog-dot">💭</span> Reflect</a>
+    <a class="prog-step" id="pill-6" onclick="goTo(6)"><span class="prog-dot">📤</span> Submit</a>
+  </div>
+</div>
+
+<!-- SHEET -->
+<div class="sheet">
+
+  <!-- ══ SECTION 0: WONDER ══ -->
+  <div class="section active" id="sec-0">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-coral">1</div>
+      <span class="eyebrow-label">The Big Question</span>
+    </div>
+    <h2>Can you measure a lucky guess?</h2>
+    <p class="lead">Here's something wild: I'm going to flip a coin 10 times. You <strong>cannot know</strong> exactly how many heads will come up — but mathematicians can say something <strong>precise and true</strong> about it anyway. How? Let's find out.</p>
+
+    <div class="wonder-box">
+      <p>Think about a time something happened that you <strong>didn't expect</strong>. Maybe you rolled the exact number you needed. Maybe it rained on the one day you forgot your umbrella. That feeling of surprise? That's probability talking.</p>
+    </div>
+
+    <p style="font-size:0.9rem; font-weight:700; color:var(--sky); margin-bottom:0.8rem;">🧠 Quick think — drag your gut-feeling answer:</p>
+
+    <div style="background:white; border:2px solid var(--border); border-radius:14px; padding:1.5rem; margin-bottom:1.5rem;">
+      <p style="font-size:0.88rem; margin-bottom:1rem; color:#3a4a5a;">I flip a coin <strong>10 times</strong>. Where would you put the number of heads you expect?</p>
+      <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--muted);">0 heads</span>
+        <input type="range" id="coinGuess" min="0" max="10" value="5" oninput="updateCoinGuess(this.value)"
+          style="flex:1; accent-color:var(--coral);">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--muted);">10 heads</span>
+      </div>
+      <p style="text-align:center; font-family:'Fredoka One',cursive; font-size:1.2rem; color:var(--coral); margin-top:0.8rem;" id="coinGuessLabel">My guess: 5 heads</p>
+      <p style="text-align:center; font-size:0.8rem; color:var(--muted); margin-top:0.3rem;" id="coinGuessNote">We'll come back to this at the end 👀</p>
+    </div>
+
+    <div class="wonder-box" style="background: linear-gradient(135deg, var(--mint) 0%, #2d9970 100%);">
+      <p>Probability lives between <strong>0</strong> (impossible) and <strong>1</strong> (certain). Everything interesting is somewhere in between. Today we're learning to find those numbers.</p>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 1: DISCOVER ══ -->
+  <div class="section" id="sec-1">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-mint">2</div>
+      <span class="eyebrow-label">Discover the Vocabulary</span>
+    </div>
+    <h2>Words mathematicians use</h2>
+    <p class="lead">Click each word below to reveal what it means. Can you think of your own example for each one?</p>
+
+    <div class="chip-row">
+      <span class="chip coral" onclick="revealConcept('impossible')">🚫 Impossible</span>
+      <span class="chip lav"   onclick="revealConcept('unlikely')">🎲 Unlikely</span>
+      <span class="chip sun"   onclick="revealConcept('evens')">⚖️ Even Chance</span>
+      <span class="chip mint"  onclick="revealConcept('likely')">✅ Likely</span>
+      <span class="chip sky"   onclick="revealConcept('certain')">💯 Certain</span>
+    </div>
+
+    <div class="concept-reveal" id="cr-impossible">
+      <strong>Impossible — P = 0</strong><br>
+      It cannot happen. No matter what. Rolling a 7 on a normal 6-sided die is impossible.
+      <br><br><em>Your turn: think of something that's completely impossible to happen today.</em>
+    </div>
+    <div class="concept-reveal lav-border" id="cr-unlikely">
+      <strong>Unlikely — P is close to 0</strong><br>
+      It <em>could</em> happen, but it would really surprise you. Rolling a 6 three times in a row is unlikely — but possible!
+      <br><br><em>Your turn: what's something unlikely that has actually happened to you?</em>
+    </div>
+    <div class="concept-reveal sun-border" id="cr-evens">
+      <strong>Even Chance — P = ½ = 0.5 = 50%</strong><br>
+      Heads or tails? Both equally likely. A fair coin flip is a perfect example of evens.
+      <br><br><em>Your turn: can you design something else that has an even chance?</em>
+    </div>
+    <div class="concept-reveal mint-border" id="cr-likely">
+      <strong>Likely — P is close to 1</strong><br>
+      You'd be surprised if it <em>didn't</em> happen. Drawing a non-ace from a card deck is likely — there are only 4 aces in 52 cards!
+      <br><br><em>Your turn: what's something likely to happen to you tomorrow?</em>
+    </div>
+    <div class="concept-reveal sky-border" id="cr-certain">
+      <strong>Certain — P = 1</strong><br>
+      It will definitely happen — every single time. Drawing any card from a full deck is certain.
+      <br><br><em>Your turn: name something that is absolutely 100% certain today.</em>
+    </div>
+
+    <div class="divider"></div>
+
+    <p style="font-size:0.88rem; font-weight:700; color:var(--sky); margin-bottom:0.8rem;">🗺️ Place these events on the probability scale:</p>
+    <div class="prob-scale-wrap">
+      <ul class="prob-events-list">
+        <li class="prob-event-row">
+          <label>🌅 Sun rises tomorrow</label>
+          <input type="range" min="0" max="100" value="50" oninput="updateScale(this,'sv1')" id="sl1">
+          <span class="prob-val" id="sv1">0.50</span>
+        </li>
+        <li class="prob-event-row">
+          <label>🎯 Roll a 6 on a die</label>
+          <input type="range" min="0" max="100" value="50" oninput="updateScale(this,'sv2')" id="sl2">
+          <span class="prob-val" id="sv2">0.50</span>
+        </li>
+        <li class="prob-event-row">
+          <label>🌙 Jump to the moon</label>
+          <input type="range" min="0" max="100" value="50" oninput="updateScale(this,'sv3')" id="sl3">
+          <span class="prob-val" id="sv3">0.50</span>
+        </li>
+        <li class="prob-event-row">
+          <label>🍕 Eat lunch today</label>
+          <input type="range" min="0" max="100" value="50" oninput="updateScale(this,'sv4')" id="sl4">
+          <span class="prob-val" id="sv4">0.50</span>
+        </li>
+        <li class="prob-event-row">
+          <label>🏆 Win the lottery</label>
+          <input type="range" min="0" max="100" value="50" oninput="updateScale(this,'sv5')" id="sl5">
+          <span class="prob-val" id="sv5">0.50</span>
+        </li>
+      </ul>
+      <div style="display:flex; justify-content:space-between; margin-top:1rem; font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted);">
+        <span>← Impossible (0)</span>
+        <span>Even (0.5) →</span>
+        <span>Certain (1) →</span>
+      </div>
+      <div style="height:8px; border-radius:4px; background:linear-gradient(90deg,#e74c3c,#f39c12,#2ecc71); margin-top:0.4rem;"></div>
+      <div style="margin-top:0.8rem;" id="scale-feedback"></div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 2: MARBLE BAG ══ -->
+  <div class="section" id="sec-2">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-sun">3</div>
+      <span class="eyebrow-label">Investigation 1</span>
+    </div>
+    <h2>🫙 The Mystery Bag</h2>
+    <p class="lead">Build your own bag of marbles, <strong>make a prediction</strong>, then test it. Does what <em>actually</em> happens match what you expected?</p>
+
+    <div class="predict-box">
+      <h4>📝 Before you start — write your prediction:</h4>
+      <textarea id="marble-prediction" placeholder="I think if I add 3 red and 2 blue marbles, the probability of drawing red will be... because..."></textarea>
+    </div>
+
+    <div class="demo-zone">
+      <h3>Build your bag</h3>
+      <div class="hint">CLICK BUTTONS TO ADD MARBLES · CLICK A MARBLE TO REMOVE IT</div>
+
+      <div class="marble-controls">
+        <span style="font-size:0.8rem; font-weight:700; color:var(--muted); margin-right:0.3rem;">ADD:</span>
+        <button class="marble-add-btn m-red"    onclick="addMarble('red')"    title="Red"></button>
+        <button class="marble-add-btn m-blue"   onclick="addMarble('blue')"   title="Blue"></button>
+        <button class="marble-add-btn m-green"  onclick="addMarble('green')"  title="Green"></button>
+        <button class="marble-add-btn m-yellow" onclick="addMarble('yellow')" title="Yellow"></button>
+        <button class="marble-add-btn m-clear"  onclick="clearBag()" title="Clear"></button>
+      </div>
+
+      <div class="bag-display" id="bagDisplay">
+        <span style="color:var(--muted); font-size:0.8rem; font-family:'DM Mono',monospace;">Your bag is empty — add some marbles!</span>
+      </div>
+
+      <div class="prob-chips-row" id="probDisplay"></div>
+
+      <div class="action-row">
+        <button class="btn btn-coral" onclick="drawMarble()">🎲 Draw 1 marble</button>
+        <button class="btn btn-mint"  onclick="draw10()">🔟 Draw 10 marbles</button>
+      </div>
+      <div class="draw-result" id="drawResult"></div>
+      <div class="draw-history" id="drawHistory"></div>
+    </div>
+
+    <div class="predict-box" style="border-color:var(--mint); background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After drawing — what did you notice?</h4>
+      <textarea id="marble-reflection" placeholder="The results were... compared to my prediction I expected... The probability formula I used was favourites/total = ..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 3: SPINNER ══ -->
+  <div class="section" id="sec-3">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-lav">4</div>
+      <span class="eyebrow-label">Investigation 2</span>
+    </div>
+    <h2>🎡 The Probability Spinner</h2>
+    <p class="lead">This spinner isn't equal — some sections are bigger than others. <strong>Before spinning</strong>, write your prediction. Then spin 20 times and see what happens!</p>
+
+    <div class="predict-box">
+      <h4>📝 Predict: if I spin 20 times, how many times will each colour appear?</h4>
+      <textarea id="spinner-prediction" placeholder="Red: ___ times, Blue: ___ times, Green: ___ times, Yellow: ___ times. Because the red section looks like it's about half the spinner, so I'd expect around 10 reds..."></textarea>
+    </div>
+
+    <div class="demo-zone">
+      <h3>Spin it!</h3>
+      <div class="hint">RED = ½ · BLUE = ¼ · GREEN = ⅛ · YELLOW = ⅛ — can you figure out those fractions from the spinner?</div>
+
+      <div class="spinner-wrap">
+        <canvas id="spinnerCanvas" width="220" height="220"></canvas>
+        <div class="spinner-right">
+          <p>Each section's size represents its probability. The <strong style="color:#e74c3c;">red</strong> section takes up half — so P(red) = ½ = 0.5. What about the others?</p>
+
+          <div class="action-row" style="margin-bottom:0.6rem;">
+            <button class="btn btn-lav" id="spinBtn" onclick="spinWheel()">▶ Spin once</button>
+            <button class="btn btn-sun" onclick="spin20()">⚡ Spin ×20</button>
+            <button class="btn btn-ghost" onclick="resetSpinner()">↺ Reset</button>
+          </div>
+
+          <div class="tally-grid">
+            <div class="tally-cell">🔴 Red <strong id="t-red">0</strong></div>
+            <div class="tally-cell">🔵 Blue <strong id="t-blue">0</strong></div>
+            <div class="tally-cell">🟢 Green <strong id="t-green">0</strong></div>
+            <div class="tally-cell">🟡 Yellow <strong id="t-yellow">0</strong></div>
+            <div class="tally-cell" style="background:var(--sun-pale); color:#b8860b; font-weight:700;">Total <strong id="t-total">0</strong></div>
+            <div class="tally-cell" id="red-pct-cell">Red % <strong id="red-pct">—</strong></div>
+          </div>
+          <div class="spinner-insight" id="spinner-insight"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="predict-box" style="border-color:var(--lavender); background:var(--lavender-pale);">
+      <h4 style="color:var(--lavender);">🔍 Compare your prediction to your results:</h4>
+      <textarea id="spinner-reflection" placeholder="I predicted ___ reds but got ___. The theoretical probability said 50% but I got ___%. I think the difference happened because..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 4: REAL LIFE ══ -->
+  <div class="section" id="sec-4">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-sky">5</div>
+      <span class="eyebrow-label">Real-World Connections</span>
+    </div>
+    <h2>Probability is everywhere 🌍</h2>
+    <p class="lead">Now that you understand the maths, you'll start seeing probability all around you. It's the secret language behind some of the most important decisions in the world.</p>
+
+    <div class="world-grid">
+      <div class="world-card coral-bg">
+        <div class="wc-icon">🌦️</div>
+        <h4>Weather Forecast</h4>
+        <p>"70% chance of rain" — that means in 100 days with the same conditions, it rained on about 70 of them. Not a promise. A calculated probability.</p>
+      </div>
+      <div class="world-card mint-bg">
+        <div class="wc-icon">🎮</div>
+        <h4>Video Games</h4>
+        <p>Every loot box, every random encounter, every critical hit — game designers set exact probabilities to make games feel exciting but fair.</p>
+      </div>
+      <div class="world-card lav-bg">
+        <div class="wc-icon">🏥</div>
+        <h4>Medicine</h4>
+        <p>Doctors use probability to test whether treatments actually work — or whether the results were just chance. Probability protects us from wishful thinking.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="game-designer">
+      <h3>🎨 Design Your Own Game</h3>
+      <p>You have a bag with 10 marbles. Design a game with a specific probability of winning. Fill in your design below and see the maths appear!</p>
+
+      <div class="game-inputs">
+        <div class="game-input-row">
+          <label>🏆 Winning marbles:</label>
+          <input type="number" id="gWin" min="1" max="10" value="3" oninput="updateGame()">
+          <span style="font-size:0.8rem; color:var(--muted);">out of 10 total</span>
+        </div>
+        <div class="game-input-row">
+          <label>🎯 Your game name:</label>
+          <input type="text" id="gName" value="Marble Madness" oninput="updateGame()" style="width:180px;">
+        </div>
+      </div>
+
+      <div class="game-result-panel show" id="gameResult">
+        Loading...
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 5: REFLECT ══ -->
+  <div class="section" id="sec-5">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-coral">6</div>
+      <span class="eyebrow-label">Synthesis & Wonder</span>
+    </div>
+    <h2>💭 Let's think it through</h2>
+    <p class="lead">The best mathematicians don't just do the calculations — they wonder about what the answers mean. Take a few minutes with these questions. There's no single right answer.</p>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q1 /</span> What surprised you most today?</div>
+      <textarea placeholder="I was surprised when... I didn't expect... The thing that made me go 'wait, really?' was..."></textarea>
+    </div>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q2 /</span> Experimental vs Theoretical — why were they different in our spinner experiment?</div>
+      <textarea placeholder="The theoretical probability said... but our experiment showed... I think they were different because... If we spun 1000 times I think..."></textarea>
+    </div>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q3 /</span> How would you explain probability to a 7-year-old using only a bag of sweets?</div>
+      <textarea placeholder="I'd say: imagine you have a bag with 10 sweets, 3 are your favourite flavour..."></textarea>
+    </div>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q4 /</span> What question does today's lesson leave you wondering about?</div>
+      <textarea placeholder="I'm still wondering... I want to know more about... What would happen if..."></textarea>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="congrats">
+      <div class="trophy">🎉</div>
+      <h2>You're thinking like a mathematician!</h2>
+      <p>Today you learned to <em>measure uncertainty</em> — one of the most powerful ideas in all of mathematics. Probability is everywhere: in science, games, medicine, weather, and even the choices we make every day.</p>
+      <div class="summary-chips">
+        <span class="summary-chip">P = 0 → Impossible</span>
+        <span class="summary-chip">P = 0.5 → Even chance</span>
+        <span class="summary-chip">P = 1 → Certain</span>
+        <span class="summary-chip">Favourable ÷ Total</span>
+        <span class="summary-chip">Theoretical vs Experimental</span>
+        <span class="summary-chip">More trials → closer to theory</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 6: SUMMARY & SUBMIT ══ -->
+  <div class="section" id="sec-7">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-mint">7</div>
+      <span class="eyebrow-label">Your Completed Work</span>
+    </div>
+    <h2>📤 Ready to Share</h2>
+    <p class="lead">Here's everything you worked on today. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> directly to your teacher.</p>
+
+    <!-- STUDENT INFO HEADER -->
+    <div class="summary-section" style="background:var(--sky); color:white; border-color:var(--sky);">
+      <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; align-items:center;">
+        <div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; opacity:0.6; margin-bottom:0.3rem;">STUDENT</div>
+          <div style="font-family:'Fredoka One',cursive; font-size:1.4rem;" id="summaryName">—</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; opacity:0.6; margin-bottom:0.3rem;">LESSON</div>
+          <div style="font-family:'Fredoka One',cursive; font-size:1rem;">Probability Workshop 🎲</div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.72rem; opacity:0.6;" id="summaryDate"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COIN GUESS -->
+    <div class="summary-section">
+      <h3>🪙 Section 1 — Opening Prediction</h3>
+      <div class="sum-label">Coin flip guess</div>
+      <div class="summary-answer" id="sum-coin"></div>
+    </div>
+
+    <!-- PROBABILITY SCALE -->
+    <div class="summary-section">
+      <h3>📍 Section 2 — Probability Scale</h3>
+      <div class="sum-label">Your probability placements</div>
+      <div id="sum-scale"></div>
+    </div>
+
+    <!-- MARBLE BAG -->
+    <div class="summary-section">
+      <h3>🫙 Section 3 — Marble Bag</h3>
+      <div class="sum-label">Prediction</div>
+      <div class="summary-answer" id="sum-marble-pred"></div>
+      <div class="sum-label">Reflection after drawing</div>
+      <div class="summary-answer" id="sum-marble-ref"></div>
+    </div>
+
+    <!-- SPINNER -->
+    <div class="summary-section">
+      <h3>🎡 Section 4 — Spinner</h3>
+      <div class="sum-label">Prediction</div>
+      <div class="summary-answer" id="sum-spin-pred"></div>
+      <div class="sum-label">Reflection after spinning</div>
+      <div class="summary-answer" id="sum-spin-ref"></div>
+    </div>
+
+    <!-- REFLECTIONS -->
+    <div class="summary-section">
+      <h3>💭 Section 6 — Reflection Questions</h3>
+      <div class="sum-label">Q1 — What surprised you most?</div>
+      <div class="summary-answer" id="sum-q1"></div>
+      <div class="sum-label">Q2 — Experimental vs Theoretical</div>
+      <div class="summary-answer" id="sum-q2"></div>
+      <div class="sum-label">Q3 — Explain probability to a 7-year-old</div>
+      <div class="summary-answer" id="sum-q3"></div>
+      <div class="sum-label">Q4 — What are you still wondering about?</div>
+      <div class="summary-answer" id="sum-q4"></div>
+    </div>
+
+    <!-- SHARE BUTTONS -->
+    <div class="share-buttons">
+      <button class="share-btn copy" onclick="copyResults()">📋 Copy My Results</button>
+      <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+      <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+    <div class="copy-confirm" id="copyConfirm"></div>
+
+    <div style="margin-top:1.5rem; background:var(--sun-pale); border:2px dashed var(--sun); border-radius:12px; padding:1rem 1.2rem;">
+      <p style="font-size:0.82rem; color:#b8860b; font-family:'DM Mono',monospace; line-height:1.7;">
+        💡 <strong>HOW TO SUBMIT:</strong> Click "Copy My Results" → open Google Classroom → paste into your assignment comment or document. Done!
+      </p>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div class="nav-row">
+    <button class="btn-prev" id="prevBtn" onclick="navigate(-1)" disabled>← Back</button>
+    <button class="btn-next" id="nextBtn" onclick="navigate(1)">Next <span>→</span></button>
+  </div>
+
+</div><!-- /sheet -->
+
+<script>
+// ── NAVIGATION ──
+let currentSection = 0;
+const totalSections = 8;
+
+function goTo(n) {
+  document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===n));
+  document.querySelectorAll('.prog-step').forEach((p,i) => {
+    p.classList.toggle('active', i===n);
+    if (i < n) p.classList.add('done');
+    else p.classList.remove('done');
+  });
+  currentSection = n;
+  document.getElementById('prevBtn').disabled = n === 0;
+  if (n === totalSections - 1) {
+    document.getElementById('nextBtn').textContent = '✓ Complete!';
+    document.getElementById('nextBtn').disabled = true;
+    buildSummary();
+  } else {
+    document.getElementById('nextBtn').innerHTML = 'Next <span>→</span>';
+    document.getElementById('nextBtn').disabled = false;
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (n === 4) updateGame();
+}
+
+function navigate(dir) { goTo(Math.min(Math.max(currentSection + dir, 0), totalSections-1)); }
+
+// ── COIN GUESS ──
+function updateCoinGuess(v) {
+  document.getElementById('coinGuessLabel').textContent = `My guess: ${v} heads`;
+  const notes = [
+    'Hmm, very few... but possible!',
+    'That would be surprising!',
+    'Interesting choice...',
+    'Less than average...',
+    'Getting closer to expected...',
+    '5 is the mathematically expected answer — P(heads) = ½!',
+    'A little above average...',
+    'More than expected...',
+    'That would be quite lucky!',
+    'Very rare outcome...',
+    '10 in a row? Wild! P = (½)¹⁰ ≈ 0.001'
+  ];
+  document.getElementById('coinGuessNote').textContent = notes[v] || '';
+}
+
+// ── CONCEPT REVEALS ──
+const conceptMap = { impossible:'cr-impossible', unlikely:'cr-unlikely', evens:'cr-evens', likely:'cr-likely', certain:'cr-certain' };
+let openConcept = null;
+function revealConcept(key) {
+  if (openConcept) document.getElementById(conceptMap[openConcept]).classList.remove('show');
+  if (openConcept === key) { openConcept = null; return; }
+  document.getElementById(conceptMap[key]).classList.add('show');
+  openConcept = key;
+}
+
+// ── PROBABILITY SCALE ──
+const correctRanges = {
+  sv1: [90, 100], // sun rises
+  sv2: [15, 20],  // roll a 6
+  sv3: [0, 2],    // jump to moon
+  sv4: [85, 100], // eat lunch
+  sv5: [0, 5],    // lottery
+};
+function updateScale(el, valId) {
+  const v = parseInt(el.value);
+  document.getElementById(valId).textContent = (v/100).toFixed(2);
+  checkScales();
+}
+function checkScales() {
+  let allClose = true;
+  const fb = document.getElementById('scale-feedback');
+  const hints = [];
+  if (document.getElementById('sl1').value < 90) { hints.push('☀️ The sun rising is almost certain — try moving it closer to 1.'); allClose=false; }
+  if (document.getElementById('sl2').value < 14 || document.getElementById('sl2').value > 22) { hints.push('🎯 Rolling a 6: there are 6 sides, so the probability is 1/6 ≈ 0.17'); allClose=false; }
+  if (document.getElementById('sl3').value > 3) { hints.push('🌙 Jumping to the moon is impossible — P = 0!'); allClose=false; }
+  if (hints.length > 0) {
+    fb.innerHTML = `<div style="font-size:0.78rem; color:var(--coral); font-family:'DM Mono',monospace; line-height:1.8;">${hints.map(h=>`💡 ${h}`).join('<br>')}</div>`;
+  } else if (allClose) {
+    fb.innerHTML = `<div style="font-size:0.82rem; color:var(--mint); font-weight:700;">🎉 Great thinking! You're placing probabilities accurately.</div>`;
+  } else {
+    fb.innerHTML = '';
+  }
+}
+
+// ── MARBLE BAG ──
+let bag = [];
+const mColors = { red:'#e74c3c', blue:'#2980b9', green:'#27ae60', yellow:'#f39c12' };
+
+function addMarble(color) {
+  if (bag.length >= 20) return;
+  bag.push(color);
+  renderBag();
+}
+function clearBag() {
+  bag = [];
+  document.getElementById('drawResult').textContent = '';
+  document.getElementById('drawHistory').textContent = '';
+  renderBag();
+}
+function renderBag() {
+  const d = document.getElementById('bagDisplay');
+  if (!bag.length) {
+    d.innerHTML = '<span style="color:var(--muted);font-size:0.8rem;font-family:\'DM Mono\',monospace;">Your bag is empty — add some marbles!</span>';
+    document.getElementById('probDisplay').innerHTML = '';
+    return;
+  }
+  d.innerHTML = bag.map((c,i) =>
+    `<span class="marble-ball" style="background:${mColors[c]};" onclick="removeMarble(${i})" title="Click to remove"></span>`
+  ).join('');
+  renderProbs();
+}
+function removeMarble(i) { bag.splice(i,1); renderBag(); }
+function renderProbs() {
+  const counts = {};
+  bag.forEach(c => counts[c]=(counts[c]||0)+1);
+  document.getElementById('probDisplay').innerHTML = Object.entries(counts).map(([c,n]) =>
+    `<span class="live-chip" style="background:${mColors[c]}22;color:${mColors[c]};border:1.5px solid ${mColors[c]}55;">
+      P(${c}) = ${n}/${bag.length} = ${(n/bag.length).toFixed(2)}
+    </span>`
+  ).join('');
+}
+function drawMarble() {
+  if (!bag.length) { document.getElementById('drawResult').innerHTML = '⚠️ Add some marbles first!'; return; }
+  const drawn = bag[Math.floor(Math.random()*bag.length)];
+  document.getElementById('drawResult').innerHTML =
+    `Drew: <span style="color:${mColors[drawn]};">● ${drawn.toUpperCase()}!</span>`;
+}
+function draw10() {
+  if (!bag.length) return;
+  const results = Array.from({length:10}, () => bag[Math.floor(Math.random()*bag.length)]);
+  const tally = {};
+  results.forEach(c => tally[c]=(tally[c]||0)+1);
+  document.getElementById('drawResult').innerHTML = '10 draws: ' + results.map(c=>
+    `<span style="color:${mColors[c]};">●</span>`).join(' ');
+  document.getElementById('drawHistory').innerHTML = Object.entries(tally).map(([c,n]) =>
+    `${c}: ${n}/10 | expected ≈ ${(bag.filter(x=>x===c).length/bag.length*10).toFixed(1)}`
+  ).join('  ·  ');
+}
+
+// ── SPINNER ──
+const sections = [
+  { color:'#e74c3c', label:'Red',    sweep:0.5,   key:'red'    },
+  { color:'#2980b9', label:'Blue',   sweep:0.25,  key:'blue'   },
+  { color:'#27ae60', label:'Green',  sweep:0.125, key:'green'  },
+  { color:'#f39c12', label:'Yellow', sweep:0.125, key:'yellow' }
+];
+let spinAngle=0, spinning=false;
+let tally = {red:0,blue:0,green:0,yellow:0};
+
+function drawSpinner(angle) {
+  const cvs = document.getElementById('spinnerCanvas');
+  if (!cvs) return;
+  const ctx = cvs.getContext('2d');
+  const cx=110,cy=110,r=100;
+  ctx.clearRect(0,0,220,220);
+  let start=angle;
+  sections.forEach(s => {
+    const sweep=s.sweep*2*Math.PI;
+    ctx.beginPath(); ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,start,start+sweep); ctx.closePath();
+    ctx.fillStyle=s.color; ctx.fill();
+    ctx.strokeStyle='white'; ctx.lineWidth=2.5; ctx.stroke();
+    const mid=start+sweep/2;
+    ctx.save();
+    ctx.translate(cx+(r*0.62)*Math.cos(mid), cy+(r*0.62)*Math.sin(mid));
+    ctx.fillStyle='white'; ctx.font='bold 12px Nunito,sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(s.label,0,0); ctx.restore();
+    start+=sweep;
+  });
+  // needle
+  ctx.save(); ctx.translate(cx,cy);
+  ctx.beginPath(); ctx.moveTo(0,-14); ctx.lineTo(6,12); ctx.lineTo(-6,12); ctx.closePath();
+  ctx.fillStyle='#1a2332'; ctx.fill();
+  ctx.beginPath(); ctx.arc(0,0,6,0,2*Math.PI);
+  ctx.fillStyle='white'; ctx.fill();
+  ctx.restore();
+}
+drawSpinner(0);
+
+function getResult(fa) {
+  const norm=(((-fa-Math.PI/2)%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
+  let acc=0;
+  for (const s of sections) { acc+=s.sweep*2*Math.PI; if(norm<acc) return s.key; }
+  return sections[sections.length-1].key;
+}
+function spinWheel(cb) {
+  if(spinning) return;
+  spinning=true;
+  document.getElementById('spinBtn').disabled=true;
+  const extra=(3+Math.random()*4)*2*Math.PI;
+  const target=spinAngle+extra;
+  const dur=1400+Math.random()*700;
+  const t0=performance.now(), fromA=spinAngle;
+  function ease(t){return 1-Math.pow(1-t,3);}
+  function frame(now) {
+    const t=Math.min((now-t0)/dur,1);
+    spinAngle=fromA+(target-fromA)*ease(t);
+    drawSpinner(spinAngle);
+    if(t<1){requestAnimationFrame(frame);return;}
+    spinAngle=target; spinning=false;
+    document.getElementById('spinBtn').disabled=false;
+    const res=getResult(spinAngle);
+    tally[res]++;
+    updateTally();
+    if(cb) cb();
+  }
+  requestAnimationFrame(frame);
+}
+let q20=0;
+function spin20(){
+  if(spinning||q20>0) return;
+  q20=20;
+  function next(){if(q20<=0)return;q20--;spinWheel(next);}
+  next();
+}
+function resetSpinner(){
+  tally={red:0,blue:0,green:0,yellow:0};
+  updateTally();
+  document.getElementById('spinner-insight').textContent='';
+  document.getElementById('red-pct').textContent='—';
+}
+function updateTally(){
+  const total=Object.values(tally).reduce((a,b)=>a+b,0);
+  ['red','blue','green','yellow'].forEach(k=>document.getElementById('t-'+k).textContent=tally[k]);
+  document.getElementById('t-total').textContent=total;
+  if(total>0){
+    const rp=(tally.red/total*100).toFixed(0);
+    document.getElementById('red-pct').textContent=rp+'%';
+    if(total>=10){
+      const diff=Math.abs(parseInt(rp)-50);
+      document.getElementById('spinner-insight').textContent=
+        diff<15
+          ? `🎯 Red came up ${rp}% of the time — close to the theoretical 50%!`
+          : `🤔 Red came up ${rp}% vs expected 50%. Try more spins — watch what happens!`;
+    }
+  }
+}
+
+// ── GAME DESIGNER ──
+function updateGame(){
+  const w=Math.min(10,Math.max(1,parseInt(document.getElementById('gWin').value)||1));
+  const name=document.getElementById('gName').value||'My Game';
+  const prob=w/10;
+  const pct=(prob*100).toFixed(0);
+  const lose=10-w;
+  let verdict='';
+  if(prob<0.2) verdict='😰 Very hard — most players will lose!';
+  else if(prob<0.4) verdict='😤 Challenging — a tough game!';
+  else if(prob<0.6) verdict='⚖️ Balanced — fairly fair!';
+  else if(prob<0.8) verdict='😊 Easy — most players will win!';
+  else verdict='🎉 Very easy — almost everyone wins!';
+  document.getElementById('gameResult').innerHTML=
+  `<strong>"${name}"</strong><br>
+  🏆 Winning marbles: ${w} out of 10<br>
+  ❌ Losing marbles: ${lose} out of 10<br>
+  📐 P(win) = ${w}/10 = ${prob.toFixed(2)} = ${pct}%<br>
+  📐 P(lose) = ${lose}/10 = ${(lose/10).toFixed(2)} = ${(lose/10*100).toFixed(0)}%<br>
+  <br>${verdict}<br>
+  <em style="font-size:0.75rem; color:var(--muted);">If 100 people played, about ${pct} of them would win.</em>`;
+}
+updateGame();
+
+// ── SUMMARY ──
+function fill(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = text && text.trim();
+  el.textContent = val || 'Not answered';
+  el.classList.toggle('empty', !val);
+}
+
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  // Coin guess
+  const coinVal = document.getElementById('coinGuess').value;
+  fill('sum-coin', `My guess: ${coinVal} heads out of 10 flips`);
+
+  // Probability scale
+  const scaleItems = [
+    { label:'🌅 Sun rises tomorrow', id:'sv1' },
+    { label:'🎯 Roll a 6 on a die',  id:'sv2' },
+    { label:'🌙 Jump to the moon',   id:'sv3' },
+    { label:'🍕 Eat lunch today',    id:'sv4' },
+    { label:'🏆 Win the lottery',    id:'sv5' },
+  ];
+  document.getElementById('sum-scale').innerHTML = scaleItems.map(item => {
+    const val = document.getElementById(item.id) ? document.getElementById(item.id).textContent : '—';
+    return `<span class="s-chip">${item.label}: P = ${val}</span>`;
+  }).join('');
+
+  // Marble bag
+  fill('sum-marble-pred', document.getElementById('marble-prediction').value);
+  fill('sum-marble-ref',  document.getElementById('marble-reflection').value);
+
+  // Spinner
+  fill('sum-spin-pred', document.getElementById('spinner-prediction').value);
+  fill('sum-spin-ref',  document.getElementById('spinner-reflection').value);
+
+  // Reflection questions — grab all textareas in sec-5
+  const refTextareas = document.querySelectorAll('#sec-5 .reflection-card textarea');
+  ['sum-q1','sum-q2','sum-q3','sum-q4'].forEach((id, i) => {
+    fill(id, refTextareas[i] ? refTextareas[i].value : '');
+  });
+}
+
+function buildPlainText() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const date = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const coinVal = document.getElementById('coinGuess').value;
+
+  const scaleItems = [
+    { label:'Sun rises tomorrow', id:'sv1' },
+    { label:'Roll a 6 on a die',  id:'sv2' },
+    { label:'Jump to the moon',   id:'sv3' },
+    { label:'Eat lunch today',    id:'sv4' },
+    { label:'Win the lottery',    id:'sv5' },
+  ];
+  const scaleText = scaleItems.map(item => {
+    const val = document.getElementById(item.id) ? document.getElementById(item.id).textContent : '—';
+    return `  • ${item.label}: P = ${val}`;
+  }).join('\n');
+
+  const refTextareas = document.querySelectorAll('#sec-5 .reflection-card textarea');
+  const qs = ['Not answered','Not answered','Not answered','Not answered'];
+  refTextareas.forEach((ta, i) => { if (ta.value.trim()) qs[i] = ta.value.trim(); });
+
+  return `
+PROBABILITY WORKSHOP 🎲 — STUDENT SUBMISSION
+=============================================
+Student: ${name}
+Date: ${date}
+Lesson: Grade 6 · Probability Workshop
+
+── SECTION 1: OPENING PREDICTION ──
+Coin flip guess: ${coinVal} heads out of 10
+
+── SECTION 2: PROBABILITY SCALE ──
+${scaleText}
+
+── SECTION 3: MARBLE BAG ──
+Prediction:
+${document.getElementById('marble-prediction').value.trim() || 'Not answered'}
+
+Reflection:
+${document.getElementById('marble-reflection').value.trim() || 'Not answered'}
+
+── SECTION 4: SPINNER ──
+Prediction:
+${document.getElementById('spinner-prediction').value.trim() || 'Not answered'}
+
+Reflection:
+${document.getElementById('spinner-reflection').value.trim() || 'Not answered'}
+
+── SECTION 6: REFLECTIONS ──
+Q1 — What surprised you most?
+${qs[0]}
+
+Q2 — Experimental vs Theoretical
+${qs[1]}
+
+Q3 — Explain probability to a 7-year-old
+${qs[2]}
+
+Q4 — What are you still wondering about?
+${qs[3]}
+
+=============================================
+Submitted via Probability Workshop · Interactive Digital Lesson
+`.trim();
+}
+
+function copyResults() {
+  const text = buildPlainText();
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Now paste into Google Classroom or your assignment.';
+    setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '⚠️ Could not copy automatically — try selecting the text above manually.';
+  });
+}
+
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const subject = encodeURIComponent(`Probability Workshop — ${name}`);
+  const body = encodeURIComponent(buildPlainText());
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+</script>
+</body>
+</html>
