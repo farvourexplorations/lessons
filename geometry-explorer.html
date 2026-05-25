@@ -894,6 +894,11 @@
     .sheet { box-shadow: none; border-radius: 0; }
     .section { display: block !important; }
     #sec-0,#sec-1,#sec-2,#sec-3,#sec-4,#sec-5 { display: none !important; }
+  @media print {
+    .hero, .nav-row, .share-buttons, .copy-confirm, .prog-step { display: none !important; }
+    .sheet { box-shadow: none; border-radius: 0; }
+    .section { display: block !important; }
+    #sec-0,#sec-1,#sec-2,#sec-3,#sec-4,#sec-5 { display: none !important; }
     #sec-6 { display: block !important; }
   }
 </style>
@@ -1308,9 +1313,12 @@
     </div>
     <div class="copy-confirm" id="copyConfirm"></div>
 
-    <div style="margin-top:1.5rem; background:var(--sun-pale); border:2px dashed var(--sun); border-radius:12px; padding:1rem 1.2rem;">
-      <p style="font-size:0.82rem; color:#b8860b; font-family:'DM Mono',monospace; line-height:1.7;">
-        💡 <strong>HOW TO SUBMIT:</strong> Click "Copy My Results" → open Google Classroom → paste into your assignment comment or document. Done!
+    <div style="margin-top:1.5rem; background:var(--sun-pale); border:2px dashed var(--sun); border-radius:12px; padding:1.2rem 1.4rem;">
+      <p style="font-family:'Fredoka One',cursive; font-size:1rem; color:#b8860b; margin-bottom:0.8rem;">📋 How to submit your work:</p>
+      <p style="font-size:0.82rem; color:#b8860b; font-family:'DM Mono',monospace; line-height:2;">
+        <strong>📋 Copy My Results</strong> — Copies all your answers to your clipboard. Then open Google Classroom, click your assignment, paste into the comment or document box, and submit.<br>
+        <strong>📧 Email to Teacher</strong> — Opens your email app with your answers already typed in the body. Just add your teacher's address and hit send.<br>
+        <strong>🖨️ Print / Save PDF</strong> — Opens your browser's print window. To save as a PDF on a Mac, click the dropdown at the bottom left and choose "Save as PDF". On Windows, choose "Microsoft Print to PDF". Then upload the PDF to your assignment.
       </p>
     </div>
   </div>
@@ -1322,13 +1330,12 @@
   </div>
 
 </div><!-- /sheet -->
-
 <script>
 // ══════════════════════════════════════
 // NAVIGATION
 // ══════════════════════════════════════
 let currentSection = 0;
-const totalSections = 6;
+const totalSections = 7;
 
 function goTo(n) {
   document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===n));
@@ -1342,6 +1349,7 @@ function goTo(n) {
   if (n === totalSections - 1) {
     document.getElementById('nextBtn').textContent = '✓ Complete!';
     document.getElementById('nextBtn').disabled = true;
+    buildSummary();
   } else {
     document.getElementById('nextBtn').innerHTML = 'Next <span>→</span>';
     document.getElementById('nextBtn').disabled = false;
@@ -1994,6 +2002,121 @@ window.addEventListener('load', () => {
   initPerimGrid();
   initCoordCanvas();
 });
+
+// ── SUMMARY ──
+function fill(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = text && text.trim();
+  el.textContent = val || 'Not answered';
+  el.classList.toggle('empty', !val);
+}
+
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  // Warm-up answers
+  const wuResults = warmupShapes.map((s, i) => {
+    const input = document.querySelector(`#warmupGrid input:nth-of-type(${i+1})`);
+    const val = input ? input.value : '—';
+    return `<span class="summary-stat">${s.name}: ${val || '?'} sides</span>`;
+  });
+  const wuEl = document.getElementById('sum-warmup');
+  if (wuEl) wuEl.innerHTML = wuResults.join('');
+
+  fill('sum-angle-pred', document.getElementById('angle-prediction').value);
+  fill('sum-angle-ref',  document.getElementById('angle-reflection').value);
+  fill('sum-area-pred',  document.getElementById('area-prediction').value);
+  fill('sum-area-ref',   document.getElementById('area-reflection').value);
+
+  const refTextareas = document.querySelectorAll('#sec-5 .reflection-card textarea');
+  ['sum-q1','sum-q2','sum-q3','sum-q4'].forEach((id, i) => {
+    fill(id, refTextareas[i] ? refTextareas[i].value : '');
+  });
+}
+
+function buildPlainText() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const date = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  const wuLines = warmupShapes.map((s, i) => {
+    const inputs = document.querySelectorAll('#warmupGrid input');
+    const val = inputs[i] ? inputs[i].value : '?';
+    return `  • ${s.name}: ${val || '?'} sides`;
+  }).join('\n');
+
+  const refTextareas = document.querySelectorAll('#sec-5 .reflection-card textarea');
+  const qs = ['Not answered','Not answered','Not answered','Not answered'];
+  refTextareas.forEach((ta, i) => { if (ta.value.trim()) qs[i] = ta.value.trim(); });
+
+  return `
+GEOMETRY EXPLORER 📐 — STUDENT SUBMISSION
+==========================================
+Student: ${name}
+Date: ${date}
+Lesson: Grade 6 · Geometry Explorer
+
+── SECTION 1: WARM-UP QUIZ ──
+${wuLines}
+
+── SECTION 3: ANGLE EXPLORER ──
+Prediction:
+${document.getElementById('angle-prediction').value.trim() || 'Not answered'}
+
+Reflection:
+${document.getElementById('angle-reflection').value.trim() || 'Not answered'}
+
+── SECTION 4: AREA & PERIMETER LAB ──
+Prediction:
+${document.getElementById('area-prediction').value.trim() || 'Not answered'}
+
+Reflection:
+${document.getElementById('area-reflection').value.trim() || 'Not answered'}
+
+── SECTION 6: REFLECTIONS ──
+Q1 — What surprised you most?
+${qs[0]}
+
+Q2 — Area vs Perimeter
+${qs[1]}
+
+Q3 — Why triangles in buildings?
+${qs[2]}
+
+Q4 — Playground design
+${qs[3]}
+
+==========================================
+Submitted via Geometry Explorer · Interactive Digital Lesson
+`.trim();
+}
+
+function copyResults() {
+  buildSummary();
+  const text = buildPlainText();
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Now paste into Google Classroom or your assignment.';
+    setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '⚠️ Could not copy automatically — try selecting the text above manually.';
+  });
+}
+
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const subject = encodeURIComponent(`Geometry Explorer — ${name}`);
+  const body = encodeURIComponent(buildPlainText());
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+
+function updateNameDisplay() {
+  // optional live name preview
+}
 </script>
 </body>
 </html>
