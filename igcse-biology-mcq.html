@@ -537,13 +537,89 @@ const questions = [
   {
     n: 1,
     q: "The relationships of four species of bacteria, P, Q, R and S, were compared.\n• Species P and Q have a more recent common ancestor than either species has with species R.\n• Species S developed recently from species P.\nWhich species has the least similar base sequences in their DNA compared to the other three species of bacteria?",
+    diagram: `<svg viewBox="0 0 380 180" xmlns="http://www.w3.org/2000/svg" width="380" height="180">
+<style>.dg{fill:none;stroke:#e8e6df;stroke-width:1.5;stroke-linecap:round}.lbl{fill:#e8e6df;font-size:13px;font-family:serif}.muted{fill:#7a8199;font-size:11px;font-family:serif}</style>
+<!-- Root -->
+<line x1="50" y1="90" x2="100" y2="90" class="dg"/>
+<!-- Split to R vs (P,Q,S) -->
+<line x1="100" y1="90" x2="100" y2="40" class="dg"/>
+<line x1="100" y1="90" x2="100" y2="140" class="dg"/>
+<!-- R branch -->
+<line x1="100" y1="40" x2="320" y2="40" class="dg"/>
+<text x="325" y="45" class="lbl">R</text>
+<!-- P,Q,S branch down -->
+<line x1="100" y1="140" x2="160" y2="140" class="dg"/>
+<!-- Split S from (P,Q) -->
+<line x1="160" y1="140" x2="160" y2="115" class="dg"/>
+<line x1="160" y1="140" x2="160" y2="165" class="dg"/>
+<!-- S branch -->
+<line x1="160" y1="165" x2="220" y2="165" class="dg"/>
+<!-- split P from S derived -->
+<line x1="220" y1="165" x2="220" y2="155" class="dg"/>
+<line x1="220" y1="165" x2="220" y2="175" class="dg"/>
+<line x1="220" y1="155" x2="320" y2="155" class="dg"/>
+<text x="325" y="160" class="lbl" fill="#4ecca3">S</text>
+<line x1="220" y1="175" x2="320" y2="175" class="dg"/>
+<text x="325" y="180" class="lbl">P</text>
+<!-- P,Q split -->
+<line x1="160" y1="115" x2="220" y2="115" class="dg"/>
+<line x1="220" y1="115" x2="220" y2="105" class="dg"/>
+<line x1="220" y1="115" x2="220" y2="125" class="dg"/>
+<line x1="220" y1="105" x2="320" y2="105" class="dg"/>
+<text x="325" y="110" class="lbl">P</text>
+<line x1="220" y1="125" x2="320" y2="125" class="dg"/>
+<text x="325" y="130" class="lbl">Q</text>
+<!-- Annotation -->
+<text x="52" y="82" class="muted">common</text>
+<text x="52" y="93" class="muted">ancestor</text>
+<text x="108" y="168" class="muted" fill="#e8c547">S derived</text>
+<text x="108" y="178" class="muted" fill="#e8c547">from P</text>
+</svg>`,
+    diagCaption: "Phylogenetic tree showing evolutionary relationships between P, Q, R and S",
     opts: ["P","Q","R","S"],
     ans: "C",
     exp: "Species R shares the most distant common ancestor with the others — P, Q, and S are all more closely related to each other. Because R diverged earliest, its DNA base sequences will have had the longest time to accumulate differences, making it least similar to the other three."
   },
   {
     n: 2,
-    q: "The diagram shows an arthropod with pedipalps and legs. To which group does it belong?",
+    q: "The diagram shows an arthropod. To which group does it belong?",
+    diagram: `<svg viewBox="0 0 340 230" xmlns="http://www.w3.org/2000/svg" width="340" height="230">
+<style>.dg{fill:none;stroke:#c8c5be;stroke-width:1.8;stroke-linecap:round}.dgf{fill:#2a3045;stroke:#c8c5be;stroke-width:1.8}.lbl{fill:#7a8199;font-size:11px;font-family:serif}.lblg{fill:#4ecca3;font-size:11px;font-family:serif;font-weight:bold}</style>
+<!-- Abdomen -->
+<ellipse cx="170" cy="158" rx="35" ry="42" class="dgf"/>
+<!-- Cephalothorax -->
+<ellipse cx="170" cy="95" rx="42" ry="35" class="dgf"/>
+<!-- Pedipalps -->
+<path d="M140,74 Q118,56 104,44" class="dg"/>
+<path d="M200,74 Q222,56 236,44" class="dg"/>
+<!-- 8 legs (4 per side) -->
+<path d="M136,88 Q106,72 78,65" class="dg"/>
+<path d="M133,98 Q100,92 68,92" class="dg"/>
+<path d="M133,108 Q100,112 70,118" class="dg"/>
+<path d="M136,118 Q108,134 82,148" class="dg"/>
+<path d="M204,88 Q234,72 262,65" class="dg"/>
+<path d="M207,98 Q240,92 272,92" class="dg"/>
+<path d="M207,108 Q240,112 270,118" class="dg"/>
+<path d="M204,118 Q232,134 258,148" class="dg"/>
+<!-- Eyes -->
+<circle cx="158" cy="83" r="3" fill="#e8c547"/>
+<circle cx="168" cy="80" r="3" fill="#e8c547"/>
+<circle cx="178" cy="80" r="3" fill="#e8c547"/>
+<circle cx="188" cy="83" r="3" fill="#e8c547"/>
+<!-- Spinnerets -->
+<ellipse cx="162" cy="196" rx="5" ry="3" fill="#2a3045" stroke="#c8c5be" stroke-width="1"/>
+<ellipse cx="172" cy="198" rx="5" ry="3" fill="#2a3045" stroke="#c8c5be" stroke-width="1"/>
+<ellipse cx="182" cy="196" rx="5" ry="3" fill="#2a3045" stroke="#c8c5be" stroke-width="1"/>
+<!-- Label arrows -->
+<line x1="104" y1="44" x2="60" y2="30" stroke="#4ecca3" stroke-width="0.8"/>
+<text x="2" y="28" class="lblg">pedipalp</text>
+<line x1="272" y1="92" x2="288" y2="80" stroke="#7a8199" stroke-width="0.8"/>
+<text x="289" y="84" class="lbl">legs (×8)</text>
+<text x="212" y="160" class="lbl">abdomen</text>
+<text x="212" y="95" class="lbl">cephalo-</text>
+<text x="212" y="107" class="lbl">thorax</text>
+</svg>`,
+    diagCaption: "Arthropod specimen — note the pedipalps and 4 pairs of legs",
     opts: ["Arachnids","Crustaceans","Insects","Myriapods"],
     ans: "A",
     exp: "Pedipalps are a defining feature of arachnids (e.g. spiders, scorpions). Insects have 3 pairs of legs and antennae; crustaceans typically have more varied appendages; myriapods (e.g. centipedes) have many leg-bearing segments but no pedipalps."
@@ -574,6 +650,35 @@ const questions = [
   {
     n: 5,
     q: "The diagram shows four mesophyll cells W, X, Y and Z. Water moves through these cells. Which row shows the direction of movement and the correct water potentials?",
+    diagram: `<svg viewBox="0 0 400 130" xmlns="http://www.w3.org/2000/svg" width="400" height="130">
+<style>.cell{fill:#1e3028;stroke:#4ecca3;stroke-width:1.5}.vac{fill:#0f2018;stroke:#4ecca3;stroke-width:1}.lbl{fill:#e8e6df;font-size:12px;font-family:serif;text-anchor:middle}.sub{fill:#7a8199;font-size:10px;font-family:serif;text-anchor:middle}.arrow{fill:#e8c547;stroke:#e8c547}</style>
+<!-- Cell W -->
+<rect x="20" y="25" width="70" height="70" class="cell" rx="4"/>
+<ellipse cx="55" cy="60" rx="22" ry="22" class="vac"/>
+<text x="55" y="14" class="lbl">W</text>
+<!-- Cell X -->
+<rect x="110" y="25" width="70" height="70" class="cell" rx="4"/>
+<ellipse cx="145" cy="60" rx="22" ry="22" class="vac"/>
+<text x="145" y="14" class="lbl">X</text>
+<!-- Cell Y -->
+<rect x="200" y="25" width="70" height="70" class="cell" rx="4"/>
+<ellipse cx="235" cy="60" rx="22" ry="22" class="vac"/>
+<text x="235" y="14" class="lbl">Y</text>
+<!-- Cell Z -->
+<rect x="290" y="25" width="70" height="70" class="cell" rx="4"/>
+<ellipse cx="325" cy="60" rx="22" ry="22" class="vac"/>
+<text x="325" y="14" class="lbl">Z</text>
+<!-- Water movement arrow -->
+<defs><marker id="arrowhead" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#e8c547"/></marker></defs>
+<line x1="95" y1="60" x2="108" y2="60" stroke="#e8c547" stroke-width="2.5" marker-end="url(#arrowhead)"/>
+<line x1="185" y1="60" x2="198" y2="60" stroke="#e8c547" stroke-width="2.5" marker-end="url(#arrowhead)"/>
+<line x1="275" y1="60" x2="288" y2="60" stroke="#e8c547" stroke-width="2.5" marker-end="url(#arrowhead)"/>
+<!-- Water potential label -->
+<text x="55" y="110" class="sub">higher ψ</text>
+<text x="325" y="110" class="sub">lower ψ</text>
+<text x="190" y="125" class="sub" style="fill:#e8c547">water moves W → Z</text>
+</svg>`,
+    diagCaption: "Four mesophyll cells in series — water moves by osmosis along a water potential gradient",
     table: {
       headers: ["","Direction","W (kPa)","X (kPa)","Y (kPa)","Z (kPa)"],
       rows: [
@@ -623,13 +728,92 @@ const questions = [
   {
     n: 10,
     q: "The graphs show how the rate of photosynthesis and the rate of respiration in a plant changed over a 24-hour period. Which graph shows the correct rates?",
+    diagram: `<svg viewBox="0 0 380 200" xmlns="http://www.w3.org/2000/svg" width="380" height="200">
+<style>.ax{stroke:#7a8199;stroke-width:1.5;fill:none}.lbl{fill:#7a8199;font-size:10px;font-family:serif;text-anchor:middle}.title{fill:#e8e6df;font-size:11px;font-family:serif;text-anchor:middle;font-weight:bold}.ps{stroke:#4ecca3;stroke-width:2.5;fill:none}.resp{stroke:#e05c5c;stroke-width:2;fill:none;stroke-dasharray:5,3}</style>
+<!-- Axes -->
+<line x1="50" y1="20" x2="50" y2="155" class="ax"/>
+<line x1="50" y1="155" x2="360" y2="155" class="ax"/>
+<!-- Y label -->
+<text x="16" y="100" class="lbl" transform="rotate(-90,16,100)">rate / arb. units</text>
+<!-- X labels -->
+<text x="50" y="170" class="lbl">0</text>
+<text x="116" y="170" class="lbl">4</text>
+<text x="182" y="170" class="lbl">8</text>
+<text x="214" y="170" class="lbl">10</text>
+<text x="247" y="170" class="lbl">12</text>
+<text x="280" y="170" class="lbl">14</text>
+<text x="313" y="170" class="lbl">18</text>
+<text x="355" y="170" class="lbl">24</text>
+<text x="200" y="185" class="lbl">time of day / hour</text>
+<!-- Tick marks -->
+<line x1="116" y1="152" x2="116" y2="158" class="ax"/>
+<line x1="182" y1="152" x2="182" y2="158" class="ax"/>
+<line x1="247" y1="152" x2="247" y2="158" class="ax"/>
+<line x1="313" y1="152" x2="313" y2="158" class="ax"/>
+<line x1="355" y1="152" x2="355" y2="158" class="ax"/>
+<!-- Photosynthesis curve: 0 at night, rises during day, peaks midday, back to 0 at night -->
+<!-- Sunrise ~6h=148px, sunset ~18h=313px, midday ~12h=247px -->
+<path d="M50,155 L116,155 Q148,155 148,155 C162,140 182,80 214,55 C247,35 280,55 313,130 Q330,155 355,155" class="ps"/>
+<!-- Respiration: constant low line -->
+<path d="M50,128 L355,128" class="resp"/>
+<!-- Legend -->
+<line x1="60" y1="15" x2="85" y2="15" stroke="#4ecca3" stroke-width="2.5"/>
+<text x="88" y="19" style="fill:#4ecca3;font-size:10px;font-family:serif">photosynthesis</text>
+<line x1="190" y1="15" x2="215" y2="15" stroke="#e05c5c" stroke-width="2" stroke-dasharray="5,3"/>
+<text x="218" y="19" style="fill:#e05c5c;font-size:10px;font-family:serif">respiration</text>
+<!-- Day/night shading labels -->
+<text x="83" y="145" class="lbl" style="fill:#4a5568">night</text>
+<text x="220" y="42" class="lbl" style="fill:#4ecca3;font-size:9px">peak</text>
+<text x="335" y="145" class="lbl" style="fill:#4a5568">night</text>
+</svg>`,
+    diagCaption: "Graph A — photosynthesis peaks during daylight hours; respiration continues at a constant rate day and night",
     opts: ["A","B","C","D"],
     ans: "A",
     exp: "Photosynthesis only occurs in light (roughly 6:00–18:00), so the photosynthesis line should rise during the day and fall to zero at night. Respiration occurs continuously at a roughly constant rate, day and night. Graph A correctly shows photosynthesis peaking during daylight and respiration as a constant lower line."
   },
   {
     n: 11,
-    q: "The photomicrograph shows part of the lower surface of a leaf. Structure X is one of the oval/bean-shaped cells visible. What is structure X?",
+    q: "The photomicrograph shows part of the lower surface of a leaf. Structure X is labelled on one of the cells. What is structure X?",
+    diagram: `<svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" width="320" height="200">
+<style>.ep{fill:#1a2535;stroke:#8899aa;stroke-width:1.2}.gc{fill:#1e3d28;stroke:#4ecca3;stroke-width:1.8}.chl{fill:#2d6040;stroke:none}.stoma{fill:#0f1117}.lbl{fill:#e8e6df;font-size:11px;font-family:serif}.lblg{fill:#4ecca3;font-size:11px;font-family:serif;font-weight:bold}.muted{fill:#7a8199;font-size:10px;font-family:serif}</style>
+<!-- Epidermal cells background -->
+<rect x="10" y="10" width="300" height="180" rx="3" fill="#0f1820" stroke="#2a3a4a" stroke-width="1"/>
+<!-- Epidermal cells -->
+<rect x="15" y="15" width="80" height="50" class="ep" rx="8"/>
+<rect x="100" y="15" width="90" height="50" class="ep" rx="8"/>
+<rect x="195" y="15" width="80" height="50" class="ep" rx="8"/>
+<rect x="15" y="135" width="80" height="50" class="ep" rx="8"/>
+<rect x="100" y="135" width="90" height="50" class="ep" rx="8"/>
+<rect x="195" y="135" width="80" height="50" class="ep" rx="8"/>
+<!-- Stoma 1 (left) -->
+<ellipse cx="80" cy="100" rx="26" ry="14" class="gc"/>
+<ellipse cx="130" cy="100" rx="26" ry="14" class="gc"/>
+<ellipse cx="80" cy="100" rx="10" ry="5" class="stoma"/>
+<ellipse cx="130" cy="100" rx="10" ry="5" class="stoma"/>
+<ellipse cx="105" cy="100" rx="12" ry="6" class="stoma"/>
+<!-- Chloroplasts in guard cells -->
+<ellipse cx="68" cy="96" rx="5" ry="2.5" class="chl"/>
+<ellipse cx="76" cy="105" rx="5" ry="2.5" class="chl"/>
+<ellipse cx="118" cy="96" rx="5" ry="2.5" class="chl"/>
+<ellipse cx="142" cy="96" rx="5" ry="2.5" class="chl"/>
+<!-- Stoma 2 (right) -->
+<ellipse cx="210" cy="100" rx="26" ry="14" class="gc"/>
+<ellipse cx="262" cy="100" rx="26" ry="14" class="gc"/>
+<ellipse cx="210" cy="100" rx="10" ry="5" class="stoma"/>
+<ellipse cx="262" cy="100" rx="10" ry="5" class="stoma"/>
+<ellipse cx="236" cy="100" rx="12" ry="6" class="stoma"/>
+<ellipse cx="198" cy="96" rx="5" ry="2.5" class="chl"/>
+<ellipse cx="222" cy="105" rx="5" ry="2.5" class="chl"/>
+<ellipse cx="250" cy="96" rx="5" ry="2.5" class="chl"/>
+<ellipse cx="274" cy="105" rx="5" ry="2.5" class="chl"/>
+<!-- Label X pointing to right guard cell -->
+<line x1="262" y1="88" x2="295" y2="62" stroke="#4ecca3" stroke-width="1"/>
+<text x="290" y="57" class="lblg">X</text>
+<!-- Labels -->
+<text x="105" y="175" class="muted" text-anchor="middle">stoma (pore)</text>
+<text x="105" y="26" class="muted" text-anchor="middle">epidermal cell</text>
+</svg>`,
+    diagCaption: "Lower epidermis of a leaf — bean-shaped cells surrounding a central pore (stoma)",
     opts: ["Guard cell","Palisade mesophyll cell","Spongy mesophyll cell","Xylem vessel"],
     ans: "A",
     exp: "The lower epidermis contains stomata, each flanked by two guard cells. Guard cells are characteristically bean-shaped or kidney-shaped and contain chloroplasts. They are visible on the leaf underside exactly as shown in the micrograph. Palisade and spongy mesophyll cells are internal; xylem vessels are tubular."
@@ -648,7 +832,37 @@ const questions = [
   },
   {
     n: 13,
-    q: "The diagram shows the four types of human tooth: 1 incisor, 2 canine, 3 premolar, 4 molar. Which teeth are used for grinding food?",
+    q: "The diagram shows the four types of human tooth. Which teeth are used for grinding food?",
+    diagram: `<svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg" width="400" height="160">
+<style>.tooth{fill:#e8e4d8;stroke:#8899aa;stroke-width:1.5}.root{fill:#c8b89a;stroke:#8899aa;stroke-width:1.5}.lbl{fill:#e8e6df;font-size:12px;font-family:serif;text-anchor:middle}.num{fill:#4ecca3;font-size:14px;font-family:serif;font-weight:bold;text-anchor:middle}</style>
+<!-- 1: Incisor - chisel shaped -->
+<path d="M45,30 L35,30 Q32,30 32,33 L32,55 Q32,95 38,105 L42,108 L48,105 Q54,95 54,55 L54,33 Q54,30 51,30 Z" class="tooth"/>
+<path d="M38,105 Q38,140 40,145 L42,148 L44,145 Q46,140 46,105" class="root"/>
+<text x="43" y="22" class="num">1</text>
+<text x="43" y="160" class="lbl">incisor</text>
+<!-- 2: Canine - pointed -->
+<path d="M130,25 L118,25 Q116,25 116,28 L116,50 Q116,80 126,115 L130,122 L134,115 Q144,80 144,50 L144,28 Q144,25 142,25 Z" class="tooth"/>
+<path d="M126,115 Q124,145 126,150 L130,153 L134,150 Q136,145 134,115" class="root"/>
+<text x="130" y="18" class="num">2</text>
+<text x="130" y="160" class="lbl">canine</text>
+<!-- 3: Premolar - two cusps -->
+<path d="M218,30 L205,30 Q202,30 202,33 L202,55 Q202,88 208,95 L218,98 L228,95 Q234,88 234,55 L234,33 Q234,30 231,30 Z" class="tooth"/>
+<circle cx="211" cy="30" r="5" class="tooth"/>
+<circle cx="225" cy="30" r="5" class="tooth"/>
+<path d="M208,95 Q205,125 207,130 L213,134 L218,130 L223,134 L229,130 Q231,125 228,95" class="root"/>
+<text x="218" y="22" class="num">3</text>
+<text x="218" y="160" class="lbl">premolar</text>
+<!-- 4: Molar - broad, multiple cusps -->
+<path d="M318,32 L300,32 Q296,32 296,36 L296,58 Q296,90 304,98 L318,102 L332,98 Q340,90 340,58 L340,36 Q340,32 336,32 Z" class="tooth"/>
+<circle cx="305" cy="32" r="5" class="tooth"/>
+<circle cx="318" cy="28" r="5" class="tooth"/>
+<circle cx="331" cy="32" r="5" class="tooth"/>
+<rect x="302" y="36" width="32" height="4" fill="#d8d4c8" rx="1"/>
+<path d="M304,98 Q298,125 300,132 L306,136 L312,132 L312,136 L318,140 L324,136 L324,132 L330,136 L336,132 Q338,125 332,98" class="root"/>
+<text x="318" y="22" class="num">4</text>
+<text x="318" y="160" class="lbl">molar</text>
+</svg>`,
+    diagCaption: "The four human tooth types: 1 incisor (cutting), 2 canine (tearing), 3 premolar (crushing), 4 molar (grinding)",
     opts: ["1 and 2","1 and 4","2 and 3","3 and 4"],
     ans: "D",
     exp: "Premolars (3) and molars (4) have broad, flat surfaces with ridges suited for grinding and crushing food. Incisors (1) are chisel-shaped for biting/cutting; canines (2) are pointed for tearing. Grinding = premolars and molars."
@@ -674,7 +888,48 @@ const questions = [
   },
   {
     n: 16,
-    q: "The diagram shows a heart defect where oxygenated and deoxygenated blood mix between the left and right sides of the heart. Which statement explains why this heart defect might cause the baby to have poor growth?",
+    q: "The diagram shows a heart defect that some babies are born with. The arrows indicate direction of blood flow. Which statement explains why this heart defect might cause the baby to have poor growth?",
+    diagram: `<svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" width="360" height="240">
+<style>.heart{fill:#1e2030;stroke:#8899aa;stroke-width:1.5}.oxy{fill:#c0392b;stroke:none;opacity:0.7}.deoxy{fill:#2980b9;stroke:none;opacity:0.7}.lbl{fill:#e8e6df;font-size:10px;font-family:serif;text-anchor:middle}.lbls{fill:#7a8199;font-size:9px;font-family:serif}.defect{fill:none;stroke:#e8c547;stroke-width:2.5;stroke-dasharray:4,2}</style>
+<!-- Heart outline -->
+<path d="M80,60 Q80,30 110,30 L120,30 Q145,30 155,55 Q165,30 190,30 L200,30 Q230,30 230,60 L230,110 Q230,160 155,200 Q80,160 80,110 Z" class="heart"/>
+<!-- Septum -->
+<line x1="155" y1="30" x2="155" y2="185" stroke="#8899aa" stroke-width="1.5" stroke-dasharray="none"/>
+<!-- Right side (blue - deoxy) -->
+<ellipse cx="115" cy="80" rx="28" ry="22" class="deoxy" opacity="0.5"/>
+<ellipse cx="115" cy="135" rx="28" ry="28" class="deoxy" opacity="0.4"/>
+<!-- Left side (red - oxy) -->
+<ellipse cx="195" cy="80" rx="28" ry="22" class="oxy" opacity="0.5"/>
+<ellipse cx="195" cy="135" rx="28" ry="28" class="oxy" opacity="0.4"/>
+<!-- Heart defect hole -->
+<ellipse cx="155" cy="72" rx="12" ry="8" class="defect"/>
+<text x="155" y="50" style="fill:#e8c547;font-size:9px;font-family:serif;text-anchor:middle">heart</text>
+<text x="155" y="60" style="fill:#e8c547;font-size:9px;font-family:serif;text-anchor:middle">defect</text>
+<!-- Mixing arrow -->
+<path d="M145,72 Q130,72 125,85" stroke="#e8c547" stroke-width="1.5" fill="none" marker-end="url(#arr2)"/>
+<defs><marker id="arr2" markerWidth="6" markerHeight="5" refX="4" refY="2.5" orient="auto"><polygon points="0 0,6 2.5,0 5" fill="#e8c547"/></marker></defs>
+<!-- Labels -->
+<text x="115" y="72" class="lbl" style="fill:#6aafe0">Right</text>
+<text x="115" y="83" class="lbl" style="fill:#6aafe0">atrium</text>
+<text x="195" y="72" class="lbl" style="fill:#e07070">Left</text>
+<text x="195" y="83" class="lbl" style="fill:#e07070">atrium</text>
+<text x="115" y="130" class="lbl" style="fill:#6aafe0">Right</text>
+<text x="115" y="141" class="lbl" style="fill:#6aafe0">ventricle</text>
+<text x="195" y="130" class="lbl" style="fill:#e07070">Left</text>
+<text x="195" y="141" class="lbl" style="fill:#e07070">ventricle</text>
+<!-- Blood to lungs arrow (right) -->
+<path d="M115,108 L115,215" stroke="#6aafe0" stroke-width="1.5" fill="none"/>
+<text x="70" y="225" class="lbl" style="fill:#6aafe0">to lungs</text>
+<!-- Blood to body (left) -->
+<path d="M195,108 L195,215" stroke="#e07070" stroke-width="1.5" fill="none"/>
+<text x="240" y="225" class="lbl" style="fill:#e07070">to body</text>
+<!-- Key -->
+<rect x="270" y="30" width="12" height="10" fill="#c0392b" opacity="0.7"/>
+<text x="285" y="40" class="lbls" style="fill:#e8e6df">oxygenated</text>
+<rect x="270" y="48" width="12" height="10" fill="#2980b9" opacity="0.7"/>
+<text x="285" y="58" class="lbls" style="fill:#e8e6df">deoxygenated</text>
+</svg>`,
+    diagCaption: "Heart defect — hole between left and right sides causes mixing of oxygenated and deoxygenated blood",
     opts: [
       "Blood flows to the lungs at high pressure increasing rate of gas exchange.",
       "Blood flows to the lungs at low pressure decreasing rate of gas exchange.",
@@ -686,7 +941,39 @@ const questions = [
   },
   {
     n: 17,
-    q: "The diagram shows the effect of vaccination on the human body. Three components are represented by numbers: (1) leads to immune response, (2) can provide passive immunity to others, (3) provide long-term immunity. Which components are memory cells?",
+    q: "The diagram shows the effect of vaccination on the human body. Three components in the diagram are represented by numbers. Component 2 can provide passive immunity to others. Component 3 provides long-term immunity. Which components are memory cells?",
+    diagram: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" width="400" height="200">
+<style>.box{fill:#1e2335;stroke:#4a5568;stroke-width:1.2;rx:4}.arrow{stroke:#7a8199;stroke-width:1.5;fill:none;marker-end:url(#a17)}.num{fill:#e8c547;font-size:14px;font-weight:bold;font-family:serif;text-anchor:middle}.lbl{fill:#e8e6df;font-size:10.5px;font-family:serif;text-anchor:middle}.muted{fill:#7a8199;font-size:9.5px;font-family:serif;text-anchor:middle}</style>
+<defs><marker id="a17" markerWidth="7" markerHeight="6" refX="5" refY="3" orient="auto"><polygon points="0 0,7 3,0 6" fill="#7a8199"/></marker></defs>
+<!-- Vaccine box -->
+<rect x="10" y="75" width="70" height="50" fill="#1e2335" stroke="#4ecca3" stroke-width="1.5" rx="4"/>
+<text x="45" y="97" class="lbl" style="fill:#4ecca3">Vaccine</text>
+<text x="45" y="110" class="muted" style="fill:#4ecca3">(antigen)</text>
+<!-- Arrow to body -->
+<line x1="80" y1="100" x2="108" y2="100" class="arrow"/>
+<!-- Body / immune response box -->
+<rect x="110" y="60" width="85" height="80" fill="#1e2335" stroke="#8899aa" stroke-width="1.2" rx="4"/>
+<text x="152" y="85" class="num">1</text>
+<text x="152" y="100" class="lbl">immune</text>
+<text x="152" y="113" class="lbl">response</text>
+<text x="152" y="126" class="muted">antibodies made</text>
+<!-- Two arrows from box 1 -->
+<line x1="195" y1="80" x2="228" y2="60" class="arrow"/>
+<line x1="195" y1="120" x2="228" y2="145" class="arrow"/>
+<!-- Box 2: passive immunity -->
+<rect x="230" y="30" width="100" height="55" fill="#1e2335" stroke="#8899aa" stroke-width="1.2" rx="4"/>
+<text x="280" y="52" class="num">2</text>
+<text x="280" y="65" class="lbl">antibodies</text>
+<text x="280" y="77" class="muted">passive immunity</text>
+<!-- Box 3: long-term immunity (memory cells) -->
+<rect x="230" y="115" width="100" height="60" fill="#1a2d1e" stroke="#4ecca3" stroke-width="2" rx="4"/>
+<text x="280" y="137" class="num" style="fill:#4ecca3">3</text>
+<text x="280" y="150" class="lbl" style="fill:#4ecca3">memory cells</text>
+<text x="280" y="164" class="muted" style="fill:#7a8199">long-term immunity</text>
+<!-- Highlight box 3 label -->
+<text x="280" y="190" style="fill:#4ecca3;font-size:9px;font-family:serif;text-anchor:middle;font-style:italic">← correct answer</text>
+</svg>`,
+    diagCaption: "Vaccination pathway — component 3 (long-term immunity) represents memory cells",
     opts: ["1 only","2 and 3","2 only","3 only"],
     ans: "D",
     exp: "Memory cells are the B and T lymphocytes that persist in the body after the initial immune response. They provide long-term (active) immunity — component 3. Component 2 (passive immunity to others, e.g. via breast milk antibodies) does not describe memory cells. Memory cells = long-term immunity = component 3 only."
@@ -701,6 +988,27 @@ const questions = [
   {
     n: 19,
     q: "Yeast can respire aerobically and anaerobically. For each molecule of glucose used in yeast, how many more molecules of carbon dioxide are produced by aerobic respiration compared with anaerobic respiration?",
+    diagram: `<svg viewBox="0 0 380 155" xmlns="http://www.w3.org/2000/svg" width="380" height="155">
+<style>.box{fill:#1e2335;stroke:#4a5568;stroke-width:1.2}.lbl{fill:#e8e6df;font-size:11px;font-family:serif}.muted{fill:#7a8199;font-size:10px;font-family:serif}.val{font-size:22px;font-weight:bold;font-family:serif;text-anchor:middle}.eq{fill:#e8e6df;font-size:11px;font-family:serif}</style>
+<!-- Aerobic box -->
+<rect x="15" y="20" width="160" height="100" class="box" rx="4"/>
+<text x="95" y="42" class="lbl" style="text-anchor:middle;fill:#4ecca3;font-weight:bold">Aerobic respiration</text>
+<text x="95" y="60" class="eq" text-anchor="middle">C₆H₁₂O₆ + 6O₂</text>
+<text x="95" y="76" class="eq" text-anchor="middle">→ 6CO₂ + 6H₂O</text>
+<text x="95" y="95" class="val" style="fill:#4ecca3">6</text>
+<text x="95" y="110" class="muted" text-anchor="middle">CO₂ per glucose</text>
+<!-- Anaerobic box -->
+<rect x="205" y="20" width="160" height="100" class="box" rx="4"/>
+<text x="285" y="42" class="lbl" style="text-anchor:middle;fill:#e05c5c;font-weight:bold">Anaerobic (yeast)</text>
+<text x="285" y="60" class="eq" text-anchor="middle">C₆H₁₂O₆</text>
+<text x="285" y="76" class="eq" text-anchor="middle">→ 2C₂H₅OH + 2CO₂</text>
+<text x="285" y="95" class="val" style="fill:#e05c5c">2</text>
+<text x="285" y="110" class="muted" text-anchor="middle">CO₂ per glucose</text>
+<!-- Difference -->
+<text x="190" y="100" class="val" style="fill:#e8c547;font-size:30px">−</text>
+<text x="190" y="145" style="fill:#e8c547;font-size:12px;font-family:serif;text-anchor:middle;font-weight:bold">= 4 more</text>
+</svg>`,
+    diagCaption: "Comparing CO₂ output: aerobic (6 CO₂) vs anaerobic/yeast (2 CO₂) per glucose molecule",
     opts: ["1 more","2 more","4 more","6 more"],
     ans: "C",
     exp: "Aerobic: C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O (6 CO₂ per glucose)\nAnaerobic (yeast): C₆H₁₂O₆ → 2C₂H₅OH + 2CO₂ (2 CO₂ per glucose)\nDifference = 6 – 2 = 4 more CO₂ molecules produced aerobically."
@@ -708,6 +1016,43 @@ const questions = [
   {
     n: 20,
     q: "In a healthy human, in which blood vessel would you find the lowest concentration of urea?",
+    diagram: `<svg viewBox="0 0 380 180" xmlns="http://www.w3.org/2000/svg" width="380" height="180">
+<style>.organ{fill:#1e2335;stroke:#7a8199;stroke-width:1.5}.lbl{fill:#e8e6df;font-size:11px;font-family:serif;text-anchor:middle}.high{fill:#e05c5c;font-size:10px;font-family:serif;text-anchor:middle}.low{fill:#4ecca3;font-size:10px;font-family:serif;text-anchor:middle}.vessel{stroke-width:6;fill:none;stroke-linecap:round}.art{stroke:#c0392b}.vein{stroke:#2980b9}</style>
+<!-- Liver -->
+<ellipse cx="100" cy="80" rx="55" ry="38" class="organ"/>
+<text x="100" y="78" class="lbl">Liver</text>
+<text x="100" y="92" style="fill:#7a8199;font-size:9px;font-family:serif;text-anchor:middle">(makes urea)</text>
+<!-- Kidneys -->
+<ellipse cx="290" cy="80" rx="42" ry="38" class="organ"/>
+<text x="290" y="78" class="lbl">Kidney</text>
+<text x="290" y="92" style="fill:#7a8199;font-size:9px;font-family:serif;text-anchor:middle">(filters urea)</text>
+<!-- Hepatic artery (to liver) -->
+<path d="M100,42 L100,20 L55,20" class="vessel art"/>
+<text x="30" y="16" class="lbl" style="fill:#c0392b;font-size:10px">hepatic</text>
+<text x="30" y="27" class="lbl" style="fill:#c0392b;font-size:10px">artery</text>
+<text x="30" y="38" class="high">↑ urea</text>
+<!-- Hepatic vein (from liver) -->
+<path d="M100,118 L100,145 L55,145" class="vessel vein"/>
+<text x="30" y="141" class="lbl" style="fill:#2980b9;font-size:10px">hepatic</text>
+<text x="30" y="152" class="lbl" style="fill:#2980b9;font-size:10px">vein</text>
+<text x="30" y="165" class="high">↑ urea</text>
+<!-- Renal artery -->
+<path d="M290,42 L290,20 L335,20" class="vessel art"/>
+<text x="340" y="16" class="lbl" style="fill:#c0392b;font-size:10px">renal</text>
+<text x="340" y="27" class="lbl" style="fill:#c0392b;font-size:10px">artery</text>
+<text x="340" y="38" class="high">urea ↑</text>
+<!-- Renal vein -->
+<path d="M290,118 L290,145 L335,145" class="vessel vein"/>
+<text x="340" y="141" class="lbl" style="fill:#4ecca3;font-size:10px">renal</text>
+<text x="340" y="152" class="lbl" style="fill:#4ecca3;font-size:10px">vein</text>
+<text x="340" y="165" class="low">urea ↓ lowest</text>
+<!-- Connecting vessel (aorta) -->
+<line x1="155" y1="80" x2="248" y2="80" stroke="#888" stroke-width="2.5" stroke-dasharray="5,3"/>
+<text x="200" y="74" style="fill:#7a8199;font-size:9px;font-family:serif;text-anchor:middle">blood flow</text>
+<!-- Arrow -->
+<polygon points="244,77 252,80 244,83" fill="#888"/>
+</svg>`,
+    diagCaption: "Urea is made in the liver and filtered out by the kidneys — renal vein carries the cleanest blood",
     opts: ["Hepatic artery","Hepatic vein","Renal artery","Renal vein"],
     ans: "D",
     exp: "Urea is produced in the liver and excreted by the kidneys. The renal artery carries blood to the kidneys at normal urea concentration; the kidneys filter out urea into urine. The renal vein therefore carries blood that has been cleaned of urea — it has the lowest urea concentration of all these vessels."
@@ -715,6 +1060,42 @@ const questions = [
   {
     n: 21,
     q: "A specific eye condition can cause permanent contraction of the ciliary muscles. Which row is correct for an eye with this condition compared to an eye without this condition?",
+    diagram: `<svg viewBox="0 0 380 190" xmlns="http://www.w3.org/2000/svg" width="380" height="190">
+<style>.eye{fill:#1a2535;stroke:#7a8199;stroke-width:1.5}.lens{fill:#b8d4e8;stroke:#7ab8d8;stroke-width:1.5;opacity:0.8}.lbl{fill:#e8e6df;font-size:10px;font-family:serif;text-anchor:middle}.acc{fill:#4ecca3;font-size:10px;font-family:serif}.muted{fill:#7a8199;font-size:9px;font-family:serif;text-anchor:middle}</style>
+<!-- Eye A: normal - taut suspensory ligaments, thinner lens -->
+<text x="90" y="15" class="lbl" style="font-size:11px">Normal eye</text>
+<circle cx="90" cy="95" r="70" class="eye"/>
+<!-- Ciliary body -->
+<circle cx="90" cy="95" r="52" fill="none" stroke="#4a5568" stroke-width="6"/>
+<!-- Suspensory ligaments (taut = straight lines) -->
+<line x1="90" y1="43" x2="90" y2="68" stroke="#aabb88" stroke-width="1.2"/>
+<line x1="90" y1="147" x2="90" y2="122" stroke="#aabb88" stroke-width="1.2"/>
+<line x1="42" y1="73" x2="64" y2="83" stroke="#aabb88" stroke-width="1.2"/>
+<line x1="138" y1="73" x2="116" y2="83" stroke="#aabb88" stroke-width="1.2"/>
+<line x1="42" y1="117" x2="64" y2="107" stroke="#aabb88" stroke-width="1.2"/>
+<line x1="138" y1="117" x2="116" y2="107" stroke="#aabb88" stroke-width="1.2"/>
+<!-- Thin lens (normal, relaxed) -->
+<ellipse cx="90" cy="95" rx="8" ry="28" class="lens"/>
+<!-- Labels -->
+<text x="90" y="170" class="muted">ciliary muscles RELAXED</text>
+<text x="90" y="182" class="muted">suspensory ligaments TAUT → thin lens</text>
+
+<!-- Eye B: condition - slack ligaments, fat lens -->
+<text x="280" y="15" class="lbl" style="font-size:11px;fill:#e8c547">Condition (contracted)</text>
+<circle cx="280" cy="95" r="70" class="eye"/>
+<circle cx="280" cy="95" r="52" fill="none" stroke="#4a5568" stroke-width="6"/>
+<!-- Slack suspensory ligaments (wavy) -->
+<path d="M280,43 Q276,50 280,57 Q284,63 280,68" stroke="#aabb88" stroke-width="1.2" fill="none"/>
+<path d="M280,147 Q276,141 280,134 Q284,128 280,122" stroke="#aabb88" stroke-width="1.2" fill="none"/>
+<path d="M42,73 Q50,76 55,80 Q60,83 64,83" stroke="#aabb88" stroke-width="1.2" fill="none" transform="translate(190,0)"/>
+<path d="M42,117 Q50,114 55,110 Q60,107 64,107" stroke="#aabb88" stroke-width="1.2" fill="none" transform="translate(190,0)"/>
+<!-- Fat lens (contracted ciliary) -->
+<ellipse cx="280" cy="95" rx="18" ry="30" class="lens" style="fill:#90c0e0"/>
+<!-- Labels -->
+<text x="280" y="170" style="fill:#e8c547;font-size:9px;font-family:serif;text-anchor:middle">ciliary muscles CONTRACTED</text>
+<text x="280" y="182" style="fill:#e8c547;font-size:9px;font-family:serif;text-anchor:middle">ligaments SLACK → fat lens → MORE refraction</text>
+</svg>`,
+    diagCaption: "Normal eye (relaxed ciliary muscles, taut ligaments, thin lens) vs condition (contracted ciliary, slack ligaments, fat lens, more refraction)",
     table: {
       headers: ["","Suspensory ligaments","Refraction of light rays onto the retina"],
       rows: [
@@ -735,7 +1116,7 @@ const questions = [
       "The liver converts the small molecule glucose into the large molecule glucagon.",
       "The liver releases the hormone insulin when blood glucose concentration is too high.",
       "The pancreas does not respond to an increase in blood glucose concentration.",
-      "The pancreas responds to a fall in blood glucose concentration by increasing release of glucagon."
+      "The pancreas responds to a fall in blood glucose concentration by increasing release of the hormone glucagon."
     ],
     ans: "D",
     exp: "When blood glucose falls, the pancreas (α-cells of islets of Langerhans) releases glucagon. Glucagon stimulates the liver to convert glycogen back to glucose (glycogenolysis). The liver does NOT release insulin (that's the pancreas). Glucagon is a protein hormone, not the same as glycogen. Option D is correct."
@@ -765,14 +1146,14 @@ const questions = [
       "It reduces the artificial selection of antibiotic resistant bacteria.",
       "It reduces the natural selection of antibiotic resistant bacteria."
     ],
-    ans: "D", // Wait — the mark scheme says D. Let me re-examine. "Why should antibiotics be used only when essential?" — overuse INCREASES natural selection. The question asks WHY they should be used only when essential — because overuse increases natural selection of resistance. Hmm — the mark scheme answer is D: "It reduces the natural selection of antibiotic resistant bacteria." So using antibiotics only when essential REDUCES natural selection of resistant strains. That IS the reason. Answer D.
+    ans: "D",
     exp: "Overuse of antibiotics creates strong selective pressure: resistant bacteria survive and reproduce (natural selection). By using antibiotics only when essential, we reduce this selection pressure, thereby slowing the evolution and spread of antibiotic-resistant strains. This is natural selection (random mutations, survival of the fittest) — not artificial selection (deliberate human breeding)."
   },
   {
     n: 25,
     q: "Which row describes self-pollination?",
     table: {
-      headers: ["","Pollen from anther → stigma of different flower on same plant","Pollen from anther → stigma of flower on different plant (same species)","Pollen from anther → stigma of same flower"],
+      headers: ["","Pollen: anther → stigma of different flower on same plant","Pollen: anther → stigma of flower on different plant (same species)","Pollen: anther → stigma of same flower"],
       rows: [
         ["A","yes","yes","no"],
         ["B","yes","no","yes"],
@@ -831,7 +1212,43 @@ const questions = [
   },
   {
     n: 31,
-    q: "The graph shows how the mass of DNA changes during a mitotic cell division (points A, B, C, D marked on the time axis). Where on the graph are two cells formed?",
+    q: "The graph shows how the mass of DNA changes during a mitotic cell division. Points A, B, C and D are marked on the time axis. Where on the graph are two cells formed?",
+    diagram: `<svg viewBox="0 0 380 200" xmlns="http://www.w3.org/2000/svg" width="380" height="200">
+<style>.ax{stroke:#7a8199;stroke-width:1.5;fill:none}.dna{stroke:#4ecca3;stroke-width:2.5;fill:none}.lbl{fill:#7a8199;font-size:10px;font-family:serif;text-anchor:middle}.point{fill:#e8c547;font-size:13px;font-weight:bold;font-family:serif;text-anchor:middle}.title{fill:#e8e6df;font-size:11px;font-family:serif}</style>
+<!-- Axes -->
+<line x1="50" y1="20" x2="50" y2="160" class="ax"/>
+<line x1="50" y1="160" x2="360" y2="160" class="ax"/>
+<!-- Y label -->
+<text x="20" y="95" class="lbl" transform="rotate(-90,20,95)">mass of DNA</text>
+<text x="20" y="107" class="lbl" transform="rotate(-90,20,107)">per cell</text>
+<!-- DNA profile:
+  A: start of interphase low
+  B: S-phase DNA doubles (rises)  
+  C: G2/mitosis - stays doubled
+  D: cytokinesis - drops back to 1x (two cells formed)
+-->
+<path d="M50,130 L100,130 Q120,130 140,70 L190,70 Q200,70 210,70 L250,70 Q280,70 300,130 L350,130" class="dna"/>
+<!-- Points A B C D -->
+<circle cx="80" cy="130" r="4" fill="#e8c547"/>
+<text x="80" y="152" class="point">A</text>
+<circle cx="120" cy="105" r="4" fill="#e8c547"/>
+<text x="120" y="152" class="point">B</text>
+<circle cx="200" cy="70" r="4" fill="#e8c547"/>
+<text x="200" y="152" class="point">C</text>
+<circle cx="290" cy="100" r="4" fill="#e8c547"/>
+<text x="290" y="152" class="point">D</text>
+<!-- Annotations -->
+<text x="80" y="140" class="lbl" style="font-size:9px">interphase</text>
+<text x="140" y="50" class="lbl" style="fill:#4ecca3">DNA replicated</text>
+<text x="200" y="40" class="lbl" style="fill:#7a8199">mitosis</text>
+<text x="295" y="50" class="lbl" style="fill:#e8c547;font-size:10px">← 2 cells</text>
+<text x="295" y="62" class="lbl" style="fill:#e8c547;font-size:10px">formed here</text>
+<!-- Drop line at D -->
+<line x1="290" y1="100" x2="290" y2="148" stroke="#e8c547" stroke-width="0.8" stroke-dasharray="3,2"/>
+<!-- x axis label -->
+<text x="200" y="178" class="lbl">time / hours</text>
+</svg>`,
+    diagCaption: "DNA mass per cell during mitosis — rises during S-phase (replication), drops when two daughter cells are formed",
     opts: ["A","B","C","D"],
     ans: "D",
     exp: "During mitosis, DNA replication doubles the DNA content (the rise in the graph). Two daughter cells are formed when cytokinesis is complete — this is when the DNA mass per cell drops back to the original amount (halves), as the DNA is divided equally between two new cells. This occurs at point D."
@@ -857,7 +1274,36 @@ const questions = [
   },
   {
     n: 34,
-    q: "The food chain: lettuce → snails → duck → human. Where did the energy in the lettuce come from?",
+    q: "The food chain shows how energy is transferred to a human:\nlettuce → snails → duck → human\nWhere did the energy in the lettuce come from?",
+    diagram: `<svg viewBox="0 0 400 90" xmlns="http://www.w3.org/2000/svg" width="400" height="90">
+<style>.box{fill:#1e2335;stroke:#4a5568;stroke-width:1.2;rx:4}.lbl{fill:#e8e6df;font-size:12px;font-family:serif;text-anchor:middle}.sun{fill:#e8c547}.arrow{stroke:#7a8199;stroke-width:2;fill:none;marker-end:url(#fc)}</style>
+<defs><marker id="fc" markerWidth="7" markerHeight="6" refX="5" refY="3" orient="auto"><polygon points="0 0,7 3,0 6" fill="#7a8199"/></marker></defs>
+<!-- Sun -->
+<circle cx="30" cy="45" r="20" fill="#e8c547" opacity="0.85"/>
+<text x="30" y="50" class="lbl" style="fill:#0f1117;font-size:10px;font-weight:bold">☀</text>
+<!-- Sunlight arrow to lettuce -->
+<line x1="50" y1="45" x2="72" y2="45" class="arrow"/>
+<!-- Lettuce -->
+<rect x="74" y="25" width="60" height="40" fill="#1e3028" stroke="#4ecca3" stroke-width="1.5" rx="4"/>
+<text x="104" y="50" class="lbl" style="fill:#4ecca3">lettuce</text>
+<!-- Arrow -->
+<line x1="136" y1="45" x2="158" y2="45" class="arrow"/>
+<!-- Snail -->
+<rect x="160" y="25" width="60" height="40" fill="#1e2335" stroke="#7a8199" stroke-width="1.2" rx="4"/>
+<text x="190" y="50" class="lbl">snails</text>
+<line x1="222" y1="45" x2="244" y2="45" class="arrow"/>
+<!-- Duck -->
+<rect x="246" y="25" width="60" height="40" fill="#1e2335" stroke="#7a8199" stroke-width="1.2" rx="4"/>
+<text x="276" y="50" class="lbl">duck</text>
+<line x1="308" y1="45" x2="330" y2="45" class="arrow"/>
+<!-- Human -->
+<rect x="332" y="25" width="60" height="40" fill="#1e2335" stroke="#7a8199" stroke-width="1.2" rx="4"/>
+<text x="362" y="50" class="lbl">human</text>
+<!-- Label under lettuce -->
+<text x="104" y="78" style="fill:#4ecca3;font-size:9px;font-family:serif;text-anchor:middle">producer</text>
+<text x="30" y="78" style="fill:#e8c547;font-size:9px;font-family:serif;text-anchor:middle">energy source</text>
+</svg>`,
+    diagCaption: "Energy flow through a food chain — all energy originates from the Sun via photosynthesis",
     opts: ["Snails","Soil","The Sun","Water"],
     ans: "C",
     exp: "Lettuce is a producer (autotroph). It captures light energy from the Sun through photosynthesis and converts it into chemical energy stored in glucose. All energy in a food chain ultimately originates from the Sun (or, in some ecosystems, chemosynthesis)."
@@ -907,6 +1353,52 @@ const questions = [
   {
     n: 39,
     q: "How does eutrophication lead to the death of fish?",
+    diagram: `<svg viewBox="0 0 400 165" xmlns="http://www.w3.org/2000/svg" width="400" height="165">
+<style>.step{fill:#1e2335;stroke:#4a5568;stroke-width:1.2}.lbl{fill:#e8e6df;font-size:10px;font-family:serif;text-anchor:middle}.arrow{stroke:#7a8199;stroke-width:1.5;fill:none;marker-end:url(#eu)}.key{fill:#4ecca3;font-size:9px;font-family:serif;text-anchor:middle}</style>
+<defs><marker id="eu" markerWidth="6" markerHeight="5" refX="4" refY="2.5" orient="auto"><polygon points="0 0,6 2.5,0 5" fill="#7a8199"/></marker></defs>
+<!-- Step 1: fertiliser -->
+<rect x="5" y="10" width="70" height="40" class="step" rx="3"/>
+<text x="40" y="27" class="lbl">fertiliser</text>
+<text x="40" y="41" class="lbl">run-off</text>
+<!-- Arrow right -->
+<line x1="76" y1="30" x2="95" y2="30" class="arrow"/>
+<!-- Step 2: algal bloom -->
+<rect x="97" y="10" width="70" height="40" class="step" rx="3" style="stroke:#4ecca3"/>
+<text x="132" y="27" class="lbl" style="fill:#4ecca3">algal</text>
+<text x="132" y="41" class="lbl" style="fill:#4ecca3">bloom</text>
+<line x1="168" y1="30" x2="187" y2="30" class="arrow"/>
+<!-- Step 3: blocks light -->
+<rect x="189" y="10" width="70" height="40" class="step" rx="3"/>
+<text x="224" y="27" class="lbl">blocks</text>
+<text x="224" y="41" class="lbl">sunlight</text>
+<line x1="260" y1="30" x2="279" y2="30" class="arrow"/>
+<!-- Step 4: plants die -->
+<rect x="281" y="10" width="70" height="40" class="step" rx="3"/>
+<text x="316" y="27" class="lbl">aquatic</text>
+<text x="316" y="41" class="lbl">plants die</text>
+<!-- Down arrow from plants die -->
+<line x1="316" y1="50" x2="316" y2="68" class="arrow"/>
+<!-- Step 5: decomposers -->
+<rect x="281" y="70" width="70" height="40" class="step" rx="3" style="stroke:#e05c5c"/>
+<text x="316" y="86" class="lbl" style="fill:#e05c5c">decomposer</text>
+<text x="316" y="100" class="lbl" style="fill:#e05c5c">bacteria ↑</text>
+<!-- Left arrow: decomposers use O2 -->
+<line x1="280" y1="90" x2="215" y2="90" class="arrow"/>
+<!-- Step 6: O2 depleted -->
+<rect x="145" y="70" width="70" height="40" class="step" rx="3" style="stroke:#e8c547"/>
+<text x="180" y="86" class="lbl" style="fill:#e8c547">O₂</text>
+<text x="180" y="100" class="lbl" style="fill:#e8c547">depleted</text>
+<!-- Left arrow -->
+<line x1="144" y1="90" x2="95" y2="90" class="arrow"/>
+<!-- Step 7: fish die -->
+<rect x="25" y="70" width="70" height="40" class="step" rx="3" style="stroke:#e05c5c"/>
+<text x="60" y="86" class="lbl" style="fill:#e05c5c">fish die</text>
+<text x="60" y="100" class="lbl" style="fill:#e05c5c">(no O₂)</text>
+<!-- Final label -->
+<text x="200" y="135" class="lbl" style="fill:#e8c547;font-size:10px">Key step: decomposers use up dissolved oxygen</text>
+<text x="200" y="150" class="key" style="fill:#7a8199">bacteria respire aerobically → consume O₂ → fish suffocate</text>
+</svg>`,
+    diagCaption: "Eutrophication sequence — fertiliser run-off ultimately depletes oxygen via decomposer bacteria",
     opts: [
       "A sudden increase in the number of bacteria increases the spread of disease.",
       "Algae respire instead of photosynthesise.",
@@ -918,7 +1410,44 @@ const questions = [
   },
   {
     n: 40,
-    q: "The diagram shows a bacterial cell with four structures labelled A, B, C, and D. Structure B is the plasmid. Which cell structure makes bacteria useful in genetic modification?",
+    q: "The diagram shows a bacterial cell with structures labelled A, B, C and D. Which cell structure makes bacteria useful in genetic modification?",
+    diagram: `<svg viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg" width="360" height="200">
+<style>.cell{fill:#1a2535;stroke:#8899aa;stroke-width:1.8}.cw{fill:none;stroke:#aabb88;stroke-width:4}.cm{fill:none;stroke:#e8c547;stroke-width:2}.flagella{fill:none;stroke:#c8c5be;stroke-width:1.5}.plasmid{fill:none;stroke:#4ecca3;stroke-width:2.5}.chrom{fill:none;stroke:#7ab8ff;stroke-width:2}.rib{fill:#c8a060;stroke:none}.lbl{fill:#e8e6df;font-size:11px;font-family:serif;text-anchor:middle}.ans{fill:#4ecca3;font-size:11px;font-family:serif;font-weight:bold}</style>
+<!-- Cell wall -->
+<ellipse cx="175" cy="100" rx="105" ry="70" class="cw"/>
+<!-- Cell membrane -->
+<ellipse cx="175" cy="100" rx="98" ry="63" class="cm"/>
+<!-- Cytoplasm fill -->
+<ellipse cx="175" cy="100" rx="97" ry="62" class="cell"/>
+<!-- Chromosome (nucleoid) -->
+<path d="M140,90 Q155,70 175,80 Q195,70 210,90 Q195,110 175,100 Q155,110 140,90 Z" class="chrom"/>
+<!-- Plasmid B - small circular -->
+<circle cx="210" cy="120" r="18" class="plasmid"/>
+<text x="210" y="124" style="fill:#4ecca3;font-size:10px;font-family:serif;text-anchor:middle;font-weight:bold">B</text>
+<!-- Ribosomes (scattered dots) -->
+<circle cx="148" cy="105" r="3" class="rib"/>
+<circle cx="160" cy="115" r="3" class="rib"/>
+<circle cx="155" cy="88" r="3" class="rib"/>
+<circle cx="185" cy="112" r="3" class="rib"/>
+<circle cx="192" cy="88" r="3" class="rib"/>
+<circle cx="168" cy="125" r="3" class="rib"/>
+<!-- Flagellum -->
+<path d="M280,95 Q300,80 310,65 Q318,50 330,45" class="flagella"/>
+<path d="M280,105 Q305,105 318,118 Q328,130 340,128" class="flagella"/>
+<!-- Labels with lines -->
+<line x1="175" y1="30" x2="175" y2="10" stroke="#aabb88" stroke-width="0.8"/>
+<text x="175" y="8" style="fill:#aabb88;font-size:10px;font-family:serif;text-anchor:middle">cell wall</text>
+<line x1="100" y1="65" x2="68" y2="45" stroke="#e8c547" stroke-width="0.8"/>
+<text x="40" y="42" style="fill:#e8c547;font-size:10px;font-family:serif">cell membrane</text>
+<line x1="175" y1="88" x2="148" y2="55" stroke="#7ab8ff" stroke-width="0.8"/>
+<text x="108" y="52" style="fill:#7ab8ff;font-size:10px;font-family:serif">chromosome</text>
+<line x1="210" y1="138" x2="210" y2="165" stroke="#4ecca3" stroke-width="0.8"/>
+<text x="210" y="175" class="ans">plasmid (B)</text>
+<text x="210" y="188" style="fill:#4ecca3;font-size:9px;font-family:serif;text-anchor:middle;font-style:italic">← used in genetic modification</text>
+<line x1="330" y1="45" x2="350" y2="38" stroke="#c8c5be" stroke-width="0.8"/>
+<text x="352" y="36" style="fill:#c8c5be;font-size:10px;font-family:serif">flagellum</text>
+</svg>`,
+    diagCaption: "Bacterial cell — structure B is the plasmid, the key tool in genetic modification",
     opts: ["A","B","C","D"],
     ans: "B",
     exp: "Plasmids (small circular DNA molecules found in bacteria) are the key tools in genetic modification. Scientists can cut and insert a desired gene into a plasmid (using restriction enzymes and ligase), then introduce the plasmid into bacterial cells, which replicate and express the gene — e.g. producing insulin. Structure B = plasmid."
@@ -956,6 +1485,12 @@ function buildQuiz() {
 
     const qTextFormatted = q.q.replace(/\n/g, '<br>');
 
+    let diagHTML = '';
+    if (q.diagram) {
+      const cap = q.diagCaption ? `<div class="diagram-caption">${q.diagCaption}</div>` : '';
+      diagHTML = `<div class="diagram-wrap">${q.diagram}</div>${cap}`;
+    }
+
     let optsHTML = '';
     q.opts.forEach((opt, oi) => {
       const letter = String.fromCharCode(65 + oi);
@@ -969,7 +1504,9 @@ function buildQuiz() {
 
     block.innerHTML = `
       <div class="q-number">Question ${q.n} of 40</div>
-      <div class="q-text">${qTextFormatted}${tableHTML}</div>
+      <div class="q-text">${qTextFormatted}</div>
+      ${diagHTML}
+      ${tableHTML ? `<div style="overflow-x:auto;margin:0 0 20px">${tableHTML}</div>` : ''}
       <div class="options">${optsHTML}</div>
       <div class="explanation" id="q${qi}-exp"></div>
     `;
