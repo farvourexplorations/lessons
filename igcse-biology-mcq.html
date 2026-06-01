@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cambridge IGCSE Biology — Paper 2 Revision</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #181c27;
+    --surface2: #1e2335;
+    --accent: #4ecca3;
+    --accent2: #e8c547;
+    --text: #e8e6df;
+    --muted: #7a8199;
+    --correct: #4ecca3;
+    --wrong: #e05c5c;
+    --border: rgba(255,255,255,0.07);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 300;
+    min-height: 100vh;
+    line-height: 1.7;
+  }
+
+  /* Subtle grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(78,204,163,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(78,204,163,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  header {
+    padding: 60px 0 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+
+  .exam-tag {
+    display: inline-block;
+    font-family: 'Source Serif 4', serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 4px 12px;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 900;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    font-size: 15px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .meta-row {
+    display: flex;
+    gap: 32px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .meta-item strong {
+    color: var(--accent2);
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  /* Progress bar */
+  .progress-bar-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  #progress-count { color: var(--accent); font-weight: 600; }
+
+  .progress-track {
+    height: 3px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* Questions */
+  .question-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 32px;
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
+    position: relative;
+  }
+
+  .question-block:hover { border-color: rgba(78,204,163,0.2); }
+
+  .question-block.answered { border-color: rgba(78,204,163,0.15); }
+
+  .q-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .q-text {
+    font-size: 16px;
+    color: var(--text);
+    margin-bottom: 24px;
+    line-height: 1.65;
+  }
+
+  .q-text .note {
+    font-style: italic;
+    color: var(--muted);
+    font-size: 14px;
+    display: block;
+    margin-top: 6px;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: var(--surface2);
+    font-size: 15px;
+    line-height: 1.55;
+    user-select: none;
+  }
+
+  .option:hover {
+    border-color: rgba(78,204,163,0.4);
+    background: rgba(78,204,163,0.04);
+  }
+
+  .option.selected {
+    border-color: var(--accent);
+    background: rgba(78,204,163,0.08);
+  }
+
+  .option-letter {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    transition: all 0.15s;
+    margin-top: 1px;
+  }
+
+  .option.selected .option-letter {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(78,204,163,0.15);
+  }
+
+  /* Results state */
+  .option.correct {
+    border-color: var(--correct) !important;
+    background: rgba(78,204,163,0.1) !important;
+  }
+
+  .option.wrong {
+    border-color: var(--wrong) !important;
+    background: rgba(224,92,92,0.08) !important;
+  }
+
+  .option.correct .option-letter {
+    border-color: var(--correct);
+    color: var(--correct);
+    background: rgba(78,204,163,0.2);
+  }
+
+  .option.wrong .option-letter {
+    border-color: var(--wrong);
+    color: var(--wrong);
+    background: rgba(224,92,92,0.15);
+  }
+
+  .option.show-correct {
+    border-color: var(--correct) !important;
+    background: rgba(78,204,163,0.05) !important;
+  }
+
+  .option.show-correct .option-letter {
+    border-color: var(--correct);
+    color: var(--correct);
+  }
+
+  .result-icon {
+    display: none;
+    font-size: 16px;
+    margin-left: auto;
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  .explanation {
+    display: none;
+    margin-top: 20px;
+    padding: 16px 18px;
+    background: rgba(232,197,71,0.06);
+    border-left: 3px solid var(--accent2);
+    font-size: 14px;
+    color: #c9c5b8;
+    line-height: 1.65;
+    border-radius: 0 2px 2px 0;
+  }
+
+  .explanation strong { color: var(--accent2); }
+
+  .explanation.visible { display: block; }
+
+  /* Submit / Results section */
+  .submit-area {
+    margin-top: 48px;
+    text-align: center;
+  }
+
+  .btn-submit {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--accent);
+    border: none;
+    padding: 18px 56px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+
+  .btn-submit:hover {
+    background: #5fe0b5;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 32px rgba(78,204,163,0.25);
+  }
+
+  .btn-submit:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .unanswered-note {
+    font-size: 13px;
+    color: var(--wrong);
+    margin-top: 12px;
+    font-style: italic;
+    display: none;
+  }
+
+  /* Score panel */
+  #score-panel {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 48px 40px;
+    text-align: center;
+    margin-bottom: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #score-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
+  }
+
+  .score-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .score-big {
+    font-family: 'Playfair Display', serif;
+    font-size: 72px;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .score-max { font-size: 32px; color: var(--muted); }
+
+  .score-percent {
+    font-size: 20px;
+    color: var(--accent2);
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  .score-grade {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 24px;
+  }
+
+  .score-bar-wrap {
+    max-width: 400px;
+    margin: 0 auto 24px;
+    height: 8px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .score-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 4px;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    width: 0;
+  }
+
+  .btn-retry {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: transparent;
+    border: 1px solid var(--accent);
+    padding: 12px 32px;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: all 0.2s;
+  }
+
+  .btn-retry:hover { background: rgba(78,204,163,0.1); }
+
+  /* Disabled after submit */
+  .option.locked { cursor: default; pointer-events: none; }
+
+  /* Table support for Q3 */
+  .q-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 12px 0 8px;
+    color: var(--text);
+  }
+
+  .q-table th {
+    border: 1px solid var(--muted);
+    padding: 6px 12px;
+    text-align: center;
+    font-weight: 600;
+    color: var(--accent2);
+    background: var(--surface2);
+    font-family: 'Source Serif 4', serif;
+  }
+
+  .q-table td {
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 6px 12px;
+    text-align: center;
+  }
+
+  .q-table tr:nth-child(odd) td { background: rgba(255,255,255,0.02); }
+
+  .diagram-wrap {
+    margin: 16px 0 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: auto;
+  }
+
+  .diagram-wrap svg {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .diagram-caption {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 10px;
+    font-style: italic;
+    letter-spacing: 0.04em;
+  }
+
+  @media (max-width: 600px) {
+    .question-block { padding: 22px 18px; }
+    header { padding: 40px 0 28px; }
+    .score-big { font-size: 52px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="exam-tag">Cambridge IGCSE · Biology 0610/22</div>
+    <h1>Paper 2 <span>Multiple Choice</span><br>Extended</h1>
+    <p class="subtitle">February / March 2025 — Revision Edition</p>
+    <div class="meta-row">
+      <div class="meta-item"><strong>40</strong> Questions</div>
+      <div class="meta-item"><strong>40</strong> Marks</div>
+      <div class="meta-item"><strong>45</strong> Minutes (suggested)</div>
+    </div>
+  </header>
+
+  <div id="score-panel">
+    <div class="score-title">Your Result</div>
+    <div class="score-big"><span id="score-num">0</span><span class="score-max">/40</span></div>
+    <div class="score-percent" id="score-pct"></div>
+    <div class="score-grade" id="score-grade"></div>
+    <div class="score-bar-wrap"><div class="score-bar-fill" id="score-bar"></div></div>
+    <p style="font-size:14px;color:var(--muted);font-style:italic;">Scroll down to review each question with explanations.</p>
+    <button class="btn-retry" onclick="location.reload()">↺ Start Again</button>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-info">
+      <span>Progress</span>
+      <span><span id="progress-count">0</span> / 40 answered</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+
+  <div id="quiz"></div>
+
+  <div class="submit-area">
+    <button class="btn-submit" id="btn-submit" onclick="submitExam()">Submit Answers</button>
+    <p class="unanswered-note" id="unanswered-note"></p>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    n: 1,
+    q: "The relationships of four species of bacteria, P, Q, R and S, were compared.\n• Species P and Q have a more recent common ancestor than either species has with species R.\n• Species S developed recently from species P.\nWhich species has the least similar base sequences in their DNA compared to the other three species of bacteria?",
+    opts: ["P","Q","R","S"],
+    ans: "C",
+    exp: "Species R shares the most distant common ancestor with the others — P, Q, and S are all more closely related to each other. Because R diverged earliest, its DNA base sequences will have had the longest time to accumulate differences, making it least similar to the other three."
+  },
+  {
+    n: 2,
+    q: "The diagram shows an arthropod with pedipalps and legs. To which group does it belong?",
+    opts: ["Arachnids","Crustaceans","Insects","Myriapods"],
+    ans: "A",
+    exp: "Pedipalps are a defining feature of arachnids (e.g. spiders, scorpions). Insects have 3 pairs of legs and antennae; crustaceans typically have more varied appendages; myriapods (e.g. centipedes) have many leg-bearing segments but no pedipalps."
+  },
+  {
+    n: 3,
+    q: "Which structures are found in both plant cells and bacterial cells?",
+    table: {
+      headers: ["","cell membrane","cell wall","plasmid","ribosomes"],
+      rows: [
+        ["A","yes","yes","yes","no"],
+        ["B","no","yes","yes","yes"],
+        ["C","yes","no","yes","yes"],
+        ["D","yes","yes","no","yes"]
+      ]
+    },
+    opts: ["A","B","C","D"],
+    ans: "D",
+    exp: "Both plant cells and bacterial cells have a cell membrane, a cell wall, and ribosomes. Plasmids are found in bacteria but are NOT a normal feature of plant cells. Therefore option D (cell membrane ✓, cell wall ✓, plasmid ✗, ribosomes ✓) is correct."
+  },
+  {
+    n: 4,
+    q: "A cell is 65 μm across. What is this measurement in mm?",
+    opts: ["0.00065 mm","0.0065 mm","0.065 mm","0.65 mm"],
+    ans: "C",
+    exp: "There are 1000 μm in 1 mm. So 65 μm ÷ 1000 = 0.065 mm. Check: 0.065 × 1000 = 65 μm. ✓"
+  },
+  {
+    n: 5,
+    q: "The diagram shows four mesophyll cells W, X, Y and Z. Water moves through these cells. Which row shows the direction of movement and the correct water potentials?",
+    table: {
+      headers: ["","Direction","W (kPa)","X (kPa)","Y (kPa)","Z (kPa)"],
+      rows: [
+        ["A","W→Z","–600","–450","–350","–250"],
+        ["B","W→Z","–350","–400","–450","–600"],
+        ["C","W→Z","–400","–450","–500","–550"],
+        ["D","W→Z","–200","–300","–350","–450"]
+      ]
+    },
+    opts: ["A","B","C","D"],
+    ans: "B",
+    exp: "Water moves by osmosis from a region of higher water potential (less negative) to lower water potential (more negative). In option B, water potential decreases from –350 → –600 as you go from W to Z, so water moves W → Z. Option A has water moving from most negative to least negative (wrong direction). Options C and D show gradients, but the arrow in the question goes W→Z and option B is the only one where W has the highest (least negative) water potential."
+  },
+  {
+    n: 6,
+    q: "Three processes are listed:\n1. Molecules or ions are moved across membranes.\n2. Molecules or ions are moved by protein carriers.\n3. Ions are taken up by root hairs.\nWhich processes can involve active transport?",
+    opts: ["1, 2 and 3","1 and 2 only","1 and 3 only","2 and 3 only"],
+    ans: "A",
+    exp: "Active transport (1) moves substances across membranes (2) using protein carrier molecules, and (3) is a classic real-world example — mineral ions absorbed by root hair cells against a concentration gradient using ATP. All three statements are true of active transport."
+  },
+  {
+    n: 7,
+    q: "A section of a chromosome contains 4500 bases. There are 1450 G bases. How many A bases are there?",
+    opts: ["800","1450","1600","2900"],
+    ans: "A",
+    exp: "In double-stranded DNA, bases pair: A–T and G–C. If G = 1450, then C = 1450. Total G+C = 2900. Remaining bases = 4500 – 2900 = 1600, split equally between A and T. So A = 1600 ÷ 2 = 800."
+  },
+  {
+    n: 8,
+    q: "Which chemical element is found in proteins but not in carbohydrates?",
+    opts: ["Carbon","Hydrogen","Nitrogen","Oxygen"],
+    ans: "C",
+    exp: "Carbohydrates contain only carbon (C), hydrogen (H), and oxygen (O). Proteins also contain nitrogen (N) — and often sulfur (S) — as part of their amino acid structure. Nitrogen is the key distinguishing element."
+  },
+  {
+    n: 9,
+    q: "Which statement describes enzymes?",
+    opts: [
+      "Enzymes are carbohydrates.",
+      "Enzymes are involved in metabolic reactions.",
+      "Enzymes decrease the rate of reaction.",
+      "Enzymes have the same shape of active site as their substrate."
+    ],
+    ans: "B",
+    exp: "Enzymes are biological catalysts (proteins, not carbohydrates) that speed up (not decrease) metabolic reactions. The active site is complementary in shape to the substrate — not identical to it. Option B is the only fully correct statement."
+  },
+  {
+    n: 10,
+    q: "The graphs show how the rate of photosynthesis and the rate of respiration in a plant changed over a 24-hour period. Which graph shows the correct rates?",
+    opts: ["A","B","C","D"],
+    ans: "A",
+    exp: "Photosynthesis only occurs in light (roughly 6:00–18:00), so the photosynthesis line should rise during the day and fall to zero at night. Respiration occurs continuously at a roughly constant rate, day and night. Graph A correctly shows photosynthesis peaking during daylight and respiration as a constant lower line."
+  },
+  {
+    n: 11,
+    q: "The photomicrograph shows part of the lower surface of a leaf. Structure X is one of the oval/bean-shaped cells visible. What is structure X?",
+    opts: ["Guard cell","Palisade mesophyll cell","Spongy mesophyll cell","Xylem vessel"],
+    ans: "A",
+    exp: "The lower epidermis contains stomata, each flanked by two guard cells. Guard cells are characteristically bean-shaped or kidney-shaped and contain chloroplasts. They are visible on the leaf underside exactly as shown in the micrograph. Palisade and spongy mesophyll cells are internal; xylem vessels are tubular."
+  },
+  {
+    n: 12,
+    q: "A student is told their diet is not balanced and they may be at risk of developing scurvy. What should the student do to reduce their risk?",
+    opts: [
+      "Drink more milk which will provide more calcium.",
+      "Drink more milk which will provide more vitamin C.",
+      "Eat more citrus fruits which will provide more calcium.",
+      "Eat more citrus fruits which will provide more vitamin C."
+    ],
+    ans: "D",
+    exp: "Scurvy is caused by deficiency of vitamin C (ascorbic acid). Citrus fruits (oranges, lemons, limes) are a rich source of vitamin C. Milk is a source of calcium, not vitamin C. So the correct advice is to eat citrus fruits for vitamin C."
+  },
+  {
+    n: 13,
+    q: "The diagram shows the four types of human tooth: 1 incisor, 2 canine, 3 premolar, 4 molar. Which teeth are used for grinding food?",
+    opts: ["1 and 2","1 and 4","2 and 3","3 and 4"],
+    ans: "D",
+    exp: "Premolars (3) and molars (4) have broad, flat surfaces with ridges suited for grinding and crushing food. Incisors (1) are chisel-shaped for biting/cutting; canines (2) are pointed for tearing. Grinding = premolars and molars."
+  },
+  {
+    n: 14,
+    q: "Which substance causes the change in pH when food enters the small intestine?",
+    opts: ["Amylase","Bile","Gastric juice","Trypsin"],
+    ans: "B",
+    exp: "Food leaving the stomach is acidic (from gastric juice/HCl). Bile, produced by the liver and stored in the gall bladder, is alkaline and neutralises the acidic chyme as it enters the small intestine, raising the pH. Amylase and trypsin are enzymes that catalyse digestion; they don't neutralise pH."
+  },
+  {
+    n: 15,
+    q: "Which conditions cause the highest rate of transpiration?",
+    opts: [
+      "High temperature, high wind speed and high humidity",
+      "High temperature, high wind speed and low humidity",
+      "Low temperature, low wind speed and low humidity",
+      "Low temperature, low wind speed and high humidity"
+    ],
+    ans: "B",
+    exp: "Transpiration is maximised when the water potential gradient from leaf to air is steepest. High temperature increases evaporation from mesophyll cells; low humidity means the air holds less water vapour (large concentration gradient); high wind speed removes water vapour from around the leaf, maintaining the gradient. Together these give maximum transpiration."
+  },
+  {
+    n: 16,
+    q: "The diagram shows a heart defect where oxygenated and deoxygenated blood mix between the left and right sides of the heart. Which statement explains why this heart defect might cause the baby to have poor growth?",
+    opts: [
+      "Blood flows to the lungs at high pressure increasing rate of gas exchange.",
+      "Blood flows to the lungs at low pressure decreasing rate of gas exchange.",
+      "Mixing of blood results in less oxygen available for respiration.",
+      "Mixing of blood results in more glucose available for respiration."
+    ],
+    ans: "C",
+    exp: "A hole between the left and right sides of the heart allows oxygenated blood to mix with deoxygenated blood. As a result, blood pumped around the body carries less oxygen per unit volume. Less oxygen means less aerobic respiration, less ATP produced, and therefore less energy available for growth."
+  },
+  {
+    n: 17,
+    q: "The diagram shows the effect of vaccination on the human body. Three components are represented by numbers: (1) leads to immune response, (2) can provide passive immunity to others, (3) provide long-term immunity. Which components are memory cells?",
+    opts: ["1 only","2 and 3","2 only","3 only"],
+    ans: "D",
+    exp: "Memory cells are the B and T lymphocytes that persist in the body after the initial immune response. They provide long-term (active) immunity — component 3. Component 2 (passive immunity to others, e.g. via breast milk antibodies) does not describe memory cells. Memory cells = long-term immunity = component 3 only."
+  },
+  {
+    n: 18,
+    q: "What helps to keep the trachea open during breathing?",
+    opts: ["Cartilage","Cilia","External intercostal muscles","Larynx"],
+    ans: "A",
+    exp: "The trachea is held open by C-shaped rings of cartilage (a firm but flexible connective tissue). This prevents the trachea from collapsing when air pressure drops during inhalation. Cilia line the trachea and move mucus, but do not hold it open."
+  },
+  {
+    n: 19,
+    q: "Yeast can respire aerobically and anaerobically. For each molecule of glucose used in yeast, how many more molecules of carbon dioxide are produced by aerobic respiration compared with anaerobic respiration?",
+    opts: ["1 more","2 more","4 more","6 more"],
+    ans: "C",
+    exp: "Aerobic: C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O (6 CO₂ per glucose)\nAnaerobic (yeast): C₆H₁₂O₆ → 2C₂H₅OH + 2CO₂ (2 CO₂ per glucose)\nDifference = 6 – 2 = 4 more CO₂ molecules produced aerobically."
+  },
+  {
+    n: 20,
+    q: "In a healthy human, in which blood vessel would you find the lowest concentration of urea?",
+    opts: ["Hepatic artery","Hepatic vein","Renal artery","Renal vein"],
+    ans: "D",
+    exp: "Urea is produced in the liver and excreted by the kidneys. The renal artery carries blood to the kidneys at normal urea concentration; the kidneys filter out urea into urine. The renal vein therefore carries blood that has been cleaned of urea — it has the lowest urea concentration of all these vessels."
+  },
+  {
+    n: 21,
+    q: "A specific eye condition can cause permanent contraction of the ciliary muscles. Which row is correct for an eye with this condition compared to an eye without this condition?",
+    table: {
+      headers: ["","Suspensory ligaments","Refraction of light rays onto the retina"],
+      rows: [
+        ["A","slack","less"],
+        ["B","slack","more"],
+        ["C","taut","less"],
+        ["D","taut","more"]
+      ]
+    },
+    opts: ["A","B","C","D"],
+    ans: "B",
+    exp: "When ciliary muscles contract, the suspensory ligaments go slack (lose tension), allowing the lens to become fatter/more convex due to its elasticity. A fatter lens refracts (bends) light more strongly. So: contracted ciliary muscles → slack suspensory ligaments → more refraction. Answer = B."
+  },
+  {
+    n: 22,
+    q: "The liver and the pancreas work together to control blood glucose concentration. Which statement is correct?",
+    opts: [
+      "The liver converts the small molecule glucose into the large molecule glucagon.",
+      "The liver releases the hormone insulin when blood glucose concentration is too high.",
+      "The pancreas does not respond to an increase in blood glucose concentration.",
+      "The pancreas responds to a fall in blood glucose concentration by increasing release of glucagon."
+    ],
+    ans: "D",
+    exp: "When blood glucose falls, the pancreas (α-cells of islets of Langerhans) releases glucagon. Glucagon stimulates the liver to convert glycogen back to glucose (glycogenolysis). The liver does NOT release insulin (that's the pancreas). Glucagon is a protein hormone, not the same as glycogen. Option D is correct."
+  },
+  {
+    n: 23,
+    q: "In the dark, plant shoots grow upwards and roots grow downwards. What causes these responses?",
+    table: {
+      headers: ["","Gravitropism","Phototropism"],
+      rows: [
+        ["A","no","no"],
+        ["B","no","yes"],
+        ["C","yes","no"],
+        ["D","yes","yes"]
+      ]
+    },
+    opts: ["A","B","C","D"],
+    ans: "C",
+    exp: "These responses happen in the dark, so phototropism (response to light) cannot be involved. The responses are due to gravitropism (also called geotropism) — the response of plant organs to gravity. Roots are positively gravitropic (grow down); shoots are negatively gravitropic (grow up). Answer = C: gravitropism yes, phototropism no."
+  },
+  {
+    n: 24,
+    q: "What is the reason why antibiotics should be used only when essential?",
+    opts: [
+      "It increases the artificial selection of antibiotic resistant bacteria.",
+      "It increases the natural selection of antibiotic resistant bacteria.",
+      "It reduces the artificial selection of antibiotic resistant bacteria.",
+      "It reduces the natural selection of antibiotic resistant bacteria."
+    ],
+    ans: "D", // Wait — the mark scheme says D. Let me re-examine. "Why should antibiotics be used only when essential?" — overuse INCREASES natural selection. The question asks WHY they should be used only when essential — because overuse increases natural selection of resistance. Hmm — the mark scheme answer is D: "It reduces the natural selection of antibiotic resistant bacteria." So using antibiotics only when essential REDUCES natural selection of resistant strains. That IS the reason. Answer D.
+    exp: "Overuse of antibiotics creates strong selective pressure: resistant bacteria survive and reproduce (natural selection). By using antibiotics only when essential, we reduce this selection pressure, thereby slowing the evolution and spread of antibiotic-resistant strains. This is natural selection (random mutations, survival of the fittest) — not artificial selection (deliberate human breeding)."
+  },
+  {
+    n: 25,
+    q: "Which row describes self-pollination?",
+    table: {
+      headers: ["","Pollen from anther → stigma of different flower on same plant","Pollen from anther → stigma of flower on different plant (same species)","Pollen from anther → stigma of same flower"],
+      rows: [
+        ["A","yes","yes","no"],
+        ["B","yes","no","yes"],
+        ["C","no","yes","no"],
+        ["D","no","no","yes"]
+      ]
+    },
+    opts: ["A","B","C","D"],
+    ans: "B",
+    exp: "Self-pollination includes transfer of pollen within the same flower AND between different flowers on the same plant — both count as 'self' since the genetic material is from the same individual. Cross-pollination (to a different plant) is NOT self-pollination. Option B correctly marks both intra-plant transfers as yes and cross-plant transfer as no."
+  },
+  {
+    n: 26,
+    q: "The list shows terms used in describing sexual reproduction: 1 male gamete, 2 female gamete, 3 ovule, 4 ovary, 5 filament, 6 fertilisation, 7 haploid. Which terms are used ONLY when describing sexual reproduction in plants?",
+    opts: ["1 and 7","2 and 4","2 and 6","3 and 5"],
+    ans: "D",
+    exp: "Ovule (3) and filament (5) are plant-specific structures — the ovule develops into a seed in flowering plants; the filament is the stalk supporting the anther. Terms like male gamete, female gamete, fertilisation, and haploid apply to both animal and plant reproduction. Ovary (4) applies to animals too. So only ovule and filament are plant-only."
+  },
+  {
+    n: 27,
+    q: "Which statement correctly describes the effect of a hormone in a human menstrual cycle that lasts for 28 days?",
+    opts: [
+      "FSH causes maturation of an egg up to day 21.",
+      "LH stimulates the release of an egg on day 14.",
+      "Oestrogen maintains the uterus lining between days 14 and 28.",
+      "Progesterone causes the repair and thickening of the uterus lining between days 4 to 14."
+    ],
+    ans: "B",
+    exp: "In a 28-day cycle, ovulation occurs around day 14 triggered by a surge in LH (luteinising hormone). FSH stimulates follicle development in the first half of the cycle but not up to day 21. Oestrogen causes repair/thickening of the uterus lining (days 4–14); progesterone maintains it after ovulation (days 14–28). Option B is the accurate statement."
+  },
+  {
+    n: 28,
+    q: "What is the main hormone responsible for the development of male secondary sexual characteristics?",
+    opts: ["Adrenaline","Insulin","Oestrogen","Testosterone"],
+    ans: "D",
+    exp: "Testosterone, produced by the testes, is responsible for male secondary sexual characteristics such as deepening voice, facial hair, muscle development, and increased height during puberty. Oestrogen drives female secondary characteristics; adrenaline and insulin have metabolic/stress roles."
+  },
+  {
+    n: 29,
+    q: "Which term is defined as a length of DNA that codes for a protein?",
+    opts: ["Amino acid","Chromosome","Gene","Mutation"],
+    ans: "C",
+    exp: "A gene is defined as a specific sequence (length) of DNA bases that codes for the production of a particular protein (or polypeptide). An amino acid is a monomer of protein. A chromosome is a long DNA molecule with associated proteins. A mutation is a change in the base sequence of DNA."
+  },
+  {
+    n: 30,
+    q: "Which statement about sex chromosomes is correct?",
+    opts: [
+      "Men and women can inherit characteristics controlled by genes on the X chromosome.",
+      "Men and women can inherit characteristics controlled by genes on the Y chromosome.",
+      "Only men can inherit characteristics controlled by genes on the X chromosome.",
+      "Only women can inherit characteristics controlled by genes on the Y chromosome."
+    ],
+    ans: "A",
+    exp: "Both males (XY) and females (XX) have at least one X chromosome, so both can inherit and express genes carried on the X chromosome (e.g. colour blindness). Only males have a Y chromosome, so females cannot inherit Y-linked genes. Options C and D are false. Option A is correct."
+  },
+  {
+    n: 31,
+    q: "The graph shows how the mass of DNA changes during a mitotic cell division (points A, B, C, D marked on the time axis). Where on the graph are two cells formed?",
+    opts: ["A","B","C","D"],
+    ans: "D",
+    exp: "During mitosis, DNA replication doubles the DNA content (the rise in the graph). Two daughter cells are formed when cytokinesis is complete — this is when the DNA mass per cell drops back to the original amount (halves), as the DNA is divided equally between two new cells. This occurs at point D."
+  },
+  {
+    n: 32,
+    q: "A man with blood group A (genotype Iᴬ Iᵒ) has a child with a woman who has blood group B (genotype Iᴮ Iᵒ). What is the probability of the child having blood group O?",
+    opts: ["0.00","0.25","0.50","1.00"],
+    ans: "B",
+    exp: "Cross: Iᴬ Iᵒ × Iᴮ Iᵒ\nOffspring possibilities: Iᴬ Iᴮ (AB), Iᴬ Iᵒ (A), Iᴮ Iᵒ (B), Iᵒ Iᵒ (O)\nProbability of Iᵒ Iᵒ = 1 in 4 = 0.25"
+  },
+  {
+    n: 33,
+    q: "What are sources of genetic variation in populations?",
+    opts: [
+      "Meiosis, mutation, random mating",
+      "Meiosis, random mating, asexual reproduction",
+      "Mitosis, mutation, random fertilisation",
+      "Mitosis, random fertilisation, asexual reproduction"
+    ],
+    ans: "A",
+    exp: "Genetic variation in sexually reproducing populations arises from: (1) meiosis — crossing over and independent assortment create new allele combinations; (2) mutation — new alleles are introduced; (3) random mating and random fertilisation — different allele combinations unite. Mitosis produces genetically identical cells; asexual reproduction also produces clones — neither generates variation."
+  },
+  {
+    n: 34,
+    q: "The food chain: lettuce → snails → duck → human. Where did the energy in the lettuce come from?",
+    opts: ["Snails","Soil","The Sun","Water"],
+    ans: "C",
+    exp: "Lettuce is a producer (autotroph). It captures light energy from the Sun through photosynthesis and converts it into chemical energy stored in glucose. All energy in a food chain ultimately originates from the Sun (or, in some ecosystems, chemosynthesis)."
+  },
+  {
+    n: 35,
+    q: "Which processes increase the concentration of carbon dioxide in the atmosphere?\n1. Increased deforestation\n2. Increased tree planting\n3. Decreased fossil fuel combustion\n4. Increased fossil fuel combustion",
+    opts: ["1 and 3","1 and 4","2 and 3","2 and 4"],
+    ans: "B",
+    exp: "Increased deforestation (1) increases CO₂ because trees that absorbed CO₂ during photosynthesis release it when they are burned or decompose, and fewer trees remain to absorb CO₂. Increased fossil fuel combustion (4) directly releases CO₂ into the atmosphere. Tree planting (2) removes CO₂; decreased combustion (3) reduces emissions."
+  },
+  {
+    n: 36,
+    q: "Which organisms can be sources of energy for decomposers?",
+    table: {
+      headers: ["","Producers","Herbivores","Carnivores"],
+      rows: [
+        ["A","yes","yes","yes"],
+        ["B","yes","yes","no"],
+        ["C","yes","no","yes"],
+        ["D","no","yes","yes"]
+      ]
+    },
+    opts: ["A","B","C","D"],
+    ans: "A",
+    exp: "Decomposers (bacteria and fungi) break down dead organic matter and waste from any organism. Producers (plants), herbivores, and carnivores all die and produce waste — all provide energy to decomposers. There is no category of organism excluded from this. Answer = A."
+  },
+  {
+    n: 37,
+    q: "A coral reef contains species such as stony corals, sponges, seahorses and whale sharks. These species interact with each other and are affected by the temperature, salt concentration and oxygen concentration of the water. Using all the information given, what is being described?",
+    opts: ["Community","Ecosystem","Food web","Population"],
+    ans: "B",
+    exp: "An ecosystem includes both the community of living organisms (biotic factors: corals, sponges, seahorses, sharks) AND the abiotic (non-living) environment (temperature, salinity, oxygen levels). A community = only the living organisms together. A population = one species. A food web = feeding relationships only. The question specifies both organisms AND abiotic factors = ecosystem."
+  },
+  {
+    n: 38,
+    q: "What can cause an increase in the size of a rabbit population?",
+    opts: [
+      "An increase in a disease that affects rabbits",
+      "An increase in available food for the rabbits",
+      "An increase in pollution in the habitat of the rabbits",
+      "An increase in predation of rabbits"
+    ],
+    ans: "B",
+    exp: "More available food means rabbits have better nutrition, higher survival rates, and can reproduce more successfully — the birth rate increases and/or death rate decreases, growing the population. Disease, pollution, and increased predation would all reduce the population."
+  },
+  {
+    n: 39,
+    q: "How does eutrophication lead to the death of fish?",
+    opts: [
+      "A sudden increase in the number of bacteria increases the spread of disease.",
+      "Algae respire instead of photosynthesise.",
+      "Decomposer bacteria lower the oxygen concentration in the water.",
+      "Fertilisers reduce the availability of nitrates in the water."
+    ],
+    ans: "C",
+    exp: "Eutrophication sequence: fertiliser run-off → algal bloom → algae block light → aquatic plants die → decomposer bacteria multiply to break down dead matter → bacteria use up oxygen in aerobic respiration → dissolved O₂ drops → fish (and other aerobic organisms) suffocate and die. The key step is decomposer bacteria depleting oxygen."
+  },
+  {
+    n: 40,
+    q: "The diagram shows a bacterial cell with four structures labelled A, B, C, and D. Structure B is the plasmid. Which cell structure makes bacteria useful in genetic modification?",
+    opts: ["A","B","C","D"],
+    ans: "B",
+    exp: "Plasmids (small circular DNA molecules found in bacteria) are the key tools in genetic modification. Scientists can cut and insert a desired gene into a plasmid (using restriction enzymes and ligase), then introduce the plasmid into bacterial cells, which replicate and express the gene — e.g. producing insulin. Structure B = plasmid."
+  }
+];
+
+let answered = {};
+let submitted = false;
+
+function letterToIndex(letter) {
+  return letter.charCodeAt(0) - 65; // A=0, B=1, C=2, D=3
+}
+
+function buildQuiz() {
+  const container = document.getElementById('quiz');
+  questions.forEach((q, qi) => {
+    const block = document.createElement('div');
+    block.className = 'question-block';
+    block.id = `q-${qi}`;
+
+    let tableHTML = '';
+    if (q.table) {
+      tableHTML = '<table class="q-table"><thead><tr>';
+      q.table.headers.forEach(h => { tableHTML += `<th>${h}</th>`; });
+      tableHTML += '</tr></thead><tbody>';
+      q.table.rows.forEach(row => {
+        tableHTML += '<tr>';
+        row.forEach((cell, ci) => {
+          tableHTML += ci === 0 ? `<td><strong style="color:var(--accent2)">${cell}</strong></td>` : `<td>${cell}</td>`;
+        });
+        tableHTML += '</tr>';
+      });
+      tableHTML += '</tbody></table>';
+    }
+
+    const qTextFormatted = q.q.replace(/\n/g, '<br>');
+
+    let optsHTML = '';
+    q.opts.forEach((opt, oi) => {
+      const letter = String.fromCharCode(65 + oi);
+      optsHTML += `
+        <div class="option" id="q${qi}-opt${oi}" onclick="selectOption(${qi}, ${oi})">
+          <div class="option-letter">${letter}</div>
+          <div style="flex:1">${opt}</div>
+          <div class="result-icon" id="q${qi}-icon${oi}"></div>
+        </div>`;
+    });
+
+    block.innerHTML = `
+      <div class="q-number">Question ${q.n} of 40</div>
+      <div class="q-text">${qTextFormatted}${tableHTML}</div>
+      <div class="options">${optsHTML}</div>
+      <div class="explanation" id="q${qi}-exp"></div>
+    `;
+    container.appendChild(block);
+  });
+}
+
+function selectOption(qi, oi) {
+  if (submitted) return;
+  const prev = answered[qi];
+  if (prev !== undefined) {
+    document.getElementById(`q${qi}-opt${prev}`).classList.remove('selected');
+  }
+  answered[qi] = oi;
+  document.getElementById(`q${qi}-opt${oi}`).classList.add('selected');
+  document.getElementById(`q-${qi}`).classList.add('answered');
+  updateProgress();
+}
+
+function updateProgress() {
+  const count = Object.keys(answered).length;
+  document.getElementById('progress-count').textContent = count;
+  document.getElementById('progress-fill').style.width = (count / 40 * 100) + '%';
+}
+
+function submitExam() {
+  const unanswered = questions.length - Object.keys(answered).length;
+  if (unanswered > 0) {
+    const note = document.getElementById('unanswered-note');
+    note.style.display = 'block';
+    note.textContent = `You have ${unanswered} unanswered question${unanswered > 1 ? 's' : ''}. Submit anyway or go back and answer them.`;
+    if (!document.getElementById('btn-submit-confirm')) {
+      const btn2 = document.createElement('button');
+      btn2.className = 'btn-submit';
+      btn2.id = 'btn-submit-confirm';
+      btn2.style.marginTop = '14px';
+      btn2.style.background = 'var(--accent2)';
+      btn2.textContent = 'Submit Anyway';
+      btn2.onclick = doSubmit;
+      document.querySelector('.submit-area').appendChild(btn2);
+    }
+    return;
+  }
+  doSubmit();
+}
+
+function doSubmit() {
+  submitted = true;
+  document.getElementById('btn-submit').disabled = true;
+  const conf = document.getElementById('btn-submit-confirm');
+  if (conf) conf.disabled = true;
+
+  let score = 0;
+  questions.forEach((q, qi) => {
+    const correctIdx = letterToIndex(q.ans);
+    const userIdx = answered[qi];
+
+    // Lock all options
+    q.opts.forEach((_, oi) => {
+      document.getElementById(`q${qi}-opt${oi}`).classList.add('locked');
+    });
+
+    // Show correct answer
+    const correctEl = document.getElementById(`q${qi}-opt${correctIdx}`);
+
+    if (userIdx !== undefined) {
+      const userEl = document.getElementById(`q${qi}-opt${userIdx}`);
+      const icon = document.getElementById(`q${qi}-icon${userIdx}`);
+      if (userIdx === correctIdx) {
+        userEl.classList.remove('selected');
+        userEl.classList.add('correct');
+        icon.style.display = 'block';
+        icon.textContent = '✓';
+        icon.style.color = 'var(--correct)';
+        score++;
+      } else {
+        userEl.classList.remove('selected');
+        userEl.classList.add('wrong');
+        icon.style.display = 'block';
+        icon.textContent = '✗';
+        icon.style.color = 'var(--wrong)';
+        correctEl.classList.add('show-correct');
+        const correctIcon = document.getElementById(`q${qi}-icon${correctIdx}`);
+        correctIcon.style.display = 'block';
+        correctIcon.textContent = '✓';
+        correctIcon.style.color = 'var(--correct)';
+      }
+    } else {
+      // Not answered — just show correct
+      correctEl.classList.add('show-correct');
+      const correctIcon = document.getElementById(`q${qi}-icon${correctIdx}`);
+      correctIcon.style.display = 'block';
+      correctIcon.textContent = '✓';
+      correctIcon.style.color = 'var(--correct)';
+    }
+
+    // Show explanation
+    const expEl = document.getElementById(`q${qi}-exp`);
+    expEl.innerHTML = `<strong>Answer: ${q.ans}</strong> — ${q.exp.replace(/\n/g,'<br>')}`;
+    expEl.classList.add('visible');
+  });
+
+  // Score panel
+  const pct = Math.round(score / 40 * 100);
+  let grade = '';
+  if (pct >= 90) grade = 'Exceptional — A*';
+  else if (pct >= 80) grade = 'Excellent — A';
+  else if (pct >= 70) grade = 'Strong — B';
+  else if (pct >= 60) grade = 'Good — C';
+  else if (pct >= 50) grade = 'Satisfactory — D';
+  else grade = 'Keep Revising — E/U';
+
+  document.getElementById('score-num').textContent = score;
+  document.getElementById('score-pct').textContent = pct + '%';
+  document.getElementById('score-grade').textContent = grade;
+
+  const panel = document.getElementById('score-panel');
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  setTimeout(() => {
+    document.getElementById('score-bar').style.width = pct + '%';
+  }, 300);
+
+  updateProgress();
+}
+
+buildQuiz();
+</script>
+</body>
+</html>
