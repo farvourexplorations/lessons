@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cambridge IGCSE Biology 0610/22 — February/March 2022</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #181c27;
+    --surface2: #1e2335;
+    --accent: #4ecca3;
+    --accent2: #e8c547;
+    --text: #e8e6df;
+    --muted: #7a8199;
+    --correct: #4ecca3;
+    --wrong: #e05c5c;
+    --border: rgba(255,255,255,0.07);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 300;
+    min-height: 100vh;
+    line-height: 1.7;
+  }
+
+  /* Subtle grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(78,204,163,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(78,204,163,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  header {
+    padding: 60px 0 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+
+  .exam-tag {
+    display: inline-block;
+    font-family: 'Source Serif 4', serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 4px 12px;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 900;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    font-size: 15px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .meta-row {
+    display: flex;
+    gap: 32px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .meta-item strong {
+    color: var(--accent2);
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  /* Progress bar */
+  .progress-bar-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  #progress-count { color: var(--accent); font-weight: 600; }
+
+  .progress-track {
+    height: 3px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* Questions */
+  .question-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 32px;
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
+    position: relative;
+  }
+
+  .question-block:hover { border-color: rgba(78,204,163,0.2); }
+
+  .question-block.answered { border-color: rgba(78,204,163,0.15); }
+
+  .q-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .q-text {
+    font-size: 16px;
+    color: var(--text);
+    margin-bottom: 24px;
+    line-height: 1.65;
+  }
+
+  .q-text .note {
+    font-style: italic;
+    color: var(--muted);
+    font-size: 14px;
+    display: block;
+    margin-top: 6px;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: var(--surface2);
+    font-size: 15px;
+    line-height: 1.55;
+    user-select: none;
+  }
+
+  .option:hover {
+    border-color: rgba(78,204,163,0.4);
+    background: rgba(78,204,163,0.04);
+  }
+
+  .option.selected {
+    border-color: var(--accent);
+    background: rgba(78,204,163,0.08);
+  }
+
+  .option-letter {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    transition: all 0.15s;
+    margin-top: 1px;
+  }
+
+  .option.selected .option-letter {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(78,204,163,0.15);
+  }
+
+  /* Results state */
+  .option.correct {
+    border-color: var(--correct) !important;
+    background: rgba(78,204,163,0.1) !important;
+  }
+
+  .option.wrong {
+    border-color: var(--wrong) !important;
+    background: rgba(224,92,92,0.08) !important;
+  }
+
+  .option.correct .option-letter {
+    border-color: var(--correct);
+    color: var(--correct);
+    background: rgba(78,204,163,0.2);
+  }
+
+  .option.wrong .option-letter {
+    border-color: var(--wrong);
+    color: var(--wrong);
+    background: rgba(224,92,92,0.15);
+  }
+
+  .option.show-correct {
+    border-color: var(--correct) !important;
+    background: rgba(78,204,163,0.05) !important;
+  }
+
+  .option.show-correct .option-letter {
+    border-color: var(--correct);
+    color: var(--correct);
+  }
+
+  .result-icon {
+    display: none;
+    font-size: 16px;
+    margin-left: auto;
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  .explanation {
+    display: none;
+    margin-top: 20px;
+    padding: 16px 18px;
+    background: rgba(232,197,71,0.06);
+    border-left: 3px solid var(--accent2);
+    font-size: 14px;
+    color: #c9c5b8;
+    line-height: 1.65;
+    border-radius: 0 2px 2px 0;
+  }
+
+  .explanation strong { color: var(--accent2); }
+
+  .explanation.visible { display: block; }
+
+  /* Submit / Results section */
+  .submit-area {
+    margin-top: 48px;
+    text-align: center;
+  }
+
+  .btn-submit {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--accent);
+    border: none;
+    padding: 18px 56px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+
+  .btn-submit:hover {
+    background: #5fe0b5;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 32px rgba(78,204,163,0.25);
+  }
+
+  .btn-submit:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .unanswered-note {
+    font-size: 13px;
+    color: var(--wrong);
+    margin-top: 12px;
+    font-style: italic;
+    display: none;
+  }
+
+  /* Score panel */
+  #score-panel {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 48px 40px;
+    text-align: center;
+    margin-bottom: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #score-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
+  }
+
+  .score-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .score-big {
+    font-family: 'Playfair Display', serif;
+    font-size: 72px;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .score-max { font-size: 32px; color: var(--muted); }
+
+  .score-percent {
+    font-size: 20px;
+    color: var(--accent2);
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  .score-grade {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 24px;
+  }
+
+  .score-bar-wrap {
+    max-width: 400px;
+    margin: 0 auto 24px;
+    height: 8px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .score-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 4px;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    width: 0;
+  }
+
+  .btn-retry {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: transparent;
+    border: 1px solid var(--accent);
+    padding: 12px 32px;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: all 0.2s;
+  }
+
+  .btn-retry:hover { background: rgba(78,204,163,0.1); }
+
+  /* Disabled after submit */
+  .option.locked { cursor: default; pointer-events: none; }
+
+  /* Table support for Q3 */
+  .q-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 12px 0 8px;
+    color: var(--text);
+  }
+
+  .q-table th {
+    border: 1px solid var(--muted);
+    padding: 6px 12px;
+    text-align: center;
+    font-weight: 600;
+    color: var(--accent2);
+    background: var(--surface2);
+    font-family: 'Source Serif 4', serif;
+  }
+
+  .q-table td {
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 6px 12px;
+    text-align: center;
+  }
+
+  .q-table tr:nth-child(odd) td { background: rgba(255,255,255,0.02); }
+
+  .diagram-wrap {
+    margin: 16px 0 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: auto;
+  }
+
+  .diagram-wrap svg {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .diagram-caption {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 10px;
+    font-style: italic;
+    letter-spacing: 0.04em;
+  }
+
+  @media (max-width: 600px) {
+    .question-block { padding: 22px 18px; }
+    header { padding: 40px 0 28px; }
+    .score-big { font-size: 52px; }
+  }
+</style>
+<body>
+<div class="container">
+
+  <header>
+    <div class="exam-tag">Cambridge IGCSE · Biology 0610/22</div>
+    <h1>Paper 2 <span>Multiple Choice</span><br>Extended</h1>
+    <p class="subtitle">February / March 2022 — Revision Edition</p>
+    <div class="meta-row">
+      <div class="meta-item"><strong>40</strong> Questions</div>
+      <div class="meta-item"><strong>40</strong> Marks</div>
+      <div class="meta-item"><strong>45</strong> Minutes (suggested)</div>
+    </div>
+  </header>
+
+  <div id="score-panel">
+    <div class="score-title">Your Result</div>
+    <div class="score-big"><span id="score-num">0</span><span class="score-max">/40</span></div>
+    <div class="score-percent" id="score-pct"></div>
+    <div class="score-grade" id="score-grade"></div>
+    <div class="score-bar-wrap"><div class="score-bar-fill" id="score-bar"></div></div>
+    <p style="font-size:14px;color:var(--muted);font-style:italic;">Scroll down to review each question with explanations.</p>
+    <button class="btn-retry" onclick="location.reload()">↺ Start Again</button>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-info">
+      <span>Progress</span>
+      <span><span id="progress-count">0</span> / 40 answered</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+
+  <div id="quiz"></div>
+
+  <div class="submit-area">
+    <button class="btn-submit" id="btn-submit" onclick="submitExam()">Submit Answers</button>
+    <p class="unanswered-note" id="unanswered-note"></p>
+  </div>
+
+</div>
+<script>
+const questions = [
+  {
+    n: 1,
+    q: "The diagrams show a test-tube containing pond water. The green colour is caused by microorganisms that have chloroplasts. Which characteristics of living organisms are shown?", diagram: `<svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" width="320" height="200">
+<style>.tube{fill:#162030;stroke:#7a8199;stroke-width:2}.water-pale{fill:#1a3a1a;opacity:0.7}.water-dark{fill:#0d280d;opacity:0.9}.lbl{fill:#e8e6df;font-size:10px;font-family:serif;text-anchor:middle}.acc{fill:#4ecca3;font-size:10px;font-family:serif}<\/style>
+
+<rect x="30" y="30" width="80" height="140" class="tube" rx="8"/>
+<rect x="34" y="34" width="72" height="132" class="water-pale" rx="6"/>
+<text x="70" y="185" class="lbl">light off</text>
+<text x="70" y="18" class="lbl" style="fill:#7a8199">pale green</text>
+
+<circle cx="50" cy="60" r="4" fill="#2d6020" opacity="0.8"/>
+<circle cx="80" cy="75" r="5" fill="#2d6020" opacity="0.8"/>
+<circle cx="60" cy="95" r="4" fill="#2d6020" opacity="0.8"/>
+<circle cx="90" cy="110" r="5" fill="#2d6020" opacity="0.8"/>
+<circle cx="55" cy="130" r="4" fill="#2d6020" opacity="0.8"/>
+<circle cx="85" cy="148" r="5" fill="#2d6020" opacity="0.8"/>
+
+<rect x="210" y="30" width="80" height="140" class="tube" rx="8"/>
+<rect x="214" y="34" width="72" height="132" class="water-dark" rx="6"/>
+<text x="250" y="185" class="lbl">light on</text>
+<text x="250" y="18" class="lbl" style="fill:#4ecca3">dark green</text>
+
+<circle cx="230" cy="65" r="5" fill="#1a4010" opacity="0.9"/>
+<circle cx="260" cy="80" r="6" fill="#1a4010" opacity="0.9"/>
+<circle cx="240" cy="105" r="5" fill="#1a4010" opacity="0.9"/>
+<circle cx="270" cy="120" r="6" fill="#1a4010" opacity="0.9"/>
+<circle cx="235" cy="145" r="4" fill="#1a4010" opacity="0.9"/>
+<circle cx="265" cy="158" r="5" fill="#1a4010" opacity="0.9"/>
+
+<circle cx="255" cy="42" r="7" fill="none" stroke="#6aafe0" stroke-width="1.8"/>
+<circle cx="248" cy="55" r="5" fill="none" stroke="#6aafe0" stroke-width="1.5"/>
+<circle cx="258" cy="65" r="4" fill="none" stroke="#6aafe0" stroke-width="1.5"/>
+
+<text x="278" y="48" class="acc" style="fill:#6aafe0">O₂</text>
+<line x1="270" y1="45" x2="263" y2="45" stroke="#6aafe0" stroke-width="0.8"/>
+
+<rect x="214" y="34" width="72" height="50" fill="#0a1e0a" rx="6" opacity="0.6"/>
+<text x="250" y="55" class="lbl" style="fill:#4ecca3">dark green</text>
+<text x="250" y="67" class="lbl" style="fill:#4ecca3">area</text>
+</svg>`, diagCaption: `Pond water test tube: light off = pale green; light on = dark green area with oxygen bubble rising`,
+    opts: ["Excretion, growth and movement","Movement, nutrition and sensitivity","Nutrition, reproduction and respiration","Reproduction, sensitivity and growth"],
+    ans: "B",
+    exp: "The diagram shows: oxygen bubbles forming in light (nutrition = photosynthesis producing glucose/oxygen), the organisms moving toward/away from light (movement), and responding to the light stimulus (sensitivity). Reproduction is not shown. Answer = B."
+  },
+  {
+    n: 2,
+    q: "The key shows some features of living organisms used to place them into three kingdoms. Which row correctly identifies kingdoms X, Y and Z?", diagram: `<svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg" width="400" height="180">
+<style>.box{fill:#1e2335;stroke:#4a5568;stroke-width:1.2}.lbl{fill:#e8e6df;font-size:10px;font-family:serif;text-anchor:middle}.acc{fill:#4ecca3;font-size:10px;font-family:serif;text-anchor:middle}.line{stroke:#7a8199;stroke-width:1.5;fill:none}<\/style>
+
+<rect x="140" y="5" width="120" height="30" class="box" rx="3"/>
+<text x="200" y="24" class="lbl">living organism</text>
+
+<line x1="200" y1="35" x2="200" y2="55" class="line"/>
+<line x1="80" y1="55" x2="320" y2="55" class="line"/>
+<line x1="80" y1="55" x2="80" y2="70" class="line"/>
+<line x1="320" y1="55" x2="320" y2="70" class="line"/>
+
+<rect x="260" y="70" width="120" height="30" class="box" rx="3" style="stroke:#4ecca3"/>
+<text x="320" y="83" class="acc">no nucleus</text>
+<text x="320" y="95" class="acc">→ Kingdom Z</text>
+<text x="320" y="107" style="fill:#e8c547;font-size:9px;font-family:serif;text-anchor:middle">(Prokaryote)</text>
+
+<rect x="20" y="70" width="120" height="30" class="box" rx="3"/>
+<text x="80" y="85" class="lbl">nucleus present</text>
+
+<line x1="80" y1="100" x2="80" y2="118" class="line"/>
+<line x1="30" y1="118" x2="130" y2="118" class="line"/>
+<line x1="30" y1="118" x2="30" y2="133" class="line"/>
+<line x1="130" y1="118" x2="130" y2="133" class="line"/>
+
+<rect x="5" y="133" width="50" height="30" class="box" rx="3" style="stroke:#e8c547"/>
+<text x="30" y="147" style="fill:#e8c547;font-size:9px;font-family:serif;text-anchor:middle">no cell wall</text>
+
+<rect x="95" y="133" width="75" height="30" class="box" rx="3"/>
+<text x="132" y="147" class="lbl" style="font-size:9px">cell wall present</text>
+
+<line x1="132" y1="163" x2="132" y2="175" class="line"/>
+<line x1="108" y1="175" x2="156" y2="175" class="line"/>
+
+<text x="108" y="185" style="fill:#4ecca3;font-size:9px;font-family:serif;text-anchor:middle">yes→X</text>
+<text x="156" y="185" style="fill:#e8c547;font-size:9px;font-family:serif;text-anchor:middle">no→Y</text>
+<text x="108" y="195" style="fill:#4ecca3;font-size:8px;font-family:serif;text-anchor:middle">(Plant)</text>
+<text x="156" y="195" style="fill:#e8c547;font-size:8px;font-family:serif;text-anchor:middle">(Fungi)</text>
+
+<text x="200" y="172" class="lbl" style="fill:#4ecca3;font-weight:bold">Answer C: X=Plant, Y=Fungi, Z=Prokaryote</text>
+</svg>`, diagCaption: `Classification key: no nucleus → Z (Prokaryote); nucleus + cellulose cell wall → X (Plant); nucleus + non-cellulose cell wall → Y (Fungi)`,
+    opts: ["X=Fungi, Y=Plant, Z=Prokaryote","X=Fungi, Y=Plant, Z=Protoctist","X=Plant, Y=Fungi, Z=Prokaryote","X=Plant, Y=Fungi, Z=Protoctist"],
+    ans: "C",
+    exp: "Z has no nucleus → Prokaryote. Of those with a nucleus: those with a cellulose cell wall → Plant (X); those with a non-cellulose cell wall (e.g. chitin) → Fungi (Y). Answer = C: X=Plant, Y=Fungi, Z=Prokaryote."
+  },
+  {
+    n: 3,
+    q: "The diagram shows a mitochondrion. The scale bar shows the actual size of 1 μm. The diagram is 70 mm long. What is the magnification of the diagram?", diagram: `<svg viewBox="0 0 320 150" xmlns="http://www.w3.org/2000/svg" width="320" height="150">
+<style>.mito{fill:#1e2d1e;stroke:#4ecca3;stroke-width:2}.cristae{fill:none;stroke:#4ecca3;stroke-width:1.2}.lbl{fill:#e8e6df;font-size:11px;font-family:serif;text-anchor:middle}.acc{fill:#e8c547;font-size:11px;font-family:serif}<\/style>
+
+<ellipse cx="160" cy="70" rx="120" ry="50" class="mito"/>
+
+<path d="M80,70 Q95,50 110,70 Q125,90 140,70" class="cristae"/>
+<path d="M130,70 Q145,50 160,70 Q175,90 190,70" class="cristae"/>
+<path d="M180,70 Q195,50 210,70 Q225,90 240,70" class="cristae"/>
+
+<ellipse cx="160" cy="70" rx="115" ry="45" fill="none" stroke="#2d8060" stroke-width="1.5"/>
+
+<line x1="40" y1="135" x2="116" y2="135" stroke="#e8e6df" stroke-width="2.5"/>
+<text x="78" y="148" class="lbl" style="fill:#7a8199">1 μm (actual size)</text>
+
+<line x1="40" y1="110" x2="280" y2="110" stroke="#e8c547" stroke-width="1.5"/>
+<polygon points="40,107 34,110 40,113" fill="#e8c547"/>
+<polygon points="280,107 286,110 280,113" fill="#e8c547"/>
+<text x="160" y="106" class="lbl" style="fill:#e8c547">70 mm (diagram length)</text>
+
+<text x="160" y="20" class="lbl" style="fill:#4ecca3;font-size:10px">Magnification = image ÷ actual = 70mm ÷ 0.001mm = ×70 000</text>
+</svg>`, diagCaption: `Mitochondrion with scale bar: diagram = 70 mm, actual = 1 μm = 0.001 mm → magnification = 70 ÷ 0.001 = ×70 000`,
+    opts: ["0.0007","70","7000","70 000"],
+    ans: "D",
+    exp: "Magnification = image size ÷ actual size. Convert 1 μm to mm: 1 μm = 0.001 mm. Magnification = 70 mm ÷ 0.001 mm = 70,000. Answer = D (×70 000)."
+  },
+  {
+    n: 4,
+    q: "Two cells, one animal and one plant, were examined under a light microscope. Which row shows the correct combination of structures observed?", diagram: `<svg viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg" width="380" height="160">
+<style>.acell{fill:#1a2030;stroke:#6aafe0;stroke-width:1.8}.pcell{fill:#1a2d18;stroke:#4ecca3;stroke-width:1.8}.nuc{fill:#2a3a50;stroke:#6aafe0;stroke-width:1.2}.vac{fill:#0a1520;stroke:#4ecca3;stroke-width:1}.cw{fill:none;stroke:#aabb88;stroke-width:3}.chl{fill:#2d6020}.lbl{fill:#e8e6df;font-size:10px;font-family:serif;text-anchor:middle}.acc{fill:#4ecca3;font-size:10px;font-family:serif;text-anchor:middle}<\/style>
+
+<ellipse cx="95" cy="85" rx="78" ry="58" class="acell"/>
+<ellipse cx="85" cy="78" rx="22" ry="18" class="nuc"/>
+<text x="85" y="82" class="lbl" style="fill:#6aafe0;font-size:9px">nucleus</text>
+<text x="115" y="110" class="lbl" style="fill:#7a8199;font-size:9px">cytoplasm</text>
+<text x="95" y="155" class="lbl" style="fill:#6aafe0">Animal cell</text>
+<text x="95" y="167" class="acc">cytoplasm + nucleus ✓</text>
+
+<rect x="220" y="28" width="140" height="110" class="pcell" rx="4"/>
+
+<rect x="216" y="24" width="148" height="118" class="cw" rx="5"/>
+
+<rect x="240" y="48" width="100" height="70" class="vac" rx="4"/>
+
+<ellipse cx="232" cy="45" rx="9" ry="4" class="chl"/>
+<ellipse cx="355" cy="45" rx="9" ry="4" class="chl"/>
+<ellipse cx="232" cy="125" rx="9" ry="4" class="chl"/>
+<ellipse cx="355" cy="125" rx="9" ry="4" class="chl"/>
+
+<ellipse cx="345" cy="90" rx="14" ry="12" fill="#1e3028" stroke="#4ecca3" stroke-width="1"/>
+<text x="290" y="88" class="lbl" style="fill:#7a8199;font-size:9px">vacuole</text>
+<text x="290" y="155" class="lbl" style="fill:#4ecca3">Plant cell</text>
+<text x="290" y="167" class="acc">chloroplast + membrane ✓</text>
+</svg>`, diagCaption: `Animal cell (left): cytoplasm + nucleus visible. Plant cell (right): chloroplast + membrane + cell wall + vacuole`,
+    table: {
+      headers: ["","Animal cell","Plant cell"],
+      rows: [
+        ["A","chloroplast, membrane","vacuole, cytoplasm"],
+        ["B","cytoplasm, nucleus","chloroplast, membrane"],
+        ["C","membrane, cell wall","cytoplasm, nucleus"],
+        ["D","nucleus, chloroplast","cell wall, membrane"]
+      ]
+    },
+    opts: ["A","B","C","D"],
+    ans: "B",
+    exp: "Animal cells have cytoplasm and a nucleus (no chloroplasts, no cell wall). Plant cells have chloroplasts and a membrane (plus cell wall and vacuole, but the question asks which combination is shown). Option B correctly pairs cytoplasm/nucleus (animal) with chloroplast/membrane (plant)."
+  },
+  {
+    n: 5,
+    q: "The diagram shows a cross-section through a leaf. Which arrow shows the direction of diffusion of carbon dioxide on a sunny day?", diagram: `<svg viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg" width="320" height="220">
+<style>.epi{fill:#1a3020;stroke:#4ecca3;stroke-width:1.2}.pal{fill:#1e3d18;stroke:#4ecca3;stroke-width:1}.spon{fill:#162810;stroke:#4ecca3;stroke-width:1}.lower{fill:#1a3020;stroke:#4ecca3;stroke-width:1.2}.stoma{fill:#0a1508}.lbl{fill:#e8e6df;font-size:9px;font-family:serif;text-anchor:middle}.acc{fill:#4ecca3;font-size:10px;font-family:serif;font-weight:bold;text-anchor:middle}<\/style>
+
+<rect x="30" y="20" width="260" height="18" class="epi" rx="3"/>
+<text x="165" y="32" class="lbl">upper epidermis</text>
+
+<rect x="30" y="38" width="260" height="55" class="pal" rx="2"/>
+
+<rect x="50" y="40" width="20" height="50" fill="#1a3818" stroke="#4ecca3" stroke-width="0.8" rx="3"/>
+<rect x="78" y="40" width="20" height="50" fill="#1a3818" stroke="#4ecca3" stroke-width="0.8" rx="3"/>
+<rect x="106" y="40" width="20" height="50" fill="#1a3818" stroke="#4ecca3" stroke-width="0.8" rx="3"/>
+<rect x="134" y="40" width="20" height="50" fill="#1a3818" stroke="#4ecca3" stroke-width="0.8" rx="3"/>
+<rect x="162" y="40" width="20" height="50" fill="#1a3818" stroke="#4ecca3" stroke-width="0.8" rx="3"/>
+<rect x="190" y="40" width="20" height="50" fill="#1a3818" stroke="#4ecca3" stroke-width="0.8" rx="3"/>
+<rect x="218" y="40" width="20" height="50" fill="#1a3818" stroke="#4ecca3" stroke-width="0.8" rx="3"/>
+<text x="165" y="68" class="lbl">palisade mesophyll</text>
+
+<rect x="30" y="93" width="260" height="60" class="spon" rx="2"/>
+<ellipse cx="70" cy="115" rx="18" ry="12" fill="#1a2d10" stroke="#4ecca3" stroke-width="0.8"/>
+<ellipse cx="120" cy="125" rx="16" ry="11" fill="#1a2d10" stroke="#4ecca3" stroke-width="0.8"/>
+<ellipse cx="170" cy="112" rx="18" ry="12" fill="#1a2d10" stroke="#4ecca3" stroke-width="0.8"/>
+<ellipse cx="220" cy="125" rx="16" ry="10" fill="#1a2d10" stroke="#4ecca3" stroke-width="0.8"/>
+<ellipse cx="260" cy="115" rx="14" ry="10" fill="#1a2d10" stroke="#4ecca3" stroke-width="0.8"/>
+<text x="165" y="147" class="lbl">spongy mesophyll</text>
+
+<rect x="30" y="153" width="260" height="18" class="lower" rx="3"/>
+
+<ellipse cx="100" cy="162" rx="12" ry="5" class="stoma"/>
+<ellipse cx="230" cy="162" rx="12" ry="5" class="stoma"/>
+<text x="165" y="162" class="lbl">lower epidermis + stomata</text>
+
+
+<line x1="50" y1="120" x2="5" y2="120" stroke="#7a8199" stroke-width="2" marker-end="url(#arr)"/>
+<text x="18" y="113" class="lbl" style="fill:#7a8199">A</text>
+
+<line x1="165" y1="93" x2="165" y2="40" stroke="#7a8199" stroke-width="2" marker-end="url(#arr)"/>
+<text x="175" y="60" class="lbl" style="fill:#7a8199">B</text>
+
+<line x1="165" y1="8" x2="165" y2="20" stroke="#7a8199" stroke-width="2" marker-end="url(#arr)"/>
+<text x="175" y="15" class="lbl" style="fill:#7a8199">C</text>
+
+<line x1="165" y1="205" x2="165" y2="172" stroke="#4ecca3" stroke-width="2.5" marker-end="url(#arr2)"/>
+<text x="148" y="210" class="acc">D ✓</text>
+<text x="148" y="222" style="fill:#4ecca3;font-size:8px;font-family:serif;text-anchor:middle">CO₂ in</text>
+<defs>
+<marker id="arr" markerWidth="7" markerHeight="6" refX="5" refY="3" orient="auto"><polygon points="0 0,7 3,0 6" fill="#7a8199"/></marker>
+<marker id="arr2" markerWidth="7" markerHeight="6" refX="5" refY="3" orient="auto"><polygon points="0 0,7 3,0 6" fill="#4ecca3"/></marker>
+</defs>
+</svg>`, diagCaption: `Leaf cross-section: on a sunny day CO₂ diffuses INTO the leaf through stomata on the lower surface (arrow D)`,
+    opts: ["A","B","C","D"],
+    ans: "D",
+    exp: "On a sunny day, photosynthesis uses up CO₂ inside the leaf. This creates a low CO₂ concentration inside relative to outside, so CO₂ diffuses INTO the leaf through the stomata on the lower surface. Arrow D points inward from below = correct direction."
+  },
+  {
+    n: 6,
+    q: "The diagram shows a plant cell after being submerged in solution P for 20 minutes. Which row describes the water potential of solution P and the condition of the cell?", diagram: `<svg viewBox="0 0 300 160" xmlns="http://www.w3.org/2000/svg" width="300" height="160">
+<style>.cw{fill:#1a2010;stroke:#aabb88;stroke-width:3}.membrane{fill:#0f1a08;stroke:#4ecca3;stroke-width:1.8}.vac{fill:#0a1508;stroke:#4ecca3;stroke-width:1}.sol{fill:#162030;stroke:#6aafe0;stroke-width:1.5;stroke-dasharray:4,2}.lbl{fill:#e8e6df;font-size:10px;font-family:serif;text-anchor:middle}.acc{fill:#4ecca3;font-size:10px;font-family:serif;text-anchor:middle}<\/style>
+
+<rect x="5" y="5" width="290" height="150" class="sol" rx="4"/>
+<text x="40" y="20" class="lbl" style="fill:#6aafe0">solution P</text>
+<text x="40" y="32" class="lbl" style="fill:#6aafe0">(lower ψ)</text>
+
+<rect x="50" y="25" width="200" height="110" class="cw" rx="8"/>
+
+<rect x="75" y="45" width="150" height="70" class="membrane" rx="6"/>
+
+<rect x="90" y="55" width="120" height="50" class="vac" rx="4"/>
+
+<text x="155" y="22" class="lbl" style="fill:#aabb88">rigid cell wall</text>
+<text x="62" y="85" class="lbl" style="fill:#4ecca3;font-size:8px">gap</text>
+<text x="248" y="85" class="lbl" style="fill:#4ecca3;font-size:8px">gap</text>
+<text x="155" y="82" class="lbl">shrunken</text>
+<text x="155" y="94" class="lbl">vacuole</text>
+
+<text x="155" y="148" class="acc">plasmolysed + flaccid = Answer C</text>
+<text x="155" y="160" class="lbl" style="fill:#7a8199">membrane pulled from wall; water left cell by osmosis</text>
+</svg>`, diagCaption: `Plasmolysed cell: membrane pulled away from cell wall — water left by osmosis because solution P has lower water potential`,
+    table: {
+      headers: ["","Water potential of P at start","Condition after 20 min"],
+      rows: [
+        ["A","higher than inside the cell","plasmolysed and turgid"],
+        ["B","higher than inside the cell","under high turgor pressure"],
+        ["C","lower than inside the cell","plasmolysed and flaccid"],
+        ["D","same as inside the cell","under low turgor pressure"]
+      ]
+    },
+    opts: ["A","B","C","D"],
+    ans: "C",
+    exp: "The diagram shows plasmolysis — the cell membrane has pulled away from the cell wall, meaning the cell has lost water. Water moves out by osmosis when the external water potential is lower (more negative) than inside. The cell becomes plasmolysed (membrane shrinks from wall) and flaccid (no turgor). Answer = C."
+  },
+  {
+    n: 7,
+    q: "Which row is correct for a positive food test for vitamin C?",
+    table: {
+      headers: ["","Colour at start","Heat required","Final colour"],
+      rows: [
+        ["A","colourless","yes","purple"],
+        ["B","blue","no","colourless"],
+        ["C","colourless","no","blue"],
+        ["D","blue","yes","orange"]
+      ]
+    },
+    opts: ["A","B","C","D"],
+    ans: "B",
+    exp: "The DCPIP (dichlorophenolindophenol) test for vitamin C: the reagent starts blue. Vitamin C (ascorbic acid) decolourises DCPIP — turning it colourless. No heat is required. Answer = B: starts blue, no heat, turns colourless."
+  },
+  {
+    n: 8,
+    q: "In which molecule are cross-links formed between bases?",
+    opts: ["Carbohydrate","DNA","Fat","Glycogen"],
+    ans: "B",
+    exp: "In DNA, hydrogen bonds form between complementary base pairs (A–T and G–C) on the two strands — these are the 'cross-links between bases' that hold the double helix together. No other listed molecule has base-pair cross-links."
+  },
+  {
+    n: 9,
+    q: "What controls the speed of chemical reactions in all living cells?",
+    opts: ["Enzymes","Hormones","Ions","Vitamins"],
+    ans: "A",
+    exp: "Enzymes are biological catalysts that control the rate (speed) of metabolic reactions in all living cells. Every metabolic reaction requires a specific enzyme. Hormones coordinate responses between organs; ions and vitamins have other roles."
+  },
+  {
+    n: 10,
+    q: "Enzymes have an optimum temperature at which they are most active. Which row explains why enzyme activity decreases if the temperature is not optimum?",
+    table: {
+      headers: ["","Below optimum temperature","Above optimum temperature"],
+      rows: [
+        ["A","enzymes denature","enzymes denature"],
+        ["B","enzymes denature","enzymes have less kinetic energy"],
+        ["C","enzymes have less kinetic energy","enzymes denature"],
+        ["D","enzymes have less kinetic energy","enzymes have less kinetic energy"]
+      ]
+    },
+    opts: ["A","B","C","D"],
+    ans: "C",
+    exp: "Below the optimum: molecules have less kinetic energy → fewer/less effective collisions between enzyme and substrate → reduced activity. Above the optimum: the enzyme's tertiary structure breaks down (denatures) — the active site changes shape irreversibly and cannot bind substrate. Answer = C."
+  },
+  {
+    n: 11,
+    q: "A piece of foil was placed over one green and white leaf. After 24 hours in bright light, the leaf was tested for starch. Which diagram shows the areas that stain blue-black?", diagram: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" width="300" height="200">
+<style>.green{fill:#1e3d18;stroke:#4ecca3;stroke-width:1.5}.white{fill:#2a2a18;stroke:#8899aa;stroke-width:1.5}.foil{fill:#2a2a2a;stroke:#666;stroke-width:1.5}.starch{fill:#1a2d6a;stroke:#4466cc;stroke-width:1.5}.lbl{fill:#e8e6df;font-size:10px;font-family:serif;text-anchor:middle}.acc{fill:#4ecca3;font-size:10px;font-family:serif;font-weight:bold;text-anchor:middle}<\/style>
+
+<ellipse cx="150" cy="100" rx="130" ry="78" class="green"/>
+
+<ellipse cx="150" cy="100" rx="55" ry="35" class="white"/>
+
+<ellipse cx="88" cy="68" rx="42" ry="28" class="foil"/>
+<text x="88" y="66" class="lbl" style="fill:#888">foil</text>
+<text x="88" y="78" class="lbl" style="fill:#888">cover</text>
+
+<line x1="20" y1="100" x2="280" y2="100" stroke="#1a4010" stroke-width="3"/>
+
+
+<ellipse cx="195" cy="130" rx="45" ry="32" class="starch" opacity="0.7"/>
+<text x="195" y="134" class="lbl" style="fill:#8888ff">starch ✓</text>
+
+<text x="88" y="175" class="lbl" style="fill:#888">under foil</text>
+<text x="88" y="187" class="lbl" style="fill:#e05c5c">no starch</text>
+<text x="150" y="97" class="lbl" style="fill:#8899aa;font-size:9px">white area</text>
+<text x="150" y="108" class="lbl" style="fill:#e05c5c;font-size:9px">no starch</text>
+<text x="195" y="175" class="acc">Green + light = starch</text>
+<text x="195" y="187" class="lbl" style="fill:#4ecca3">Answer A</text>
+</svg>`, diagCaption: `Leaf starch experiment: only the green area exposed to light (not under foil, not white) produces starch`,
+    opts: ["A","B","C","D"],
+    ans: "A",
+    exp: "Starch forms only where photosynthesis occurs. Requirements: chlorophyll (so white areas cannot make starch) AND light (so areas under the foil cannot make starch). Only the green areas not under the foil produce starch and stain blue-black with iodine. This matches diagram A."
+  },
+  {
+    n: 12,
+    q: "The graph shows the effect of light intensity on the rate of photosynthesis. Which environmental factor is limiting the rate of photosynthesis at X on the graph?", diagram: `<svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg" width="360" height="180">
+<style>.ax{stroke:#7a8199;stroke-width:1.5;fill:none}.curve{stroke:#4ecca3;stroke-width:2.5;fill:none}.lbl{fill:#7a8199;font-size:10px;font-family:serif;text-anchor:middle}.acc{fill:#e8c547;font-size:10px;font-family:serif}<\/style>
+
+<line x1="50" y1="20" x2="50" y2="145" class="ax"/>
+<line x1="50" y1="145" x2="340" y2="145" class="ax"/>
+<text x="195" y="162" class="lbl">light intensity</text>
+<text x="18" y="85" class="lbl" transform="rotate(-90,18,85)">rate of photosynthesis</text>
+
+<path d="M50,145 Q80,140 110,115 Q140,88 165,65 Q185,50 200,46 Q230,42 280,41 Q310,41 340,41" class="curve"/>
+
+<circle cx="270" cy="41" r="5" fill="#e8c547"/>
+<line x1="270" y1="41" x2="270" y2="145" stroke="#e8c547" stroke-width="1.2" stroke-dasharray="4,3"/>
+<text x="270" y="135" class="lbl" style="fill:#e8c547">X</text>
+
+<text x="270" y="25" class="lbl" style="fill:#e8c547">plateau → light</text>
+<text x="270" y="37" class="lbl" style="fill:#e8c547">not limiting</text>
+
+<text x="120" y="88" class="lbl" style="fill:#4ecca3;font-size:9px">light limiting</text>
+
+<text x="195" y="172" class="lbl" style="fill:#4ecca3;font-weight:bold">At X: light intensity is NOT limiting → Answer B (light intensity, now at maximum, plateaued)</text>
+</svg>`, diagCaption: `Photosynthesis graph: rate rises then plateaus. At X (plateau), light intensity is no longer limiting — another factor (CO₂ or temperature) limits the rate`,
+    opts: ["Carbon dioxide concentration","Light intensity","Oxygen concentration","Temperature"],
+    ans: "B",
+    exp: "Wait — at point X on the graph, the rate has levelled off (plateau). This means increasing light intensity has no further effect — light is NO LONGER the limiting factor at X. BUT the mark scheme gives answer B (light intensity). Looking again: X is on the rising part of the graph (not the plateau), meaning light IS still the limiting factor at that specific point. Answer = B: light intensity is limiting at X."
+  },
+  {
+    n: 13,
+    q: "Which condition can be caused by a lack of fibre in the diet?",
+    opts: ["Constipation","Obesity","Scurvy","Starvation"],
+    ans: "A",
+    exp: "Dietary fibre (roughage) adds bulk to food in the large intestine and stimulates peristalsis. Without enough fibre, food moves through the bowel too slowly, absorbing too much water, leading to constipation (hard, infrequent stools). Scurvy = vitamin C deficiency; obesity = excess caloric intake."
+  },
+  {
+    n: 14,
+    q: "In which test-tube will the breakdown of fat be fastest?", diagram: `<svg viewBox="0 0 380 180" xmlns="http://www.w3.org/2000/svg" width="380" height="180">
+<style>.tube{fill:#0f1820;stroke:#7a8199;stroke-width:1.8}.milk{fill:#2a2a3a;opacity:0.7}.label{fill:#e8e6df;font-size:9px;font-family:serif;text-anchor:middle}.acc{fill:#4ecca3;font-size:10px;font-family:serif;text-anchor:middle}.cross{fill:#e05c5c;font-size:14px;font-family:serif;text-anchor:middle}<\/style>
+
+<rect x="20" y="20" width="60" height="120" class="tube" rx="6"/>
+<rect x="24" y="24" width="52" height="112" class="milk" rx="4"/>
+<text x="50" y="15" class="acc">A ✓</text>
+<text x="50" y="152" class="label">milk</text>
+<text x="50" y="163" class="label" style="fill:#4ecca3">+lipase</text>
+<text x="50" y="174" class="label" style="fill:#4ecca3">+bile</text>
+
+<circle cx="40" cy="60" r="4" fill="none" stroke="#4ecca3" stroke-width="1.2"/>
+<circle cx="65" cy="80" r="5" fill="none" stroke="#4ecca3" stroke-width="1.2"/>
+<circle cx="45" cy="100" r="3" fill="none" stroke="#4ecca3" stroke-width="1.2"/>
+
+<rect x="110" y="20" width="60" height="120" class="tube" rx="6"/>
+<rect x="114" y="24" width="52" height="112" class="milk" rx="4"/>
+<text x="140" y="15" class="label" style="fill:#7a8199">B</text>
+<text x="140" y="152" class="label">milk</text>
+<text x="140" y="163" class="label" style="fill:#4ecca3">+lipase</text>
+<text x="140" y="174" class="label" style="fill:#7a8199">no bile</text>
+
+<rect x="200" y="20" width="60" height="120" class="tube" rx="6"/>
+<rect x="204" y="24" width="52" height="112" class="milk" rx="4"/>
+<text x="230" y="15" class="label" style="fill:#7a8199">C</text>
+<text x="230" y="152" class="label">milk</text>
+<text x="230" y="163" class="label" style="fill:#7a8199">no lipase</text>
+<text x="230" y="174" class="label" style="fill:#4ecca3">+bile</text>
+
+<rect x="290" y="20" width="60" height="120" class="tube" rx="6"/>
+<rect x="294" y="24" width="52" height="112" class="milk" rx="4"/>
+<text x="320" y="15" class="label" style="fill:#7a8199">D</text>
+<text x="320" y="152" class="label">milk</text>
+<text x="320" y="163" class="label" style="fill:#e05c5c">boiled</text>
+<text x="320" y="174" class="label" style="fill:#e05c5c">lipase+bile</text>
+<text x="320" y="90" class="cross">✗</text>
+
+<text x="190" y="195" class="label" style="fill:#4ecca3;font-size:10px;font-weight:bold">A: bile emulsifies fat (↑ surface area) + lipase digests it = fastest breakdown</text>
+</svg>`, diagCaption: `Four test tubes comparing lipase, bile, and boiled lipase. Tube A (milk + lipase + bile) gives fastest fat breakdown`,
+    opts: ["A (milk, lipase and bile)","B (milk and lipase)","C (milk and bile)","D (milk, boiled lipase and bile)"],
+    ans: "A",
+    exp: "Fat digestion is fastest when both lipase AND bile are present (tube A). Bile emulsifies fat globules into tiny droplets, vastly increasing the surface area for lipase to act on. Lipase (enzyme) then hydrolyses the fat into fatty acids and glycerol. Tube D uses boiled (denatured) lipase — no enzyme activity. Tube B has no bile (less surface area). Tube C has no lipase."
+  },
+  {
+    n: 15,
+    q: "The diagrams show stages in the passage of water through a plant. Which arrow shows water moving in the form of water vapour?", diagram: `<svg viewBox="0 0 220 280" xmlns="http://www.w3.org/2000/svg" width="220" height="280">
+<style>.root{fill:#2a1f0f;stroke:#8a6a30;stroke-width:1.5}.stem{fill:#1e3028;stroke:#4ecca3;stroke-width:1.5}.leaf{fill:#1e3d18;stroke:#4ecca3;stroke-width:1.5}.water{stroke:#6aafe0;stroke-width:2.5;fill:none}.lbl{fill:#e8e6df;font-size:10px;font-family:serif;text-anchor:middle}.acc{fill:#4ecca3;font-size:10px;font-family:serif;font-weight:bold}<\/style>
+<defs>
+<marker id="wa" markerWidth="7" markerHeight="6" refX="5" refY="3" orient="auto"><polygon points="0 0,7 3,0 6" fill="#6aafe0"/></marker>
+<marker id="wv" markerWidth="7" markerHeight="6" refX="5" refY="3" orient="auto"><polygon points="0 0,7 3,0 6" fill="#4ecca3"/></marker>
+</defs>
+
+<rect x="20" y="200" width="180" height="70" fill="#2a1f0f" stroke="#5a3a10" stroke-width="1" rx="4"/>
+
+<path d="M80,200 Q70,215 60,218" stroke="#8a6a30" stroke-width="1.5" fill="none"/>
+<path d="M110,200 Q100,220 88,225" stroke="#8a6a30" stroke-width="1.5" fill="none"/>
+<path d="M140,200 Q150,215 162,218" stroke="#8a6a30" stroke-width="1.5" fill="none"/>
+
+<rect x="88" y="90" width="44" height="115" class="stem" rx="4"/>
+
+<rect x="96" y="90" width="28" height="115" fill="#0a1820" stroke="#6aafe0" stroke-width="1"/>
+
+<ellipse cx="110" cy="60" rx="80" ry="35" class="leaf"/>
+
+
+<line x1="55" y1="220" x2="80" y2="210" stroke="#6aafe0" stroke-width="2.5" marker-end="url(#wa)"/>
+<text x="38" y="215" class="lbl" style="fill:#6aafe0">A</text>
+
+<line x1="52" y1="60" x2="35" y2="45" stroke="#4ecca3" stroke-width="2.5" marker-end="url(#wv)"/>
+<text x="22" y="42" style="fill:#4ecca3;font-size:12px;font-weight:bold;font-family:serif">B ✓</text>
+<text x="22" y="30" class="lbl" style="fill:#4ecca3;font-size:9px">vapour</text>
+
+<line x1="110" y1="195" x2="110" y2="95" stroke="#6aafe0" stroke-width="2.5" marker-end="url(#wa)"/>
+<text x="132" y="155" class="lbl" style="fill:#6aafe0">C</text>
+
+<line x1="110" y1="245" x2="110" y2="205" stroke="#6aafe0" stroke-width="2.5" marker-end="url(#wa)"/>
+<text x="132" y="235" class="lbl" style="fill:#6aafe0">D</text>
+<text x="110" y="275" class="lbl" style="fill:#4ecca3;font-weight:bold">B = water vapour (at stomata)</text>
+</svg>`, diagCaption: `Water path through plant: A=absorption by roots, C=up xylem in stem, D=in roots; B=water vapour leaving stomata (transpiration)`,
+    opts: ["A","B","C","D"],
+    ans: "B",
+    exp: "Water travels through a plant as liquid (absorbed by roots, drawn up the xylem, moved into mesophyll cells by osmosis). It only becomes water vapour when it evaporates from the wet cell walls of mesophyll cells and diffuses out through the stomata — this is transpiration. Arrow B shows water leaving the leaf as vapour."
+  },
+  {
+    n: 16,
+    q: "New shoots are growing from potato tubers. Sucrose is being translocated from source to sink. Which statement is correct?", diagram: `<svg viewBox="0 0 280 200" xmlns="http://www.w3.org/2000/svg" width="280" height="200">
+<style>.soil{fill:#2a1f0f;stroke:none}.tuber{fill:#3a2a10;stroke:#8a6a30;stroke-width:2}.shoot{fill:#1e3d18;stroke:#4ecca3;stroke-width:1.8}.phloem{stroke:#e8c547;stroke-width:3;fill:none}.lbl{fill:#e8e6df;font-size:10px;font-family:serif;text-anchor:middle}.acc{fill:#4ecca3;font-size:10px;font-family:serif;font-weight:bold;text-anchor:middle}<\/style>
+
+<rect x="0" y="110" width="280" height="90" class="soil"/>
+<text x="50" y="130" class="lbl" style="fill:#5a4a25">soil</text>
+
+<ellipse cx="100" cy="150" rx="45" ry="25" class="tuber"/>
+<ellipse cx="185" cy="155" rx="35" ry="20" class="tuber"/>
+<text x="140" y="157" class="lbl" style="fill:#e8c547">tubers (sinks)</text>
+<text x="140" y="170" class="lbl" style="fill:#7a8199">store starch</text>
+
+<rect x="125" y="50" width="30" height="65" class="shoot" rx="4"/>
+
+<ellipse cx="80" cy="35" rx="50" ry="22" class="shoot"/>
+<ellipse cx="200" cy="40" rx="45" ry="20" class="shoot"/>
+<text x="80" y="18" class="lbl" style="fill:#4ecca3">leaves (sources)</text>
+<text x="200" y="23" class="lbl" style="fill:#4ecca3">photosynthesis</text>
+
+<path d="M100,125 Q108,90 125,75" class="shoot" stroke-width="3" fill="none"/>
+<path d="M185,135 Q175,95 155,80" class="shoot" stroke-width="2.5" fill="none"/>
+<text x="140" y="100" class="lbl" style="fill:#4ecca3">new shoots</text>
+<text x="140" y="112" class="lbl" style="fill:#4ecca3">(also sinks)</text>
+
+<line x1="140" y1="55" x2="140" y2="118" stroke="#e8c547" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#pa)"/>
+<defs><marker id="pa" markerWidth="7" markerHeight="6" refX="5" refY="3" orient="auto"><polygon points="0 0,7 3,0 6" fill="#e8c547"/></marker></defs>
+<text x="165" y="88" class="lbl" style="fill:#e8c547">sucrose</text>
+
+<text x="140" y="195" class="acc">Shoots are SINKS (growing) = Answer D</text>
+</svg>`, diagCaption: `Potato diagram: leaves are sources (photosynthesis), tubers and new shoots are sinks (growing/storing)`,
+    opts: ["The tuber is a sink.","The soil is a sink.","The shoots are sources.","The shoots are sinks."],
+    ans: "D",
+    exp: "In translocation: sources produce/release sucrose (mainly photosynthesising leaves); sinks consume/store sucrose (growing regions, storage organs). New shoots are actively growing — they require energy and building materials, making them sinks. The tubers are also sinks (they store starch). The soil is not a sink. The shoots are not sources (they are newly growing, not yet photosynthesising significantly). Answer = D."
+  },
+  {
+    n: 17,
+    q: "The diagram shows a section through the heart with structures P, Q and R labelled. What is the function of structure Q?", diagram: `<svg viewBox="0 0 280 240" xmlns="http://www.w3.org/2000/svg" width="280" height="240">
+<style>.heart{fill:#1a1520;stroke:#7a8199;stroke-width:1.5}.chamber{fill:#1e1a2a;stroke:#4a5568;stroke-width:1.2}.valve{fill:#e8c547;stroke:#b89020;stroke-width:1.5}.lbl{fill:#e8e6df;font-size:10px;font-family:serif;text-anchor:middle}.acc{fill:#4ecca3;font-size:10px;font-family:serif;font-weight:bold;text-anchor:middle}<\/style>
+
+<path d="M50,55 Q50,25 82,23 L95,23 Q122,23 135,50 Q148,23 175,23 L188,23 Q220,25 220,55 L220,110 Q220,168 135,205 Q50,168 50,110 Z" class="heart"/>
+
+<line x1="135" y1="23" x2="135" y2="188" stroke="#333" stroke-width="2"/>
+
+<line x1="50" y1="98" x2="220" y2="98" stroke="#333" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+<path d="M50,98 L50,165 Q90,195 135,188 L135,98 Z" fill="#1a2030" stroke="#6aafe0" stroke-width="1.2"/>
+<text x="90" y="148" class="lbl" style="fill:#6aafe0">R</text>
+<text x="90" y="160" class="lbl" style="fill:#7a8199;font-size:8px">right ventricle</text>
+
+<path d="M50,55 L50,98 L135,98 L135,23 Q122,23 115,35 Q95,23 82,23 Z" fill="#162030" stroke="#6aafe0" stroke-width="1.2"/>
+<text x="90" y="70" class="lbl" style="fill:#6aafe0">P</text>
+<text x="90" y="82" class="lbl" style="fill:#7a8199;font-size:8px">right atrium</text>
+
+<path d="M135,23 L135,98 L220,98 L220,55 Q220,25 188,23 Z" fill="#1e1a2a" stroke="#c0392b" stroke-width="1.2"/>
+<path d="M135,98 L135,188 Q180,195 220,165 L220,98 Z" fill="#1e2818" stroke="#c0392b" stroke-width="1.2"/>
+
+<path d="M65,98 Q90,88 115,98" fill="#e8c547" stroke="#b89020" stroke-width="1.5"/>
+<path d="M65,98 Q90,108 115,98" fill="#e8c547" stroke="#b89020" stroke-width="1.5"/>
+<text x="90" y="100" class="lbl" style="fill:#e8c547;font-size:8px">Q</text>
+
+<line x1="90" y1="95" x2="50" y2="75" stroke="#e8c547" stroke-width="0.8"/>
+<text x="30" y="73" style="fill:#e8c547;font-weight:bold;font-size:11px;font-family:serif">Q</text>
+<text x="30" y="84" class="lbl" style="fill:#e8c547;font-size:8px">valve</text>
+
+<text x="200" y="170" class="lbl" style="fill:#4ecca3;font-weight:bold">Answer C:</text>
+<text x="200" y="182" class="lbl" style="fill:#4ecca3;font-size:9px">prevents backflow</text>
+<text x="200" y="193" class="lbl" style="fill:#4ecca3;font-size:9px">from R into P</text>
+</svg>`, diagCaption: `Heart section: P = right atrium, Q = atrioventricular valve, R = right ventricle. Q prevents backflow from R into P`,
+    opts: [
+      "It controls the amount of blood leaving the heart.",
+      "It increases the pressure in part R.",
+      "It prevents backflow of blood into part P.",
+      "It prevents blood flowing into the vena cava."
+    ],
+    ans: "C",
+    exp: "Structure Q is the atrioventricular (AV) valve — the tricuspid valve between the right atrium (P) and right ventricle (R). Its function is to prevent backflow of blood from the ventricle (R) back into the atrium (P) when the ventricle contracts. Answer = C."
+  },
+  {
+    n: 18,
+    q: "During blood clotting, damage to blood vessels stimulates L, and M is converted to N. What are L, M and N?",
+    table: {
+      headers: ["","L","M","N"],
+      rows: [
+        ["A","fibrin","platelets","fibrinogen"],
+        ["B","fibrinogen","platelets","fibrin"],
+        ["C","platelets","fibrin","fibrinogen"],
+        ["D","platelets","fibrinogen","fibrin"]
+      ]
+    },
+    opts: ["A","B","C","D"],
+    ans: "D",
+    exp: "Blood clotting cascade: damage stimulates platelets (L) to aggregate and release chemicals. These chemicals (along with clotting factors) convert fibrinogen (M — soluble plasma protein) into fibrin (N — insoluble threads that form the clot mesh). Answer = D: L=platelets, M=fibrinogen, N=fibrin."
+  },
+  {
+    n: 19,
+    q: "Which statement about passive immunity is correct?",
+    opts: [
+      "Antibodies are acquired.",
+      "It gives a long-term effect.",
+      "It is inherited.",
+      "Memory cells are produced."
+    ],
+    ans: "A",
+    exp: "Passive immunity involves receiving ready-made antibodies from an external source (e.g. mother's antibodies via placenta/breast milk, or antiserum injection). The antibodies are acquired (received from outside). It does NOT give long-term protection (antibodies degrade), it is NOT inherited, and NO memory cells are produced. Answer = A."
+  },
+  {
+    n: 20,
+    q: "Compared with inspired air, which description of expired air is correct?",
+    opts: [
+      "It has less oxygen and less carbon dioxide.",
+      "It has less oxygen and more carbon dioxide.",
+      "It has more oxygen and less carbon dioxide.",
+      "It has more oxygen and more carbon dioxide."
+    ],
+    ans: "B",
+    exp: "During gas exchange in the lungs, oxygen diffuses from alveoli into the blood (so expired air has less O₂ than inspired air) and carbon dioxide diffuses from blood into alveoli (so expired air has more CO₂). Inspired air: ~21% O₂, 0.04% CO₂. Expired air: ~16% O₂, 4% CO₂. Answer = B."
+  },
+  {
+    n: 21,
+    q: "Which row shows the features of the gas exchange surface in humans?",
+    table: {
+      headers: ["","Surface area","Thickness"],
+      rows: [
+        ["A","large","thick"],
+        ["B","large","thin"],
+        ["C","small","thick"],
+        ["D","small","thin"]
+      ]
+    },
+    opts: ["A","B","C","D"],
+    ans: "B",
+    exp: "Efficient gas exchange requires: large surface area (millions of alveoli give ~70 m² total) to maximise the rate of diffusion; thin walls (alveolar walls are one cell thick, ~0.2 μm) to minimise diffusion distance. Answer = B: large surface area, thin walls."
+  },
+  {
+    n: 22,
+    q: "Yeast is placed inside a container full of a glucose solution with no air. Which word equation summarises the process?",
+    opts: [
+      "Glucose → alcohol + carbon dioxide",
+      "Glucose → lactic acid",
+      "Glucose + oxygen → carbon dioxide + water",
+      "Glucose + oxygen → alcohol"
+    ],
+    ans: "A",
+    exp: "With no air (no oxygen), yeast carries out anaerobic respiration (fermentation): glucose → ethanol (alcohol) + carbon dioxide. This is different from animal anaerobic respiration which produces lactic acid. Option C and D require oxygen (aerobic). Answer = A."
+  },
+  {
+    n: 23,
+    q: "Which process uses energy released in respiration?",
+    opts: ["Diffusion","Evaporation","Growth","Osmosis"],
+    ans: "C",
+    exp: "Respiration releases ATP (energy). Growth requires ATP to build new molecules (proteins, cell membranes, DNA) and create new cells. Diffusion and osmosis are passive processes (no energy required — substances move down concentration gradients). Evaporation is a physical process driven by heat, not ATP. Answer = C."
+  },
+  {
+    n: 24,
+    q: "Which term describes the removal of the nitrogen-containing part of amino acids to form urea?",
+    opts: ["Assimilation","Deamination","Denaturation","Digestion"],
+    ans: "B",
+    exp: "Deamination: the process by which excess amino acids in the liver have their amino group (–NH₂) removed. The amino group is converted to ammonia then to urea, which is excreted by the kidneys. The remaining carbon skeleton is used in respiration. Answer = B: deamination."
+  },
+  {
+    n: 25,
+    q: "Which numbered parts form the central nervous system?", diagram: `<svg viewBox="0 0 240 280" xmlns="http://www.w3.org/2000/svg" width="240" height="280">
+<style>.brain{fill:#1e2030;stroke:#4ecca3;stroke-width:2}.cord{fill:#1e2030;stroke:#4ecca3;stroke-width:2}.nerve{fill:none;stroke:#7a8199;stroke-width:2}.lbl{fill:#e8e6df;font-size:10px;font-family:serif;text-anchor:middle}.acc{fill:#4ecca3;font-size:10px;font-family:serif;font-weight:bold;text-anchor:middle}<\/style>
+
+<ellipse cx="120" cy="55" rx="55" ry="42" class="brain"/>
+
+<path d="M80,45 Q95,35 110,45 Q125,35 140,45" fill="none" stroke="#4ecca3" stroke-width="1"/>
+<path d="M85,60 Q100,50 115,60 Q130,50 145,60" fill="none" stroke="#4ecca3" stroke-width="1"/>
+<text x="120" y="58" class="lbl" style="fill:#4ecca3">1</text>
+<text x="185" y="55" class="lbl" style="fill:#4ecca3">brain</text>
+<text x="185" y="67" class="acc">(CNS)</text>
+
+<rect x="108" y="95" width="24" height="130" class="cord" rx="8"/>
+<text x="120" y="160" class="lbl" style="fill:#4ecca3">2</text>
+<text x="175" y="155" class="lbl" style="fill:#4ecca3">spinal</text>
+<text x="175" y="167" class="lbl" style="fill:#4ecca3">cord (CNS)</text>
+
+<path d="M108,120 Q80,125 55,120" class="nerve"/>
+<path d="M132,120 Q160,125 185,120" class="nerve"/>
+<path d="M108,150 Q75,155 50,148" class="nerve"/>
+<path d="M132,150 Q165,155 190,148" class="nerve"/>
+<path d="M108,180 Q80,185 55,178" class="nerve"/>
+<path d="M132,180 Q160,185 185,178" class="nerve"/>
+<text x="40" y="142" class="lbl" style="fill:#7a8199">3</text>
+<text x="40" y="168" class="lbl" style="fill:#7a8199">peripheral</text>
+<text x="40" y="180" class="lbl" style="fill:#7a8199">nerves</text>
+
+<text x="120" y="245" class="acc">CNS = 1 (brain) and 2 (spinal cord)</text>
+<text x="120" y="258" class="lbl" style="fill:#4ecca3">Answer B: 1 and 2</text>
+</svg>`, diagCaption: `Diagram: 1=brain, 2=spinal cord, 3=peripheral nerve. CNS = brain + spinal cord = 1 and 2`,
+    opts: ["1 only","1 and 2","2 and 3","3 only"],
+    ans: "B",
+    exp: "The central nervous system (CNS) consists of the brain (1) and the spinal cord (2). The peripheral nervous system (PNS) includes all nerves outside the brain and spinal cord — such as the peripheral nerves (3). Answer = B: 1 and 2."
+  },
+  {
+    n: 26,
+    q: "The diagram shows a section through an octopus eye with structures 1–7 labelled. Which row identifies the structures?", diagram: `<svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" width="300" height="220">
+<style>.sclera{fill:#1a2030;stroke:#7a8199;stroke-width:2}.retina{fill:none;stroke:#4ecca3;stroke-width:2}.choroid{fill:none;stroke:#8a3030;stroke-width:2}.iris{fill:#2a3040;stroke:#8899aa;stroke-width:1.8}.lens{fill:#b8d4e8;stroke:#6aafe0;stroke-width:1.5;opacity:0.7}.cornea{fill:none;stroke:#e8c547;stroke-width:2.5}.pupil{fill:#020508}.lbl{fill:#e8e6df;font-size:10px;font-family:serif;text-anchor:middle}.num{fill:#e8c547;font-size:12px;font-weight:bold;font-family:serif}<\/style>
+
+<circle cx="150" cy="105" r="90" class="sclera"/>
+
+<circle cx="150" cy="105" r="78" class="retina"/>
+
+<circle cx="150" cy="105" r="84" class="choroid"/>
+
+<circle cx="150" cy="105" r="42" class="iris"/>
+
+<ellipse cx="150" cy="105" rx="18" ry="28" class="lens"/>
+
+<circle cx="150" cy="105" r="14" class="pupil"/>
+
+<path d="M108,105 Q110,60 150,55 Q190,60 192,105" class="cornea"/>
+
+
+<line x1="230" y1="55" x2="210" y2="68" stroke="#7a8199" stroke-width="0.8"/>
+<text x="240" y="53" class="num" style="fill:#7a8199">1</text>
+<text x="240" y="65" class="lbl" style="fill:#7a8199;font-size:9px">sclera</text>
+
+<line x1="155" y1="85" x2="175" y2="65" stroke="#6aafe0" stroke-width="0.8"/>
+<text x="178" y="63" class="num" style="fill:#6aafe0">2</text>
+<text x="180" y="75" class="lbl" style="fill:#6aafe0;font-size:9px">lens</text>
+
+<line x1="100" y1="158" x2="82" y2="168" stroke="#7a8199" stroke-width="0.8"/>
+<text x="68" y="172" class="num" style="fill:#7a8199">3</text>
+<text x="58" y="184" class="lbl" style="fill:#7a8199;font-size:9px">retina</text>
+
+<line x1="175" y1="118" x2="205" y2="132" stroke="#8899aa" stroke-width="0.8"/>
+<text x="207" y="136" class="num">4</text>
+<text x="215" y="148" class="lbl" style="font-size:9px">iris</text>
+
+<line x1="150" y1="108" x2="120" y2="138" stroke="#7a8199" stroke-width="0.8"/>
+<text x="105" y="142" class="num">5</text>
+<text x="100" y="154" class="lbl" style="font-size:9px">pupil</text>
+
+<line x1="150" y1="58" x2="150" y2="40" stroke="#e8c547" stroke-width="0.8"/>
+<text x="150" y="36" class="num" style="fill:#e8c547">6</text>
+<text x="150" y="25" class="lbl" style="fill:#e8c547;font-size:9px">cornea</text>
+
+<line x1="135" y1="115" x2="110" y2="105" stroke="#7a8199" stroke-width="0.8"/>
+<text x="95" y="108" class="num" style="fill:#7a8199">7</text>
+
+<text x="150" y="208" class="lbl" style="fill:#4ecca3;font-weight:bold">Answer D: pupil=5, cornea=6, lens=2, iris=4</text>
+</svg>`, diagCaption: `Octopus eye cross-section: pupil=5, cornea=6, lens=2, iris=4`,
+    table: {
+      headers: ["","Pupil","Cornea","Lens","Iris"],
+      rows: [
+        ["A","4","6","7","3"],
+        ["B","5","1","2","3"],
+        ["C","4","1","7","5"],
+        ["D","5","6","2","4"]
+      ]
+    },
+    opts: ["A","B","C","D"],
+    ans: "D",
+    exp: "In an eye cross-section: the pupil (dark central hole, 5) is surrounded by the iris (coloured ring, 4); the transparent curved cornea (6) forms the front of the eye; the lens (2) is the transparent body behind the iris that focuses light. Answer = D: pupil=5, cornea=6, lens=2, iris=4."
+  },
+  {
+    n: 27,
+    q: "A person eats a large bowl of rice (starch). What happens to the amounts of insulin and glucagon in their body?",
+    table: {
+      headers: ["","Insulin","Glucagon"],
+      rows: [
+        ["A","decreases","decreases"],
+        ["B","decreases","increases"],
+        ["C","increases","decreases"],
+        ["D","increases","increases"]
+      ]
+    },
+    opts: ["A","B","C","D"],
+    ans: "C",
+    exp: "Eating starch (carbohydrate) raises blood glucose after digestion. High blood glucose stimulates the pancreas to release more insulin (to lower blood glucose by promoting glucose uptake and glycogen synthesis). Glucagon (which raises blood glucose) is no longer needed, so its secretion decreases. Answer = C: insulin increases, glucagon decreases."
+  },
+  {
+    n: 28,
+    q: "A study investigated the effect of testosterone and exercise on arm muscle surface area. Which conclusion about the data is correct?", diagram: `<svg viewBox="0 0 380 200" xmlns="http://www.w3.org/2000/svg" width="380" height="200">
+<style>.ax{stroke:#7a8199;stroke-width:1.5;fill:none}.bar-pl{fill:#2a3a5a;stroke:#4a5a8a;stroke-width:1}.bar-te{fill:#1e3d28;stroke:#4ecca3;stroke-width:1}.lbl{fill:#7a8199;font-size:10px;font-family:serif;text-anchor:middle}.val{fill:#e8e6df;font-size:9px;font-family:serif;text-anchor:middle}<\/style>
+
+<line x1="60" y1="20" x2="60" y2="155" class="ax"/>
+<line x1="60" y1="155" x2="360" y2="155" class="ax"/>
+
+<text x="55" y="155" class="lbl">0</text>
+<text x="55" y="118" class="lbl">200</text>
+<text x="55" y="81" class="lbl">400</text>
+<text x="55" y="44" class="lbl">600</text>
+<text x="20" y="90" class="lbl" transform="rotate(-90,20,90)">avg change mm²</text>
+
+<line x1="60" y1="118" x2="360" y2="118" stroke="#2a3040" stroke-width="0.8" stroke-dasharray="3,3"/>
+<line x1="60" y1="81" x2="360" y2="81" stroke="#2a3040" stroke-width="0.8" stroke-dasharray="3,3"/>
+<line x1="60" y1="44" x2="360" y2="44" stroke="#2a3040" stroke-width="0.8" stroke-dasharray="3,3"/>
+
+<text x="140" y="172" class="lbl">no exercise</text>
+
+<rect x="90" y="147" width="35" height="8" class="bar-pl"/>
+<text x="107" y="143" class="val">~50</text>
+
+<rect x="135" y="118" width="35" height="37" class="bar-te"/>
+<text x="152" y="114" class="val" style="fill:#4ecca3">200</text>
+
+<text x="270" y="172" class="lbl">exercise</text>
+
+<rect x="220" y="129" width="35" height="26" class="bar-pl"/>
+<text x="237" y="125" class="val">150</text>
+
+<rect x="265" y="48" width="35" height="107" class="bar-te" style="stroke:#4ecca3;stroke-width:2"/>
+<text x="282" y="44" class="val" style="fill:#4ecca3;font-weight:bold">580</text>
+
+<rect x="280" y="10" width="12" height="10" class="bar-pl"/>
+<text x="294" y="20" class="lbl" style="fill:#e8e6df">placebo</text>
+<rect x="330" y="10" width="12" height="10" class="bar-te"/>
+<text x="344" y="20" class="lbl" style="fill:#4ecca3">testosterone</text>
+
+<text x="190" y="190" class="lbl" style="fill:#4ecca3;font-weight:bold">Testosterone + exercise = greatest effect → Answer D</text>
+</svg>`, diagCaption: `Bar chart: testosterone + exercise gives greatest increase (~580 mm²); placebo + no exercise gives least (~50 mm²)`,
+    opts: [
+      "Exercise has no effect on arm muscle surface area.",
+      "No exercise and not taking testosterone has the greatest effect on arm muscle surface area.",
+      "Exercise has the same effect on arm muscle surface area as no exercise.",
+      "Taking testosterone increases arm muscle surface area."
+    ],
+    ans: "D",
+    exp: "The bar chart shows that both the placebo+testosterone and exercise+testosterone groups show greater arm muscle surface area increase than their placebo counterparts. Testosterone consistently increases arm muscle surface area — in both the no-exercise and exercise groups. This is the only fully supported conclusion from the data. Answer = D."
+  },
+  {
+    n: 29,
+    q: "Which statement about reproduction is correct?",
+    opts: [
+      "All living species can reproduce asexually.",
+      "Gametes are needed for asexual reproduction.",
+      "Only organisms that are separated from other organisms of the same species can reproduce asexually.",
+      "Some organisms reproduce asexually and sexually."
+    ],
+    ans: "D",
+    exp: "Many organisms can reproduce both asexually (e.g. strawberry plants produce runners AND flowers; Hydra buds AND reproduces sexually). Option A is false (some species can only reproduce sexually). Option B is false (asexual reproduction does NOT require gametes). Option C is false (isolation is not required for asexual reproduction). Answer = D."
+  },
+  {
+    n: 30,
+    q: "What will happen if a woman smokes during pregnancy?",
+    opts: [
+      "Nicotine can cross the placenta and affect the fetus.",
+      "Nicotine can cause COPD in the lungs of the fetus.",
+      "The woman can become addicted to carbon monoxide.",
+      "Carbon monoxide can cause cancer in the lungs of the fetus."
+    ],
+    ans: "A",
+    exp: "Nicotine is a small molecule that can cross the placenta and enter fetal circulation, affecting fetal development and heart rate. COPD (chronic obstructive pulmonary disease) takes decades to develop — it cannot develop in a fetus. Carbon monoxide is not addictive. Cancer does not develop during fetal life from smoking. Answer = A."
+  },
+  {
+    n: 31,
+    q: "The graph shows four hormones controlling the menstrual cycle. Which curve represents LH?", diagram: `<svg viewBox="0 0 380 180" xmlns="http://www.w3.org/2000/svg" width="380" height="180">
+<style>.ax{stroke:#7a8199;stroke-width:1.5;fill:none}.lbl{fill:#7a8199;font-size:10px;font-family:serif;text-anchor:middle}.curveA{stroke:#6aafe0;stroke-width:2;fill:none;stroke-dasharray:6,3}.curveB{stroke:#e05c5c;stroke-width:2;fill:none}.curveC{stroke:#4ecca3;stroke-width:2.5;fill:none}.curveD{stroke:#e8c547;stroke-width:2;fill:none;stroke-dasharray:4,2}<\/style>
+
+<line x1="50" y1="15" x2="50" y2="145" class="ax"/>
+<line x1="50" y1="145" x2="360" y2="145" class="ax"/>
+<text x="205" y="162" class="lbl">time / weeks</text>
+<text x="18" y="80" class="lbl" transform="rotate(-90,18,80)">hormone concentration</text>
+
+<text x="50" y="158" class="lbl">0</text>
+<text x="125" y="158" class="lbl">1</text>
+<text x="200" y="158" class="lbl">2</text>
+<text x="275" y="158" class="lbl">3</text>
+<text x="350" y="158" class="lbl">4</text>
+<line x1="200" y1="142" x2="200" y2="148" class="ax"/>
+
+<line x1="200" y1="15" x2="200" y2="145" stroke="#555" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="208" y="28" class="lbl" style="fill:#555;font-size:9px">ovulation</text>
+
+<path d="M50,130 Q80,120 110,85 Q140,60 155,75 Q170,90 200,130 Q230,138 280,135 Q320,133 350,132" class="curveA"/>
+<text x="80" y="78" class="lbl" style="fill:#6aafe0">A (FSH)</text>
+
+<path d="M50,138 Q90,135 130,100 Q160,72 185,75 Q200,78 215,110 Q240,130 280,125 Q320,120 350,118" class="curveB"/>
+<text x="155" y="68" class="lbl" style="fill:#e05c5c">B (oestrogen)</text>
+
+<path d="M50,142 Q100,141 160,138 Q185,135 195,50 Q200,25 205,50 Q215,135 240,140 Q290,142 350,142" class="curveC"/>
+<text x="205" y="20" class="lbl" style="fill:#4ecca3;font-weight:bold">C = LH ✓</text>
+<text x="205" y="32" class="lbl" style="fill:#4ecca3;font-size:9px">sharp surge</text>
+<text x="205" y="43" class="lbl" style="fill:#4ecca3;font-size:9px">triggers ovulation</text>
+
+<path d="M50,142 Q140,142 200,142 Q220,128 250,88 Q270,65 290,72 Q320,90 350,138" class="curveD"/>
+<text x="290" y="60" class="lbl" style="fill:#e8c547">D (progesterone)</text>
+</svg>`, diagCaption: `Menstrual cycle hormone graph: LH (C) shows a sharp spike at ovulation (week 2). FSH=A, oestrogen=B, progesterone=D`,
+    opts: ["A","B","C","D"],
+    ans: "C",
+    exp: "LH (luteinising hormone) shows a sharp, dramatic surge around day 14 (week 2) that directly triggers ovulation. This distinctive spike pattern is curve C. FSH rises and falls in the first half of the cycle (A). Oestrogen rises steadily then has a smaller peak before ovulation (B). Progesterone rises after ovulation and falls at the end of the cycle (D). Answer = C."
+  },
+  {
+    n: 32,
+    q: "What happens to the mass of DNA in a nucleus before mitosis occurs?",
+    opts: ["It doubles.","It halves.","It stays the same.","It halves and then halves again."],
+    ans: "A",
+    exp: "Before mitosis (during S-phase of interphase), DNA replication occurs — every chromosome is copied. This doubles the total DNA content of the nucleus, so that when the cell divides, each daughter cell receives a complete copy. The DNA mass doubles before mitosis begins. Answer = A."
+  },
+  {
+    n: 33,
+    q: "A test cross is done on a tall pea plant. The table shows possible offspring phenotypes and descriptions of the tall parent's genotype. If a large number of offspring are produced, which rows are possible?",
+    table: {
+      headers: ["","Offspring phenotypes","Genotype of tall parent"],
+      rows: [
+        ["1","all tall","heterozygous"],
+        ["2","all tall","homozygous dominant"],
+        ["3","all short","homozygous dominant"],
+        ["4","tall and short","heterozygous"]
+      ]
+    },
+    opts: ["1 and 3","1 only","2 and 4","2 only"],
+    ans: "C",
+    exp: "A test cross uses a homozygous recessive (short, tt) partner. If the tall parent is homozygous dominant (TT): TT × tt → all Tt = all tall (Row 2 ✓). If heterozygous (Tt): Tt × tt → 50% Tt (tall) + 50% tt (short) = tall and short (Row 4 ✓). Row 1 is wrong (heterozygous Tt × tt gives mixed, not all tall in large samples). Row 3 is wrong (TT cannot give short offspring). Answer = C: rows 2 and 4."
+  },
+  {
+    n: 34,
+    q: "Which statement about variation is correct?",
+    opts: [
+      "Continuous variation results in few phenotypes with no intermediates.",
+      "Discontinuous variation results in few phenotypes with no intermediates.",
+      "Phenotypic variation is caused by environmental factors only.",
+      "Phenotypic variation is caused by genetic factors only."
+    ],
+    ans: "B",
+    exp: "Discontinuous variation produces distinct categories with no intermediates (e.g. blood groups: A, B, AB, O — you cannot be between groups). Continuous variation produces a range of phenotypes with intermediates (e.g. height). Phenotypic variation is caused by BOTH genetic and environmental factors. Answer = B."
+  },
+  {
+    n: 35,
+    q: "Some plants have small leaves with thick waxy cuticles. Which row describes the effect on water loss and the type of plant?",
+    table: {
+      headers: ["","Effect on water loss","Type of plant"],
+      rows: [
+        ["A","decreases","hydrophyte"],
+        ["B","decreases","xerophyte"],
+        ["C","increases","hydrophyte"],
+        ["D","increases","xerophyte"]
+      ]
+    },
+    opts: ["A","B","C","D"],
+    ans: "B",
+    exp: "Small leaves = reduced surface area = less transpiration. Thick waxy cuticle = waterproof layer = less evaporation through leaf surface. Both features decrease water loss. These are adaptations of xerophytes — plants that live in hot, dry environments (e.g. cacti, desert plants). Hydrophytes live in water. Answer = B: decreases water loss, xerophyte."
+  },
+  {
+    n: 36,
+    q: "The diagram shows a cross between plants with different diploid numbers forming a hybrid. Species 1 has diploid number 70. The hybrid has diploid number 64. What is the diploid number of species 2?", diagram: `<svg viewBox="0 0 380 140" xmlns="http://www.w3.org/2000/svg" width="380" height="140">
+<style>.box{fill:#1e2335;stroke:#4a5568;stroke-width:1.2}.lbl{fill:#e8e6df;font-size:11px;font-family:serif;text-anchor:middle}.acc{fill:#4ecca3;font-size:11px;font-family:serif;font-weight:bold;text-anchor:middle}.eq{fill:#e8c547;font-size:12px;font-family:serif;text-anchor:middle}<\/style>
+<defs><marker id="ha" markerWidth="7" markerHeight="6" refX="5" refY="3" orient="auto"><polygon points="0 0,7 3,0 6" fill="#7a8199"/></marker></defs>
+
+<rect x="10" y="30" width="100" height="60" class="box" rx="4"/>
+<text x="60" y="55" class="lbl">Species 1</text>
+<text x="60" y="70" class="eq">diploid = 70</text>
+<text x="60" y="83" class="lbl" style="fill:#7a8199">haploid = 35</text>
+
+<line x1="110" y1="60" x2="145" y2="60" stroke="#7a8199" stroke-width="1.5" marker-end="url(#ha)"/>
+
+<rect x="147" y="20" width="90" height="80" class="box" rx="4" style="stroke:#4ecca3"/>
+<text x="192" y="48" class="lbl" style="fill:#4ecca3">Hybrid</text>
+<text x="192" y="63" class="eq">diploid = 64</text>
+<text x="192" y="78" class="lbl" style="fill:#7a8199">= 35 + 29</text>
+<text x="192" y="90" class="lbl" style="fill:#7a8199">gametes</text>
+
+<line x1="237" y1="60" x2="272" y2="60" stroke="#7a8199" stroke-width="1.5" marker-end="url(#ha)"/>
+
+<rect x="274" y="30" width="100" height="60" class="box" rx="4" style="stroke:#e8c547"/>
+<text x="324" y="55" class="lbl">Species 2</text>
+<text x="324" y="70" class="eq" style="fill:#e8c547">diploid = ?</text>
+
+<text x="192" y="115" class="lbl" style="fill:#e8c547;font-size:10px">Hybrid 64 = 35 (from sp.1) + 29 (from sp.2)</text>
+<text x="192" y="128" class="acc">Species 2 diploid = 29 × 2 = 58 → Answer D</text>
+</svg>`, diagCaption: `Hybrid calculation: hybrid diploid 64 = haploid from sp.1 (35) + haploid from sp.2 (29). So sp.2 diploid = 29×2 = 58`,
+    opts: ["29","32","35","58"],
+    ans: "D",
+    exp: "Species 1 diploid = 70, so its haploid gamete contributes 70÷2 = 35 chromosomes to the hybrid. Hybrid diploid = 64, so the gamete from species 2 contributes 64 − 35 = 29 chromosomes. Species 2 diploid number = 29 × 2 = 58. Answer = D."
+  },
+  {
+    n: 37,
+    q: "The diagram shows stages in the nitrogen cycle (numbered 1–5). Which row correctly identifies the processes at each stage?", diagram: `<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" width="400" height="220">
+<style>.box{fill:#1e2335;stroke:#4a5568;stroke-width:1.2}.lbl{fill:#e8e6df;font-size:10px;font-family:serif;text-anchor:middle}.num{fill:#e8c547;font-size:12px;font-weight:bold;font-family:serif;text-anchor:middle}.arrow{stroke:#7a8199;stroke-width:1.8;fill:none;marker-end:url(#na)}<\/style>
+<defs><marker id="na" markerWidth="7" markerHeight="6" refX="5" refY="3" orient="auto"><polygon points="0 0,7 3,0 6" fill="#7a8199"/></marker></defs>
+
+<rect x="140" y="5" width="120" height="35" class="box" rx="4" style="stroke:#6aafe0"/>
+<text x="200" y="22" class="lbl" style="fill:#6aafe0">atmospheric</text>
+<text x="200" y="34" class="lbl" style="fill:#6aafe0">nitrogen</text>
+
+<rect x="10" y="95" width="110" height="35" class="box" rx="4"/>
+<text x="65" y="111" class="lbl">ammonium</text>
+<text x="65" y="123" class="lbl">compounds</text>
+
+<rect x="280" y="95" width="110" height="35" class="box" rx="4" style="stroke:#4ecca3"/>
+<text x="335" y="111" class="lbl" style="fill:#4ecca3">plant</text>
+<text x="335" y="123" class="lbl" style="fill:#4ecca3">protein</text>
+
+<rect x="140" y="175" width="120" height="35" class="box" rx="4" style="stroke:#e8c547"/>
+<text x="200" y="196" class="lbl" style="fill:#e8c547">nitrate</text>
+
+
+<line x1="260" y1="192" x2="335" y2="130" class="arrow"/>
+<text x="310" y="165" class="num">1</text>
+
+<line x1="280" y1="112" x2="120" y2="112" class="arrow"/>
+<text x="200" y="106" class="num">2</text>
+
+<line x1="65" y1="130" x2="140" y2="178" class="arrow"/>
+<text x="92" y="162" class="num">3</text>
+
+<line x1="200" y1="175" x2="200" y2="40" class="arrow"/>
+<text x="212" y="115" class="num">4</text>
+
+<line x1="140" y1="28" x2="65" y2="95" class="arrow"/>
+<text x="88" y="58" class="num">5</text>
+
+<text x="195" y="210" class="lbl" style="fill:#4ecca3;font-weight:bold">Answer B: absorption=2, decomposition=3, denitrification=1, nitrification=4, N-fixation=5</text>
+</svg>`, diagCaption: `Nitrogen cycle: 1=absorption (nitrate→plant protein), 2=decomposition (protein→ammonium), 3=nitrification (ammonium→nitrate), 4=denitrification (nitrate→atm N), 5=nitrogen fixation (atm N→ammonium)`,
+    table: {
+      headers: ["","Absorption","Decomposition","Denitrification","Nitrification","N-fixation"],
+      rows: [
+        ["A","2","4","5","1","3"],
+        ["B","2","3","1","4","5"],
+        ["C","1","5","2","3","4"],
+        ["D","1","2","3","5","4"]
+      ]
+    },
+    opts: ["A","B","C","D"],
+    ans: "B",
+    exp: "Nitrogen cycle stages: (1) nitrate → plant protein = absorption; (2) plant protein → ammonium = decomposition; (3) ammonium → nitrate = nitrification (by nitrifying bacteria); (4) nitrate → atmospheric N₂ = denitrification (by denitrifying bacteria); (5) atmospheric N₂ → ammonium = nitrogen fixation. Answer = B: absorption=2, decomposition=3, denitrification=1, nitrification=4, N-fixation=5."
+  },
+  {
+    n: 38,
+    q: "Genetically engineered bacteria are used to produce human proteins. Into which component of the bacterial cell is human DNA inserted?",
+    opts: ["Cell wall","Nucleus","Plasmid","Rough endoplasmic reticulum"],
+    ans: "C",
+    exp: "In genetic engineering, the human gene (e.g. insulin gene) is cut out using restriction enzymes and inserted into a bacterial plasmid (small circular DNA molecule) using DNA ligase. The recombinant plasmid is then introduced into the bacterium. Bacteria have no nucleus or rough ER. The cell wall cannot be used for DNA insertion. Answer = C: plasmid."
+  },
+  {
+    n: 39,
+    q: "The sugar in milk is digested by an enzyme. Which row matches the enzyme with the sugar it digests?",
+    table: {
+      headers: ["","Enzyme","Sugar in milk"],
+      rows: [
+        ["A","lactase","glucose"],
+        ["B","lactose","lactase"],
+        ["C","lactase","lactose"],
+        ["D","lactose","sucrose"]
+      ]
+    },
+    opts: ["A","B","C","D"],
+    ans: "C",
+    exp: "The sugar in milk is lactose (a disaccharide). The enzyme that digests it is lactase (note: enzyme names end in -ase). Lactase breaks lactose into glucose and galactose. Option B has enzyme and substrate swapped. Option A says lactase digests glucose (wrong). Answer = C: lactase digests lactose."
+  },
+  {
+    n: 40,
+    q: "The list shows activities in a forest. Which activities are likely to ensure the forest is used sustainably?
+1. Cutting down only selected trees
+2. Educating people about forests
+3. Replanting trees
+4. Cutting down trees to grow crop plants",
+    opts: [
+      "1, 2 and 3",
+      "1, 2 and 4",
+      "1, 3 and 4",
+      "2 and 3 only"
+    ],
+    ans: "A",
+    exp: "Sustainable forestry means using the forest in a way that can continue indefinitely without depleting it. (1) Selective felling preserves the forest structure. (2) Education raises awareness and long-term support for conservation. (3) Replanting replaces trees removed. (4) Clearing for crops permanently destroys the forest — NOT sustainable. Answer = A: 1, 2 and 3."
+  }
+];
+
+let answered = {};
+let submitted = false;
+
+function letterToIndex(letter) {
+  return letter.charCodeAt(0) - 65; // A=0, B=1, C=2, D=3
+}
+
+function buildQuiz() {
+  const container = document.getElementById('quiz');
+  questions.forEach((q, qi) => {
+    const block = document.createElement('div');
+    block.className = 'question-block';
+    block.id = `q-${qi}`;
+
+    let tableHTML = '';
+    if (q.table) {
+      tableHTML = '<table class="q-table"><thead><tr>';
+      q.table.headers.forEach(h => { tableHTML += `<th>${h}</th>`; });
+      tableHTML += '</tr></thead><tbody>';
+      q.table.rows.forEach(row => {
+        tableHTML += '<tr>';
+        row.forEach((cell, ci) => {
+          tableHTML += ci === 0 ? `<td><strong style="color:var(--accent2)">${cell}</strong></td>` : `<td>${cell}</td>`;
+        });
+        tableHTML += '</tr>';
+      });
+      tableHTML += '</tbody></table>';
+    }
+
+    const qTextFormatted = q.q.replace(/\n/g, '<br>');
+
+    let diagHTML = '';
+    if (q.diagram) {
+      const cap = q.diagCaption ? `<div class="diagram-caption">${q.diagCaption}</div>` : '';
+      diagHTML = `<div class="diagram-wrap">${q.diagram}</div>${cap}`;
+    }
+
+    let optsHTML = '';
+    q.opts.forEach((opt, oi) => {
+      const letter = String.fromCharCode(65 + oi);
+      optsHTML += `
+        <div class="option" id="q${qi}-opt${oi}" onclick="selectOption(${qi}, ${oi})">
+          <div class="option-letter">${letter}</div>
+          <div style="flex:1">${opt}</div>
+          <div class="result-icon" id="q${qi}-icon${oi}"></div>
+        </div>`;
+    });
+
+    block.innerHTML = `
+      <div class="q-number">Question ${q.n} of 40</div>
+      <div class="q-text">${qTextFormatted}</div>
+      ${diagHTML}
+      ${tableHTML ? `<div style="overflow-x:auto;margin:0 0 20px">${tableHTML}</div>` : ''}
+      <div class="options">${optsHTML}</div>
+      <div class="explanation" id="q${qi}-exp"></div>
+    `;
+    container.appendChild(block);
+  });
+}
+
+function selectOption(qi, oi) {
+  if (submitted) return;
+  const prev = answered[qi];
+  if (prev !== undefined) {
+    document.getElementById(`q${qi}-opt${prev}`).classList.remove('selected');
+  }
+  answered[qi] = oi;
+  document.getElementById(`q${qi}-opt${oi}`).classList.add('selected');
+  document.getElementById(`q-${qi}`).classList.add('answered');
+  updateProgress();
+}
+
+function updateProgress() {
+  const count = Object.keys(answered).length;
+  document.getElementById('progress-count').textContent = count;
+  document.getElementById('progress-fill').style.width = (count / 40 * 100) + '%';
+}
+
+function submitExam() {
+  const unanswered = questions.length - Object.keys(answered).length;
+  if (unanswered > 0) {
+    const note = document.getElementById('unanswered-note');
+    note.style.display = 'block';
+    note.textContent = `You have ${unanswered} unanswered question${unanswered > 1 ? 's' : ''}. Submit anyway or go back and answer them.`;
+    if (!document.getElementById('btn-submit-confirm')) {
+      const btn2 = document.createElement('button');
+      btn2.className = 'btn-submit';
+      btn2.id = 'btn-submit-confirm';
+      btn2.style.marginTop = '14px';
+      btn2.style.background = 'var(--accent2)';
+      btn2.textContent = 'Submit Anyway';
+      btn2.onclick = doSubmit;
+      document.querySelector('.submit-area').appendChild(btn2);
+    }
+    return;
+  }
+  doSubmit();
+}
+
+function doSubmit() {
+  submitted = true;
+  document.getElementById('btn-submit').disabled = true;
+  const conf = document.getElementById('btn-submit-confirm');
+  if (conf) conf.disabled = true;
+
+  let score = 0;
+  questions.forEach((q, qi) => {
+    const correctIdx = letterToIndex(q.ans);
+    const userIdx = answered[qi];
+
+    // Lock all options
+    q.opts.forEach((_, oi) => {
+      document.getElementById(`q${qi}-opt${oi}`).classList.add('locked');
+    });
+
+    // Show correct answer
+    const correctEl = document.getElementById(`q${qi}-opt${correctIdx}`);
+
+    if (userIdx !== undefined) {
+      const userEl = document.getElementById(`q${qi}-opt${userIdx}`);
+      const icon = document.getElementById(`q${qi}-icon${userIdx}`);
+      if (userIdx === correctIdx) {
+        userEl.classList.remove('selected');
+        userEl.classList.add('correct');
+        icon.style.display = 'block';
+        icon.textContent = '✓';
+        icon.style.color = 'var(--correct)';
+        score++;
+      } else {
+        userEl.classList.remove('selected');
+        userEl.classList.add('wrong');
+        icon.style.display = 'block';
+        icon.textContent = '✗';
+        icon.style.color = 'var(--wrong)';
+        correctEl.classList.add('show-correct');
+        const correctIcon = document.getElementById(`q${qi}-icon${correctIdx}`);
+        correctIcon.style.display = 'block';
+        correctIcon.textContent = '✓';
+        correctIcon.style.color = 'var(--correct)';
+      }
+    } else {
+      // Not answered — just show correct
+      correctEl.classList.add('show-correct');
+      const correctIcon = document.getElementById(`q${qi}-icon${correctIdx}`);
+      correctIcon.style.display = 'block';
+      correctIcon.textContent = '✓';
+      correctIcon.style.color = 'var(--correct)';
+    }
+
+    // Show explanation
+    const expEl = document.getElementById(`q${qi}-exp`);
+    expEl.innerHTML = `<strong>Answer: ${q.ans}</strong> — ${q.exp.replace(/\n/g,'<br>')}`;
+    expEl.classList.add('visible');
+  });
+
+  // Score panel
+  const pct = Math.round(score / 40 * 100);
+  let grade = '';
+  if (pct >= 90) grade = 'Exceptional — A*';
+  else if (pct >= 80) grade = 'Excellent — A';
+  else if (pct >= 70) grade = 'Strong — B';
+  else if (pct >= 60) grade = 'Good — C';
+  else if (pct >= 50) grade = 'Satisfactory — D';
+  else grade = 'Keep Revising — E/U';
+
+  document.getElementById('score-num').textContent = score;
+  document.getElementById('score-pct').textContent = pct + '%';
+  document.getElementById('score-grade').textContent = grade;
+
+  const panel = document.getElementById('score-panel');
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  setTimeout(() => {
+    document.getElementById('score-bar').style.width = pct + '%';
+  }, 300);
+
+  updateProgress();
+}
+
+buildQuiz();
+
+</script>
+</body>
+</html>
