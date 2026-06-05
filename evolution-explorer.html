@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evolution Explorer 🧬</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:    #1a3d2b;
+    --forest-mid:#2d6a4f;
+    --forest-lt: #40916c;
+    --coral:     #e8603c;
+    --coral-pale:#fdf0ec;
+    --mint:      #3aaf85;
+    --mint-pale: #e8f8f2;
+    --gold:      #c9962a;
+    --gold-pale: #fef9e7;
+    --lavender:  #7c6fcd;
+    --lav-pale:  #f0eefb;
+    --paper:     #fffef9;
+    --ink:       #1a2332;
+    --muted:     #7a8899;
+    --border:    #e0e4ea;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: linear-gradient(160deg, #0d2318 0%, #1a3d2b 45%, #2d6a4f 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* Leaf-particle background */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%, rgba(144,238,144,.45) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 22%  38%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 41%  6%,  rgba(144,238,144,.35) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 60%  24%, rgba(255,255,255,.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 77%  9%,  rgba(144,238,144,.4)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 90%  33%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 33%  55%, rgba(144,238,144,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 70%  48%, rgba(255,255,255,.2)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 55%  70%, rgba(144,238,144,.25) 0%, transparent 100%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 3.5rem 2rem 2rem;
+    color: white;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--forest);
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.85rem;
+    letter-spacing: .05em;
+    padding: .35rem 1.2rem;
+    border-radius: 20px;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 12px rgba(201,150,42,.45);
+  }
+  .hero h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.2rem,6vw,4rem);
+    line-height: 1.1;
+    margin-bottom: .8rem;
+    text-shadow: 0 2px 20px rgba(0,0,0,.35);
+  }
+  .hero h1 .accent { color: var(--gold); }
+  .hero p.intro {
+    font-size: 1.05rem; line-height: 1.7;
+    opacity: .88; max-width: 580px;
+    margin: 0 auto 2rem;
+  }
+
+  /* ─── PROGRESS PILLS ─── */
+  .progress-wrap {
+    display: flex; justify-content: center;
+    gap: .5rem; flex-wrap: wrap; margin-bottom: .5rem;
+  }
+  .prog-step {
+    display: flex; align-items: center; gap: .4rem;
+    background: rgba(255,255,255,.1);
+    border: 1.5px solid rgba(255,255,255,.18);
+    border-radius: 20px; padding: .35rem .9rem;
+    font-size: .78rem; font-weight: 700;
+    color: rgba(255,255,255,.7);
+    cursor: pointer; transition: all .2s;
+    font-family: 'DM Mono', monospace;
+  }
+  .prog-step:hover, .prog-step.done {
+    background: rgba(255,255,255,.2); color: white;
+    border-color: rgba(255,255,255,.35);
+  }
+  .prog-step.active {
+    background: var(--gold); color: var(--forest);
+    border-color: var(--gold);
+    box-shadow: 0 2px 12px rgba(201,150,42,.45);
+  }
+
+  /* ─── SHEET ─── */
+  .sheet {
+    position: relative; z-index: 1;
+    background: var(--paper);
+    border-radius: 24px 24px 0 0;
+    margin-top: 1.5rem;
+    padding: 0 0 6rem;
+    min-height: 80vh;
+    box-shadow: 0 -8px 40px rgba(0,0,0,.3);
+  }
+
+  /* ─── SECTIONS ─── */
+  .section {
+    padding: 3rem 2rem 0;
+    max-width: 820px;
+    margin: 0 auto;
+    display: none;
+  }
+  .section.active { display: block; }
+
+  .section-eyebrow {
+    display: flex; align-items: center;
+    gap: .6rem; margin-bottom: 1rem;
+  }
+  .eyebrow-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem; color: white; flex-shrink: 0;
+  }
+  .num-coral  { background: var(--coral); }
+  .num-mint   { background: var(--mint); }
+  .num-gold   { background: var(--gold); color: var(--forest); }
+  .num-lav    { background: var(--lavender); }
+  .num-forest { background: var(--forest-mid); }
+
+  .eyebrow-label {
+    font-size: .72rem; font-weight: 800;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--muted); font-family: 'DM Mono', monospace;
+  }
+
+  .section h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.6rem,3.5vw,2.2rem);
+    color: var(--forest); margin-bottom: .6rem; line-height: 1.2;
+  }
+  .section .lead {
+    font-size: 1rem; line-height: 1.75; color: #3a4a5a;
+    margin-bottom: 1.8rem;
+  }
+  .section .lead strong { color: var(--coral); }
+
+  /* ─── WONDER BOX ─── */
+  .wonder-box {
+    background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 100%);
+    color: white; border-radius: 16px;
+    padding: 1.8rem 2rem; margin-bottom: 1.8rem;
+    position: relative; overflow: hidden;
+  }
+  .wonder-box::after {
+    content: '🤔';
+    position: absolute; right: 1.5rem; top: 50%;
+    transform: translateY(-50%);
+    font-size: 3rem; opacity: .3;
+  }
+  .wonder-box p { font-size: 1rem; line-height: 1.7; font-style: italic; opacity: .95; max-width: 85%; }
+  .wonder-box strong { color: var(--gold); font-style: normal; }
+  .wonder-box.mint-box { background: linear-gradient(135deg, #1b7a58 0%, #2d9970 100%); }
+  .wonder-box.mint-box::after { content: '🔬'; }
+  .wonder-box.gold-box { background: linear-gradient(135deg, #8a6a1a 0%, #b8860b 100%); }
+  .wonder-box.gold-box::after { content: '🐦'; }
+
+  /* ─── CONCEPT CHIPS ─── */
+  .chip-row { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1.5rem; }
+  .chip {
+    padding: .45rem 1rem; border-radius: 20px;
+    font-size: .82rem; font-weight: 700; cursor: pointer;
+    transition: all .2s; border: 2px solid transparent;
+  }
+  .chip.coral  { background: var(--coral-pale);  color: var(--coral);     border-color: #f8c5b8; }
+  .chip.mint   { background: var(--mint-pale);   color: var(--mint);      border-color: #b8ebd8; }
+  .chip.gold   { background: var(--gold-pale);   color: #8a6a1a;          border-color: #f8e0a0; }
+  .chip.lav    { background: var(--lav-pale);    color: var(--lavender);  border-color: #d0caef; }
+  .chip.forest { background: #d4eadd;            color: var(--forest-mid);border-color: #a8d5b8; }
+  .chip:hover  { transform: scale(1.05); }
+
+  .concept-reveal {
+    background: var(--paper); border-left: 4px solid var(--coral);
+    border-radius: 0 10px 10px 0;
+    padding: 1rem 1.2rem; font-size: .88rem; line-height: 1.7;
+    margin-top: .5rem; display: none;
+    animation: fadeIn .3s ease;
+  }
+  .concept-reveal.show { display: block; }
+  .concept-reveal.mint-border   { border-color: var(--mint); }
+  .concept-reveal.gold-border   { border-color: var(--gold); }
+  .concept-reveal.lav-border    { border-color: var(--lavender); }
+  .concept-reveal.forest-border { border-color: var(--forest-mid); }
+
+  @keyframes fadeIn {
+    from { opacity:0; transform:translateY(-6px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* ─── PREDICT / REFLECT BOXES ─── */
+  .predict-box {
+    background: var(--gold-pale); border: 2px dashed var(--gold);
+    border-radius: 14px; padding: 1.4rem 1.6rem; margin-bottom: 1.5rem;
+  }
+  .predict-box h4 {
+    font-family: 'Fredoka One', cursive; font-size: 1rem;
+    color: #8a6a1a; margin-bottom: .8rem;
+  }
+  .predict-box textarea, .reflect-box textarea {
+    width: 100%; border: 1.5px solid rgba(0,0,0,.12);
+    border-radius: 8px; padding: .7rem;
+    font-family: 'Nunito', sans-serif; font-size: .88rem;
+    resize: vertical; min-height: 64px;
+    background: white; color: var(--ink); outline: none;
+    transition: border-color .2s;
+  }
+  .predict-box textarea:focus { border-color: var(--gold); }
+
+  .reflect-box {
+    background: var(--mint-pale); border: 2px dashed var(--mint);
+    border-radius: 14px; padding: 1.4rem 1.6rem; margin-top: 1.5rem;
+  }
+  .reflect-box h4 {
+    font-family: 'Fredoka One', cursive; font-size: 1rem;
+    color: #1b7a58; margin-bottom: .8rem;
+  }
+  .reflect-box textarea:focus { border-color: var(--mint); }
+
+  /* ─── DEMO ZONE ─── */
+  .demo-zone {
+    background: white; border: 2px solid var(--border);
+    border-radius: 16px; padding: 1.8rem; margin-bottom: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,.07);
+  }
+  .demo-zone h3 {
+    font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+    color: var(--forest); margin-bottom: .3rem;
+  }
+  .demo-zone .hint {
+    font-size: .78rem; color: var(--muted);
+    font-family: 'DM Mono', monospace; margin-bottom: 1.3rem;
+  }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    border: none; border-radius: 10px;
+    padding: .65rem 1.3rem; font-family: 'Nunito', sans-serif;
+    font-size: .88rem; font-weight: 800; cursor: pointer;
+    transition: all .15s; letter-spacing: .02em;
+  }
+  .btn:hover  { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,.15); }
+  .btn:active { transform: translateY(0); }
+  .btn-coral  { background: var(--coral);    color: white; }
+  .btn-mint   { background: var(--mint);     color: white; }
+  .btn-gold   { background: var(--gold);     color: var(--forest); }
+  .btn-lav    { background: var(--lavender); color: white; }
+  .btn-ghost  { background: #f0f2f5;         color: var(--muted); }
+  .btn-forest { background: var(--forest);   color: white; }
+
+  .action-row { display: flex; gap: .8rem; flex-wrap: wrap; align-items: center; margin-bottom: .8rem; }
+
+  /* ─── NAV ROW ─── */
+  .nav-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 2.5rem 2rem 0; max-width: 820px; margin: 0 auto;
+  }
+
+  /* ─── QUIZ CARD ─── */
+  .quiz-card {
+    background: white; border: 2px solid var(--border);
+    border-radius: 14px; padding: 1.4rem 1.6rem;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  }
+  .quiz-q {
+    font-weight: 700; font-size: .95rem;
+    color: var(--ink); margin-bottom: 1rem; line-height: 1.5;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: .5rem; }
+  .quiz-opt {
+    padding: .6rem 1rem; border-radius: 8px;
+    border: 2px solid var(--border);
+    background: white; cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: .88rem; font-weight: 600;
+    text-align: left; transition: all .15s;
+    color: var(--ink);
+  }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--forest-mid); background: #f0f7f3; }
+  .quiz-opt.correct   { background: var(--mint-pale); border-color: var(--mint); color: #1b7a58; }
+  .quiz-opt.wrong     { background: var(--coral-pale); border-color: var(--coral); color: #a83020; }
+  .quiz-opt:disabled  { cursor: default; }
+  .quiz-feedback {
+    margin-top: .8rem; font-size: .85rem; line-height: 1.6;
+    padding: .7rem 1rem; border-radius: 8px; display: none;
+    animation: fadeIn .3s ease;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct-fb { background: var(--mint-pale); color: #1b7a58; border-left: 3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background: var(--coral-pale); color: #a83020; border-left: 3px solid var(--coral); }
+
+  /* ─── SELECTION SIMULATOR ─── */
+  .sim-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 4px; margin: 1rem 0;
+  }
+  .sim-moth {
+    font-size: 1.4rem; text-align: center; cursor: default;
+    transition: all .3s; border-radius: 6px;
+    padding: 2px;
+  }
+  .sim-stat-row {
+    display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0;
+  }
+  .sim-stat {
+    background: #f5f7fa; border-radius: 10px;
+    padding: .6rem 1.1rem; flex: 1; min-width: 120px;
+    text-align: center;
+  }
+  .sim-stat .stat-val {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.6rem; color: var(--forest);
+  }
+  .sim-stat .stat-lbl {
+    font-family: 'DM Mono', monospace;
+    font-size: .65rem; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .08em;
+  }
+
+  /* ─── EVIDENCE CARDS ─── */
+  .evidence-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem; margin-bottom: 1.5rem;
+  }
+  .ev-card {
+    background: white; border: 2px solid var(--border);
+    border-radius: 14px; padding: 1.2rem; cursor: pointer;
+    transition: all .2s; text-align: center;
+  }
+  .ev-card:hover, .ev-card.active {
+    border-color: var(--forest-mid);
+    box-shadow: 0 4px 16px rgba(45,106,79,.2);
+    transform: translateY(-2px);
+  }
+  .ev-card.active { background: #d4eadd; }
+  .ev-card .ev-icon { font-size: 2.4rem; margin-bottom: .5rem; }
+  .ev-card .ev-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem; color: var(--forest); margin-bottom: .3rem;
+  }
+  .ev-card .ev-sub { font-size: .75rem; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+  .ev-panel {
+    background: #d4eadd; border-left: 4px solid var(--forest-mid);
+    border-radius: 0 12px 12px 0; padding: 1.2rem 1.4rem;
+    display: none; animation: fadeIn .3s ease;
+  }
+  .ev-panel.show { display: block; }
+  .ev-panel h4 { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: var(--forest); margin-bottom: .5rem; }
+  .ev-panel p  { font-size: .88rem; line-height: 1.7; color: #2a3a2a; }
+  .ev-panel .example-box {
+    background: white; border-radius: 8px; padding: .7rem 1rem;
+    margin-top: .8rem; font-size: .82rem;
+    font-family: 'DM Mono', monospace; color: var(--ink);
+    border: 1.5px solid rgba(45,106,79,.2);
+  }
+
+  /* ─── MATCHING GAME ─── */
+  .match-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; margin: 1rem 0;
+  }
+  .match-item {
+    padding: .75rem 1rem; border-radius: 10px;
+    border: 2px solid var(--border); cursor: pointer;
+    font-size: .88rem; font-weight: 700;
+    transition: all .2s; background: white;
+    text-align: center; color: var(--ink);
+  }
+  .match-item:hover   { border-color: var(--forest-mid); background: #f0f7f3; }
+  .match-item.selected { border-color: var(--lavender); background: var(--lav-pale); color: var(--lavender); }
+  .match-item.matched  { border-color: var(--mint); background: var(--mint-pale); color: #1b7a58; cursor: default; }
+  .match-item.wrong    { border-color: var(--coral); background: var(--coral-pale); color: var(--coral); animation: shake .3s; }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  /* ─── SELECTION TYPES CARDS ─── */
+  .sel-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: .8rem; margin: 1rem 0 1.5rem;
+  }
+  .sel-card {
+    background: white; border: 2px solid var(--border);
+    border-radius: 14px; padding: 1rem; text-align: center;
+    cursor: pointer; transition: all .2s;
+  }
+  .sel-card:hover, .sel-card.active {
+    border-color: var(--coral);
+    box-shadow: 0 3px 12px rgba(232,96,60,.18);
+    transform: translateY(-2px);
+  }
+  .sel-card.active { background: var(--coral-pale); }
+  .sel-card .sel-icon { font-size: 2rem; margin-bottom: .4rem; }
+  .sel-card .sel-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: .92rem; color: var(--forest); margin-bottom: .2rem;
+  }
+  .sel-card .sel-key {
+    font-family: 'DM Mono', monospace; font-size: .65rem;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .06em;
+  }
+  .sel-detail {
+    background: var(--coral-pale); border-left: 4px solid var(--coral);
+    border-radius: 0 12px 12px 0; padding: 1.2rem 1.4rem;
+    display: none; animation: fadeIn .3s ease; margin-bottom: 1.5rem;
+  }
+  .sel-detail.show { display: block; }
+  .sel-detail h4 { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: var(--forest); margin-bottom: .4rem; }
+  .sel-detail p  { font-size: .88rem; line-height: 1.7; }
+  .sel-detail .examples { margin-top: .6rem; font-style: italic; color: var(--muted); font-size: .82rem; }
+
+  /* ─── SCORE PANEL ─── */
+  .score-panel {
+    background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 100%);
+    color: white; border-radius: 16px; padding: 2rem; text-align: center; margin-top: 1.5rem;
+  }
+  .score-panel .score-num {
+    font-family: 'Fredoka One', cursive; font-size: 3.5rem;
+    line-height: 1; color: var(--gold);
+  }
+  .score-panel p { opacity: .88; margin-top: .5rem; font-size: 1rem; }
+  .score-panel h3 {
+    font-family: 'Fredoka One', cursive; font-size: 1.5rem; margin-bottom: .3rem;
+  }
+
+  /* ─── CONGRATS ─── */
+  .congrats-panel {
+    background: linear-gradient(135deg, var(--forest) 0%, #1b7a58 100%);
+    color: white; border-radius: 20px; padding: 2.5rem 2rem; text-align: center;
+    margin-top: 2rem;
+  }
+  .congrats-panel h2 { font-family: 'Fredoka One', cursive; font-size: 2rem; margin-bottom: .6rem; }
+  .congrats-panel p  { opacity: .9; line-height: 1.7; max-width: 480px; margin: 0 auto .8rem; }
+  .summary-chips { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin-top: 1rem; }
+  .summary-chip {
+    background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.3);
+    border-radius: 20px; padding: .3rem .9rem;
+    font-size: .78rem; font-weight: 700;
+    font-family: 'DM Mono', monospace; letter-spacing: .04em;
+  }
+
+  /* ─── VOCAB TABLE ─── */
+  .vocab-table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; }
+  .vocab-table th {
+    background: var(--forest); color: white;
+    font-family: 'Fredoka One', cursive; font-size: .85rem;
+    padding: .7rem 1rem; text-align: left;
+  }
+  .vocab-table td {
+    padding: .65rem 1rem; font-size: .85rem; line-height: 1.5;
+    border-bottom: 1px solid var(--border);
+  }
+  .vocab-table tr:nth-child(even) td { background: #f5f7fa; }
+  .vocab-table tr:hover td { background: #d4eadd; transition: background .15s; }
+  .vocab-table td:first-child { font-weight: 800; color: var(--forest-mid); }
+
+  /* ─── FILL IN THE BLANK ─── */
+  .blank-input {
+    border: none; border-bottom: 2.5px solid var(--forest-mid);
+    background: transparent; font-family: 'Nunito', sans-serif;
+    font-size: 1rem; font-weight: 700; color: var(--forest);
+    width: 160px; text-align: center; outline: none;
+    padding: 0 4px; transition: border-color .2s;
+  }
+  .blank-input:focus  { border-color: var(--coral); }
+  .blank-input.ok     { border-color: var(--mint);   color: var(--mint); }
+  .blank-input.err    { border-color: var(--coral);  color: var(--coral); }
+  .fill-q {
+    font-size: 1rem; line-height: 2; color: var(--ink);
+    margin-bottom: 1rem;
+  }
+
+  /* divider */
+  .divider { height: 1px; background: var(--border); margin: 2rem 0; }
+
+  /* ─── NAME BAR ─── */
+  .name-bar {
+    background: rgba(255,255,255,.1);
+    border: 1.5px solid rgba(255,255,255,.25);
+    border-radius: 12px; padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    max-width: 420px; margin: 0 auto 1rem;
+  }
+  .name-bar label {
+    font-size: .78rem; font-weight: 700;
+    color: rgba(255,255,255,.8); white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+  }
+  .name-bar input {
+    flex: 1; background: rgba(255,255,255,.15);
+    border: none; border-radius: 8px;
+    padding: .4rem .8rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: .9rem; font-weight: 700; color: white; outline: none;
+  }
+  .name-bar input::placeholder { color: rgba(255,255,255,.4); font-weight: 400; }
+
+  /* ─── SUMMARY / SUBMIT ─── */
+  .summary-section {
+    background: white; border-radius: 14px;
+    padding: 1.4rem 1.6rem; margin-bottom: 1rem;
+    border: 2px solid var(--border);
+  }
+  .summary-section h3 {
+    font-family: 'Fredoka One', cursive; font-size: 1.05rem;
+    color: var(--forest); margin-bottom: .8rem;
+  }
+  .summary-answer {
+    background: #f5f7fa; border-radius: 8px;
+    padding: .7rem 1rem; font-size: .85rem; line-height: 1.6;
+    color: var(--ink); margin-bottom: .5rem;
+    font-style: italic; border-left: 3px solid var(--lavender);
+    min-height: 2rem;
+  }
+  .summary-answer.empty { color: var(--muted); font-style: normal; border-left-color: var(--border); }
+
+  /* ─── SHARE BUTTONS ─── */
+  .share-buttons {
+    display: flex; gap: .8rem; flex-wrap: wrap;
+    margin-top: 1.5rem; justify-content: center;
+  }
+  .share-btn {
+    border: none; border-radius: 12px;
+    padding: .85rem 1.6rem;
+    font-family: 'Fredoka One', cursive; font-size: 1rem;
+    cursor: pointer; transition: all .2s;
+    display: flex; align-items: center; gap: .5rem;
+  }
+  .share-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background: var(--mint);     color: white; }
+  .share-btn.email { background: var(--lavender); color: white; }
+  .share-btn.print { background: var(--forest);   color: white; }
+  .copy-confirm {
+    text-align: center; font-family: 'DM Mono', monospace;
+    font-size: .78rem; color: var(--mint);
+    min-height: 1.2rem; margin-top: .6rem; transition: all .3s;
+  }
+
+  /* ─── COPYRIGHT FOOTER ─── */
+  .site-footer {
+    position: relative; z-index: 1;
+    text-align: center; padding: 2rem 1rem 3rem;
+    color: rgba(255,255,255,.45);
+    font-family: 'DM Mono', monospace; font-size: .72rem;
+    line-height: 1.8;
+  }
+  .site-footer a { color: rgba(255,255,255,.55); text-decoration: none; }
+  .site-footer a:hover { color: rgba(255,255,255,.8); }
+
+  @media print {
+    .hero, .nav-row, .share-buttons, .copy-confirm, .prog-step, .name-bar { display: none !important; }
+    .sheet { box-shadow: none; border-radius: 0; }
+    .section { display: none !important; }
+    #sec-6 { display: block !important; }
+    .site-footer { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HERO ═══════════ -->
+<div class="hero">
+  <div class="hero-badge">🧬 AP Biology Prep · Unit 7</div>
+  <h1>Evolution <span class="accent">Explorer</span></h1>
+  <p class="intro">Master natural selection, speciation, and the evidence for evolution — covering every question in the Evolution Worksheet.</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+
+  <div class="progress-wrap">
+    <span class="prog-step active" onclick="goTo(0)">① Wonder</span>
+    <span class="prog-step"       onclick="goTo(1)">② Concepts</span>
+    <span class="prog-step"       onclick="goTo(2)">③ Evidence</span>
+    <span class="prog-step"       onclick="goTo(3)">④ Selection Lab</span>
+    <span class="prog-step"       onclick="goTo(4)">⑤ Quiz</span>
+    <span class="prog-step"       onclick="goTo(5)">⑥ Reflect</span>
+    <span class="prog-step"       onclick="goTo(6)">📤 Submit</span>
+  </div>
+</div>
+
+<!-- ═══════════ SHEET ═══════════ -->
+<div class="sheet">
+
+<!-- ── SECTION 0: WONDER ── -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-coral">1</div>
+    <span class="eyebrow-label">Phase 1 · Wonder</span>
+  </div>
+  <h2>🌿 Why Do Species Change Over Time?</h2>
+  <p class="lead">
+    You are studying for the <strong>AP Biology exam</strong> — one of the hardest high-school science tests in the country. 
+    The Evolution unit alone covers speciation, natural selection, mutations, genetic drift, and the fossil record. Let's start with a big question.
+  </p>
+
+  <div class="wonder-box">
+    <p>A tiny Galapagos finch lands on an island where only large, hard-shelled nuts grow. Fast-forward 10,000 years. <strong>What do you predict has happened to the beak of that finch population?</strong> Why?</p>
+  </div>
+
+  <div class="predict-box">
+    <h4>✏️ Your Prediction (before we dig in)</h4>
+    <textarea placeholder="Write what you think will happen to the finches, and why..."></textarea>
+  </div>
+
+  <div class="wonder-box gold-box">
+    <p>Here's the kicker: the same process that shaped finch beaks also shaped <strong>whale flippers, dog breeds, antibiotic-resistant bacteria, and the human hand</strong>. Evolution isn't a distant idea — it's happening right now.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.6rem;">🗝️ The Big Picture</h3>
+  <p style="font-size:.95rem;line-height:1.75;margin-bottom:1.8rem;">
+    <strong>Evolution</strong> is the process by which organisms change over time due to inherited changes to DNA. It operates through <em>natural selection</em>, <em>artificial selection</em>, <em>sexual selection</em>, and random processes like <em>genetic drift</em>. 
+    Two scientists — <strong>Charles Darwin</strong> and <strong>Alfred Russel Wallace</strong> — independently developed similar ideas about how evolution works.
+  </p>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" disabled>← Back</button>
+    <button class="btn btn-coral" onclick="goTo(1)">Next: Concepts →</button>
+  </div>
+</div>
+
+<!-- ── SECTION 1: CONCEPTS ── -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-lav">2</div>
+    <span class="eyebrow-label">Phase 2 · Discover</span>
+  </div>
+  <h2>📖 Core Vocabulary — Tap to Reveal</h2>
+  <p class="lead">Tap each term to see its definition and connection to the worksheet questions. Know ALL of these cold for the AP exam.</p>
+
+  <div class="chip-row">
+    <span class="chip coral" onclick="reveal('evo')">Evolution</span>
+    <span class="chip forest" onclick="reveal('natsel')">Natural Selection</span>
+    <span class="chip mint" onclick="reveal('artsel')">Artificial Selection</span>
+    <span class="chip gold" onclick="reveal('sexsel')">Sexual Selection</span>
+    <span class="chip lav" onclick="reveal('mutation')">Mutation</span>
+    <span class="chip coral" onclick="reveal('speciation')">Speciation</span>
+    <span class="chip forest" onclick="reveal('homolog')">Homologous Structures</span>
+    <span class="chip mint" onclick="reveal('vestigial')">Vestigial Structures</span>
+    <span class="chip gold" onclick="reveal('fitness')">Adaptation / Fitness</span>
+    <span class="chip lav" onclick="reveal('heredity')">Heredity</span>
+    <span class="chip coral" onclick="reveal('species')">Species</span>
+    <span class="chip forest" onclick="reveal('drift')">Genetic Drift</span>
+  </div>
+
+  <div id="rev-evo"        class="concept-reveal coral">
+    <strong>Evolution</strong> — The process by which organisms change over time due to inherited changes to their DNA. This is the central theory of biology. <em>Q126 on your worksheet.</em>
+  </div>
+  <div id="rev-natsel"     class="concept-reveal forest-border">
+    <strong>Natural Selection</strong> — The process by which traits that help an organism survive and reproduce become more common in a population over generations. It acts on <em>variation</em> that already exists. <em>Q118, 119, 116 on your worksheet.</em>
+  </div>
+  <div id="rev-artsel"     class="concept-reveal mint-border">
+    <strong>Artificial Selection</strong> — Selection caused by humans choosing which individuals to breed. Responsible for dog breeds, farm animals, and crop vegetables like broccoli. <em>Q110, 112, 122, 136.</em>
+  </div>
+  <div id="rev-sexsel"     class="concept-reveal gold-border">
+    <strong>Sexual Selection</strong> — A special type of natural selection driven by mate choice. Explains elaborate traits like the bright plumage of male birds. <em>Q135.</em>
+  </div>
+  <div id="rev-mutation"   class="concept-reveal lav-border">
+    <strong>Mutation</strong> — A random change in an organism's genetic sequence (DNA). Mutations are the ultimate source of all new genetic variation. They act <em>randomly</em> — not always helpful, not always harmful. <em>Q113, 120, 130.</em>
+  </div>
+  <div id="rev-speciation" class="concept-reveal coral">
+    <strong>Speciation</strong> — The process by which one species splits into two or more new species, usually because populations become reproductively isolated (can no longer breed with each other). Creates new species. <em>Q117, 121.</em>
+  </div>
+  <div id="rev-homolog"    class="concept-reveal forest-border">
+    <strong>Homologous Structures</strong> — Structures in different organisms that developed from the same embryonic tissue but may now perform different functions (e.g. whale fin and human hand). Evidence for common ancestry. <em>Q108, 129.</em>
+  </div>
+  <div id="rev-vestigial"  class="concept-reveal mint-border">
+    <strong>Vestigial Structures</strong> — Structures that are remnants of evolutionary history but no longer serve a function in the organism (e.g. human appendix, whale hip bones). <em>Q124, 125, 128, 131.</em>
+  </div>
+  <div id="rev-fitness"    class="concept-reveal gold-border">
+    <strong>Adaptation / Fitness</strong> — A trait that increases an organism's ability to survive and reproduce in its environment is called an <em>adaptation</em>. Fitness = reproductive success. <em>Q127, 132.</em>
+  </div>
+  <div id="rev-heredity"   class="concept-reveal lav-border">
+    <strong>Heredity</strong> — The transmission of genetic characteristics from parent to offspring. Natural selection only works because traits are heritable. <em>Q134.</em>
+  </div>
+  <div id="rev-species"    class="concept-reveal coral">
+    <strong>Species</strong> — A group of organisms that can interbreed and produce fertile offspring. Speciation creates new species when populations can no longer interbreed. <em>Q117, 121.</em>
+  </div>
+  <div id="rev-drift"      class="concept-reveal forest-border">
+    <strong>Genetic Drift</strong> — Random changes in allele frequency in a population, due to chance rather than selection. Most important in small populations. The change in <em>gene frequencies</em> in a population over time is evolution. <em>Q133.</em>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 Four Lines of Evidence for Evolution</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:1rem;">Your worksheet (Q123) lists all four — know them and be able to give examples.</p>
+  <table class="vocab-table">
+    <tr><th>Evidence</th><th>What it shows</th><th>Example</th></tr>
+    <tr><td>Fossil Record</td><td>Shows how organisms have changed over geological time; older fossils show simpler ancestors</td><td>Early horse fossils → modern horse</td></tr>
+    <tr><td>Homologous Structures</td><td>Same embryonic origin, different function → shared common ancestor</td><td>Whale fin & human hand (Q108)</td></tr>
+    <tr><td>Vestigial Structures</td><td>Leftover structures from ancestors → proves descent with modification</td><td>Human appendix, whale hip bones</td></tr>
+    <tr><td>Similarities in Embryology</td><td>Embryos of different species look remarkably similar → common ancestor</td><td>Turtle embryo ≈ human embryo (Q125)</td></tr>
+  </table>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(0)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(2)">Next: Evidence →</button>
+  </div>
+</div>
+
+<!-- ── SECTION 2: EVIDENCE ── -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-gold">3</div>
+    <span class="eyebrow-label">Phase 3 · Evidence</span>
+  </div>
+  <h2>🔍 Evidence for Evolution — Explore Each Type</h2>
+  <p class="lead">Tap a card to explore the evidence. You need to know both the <strong>type of evidence</strong> and be able to <strong>give examples</strong> from the worksheet.</p>
+
+  <div class="evidence-grid">
+    <div class="ev-card" onclick="showEvidence('fossil')">
+      <div class="ev-icon">🪨</div>
+      <div class="ev-title">Fossil Record</div>
+      <div class="ev-sub">Q111 · Q123</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('homolog')">
+      <div class="ev-icon">🤝</div>
+      <div class="ev-title">Homologous Structures</div>
+      <div class="ev-sub">Q108 · Q123 · Q129</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('vestigial')">
+      <div class="ev-icon">🦴</div>
+      <div class="ev-title">Vestigial Structures</div>
+      <div class="ev-sub">Q124 · Q128 · Q131</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('embryo')">
+      <div class="ev-icon">🥚</div>
+      <div class="ev-title">Embryology</div>
+      <div class="ev-sub">Q125 · Q123</div>
+    </div>
+  </div>
+
+  <div id="ev-fossil"   class="ev-panel">
+    <h4>🪨 Fossil Record</h4>
+    <p>The fossil record shows organisms preserved in rock layers over millions of years. Older layers contain simpler, more primitive organisms; newer layers show more complex, modern species. Comparing structures in the fossil record provides evidence for evolution (Q111).</p>
+    <div class="example-box">📌 Worksheet Q111: "Comparing organisms' structures in the fossil record provides evidence for ___." → <strong>evolution</strong></div>
+  </div>
+  <div id="ev-homolog"  class="ev-panel">
+    <h4>🤝 Homologous Structures</h4>
+    <p>Homologous structures develop from the same embryonic tissue but function differently in different species. This shows that different species descended from a <em>common ancestor</em> whose limb was then modified by evolution over millions of years (Q129).</p>
+    <div class="example-box">📌 Q108: A whale fin and a human hand are examples of <strong>homologous structures</strong>.<br>📌 Q129: "What are structures that develop from the same embryonic tissue into different functioning structures?" → <strong>Homologous structures</strong></div>
+  </div>
+  <div id="ev-vestigial" class="ev-panel">
+    <h4>🦴 Vestigial Structures</h4>
+    <p>Vestigial structures are evolutionary remnants — structures that had a function in an ancestor but are no longer useful. They are "biological fossils" inside living bodies, proving that species have changed over time (Q131).</p>
+    <div class="example-box">📌 Q124: The human <strong>appendix</strong> is an example of a vestigial structure.<br>📌 Q128: Whale <strong>hip bones</strong> are an example of a vestigial structure.</div>
+  </div>
+  <div id="ev-embryo"   class="ev-panel">
+    <h4>🥚 Similarities in Embryology</h4>
+    <p>The embryos of very different vertebrates (fish, turtles, humans) look strikingly similar in early development — all have gill slits and tails. This suggests all vertebrates share a distant common ancestor (Q125).</p>
+    <div class="example-box">📌 Q125: The inside of a turtle egg looks like a human embryo because turtles and humans share similarities in <strong>embryology</strong>.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Matching Game -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.4rem;">🎯 Quick Match — Evidence to Example</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Tap a term on the left, then tap the matching example on the right. All matches are drawn from your worksheet.</p>
+
+  <div class="match-grid" id="matchGrid">
+    <!-- left col -->
+    <div class="match-item" data-pair="a" data-side="term" onclick="matchClick(this)">Homologous Structure</div>
+    <div class="match-item" data-pair="b" data-side="def"  onclick="matchClick(this)">Whale hip bones</div>
+    <div class="match-item" data-pair="c" data-side="term" onclick="matchClick(this)">Fossil Record Evidence</div>
+    <div class="match-item" data-pair="d" data-side="def"  onclick="matchClick(this)">Turtle embryo ≈ human embryo</div>
+    <div class="match-item" data-pair="a" data-side="def"  onclick="matchClick(this)">Whale fin & human hand</div>
+    <div class="match-item" data-pair="e" data-side="term" onclick="matchClick(this)">Sexual Selection</div>
+    <div class="match-item" data-pair="b" data-side="term" onclick="matchClick(this)">Vestigial Structure</div>
+    <div class="match-item" data-pair="c" data-side="def"  onclick="matchClick(this)">Structures in rock layers show change over time</div>
+    <div class="match-item" data-pair="d" data-side="term" onclick="matchClick(this)">Embryology Similarity</div>
+    <div class="match-item" data-pair="e" data-side="def"  onclick="matchClick(this)">Bright colors in male birds</div>
+  </div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-ghost" onclick="resetMatch()">↺ Reset Match</button>
+    <span id="match-score" style="margin-left:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted);"></span>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(3)">Next: Selection Lab →</button>
+  </div>
+</div>
+
+<!-- ── SECTION 3: SELECTION LAB ── -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">4</div>
+    <span class="eyebrow-label">Phase 4 · Lab</span>
+  </div>
+  <h2>🦋 Natural Selection Simulator</h2>
+  <p class="lead">
+    During the Industrial Revolution, pollution darkened tree bark. The peppered moth population shifted toward <strong>darker coloring</strong> (Q114). Watch natural selection happen in real time.
+  </p>
+
+  <div class="predict-box">
+    <h4>✏️ Before you simulate — your prediction</h4>
+    <textarea id="sim-predict" placeholder="If the environment turns dark (polluted), what will happen to the ratio of light vs. dark moths? Why?"></textarea>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🌲 Peppered Moth Population</h3>
+    <div class="hint">Environment: <span id="env-label">Clean forest — light bark</span></div>
+
+    <div class="sim-stat-row">
+      <div class="sim-stat"><div class="stat-val" id="stat-light">50</div><div class="stat-lbl">🤍 Light Moths</div></div>
+      <div class="sim-stat"><div class="stat-val" id="stat-dark">50</div><div class="stat-lbl">🖤 Dark Moths</div></div>
+      <div class="sim-stat"><div class="stat-val" id="stat-gen">0</div><div class="stat-lbl">Generations</div></div>
+    </div>
+
+    <div class="sim-grid" id="simGrid"></div>
+
+    <div class="action-row" style="margin-top:1rem;">
+      <button class="btn btn-coral"   id="btn-pollute" onclick="pollute()">🏭 Industrialize (darken bark)</button>
+      <button class="btn btn-mint"    id="btn-clean"   onclick="cleanEnv()" disabled>🌿 Clean Up Environment</button>
+      <button class="btn btn-gold"    onclick="runGen()">▶ Next Generation</button>
+      <button class="btn btn-ghost"   onclick="resetSim()">↺ Reset</button>
+    </div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — What did you observe?</h4>
+    <textarea placeholder="Describe what happened to the moth population when the environment changed. Connect this to 'survival of the fittest' and Q114 from your worksheet..."></textarea>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Types of Selection -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin:.5rem 0 .4rem;">⚖️ Types of Selection — Tap to Explore</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">All four types appear on your worksheet. Know the definition AND a specific example for each.</p>
+
+  <div class="sel-grid">
+    <div class="sel-card" onclick="showSel('nat')">
+      <div class="sel-icon">🌿</div>
+      <div class="sel-name">Natural</div>
+      <div class="sel-key">environment drives it</div>
+    </div>
+    <div class="sel-card" onclick="showSel('art')">
+      <div class="sel-icon">👨‍🌾</div>
+      <div class="sel-name">Artificial</div>
+      <div class="sel-key">humans drive it</div>
+    </div>
+    <div class="sel-card" onclick="showSel('sex')">
+      <div class="sel-icon">🦚</div>
+      <div class="sel-name">Sexual</div>
+      <div class="sel-key">mate choice drives it</div>
+    </div>
+    <div class="sel-card" onclick="showSel('indust')">
+      <div class="sel-icon">🏭</div>
+      <div class="sel-name">Industrial Melanism</div>
+      <div class="sel-key">pollution example</div>
+    </div>
+  </div>
+
+  <div id="sel-nat"    class="sel-detail">
+    <h4>🌿 Natural Selection</h4>
+    <p>The environment acts as the "selector." Individuals with traits better suited to their environment survive and reproduce more. Over generations, the population becomes better adapted.</p>
+    <p class="examples">📌 Worksheet examples: Faster mice that outrun predator cats (Q116). Antibiotic-resistant bacteria from excessive antibiotic use (Q115). Birds with thicker beaks survive on hard-shelled nuts (Q118).</p>
+  </div>
+  <div id="sel-art"    class="sel-detail">
+    <h4>👨‍🌾 Artificial Selection</h4>
+    <p>Humans choose which individuals to breed, selecting for traits humans desire. Also called <em>selective breeding</em>. This is what caused the incredible diversity of dog breeds and farm animals.</p>
+    <p class="examples">📌 Worksheet examples: Different dog breeds (Q122). Cows and chickens (Q112). Broccoli and other vegetables (Q110). Human-caused = artificial (Q136).</p>
+  </div>
+  <div id="sel-sex"    class="sel-detail">
+    <h4>🦚 Sexual Selection</h4>
+    <p>A form of natural selection where the "selector" is the opposite sex choosing mates. Leads to traits like bright colors, elaborate songs, or large antlers — even if those traits reduce survival (but increase mating success).</p>
+    <p class="examples">📌 Worksheet Q135: "What type of selection caused male birds to be bright colors?" → <strong>Sexual selection</strong></p>
+  </div>
+  <div id="sel-indust" class="sel-detail">
+    <h4>🏭 Industrial Melanism (a type of Natural Selection)</h4>
+    <p>During the Industrial Revolution, coal pollution darkened tree bark. Light peppered moths became highly visible to predators and were eaten, while darker moths survived and reproduced. The population shifted to become predominantly dark — natural selection in action.</p>
+    <p class="examples">📌 Worksheet Q114: Peppered moths became darker because of <strong>natural selection</strong>.</p>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(4)">Next: Quiz →</button>
+  </div>
+</div>
+
+<!-- ── SECTION 4: QUIZ ── -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-forest">5</div>
+    <span class="eyebrow-label">Phase 5 · Real Test Practice</span>
+  </div>
+  <h2>📝 Worksheet Quiz — All 30 Questions</h2>
+  <p class="lead">These questions are taken <strong>directly from your Evolution Worksheet (Q108–137)</strong>. Answer each one — you'll get immediate feedback.</p>
+
+  <div id="quiz-container"></div>
+
+  <div id="score-panel" class="score-panel" style="display:none;">
+    <h3>Quiz Complete! 🎉</h3>
+    <div class="score-num" id="score-display">0/15</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-gold" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(3)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(5)">Next: Reflect →</button>
+  </div>
+</div>
+
+<!-- ── SECTION 5: REFLECT ── -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">6</div>
+    <span class="eyebrow-label">Phase 6 · Reflect</span>
+  </div>
+  <h2>💭 Reflection & Review</h2>
+  <p class="lead">Solidify your learning. Answer all four reflection questions in your own words — this is the most powerful study technique.</p>
+
+  <div class="quiz-card">
+    <div class="quiz-q">1. In your own words, explain the difference between natural selection, artificial selection, and sexual selection. Give one example of each.</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer..."></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">2. What are the four lines of evidence for evolution? For each one, give one specific example from your worksheet.</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer..."></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">3. Explain the difference between homologous structures and vestigial structures. Give one example of each from your worksheet.</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer..."></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">4. What is speciation? Why is it significant that finches on different islands can no longer interbreed? (Q117)</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer..."></textarea>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Fill in the blanks from the worksheet -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.8rem;">✏️ Fill-in-the-Blank Review (from your worksheet)</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1.2rem;">Type the answer and press Enter or click Check.</p>
+
+  <div id="fill-container"></div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-mint" onclick="checkAllFills()">✓ Check All Answers</button>
+    <button class="btn btn-ghost" onclick="resetFills()" style="margin-left:.6rem;">↺ Reset</button>
+  </div>
+
+  <div class="congrats-panel" style="margin-top:2rem;">
+    <h2>🌿 Evolution Mastered!</h2>
+    <p>You've worked through all 30 worksheet questions, explored every type of selection, matched evidence to examples, and reflected on your learning. You're ready for the AP Biology exam!</p>
+    <p style="font-size:.85rem;opacity:.75;">Remember: The AP Bio exam is scored 1–5. With preparation like this, you're aiming for a 4 or 5.</p>
+    <div class="summary-chips">
+      <span class="summary-chip">Natural Selection ✓</span>
+      <span class="summary-chip">Artificial Selection ✓</span>
+      <span class="summary-chip">Sexual Selection ✓</span>
+      <span class="summary-chip">Homologous Structures ✓</span>
+      <span class="summary-chip">Vestigial Structures ✓</span>
+      <span class="summary-chip">Speciation ✓</span>
+      <span class="summary-chip">Mutation ✓</span>
+      <span class="summary-chip">Evidence for Evolution ✓</span>
+      <span class="summary-chip">Fossil Record ✓</span>
+      <span class="summary-chip">Embryology ✓</span>
+    </div>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(4)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(0)">↺ Start Over</button>
+  </div>
+</div>
+
+
+<!-- ── SECTION 6: SUBMIT ── -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">7</div>
+    <span class="eyebrow-label">Your Completed Work</span>
+  </div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Here's a summary of everything you worked on. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> to your teacher.</p>
+
+  <div class="summary-section" style="background:var(--forest);color:white;border-color:var(--forest);">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">STUDENT</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">LESSON</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;">Evolution Explorer 🧬</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6;" id="summaryDate"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section">
+    <h3>📝 Quiz Score</h3>
+    <div class="summary-answer" id="sum-quiz"></div>
+  </div>
+
+  <div class="summary-section">
+    <h3>🌿 Section 1 — Opening Prediction</h3>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;">YOUR PREDICTION (finch beak question)</div>
+    <div class="summary-answer" id="sum-pred"></div>
+  </div>
+
+  <div class="summary-section">
+    <h3>🦋 Section 4 — Moth Simulator Prediction</h3>
+    <div class="summary-answer" id="sum-sim-pred"></div>
+  </div>
+
+  <div class="summary-section">
+    <h3>💭 Section 6 — Reflection Questions</h3>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;">Q1 — Natural vs Artificial vs Sexual Selection</div>
+    <div class="summary-answer" id="sum-r1"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q2 — Four Lines of Evidence</div>
+    <div class="summary-answer" id="sum-r2"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q3 — Homologous vs Vestigial Structures</div>
+    <div class="summary-answer" id="sum-r3"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q4 — Speciation and the Finches (Q117)</div>
+    <div class="summary-answer" id="sum-r4"></div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.6rem;">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2;">
+      <strong>📋 Copy My Results</strong> — Copies all answers to clipboard. Open Google Classroom, paste into the comment box, and submit.<br>
+      <strong>📧 Email to Teacher</strong> — Opens your email app with answers pre-filled. Add teacher address and send.<br>
+      <strong>🖨️ Print / Save PDF</strong> — Mac: bottom-left dropdown → Save as PDF. Windows: Microsoft Print to PDF. Upload to assignment.
+    </p>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(5)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(0)">↺ Start Over</button>
+  </div>
+</div>
+
+</div><!-- /sheet -->
+
+<footer class="site-footer">
+  <div>🧬 Evolution Explorer · AP Biology Prep · Interactive Digital Lesson Series</div>
+  <div style="margin-top:.3rem;">© 2026 Interactive Lesson Series · Montessori Digital Resources · Seth</div>
+  <div style="margin-top:.3rem;">Content based on <a href="https://openstax.org/books/biology-2e/pages/1-introduction" target="_blank">OpenStax Biology 2e</a> · For educational use only · Not for redistribution</div>
+</footer>
+
+
+
+<script>
+// ─── NAVIGATION ───
+const steps = document.querySelectorAll('.prog-step');
+const sections = document.querySelectorAll('.section');
+let currentSection = 0;
+
+function goTo(n) {
+  sections.forEach((s,i) => s.classList.toggle('active', i === n));
+  steps.forEach((s,i) => {
+    s.classList.remove('active','done');
+    if (i === n) s.classList.add('active');
+    if (i < n)  s.classList.add('done');
+  });
+  currentSection = n;
+  if (n === 6) buildSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── CONCEPT REVEALS ───
+const revealMap = {
+  evo:'rev-evo', natsel:'rev-natsel', artsel:'rev-artsel', sexsel:'rev-sexsel',
+  mutation:'rev-mutation', speciation:'rev-speciation', homolog:'rev-homolog',
+  vestigial:'rev-vestigial', fitness:'rev-fitness', heredity:'rev-heredity',
+  species:'rev-species', drift:'rev-drift'
+};
+function reveal(key) {
+  // hide all first
+  Object.values(revealMap).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('show');
+  });
+  const target = document.getElementById(revealMap[key]);
+  if (target) target.classList.add('show');
+}
+
+// ─── EVIDENCE CARDS ───
+function showEvidence(type) {
+  document.querySelectorAll('.ev-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.ev-panel').forEach(p => p.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const panel = document.getElementById('ev-' + type);
+  if (panel) panel.classList.add('show');
+}
+
+// ─── SELECTION CARDS ───
+function showSel(type) {
+  document.querySelectorAll('.sel-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.sel-detail').forEach(d => d.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const det = document.getElementById('sel-' + type);
+  if (det) det.classList.add('show');
+}
+
+// ─── MATCHING GAME ───
+let matchSelected = null;
+let matchScore = 0;
+
+function matchClick(el) {
+  if (el.classList.contains('matched')) return;
+  if (!matchSelected) {
+    // first click
+    el.classList.add('selected');
+    matchSelected = el;
+  } else if (matchSelected === el) {
+    el.classList.remove('selected');
+    matchSelected = null;
+  } else {
+    // second click — check pair
+    const pairA = matchSelected.dataset.pair;
+    const pairB = el.dataset.pair;
+    const sideA = matchSelected.dataset.side;
+    const sideB = el.dataset.side;
+    if (pairA === pairB && sideA !== sideB) {
+      // correct!
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('matched');
+      el.classList.add('matched');
+      matchScore++;
+      document.getElementById('match-score').textContent = matchScore + '/5 matched';
+      matchSelected = null;
+    } else {
+      // wrong
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('wrong');
+      el.classList.add('wrong');
+      const a = matchSelected, b = el;
+      setTimeout(() => { a.classList.remove('wrong'); b.classList.remove('wrong'); }, 600);
+      matchSelected = null;
+    }
+  }
+}
+
+function resetMatch() {
+  matchSelected = null; matchScore = 0;
+  document.querySelectorAll('.match-item').forEach(el => {
+    el.classList.remove('selected','matched','wrong');
+  });
+  document.getElementById('match-score').textContent = '';
+}
+
+// ─── MOTH SIMULATOR ───
+let lightMoths = 50, darkMoths = 50, gen = 0, polluted = false;
+
+function initSim() {
+  lightMoths = 50; darkMoths = 50; gen = 0;
+  renderSim();
+}
+
+function renderSim() {
+  const grid = document.getElementById('simGrid');
+  const total = lightMoths + darkMoths;
+  let html = '';
+  for (let i = 0; i < Math.min(total, 100); i++) {
+    if (i < lightMoths) html += `<div class="sim-moth" title="Light moth" style="filter:${polluted ? 'brightness(1.4)' : 'none'}">${polluted ? '🦋' : '🦋'}</div>`;
+    else html += `<div class="sim-moth" title="Dark moth">🐛</div>`;
+  }
+  grid.innerHTML = html;
+  document.getElementById('stat-light').textContent = lightMoths;
+  document.getElementById('stat-dark').textContent  = darkMoths;
+  document.getElementById('stat-gen').textContent   = gen;
+}
+
+function runGen() {
+  gen++;
+  const total = lightMoths + darkMoths;
+  if (total === 0) return;
+
+  let newLight, newDark;
+  if (polluted) {
+    // dark moths survive better; light ones are eaten
+    const lightSurv = Math.max(0, lightMoths - Math.round(lightMoths * 0.18));
+    const darkSurv  = Math.max(0, darkMoths  + Math.round(darkMoths  * 0.12));
+    newLight = lightSurv; newDark = darkSurv;
+  } else {
+    // light moths survive better
+    const lightSurv = Math.max(0, lightMoths + Math.round(lightMoths * 0.12));
+    const darkSurv  = Math.max(0, darkMoths  - Math.round(darkMoths  * 0.15));
+    newLight = lightSurv; newDark = darkSurv;
+  }
+  // normalize to keep roughly 100 total
+  const newTotal = newLight + newDark || 1;
+  const scale = Math.min(100, 100) / newTotal;
+  lightMoths = Math.round(newLight * scale);
+  darkMoths  = Math.max(0, 100 - lightMoths);
+
+  renderSim();
+}
+
+function pollute() {
+  polluted = true;
+  document.getElementById('env-label').textContent = '🏭 Polluted — dark bark (industrial)';
+  document.getElementById('btn-pollute').disabled = true;
+  document.getElementById('btn-clean').disabled   = false;
+  renderSim();
+}
+
+function cleanEnv() {
+  polluted = false;
+  document.getElementById('env-label').textContent = '🌿 Clean forest — light bark';
+  document.getElementById('btn-pollute').disabled = false;
+  document.getElementById('btn-clean').disabled   = true;
+  renderSim();
+}
+
+function resetSim() {
+  polluted = false;
+  document.getElementById('env-label').textContent = '🌿 Clean forest — light bark';
+  document.getElementById('btn-pollute').disabled = false;
+  document.getElementById('btn-clean').disabled   = true;
+  initSim();
+}
+
+initSim();
+
+// ─── QUIZ DATA (directly from worksheet Q108-137) ───
+const quizData = [
+  {
+    q: "Q108 — A whale fin and a human hand are examples of ___.",
+    opts: ["Vestigial structures","Homologous structures","Analogous structures","Convergent evolution"],
+    ans: 1,
+    fb: "Correct! Homologous structures develop from the same embryonic tissue (a shared ancestor's limb) but serve different functions in different organisms."
+  },
+  {
+    q: "Q109 — Who else (besides Darwin) independently developed similar ideas about evolution?",
+    opts: ["Gregor Mendel","Rosalind Franklin","Alfred Russel Wallace","Louis Pasteur"],
+    ans: 2,
+    fb: "Alfred Russel Wallace wrote to Darwin about his nearly identical theory, prompting Darwin to publish 'On the Origin of Species' in 1859."
+  },
+  {
+    q: "Q110 — Broccoli and other vegetables are the result of ___ selection.",
+    opts: ["Natural","Sexual","Artificial","Stabilizing"],
+    ans: 2,
+    fb: "Artificial selection! Humans selectively bred wild mustard plants over centuries to produce broccoli, cauliflower, cabbage, and kale — all from the same ancestor."
+  },
+  {
+    q: "Q113 — Do mutations always help, always hurt, or act randomly on an individual?",
+    opts: ["Always help","Always hurt","Act randomly","Usually helpful"],
+    ans: 2,
+    fb: "Mutations are random. Most are neutral, some are harmful, and very rarely one is beneficial. Natural selection then acts on the variation mutations create."
+  },
+  {
+    q: "Q114 — During the Industrial Revolution, peppered moths became darker because of ___ selection.",
+    opts: ["Artificial","Sexual","Stabilizing","Natural"],
+    ans: 3,
+    fb: "Natural selection. Pollution darkened tree bark, making light moths visible to predators. Dark moths survived and reproduced more — classic industrial melanism."
+  },
+  {
+    q: "Q115 — Excessive use of antibiotics has resulted in antibiotic-resistant bacteria because of ___ selection.",
+    opts: ["Artificial","Sexual","Natural","Disruptive"],
+    ans: 2,
+    fb: "Natural selection. Bacteria with mutations conferring resistance survived antibiotic treatment and reproduced, passing resistance to offspring."
+  },
+  {
+    q: "Q116 — Faster mice that can outrun predator cats are an example of ___ selection.",
+    opts: ["Artificial","Sexual","Natural","Directional"],
+    ans: 2,
+    fb: "Natural selection — the environment (predators) is selecting for faster mice. Speed is an adaptation that increases fitness (survival + reproduction)."
+  },
+  {
+    q: "Q117 — Finches on different islands can no longer breed. This means they have evolved into different ___.",
+    opts: ["Varieties","Mutations","Species","Populations"],
+    ans: 2,
+    fb: "When populations can no longer interbreed, by definition they have become separate species. This is speciation — the formation of new species."
+  },
+  {
+    q: "Q119 — Natural selection chooses traits that help an organism survive and ___.",
+    opts: ["Grow larger","Reproduce","Avoid predators","Migrate"],
+    ans: 1,
+    fb: "Reproduce! Fitness in biology = reproductive success. An organism that survives but never reproduces contributes nothing to the next generation."
+  },
+  {
+    q: "Q120 — Random changes in an organism's genetic sequence are called ___.",
+    opts: ["Adaptations","Alleles","Mutations","Variations"],
+    ans: 2,
+    fb: "Mutations are random changes in DNA. They are the raw material of evolution, creating the genetic variation that natural selection acts on."
+  },
+  {
+    q: "Q122 — The different breeds of dogs that exist are a result of ___ selection.",
+    opts: ["Natural","Sexual","Artificial","Genetic drift"],
+    ans: 2,
+    fb: "Artificial selection! Humans bred dogs for specific traits (size, behavior, appearance) over thousands of years, creating hundreds of distinct breeds."
+  },
+  {
+    q: "Q124 — The human appendix is an example of a ___.",
+    opts: ["Homologous structure","Analogous structure","Vestigial structure","Adaptive trait"],
+    ans: 2,
+    fb: "Vestigial structure. The appendix was likely functional in our herbivorous ancestors for digesting plant matter, but is now a remnant with no clear function."
+  },
+  {
+    q: "Q127 — Traits that help an organism survive in their environment are called ___.",
+    opts: ["Mutations","Adaptations","Alleles","Genotypes"],
+    ans: 1,
+    fb: "Adaptations! These are inherited traits that increase an organism's fitness — its ability to survive and reproduce in its specific environment."
+  },
+  {
+    q: "Q133 — What is the genetic change in a population over time?",
+    opts: ["Heredity","Speciation","Evolution","Mutation"],
+    ans: 2,
+    fb: "Evolution can be defined as the change in allele frequencies in a population over time — a genetic definition that captures all mechanisms (selection, drift, migration)."
+  },
+  {
+    q: "Q135-137 — Which type of selection is faster — natural or artificial?",
+    opts: ["Natural selection (it's been going on for billions of years)","Artificial selection (humans can accelerate the process)","They are equally fast","It depends on the trait"],
+    ans: 1,
+    fb: "Artificial selection is faster. Humans can control every breeding event and select strongly for specific traits, achieving in decades what natural selection takes thousands of years to accomplish."
+  }
+];
+
+let quizScore = 0;
+let quizAnswered = 0;
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  quizScore = 0; quizAnswered = 0;
+  document.getElementById('score-panel').style.display = 'none';
+
+  quizData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `
+      <div class="quiz-q">${item.q}</div>
+      <div class="quiz-options">
+        ${item.opts.map((opt, i) => `
+          <button class="quiz-opt" data-idx="${idx}" data-opt="${i}" onclick="checkAnswer(this, ${idx}, ${i})">
+            ${String.fromCharCode(65+i)}. ${opt}
+          </button>
+        `).join('')}
+      </div>
+      <div class="quiz-feedback" id="qfb-${idx}"></div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function checkAnswer(btn, qIdx, optIdx) {
+  const card = btn.closest('.quiz-card');
+  const buttons = card.querySelectorAll('.quiz-opt');
+  const fb = document.getElementById('qfb-' + qIdx);
+  const correct = quizData[qIdx].ans;
+
+  buttons.forEach(b => b.disabled = true);
+
+  if (optIdx === correct) {
+    btn.classList.add('correct');
+    fb.textContent = '✅ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show correct-fb';
+    quizScore++;
+  } else {
+    btn.classList.add('wrong');
+    buttons[correct].classList.add('correct');
+    fb.textContent = '❌ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show wrong-fb';
+  }
+
+  quizAnswered++;
+  if (quizAnswered === quizData.length) showScore();
+}
+
+function showScore() {
+  const panel = document.getElementById('score-panel');
+  panel.style.display = 'block';
+  document.getElementById('score-display').textContent = quizScore + '/' + quizData.length;
+  const pct = quizScore / quizData.length;
+  let msg;
+  if (pct >= .9) msg = '🌟 Outstanding! You clearly understand evolutionary biology. AP exam ready.';
+  else if (pct >= .75) msg = '👍 Great work! Review the questions you missed and you\'ll be in great shape.';
+  else if (pct >= .6) msg = '📚 Good start. Revisit Phases 2 and 3 and try again — you\'ve got this.';
+  else msg = '💪 Keep going! Go back through the Concepts and Evidence phases, then retake.';
+  document.getElementById('score-msg').textContent = msg;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function retakeQuiz() { buildQuiz(); }
+
+buildQuiz();
+
+// ─── FILL IN THE BLANK ───
+const fills = [
+  { q: "Q108: A whale fin and a human hand are examples of ___ structures.", ans: "homologous" },
+  { q: "Q110: Broccoli and other vegetables are the result of ___ selection.", ans: "artificial" },
+  { q: "Q114: Peppered moths became darker because of ___ selection.", ans: "natural" },
+  { q: "Q119: Natural selection chooses traits that help an organism survive and ___.", ans: "reproduce" },
+  { q: "Q121: Speciation creates new ___.", ans: "species" },
+  { q: "Q124: The human appendix is an example of a ___ structure.", ans: "vestigial" },
+  { q: "Q126: The process by which organisms change over time due to inherited changes to DNA is ___.", ans: "evolution" },
+  { q: "Q134: What is the transmission of characteristics from a parent to their offspring called?", ans: "heredity" },
+  { q: "Q135: ___ selection caused male birds to have bright colors.", ans: "sexual" },
+  { q: "Q136: ___ selection is caused by humans.", ans: "artificial" },
+];
+
+function buildFills() {
+  const container = document.getElementById('fill-container');
+  container.innerHTML = '';
+  fills.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-card';
+    div.innerHTML = `
+      <div class="fill-q">${item.q.replace('___', `<input class="blank-input" id="fill-${idx}" type="text" placeholder="?" onkeydown="if(event.key==='Enter')checkFill(${idx})">`)}</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function checkFill(idx) {
+  const input = document.getElementById('fill-' + idx);
+  const val = input.value.trim().toLowerCase();
+  const correct = fills[idx].ans.toLowerCase();
+  if (val === correct || val.includes(correct) || correct.includes(val)) {
+    input.classList.remove('err'); input.classList.add('ok');
+    input.value = fills[idx].ans;
+  } else {
+    input.classList.remove('ok'); input.classList.add('err');
+  }
+}
+
+function checkAllFills() {
+  fills.forEach((_, idx) => checkFill(idx));
+}
+
+function resetFills() {
+  fills.forEach((_, idx) => {
+    const input = document.getElementById('fill-' + idx);
+    if (input) { input.value = ''; input.classList.remove('ok','err'); }
+  });
+}
+
+buildFills();
+
+// ─── SUMMARY / SUBMIT ───
+function fillSummary(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = text && text.trim();
+  el.textContent = val || 'Not answered';
+  el.classList.toggle('empty', !val);
+}
+
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  // quiz score
+  const scoreEl = document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl ? scoreEl.textContent + ' correct' : 'Quiz not yet completed');
+
+  // predict box (first textarea in sec-0)
+  const predTA = document.querySelector('#sec-0 textarea');
+  fillSummary('sum-pred', predTA ? predTA.value : '');
+
+  // sim predict
+  const simTA = document.getElementById('sim-predict');
+  fillSummary('sum-sim-pred', simTA ? simTA.value : '');
+
+  // reflection textareas in sec-5
+  const refCards = document.querySelectorAll('#sec-5 .quiz-card textarea');
+  ['sum-r1','sum-r2','sum-r3','sum-r4'].forEach((id, i) => {
+    fillSummary(id, refCards[i] ? refCards[i].value : '');
+  });
+}
+
+function buildPlainText() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const date = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const scoreEl = document.getElementById('score-display');
+  const score = scoreEl ? scoreEl.textContent : 'not completed';
+  const predTA = document.querySelector('#sec-0 textarea');
+  const simTA  = document.getElementById('sim-predict');
+  const refCards = document.querySelectorAll('#sec-5 .quiz-card textarea');
+  const refs = ['','','',''];
+  refCards.forEach((ta, i) => { refs[i] = ta.value.trim() || 'Not answered'; });
+
+  return [
+    'EVOLUTION EXPLORER 🧬 — STUDENT SUBMISSION',
+    '============================================',
+    'Student: ' + name,
+    'Date: ' + date,
+    'Lesson: AP Biology · Evolution Explorer',
+    '',
+    '── QUIZ SCORE ──',
+    score,
+    '',
+    '── SECTION 1: OPENING PREDICTION ──',
+    predTA ? (predTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── SECTION 4: MOTH SIMULATOR PREDICTION ──',
+    simTA ? (simTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── SECTION 6: REFLECTIONS ──',
+    'Q1 — Natural vs Artificial vs Sexual Selection:', refs[0],
+    'Q2 — Four Lines of Evidence:', refs[1],
+    'Q3 — Homologous vs Vestigial Structures:', refs[2],
+    'Q4 — Speciation and the Finches:', refs[3],
+    '',
+    '============================================',
+    'Submitted via Evolution Explorer · Interactive Digital Lesson Series'
+  ].join('\n');
+}
+
+function copyResults() {
+  buildSummary();
+  const text = buildPlainText();
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Now paste into Google Classroom or your assignment.';
+    setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '⚠️ Could not copy automatically — try selecting the text above manually.';
+  });
+}
+
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const subject = encodeURIComponent('Evolution Explorer — ' + name);
+  const body = encodeURIComponent(buildPlainText());
+  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+}
+
+</script>
+</body>
+</html>
