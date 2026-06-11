@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Movement Into and Out of Cells — IGCSE Biology</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ocean:      #1a3d2b;
+    --ocean-mid:  #2d6a4f;
+    --ocean-lt:   #40916c;
+    --coral:      #e8603c;
+    --coral-pale: #fdf0ec;
+    --mint:       #3aaf85;
+    --mint-pale:  #e8f8f2;
+    --gold:       #c9962a;
+    --gold-pale:  #fef9e7;
+    --lavender:   #7c6fcd;
+    --lav-pale:   #f0eefb;
+    --paper:      #fffef9;
+    --ink:        #1a2332;
+    --muted:      #7a8899;
+    --border:     #e0e4ea;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: linear-gradient(160deg,#0d2318 0%,#1a3d2b 45%,#2d6a4f 100%);
+    min-height:100vh; font-family:'Nunito',sans-serif; color:var(--ink); overflow-x:hidden;
+  }
+  body::before {
+    content:''; position:fixed; inset:0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%,rgba(144,238,144,.4) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 22% 38%,rgba(255,255,255,.25) 0%,transparent 100%),
+      radial-gradient(2px   2px   at 41% 6%, rgba(144,238,144,.32) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 60% 24%,rgba(255,255,255,.2)  0%,transparent 100%),
+      radial-gradient(1.5px 1.5px at 77% 9%, rgba(144,238,144,.38) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 90% 33%,rgba(255,255,255,.25) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 33% 55%,rgba(144,238,144,.28) 0%,transparent 100%),
+      radial-gradient(2px   2px   at 70% 48%,rgba(255,255,255,.15) 0%,transparent 100%);
+    pointer-events:none; z-index:0;
+  }
+  /* HERO */
+  .hero { position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 2rem;color:white; }
+  .hero-badge { display:inline-block;background:var(--gold);color:var(--ocean);font-family:'Fredoka One',cursive;font-size:.85rem;letter-spacing:.05em;padding:.35rem 1.2rem;border-radius:20px;margin-bottom:1.2rem;box-shadow:0 2px 12px rgba(201,150,42,.45); }
+  .hero h1 { font-family:'Fredoka One',cursive;font-size:clamp(2rem,6vw,3.6rem);line-height:1.1;margin-bottom:.8rem;text-shadow:0 2px 20px rgba(0,0,0,.35); }
+  .hero h1 .accent { color:var(--gold); }
+  .hero p.intro { font-size:1.05rem;line-height:1.7;opacity:.88;max-width:580px;margin:0 auto 2rem; }
+  .name-bar { background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);border-radius:12px;padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;max-width:420px;margin:0 auto 1rem; }
+  .name-bar label { font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;font-family:'DM Mono',monospace; }
+  .name-bar input { flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.4rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:white;outline:none; }
+  .name-bar input::placeholder { color:rgba(255,255,255,.4);font-weight:400; }
+  .progress-wrap { display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem; }
+  .prog-step { background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);border-radius:20px;padding:.35rem .9rem;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace;display:inline-block; }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.35); }
+  .prog-step.active { background:var(--gold);color:var(--ocean);border-color:var(--gold);box-shadow:0 2px 12px rgba(201,150,42,.45); }
+  /* SHEET */
+  .sheet { position:relative;z-index:1;background:var(--paper);border-radius:24px 24px 0 0;margin-top:1.5rem;padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.3); }
+  .section { padding:3rem 2rem 0;max-width:820px;margin:0 auto;display:none; }
+  .section.active { display:block; }
+  .section-eyebrow { display:flex;align-items:center;gap:.6rem;margin-bottom:1rem; }
+  .eyebrow-num { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1rem;color:white;flex-shrink:0; }
+  .num-coral  { background:var(--coral); }
+  .num-mint   { background:var(--mint); }
+  .num-gold   { background:var(--gold);color:var(--ocean); }
+  .num-lav    { background:var(--lavender); }
+  .num-ocean  { background:var(--ocean-mid); }
+  .eyebrow-label { font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace; }
+  .section h2 { font-family:'Fredoka One',cursive;font-size:clamp(1.6rem,3.5vw,2.2rem);color:var(--ocean);margin-bottom:.6rem;line-height:1.2; }
+  .section .lead { font-size:1rem;line-height:1.75;color:#3a4a5a;margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+  /* WONDER BOXES */
+  .wonder-box { background:linear-gradient(135deg,var(--ocean) 0%,var(--ocean-mid) 100%);color:white;border-radius:16px;padding:1.8rem 2rem;margin-bottom:1.8rem;position:relative;overflow:hidden; }
+  .wonder-box::after { content:'🤔';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3; }
+  .wonder-box p { font-size:1rem;line-height:1.7;font-style:italic;opacity:.95;max-width:85%; }
+  .wonder-box strong { color:var(--gold);font-style:normal; }
+  .wonder-box.gold-box { background:linear-gradient(135deg,#8a6a1a 0%,#b8860b 100%); }
+  .wonder-box.gold-box::after { content:'⚗️'; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,#1b7a58 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'💧'; }
+  .wonder-box.coral-box { background:linear-gradient(135deg,#a03020 0%,#c8502a 100%); }
+  .wonder-box.coral-box::after { content:'⚡'; }
+  /* PREDICT / REFLECT */
+  .predict-box { background:var(--gold-pale);border:2px dashed var(--gold);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem; }
+  .predict-box textarea,.reflect-box textarea { width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:64px;background:white;color:var(--ink);outline:none;transition:border-color .2s; }
+  .predict-box textarea:focus { border-color:var(--gold); }
+  .reflect-box { background:var(--mint-pale);border:2px dashed var(--mint);border-radius:14px;padding:1.4rem 1.6rem;margin-top:1.5rem; }
+  .reflect-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#1b7a58;margin-bottom:.8rem; }
+  .reflect-box textarea:focus { border-color:var(--mint); }
+  /* DEMO ZONE */
+  .demo-zone { background:white;border:2px solid var(--border);border-radius:16px;padding:1.8rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07); }
+  .demo-zone h3 { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--ocean);margin-bottom:.3rem; }
+  .demo-zone .hint { font-size:.78rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:1.3rem; }
+  /* CHIPS */
+  .chip-row { display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem; }
+  .chip { padding:.45rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;border:2px solid transparent; }
+  .chip.coral  { background:var(--coral-pale);color:var(--coral);border-color:#f8c5b8; }
+  .chip.mint   { background:var(--mint-pale);color:var(--mint);border-color:#b8ebd8; }
+  .chip.gold   { background:var(--gold-pale);color:#8a6a1a;border-color:#f8e0a0; }
+  .chip.lav    { background:var(--lav-pale);color:var(--lavender);border-color:#d0caef; }
+  .chip.ocean  { background:#d4eadd;color:var(--ocean-mid);border-color:#a8ccee; }
+  .chip:hover  { transform:scale(1.05); }
+  .concept-reveal { background:var(--paper);border-left:4px solid var(--coral);border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;margin-top:.5rem;display:none;animation:fadeIn .3s ease; }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border   { border-color:var(--mint); }
+  .concept-reveal.gold-border   { border-color:var(--gold); }
+  .concept-reveal.lav-border    { border-color:var(--lavender); }
+  .concept-reveal.ocean-border  { border-color:var(--ocean-mid); }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+  /* CARDS */
+  .card-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0 1rem; }
+  .info-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.1rem;text-align:center;cursor:pointer;transition:all .2s; }
+  .info-card:hover,.info-card.active { border-color:var(--ocean-mid);transform:translateY(-2px);box-shadow:0 4px 14px rgba(45,106,143,.2); }
+  .info-card.active { background:#d4eadd; }
+  .info-card .ic-icon  { font-size:2rem;margin-bottom:.4rem; }
+  .info-card .ic-title { font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--ocean);margin-bottom:.2rem; }
+  .info-card .ic-sub   { font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em; }
+  .info-panel { background:#d4eadd;border-left:4px solid var(--ocean-mid);border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;display:none;animation:fadeIn .3s ease;margin-bottom:1rem; }
+  .info-panel.show { display:block; }
+  .info-panel h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ocean);margin-bottom:.5rem; }
+  .info-panel p  { font-size:.88rem;line-height:1.7;color:#1a2a3a; }
+  .info-panel .eg { background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;font-size:.82rem;font-family:'DM Mono',monospace;border:1.5px solid rgba(45,106,143,.2); }
+  /* ACCORDION */
+  .accord-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1rem 1.2rem;margin-bottom:.8rem;cursor:pointer;transition:all .2s; }
+  .accord-card:hover { border-color:var(--ocean-mid); }
+  .accord-card.open { border-color:var(--mint);background:var(--mint-pale); }
+  .accord-title { font-family:'Fredoka One',cursive;font-size:1rem;color:var(--ocean);display:flex;align-items:center;justify-content:space-between; }
+  .accord-arrow { transition:transform .2s; }
+  .accord-card.open .accord-arrow { transform:rotate(180deg); }
+  .accord-body { font-size:.85rem;line-height:1.7;color:var(--ink);margin-top:.6rem;display:none; }
+  .accord-card.open .accord-body { display:block; }
+  .accord-eg { font-family:'DM Mono',monospace;font-size:.78rem;color:var(--muted);margin-top:.4rem;font-style:italic; }
+  /* QUIZ */
+  .quiz-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .quiz-q { font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:1rem;line-height:1.5; }
+  .quiz-options { display:flex;flex-direction:column;gap:.5rem; }
+  .quiz-opt { padding:.6rem 1rem;border-radius:8px;border:2px solid var(--border);background:white;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:600;text-align:left;transition:all .15s;color:var(--ink); }
+  .quiz-opt:hover:not(:disabled) { border-color:var(--ocean-mid);background:#f0f7f3; }
+  .quiz-opt.correct { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .quiz-opt.wrong   { background:var(--coral-pale);border-color:var(--coral);color:#a83020; }
+  .quiz-opt:disabled { cursor:default; }
+  .quiz-feedback { margin-top:.8rem;font-size:.85rem;line-height:1.6;padding:.7rem 1rem;border-radius:8px;display:none;animation:fadeIn .3s ease; }
+  .quiz-feedback.show { display:block; }
+  .quiz-feedback.correct-fb { background:var(--mint-pale);color:#1b7a58;border-left:3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background:var(--coral-pale);color:#a83020;border-left:3px solid var(--coral); }
+  /* MATCHING */
+  .match-grid { display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1rem 0; }
+  .match-item { padding:.75rem 1rem;border-radius:10px;border:2px solid var(--border);cursor:pointer;font-size:.85rem;font-weight:700;transition:all .2s;background:white;text-align:center;color:var(--ink); }
+  .match-item:hover   { border-color:var(--ocean-mid);background:#f0f7f3; }
+  .match-item.selected{ border-color:var(--lavender);background:var(--lav-pale);color:var(--lavender); }
+  .match-item.matched { border-color:var(--mint);background:var(--mint-pale);color:#1b7a58;cursor:default; }
+  .match-item.wrong   { border-color:var(--coral);background:var(--coral-pale);color:var(--coral);animation:shake .3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  /* OSMOSIS SIMULATOR */
+  .osm-container { display:flex;gap:0;align-items:stretch;margin:1rem 0;border-radius:12px;overflow:hidden;border:2px solid var(--border); }
+  .osm-side { flex:1;padding:1.2rem 1rem;text-align:center;transition:all .6s;min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center; }
+  .osm-side.left  { background:#e3f2fd; }
+  .osm-side.right { background:#fff9e6; }
+  .osm-membrane { width:6px;background:repeating-linear-gradient(180deg,var(--ocean) 0px,var(--ocean) 8px,transparent 8px,transparent 14px);flex-shrink:0; }
+  .osm-label { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--ocean);margin-bottom:.4rem; }
+  .osm-dots { font-size:1.4rem;line-height:1.5;transition:all .6s;min-height:40px; }
+  .osm-conc  { font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);margin-top:.4rem; }
+  .osm-arrow { font-size:1.4rem;align-self:center;padding:0 .5rem;transition:all .5s;opacity:0; }
+  .osm-arrow.show { opacity:1; }
+  .osm-result { margin-top:.8rem;padding:.7rem 1rem;border-radius:10px;font-size:.85rem;background:#f5f7fa;min-height:2.5rem;transition:all .3s; }
+  /* VOCAB TABLE */
+  .vocab-table { width:100%;border-collapse:collapse;margin:1rem 0 1.5rem; }
+  .vocab-table th { background:var(--ocean);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;padding:.7rem 1rem;text-align:left; }
+  .vocab-table td { padding:.65rem 1rem;font-size:.85rem;line-height:1.5;border-bottom:1px solid var(--border); }
+  .vocab-table tr:nth-child(even) td { background:#f5f7fa; }
+  .vocab-table tr:hover td { background:#d4eadd;transition:background .15s; }
+  .vocab-table td:first-child { font-weight:800;color:var(--ocean-mid); }
+  /* PAST PAPER QUESTIONS */
+  .pp-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .pp-label { font-family:'DM Mono',monospace;font-size:.68rem;color:var(--ocean-mid);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem; }
+  .pp-q { font-size:.95rem;line-height:1.6;color:var(--ink);margin-bottom:.8rem;font-weight:700; }
+  .pp-q em { font-weight:400;color:#3a4a5a; }
+  .pp-textarea { width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:72px;background:white;color:var(--ink);outline:none;transition:border-color .2s; }
+  .pp-textarea:focus { border-color:var(--ocean-mid); }
+  .pp-marks { font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);margin-top:.4rem; }
+  .pp-answer { background:#d4eadd;border-left:4px solid var(--ocean-mid);border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.85rem;line-height:1.7;margin-top:.8rem;display:none;animation:fadeIn .3s ease; }
+  .pp-answer.show { display:block; }
+  .pp-answer strong { color:var(--ocean); }
+  .pp-answer ul { margin:.4rem 0 0 1rem; }
+  .pp-answer li { margin-bottom:.3rem; }
+  /* SCORE */
+  .score-panel { background:linear-gradient(135deg,var(--ocean) 0%,var(--ocean-mid) 100%);color:white;border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem; }
+  .score-panel .score-num { font-family:'Fredoka One',cursive;font-size:3.5rem;line-height:1;color:var(--gold); }
+  .score-panel p { opacity:.88;margin-top:.5rem;font-size:1rem; }
+  .score-panel h3 { font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:.3rem; }
+  /* NAV */
+  .nav-row { display:flex;justify-content:space-between;align-items:center;padding:2.5rem 2rem 0;max-width:820px;margin:0 auto; }
+  .btn-next { background:var(--ocean);color:white;border:none;border-radius:50px;padding:.9rem 2rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;display:flex;align-items:center;gap:.6rem;transition:all .2s;box-shadow:0 4px 16px rgba(26,61,43,.35); }
+  .btn-next:hover { background:var(--ocean-mid);transform:translateY(-2px); }
+  .btn-prev { background:transparent;color:var(--muted);border:2px solid var(--border);border-radius:50px;padding:.9rem 1.6rem;font-family:'Fredoka One',cursive;font-size:.95rem;cursor:pointer;transition:all .2s; }
+  .btn-prev:hover { border-color:var(--muted);color:var(--ink); }
+  .btn-prev:disabled,.btn-next:disabled { opacity:.3;cursor:not-allowed;transform:none; }
+  /* SUMMARY */
+  .summary-section { background:white;border-radius:16px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--ocean);margin-bottom:.8rem; }
+  .summary-answer { background:#f5f7fa;border-radius:8px;padding:.7rem 1rem;font-size:.85rem;line-height:1.6;color:var(--ink);margin-bottom:.5rem;font-style:italic;border-left:3px solid var(--lavender);min-height:2rem; }
+  .summary-answer.empty { color:var(--muted);font-style:normal;border-left-color:var(--border); }
+  .sum-label { font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.6rem;text-transform:uppercase;letter-spacing:.06em; }
+  /* SHARE */
+  .share-buttons { display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center; }
+  .share-btn { border:none;border-radius:12px;padding:.85rem 1.6rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem; }
+  .share-btn:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background:var(--mint);color:white; }
+  .share-btn.email { background:var(--lavender);color:white; }
+  .share-btn.print { background:var(--ocean);color:white; }
+  .copy-confirm { text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--mint);min-height:1.2rem;margin-top:.6rem; }
+  /* FILL BLANK */
+  .blank-input { border:none;border-bottom:2.5px solid var(--ocean-mid);background:transparent;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;color:var(--ocean);width:180px;text-align:center;outline:none;padding:0 4px;transition:border-color .2s; }
+  .blank-input:focus { border-color:var(--coral); }
+  .blank-input.ok  { border-color:var(--mint);color:var(--mint); }
+  .blank-input.err { border-color:var(--coral);color:var(--coral); }
+  .fill-q { font-size:1rem;line-height:2.4;color:var(--ink);margin-bottom:.8rem; }
+  .btn { border:none;border-radius:10px;padding:.65rem 1.3rem;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;transition:all .15s; }
+  .btn:hover { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  .btn-mint  { background:var(--mint);color:white; }
+  .btn-ocean { background:var(--ocean);color:white; }
+  .btn-ghost { background:#f0f2f5;color:var(--muted); }
+  .divider { height:1px;background:var(--border);margin:2rem 0; }
+  /* FACTORS BAR */
+  .factor-row { display:flex;align-items:center;gap:.8rem;margin-bottom:.8rem; }
+  .factor-label { font-size:.85rem;font-weight:700;min-width:130px;color:var(--ink); }
+  .factor-bar-wrap { flex:1;background:#e0e4ea;border-radius:20px;height:14px;overflow:hidden; }
+  .factor-bar { height:100%;border-radius:20px;background:var(--ocean-mid);transition:width .6s; }
+  .factor-desc { font-size:.78rem;color:var(--muted);font-family:'DM Mono',monospace;min-width:80px;text-align:right; }
+  @media(max-width:560px) {
+    .hero{padding:2.5rem 1.2rem 1.5rem} .section{padding:2rem 1.2rem 0} .nav-row{padding:2rem 1.2rem 0} .match-grid{grid-template-columns:1fr}
+  }
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm{display:none!important}
+    .sheet{box-shadow:none;border-radius:0} .section{display:none!important} #sec-8{display:block!important}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">🔬 IGCSE Biology · Topic 3 · CIE 0610</div>
+  <h1>Movement Into and <span class="accent">Out of Cells</span></h1>
+  <p class="intro">Diffusion, osmosis, and active transport — the three ways substances cross cell membranes. Master the definitions, experiments, and applications tested in every IGCSE paper.</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <a class="prog-step active" onclick="goTo(0)">💧 Wonder</a>
+    <a class="prog-step"        onclick="goTo(1)">🌬️ Diffusion</a>
+    <a class="prog-step"        onclick="goTo(2)">💧 Osmosis</a>
+    <a class="prog-step"        onclick="goTo(3)">⚡ Active Transport</a>
+    <a class="prog-step"        onclick="goTo(4)">🧫 Experiments</a>
+    <a class="prog-step"        onclick="goTo(5)">📝 Past Papers</a>
+    <a class="prog-step"        onclick="goTo(6)">❓ Quiz</a>
+    <a class="prog-step"        onclick="goTo(7)">📤 Submit</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+<!-- ══ SEC 0: WONDER ══ -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">Phase 1 · Wonder</span></div>
+  <h2>💧 How Do Things Get In and Out of Cells?</h2>
+  <p class="lead">Your cells are constantly exchanging substances with their surroundings — taking in oxygen and glucose, getting rid of carbon dioxide and waste. But how? The cell membrane controls everything.</p>
+  <div class="wonder-box">
+    <p>If you drop a tea bag into hot water, the colour spreads outward without stirring. If you put a raisin into water overnight, it swells up. If a plant wilts in dry soil but recovers after watering — <strong>all three of these happen by the same set of principles that govern how your cells work.</strong> Can you name what's happening in each?</p>
+  </div>
+  <div class="predict-box">
+    <h4>✏️ Your Thinking — Before We Begin</h4>
+    <textarea id="ta-wonder" placeholder="What do you think is happening in each scenario — the tea bag, the raisin, and the wilting plant? How do you think substances move in and out of cells? Are they pushed in, or do they move on their own?"></textarea>
+  </div>
+  <div class="wonder-box gold-box">
+    <p>There are <strong>three mechanisms</strong> cells use to move substances across their membranes: <strong>diffusion</strong> (random movement down a gradient), <strong>osmosis</strong> (water movement through a partially permeable membrane), and <strong>active transport</strong> (energy-powered movement against a gradient). Each one explains one of the scenarios above.</p>
+  </div>
+  <div class="nav-row"><button class="btn-prev" disabled>← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 1: DIFFUSION ══ -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">2</div><span class="eyebrow-label">Phase 2 · Diffusion</span></div>
+  <h2>🌬️ Diffusion</h2>
+  <p class="lead">The IGCSE examiners expect you to give a <strong>precise, formal definition</strong> of diffusion. They also expect you to explain the factors that affect its rate and give biological examples.</p>
+
+  <div class="wonder-box mint-box">
+    <p><strong>Definition (learn this word for word):</strong> Diffusion is the net movement of particles from a region of their <strong>higher concentration</strong> to a region of their <strong>lower concentration</strong> (down a concentration gradient), as a result of their <strong>random movement</strong>.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🔑 Key Vocabulary — Tap Each Term</h3>
+  <div class="chip-row">
+    <span class="chip ocean"  onclick="revealChip('concgrad')">Concentration Gradient</span>
+    <span class="chip coral"  onclick="revealChip('netmov')">Net Movement</span>
+    <span class="chip mint"   onclick="revealChip('equil')">Equilibrium</span>
+    <span class="chip gold"   onclick="revealChip('passive')">Passive Process</span>
+    <span class="chip lav"    onclick="revealChip('partial')">Partially Permeable Membrane</span>
+  </div>
+  <div id="chip-concgrad" class="concept-reveal ocean-border"><strong>Concentration Gradient</strong> — The difference in concentration of a substance between two regions. The steeper the gradient (bigger difference), the faster diffusion occurs. Particles always move DOWN their gradient (from high to low) until equilibrium is reached.</div>
+  <div id="chip-netmov"   class="concept-reveal coral"><strong>Net Movement</strong> — The overall direction of movement. Particles move randomly in all directions, but there are MORE moving from high to low concentration than the reverse — so the NET movement is from high to low. At equilibrium, particles still move but net movement = zero.</div>
+  <div id="chip-equil"    class="concept-reveal mint-border"><strong>Equilibrium</strong> — When concentrations are equal on both sides of a membrane. Diffusion does NOT stop at equilibrium — random movement continues — but there is no net movement in either direction.</div>
+  <div id="chip-passive"  class="concept-reveal gold-border"><strong>Passive Process</strong> — Diffusion requires NO energy (ATP). It relies entirely on the random kinetic energy that particles already possess. This distinguishes it from active transport, which requires energy from respiration.</div>
+  <div id="chip-partial"  class="concept-reveal lav-border"><strong>Partially Permeable Membrane</strong> — A membrane with pores that allow small molecules (like water, oxygen, CO₂, glucose) to pass through but block larger molecules (like proteins and starch). The cell membrane is partially permeable. Exam note: do NOT say "semi-permeable" — use "partially permeable".</div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">📊 Factors Affecting Rate of Diffusion</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">All four factors are tested in IGCSE exams. For each one, you must explain the <em>reason</em> for the effect, not just state the trend.</p>
+
+  <div id="factor-bars" style="margin:1rem 0 1.5rem;">
+    <div class="factor-row"><div class="factor-label">📐 Surface Area</div><div class="factor-bar-wrap"><div class="factor-bar" style="width:85%;background:#3aaf85;"></div></div><div class="factor-desc">↑ = faster</div></div>
+    <div class="factor-row"><div class="factor-label">🌡️ Temperature</div><div class="factor-bar-wrap"><div class="factor-bar" style="width:75%;background:#e8603c;"></div></div><div class="factor-desc">↑ = faster</div></div>
+    <div class="factor-row"><div class="factor-label">📉 Concentration</div><div class="factor-bar-wrap"><div class="factor-bar" style="width:90%;background:#7c6fcd;"></div></div><div class="factor-desc">bigger Δ = faster</div></div>
+    <div class="factor-row"><div class="factor-label">📏 Distance</div><div class="factor-bar-wrap"><div class="factor-bar" style="width:60%;background:#c9962a;"></div></div><div class="factor-desc">shorter = faster</div></div>
+  </div>
+
+  <div class="card-grid">
+    <div class="info-card" onclick="showPanel('sa')"><div class="ic-icon">📐</div><div class="ic-title">Surface Area</div><div class="ic-sub">more area = faster</div></div>
+    <div class="info-card" onclick="showPanel('temp')"><div class="ic-icon">🌡️</div><div class="ic-title">Temperature</div><div class="ic-sub">hotter = faster</div></div>
+    <div class="info-card" onclick="showPanel('conc')"><div class="ic-icon">📉</div><div class="ic-title">Concentration Gradient</div><div class="ic-sub">steeper = faster</div></div>
+    <div class="info-card" onclick="showPanel('dist')"><div class="ic-icon">📏</div><div class="ic-title">Distance</div><div class="ic-sub">shorter = faster</div></div>
+  </div>
+  <div id="panel-sa"   class="info-panel"><h4>📐 Surface Area</h4><p>A larger surface area provides more space through which particles can diffuse simultaneously. This is why organisms that rely heavily on diffusion (like the lungs and small intestine) have highly folded membranes to maximise surface area.</p><div class="eg">📌 Exam answer: "As surface area increases, the rate of diffusion increases because there is more membrane available for particles to pass through at the same time."</div></div>
+  <div id="panel-temp" class="info-panel"><h4>🌡️ Temperature</h4><p>Higher temperature gives particles more kinetic energy, so they move faster and collide more frequently with the membrane. This increases the rate of diffusion. Exam trap: say "particles gain kinetic energy and move faster" — don't just say "particles move more".</p><div class="eg">📌 Exam answer: "As temperature increases, particles gain kinetic energy and move faster, increasing the rate of diffusion."</div></div>
+  <div id="panel-conc" class="info-panel"><h4>📉 Concentration Gradient</h4><p>The steeper the gradient (the bigger the difference in concentration between two regions), the faster diffusion occurs. More particles are moving from the high side to the low side per unit time. This is the most important factor in biological systems.</p><div class="eg">📌 Exam answer: "A steeper concentration gradient means more particles move from high to low concentration per unit time, increasing the rate of diffusion."</div></div>
+  <div id="panel-dist" class="info-panel"><h4>📏 Distance</h4><p>The shorter the distance particles must travel, the faster they arrive at their destination. This is why cell membranes are extremely thin and why the walls of alveoli are only one cell thick — minimising diffusion distance maximises rate.</p><div class="eg">📌 Exam answer: "A shorter diffusion distance means particles travel less far to reach their destination, so the rate of diffusion increases."</div></div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🫁 Biological Examples of Diffusion</h3>
+  <table class="vocab-table">
+    <tr><th>Substance</th><th>Direction</th><th>Where</th></tr>
+    <tr><td>Oxygen (O₂)</td><td>Alveoli → blood → body cells</td><td>Lungs, respiring cells</td></tr>
+    <tr><td>Carbon dioxide (CO₂)</td><td>Body cells → blood → alveoli → air</td><td>Lungs, respiring cells</td></tr>
+    <tr><td>Glucose</td><td>Ileum → blood</td><td>Small intestine (with active transport)</td></tr>
+    <tr><td>Urea</td><td>Body cells → blood → kidney</td><td>Excretion</td></tr>
+    <tr><td>CO₂ & O₂ in leaves</td><td>Through stomata</td><td>During photosynthesis / respiration</td></tr>
+  </table>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 2: OSMOSIS ══ -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow"><div class="eyebrow-num num-ocean">3</div><span class="eyebrow-label">Phase 3 · Osmosis</span></div>
+  <h2>💧 Osmosis</h2>
+  <p class="lead">Osmosis is a <strong>special case of diffusion</strong> that applies only to water. The IGCSE definition is very specific — every word matters in the exam.</p>
+
+  <div class="wonder-box mint-box">
+    <p><strong>Definition (learn this word for word):</strong> Osmosis is the net movement of <strong>water molecules</strong> from a region of <strong>higher water potential</strong> (dilute solution) to a region of <strong>lower water potential</strong> (concentrated solution), through a <strong>partially permeable membrane</strong>.</p>
+  </div>
+
+  <!-- OSMOSIS SIMULATOR -->
+  <div class="demo-zone">
+    <h3>🔬 Osmosis Simulator</h3>
+    <div class="hint">Select a scenario to see what happens across the partially permeable membrane</div>
+    <div class="osm-container" id="osmContainer">
+      <div class="osm-side left" id="osmLeft">
+        <div class="osm-label" id="osmLeftLabel">Left side</div>
+        <div class="osm-dots" id="osmLeftDots">💧💧💧💧💧💧</div>
+        <div class="osm-conc" id="osmLeftConc"></div>
+      </div>
+      <div class="osm-arrow" id="osmArrow">→</div>
+      <div class="osm-membrane"></div>
+      <div class="osm-side right" id="osmRight">
+        <div class="osm-label" id="osmRightLabel">Right side</div>
+        <div class="osm-dots" id="osmRightDots">💧💧💧🟡🟡🟡</div>
+        <div class="osm-conc" id="osmRightConc"></div>
+      </div>
+    </div>
+    <div class="osm-result" id="osmResult">Select a scenario below to begin</div>
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.8rem;">
+      <button class="btn btn-ocean" onclick="setScenario('hypo')">🌊 Cell in Pure Water</button>
+      <button class="btn btn-mint"  onclick="setScenario('iso')">⚖️ Cell in Isotonic Solution</button>
+      <button class="btn btn-ghost" onclick="setScenario('hyper')">🏜️ Cell in Concentrated Solution</button>
+      <button class="btn btn-ghost" onclick="setScenario('plant')">🌿 Plant Cell in Water</button>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🧠 Key Terms — Tap Each</h3>
+  <div class="chip-row">
+    <span class="chip ocean" onclick="revealChip('watpot')">Water Potential</span>
+    <span class="chip coral" onclick="revealChip('turgid')">Turgid</span>
+    <span class="chip mint"  onclick="revealChip('flaccid')">Flaccid</span>
+    <span class="chip gold"  onclick="revealChip('plasmo')">Plasmolysis</span>
+    <span class="chip lav"   onclick="revealChip('hypo2')">Hypotonic / Hypertonic / Isotonic</span>
+  </div>
+  <div id="chip-watpot"  class="concept-reveal ocean-border"><strong>Water Potential</strong> — The potential (tendency) of water molecules to move. Pure water has the HIGHEST water potential. Adding solutes LOWERS water potential (because solute particles take up space and reduce the proportion of water molecules free to move). Water always moves from HIGH to LOW water potential via osmosis.</div>
+  <div id="chip-turgid"  class="concept-reveal coral"><strong>Turgid</strong> — A plant cell that has absorbed water by osmosis and swollen. The cell membrane pushes against the cell wall, creating turgor pressure. A turgid cell is firm and rigid — this is how plants stay upright. Animal cells DO NOT become turgid — they have no cell wall, so they BURST (lysis) if placed in too much water.</div>
+  <div id="chip-flaccid" class="concept-reveal mint-border"><strong>Flaccid</strong> — A plant cell that has lost water by osmosis. The vacuole and cytoplasm shrink, and the cell becomes limp and soft. The cell membrane still touches the cell wall (unlike in plasmolysis). A wilting plant has flaccid cells.</div>
+  <div id="chip-plasmo"  class="concept-reveal gold-border"><strong>Plasmolysis</strong> — Occurs when a plant cell is placed in a very concentrated solution. So much water leaves by osmosis that the cytoplasm and cell membrane pull AWAY from the cell wall. The plant cell is said to be plasmolysed. This is more severe than being flaccid and can kill the cell.</div>
+  <div id="chip-hypo2"   class="concept-reveal lav-border"><strong>Hypotonic</strong> — Solution with LOWER solute concentration (higher water potential) than the cell. Water enters the cell.<br><strong>Hypertonic</strong> — Solution with HIGHER solute concentration (lower water potential) than the cell. Water leaves the cell.<br><strong>Isotonic</strong> — Solution with the SAME concentration as the cell. No net movement of water. Cell volume stays the same.</div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🔄 Osmosis in Animal vs Plant Cells</h3>
+  <table class="vocab-table">
+    <tr><th>Solution</th><th>Animal Cell (e.g. red blood cell)</th><th>Plant Cell</th></tr>
+    <tr><td>Hypotonic (dilute / pure water)</td><td>Swells and bursts (lysis)</td><td>Becomes turgid — swells but cell wall prevents bursting</td></tr>
+    <tr><td>Isotonic</td><td>No change in shape</td><td>No change — stays slightly turgid</td></tr>
+    <tr><td>Hypertonic (concentrated)</td><td>Shrinks (crenation)</td><td>Becomes flaccid → plasmolysis if very concentrated</td></tr>
+  </table>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Root Hair Cell</h4>
+    <textarea id="ta-osmosis" placeholder="The soil solution surrounding a plant root hair cell is more dilute than the cell's cytoplasm. Using the word 'water potential', explain the direction of water movement and describe what happens to the root hair cell."></textarea>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 3: ACTIVE TRANSPORT ══ -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">4</div><span class="eyebrow-label">Phase 4 · Active Transport</span></div>
+  <h2>⚡ Active Transport</h2>
+  <p class="lead">Sometimes cells need to move substances <strong>against</strong> their concentration gradient — from low to high concentration. This requires energy and protein carriers. It is called <strong>active transport</strong>.</p>
+
+  <div class="wonder-box coral-box">
+    <p><strong>Definition:</strong> Active transport is the movement of particles through a cell membrane from a region of <strong>lower concentration</strong> to a region of <strong>higher concentration</strong> (against the concentration gradient), using <strong>energy from respiration</strong> and <strong>carrier proteins</strong> in the cell membrane.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">⚙️ How Active Transport Works — Tap to Expand</h3>
+
+  <div class="accord-card" onclick="toggleAccord(this)">
+    <div class="accord-title"><span>Step 1 — The molecule binds to the carrier protein</span><span class="accord-arrow">▼</span></div>
+    <div class="accord-body">A molecule from the side with LOWER concentration binds to a specific carrier protein embedded in the cell membrane. Carrier proteins are specific — like a lock and key, they only accept certain molecules. This specificity ensures only the right substances are transported.<div class="accord-eg">📌 Example: glucose molecules in the gut lumen bind to glucose carrier proteins in the epithelial cells of the ileum.</div></div>
+  </div>
+  <div class="accord-card" onclick="toggleAccord(this)">
+    <div class="accord-title"><span>Step 2 — Energy from respiration (ATP) is used</span><span class="accord-arrow">▼</span></div>
+    <div class="accord-body">ATP (from cellular respiration in mitochondria) provides the energy for the carrier protein to change shape. This is the key difference from diffusion — active transport REQUIRES energy. This is why cells that carry out a lot of active transport have many mitochondria.<div class="accord-eg">📌 Exam link: "Root hair cells have many mitochondria to provide energy for active transport of mineral ions from the soil into the root."</div></div>
+  </div>
+  <div class="accord-card" onclick="toggleAccord(this)">
+    <div class="accord-title"><span>Step 3 — The protein changes shape, releasing the molecule on the other side</span><span class="accord-arrow">▼</span></div>
+    <div class="accord-body">The carrier protein changes shape using the energy from ATP, forcing the molecule through the membrane from the LOW concentration side to the HIGH concentration side — against the gradient. The protein then resets to its original shape, ready to transport another molecule.<div class="accord-eg">📌 This is analogous to a revolving door that only spins one way and requires a push (energy) to operate.</div></div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🌿 Biological Examples of Active Transport — Tap Each</h3>
+
+  <div class="card-grid">
+    <div class="info-card" onclick="showPanel('rootat')"><div class="ic-icon">🌱</div><div class="ic-title">Root Hair Cells</div><div class="ic-sub">mineral ion uptake</div></div>
+    <div class="info-card" onclick="showPanel('villi')"><div class="ic-icon">🫀</div><div class="ic-title">Ileum Villi</div><div class="ic-sub">glucose uptake</div></div>
+    <div class="info-card" onclick="showPanel('kidney')"><div class="ic-icon">🫘</div><div class="ic-title">Kidney Tubules</div><div class="ic-sub">glucose reabsorption</div></div>
+  </div>
+  <div id="panel-rootat" class="info-panel"><h4>🌱 Root Hair Cells — Mineral Ion Uptake</h4><p>The concentration of mineral ions (e.g. nitrates, potassium) is often HIGHER inside root hair cells than in the soil water. Diffusion cannot move ions into the cell against this gradient. Active transport uses energy from respiration to pump mineral ions from the soil (low concentration) into the root (high concentration).</p><div class="eg">📌 Exam answer: "Root hair cells absorb mineral ions by active transport because the concentration of ions in the cell is already higher than in the soil, so diffusion cannot occur. Energy from respiration is used to move ions against the concentration gradient."</div></div>
+  <div id="panel-villi"  class="info-panel"><h4>🫀 Ileum Villi — Glucose Uptake</h4><p>After carbohydrate digestion, glucose concentration in the small intestine can drop very low. Yet the body still needs to absorb glucose into the blood. Active transport allows glucose to be absorbed from the gut even when its concentration in the gut lumen is LOWER than in the blood. Villi epithelial cells are packed with mitochondria for this purpose.</p><div class="eg">📌 Exam answer: "Active transport allows glucose to be absorbed from the ileum even when its concentration in the gut is lower than in the blood. This requires energy from respiration and carrier proteins in the cell membrane."</div></div>
+  <div id="panel-kidney" class="info-panel"><h4>🫘 Kidney Tubules — Glucose Reabsorption</h4><p>All glucose is filtered out of the blood in the kidney's glomerulus. Active transport is used to reabsorb all the glucose back into the blood from the kidney tubules — even when its concentration in the blood is higher — ensuring no glucose is lost in urine. (In diabetes, this mechanism is overwhelmed, so glucose appears in urine.)</p><div class="eg">📌 Active transport in kidney tubules prevents glucose loss in urine. Diabetic patients who exceed the kidney's reabsorption capacity will have glucose in their urine — a diagnostic indicator.</div></div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">📊 Comparison — All Three Processes</h3>
+  <table class="vocab-table">
+    <tr><th>Feature</th><th>Diffusion</th><th>Osmosis</th><th>Active Transport</th></tr>
+    <tr><td>Substance moved</td><td>Any particle (small)</td><td>Water only</td><td>Specific molecules/ions</td></tr>
+    <tr><td>Direction</td><td>High → Low conc.</td><td>High → Low water potential</td><td>Low → High conc. (against gradient)</td></tr>
+    <tr><td>Energy required?</td><td>No (passive)</td><td>No (passive)</td><td>Yes (ATP from respiration)</td></tr>
+    <tr><td>Protein carriers?</td><td>Sometimes (facilitated)</td><td>Aquaporins (water channels)</td><td>Yes — always</td></tr>
+    <tr><td>Membrane needed?</td><td>Not always</td><td>Yes — partially permeable</td><td>Yes — cell membrane</td></tr>
+  </table>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 4: EXPERIMENTS ══ -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">5</div><span class="eyebrow-label">Phase 5 · Practical Experiments</span></div>
+  <h2>🧫 IGCSE Practical Experiments</h2>
+  <p class="lead">The IGCSE exam regularly includes questions based on standard practical investigations. You must know the method, variables, results, and explanation for each.</p>
+
+  <div class="accord-card" onclick="toggleAccord(this)">
+    <div class="accord-title"><span>🥔 Experiment 1 — Osmosis in Potato Tissue</span><span class="accord-arrow">▼</span></div>
+    <div class="accord-body">
+      <strong>Method:</strong> Cut potato cylinders of equal size. Place them in solutions of different sugar concentrations (0%, 5%, 10%, 20%, 40%) and pure water. Measure length/mass before and after (usually 24 hours).<br><br>
+      <strong>Variables:</strong> Independent = concentration of sugar solution. Dependent = change in mass/length. Controlled = size of potato cylinders, temperature, time, species of potato.<br><br>
+      <strong>Results:</strong> In dilute solutions → potato gains mass (water enters by osmosis). In concentrated solutions → potato loses mass (water leaves by osmosis). There is a concentration at which mass does not change (isotonic point — this equals the concentration of the potato's cell sap).<br><br>
+      <strong>Explanation:</strong> The cell sap of potato cells has a certain water potential. In more dilute solutions, water potential outside is higher → water enters → mass increases. In more concentrated solutions, water potential outside is lower → water leaves → mass decreases.
+      <div class="accord-eg">📌 Exam trap: Always measure % change in mass, not absolute change, to account for different starting masses. Graph should show a curve crossing x-axis at the isotonic point.</div>
+    </div>
+  </div>
+
+  <div class="accord-card" onclick="toggleAccord(this)">
+    <div class="accord-title"><span>🔴 Experiment 2 — Diffusion of Potassium Permanganate in Agar</span><span class="accord-arrow">▼</span></div>
+    <div class="accord-body">
+      <strong>Method:</strong> Place crystals of potassium permanganate (or another coloured substance) on agar jelly in a Petri dish. Measure how far the colour diffuses over time at different temperatures.<br><br>
+      <strong>Variables:</strong> Independent = temperature (or time). Dependent = distance diffused. Controlled = amount of KMnO₄, concentration, agar thickness.<br><br>
+      <strong>Results:</strong> At higher temperatures, the colour spreads further/faster. At lower temperatures, it spreads more slowly.<br><br>
+      <strong>Explanation:</strong> At higher temperatures, particles have more kinetic energy and move faster, increasing the rate of diffusion. Distance diffused ∝ rate of diffusion.
+      <div class="accord-eg">📌 This experiment demonstrates that temperature increases the rate of diffusion because particles gain kinetic energy. Remember: in agar, there is no bulk flow — movement is purely by diffusion.</div>
+    </div>
+  </div>
+
+  <div class="accord-card" onclick="toggleAccord(this)">
+    <div class="accord-title"><span>🌱 Experiment 3 — Osmosis in Plant Cells (Plasmolysis)</span><span class="accord-arrow">▼</span></div>
+    <div class="accord-body">
+      <strong>Method:</strong> Place strips of onion (or Elodea) cells in increasingly concentrated sucrose/salt solutions. Observe under a microscope. Look for plasmolysis (cell membrane pulling away from cell wall).<br><br>
+      <strong>Variables:</strong> Independent = concentration of external solution. Dependent = whether plasmolysis occurs / degree of plasmolysis. Controlled = species of plant, thickness of slice, temperature.<br><br>
+      <strong>Results:</strong> In dilute/distilled water → cells are turgid. In isotonic solution → no visible change. In concentrated solution → plasmolysis — cytoplasm visibly peels away from cell wall.<br><br>
+      <strong>Explanation:</strong> In concentrated solutions, water potential outside is lower than inside the cell. Water leaves by osmosis, the vacuole shrinks, and the cytoplasm pulls away from the cell wall.
+      <div class="accord-eg">📌 Incipient plasmolysis = the point at which the cell membrane just begins to pull away from the cell wall. The concentration at this point equals the concentration of the cell's contents.</div>
+    </div>
+  </div>
+
+  <div class="predict-box" style="margin-top:1.5rem;">
+    <h4>🧪 Exam-Style Practical Question</h4>
+    <textarea id="ta-exp" placeholder="A student cuts 5 potato cylinders, each 5cm long and 1cm diameter. She places them in 0.0M, 0.2M, 0.4M, 0.6M, and 0.8M sucrose solutions for 24 hours. She then measures their lengths. The cylinder in 0.0M solution is 5.4cm. The cylinder in 0.8M solution is 4.3cm. (1) Explain why the cylinder in 0.0M solution increased in length. (2) Suggest the approximate molarity of the potato cell sap. (3) Give ONE variable she must control."></textarea>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 5: PAST PAPERS ══ -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow"><div class="eyebrow-num num-gold">6</div><span class="eyebrow-label">Phase 6 · Past Paper Questions</span></div>
+  <h2>📝 IGCSE Past Paper Questions</h2>
+  <p class="lead">These questions are based on the style and content of CIE IGCSE Biology past papers (0610). Write your answers, then click <strong>Check All Answers</strong> to reveal the mark-scheme level answers.</p>
+
+  <!-- Q1 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Diffusion · 3 marks</div>
+    <div class="pp-q">Define the term <em>'diffusion'</em>. <em>[3]</em></div>
+    <textarea class="pp-textarea" id="pp1" placeholder="Write your definition here..."></textarea>
+    <div class="pp-marks">Tip: The mark scheme awards one mark each for three key phrases.</div>
+    <div class="pp-answer" id="ans1">
+      <strong>Mark Scheme Answer (3 marks):</strong>
+      <ul>
+        <li>Net movement of particles / molecules / ions <strong>[1]</strong></li>
+        <li>From a region of higher concentration to a region of lower concentration / down a concentration gradient <strong>[1]</strong></li>
+        <li>As a result of random movement (of particles) <strong>[1]</strong></li>
+      </ul>
+      <em>Note: Do NOT just say "from high to low concentration" — you must say NET MOVEMENT and AS A RESULT OF RANDOM MOVEMENT to get full marks.</em>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Diffusion Rate · 2 marks</div>
+    <div class="pp-q">A student measures how far a dye diffuses through agar jelly at 20°C and at 40°C. The dye diffuses further at 40°C. <em>Explain why the rate of diffusion is greater at 40°C.</em> <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp2" placeholder="Write your explanation here..."></textarea>
+    <div class="pp-marks">Tip: You need to explain the mechanism — not just state the trend.</div>
+    <div class="pp-answer" id="ans2">
+      <strong>Mark Scheme Answer (2 marks):</strong>
+      <ul>
+        <li>At higher temperature, particles have more kinetic energy <strong>[1]</strong></li>
+        <li>So particles move faster / collide more frequently, increasing the rate of diffusion <strong>[1]</strong></li>
+      </ul>
+      <em>Do NOT say "heat makes particles move more" — say "kinetic energy" and "move faster".</em>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Osmosis Definition · 3 marks</div>
+    <div class="pp-q">Define the term <em>'osmosis'</em>. <em>[3]</em></div>
+    <textarea class="pp-textarea" id="pp3" placeholder="Write your definition here..."></textarea>
+    <div class="pp-marks">Tip: Three separate marks — think about: what moves, which direction, and what structure is involved.</div>
+    <div class="pp-answer" id="ans3">
+      <strong>Mark Scheme Answer (3 marks):</strong>
+      <ul>
+        <li>Net movement of water molecules <strong>[1]</strong></li>
+        <li>From a region of higher water potential (dilute solution) to a region of lower water potential (concentrated solution) <strong>[1]</strong></li>
+        <li>Through a partially permeable membrane <strong>[1]</strong></li>
+      </ul>
+      <em>Critical: you must say WATER MOLECULES (not just particles), and PARTIALLY PERMEABLE MEMBRANE (not semi-permeable). Water potential language is expected at Extended level.</em>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Osmosis in Potato · 3 marks</div>
+    <div class="pp-q">A student places potato discs in a concentrated sucrose solution. After 30 minutes, the potato discs have decreased in mass. <em>Explain why the mass of the potato discs decreased.</em> <em>[3]</em></div>
+    <textarea class="pp-textarea" id="pp4" placeholder="Write your explanation here..."></textarea>
+    <div class="pp-answers">
+    <div class="pp-answer" id="ans4">
+      <strong>Mark Scheme Answer (3 marks):</strong>
+      <ul>
+        <li>The sucrose solution has a lower water potential than the potato cell sap <strong>[1]</strong></li>
+        <li>Water moves out of the potato cells by osmosis <strong>[1]</strong></li>
+        <li>Through the partially permeable cell membrane / from higher water potential (inside cell) to lower water potential (sucrose solution) <strong>[1]</strong></li>
+      </ul>
+      <em>Always say OSMOSIS — never just "diffusion" when water movement through a membrane is involved.</em>
+    </div>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Plant Cell Osmosis · 2 marks</div>
+    <div class="pp-q">Fig. 1 shows a plant cell after being placed in distilled water. <em>State the term used to describe this cell and explain how it reached this state.</em> <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp5" placeholder="Name the state and explain how it occurred..."></textarea>
+    <div class="pp-answer" id="ans5">
+      <strong>Mark Scheme Answer (2 marks):</strong>
+      <ul>
+        <li>Turgid <strong>[1]</strong></li>
+        <li>Water entered the cell by osmosis because the water potential of distilled water (outside) is higher than the water potential of the cell sap (inside), so water moved into the vacuole, pushing the cell membrane against the cell wall <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Active Transport · 3 marks</div>
+    <div class="pp-q">The concentration of nitrate ions in the soil water surrounding plant roots is lower than the concentration of nitrate ions inside the root hair cells. <em>Explain how root hair cells absorb nitrate ions from the soil, and why this process requires energy.</em> <em>[3]</em></div>
+    <textarea class="pp-textarea" id="pp6" placeholder="Write your explanation here..."></textarea>
+    <div class="pp-answer" id="ans6">
+      <strong>Mark Scheme Answer (3 marks):</strong>
+      <ul>
+        <li>Nitrate ions are absorbed by active transport <strong>[1]</strong></li>
+        <li>Against the concentration gradient (from lower concentration in soil to higher concentration in root) <strong>[1]</strong></li>
+        <li>Energy from respiration (ATP) is required to change the shape of carrier proteins in the cell membrane <strong>[1]</strong></li>
+      </ul>
+      <em>Key phrases: "active transport", "against the concentration gradient", "energy from respiration". Also acceptable: root hair cells have many mitochondria to provide energy.</em>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Comparing Processes · 2 marks</div>
+    <div class="pp-q"><em>State two differences between active transport and diffusion.</em> <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp7" placeholder="Difference 1: ...\nDifference 2: ..."></textarea>
+    <div class="pp-answer" id="ans7">
+      <strong>Mark Scheme Answer (2 marks — any 2 of):</strong>
+      <ul>
+        <li>Active transport requires energy / ATP; diffusion does not (is passive) <strong>[1]</strong></li>
+        <li>Active transport moves substances against the concentration gradient; diffusion moves substances down the concentration gradient <strong>[1]</strong></li>
+        <li>Active transport requires carrier proteins; diffusion does not (always) <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin-top:1.5rem;text-align:center;">
+    <button class="btn btn-ocean" onclick="showAllAnswers()" style="font-size:1rem;padding:.85rem 2rem;border-radius:50px;">✅ Check All Answers</button>
+    <button class="btn btn-ghost" onclick="hideAllAnswers()" style="margin-left:.8rem;font-size:1rem;padding:.85rem 2rem;border-radius:50px;">🙈 Hide Answers</button>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 6: QUIZ ══ -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">7</div><span class="eyebrow-label">Phase 7 · Multiple Choice Quiz</span></div>
+  <h2>❓ IGCSE-Style Multiple Choice Quiz</h2>
+  <p class="lead">12 questions in the style of IGCSE Paper 1. Choose the best answer — you'll get instant feedback with explanations.</p>
+  <div id="quiz-container"></div>
+  <div id="score-panel" class="score-panel" style="display:none;">
+    <h3>Quiz Complete! 🎉</h3>
+    <div class="score-num" id="score-display">0/12</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-ghost" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 7: SUBMIT ══ -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">8</div><span class="eyebrow-label">Your Completed Work</span></div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Summary of all your work. Copy, email, or print to submit to your teacher.</p>
+
+  <div class="summary-section" style="background:var(--ocean);color:white;border-color:var(--ocean);">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">STUDENT</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">LESSON</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;">IGCSE Biology · Topic 3 · Movement Into & Out of Cells 💧</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6;" id="summaryDate"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section"><h3>❓ Quiz Score</h3><div class="summary-answer" id="sum-quiz"></div></div>
+  <div class="summary-section"><h3>💧 Opening Prediction</h3><div class="summary-answer" id="sum-wonder"></div></div>
+  <div class="summary-section"><h3>🌱 Root Hair Cell Osmosis Reflection</h3><div class="summary-answer" id="sum-osmosis"></div></div>
+  <div class="summary-section"><h3>🥔 Practical Question Response</h3><div class="summary-answer" id="sum-exp"></div></div>
+  <div class="summary-section">
+    <h3>📝 Past Paper Responses</h3>
+    <div class="sum-label">Q1 — Define Diffusion</div><div class="summary-answer" id="sum-pp1"></div>
+    <div class="sum-label">Q2 — Rate of Diffusion at 40°C</div><div class="summary-answer" id="sum-pp2"></div>
+    <div class="sum-label">Q3 — Define Osmosis</div><div class="summary-answer" id="sum-pp3"></div>
+    <div class="sum-label">Q4 — Potato in Sucrose Solution</div><div class="summary-answer" id="sum-pp4"></div>
+    <div class="sum-label">Q5 — Turgid Plant Cell</div><div class="summary-answer" id="sum-pp5"></div>
+    <div class="sum-label">Q6 — Active Transport in Root Hairs</div><div class="summary-answer" id="sum-pp6"></div>
+    <div class="sum-label">Q7 — Active Transport vs Diffusion</div><div class="summary-answer" id="sum-pp7"></div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem;">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2;">
+      <strong>📋 Copy My Results</strong> — Copies all answers to clipboard. Paste into Google Classroom and submit.<br>
+      <strong>📧 Email to Teacher</strong> — Opens email app pre-filled. Add your teacher's address and send.<br>
+      <strong>🖨️ Print / Save PDF</strong> — Mac: Save as PDF. Windows: Microsoft Print to PDF. Upload to assignment.
+    </p>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" disabled>✓ Complete!</button></div>
+</div>
+
+</div><!-- /sheet -->
+
+<!-- COPYRIGHT -->
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+
+<script>
+// ══ NAVIGATION ══
+let currentSection = 0;
+const totalSections = 8;
+function goTo(n) {
+  document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===n));
+  document.querySelectorAll('.prog-step').forEach((p,i) => {
+    p.classList.remove('active','done');
+    if(i===n) p.classList.add('active');
+    else if(i<n) p.classList.add('done');
+  });
+  currentSection = n;
+  if(n===totalSections-1) buildSummary();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function navigate(dir) { goTo(Math.max(0,Math.min(currentSection+dir,totalSections-1))); }
+
+// ══ VOCAB CHIPS ══
+function revealChip(id) {
+  const all = document.querySelectorAll('.concept-reveal');
+  const t = document.getElementById('chip-'+id);
+  const isOpen = t && t.classList.contains('show');
+  all.forEach(c=>c.classList.remove('show'));
+  if(!isOpen && t) t.classList.add('show');
+}
+
+// ══ PANELS ══
+function showPanel(id) {
+  const allP = document.querySelectorAll('.info-panel');
+  const allC = document.querySelectorAll('.info-card');
+  const t = document.getElementById('panel-'+id);
+  const isOpen = t && t.classList.contains('show');
+  allP.forEach(p=>p.classList.remove('show'));
+  allC.forEach(c=>c.classList.remove('active'));
+  if(!isOpen && t){ t.classList.add('show'); event.currentTarget.classList.add('active'); }
+}
+
+// ══ ACCORDION ══
+function toggleAccord(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.accord-card').forEach(c=>c.classList.remove('open'));
+  if(!isOpen) el.classList.add('open');
+}
+
+// ══ OSMOSIS SIMULATOR ══
+const scenarios = {
+  hypo: {
+    leftLabel:'Cell Cytoplasm', rightLabel:'Pure Water (outside)',
+    leftDots:'🟡🟡🟡💧💧', rightDots:'💧💧💧💧💧💧💧',
+    leftConc:'HIGH solute concentration → LOW water potential',
+    rightConc:'No solutes → HIGH water potential',
+    arrow:'←', arrowShow:true,
+    result:'💧 Water moves INTO the cell by osmosis. The outside (pure water) has HIGHER water potential than the cell. In an animal cell: swells and may burst. In a plant cell: becomes TURGID — firm against the cell wall.',
+    leftBg:'#e8f8f2', rightBg:'#e3f2fd'
+  },
+  iso: {
+    leftLabel:'Cell Cytoplasm', rightLabel:'Isotonic Solution',
+    leftDots:'🟡🟡💧💧💧', rightDots:'🟡🟡💧💧💧',
+    leftConc:'Concentration = solution', rightConc:'Concentration = cell',
+    arrow:'↔', arrowShow:true,
+    result:'⚖️ No net movement of water. The water potential inside and outside the cell are EQUAL. The cell does not change in size. This is the isotonic point.',
+    leftBg:'#f5f7fa', rightBg:'#f5f7fa'
+  },
+  hyper: {
+    leftLabel:'Cell Cytoplasm', rightLabel:'Concentrated Solution',
+    leftDots:'🟡💧💧💧💧', rightDots:'🟡🟡🟡🟡🟡💧',
+    leftConc:'Lower solute → Higher water potential',
+    rightConc:'HIGH solute → LOW water potential',
+    arrow:'→', arrowShow:true,
+    result:'🏜️ Water moves OUT of the cell by osmosis. The outside solution has LOWER water potential. Animal cell: shrinks (crenation). Plant cell: becomes FLACCID → PLASMOLYSIS if very concentrated.',
+    leftBg:'#e3f2fd', rightBg:'#fff9e6'
+  },
+  plant: {
+    leftLabel:'Vacuole / Cytoplasm', rightLabel:'Soil Water (dilute)',
+    leftDots:'🟡🟡🟡💧💧', rightDots:'💧💧💧💧💧💧',
+    leftConc:'Cell sap — lower water potential',
+    rightConc:'Dilute soil water — higher water potential',
+    arrow:'←', arrowShow:true,
+    result:'🌱 Water enters root hair cells by osmosis. Soil water has HIGHER water potential than cell sap. Water moves in, filling the vacuole and making the cell TURGID. This drives water uptake in plants.',
+    leftBg:'#e8f8f2', rightBg:'#d4eadd'
+  }
+};
+function setScenario(key) {
+  const s = scenarios[key];
+  document.getElementById('osmLeftLabel').textContent = s.leftLabel;
+  document.getElementById('osmRightLabel').textContent = s.rightLabel;
+  document.getElementById('osmLeftDots').textContent = s.leftDots;
+  document.getElementById('osmRightDots').textContent = s.rightDots;
+  document.getElementById('osmLeftConc').textContent = s.leftConc;
+  document.getElementById('osmRightConc').textContent = s.rightConc;
+  document.getElementById('osmArrow').textContent = s.arrow;
+  document.getElementById('osmArrow').classList.toggle('show', s.arrowShow);
+  document.getElementById('osmResult').innerHTML = s.result;
+  document.getElementById('osmLeft').style.background = s.leftBg;
+  document.getElementById('osmRight').style.background = s.rightBg;
+}
+
+// ══ PAST PAPER ANSWERS ══
+function showAllAnswers() {
+  for(let i=1;i<=7;i++) {
+    const el = document.getElementById('ans'+i);
+    if(el) el.classList.add('show');
+  }
+}
+function hideAllAnswers() {
+  for(let i=1;i<=7;i++) {
+    const el = document.getElementById('ans'+i);
+    if(el) el.classList.remove('show');
+  }
+}
+
+// ══ QUIZ ══
+const quizData = [
+  { q:'Which of the following is the correct definition of diffusion?',
+    opts:['The movement of water through a partially permeable membrane','The net movement of particles from a region of lower concentration to higher concentration','The net movement of particles from a region of higher concentration to lower concentration, as a result of random movement','Movement of particles against a concentration gradient using energy'],
+    ans:2, fb:'Diffusion is the NET movement of particles from HIGH to LOW concentration, as a result of RANDOM movement. Remember all three components for full IGCSE marks.' },
+  { q:'A student places a potato cylinder in a very concentrated salt solution. What will happen to the potato cylinder?',
+    opts:['It will increase in length as water enters by osmosis','It will stay the same size as the solution is isotonic','It will decrease in mass as water leaves by osmosis','It will increase in mass as salt enters the cell'],
+    ans:2, fb:'The concentrated salt solution has a LOWER water potential than the potato cell sap. Water leaves the potato cells by osmosis, so the potato loses mass and decreases in size.' },
+  { q:'Which process requires energy from respiration?',
+    opts:['Diffusion of oxygen into a respiring cell','Osmosis of water into a root hair cell','Active transport of glucose into ileum epithelial cells','Diffusion of carbon dioxide out of a cell'],
+    ans:2, fb:'Active transport is the only process that requires energy (ATP) from respiration. Diffusion and osmosis are both passive processes that do not require energy.' },
+  { q:'The diagrams show two plant cells. Cell A has the cytoplasm pulled away from the cell wall. Cell B is firm with the membrane pushed against the cell wall. What is the correct description of Cell A and Cell B?',
+    opts:['Cell A: turgid; Cell B: plasmolysed','Cell A: plasmolysed; Cell B: turgid','Cell A: flaccid; Cell B: plasmolysed','Cell A: turgid; Cell B: flaccid'],
+    ans:1, fb:'Plasmolysis = cytoplasm/membrane pulls away from cell wall (too much water loss). Turgid = water enters cell, membrane pushed firmly against cell wall. Cell A is plasmolysed; Cell B is turgid.' },
+  { q:'A student investigates how temperature affects diffusion rate using coloured dye in agar. At 40°C, the dye diffuses 5mm in 10 minutes. At 20°C, it diffuses 2mm in 10 minutes. What is the correct explanation for this result?',
+    opts:['At 40°C, the agar is softer so dye moves more easily','At 40°C, particles have more kinetic energy so they move faster','At 20°C, the concentration gradient is steeper','At 40°C, osmosis occurs more rapidly'],
+    ans:1, fb:'Higher temperature gives particles MORE KINETIC ENERGY, causing them to move faster. This increases the rate of diffusion. Always say "kinetic energy" in your exam answer — not just "move more".' },
+  { q:'Which of the following best explains why root hair cells absorb mineral ions by active transport rather than diffusion?',
+    opts:['The root hair cells are too far from the soil for diffusion to occur','Mineral ions are too large to diffuse through the membrane','The concentration of mineral ions inside root hair cells is already higher than in the soil','Active transport is faster in all situations'],
+    ans:2, fb:'Root hair cells accumulate mineral ions to concentrations HIGHER than in the surrounding soil. Diffusion only goes from high to low concentration, so it cannot move ions INTO an already more concentrated cell. Active transport is required.' },
+  { q:'Which row correctly describes osmosis?',
+    opts:['Movement of any particle; does not require a membrane; passive','Net movement of water only; requires a partially permeable membrane; passive','Movement of water; does not require a membrane; requires energy','Net movement of water; requires a partially permeable membrane; requires energy'],
+    ans:1, fb:'Osmosis involves WATER MOLECULES ONLY, requires a PARTIALLY PERMEABLE MEMBRANE, and is PASSIVE (no energy required). This distinguishes it from both diffusion (any particle, no membrane needed) and active transport (requires energy).' },
+  { q:'An epithelial cell in the small intestine has a large number of mitochondria. What does this suggest about the method of glucose absorption?',
+    opts:['Glucose is absorbed by diffusion, which releases energy stored in mitochondria','Glucose is absorbed by osmosis, which requires energy from mitochondria','Glucose is absorbed by active transport, which requires energy (ATP) from mitochondria','Glucose is absorbed by diffusion, which does not require mitochondria'],
+    ans:2, fb:'Large numbers of mitochondria indicate high energy demand. Active transport requires ATP from respiration (which occurs in mitochondria). This is the clue examiners use to test whether students know that active transport requires energy.' },
+  { q:'What happens to a red blood cell placed in pure (distilled) water?',
+    opts:['It shrinks as water leaves by osmosis','It remains the same size as conditions are isotonic','It swells and bursts as water enters by osmosis','It becomes turgid as water enters by osmosis'],
+    ans:2, fb:'Pure water has HIGH water potential. The red blood cell has lower water potential (due to solutes inside). Water enters by osmosis. Animal cells have no cell wall, so they BURST (lyse). Plant cells become turgid (not burst) due to the cell wall.' },
+  { q:'Which of the following is a correct statement about diffusion?',
+    opts:['Diffusion requires carrier proteins to move all substances','Diffusion always requires a partially permeable membrane','Diffusion occurs as a result of random movement of particles','Diffusion can move particles against a concentration gradient if enough energy is available'],
+    ans:2, fb:'Diffusion occurs due to the RANDOM MOVEMENT of particles — they have kinetic energy and move in all directions, but there is a net movement from high to low concentration. It does not require a membrane, carrier proteins, or energy.' },
+  { q:'The diagram shows a cell in which the concentration of substance X inside is 2% and outside is 8%. Which process could move more of substance X INTO the cell?',
+    opts:['Diffusion only','Osmosis only','Active transport only','Both diffusion and active transport'],
+    ans:2, fb:'The concentration of X is HIGHER outside (8%) than inside (2%). Diffusion would move X INTO the cell (down the gradient). To move X OUT of the cell (against the gradient), active transport would be needed. Since the question asks what could move MORE IN, active transport is not needed here — but diffusion works. Wait — re-read: the cell already has 2% inside, outside has 8% — so diffusion moves X in naturally. Active transport could also move it in but is not necessary. If the question had reversed concentrations, only active transport would work.' },
+  { q:'A student investigates osmosis in potato tissue. She finds that when placed in a 0.3M sucrose solution, the potato cylinders do not change in mass. What can be concluded from this result?',
+    opts:['0.3M sucrose is a hypertonic solution relative to the potato','The concentration of the potato cell sap is approximately 0.3M sucrose','No osmosis occurred in this experiment','The potato cells became turgid in this solution'],
+    ans:1, fb:'When there is NO CHANGE IN MASS, the water potential of the solution equals the water potential of the potato cells — they are isotonic. This means the cell sap has the same concentration as the 0.3M sucrose solution. This is the isotonic point.' },
+];
+
+let quizScore=0, quizAnswered=0;
+function buildQuiz(){
+  const c=document.getElementById('quiz-container'); c.innerHTML=''; quizScore=0; quizAnswered=0;
+  document.getElementById('score-panel').style.display='none';
+  quizData.forEach((item,idx)=>{
+    const card=document.createElement('div'); card.className='quiz-card';
+    card.innerHTML=`<div class="quiz-q">Q${idx+1}. ${item.q}</div><div class="quiz-options">${item.opts.map((o,i)=>`<button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}</div><div class="quiz-feedback" id="qfb-${idx}"></div>`;
+    c.appendChild(card);
+  });
+}
+function checkAnswer(btn,qIdx,optIdx){
+  const card=btn.closest('.quiz-card');
+  const buttons=card.querySelectorAll('.quiz-opt');
+  const fb=document.getElementById('qfb-'+qIdx);
+  const correct=quizData[qIdx].ans;
+  buttons.forEach(b=>b.disabled=true);
+  if(optIdx===correct){ btn.classList.add('correct'); fb.textContent='✅ '+quizData[qIdx].fb; fb.className='quiz-feedback show correct-fb'; quizScore++; }
+  else { btn.classList.add('wrong'); buttons[correct].classList.add('correct'); fb.textContent='❌ '+quizData[qIdx].fb; fb.className='quiz-feedback show wrong-fb'; }
+  quizAnswered++;
+  if(quizAnswered===quizData.length){
+    const panel=document.getElementById('score-panel'); panel.style.display='block';
+    document.getElementById('score-display').textContent=quizScore+'/'+quizData.length;
+    const pct=quizScore/quizData.length;
+    document.getElementById('score-msg').textContent=pct>=.9?'🌟 Excellent — IGCSE exam ready on this topic!':pct>=.75?'👍 Good work! Review the questions you missed.':pct>=.6?'📚 Solid start — revisit Sections 2–4 and retake.':'💪 Go back through the lesson phases, then retake.';
+    panel.scrollIntoView({behavior:'smooth'});
+  }
+}
+function retakeQuiz(){ buildQuiz(); }
+buildQuiz();
+
+// ══ SUMMARY ══
+function getTA(id){ const el=document.getElementById(id); return el?el.value.trim():''; }
+function fillSummary(id,text){ const el=document.getElementById(id); if(!el)return; el.textContent=text||'Not answered'; el.classList.toggle('empty',!text); }
+function buildSummary(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  document.getElementById('summaryName').textContent=name;
+  document.getElementById('summaryDate').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const scoreEl=document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl?scoreEl.textContent+' correct':'Quiz not yet completed');
+  fillSummary('sum-wonder',  getTA('ta-wonder'));
+  fillSummary('sum-osmosis', getTA('ta-osmosis'));
+  fillSummary('sum-exp',     getTA('ta-exp'));
+  for(let i=1;i<=7;i++) fillSummary('sum-pp'+i, getTA('pp'+i));
+}
+function buildPlainText(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  const date=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const scoreEl=document.getElementById('score-display');
+  const ppAnswers = [1,2,3,4,5,6,7].map(i=>`Q${i}: ${getTA('pp'+i)||'Not answered'}`).join('\n');
+  return [
+    'IGCSE BIOLOGY · TOPIC 3 · MOVEMENT INTO AND OUT OF CELLS — STUDENT SUBMISSION',
+    '==============================================================================',
+    'Student: '+name, 'Date: '+date,'',
+    '── QUIZ SCORE ──', scoreEl?scoreEl.textContent:'Not completed','',
+    '── OPENING PREDICTION ──', getTA('ta-wonder')||'Not answered','',
+    '── ROOT HAIR CELL OSMOSIS REFLECTION ──', getTA('ta-osmosis')||'Not answered','',
+    '── PRACTICAL QUESTION ──', getTA('ta-exp')||'Not answered','',
+    '── PAST PAPER RESPONSES ──', ppAnswers,'',
+    '==============================================================================',
+    '© 2026 Farvour Explorations · farvourexplorations.com',
+    'Submitted via Movement Into and Out of Cells · IGCSE Biology Interactive Lesson'
+  ].join('\n');
+}
+function copyResults(){
+  buildSummary();
+  navigator.clipboard.writeText(buildPlainText()).then(()=>{
+    const el=document.getElementById('copyConfirm'); el.textContent='✓ Copied! Paste into Google Classroom or your assignment.';
+    setTimeout(()=>el.textContent='',4000);
+  }).catch(()=>{ document.getElementById('copyConfirm').textContent='⚠️ Could not copy — try selecting the text manually.'; });
+}
+function emailResults(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  window.location.href='mailto:?subject='+encodeURIComponent('IGCSE Bio Topic 3 — '+name)+'&body='+encodeURIComponent(buildPlainText());
+}
+</script>
+</body>
+</html>
