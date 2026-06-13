@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Chemical Foundation of Life — AP Biology</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:     #1a3d2b;
+    --forest-mid: #2d6a4f;
+    --coral:      #e8603c;
+    --coral-pale: #fdf0ec;
+    --mint:       #3aaf85;
+    --mint-pale:  #e8f8f2;
+    --gold:       #c9962a;
+    --gold-pale:  #fef9e7;
+    --lavender:   #7c6fcd;
+    --lav-pale:   #f0eefb;
+    --paper:      #fffef9;
+    --ink:        #1a2332;
+    --muted:      #7a8899;
+    --border:     #e0e4ea;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: linear-gradient(160deg,#0d2318 0%,#1a3d2b 45%,#2d6a4f 100%);
+    min-height:100vh; font-family:'Nunito',sans-serif; color:var(--ink); overflow-x:hidden;
+  }
+  body::before {
+    content:''; position:fixed; inset:0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%,rgba(144,238,144,.4) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 22% 38%,rgba(255,255,255,.28) 0%,transparent 100%),
+      radial-gradient(2px   2px   at 41% 6%, rgba(144,238,144,.32) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 60% 24%,rgba(255,255,255,.22) 0%,transparent 100%),
+      radial-gradient(1.5px 1.5px at 77% 9%, rgba(144,238,144,.38) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 90% 33%,rgba(255,255,255,.28) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 33% 55%,rgba(144,238,144,.28) 0%,transparent 100%),
+      radial-gradient(2px   2px   at 70% 48%,rgba(255,255,255,.18) 0%,transparent 100%);
+    pointer-events:none; z-index:0;
+  }
+  .hero { position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 2rem;color:white; }
+  .hero-badge {
+    display:inline-block;background:var(--gold);color:var(--forest);
+    font-family:'Fredoka One',cursive;font-size:.85rem;letter-spacing:.05em;
+    padding:.35rem 1.2rem;border-radius:20px;margin-bottom:1.2rem;
+    box-shadow:0 2px 12px rgba(201,150,42,.45);
+  }
+  .hero h1 { font-family:'Fredoka One',cursive;font-size:clamp(2rem,6vw,3.6rem);line-height:1.1;margin-bottom:.8rem;text-shadow:0 2px 20px rgba(0,0,0,.35); }
+  .hero h1 .accent { color:var(--gold); }
+  .hero p.intro { font-size:1.05rem;line-height:1.7;opacity:.88;max-width:580px;margin:0 auto 2rem; }
+  .name-bar {
+    background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);border-radius:12px;
+    padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;max-width:420px;margin:0 auto 1rem;
+  }
+  .name-bar label { font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;font-family:'DM Mono',monospace; }
+  .name-bar input { flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.4rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:white;outline:none; }
+  .name-bar input::placeholder { color:rgba(255,255,255,.4);font-weight:400; }
+  .progress-wrap { display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem; }
+  .prog-step {
+    background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);border-radius:20px;
+    padding:.35rem .9rem;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.7);
+    cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace;text-decoration:none;display:inline-block;
+  }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.35); }
+  .prog-step.active { background:var(--gold);color:var(--forest);border-color:var(--gold);box-shadow:0 2px 12px rgba(201,150,42,.45); }
+  .sheet { position:relative;z-index:1;background:var(--paper);border-radius:24px 24px 0 0;margin-top:1.5rem;padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.25); }
+  .section { padding:3rem 2rem 0;max-width:820px;margin:0 auto;display:none; }
+  .section.active { display:block; }
+  .section-eyebrow { display:flex;align-items:center;gap:.6rem;margin-bottom:1rem; }
+  .eyebrow-num { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1rem;color:white;flex-shrink:0; }
+  .num-coral { background:var(--coral); }
+  .num-mint  { background:var(--mint); }
+  .num-gold  { background:var(--gold);color:var(--forest); }
+  .num-lav   { background:var(--lavender); }
+  .num-forest{ background:var(--forest-mid); }
+  .eyebrow-label { font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace; }
+  .section h2 { font-family:'Fredoka One',cursive;font-size:clamp(1.6rem,3.5vw,2.2rem);color:var(--forest);margin-bottom:.6rem;line-height:1.2; }
+  .section .lead { font-size:1rem;line-height:1.75;color:#3a4a5a;margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+  .wonder-box {
+    background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);
+    color:white;border-radius:16px;padding:1.8rem 2rem;margin-bottom:1.8rem;position:relative;overflow:hidden;
+  }
+  .wonder-box::after { content:'🤔';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3; }
+  .wonder-box p { font-size:1rem;line-height:1.7;font-style:italic;opacity:.95;max-width:85%; }
+  .wonder-box strong { color:var(--gold);font-style:normal; }
+  .wonder-box.gold-box { background:linear-gradient(135deg,#8a6a1a 0%,#b8860b 100%); }
+  .wonder-box.gold-box::after { content:'⚗️'; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,#1b7a58 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'💧'; }
+  .wonder-box.lav-box { background:linear-gradient(135deg,#4a3a8a 0%,#6a5acd 100%); }
+  .wonder-box.lav-box::after { content:'🔬'; }
+  .predict-box { background:var(--gold-pale);border:2px dashed var(--gold);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem; }
+  .predict-box textarea,.reflect-box textarea {
+    width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;
+    font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:64px;
+    background:white;color:var(--ink);outline:none;transition:border-color .2s;
+  }
+  .predict-box textarea:focus { border-color:var(--gold); }
+  .reflect-box { background:var(--mint-pale);border:2px dashed var(--mint);border-radius:14px;padding:1.4rem 1.6rem;margin-top:1.5rem; }
+  .reflect-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#1b7a58;margin-bottom:.8rem; }
+  .reflect-box textarea:focus { border-color:var(--mint); }
+  .demo-zone { background:white;border:2px solid var(--border);border-radius:16px;padding:1.8rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07); }
+  .demo-zone h3 { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.3rem; }
+  .demo-zone .hint { font-size:.78rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:1.3rem; }
+  .chip-row { display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem; }
+  .chip { padding:.45rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;border:2px solid transparent; }
+  .chip.coral  { background:var(--coral-pale);color:var(--coral);border-color:#f8c5b8; }
+  .chip.mint   { background:var(--mint-pale);color:var(--mint);border-color:#b8ebd8; }
+  .chip.gold   { background:var(--gold-pale);color:#8a6a1a;border-color:#f8e0a0; }
+  .chip.lav    { background:var(--lav-pale);color:var(--lavender);border-color:#d0caef; }
+  .chip.forest { background:#d4eadd;color:var(--forest-mid);border-color:#a8d5b8; }
+  .chip:hover  { transform:scale(1.05); }
+  .concept-reveal { background:var(--paper);border-left:4px solid var(--coral);border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;margin-top:.5rem;display:none;animation:fadeIn .3s ease; }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border   { border-color:var(--mint); }
+  .concept-reveal.gold-border   { border-color:var(--gold); }
+  .concept-reveal.lav-border    { border-color:var(--lavender); }
+  .concept-reveal.forest-border { border-color:var(--forest-mid); }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+  .card-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0 1.5rem; }
+  .info-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.1rem;text-align:center;cursor:pointer;transition:all .2s; }
+  .info-card:hover,.info-card.active { border-color:var(--forest-mid);transform:translateY(-2px);box-shadow:0 4px 14px rgba(45,106,79,.18); }
+  .info-card.active { background:#d4eadd; }
+  .info-card .ic-icon { font-size:2rem;margin-bottom:.4rem; }
+  .info-card .ic-title { font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--forest);margin-bottom:.2rem; }
+  .info-card .ic-sub   { font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em; }
+  .info-panel { background:#d4eadd;border-left:4px solid var(--forest-mid);border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;display:none;animation:fadeIn .3s ease;margin-bottom:1rem; }
+  .info-panel.show { display:block; }
+  .info-panel h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.5rem; }
+  .info-panel p  { font-size:.88rem;line-height:1.7;color:#2a3a2a; }
+  .info-panel .eg { background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;font-size:.82rem;font-family:'DM Mono',monospace;border:1.5px solid rgba(45,106,79,.2); }
+  .quiz-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .quiz-q { font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:1rem;line-height:1.5; }
+  .quiz-options { display:flex;flex-direction:column;gap:.5rem; }
+  .quiz-opt { padding:.6rem 1rem;border-radius:8px;border:2px solid var(--border);background:white;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:600;text-align:left;transition:all .15s;color:var(--ink); }
+  .quiz-opt:hover:not(:disabled) { border-color:var(--forest-mid);background:#f0f7f3; }
+  .quiz-opt.correct { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .quiz-opt.wrong   { background:var(--coral-pale);border-color:var(--coral);color:#a83020; }
+  .quiz-opt:disabled { cursor:default; }
+  .quiz-feedback { margin-top:.8rem;font-size:.85rem;line-height:1.6;padding:.7rem 1rem;border-radius:8px;display:none;animation:fadeIn .3s ease; }
+  .quiz-feedback.show { display:block; }
+  .quiz-feedback.correct-fb { background:var(--mint-pale);color:#1b7a58;border-left:3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background:var(--coral-pale);color:#a83020;border-left:3px solid var(--coral); }
+  .vocab-table { width:100%;border-collapse:collapse;margin:1rem 0 1.5rem; }
+  .vocab-table th { background:var(--forest);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;padding:.7rem 1rem;text-align:left; }
+  .vocab-table td { padding:.65rem 1rem;font-size:.85rem;line-height:1.5;border-bottom:1px solid var(--border); }
+  .vocab-table tr:nth-child(even) td { background:#f5f7fa; }
+  .vocab-table tr:hover td { background:#d4eadd;transition:background .15s; }
+  .vocab-table td:first-child { font-weight:800;color:var(--forest-mid); }
+  .match-grid { display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1rem 0; }
+  .match-item { padding:.75rem 1rem;border-radius:10px;border:2px solid var(--border);cursor:pointer;font-size:.85rem;font-weight:700;transition:all .2s;background:white;text-align:center;color:var(--ink); }
+  .match-item:hover   { border-color:var(--forest-mid);background:#f0f7f3; }
+  .match-item.selected { border-color:var(--lavender);background:var(--lav-pale);color:var(--lavender); }
+  .match-item.matched  { border-color:var(--mint);background:var(--mint-pale);color:#1b7a58;cursor:default; }
+  .match-item.wrong    { border-color:var(--coral);background:var(--coral-pale);color:var(--coral);animation:shake .3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  /* PH SIMULATOR */
+  .ph-bar-wrap { margin:1rem 0; }
+  .ph-bar { height:28px;border-radius:14px;background:linear-gradient(to right,#c00,#e05000,#e08000,#c8c800,#00a000,#0080c0,#0000c0,#5500a0);position:relative; }
+  .ph-marker { position:absolute;top:-22px;transform:translateX(-50%);transition:left .4s; }
+  .ph-marker .pin { width:3px;height:42px;background:var(--forest);margin:0 auto; }
+  .ph-marker .label { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--forest);text-align:center;white-space:nowrap; }
+  .ph-scale-nums { display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);margin-top:4px; }
+  .ph-examples { display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem; }
+  .ph-tag { padding:.4rem .9rem;border-radius:20px;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;border:2px solid transparent;font-family:'DM Mono',monospace; }
+  .ph-tag:hover { transform:scale(1.05); }
+  .ph-result { margin-top:.8rem;padding:.7rem 1rem;border-radius:10px;font-size:.85rem;min-height:2.5rem;transition:all .3s; }
+  /* ATOM BUILDER */
+  .atom-canvas { background:#f0f7f3;border-radius:16px;padding:1.5rem;margin:1rem 0;text-align:center; }
+  .atom-display { font-size:3rem;line-height:1;margin-bottom:.5rem; }
+  .atom-info { font-family:'DM Mono',monospace;font-size:.78rem;color:var(--ink);line-height:1.8; }
+  .atom-info span { color:var(--forest-mid);font-weight:700; }
+  .atom-btns { display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:1rem; }
+  .atom-btn { padding:.5rem 1rem;border-radius:10px;border:2px solid var(--border);background:white;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;transition:all .15s;color:var(--ink); }
+  .atom-btn:hover { border-color:var(--forest-mid);background:#f0f7f3; }
+  .atom-btn.active { border-color:var(--forest);background:#d4eadd;color:var(--forest); }
+  /* BOND TYPES */
+  .bond-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1rem 1.2rem;margin-bottom:.8rem;cursor:pointer;transition:all .2s; }
+  .bond-card:hover { border-color:var(--forest-mid);transform:translateX(4px); }
+  .bond-card.open { border-color:var(--mint);background:var(--mint-pale); }
+  .bond-card .bond-title { font-family:'Fredoka One',cursive;font-size:1rem;color:var(--forest);display:flex;align-items:center;gap:.6rem; }
+  .bond-card .bond-body { font-size:.85rem;line-height:1.7;color:var(--ink);margin-top:.6rem;display:none; }
+  .bond-card.open .bond-body { display:block; }
+  .bond-card .bond-eg { font-family:'DM Mono',monospace;font-size:.78rem;color:var(--muted);margin-top:.4rem;font-style:italic; }
+  /* WATER PROPERTIES */
+  .water-cards { display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.8rem;margin:1rem 0; }
+  .water-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.1rem;cursor:pointer;transition:all .2s;text-align:center; }
+  .water-card:hover,.water-card.active { border-color:#0080c0;transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,128,192,.15); }
+  .water-card.active { background:#e3f2fd; }
+  .water-card .wc-icon { font-size:2rem;margin-bottom:.4rem; }
+  .water-card .wc-title { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--forest);margin-bottom:.2rem; }
+  .water-card .wc-sub   { font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase; }
+  .water-panel { background:#e3f2fd;border-left:4px solid #0080c0;border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;display:none;animation:fadeIn .3s ease;margin-bottom:1rem; }
+  .water-panel.show { display:block; }
+  .water-panel h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:#0d47a1;margin-bottom:.5rem; }
+  .water-panel p  { font-size:.88rem;line-height:1.7;color:#1a2a3a; }
+  .water-panel .eg { background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;font-size:.82rem;font-family:'DM Mono',monospace;border:1.5px solid rgba(0,128,192,.2); }
+  /* CARBON SECTION */
+  .fg-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.7rem;margin:1rem 0 1.5rem; }
+  .fg-card { background:white;border:2px solid var(--border);border-radius:12px;padding:.9rem;text-align:center;cursor:pointer;transition:all .2s; }
+  .fg-card:hover,.fg-card.active { border-color:var(--lavender);background:var(--lav-pale);transform:translateY(-2px); }
+  .fg-panel { background:var(--lav-pale);border-left:4px solid var(--lavender);border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;display:none;animation:fadeIn .3s ease;margin-bottom:1rem; }
+  .fg-panel.show { display:block; }
+  .fg-panel h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:var(--lavender);margin-bottom:.4rem; }
+  .fg-panel p  { font-size:.85rem;line-height:1.7; }
+  /* SCORE */
+  .score-panel { background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);color:white;border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem; }
+  .score-panel .score-num { font-family:'Fredoka One',cursive;font-size:3.5rem;line-height:1;color:var(--gold); }
+  .score-panel p { opacity:.88;margin-top:.5rem;font-size:1rem; }
+  .score-panel h3 { font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:.3rem; }
+  /* NAV */
+  .nav-row { display:flex;justify-content:space-between;align-items:center;padding:2.5rem 2rem 0;max-width:820px;margin:0 auto; }
+  .btn-next { background:var(--forest);color:white;border:none;border-radius:50px;padding:.9rem 2rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;display:flex;align-items:center;gap:.6rem;transition:all .2s;box-shadow:0 4px 16px rgba(26,61,43,.35); }
+  .btn-next:hover { background:var(--forest-mid);transform:translateY(-2px); }
+  .btn-prev { background:transparent;color:var(--muted);border:2px solid var(--border);border-radius:50px;padding:.9rem 1.6rem;font-family:'Fredoka One',cursive;font-size:.95rem;cursor:pointer;transition:all .2s; }
+  .btn-prev:hover { border-color:var(--muted);color:var(--ink); }
+  .btn-prev:disabled,.btn-next:disabled { opacity:.3;cursor:not-allowed;transform:none; }
+  /* SUMMARY */
+  .summary-section { background:white;border-radius:16px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--forest);margin-bottom:.8rem; }
+  .summary-answer { background:#f5f7fa;border-radius:8px;padding:.7rem 1rem;font-size:.85rem;line-height:1.6;color:var(--ink);margin-bottom:.5rem;font-style:italic;border-left:3px solid var(--lavender);min-height:2rem; }
+  .summary-answer.empty { color:var(--muted);font-style:normal;border-left-color:var(--border); }
+  .sum-label { font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.6rem;text-transform:uppercase;letter-spacing:.06em; }
+  .share-buttons { display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center; }
+  .share-btn { border:none;border-radius:12px;padding:.85rem 1.6rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem; }
+  .share-btn:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background:var(--mint);color:white; }
+  .share-btn.email { background:var(--lavender);color:white; }
+  .share-btn.print { background:var(--forest);color:white; }
+  .copy-confirm { text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--mint);min-height:1.2rem;margin-top:.6rem; }
+  .btn { border:none;border-radius:10px;padding:.65rem 1.3rem;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;transition:all .15s; }
+  .btn:hover { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  .btn-mint  { background:var(--mint);color:white; }
+  .btn-ghost { background:#f0f2f5;color:var(--muted); }
+  .blank-input { border:none;border-bottom:2.5px solid var(--forest-mid);background:transparent;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;color:var(--forest);width:180px;text-align:center;outline:none;padding:0 4px;transition:border-color .2s; }
+  .blank-input:focus { border-color:var(--coral); }
+  .blank-input.ok  { border-color:var(--mint);color:var(--mint); }
+  .blank-input.err { border-color:var(--coral);color:var(--coral); }
+  .fill-q { font-size:1rem;line-height:2.2;color:var(--ink);margin-bottom:1rem; }
+  .divider { height:1px;background:var(--border);margin:2rem 0; }
+  @media(max-width:560px) {
+    .hero{padding:2.5rem 1.2rem 1.5rem} .section{padding:2rem 1.2rem 0} .nav-row{padding:2rem 1.2rem 0} .match-grid{grid-template-columns:1fr}
+  }
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm{display:none!important}
+    .sheet{box-shadow:none;border-radius:0} .section{display:none!important} #sec-9{display:block!important}
+  }
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge">⚗️ AP Biology · Unit 1 · The Chemistry of Life</div>
+  <h1>The Chemical <span class="accent">Foundation</span> of Life</h1>
+  <p class="intro">Atoms, bonds, water, and carbon — the molecular toolkit that makes biology possible. Master the chemistry that underlies every AP Biology concept.</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <a class="prog-step active" onclick="goTo(0)">⚗️ Wonder</a>
+    <a class="prog-step"        onclick="goTo(1)">⚛️ Atoms</a>
+    <a class="prog-step"        onclick="goTo(2)">🔗 Bonds</a>
+    <a class="prog-step"        onclick="goTo(3)">💧 Water</a>
+    <a class="prog-step"        onclick="goTo(4)">🧪 pH</a>
+    <a class="prog-step"        onclick="goTo(5)">🖤 Carbon</a>
+    <a class="prog-step"        onclick="goTo(6)">💭 Reflect</a>
+    <a class="prog-step"        onclick="goTo(7)">📝 Quiz</a>
+    <a class="prog-step"        onclick="goTo(8)">📤 Submit</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+<!-- ══ SEC 0: WONDER ══ -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">Phase 1 · Wonder</span></div>
+  <h2>⚗️ Why Does Chemistry Matter in Biology?</h2>
+  <p class="lead">You are made of atoms. Every heartbeat, every thought, every cell division — all of it follows the rules of chemistry. This lesson is about the chemical toolkit that makes life possible.</p>
+  <div class="wonder-box">
+    <p>Your body is about <strong>60% water by mass</strong>. Water is just two hydrogen atoms and one oxygen atom. So why is it the single most critical molecule for life on Earth? What makes H₂O so special — and what would happen if life tried to use a different solvent?</p>
+  </div>
+  <div class="predict-box">
+    <h4>✏️ Your Thinking — Before We Begin</h4>
+    <textarea id="ta-wonder" placeholder="Without looking it up — why do you think water is so important to life? What properties does it have that might make it unique? What elements do you think are most important in living things?"></textarea>
+  </div>
+  <div class="wonder-box gold-box">
+    <p>The four elements that make up <strong>96% of living matter</strong> are carbon, hydrogen, oxygen, and nitrogen — abbreviated <strong>CHON</strong>. Everything from your DNA to your cell membranes is built from these four elements arranged in specific molecular structures.</p>
+  </div>
+  <p style="font-size:.95rem;line-height:1.75;color:#3a4a5a;margin-bottom:1.8rem;">This lesson covers three sections: <strong>(1)</strong> atoms, isotopes, ions, and chemical bonds — the building blocks; <strong>(2)</strong> the unique properties of water that make life possible; and <strong>(3)</strong> why carbon is the backbone of all biological molecules.</p>
+  <div class="nav-row"><button class="btn-prev" disabled>← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 1: ATOMS ══ -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">2</div><span class="eyebrow-label">Phase 2 · Atoms & Elements</span></div>
+  <h2>⚛️ Atoms, Isotopes, and Ions</h2>
+  <p class="lead">At its most fundamental level, life is made of <strong>matter</strong> — and matter is made of atoms. Understanding atomic structure tells you why elements behave the way they do in biological systems.</p>
+
+  <div class="wonder-box lav-box">
+    <p>The four elements common to all living organisms are <strong>oxygen (O), carbon (C), hydrogen (H), and nitrogen (N)</strong>. In humans, oxygen makes up 65% of body mass, carbon 18%, hydrogen 10%, and nitrogen 3%. Non-living matter has very different proportions.</p>
+  </div>
+
+  <!-- ATOM EXPLORER -->
+  <div class="demo-zone">
+    <h3>🔬 Interactive Atom Explorer</h3>
+    <div class="hint">Tap an element to see its atomic structure and biological role</div>
+    <div class="atom-btns">
+      <button class="atom-btn" onclick="showAtom('H')">H — Hydrogen</button>
+      <button class="atom-btn" onclick="showAtom('C')">C — Carbon</button>
+      <button class="atom-btn" onclick="showAtom('N')">N — Nitrogen</button>
+      <button class="atom-btn" onclick="showAtom('O')">O — Oxygen</button>
+      <button class="atom-btn" onclick="showAtom('Na')">Na — Sodium</button>
+      <button class="atom-btn" onclick="showAtom('Cl')">Cl — Chlorine</button>
+      <button class="atom-btn" onclick="showAtom('P')">P — Phosphorus</button>
+      <button class="atom-btn" onclick="showAtom('S')">S — Sulfur</button>
+    </div>
+    <div class="atom-canvas" id="atomCanvas" style="display:none;">
+      <div class="atom-display" id="atomSymbol"></div>
+      <div class="atom-info" id="atomInfo"></div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin:.5rem 0 .8rem;">🧠 Key Concepts — Tap Each Term</h3>
+  <div class="chip-row">
+    <span class="chip lav"    onclick="revealChip('atom')">Atom</span>
+    <span class="chip coral"  onclick="revealChip('proton')">Proton / Neutron / Electron</span>
+    <span class="chip forest" onclick="revealChip('isotope')">Isotope</span>
+    <span class="chip mint"   onclick="revealChip('radio')">Radioisotope</span>
+    <span class="chip gold"   onclick="revealChip('valence')">Valence Electrons</span>
+    <span class="chip lav"    onclick="revealChip('octet')">Octet Rule</span>
+    <span class="chip coral"  onclick="revealChip('ion')">Ion / Cation / Anion</span>
+    <span class="chip forest" onclick="revealChip('atomic')">Atomic Number vs Mass</span>
+  </div>
+  <div id="chip-atom"   class="concept-reveal lav-border"><strong>Atom</strong> — The smallest unit of matter that retains all the chemical properties of an element. Composed of a nucleus (protons + neutrons) surrounded by electrons in orbitals. More than 99% of an atom's volume is empty space.</div>
+  <div id="chip-proton" class="concept-reveal coral"><strong>Protons (+1 charge), Neutrons (0 charge), Electrons (−1 charge)</strong> — Protons and neutrons are in the nucleus (~1 amu each). Electrons are in orbitals and have negligible mass. In a neutral atom, protons = electrons. The number of protons defines the element.</div>
+  <div id="chip-isotope" class="concept-reveal forest-border"><strong>Isotope</strong> — Different forms of the same element with the same number of protons but different numbers of neutrons. Example: Carbon-12 has 6 neutrons; Carbon-14 has 8 neutrons. Same element, different mass. <em>Don't confuse isotope with ion!</em></div>
+  <div id="chip-radio" class="concept-reveal mint-border"><strong>Radioisotope</strong> — An unstable isotope that undergoes radioactive decay, releasing energy. Carbon-14 (half-life 5,730 years) is used in carbon dating to determine the age of formerly living organisms up to ~50,000 years old. Potassium-40 (half-life 1.25 billion years) dates older fossils.</div>
+  <div id="chip-valence" class="concept-reveal gold-border"><strong>Valence Electrons</strong> — Electrons in the outermost electron shell (valence shell). These are the electrons involved in chemical bonding. The number of valence electrons determines an element's chemical behavior. Carbon has 4 valence electrons — allowing up to 4 bonds.</div>
+  <div id="chip-octet" class="concept-reveal lav-border"><strong>Octet Rule</strong> — Atoms are most stable when their outermost shell contains 8 electrons (or 2, for the first shell). Atoms form bonds to fill their valence shells. This drives all chemical bonding. Noble gases (He, Ne, Ar) already have full shells — they almost never bond.</div>
+  <div id="chip-ion"   class="concept-reveal coral"><strong>Ion</strong> — An atom that has gained or lost electrons, giving it a net charge. <em>Cation (+)</em> — lost electrons (e.g., Na⁺). <em>Anion (−)</em> — gained electrons (e.g., Cl⁻). Ions are crucial in biology: Na⁺, K⁺, Ca²⁺, and Cl⁻ are key electrolytes for nerve impulses and muscle contraction.</div>
+  <div id="chip-atomic" class="concept-reveal forest-border"><strong>Atomic Number vs Atomic Mass</strong> — <em>Atomic number</em> = number of protons (defines the element, never changes). <em>Atomic mass</em> = protons + neutrons. To find neutrons: atomic mass − atomic number. Carbon's atomic number is 6; atomic mass is ~12 → 6 neutrons.</div>
+
+  <div class="divider"></div>
+  <div class="predict-box">
+    <h4>🧪 Quick Check — Carbon-14 Dating</h4>
+    <textarea id="ta-atoms" placeholder="A scientist finds a bone fossil and measures the ratio of Carbon-14 to Carbon-12. The ratio is about half of what you'd find in a living organism. Approximately how old is the fossil? How do you know? (Hint: think about what 'half-life' means)"></textarea>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 2: BONDS ══ -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow"><div class="eyebrow-num num-gold">3</div><span class="eyebrow-label">Phase 3 · Chemical Bonds</span></div>
+  <h2>🔗 Chemical Bonds & Molecular Interactions</h2>
+  <p class="lead">Atoms bond together to form molecules by <strong>sharing or transferring electrons</strong> to fill their valence shells. The type of bond determines the molecule's properties — and its biological role. Tap each bond type to expand it.</p>
+
+  <div class="bond-card" onclick="toggleBond(this)">
+    <div class="bond-title">⚡ Ionic Bond</div>
+    <div class="bond-body">
+      Formed when one atom <em>donates</em> an electron to another. The atom that loses an electron becomes a positive cation; the atom that gains becomes a negative anion. These opposite charges attract — forming an ionic bond.
+      <div class="bond-eg">📌 Classic example: NaCl (table salt). Na donates its 1 valence electron to Cl (which needs 1 to fill its shell). Result: Na⁺ and Cl⁻ attract. | AP note: Ionic bonds are weaker than covalent in biological systems — they break easily in water (dissociation).</div>
+    </div>
+  </div>
+  <div class="bond-card" onclick="toggleBond(this)">
+    <div class="bond-title">🤝 Nonpolar Covalent Bond</div>
+    <div class="bond-body">
+      Electrons are <em>shared equally</em> between two atoms of the same element or atoms with similar electronegativity. No partial charges develop — the molecule is nonpolar. Nonpolar molecules are <em>hydrophobic</em> (don't mix with water).
+      <div class="bond-eg">📌 Examples: O₂ (oxygen gas), N₂ (nitrogen gas), CH₄ (methane). The carbon-hydrogen bonds in lipids are nonpolar covalent — this is why fats don't dissolve in water.</div>
+    </div>
+  </div>
+  <div class="bond-card" onclick="toggleBond(this)">
+    <div class="bond-title">⚖️ Polar Covalent Bond</div>
+    <div class="bond-body">
+      Electrons are <em>shared unequally</em> because one atom is more electronegative than the other — it pulls electrons closer. This creates partial charges: δ+ on the less electronegative atom, δ− on the more electronegative. Polar molecules are <em>hydrophilic</em>.
+      <div class="bond-eg">📌 Water (H₂O): oxygen is much more electronegative than hydrogen. Electrons spend more time near oxygen → oxygen gets δ−, hydrogens get δ+. This polarity is responsible for ALL of water's special properties. CO₂ has polar bonds but is linear → the partial charges cancel → nonpolar overall.</div>
+    </div>
+  </div>
+  <div class="bond-card" onclick="toggleBond(this)">
+    <div class="bond-title">🫧 Hydrogen Bond</div>
+    <div class="bond-body">
+      A <em>weak</em> attractive interaction between a slightly positive hydrogen (δ+) in one polar molecule and a slightly negative atom (usually O or N) in another molecule — or in the same molecule. Individual hydrogen bonds are easily broken, but many together create significant force.
+      <div class="bond-eg">📌 Crucial examples: (1) Water molecules attract each other via H-bonds → gives water cohesion, high heat capacity, surface tension. (2) DNA double helix held together by H-bonds between base pairs. (3) Protein secondary structure (alpha helices, beta sheets) maintained by H-bonds.</div>
+    </div>
+  </div>
+  <div class="bond-card" onclick="toggleBond(this)">
+    <div class="bond-title">🌫️ Van der Waals Interactions</div>
+    <div class="bond-body">
+      Very weak, temporary attractive forces between any two molecules caused by momentary fluctuations in electron density. They require molecules to be very close together. Individually negligible — but cumulatively important for protein folding and DNA structure.
+      <div class="bond-eg">📌 Van der Waals forces contribute to the three-dimensional structure of proteins — alongside ionic, covalent, and hydrogen bonds. A gecko's ability to stick to walls is partly due to van der Waals forces between its toe hairs and surfaces.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin:.5rem 0 .8rem;">🎯 Bond Match — Pair Each Bond to Its Key Feature</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Tap a bond on the left, then its matching characteristic on the right.</p>
+  <div class="match-grid" id="bondMatch">
+    <div class="match-item" data-pair="a" data-side="term" onclick="matchClick(this,'bondMatch')">Ionic Bond</div>
+    <div class="match-item" data-pair="b" data-side="def"  onclick="matchClick(this,'bondMatch')">Holds DNA double helix together</div>
+    <div class="match-item" data-pair="c" data-side="term" onclick="matchClick(this,'bondMatch')">Nonpolar Covalent</div>
+    <div class="match-item" data-pair="d" data-side="def"  onclick="matchClick(this,'bondMatch')">Electrons shared equally — hydrophobic</div>
+    <div class="match-item" data-pair="a" data-side="def"  onclick="matchClick(this,'bondMatch')">Electron transfer — Na⁺ and Cl⁻</div>
+    <div class="match-item" data-pair="e" data-side="term" onclick="matchClick(this,'bondMatch')">Polar Covalent</div>
+    <div class="match-item" data-pair="b" data-side="term" onclick="matchClick(this,'bondMatch')">Hydrogen Bond</div>
+    <div class="match-item" data-pair="c" data-side="def"  onclick="matchClick(this,'bondMatch')">Found in O₂ and N₂</div>
+    <div class="match-item" data-pair="d" data-side="term" onclick="matchClick(this,'bondMatch')">Van der Waals</div>
+    <div class="match-item" data-pair="e" data-side="def"  onclick="matchClick(this,'bondMatch')">Unequal sharing — creates δ+ and δ−</div>
+  </div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-ghost" onclick="resetMatch('bondMatch','bond-score')">↺ Reset</button>
+    <span id="bond-score" style="margin-left:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted);"></span>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 3: WATER ══ -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">4</div><span class="eyebrow-label">Phase 4 · The Properties of Water</span></div>
+  <h2>💧 Water — Life's Essential Solvent</h2>
+  <p class="lead">Water's polarity and hydrogen bonding give it <strong>five critical properties</strong> that make life as we know it possible. The AP exam regularly tests all five. Tap each property card to explore.</p>
+
+  <div class="wonder-box mint-box">
+    <p>The human body is 60–70% water. Life originally evolved in a watery environment, and most cellular chemistry occurs inside the watery cytoplasm of cells. Water's unique properties stem entirely from one fact: <strong>it is a polar molecule that forms hydrogen bonds.</strong></p>
+  </div>
+
+  <div class="water-cards">
+    <div class="water-card" onclick="showWater('solvent')"><div class="wc-icon">🧂</div><div class="wc-title">Universal Solvent</div><div class="wc-sub">Property 1</div></div>
+    <div class="water-card" onclick="showWater('heat')"><div class="wc-icon">🌡️</div><div class="wc-title">High Heat Capacity</div><div class="wc-sub">Property 2</div></div>
+    <div class="water-card" onclick="showWater('vapor')"><div class="wc-icon">💨</div><div class="wc-title">Heat of Vaporization</div><div class="wc-sub">Property 3</div></div>
+    <div class="water-card" onclick="showWater('cohesion')"><div class="wc-icon">🌊</div><div class="wc-title">Cohesion & Adhesion</div><div class="wc-sub">Property 4</div></div>
+    <div class="water-card" onclick="showWater('ice')"><div class="wc-icon">🧊</div><div class="wc-title">Ice Floats</div><div class="wc-sub">Property 5</div></div>
+  </div>
+
+  <div id="water-solvent" class="water-panel">
+    <h4>🧂 Water as Universal Solvent</h4>
+    <p>Because water is polar, it dissolves ionic compounds and other polar molecules by surrounding them with a <em>sphere of hydration</em>. The δ− oxygen attracts cations; the δ+ hydrogens attract anions. Biological reactions occur in aqueous solution — without water's solvent properties, biochemistry is impossible.</p>
+    <div class="eg">📌 When NaCl dissolves in water, Na⁺ is surrounded by the oxygen side of water molecules and Cl⁻ is surrounded by the hydrogen side. | Nonpolar molecules (lipids) do NOT dissolve in water — they are hydrophobic.</div>
+  </div>
+  <div id="water-heat" class="water-panel">
+    <h4>🌡️ High Heat Capacity</h4>
+    <p>Water absorbs a large amount of heat before its temperature rises, and releases heat slowly. This is because breaking hydrogen bonds requires energy. Water's specific heat is 1 calorie/gram/°C — about 5× higher than sand. This stabilizes temperatures in organisms and aquatic environments.</p>
+    <div class="eg">📌 Warm-blooded animals use water's high heat capacity to distribute and buffer body heat. Coastal cities have milder temperatures than inland cities because the ocean absorbs and releases heat slowly.</div>
+  </div>
+  <div id="water-vapor" class="water-panel">
+    <h4>💨 High Heat of Vaporization</h4>
+    <p>It takes a lot of energy (586 cal/g) to convert liquid water to gas, because all hydrogen bonds must break. As water evaporates, it carries heat away — <em>cooling the surface it leaves</em>. This is the basis of evaporative cooling.</p>
+    <div class="eg">📌 Sweating cools your body: water evaporates from skin, removing heat. This is homeostatic temperature regulation in action. Plants use transpiration (water evaporating through leaves) for the same purpose.</div>
+  </div>
+  <div id="water-cohesion" class="water-panel">
+    <h4>🌊 Cohesion and Adhesion</h4>
+    <p><em>Cohesion</em> = water molecules attracted to each other via hydrogen bonds → creates surface tension. <em>Adhesion</em> = water attracted to other polar surfaces. Together, these properties drive <em>capillary action</em> — water climbing up narrow tubes (like the xylem of a 300-foot redwood tree).</p>
+    <div class="eg">📌 Surface tension allows water striders to walk on water. Capillary action transports water from roots to leaves in plants without requiring a pump. A water column "pulled" up a tree by evaporation at the leaves → cohesion + adhesion make this possible.</div>
+  </div>
+  <div id="water-ice" class="water-panel">
+    <h4>🧊 Ice is Less Dense Than Liquid Water</h4>
+    <p>When water freezes, hydrogen bonds lock into a crystalline lattice that is more spread out than liquid water — making ice LESS dense than liquid water. This is unusual; most solids are denser than their liquid form. Ice floats, insulating the water below and allowing aquatic life to survive winter.</p>
+    <div class="eg">📌 If ice sank, lakes and ponds would freeze solid from the bottom up, killing all aquatic life. Ice forming on the surface insulates the water below, keeping it liquid at ~4°C. This property of water is essential for life in cold climates.</div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Transpiration Challenge</h4>
+    <textarea id="ta-water" placeholder="A California redwood tree can be 300 feet tall. There is no pump in a tree. Using at least 3 of water's properties, explain how water molecules travel from the roots all the way to the leaves at the top of the tree. Be specific."></textarea>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 4: PH ══ -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">5</div><span class="eyebrow-label">Phase 5 · pH, Acids & Bases</span></div>
+  <h2>🧪 pH, Acids, Bases & Buffers</h2>
+  <p class="lead">The pH of a solution measures its concentration of hydrogen ions (H⁺). Life is extremely sensitive to pH — most enzymes only work within a narrow range. Understanding pH and buffers is essential AP content.</p>
+
+  <!-- PH SIMULATOR -->
+  <div class="demo-zone">
+    <h3>🔬 Interactive pH Simulator</h3>
+    <div class="hint">Tap a substance to see its pH and classification</div>
+    <div class="ph-bar-wrap">
+      <div class="ph-bar" id="phBar">
+        <div class="ph-marker" id="phMarker" style="left:50%">
+          <div class="label" id="phLabel">7.0</div>
+          <div class="pin"></div>
+        </div>
+      </div>
+      <div class="ph-scale-nums">
+        <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
+        <span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>
+      </div>
+    </div>
+    <div class="ph-examples">
+      <button class="ph-tag" style="background:#ffdddd;color:#900;border-color:#f88" onclick="setPH(1,'Stomach acid','Strongly acidic — pH 1. High H⁺ concentration. Denatures proteins and kills pathogens. Stomach cells are constantly replaced because they die in this extreme acid.')">Stomach acid (1)</button>
+      <button class="ph-tag" style="background:#ffe8cc;color:#a05000;border-color:#f8a" onclick="setPH(2,'Lemon juice','Acidic — pH 2. Citric acid. Tangy taste from H⁺ ions. Still quite corrosive — you\'d notice if you got it in a cut.')">Lemon juice (2)</button>
+      <button class="ph-tag" style="background:#fff3cc;color:#806000;border-color:#fc8" onclick="setPH(4,'Black coffee','Mildly acidic — pH ~5. Weak acids from coffee compounds. Acid reflux sufferers are often advised to limit coffee.')">Coffee (~5)</button>
+      <button class="ph-tag" style="background:#eeffee;color:#004000;border-color:#8d8" onclick="setPH(7,'Pure water','Neutral — pH 7. Equal concentrations of H⁺ and OH⁻ (1×10⁻⁷ mol/L each). The reference point for the pH scale.')">Pure water (7)</button>
+      <button class="ph-tag" style="background:#eeeeff;color:#000060;border-color:#88f" onclick="setPH(7.4,'Human blood','Slightly alkaline — pH 7.35–7.45. Maintained by the bicarbonate buffer system. Blood pH outside this range is life-threatening (acidosis or alkalosis).')">Blood (7.4)</button>
+      <button class="ph-tag" style="background:#ddeeff;color:#004080;border-color:#8af" onclick="setPH(8,'Seawater','Mildly alkaline — pH ~8. Marine organisms are adapted to this slightly basic environment. Ocean acidification from CO₂ is threatening marine ecosystems.')">Seawater (8)</button>
+      <button class="ph-tag" style="background:#ddeeff;color:#003060;border-color:#68f" onclick="setPH(11,'Ammonia','Strongly alkaline — pH 11. High OH⁻ concentration. Household cleaners are often in this range — dangerous to skin and eyes.')">Ammonia (11)</button>
+      <button class="ph-tag" style="background:#ccddff;color:#002050;border-color:#46f" onclick="setPH(13,'Bleach','Very strongly alkaline — pH 13. Extremely corrosive. Never mix with acids — you\'ll produce toxic chlorine gas.')">Bleach (13)</button>
+    </div>
+    <div class="ph-result" id="phResult"></div>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin:.5rem 0 .8rem;">🧠 Key Concepts — Tap Each</h3>
+  <div class="chip-row">
+    <span class="chip coral"  onclick="revealChip('acid')">Acid</span>
+    <span class="chip mint"   onclick="revealChip('base')">Base</span>
+    <span class="chip gold"   onclick="revealChip('buffer')">Buffer</span>
+    <span class="chip lav"    onclick="revealChip('log')">Logarithmic Scale</span>
+    <span class="chip forest" onclick="revealChip('bicarb')">Bicarbonate Buffer</span>
+  </div>
+  <div id="chip-acid"   class="concept-reveal coral"><strong>Acid</strong> — A substance that <em>donates</em> H⁺ ions (protons) to a solution, increasing [H⁺] and <em>lowering</em> pH. Strong acids (like HCl) completely dissociate. Weak acids (like citric acid) partially dissociate. The stomach uses HCl (strong acid) to digest food and kill pathogens.</div>
+  <div id="chip-base"   class="concept-reveal mint-border"><strong>Base</strong> — A substance that <em>accepts</em> H⁺ ions (reducing [H⁺]) or releases OH⁻, thereby <em>raising</em> pH. Strong bases (NaOH) fully dissociate. Baking soda (weak base) is used as an antacid because it neutralizes stomach acid.</div>
+  <div id="chip-buffer" class="concept-reveal gold-border"><strong>Buffer</strong> — A solution that resists changes in pH by absorbing excess H⁺ or OH⁻. Buffers contain both a weak acid and its conjugate base. Essential for maintaining homeostasis — most enzymes are pH-specific and denature outside their optimal range.</div>
+  <div id="chip-log"    class="concept-reveal lav-border"><strong>Logarithmic Scale</strong> — pH = −log[H⁺]. Each whole number change in pH represents a 10-fold change in H⁺ concentration. pH 5 has 10× more H⁺ than pH 6, and 100× more than pH 7. This is why small pH changes in blood can be life-threatening.</div>
+  <div id="chip-bicarb" class="concept-reveal forest-border"><strong>Bicarbonate Buffer System</strong> — The main buffer of human blood. CO₂ + H₂O ⇌ H₂CO₃ ⇌ H⁺ + HCO₃⁻. When blood is too acidic (too much H⁺), bicarbonate (HCO₃⁻) absorbs the H⁺, forming H₂CO₃, which breaks down to CO₂ exhaled by the lungs. This maintains blood pH at 7.35–7.45.</div>
+
+  <div class="predict-box">
+    <h4>⚠️ AP Exam: Diabetic Ketoacidosis</h4>
+    <textarea id="ta-ph" placeholder="Diabetic ketoacidosis (DKA) is a complication where the body produces excess acid (ketones), dropping blood pH below 7.35. Using what you know about pH, buffers, and homeostasis, explain: (1) Why is a drop in blood pH from 7.4 to 7.1 dangerous? (2) How would the bicarbonate buffer system respond?"></textarea>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 5: CARBON ══ -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow"><div class="eyebrow-num num-forest">6</div><span class="eyebrow-label">Phase 6 · Carbon — The Backbone of Life</span></div>
+  <h2>🖤 Carbon — Why Life Is Carbon-Based</h2>
+  <p class="lead">Carbon has <strong>four valence electrons</strong>, allowing it to form up to four covalent bonds with other atoms — making it the most versatile element for building biological molecules. All macromolecules are built on carbon skeletons.</p>
+
+  <div class="wonder-box gold-box">
+    <p>With 4 valence electrons, carbon can bond to <strong>oxygen, hydrogen, nitrogen, sulfur, phosphorus</strong> — and to other carbon atoms. This creates chains, rings, and branched structures of endless variety. No other element can match carbon's molecular diversity.</p>
+  </div>
+
+  <div class="card-grid">
+    <div class="info-card" onclick="showPanel('chains')"><div class="ic-icon">⛓️</div><div class="ic-title">Carbon Skeletons</div><div class="ic-sub">Chains & Rings</div></div>
+    <div class="info-card" onclick="showPanel('isomers')"><div class="ic-icon">🔄</div><div class="ic-title">Isomers</div><div class="ic-sub">Same formula, diff. structure</div></div>
+    <div class="info-card" onclick="showPanel('hydro')"><div class="ic-icon">⛽</div><div class="ic-title">Hydrocarbons</div><div class="ic-sub">C + H only → nonpolar</div></div>
+  </div>
+  <div id="panel-chains" class="info-panel">
+    <h4>⛓️ Carbon Skeletons</h4>
+    <p>Carbon atoms bond to each other in chains (straight, branched) or rings. The length and shape of the carbon skeleton largely determines a molecule's properties. Single bonds (C−C), double bonds (C=C), and triple bonds (C≡C) are all possible. More bonds = stronger, shorter, less flexible.</p>
+    <div class="eg">📌 Glucose (C₆H₁₂O₆) has a 6-carbon ring. Fatty acids have long carbon chains. DNA has a backbone of alternating carbon-containing sugars and phosphate groups.</div>
+  </div>
+  <div id="panel-isomers" class="info-panel">
+    <h4>🔄 Isomers</h4>
+    <p>Isomers are molecules with the <em>same molecular formula</em> but different structural arrangements — giving them different properties and functions. <em>Don't confuse isomers with isotopes!</em> Isotopes differ in neutrons; isomers differ in structure.</p>
+    <div class="eg">📌 Glucose and fructose are both C₆H₁₂O₆ (isomers) but have different structures and are metabolized differently. Structural isomers have different connectivity; stereoisomers have the same connectivity but different spatial arrangements.</div>
+  </div>
+  <div id="panel-hydro" class="info-panel">
+    <h4>⛽ Hydrocarbons</h4>
+    <p>Molecules consisting only of carbon and hydrogen. The C−H bonds are nonpolar covalent, making hydrocarbons hydrophobic. They store a lot of energy because the electrons are at a high energy state relative to water. This is why fats (which have long hydrocarbon tails) store more energy per gram than carbohydrates.</p>
+    <div class="eg">📌 Methane (CH₄), propane (C₃H₈), and the fatty acid tails of lipids are all hydrocarbons or hydrocarbon-like. They don't mix with water but do mix with other nonpolar substances.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin:.5rem 0 .8rem;">🧪 Functional Groups — Tap to Explore</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Functional groups are clusters of atoms attached to carbon skeletons that give molecules their specific chemical properties. You need to know these for AP.</p>
+  <div class="fg-grid">
+    <div class="fg-card" onclick="showFG('hydroxyl')"><div style="font-size:1.5rem;">−OH</div><div style="font-family:'Fredoka One',cursive;font-size:.85rem;color:var(--forest);margin-top:.3rem;">Hydroxyl</div></div>
+    <div class="fg-card" onclick="showFG('carbonyl')"><div style="font-size:1.5rem;">C=O</div><div style="font-family:'Fredoka One',cursive;font-size:.85rem;color:var(--forest);margin-top:.3rem;">Carbonyl</div></div>
+    <div class="fg-card" onclick="showFG('carboxyl')"><div style="font-size:1.5rem;">−COOH</div><div style="font-family:'Fredoka One',cursive;font-size:.85rem;color:var(--forest);margin-top:.3rem;">Carboxyl</div></div>
+    <div class="fg-card" onclick="showFG('amino')"><div style="font-size:1.5rem;">−NH₂</div><div style="font-family:'Fredoka One',cursive;font-size:.85rem;color:var(--forest);margin-top:.3rem;">Amino</div></div>
+    <div class="fg-card" onclick="showFG('phosphate')"><div style="font-size:1.5rem;">−PO₄</div><div style="font-family:'Fredoka One',cursive;font-size:.85rem;color:var(--forest);margin-top:.3rem;">Phosphate</div></div>
+    <div class="fg-card" onclick="showFG('sulfhydryl')"><div style="font-size:1.5rem;">−SH</div><div style="font-family:'Fredoka One',cursive;font-size:.85rem;color:var(--forest);margin-top:.3rem;">Sulfhydryl</div></div>
+  </div>
+  <div id="fg-hydroxyl"   class="fg-panel"><h4>−OH Hydroxyl Group</h4><p>Polar and hydrophilic. Makes molecules more soluble in water. Found in alcohols and sugars. The hydroxyl groups on glucose make it water-soluble. Also found on the sugar component of nucleotides.</p></div>
+  <div id="fg-carbonyl"   class="fg-panel"><h4>C=O Carbonyl Group</h4><p>Polar. Found in aldehydes (carbonyl at end of chain, e.g., glucose) and ketones (carbonyl in middle, e.g., fructose). Distinguishes glucose from fructose despite having the same molecular formula. Important in carbohydrate chemistry.</p></div>
+  <div id="fg-carboxyl"   class="fg-panel"><h4>−COOH Carboxyl Group</h4><p>Acts as an <em>acid</em> — can donate H⁺, making the molecule acidic. Found in amino acids and fatty acids. The carboxyl end of an amino acid is what forms peptide bonds during protein synthesis. Fatty acids are named for their carboxyl group.</p></div>
+  <div id="fg-amino"      class="fg-panel"><h4>−NH₂ Amino Group</h4><p>Acts as a <em>base</em> — can accept H⁺. Found in amino acids (hence the name) and nucleotides. Amino acids have BOTH a carboxyl group (acidic) and an amino group (basic). The interaction between these drives peptide bond formation.</p></div>
+  <div id="fg-phosphate"  class="fg-panel"><h4>−PO₄ Phosphate Group</h4><p>Negatively charged at physiological pH — acidic. Found in ATP (the energy currency), DNA and RNA backbones, and phospholipids. The high-energy bonds between phosphate groups in ATP store chemical energy used to power cellular work.</p></div>
+  <div id="fg-sulfhydryl" class="fg-panel"><h4>−SH Sulfhydryl Group</h4><p>Found in the amino acid cysteine. Two −SH groups can bond to each other, forming a <em>disulfide bond</em> (−S−S−). Disulfide bonds help stabilize protein tertiary structure. The hair example: heat breaks H-bonds but not disulfide bonds; perms use chemicals to break disulfide bonds and reform them in new positions.</p></div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 6: REFLECT ══ -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">7</div><span class="eyebrow-label">Phase 7 · Reflect</span></div>
+  <h2>💭 Reflection Questions</h2>
+  <p class="lead">Write your answers in your own words. No looking things up — test what you actually remember and understand.</p>
+  <div class="quiz-card"><div class="quiz-q">1. Explain the difference between an ionic bond, a polar covalent bond, a nonpolar covalent bond, and a hydrogen bond. Which is strongest? Which is weakest? Give a biological example of each.</div><textarea id="ref1" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Your answer..."></textarea></div>
+  <div class="quiz-card"><div class="quiz-q">2. List all five properties of water and explain how each one supports life. Pick the one you think is MOST important and defend your choice.</div><textarea id="ref2" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Your answer..."></textarea></div>
+  <div class="quiz-card"><div class="quiz-q">3. Why is carbon the backbone of biological molecules? What property of carbon allows it to form the diverse structures needed for life? Why couldn't silicon (Si) play the same role as well? (Hint: silicon is in the same group as carbon on the periodic table.)</div><textarea id="ref3" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Your answer..."></textarea></div>
+  <div class="quiz-card"><div class="quiz-q">4. Explain how the bicarbonate buffer system maintains blood pH homeostasis. What would happen to blood pH if a person hyperventilated (breathed out too much CO₂)? Use the chemical equation to support your answer.</div><textarea id="ref4" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Your answer..."></textarea></div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.8rem;">✏️ Fill in the Blank Review</h3>
+  <div id="fill-container"></div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-mint" onclick="checkAllFills()">✓ Check All</button>
+    <button class="btn btn-ghost" onclick="resetFills()" style="margin-left:.6rem;">↺ Reset</button>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 7: QUIZ ══ -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">8</div><span class="eyebrow-label">Phase 8 · AP-Style Quiz</span></div>
+  <h2>📝 AP-Style Multiple Choice Quiz</h2>
+  <p class="lead">12 questions written in AP Biology exam style — Chemical Foundation of Life content.</p>
+  <div id="quiz-container"></div>
+  <div id="score-panel" class="score-panel" style="display:none;">
+    <h3>Quiz Complete! 🎉</h3>
+    <div class="score-num" id="score-display">0/12</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-ghost" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 8: SUBMIT ══ -->
+<div class="section" id="sec-8">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">9</div><span class="eyebrow-label">Your Completed Work</span></div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Summary of everything you worked on. Copy, email, or print to submit.</p>
+
+  <div class="summary-section" style="background:var(--forest);color:white;border-color:var(--forest);">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">STUDENT</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">LESSON</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;">AP Bio · Chemical Foundation of Life ⚗️</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6;" id="summaryDate"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section"><h3>📝 Quiz Score</h3><div class="summary-answer" id="sum-quiz"></div></div>
+  <div class="summary-section"><h3>⚗️ Opening — Why Water?</h3><div class="summary-answer" id="sum-wonder"></div></div>
+  <div class="summary-section"><h3>⚛️ Carbon-14 Dating Response</h3><div class="summary-answer" id="sum-atoms"></div></div>
+  <div class="summary-section"><h3>💧 Transpiration Challenge</h3><div class="summary-answer" id="sum-water"></div></div>
+  <div class="summary-section"><h3>🧪 Diabetic Ketoacidosis Response</h3><div class="summary-answer" id="sum-ph"></div></div>
+  <div class="summary-section">
+    <h3>💭 Reflection Questions</h3>
+    <div class="sum-label">Q1 — Bond Types</div><div class="summary-answer" id="sum-r1"></div>
+    <div class="sum-label">Q2 — Five Properties of Water</div><div class="summary-answer" id="sum-r2"></div>
+    <div class="sum-label">Q3 — Why Carbon?</div><div class="summary-answer" id="sum-r3"></div>
+    <div class="sum-label">Q4 — Bicarbonate Buffer</div><div class="summary-answer" id="sum-r4"></div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem;">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2;">
+      <strong>📋 Copy My Results</strong> — Copies all answers to clipboard. Paste into Google Classroom comment box and submit.<br>
+      <strong>📧 Email to Teacher</strong> — Opens your email app pre-filled. Add teacher's address and send.<br>
+      <strong>🖨️ Print / Save PDF</strong> — Mac: bottom-left dropdown → Save as PDF. Windows: Microsoft Print to PDF. Upload to assignment.
+    </p>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)" disabled>✓ Complete!</button></div>
+</div>
+
+</div><!-- /sheet -->
+
+<!-- COPYRIGHT -->
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+
+<script>
+// ══ NAVIGATION ══
+let currentSection = 0;
+const totalSections = 9;
+function goTo(n) {
+  document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===n));
+  document.querySelectorAll('.prog-step').forEach((p,i) => {
+    p.classList.remove('active','done');
+    if(i===n) p.classList.add('active');
+    else if(i<n) p.classList.add('done');
+  });
+  currentSection = n;
+  if(n===totalSections-1) buildSummary();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function navigate(dir) { goTo(Math.max(0,Math.min(currentSection+dir,totalSections-1))); }
+
+// ══ ATOM EXPLORER ══
+const atoms = {
+  H:  { sym:'H', name:'Hydrogen', num:1, mass:1,  valence:1, bio:'Most abundant element in the universe. In living things, it bonds to carbon, oxygen, and nitrogen. Essential for water (H₂O) and organic molecules.' },
+  C:  { sym:'C', name:'Carbon',   num:6, mass:12, valence:4, bio:'The backbone of all organic molecules. 4 valence electrons allow up to 4 bonds — can form chains, rings, and branches of endless variety.' },
+  N:  { sym:'N', name:'Nitrogen', num:7, mass:14, valence:5, bio:'Essential in amino groups (−NH₂) of amino acids and in the nitrogen bases of DNA and RNA. 78% of the atmosphere is N₂, but most organisms cannot use it directly.' },
+  O:  { sym:'O', name:'Oxygen',   num:8, mass:16, valence:6, bio:'Highly electronegative — pulls electrons in bonds, creating polarity. Critical for water, aerobic respiration (final electron acceptor), and many biological molecules.' },
+  Na: { sym:'Na',name:'Sodium',   num:11,mass:23, valence:1, bio:'Loses its 1 valence electron easily → Na⁺. Key electrolyte for nerve impulse transmission. The "sodium" in the sodium-potassium pump.' },
+  Cl: { sym:'Cl',name:'Chlorine', num:17,mass:35, valence:7, bio:'Gains 1 electron → Cl⁻. Pairs with Na⁺ to form NaCl (table salt). Cl⁻ is an important electrolyte in blood and gastric acid (HCl).' },
+  P:  { sym:'P', name:'Phosphorus',num:15,mass:31,valence:5, bio:'Found in phosphate groups (−PO₄). Critical in ATP (energy currency), DNA/RNA backbone, and phospholipid membranes. Often the limiting nutrient in ecosystems.' },
+  S:  { sym:'S', name:'Sulfur',   num:16,mass:32, valence:6, bio:'Found in sulfhydryl groups (−SH) in the amino acid cysteine. Disulfide bonds (−S−S−) stabilize protein structure. Also found in some vitamins.' }
+};
+function showAtom(sym) {
+  const a = atoms[sym];
+  document.querySelectorAll('.atom-btn').forEach(b => b.classList.toggle('active', b.textContent.startsWith(sym)));
+  document.getElementById('atomCanvas').style.display='block';
+  document.getElementById('atomSymbol').textContent = a.sym;
+  document.getElementById('atomInfo').innerHTML =
+    `<span>Name:</span> ${a.name} &nbsp;|&nbsp; <span>Atomic #:</span> ${a.num} &nbsp;|&nbsp; <span>Mass:</span> ${a.mass} amu<br>
+     <span>Valence e⁻:</span> ${a.valence} &nbsp;|&nbsp; <span>Neutrons:</span> ${a.mass - a.num}<br><br>${a.bio}`;
+}
+
+// ══ CHIP REVEALS ══
+function revealChip(id) {
+  const all = document.querySelectorAll('.concept-reveal');
+  const t = document.getElementById('chip-'+id);
+  const isOpen = t && t.classList.contains('show');
+  all.forEach(c=>c.classList.remove('show'));
+  if(!isOpen && t) t.classList.add('show');
+}
+
+// ══ PANELS ══
+function showPanel(id) {
+  const allP = document.querySelectorAll('.info-panel');
+  const allC = document.querySelectorAll('.info-card');
+  const t = document.getElementById('panel-'+id);
+  const isOpen = t && t.classList.contains('show');
+  allP.forEach(p=>p.classList.remove('show'));
+  allC.forEach(c=>c.classList.remove('active'));
+  if(!isOpen && t){ t.classList.add('show'); event.currentTarget.classList.add('active'); }
+}
+
+// ══ BOND ACCORDION ══
+function toggleBond(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.bond-card').forEach(c=>c.classList.remove('open'));
+  if(!isOpen) el.classList.add('open');
+}
+
+// ══ WATER PROPERTIES ══
+function showWater(id) {
+  const allW = document.querySelectorAll('.water-panel');
+  const allC = document.querySelectorAll('.water-card');
+  const t = document.getElementById('water-'+id);
+  const isOpen = t && t.classList.contains('show');
+  allW.forEach(p=>p.classList.remove('show'));
+  allC.forEach(c=>c.classList.remove('active'));
+  if(!isOpen && t){ t.classList.add('show'); event.currentTarget.classList.add('active'); }
+}
+
+// ══ PH SIMULATOR ══
+function setPH(val, name, desc) {
+  const pct = (val/14)*100;
+  document.getElementById('phMarker').style.left = pct+'%';
+  document.getElementById('phLabel').textContent = val.toFixed(1);
+  let cls='', bg='';
+  if(val<7){ cls='color:#900'; bg='background:#fff0f0'; }
+  else if(val===7){ cls='color:#007700'; bg='background:#f0fff0'; }
+  else { cls='color:#0000aa'; bg='background:#f0f0ff'; }
+  document.getElementById('phResult').style.cssText = bg+';border-radius:10px;padding:.8rem 1rem;font-size:.85rem;line-height:1.6;border-left:4px solid;border-color:'+(val<7?'#f00':val===7?'#0a0':'#00a');
+  document.getElementById('phResult').innerHTML = '<strong style="'+cls+'">'+name+' — pH '+val+'</strong><br>'+desc;
+}
+
+// ══ FUNCTIONAL GROUPS ══
+function showFG(id) {
+  const allFG = document.querySelectorAll('.fg-panel');
+  const allC  = document.querySelectorAll('.fg-card');
+  const t = document.getElementById('fg-'+id);
+  const isOpen = t && t.classList.contains('show');
+  allFG.forEach(p=>p.classList.remove('show'));
+  allC.forEach(c=>c.classList.remove('active'));
+  if(!isOpen && t){ t.classList.add('show'); event.currentTarget.classList.add('active'); }
+}
+
+// ══ MATCHING GAME ══
+let matchStates = {};
+function matchClick(el, gridId) {
+  const grid = gridId;
+  if(!matchStates[grid]) matchStates[grid]={selected:null,score:0};
+  const state = matchStates[grid];
+  if(el.classList.contains('matched')) return;
+  if(!state.selected){
+    el.classList.add('selected'); state.selected=el;
+  } else if(state.selected===el){
+    el.classList.remove('selected'); state.selected=null;
+  } else {
+    const pA=state.selected.dataset.pair, pB=el.dataset.pair;
+    const sA=state.selected.dataset.side, sB=el.dataset.side;
+    if(pA===pB && sA!==sB){
+      state.selected.classList.remove('selected'); state.selected.classList.add('matched');
+      el.classList.add('matched'); state.score++;
+      const scoreEl=document.getElementById(grid==='bondMatch'?'bond-score':'lev-score');
+      if(scoreEl) scoreEl.textContent=state.score+'/5 matched';
+    } else {
+      const a=state.selected,b=el;
+      a.classList.remove('selected'); a.classList.add('wrong'); b.classList.add('wrong');
+      setTimeout(()=>{a.classList.remove('wrong');b.classList.remove('wrong');},600);
+    }
+    state.selected=null;
+  }
+}
+function resetMatch(gridId, scoreId) {
+  if(matchStates[gridId]) matchStates[gridId]={selected:null,score:0};
+  document.querySelectorAll('#'+gridId+' .match-item').forEach(el=>el.classList.remove('selected','matched','wrong'));
+  const s=document.getElementById(scoreId); if(s) s.textContent='';
+}
+
+// ══ FILL IN THE BLANK ══
+const fills = [
+  { q:'The four elements making up 96% of living matter are carbon, hydrogen, nitrogen, and ___.', ans:'oxygen' },
+  { q:'Atoms of the same element with different numbers of neutrons are called ___.', ans:'isotopes' },
+  { q:'An atom that has lost an electron and now carries a positive charge is called a ___.', ans:'cation' },
+  { q:'The type of bond formed when electrons are transferred from one atom to another is called a(n) ___ bond.', ans:'ionic' },
+  { q:'Water is a ___ molecule, meaning it has partial positive and negative charges.', ans:'polar' },
+  { q:'The property of water that allows it to rise up the xylem of plants is called capillary action, driven by cohesion and ___.', ans:'adhesion' },
+  { q:'A ___ resists changes in pH by absorbing excess H⁺ or OH⁻ ions.', ans:'buffer' },
+  { q:'Ice floats on water because it is less ___ than liquid water.', ans:'dense' },
+  { q:'Carbon can form up to ___ covalent bonds with other atoms.', ans:'four' },
+  { q:'The functional group −COOH is called a ___ group and acts as an acid.', ans:'carboxyl' },
+];
+function buildFills() {
+  const c=document.getElementById('fill-container'); c.innerHTML='';
+  fills.forEach((item,idx)=>{
+    const d=document.createElement('div'); d.className='quiz-card';
+    d.innerHTML=`<div class="fill-q">${item.q.replace('___',`<input class="blank-input" id="fill-${idx}" type="text" placeholder="?" onkeydown="if(event.key==='Enter')checkFill(${idx})">`)}</div>`;
+    c.appendChild(d);
+  });
+}
+function checkFill(idx){
+  const inp=document.getElementById('fill-'+idx); if(!inp) return;
+  const val=inp.value.trim().toLowerCase(), correct=fills[idx].ans.toLowerCase();
+  if(val===correct||val.includes(correct)||correct.includes(val)){ inp.classList.remove('err'); inp.classList.add('ok'); inp.value=fills[idx].ans; }
+  else { inp.classList.remove('ok'); inp.classList.add('err'); }
+}
+function checkAllFills() { fills.forEach((_,i)=>checkFill(i)); }
+function resetFills() { fills.forEach((_,i)=>{ const inp=document.getElementById('fill-'+i); if(inp){inp.value='';inp.classList.remove('ok','err');} }); }
+buildFills();
+
+// ══ QUIZ ══
+const quizData = [
+  { q:'An atom has 6 protons and 8 neutrons. Which of the following best describes this atom?',
+    opts:['Carbon-14, a stable isotope','Carbon-14, a radioactive isotope','Nitrogen-14, a radioactive isotope','Carbon-8, a radioactive isotope'],
+    ans:1, fb:'Carbon is defined by its atomic number of 6. This atom has mass number 6+8=14. Carbon-14 is radioactive (unstable) because it has 2 more neutrons than the most stable isotope, Carbon-12.' },
+  { q:'Which type of chemical bond involves the TRANSFER of electrons from one atom to another?',
+    opts:['Hydrogen bond','Nonpolar covalent bond','Polar covalent bond','Ionic bond'],
+    ans:3, fb:'Ionic bonds form when one atom donates (transfers) electrons to another, creating oppositely charged ions that attract each other. Covalent bonds involve sharing, not transfer.' },
+  { q:'Water molecules are held together by which type of bond?',
+    opts:['Covalent bonds between O and H within the molecule; ionic bonds between molecules','Ionic bonds within the molecule; hydrogen bonds between molecules','Polar covalent bonds within the molecule; hydrogen bonds between molecules','Nonpolar covalent bonds within the molecule; van der Waals forces between molecules'],
+    ans:2, fb:'Within each H₂O molecule, O and H share electrons via polar covalent bonds (unequal sharing due to oxygen\'s higher electronegativity). Between water molecules, the δ+ hydrogen of one molecule attracts the δ− oxygen of another — hydrogen bonds.' },
+  { q:'A scientist measures the specific heat of a new liquid and finds it is much lower than water. How would this likely affect an organism that uses this liquid as its primary cellular solvent?',
+    opts:['The organism would be better able to regulate its body temperature','The organism would be more susceptible to temperature fluctuations','The organism could photosynthesize more efficiently','The organism\'s enzymes would work at lower temperatures'],
+    ans:1, fb:'Water\'s high specific heat allows organisms to resist temperature changes. A solvent with lower specific heat would heat and cool more rapidly, making temperature regulation much harder and potentially denaturing temperature-sensitive enzymes.' },
+  { q:'A person living at high altitude has lower blood pH than someone at sea level due to CO₂ buildup. Which response best explains how the body corrects this?',
+    opts:['The kidneys produce more H⁺ ions to raise pH','Bicarbonate (HCO₃⁻) absorbs excess H⁺, and excess CO₂ is exhaled through the lungs','The blood produces more carbonic acid to buffer the excess H⁺','The body increases its water intake to dilute the acid'],
+    ans:1, fb:'The bicarbonate buffer: H⁺ + HCO₃⁻ → H₂CO₃ → CO₂ + H₂O. Bicarbonate absorbs excess H⁺, forming carbonic acid, which then breaks down to CO₂ that is exhaled. This is the primary mechanism for maintaining blood pH homeostasis.' },
+  { q:'Ice floating on liquid water is important for aquatic life because:',
+    opts:['Ice is denser than water, so it sinks and keeps the water surface open','Ice is less dense than water, so it floats and insulates the liquid water below from freezing','Ice melts quickly, releasing heat energy that warms the water below','Ice prevents evaporation of water from the lake surface'],
+    ans:1, fb:'When water freezes, hydrogen bonds form a lattice that is more spread out — making ice LESS dense than liquid water. This causes ice to float, forming an insulating layer that keeps liquid water below it. Without this, lakes would freeze solid and aquatic life would die.' },
+  { q:'Which property of water allows it to move from a plant\'s roots to its leaves against the force of gravity in tall trees?',
+    opts:['Water\'s high heat capacity prevents it from evaporating before reaching the leaves','Water\'s cohesion (hydrogen bonds between water molecules) and adhesion (to xylem walls) pull water up in a continuous column','Water\'s density decreases as it moves up the tree, allowing it to rise','Water absorbs CO₂ from leaves, making it lighter and causing it to rise'],
+    ans:1, fb:'Transpiration (evaporation at leaves) creates a "pull." Water molecules, held together by cohesion (hydrogen bonds), form an unbroken column from roots to leaves. Adhesion to the xylem walls helps resist gravity. This is the cohesion-tension theory.' },
+  { q:'Carbon can serve as the backbone of biological molecules primarily because:',
+    opts:['It has 6 protons, making it highly reactive with water','It has 4 valence electrons, allowing it to form 4 covalent bonds and create diverse molecular structures','It is the most abundant element in the atmosphere','It readily forms ionic bonds with other carbon atoms'],
+    ans:1, fb:'Carbon\'s 4 valence electrons allow it to bond with up to 4 other atoms simultaneously — including other carbons, hydrogen, oxygen, nitrogen, sulfur, and phosphorus. This versatility allows for chains, rings, and branches of virtually unlimited variety.' },
+  { q:'Glucose (C₆H₁₂O₆) and fructose (C₆H₁₂O₆) have the same molecular formula but different structures. What are these two molecules called?',
+    opts:['Isotopes','Ions','Isomers','Radioisotopes'],
+    ans:2, fb:'Isomers have the same molecular formula but different structural arrangements. Glucose has a carbonyl group at the end of the chain (aldehyde); fructose has it in the middle (ketone). Despite the same formula, they are metabolized differently.' },
+  { q:'Which functional group makes a molecule MORE ACIDIC by donating H⁺?',
+    opts:['Amino group (−NH₂)','Hydroxyl group (−OH)','Carboxyl group (−COOH)','Phosphate group (−PO₄)'],
+    ans:2, fb:'The carboxyl group (−COOH) can donate a proton (H⁺), making the molecule behave as an acid. This is why fatty acids and amino acids are acidic. The amino group (−NH₂) is the opposite — it accepts H⁺, acting as a base.' },
+  { q:'A solution has a pH of 5. Another has a pH of 7. How many times more acidic is the pH 5 solution?',
+    opts:['2 times more acidic','10 times more acidic','100 times more acidic','1000 times more acidic'],
+    ans:2, fb:'pH is a logarithmic scale — each whole number represents a 10-fold change in H⁺ concentration. From pH 7 to pH 5 is a difference of 2 units → 10² = 100 times more acidic. This is why even small blood pH changes are medically significant.' },
+  { q:'A pharmaceutical chemist is developing a drug that must bind to a specific protein receptor in the body. Which type of bond is MOST important for the drug\'s initial, reversible interaction with the receptor?',
+    opts:['Covalent bonds, because they are the strongest','Ionic bonds, because the drug must be permanently attached','Hydrogen bonds and van der Waals interactions, because they allow specific but reversible binding','Disulfide bonds, because they lock the drug into place'],
+    ans:2, fb:'Drug-receptor interactions rely on weak, reversible bonds (hydrogen bonds, van der Waals, ionic interactions) so the drug can bind specifically but also be released. Strong covalent bonds would make the drug permanently attached — problematic for most medications.' },
+];
+
+let quizScore=0, quizAnswered=0;
+function buildQuiz(){
+  const c=document.getElementById('quiz-container'); c.innerHTML=''; quizScore=0; quizAnswered=0;
+  document.getElementById('score-panel').style.display='none';
+  quizData.forEach((item,idx)=>{
+    const card=document.createElement('div'); card.className='quiz-card';
+    card.innerHTML=`<div class="quiz-q">Q${idx+1}. ${item.q}</div><div class="quiz-options">${item.opts.map((o,i)=>`<button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}</div><div class="quiz-feedback" id="qfb-${idx}"></div>`;
+    c.appendChild(card);
+  });
+}
+function checkAnswer(btn,qIdx,optIdx){
+  const card=btn.closest('.quiz-card');
+  const buttons=card.querySelectorAll('.quiz-opt');
+  const fb=document.getElementById('qfb-'+qIdx);
+  const correct=quizData[qIdx].ans;
+  buttons.forEach(b=>b.disabled=true);
+  if(optIdx===correct){ btn.classList.add('correct'); fb.textContent='✅ '+quizData[qIdx].fb; fb.className='quiz-feedback show correct-fb'; quizScore++; }
+  else { btn.classList.add('wrong'); buttons[correct].classList.add('correct'); fb.textContent='❌ '+quizData[qIdx].fb; fb.className='quiz-feedback show wrong-fb'; }
+  quizAnswered++;
+  if(quizAnswered===quizData.length){
+    const panel=document.getElementById('score-panel'); panel.style.display='block';
+    document.getElementById('score-display').textContent=quizScore+'/'+quizData.length;
+    const pct=quizScore/quizData.length;
+    document.getElementById('score-msg').textContent=pct>=.9?'🌟 Outstanding — AP exam ready on this chapter.':pct>=.75?'👍 Strong work! Review the questions you missed.':pct>=.6?'📚 Good start — revisit phases 2–5 and retake.':'💪 Go back through the lesson, then retake.';
+    panel.scrollIntoView({behavior:'smooth'});
+  }
+}
+function retakeQuiz(){ buildQuiz(); }
+buildQuiz();
+
+// ══ SUMMARY ══
+function getTA(id){ const el=document.getElementById(id); return el?el.value.trim():''; }
+function fillSummary(id,text){ const el=document.getElementById(id); if(!el)return; el.textContent=text||'Not answered'; el.classList.toggle('empty',!text); }
+function buildSummary(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  document.getElementById('summaryName').textContent=name;
+  document.getElementById('summaryDate').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const scoreEl=document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl?scoreEl.textContent+' correct':'Quiz not yet completed');
+  fillSummary('sum-wonder', getTA('ta-wonder'));
+  fillSummary('sum-atoms',  getTA('ta-atoms'));
+  fillSummary('sum-water',  getTA('ta-water'));
+  fillSummary('sum-ph',     getTA('ta-ph'));
+  fillSummary('sum-r1',getTA('ref1')); fillSummary('sum-r2',getTA('ref2'));
+  fillSummary('sum-r3',getTA('ref3')); fillSummary('sum-r4',getTA('ref4'));
+}
+function buildPlainText(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  const date=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const scoreEl=document.getElementById('score-display');
+  return [
+    'AP BIOLOGY · CHEMICAL FOUNDATION OF LIFE — STUDENT SUBMISSION',
+    '==============================================================',
+    'Student: '+name,'Date: '+date,'',
+    '── QUIZ SCORE ──', scoreEl?scoreEl.textContent:'Not completed','',
+    '── OPENING: WHY WATER? ──', getTA('ta-wonder')||'Not answered','',
+    '── CARBON-14 DATING RESPONSE ──', getTA('ta-atoms')||'Not answered','',
+    '── TRANSPIRATION CHALLENGE ──', getTA('ta-water')||'Not answered','',
+    '── DIABETIC KETOACIDOSIS ──', getTA('ta-ph')||'Not answered','',
+    '── REFLECTION QUESTIONS ──',
+    'Q1 — Bond Types:', getTA('ref1')||'Not answered',
+    'Q2 — Properties of Water:', getTA('ref2')||'Not answered',
+    'Q3 — Why Carbon?:', getTA('ref3')||'Not answered',
+    'Q4 — Bicarbonate Buffer:', getTA('ref4')||'Not answered','',
+    '==============================================================',
+    '© 2026 Farvour Explorations · farvourexplorations.com',
+    'Submitted via Chemical Foundation of Life · AP Biology Interactive Lesson'
+  ].join('\n');
+}
+function copyResults(){
+  buildSummary();
+  navigator.clipboard.writeText(buildPlainText()).then(()=>{
+    const el=document.getElementById('copyConfirm'); el.textContent='✓ Copied! Paste into Google Classroom or your assignment.';
+    setTimeout(()=>el.textContent='',4000);
+  }).catch(()=>{ document.getElementById('copyConfirm').textContent='⚠️ Could not copy — try selecting the text manually.'; });
+}
+function emailResults(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  window.location.href='mailto:?subject='+encodeURIComponent('AP Bio Chemical Foundation of Life — '+name)+'&body='+encodeURIComponent(buildPlainText());
+}
+</script>
+</body>
+</html>
