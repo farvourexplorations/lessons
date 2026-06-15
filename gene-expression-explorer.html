@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gene Expression Explorer 🧬</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:    #1a3d2b;
+    --forest-mid:#2d6a4f;
+    --forest-lt: #40916c;
+    --coral:     #e8603c;
+    --coral-pale:#fdf0ec;
+    --mint:      #3aaf85;
+    --mint-pale: #e8f8f2;
+    --gold:      #c9962a;
+    --gold-pale: #fef9e7;
+    --lavender:  #7c6fcd;
+    --lav-pale:  #f0eefb;
+    --paper:     #fffef9;
+    --ink:       #1a2332;
+    --muted:     #7a8899;
+    --border:    #e0e4ea;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: linear-gradient(160deg, #0d2318 0%, #1a3d2b 45%, #2d6a4f 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* Leaf-particle background */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%, rgba(144,238,144,.45) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 22%  38%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 41%  6%,  rgba(144,238,144,.35) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 60%  24%, rgba(255,255,255,.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 77%  9%,  rgba(144,238,144,.4)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 90%  33%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 33%  55%, rgba(144,238,144,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 70%  48%, rgba(255,255,255,.2)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 55%  70%, rgba(144,238,144,.25) 0%, transparent 100%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 3.5rem 2rem 2rem;
+    color: white;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--forest);
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.85rem;
+    letter-spacing: .05em;
+    padding: .35rem 1.2rem;
+    border-radius: 20px;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 12px rgba(201,150,42,.45);
+  }
+  .hero h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.2rem,6vw,4rem);
+    line-height: 1.1;
+    margin-bottom: .8rem;
+    text-shadow: 0 2px 20px rgba(0,0,0,.35);
+  }
+  .hero h1 .accent { color: var(--gold); }
+  .hero p.intro {
+    font-size: 1.05rem; line-height: 1.7;
+    opacity: .88; max-width: 580px;
+    margin: 0 auto 2rem;
+  }
+
+  /* ─── PROGRESS PILLS ─── */
+  .progress-wrap {
+    display: flex; justify-content: center;
+    gap: .5rem; flex-wrap: wrap; margin-bottom: .5rem;
+  }
+  .prog-step {
+    display: flex; align-items: center; gap: .4rem;
+    background: rgba(255,255,255,.1);
+    border: 1.5px solid rgba(255,255,255,.18);
+    border-radius: 20px; padding: .35rem .9rem;
+    font-size: .78rem; font-weight: 700;
+    color: rgba(255,255,255,.7);
+    cursor: pointer; transition: all .2s;
+    font-family: 'DM Mono', monospace;
+  }
+  .prog-step:hover, .prog-step.done {
+    background: rgba(255,255,255,.2); color: white;
+    border-color: rgba(255,255,255,.35);
+  }
+  .prog-step.active {
+    background: var(--gold); color: var(--forest);
+    border-color: var(--gold);
+    box-shadow: 0 2px 12px rgba(201,150,42,.45);
+  }
+
+  /* ─── SHEET ─── */
+  .sheet {
+    position: relative; z-index: 1;
+    background: var(--paper);
+    border-radius: 24px 24px 0 0;
+    margin-top: 1.5rem;
+    padding: 0 0 6rem;
+    min-height: 80vh;
+    box-shadow: 0 -8px 40px rgba(0,0,0,.3);
+  }
+
+  /* ─── SECTIONS ─── */
+  .section {
+    padding: 3rem 2rem 0;
+    max-width: 820px;
+    margin: 0 auto;
+    display: none;
+  }
+  .section.active { display: block; }
+
+  .section-eyebrow {
+    display: flex; align-items: center;
+    gap: .6rem; margin-bottom: 1rem;
+  }
+  .eyebrow-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem; color: white; flex-shrink: 0;
+  }
+  .num-coral  { background: var(--coral); }
+  .num-mint   { background: var(--mint); }
+  .num-gold   { background: var(--gold); color: var(--forest); }
+  .num-lav    { background: var(--lavender); }
+  .num-forest { background: var(--forest-mid); }
+
+  .eyebrow-label {
+    font-size: .72rem; font-weight: 800;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--muted); font-family: 'DM Mono', monospace;
+  }
+
+  .section h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.6rem,3.5vw,2.2rem);
+    color: var(--forest); margin-bottom: .6rem; line-height: 1.2;
+  }
+  .section .lead {
+    font-size: 1rem; line-height: 1.75; color: #3a4a5a;
+    margin-bottom: 1.8rem;
+  }
+  .section .lead strong { color: var(--coral); }
+
+  /* ─── WONDER BOX ─── */
+  .wonder-box {
+    background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 100%);
+    color: white; border-radius: 16px;
+    padding: 1.8rem 2rem; margin-bottom: 1.8rem;
+    position: relative; overflow: hidden;
+  }
+  .wonder-box::after {
+    content: '🤔';
+    position: absolute; right: 1.5rem; top: 50%;
+    transform: translateY(-50%);
+    font-size: 3rem; opacity: .3;
+  }
+  .wonder-box p { font-size: 1rem; line-height: 1.7; font-style: italic; opacity: .95; max-width: 85%; }
+  .wonder-box strong { color: var(--gold); font-style: normal; }
+  .wonder-box.mint-box { background: linear-gradient(135deg, #1b7a58 0%, #2d9970 100%); }
+  .wonder-box.mint-box::after { content: '🔬'; }
+  .wonder-box.gold-box { background: linear-gradient(135deg, #8a6a1a 0%, #b8860b 100%); }
+  .wonder-box.gold-box::after { content: '🧬'; }
+
+  /* ─── CONCEPT CHIPS ─── */
+  .chip-row { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1.5rem; }
+  .chip {
+    padding: .45rem 1rem; border-radius: 20px;
+    font-size: .82rem; font-weight: 700; cursor: pointer;
+    transition: all .2s; border: 2px solid transparent;
+  }
+  .chip.coral  { background: var(--coral-pale);  color: var(--coral);     border-color: #f8c5b8; }
+  .chip.mint   { background: var(--mint-pale);   color: var(--mint);      border-color: #b8ebd8; }
+  .chip.gold   { background: var(--gold-pale);   color: #8a6a1a;          border-color: #f8e0a0; }
+  .chip.lav    { background: var(--lav-pale);    color: var(--lavender);  border-color: #d0caef; }
+  .chip.forest { background: #d4eadd;            color: var(--forest-mid);border-color: #a8d5b8; }
+  .chip:hover  { transform: scale(1.05); }
+
+  .concept-reveal {
+    background: var(--paper); border-left: 4px solid var(--coral);
+    border-radius: 0 10px 10px 0;
+    padding: 1rem 1.2rem; font-size: .88rem; line-height: 1.7;
+    margin-top: .5rem; display: none;
+    animation: fadeIn .3s ease;
+  }
+  .concept-reveal.show { display: block; }
+  .concept-reveal.mint-border   { border-color: var(--mint); }
+  .concept-reveal.gold-border   { border-color: var(--gold); }
+  .concept-reveal.lav-border    { border-color: var(--lavender); }
+  .concept-reveal.forest-border { border-color: var(--forest-mid); }
+
+  @keyframes fadeIn {
+    from { opacity:0; transform:translateY(-6px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* ─── PREDICT / REFLECT BOXES ─── */
+  .predict-box {
+    background: var(--gold-pale); border: 2px dashed var(--gold);
+    border-radius: 14px; padding: 1.4rem 1.6rem; margin-bottom: 1.5rem;
+  }
+  .predict-box h4 {
+    font-family: 'Fredoka One', cursive; font-size: 1rem;
+    color: #8a6a1a; margin-bottom: .8rem;
+  }
+  .predict-box textarea, .reflect-box textarea {
+    width: 100%; border: 1.5px solid rgba(0,0,0,.12);
+    border-radius: 8px; padding: .7rem;
+    font-family: 'Nunito', sans-serif; font-size: .88rem;
+    resize: vertical; min-height: 64px;
+    background: white; color: var(--ink); outline: none;
+    transition: border-color .2s;
+  }
+  .predict-box textarea:focus { border-color: var(--gold); }
+
+  .reflect-box {
+    background: var(--mint-pale); border: 2px dashed var(--mint);
+    border-radius: 14px; padding: 1.4rem 1.6rem; margin-top: 1.5rem;
+  }
+  .reflect-box h4 {
+    font-family: 'Fredoka One', cursive; font-size: 1rem;
+    color: #1b7a58; margin-bottom: .8rem;
+  }
+  .reflect-box textarea:focus { border-color: var(--mint); }
+
+  /* ─── DEMO ZONE ─── */
+  .demo-zone {
+    background: white; border: 2px solid var(--border);
+    border-radius: 16px; padding: 1.8rem; margin-bottom: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,.07);
+  }
+  .demo-zone h3 {
+    font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+    color: var(--forest); margin-bottom: .3rem;
+  }
+  .demo-zone .hint {
+    font-size: .78rem; color: var(--muted);
+    font-family: 'DM Mono', monospace; margin-bottom: 1.3rem;
+  }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    border: none; border-radius: 10px;
+    padding: .65rem 1.3rem; font-family: 'Nunito', sans-serif;
+    font-size: .88rem; font-weight: 800; cursor: pointer;
+    transition: all .15s; letter-spacing: .02em;
+  }
+  .btn:hover  { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,.15); }
+  .btn:active { transform: translateY(0); }
+  .btn-coral  { background: var(--coral);    color: white; }
+  .btn-mint   { background: var(--mint);     color: white; }
+  .btn-gold   { background: var(--gold);     color: var(--forest); }
+  .btn-lav    { background: var(--lavender); color: white; }
+  .btn-ghost  { background: #f0f2f5;         color: var(--muted); }
+  .btn-forest { background: var(--forest);   color: white; }
+
+  .action-row { display: flex; gap: .8rem; flex-wrap: wrap; align-items: center; margin-bottom: .8rem; }
+
+  /* ─── NAV ROW ─── */
+  .nav-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 2.5rem 2rem 0; max-width: 820px; margin: 0 auto;
+  }
+
+  /* ─── QUIZ CARD ─── */
+  .quiz-card {
+    background: white; border: 2px solid var(--border);
+    border-radius: 14px; padding: 1.4rem 1.6rem;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  }
+  .quiz-q {
+    font-weight: 700; font-size: .95rem;
+    color: var(--ink); margin-bottom: 1rem; line-height: 1.5;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: .5rem; }
+  .quiz-opt {
+    padding: .6rem 1rem; border-radius: 8px;
+    border: 2px solid var(--border);
+    background: white; cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: .88rem; font-weight: 600;
+    text-align: left; transition: all .15s;
+    color: var(--ink);
+  }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--forest-mid); background: #f0f7f3; }
+  .quiz-opt.correct   { background: var(--mint-pale); border-color: var(--mint); color: #1b7a58; }
+  .quiz-opt.wrong     { background: var(--coral-pale); border-color: var(--coral); color: #a83020; }
+  .quiz-opt:disabled  { cursor: default; }
+  .quiz-feedback {
+    margin-top: .8rem; font-size: .85rem; line-height: 1.6;
+    padding: .7rem 1rem; border-radius: 8px; display: none;
+    animation: fadeIn .3s ease;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct-fb { background: var(--mint-pale); color: #1b7a58; border-left: 3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background: var(--coral-pale); color: #a83020; border-left: 3px solid var(--coral); }
+
+  /* ─── TRANSCRIPTION SIMULATOR ─── */
+  .sim-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 4px; margin: 1rem 0;
+  }
+  .sim-base {
+    font-size: 1.05rem; text-align: center; cursor: default;
+    transition: all .3s; border-radius: 6px;
+    padding: .5rem 2px; font-family: 'DM Mono', monospace; font-weight: 700;
+    border: 2px solid var(--border); background: white;
+  }
+  .sim-base.base-A { color: var(--coral); border-color: #f8c5b8; background: var(--coral-pale); }
+  .sim-base.base-T { color: var(--lavender); border-color: #d0caef; background: var(--lav-pale); }
+  .sim-base.base-U { color: var(--mint); border-color: #b8ebd8; background: var(--mint-pale); }
+  .sim-base.base-C { color: #8a6a1a; border-color: #f8e0a0; background: var(--gold-pale); }
+  .sim-base.base-G { color: var(--forest-mid); border-color: #a8d5b8; background: #d4eadd; }
+  .sim-base.base-C2 { color: var(--forest-mid); border-color: #a8d5b8; background: #d4eadd; }
+  .sim-base.base-coral { color: var(--coral); border-color: #f8c5b8; background: var(--coral-pale); }
+  .sim-stat-row {
+    display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0;
+  }
+  .sim-stat {
+    background: #f5f7fa; border-radius: 10px;
+    padding: .6rem 1.1rem; flex: 1; min-width: 120px;
+    text-align: center;
+  }
+  .sim-stat .stat-val {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem; color: var(--forest);
+    font-family: 'DM Mono', monospace; font-weight: 700;
+  }
+  .sim-stat .stat-lbl {
+    font-family: 'DM Mono', monospace;
+    font-size: .65rem; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .08em;
+  }
+
+  /* ─── EVIDENCE / PROCESS CARDS ─── */
+  .evidence-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem; margin-bottom: 1.5rem;
+  }
+  .ev-card {
+    background: white; border: 2px solid var(--border);
+    border-radius: 14px; padding: 1.2rem; cursor: pointer;
+    transition: all .2s; text-align: center;
+  }
+  .ev-card:hover, .ev-card.active {
+    border-color: var(--forest-mid);
+    box-shadow: 0 4px 16px rgba(45,106,79,.2);
+    transform: translateY(-2px);
+  }
+  .ev-card.active { background: #d4eadd; }
+  .ev-card .ev-icon { font-size: 2.4rem; margin-bottom: .5rem; }
+  .ev-card .ev-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem; color: var(--forest); margin-bottom: .3rem;
+  }
+  .ev-card .ev-sub { font-size: .75rem; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+  .ev-panel {
+    background: #d4eadd; border-left: 4px solid var(--forest-mid);
+    border-radius: 0 12px 12px 0; padding: 1.2rem 1.4rem;
+    display: none; animation: fadeIn .3s ease;
+  }
+  .ev-panel.show { display: block; }
+  .ev-panel h4 { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: var(--forest); margin-bottom: .5rem; }
+  .ev-panel p  { font-size: .88rem; line-height: 1.7; color: #2a3a2a; }
+  .ev-panel .example-box {
+    background: white; border-radius: 8px; padding: .7rem 1rem;
+    margin-top: .8rem; font-size: .82rem;
+    font-family: 'DM Mono', monospace; color: var(--ink);
+    border: 1.5px solid rgba(45,106,79,.2);
+  }
+
+  /* ─── MATCHING GAME ─── */
+  .match-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; margin: 1rem 0;
+  }
+  .match-item {
+    padding: .75rem 1rem; border-radius: 10px;
+    border: 2px solid var(--border); cursor: pointer;
+    font-size: .88rem; font-weight: 700;
+    transition: all .2s; background: white;
+    text-align: center; color: var(--ink);
+  }
+  .match-item:hover   { border-color: var(--forest-mid); background: #f0f7f3; }
+  .match-item.selected { border-color: var(--lavender); background: var(--lav-pale); color: var(--lavender); }
+  .match-item.matched  { border-color: var(--mint); background: var(--mint-pale); color: #1b7a58; cursor: default; }
+  .match-item.wrong    { border-color: var(--coral); background: var(--coral-pale); color: var(--coral); animation: shake .3s; }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  /* ─── PROCESS/STEP CARDS ─── */
+  .sel-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: .8rem; margin: 1rem 0 1.5rem;
+  }
+  .sel-card {
+    background: white; border: 2px solid var(--border);
+    border-radius: 14px; padding: 1rem; text-align: center;
+    cursor: pointer; transition: all .2s;
+  }
+  .sel-card:hover, .sel-card.active {
+    border-color: var(--coral);
+    box-shadow: 0 3px 12px rgba(232,96,60,.18);
+    transform: translateY(-2px);
+  }
+  .sel-card.active { background: var(--coral-pale); }
+  .sel-card .sel-icon { font-size: 2rem; margin-bottom: .4rem; }
+  .sel-card .sel-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: .92rem; color: var(--forest); margin-bottom: .2rem;
+  }
+  .sel-card .sel-key {
+    font-family: 'DM Mono', monospace; font-size: .65rem;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .06em;
+  }
+  .sel-detail {
+    background: var(--coral-pale); border-left: 4px solid var(--coral);
+    border-radius: 0 12px 12px 0; padding: 1.2rem 1.4rem;
+    display: none; animation: fadeIn .3s ease; margin-bottom: 1.5rem;
+  }
+  .sel-detail.show { display: block; }
+  .sel-detail h4 { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: var(--forest); margin-bottom: .4rem; }
+  .sel-detail p  { font-size: .88rem; line-height: 1.7; }
+  .sel-detail .examples { margin-top: .6rem; font-style: italic; color: var(--muted); font-size: .82rem; }
+
+  /* ─── SCORE PANEL ─── */
+  .score-panel {
+    background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 100%);
+    color: white; border-radius: 16px; padding: 2rem; text-align: center; margin-top: 1.5rem;
+  }
+  .score-panel .score-num {
+    font-family: 'Fredoka One', cursive; font-size: 3.5rem;
+    line-height: 1; color: var(--gold);
+  }
+  .score-panel p { opacity: .88; margin-top: .5rem; font-size: 1rem; }
+  .score-panel h3 {
+    font-family: 'Fredoka One', cursive; font-size: 1.5rem; margin-bottom: .3rem;
+  }
+
+  /* ─── CONGRATS ─── */
+  .congrats-panel {
+    background: linear-gradient(135deg, var(--forest) 0%, #1b7a58 100%);
+    color: white; border-radius: 20px; padding: 2.5rem 2rem; text-align: center;
+    margin-top: 2rem;
+  }
+  .congrats-panel h2 { font-family: 'Fredoka One', cursive; font-size: 2rem; margin-bottom: .6rem; }
+  .congrats-panel p  { opacity: .9; line-height: 1.7; max-width: 480px; margin: 0 auto .8rem; }
+  .summary-chips { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin-top: 1rem; }
+  .summary-chip {
+    background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.3);
+    border-radius: 20px; padding: .3rem .9rem;
+    font-size: .78rem; font-weight: 700;
+    font-family: 'DM Mono', monospace; letter-spacing: .04em;
+  }
+
+  /* ─── VOCAB TABLE ─── */
+  .vocab-table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; }
+  .vocab-table th {
+    background: var(--forest); color: white;
+    font-family: 'Fredoka One', cursive; font-size: .85rem;
+    padding: .7rem 1rem; text-align: left;
+  }
+  .vocab-table td {
+    padding: .65rem 1rem; font-size: .85rem; line-height: 1.5;
+    border-bottom: 1px solid var(--border);
+  }
+  .vocab-table tr:nth-child(even) td { background: #f5f7fa; }
+  .vocab-table tr:hover td { background: #d4eadd; transition: background .15s; }
+  .vocab-table td:first-child { font-weight: 800; color: var(--forest-mid); }
+
+  /* ─── FILL IN THE BLANK ─── */
+  .blank-input {
+    border: none; border-bottom: 2.5px solid var(--forest-mid);
+    background: transparent; font-family: 'Nunito', sans-serif;
+    font-size: 1rem; font-weight: 700; color: var(--forest);
+    width: 160px; text-align: center; outline: none;
+    padding: 0 4px; transition: border-color .2s;
+  }
+  .blank-input:focus  { border-color: var(--coral); }
+  .blank-input.ok     { border-color: var(--mint);   color: var(--mint); }
+  .blank-input.err    { border-color: var(--coral);  color: var(--coral); }
+  .fill-q {
+    font-size: 1rem; line-height: 2; color: var(--ink);
+    margin-bottom: 1rem;
+  }
+
+  /* divider */
+  .divider { height: 1px; background: var(--border); margin: 2rem 0; }
+
+  /* ─── NAME BAR ─── */
+  .name-bar {
+    background: rgba(255,255,255,.1);
+    border: 1.5px solid rgba(255,255,255,.25);
+    border-radius: 12px; padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    max-width: 420px; margin: 0 auto 1rem;
+  }
+  .name-bar label {
+    font-size: .78rem; font-weight: 700;
+    color: rgba(255,255,255,.8); white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+  }
+  .name-bar input {
+    flex: 1; background: rgba(255,255,255,.15);
+    border: none; border-radius: 8px;
+    padding: .4rem .8rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: .9rem; font-weight: 700; color: white; outline: none;
+  }
+  .name-bar input::placeholder { color: rgba(255,255,255,.4); font-weight: 400; }
+
+  /* ─── SUMMARY / SUBMIT ─── */
+  .summary-section {
+    background: white; border-radius: 14px;
+    padding: 1.4rem 1.6rem; margin-bottom: 1rem;
+    border: 2px solid var(--border);
+  }
+  .summary-section h3 {
+    font-family: 'Fredoka One', cursive; font-size: 1.05rem;
+    color: var(--forest); margin-bottom: .8rem;
+  }
+  .summary-answer {
+    background: #f5f7fa; border-radius: 8px;
+    padding: .7rem 1rem; font-size: .85rem; line-height: 1.6;
+    color: var(--ink); margin-bottom: .5rem;
+    font-style: italic; border-left: 3px solid var(--lavender);
+    min-height: 2rem;
+  }
+  .summary-answer.empty { color: var(--muted); font-style: normal; border-left-color: var(--border); }
+
+  /* ─── SHARE BUTTONS ─── */
+  .share-buttons {
+    display: flex; gap: .8rem; flex-wrap: wrap;
+    margin-top: 1.5rem; justify-content: center;
+  }
+  .share-btn {
+    border: none; border-radius: 12px;
+    padding: .85rem 1.6rem;
+    font-family: 'Fredoka One', cursive; font-size: 1rem;
+    cursor: pointer; transition: all .2s;
+    display: flex; align-items: center; gap: .5rem;
+  }
+  .share-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background: var(--mint);     color: white; }
+  .share-btn.email { background: var(--lavender); color: white; }
+  .share-btn.print { background: var(--forest);   color: white; }
+  .copy-confirm {
+    text-align: center; font-family: 'DM Mono', monospace;
+    font-size: .78rem; color: var(--mint);
+    min-height: 1.2rem; margin-top: .6rem; transition: all .3s;
+  }
+
+  /* ─── COPYRIGHT FOOTER ─── */
+  .site-footer {
+    position: relative; z-index: 1;
+    text-align: center; padding: 2rem 1rem 3rem;
+    color: rgba(255,255,255,.45);
+    font-family: 'DM Mono', monospace; font-size: .72rem;
+    line-height: 1.8;
+  }
+  .site-footer a { color: rgba(255,255,255,.55); text-decoration: none; }
+  .site-footer a:hover { color: rgba(255,255,255,.8); }
+
+  @media print {
+    .hero, .nav-row, .share-buttons, .copy-confirm, .prog-step, .name-bar { display: none !important; }
+    .sheet { box-shadow: none; border-radius: 0; }
+    .section { display: none !important; }
+    #sec-6 { display: block !important; }
+    .site-footer { display: none !important; }
+  }
+</style>
+</head>
+<body>
+<!-- ═══════════ HERO ═══════════ -->
+<div class="hero">
+  <div class="hero-badge">🧬 AP Biology Prep · Unit 10</div>
+  <h1>Gene Expression <span class="accent">Explorer</span></h1>
+  <p class="intro">Master the central dogma and transcription — covering every question in your Unit 10 Packet, sections 10.1 (Overview of Gene Expression) and 10.2 (Transcription).</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+
+  <div class="progress-wrap">
+    <span class="prog-step active" onclick="goTo(0)">① Wonder</span>
+    <span class="prog-step"       onclick="goTo(1)">② Concepts</span>
+    <span class="prog-step"       onclick="goTo(2)">③ Transcription</span>
+    <span class="prog-step"       onclick="goTo(3)">④ Transcribe Lab</span>
+    <span class="prog-step"       onclick="goTo(4)">⑤ Quiz</span>
+    <span class="prog-step"       onclick="goTo(5)">⑥ Reflect</span>
+    <span class="prog-step"       onclick="goTo(6)">📤 Submit</span>
+  </div>
+</div>
+
+<!-- ═══════════ SHEET ═══════════ -->
+<div class="sheet">
+
+<!-- ── SECTION 0: WONDER ── -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-coral">1</div>
+    <span class="eyebrow-label">Phase 1 · Wonder</span>
+  </div>
+  <h2>🧬 How Does DNA Become You?</h2>
+  <p class="lead">
+    You are studying for the <strong>AP Biology exam</strong>. Unit 10 covers the <strong>Central Dogma</strong> — the flow of information from DNA → RNA → Protein — including transcription, translation, and mutations. Let's start with a big question.
+  </p>
+
+  <div class="wonder-box">
+    <p>Every cell in your body contains the exact same DNA. Yet a muscle cell looks and acts completely differently than a neuron or a skin cell. <strong>If they all have the same genetic instructions, what determines which "instructions" actually get used in each cell?</strong></p>
+  </div>
+
+  <div class="predict-box">
+    <h4>✏️ Your Prediction (before we dig in)</h4>
+    <textarea placeholder="Write what you think controls which genes are 'turned on' in different cell types, and why..."></textarea>
+  </div>
+
+  <div class="wonder-box gold-box">
+    <p>Here's the kicker: the answer is <strong>gene expression</strong> — the process by which the information in a gene is used to make a functional product (usually a protein). Every trait you have, every protein in your body, and even the genetic diseases that exist all trace back to this one process.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.6rem;">🗝️ The Big Picture</h3>
+  <p style="font-size:.95rem;line-height:1.75;margin-bottom:1.8rem;">
+    The <strong>central dogma of molecular biology</strong> describes how genetic information flows in one general direction: <em>DNA → RNA → Protein</em>. DNA is <em>transcribed</em> into messenger RNA (mRNA) in the nucleus, and that mRNA is then <em>translated</em> into a chain of amino acids — a protein — at the ribosome. Proteins do almost everything: they're enzymes, structural materials, signals, transporters, antibodies, and receptors.
+  </p>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" disabled>← Back</button>
+    <button class="btn btn-coral" onclick="goTo(1)">Next: Concepts →</button>
+  </div>
+</div>
+
+<!-- ── SECTION 1: CONCEPTS (10.1 Overview) ── -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-lav">2</div>
+    <span class="eyebrow-label">Phase 2 · 10.1 Overview of Gene Expression</span>
+  </div>
+  <h2>📖 Core Vocabulary — Tap to Reveal</h2>
+  <p class="lead">Tap each term to see its definition and connection to your packet questions (Q1–10). Know ALL of these cold for the AP exam.</p>
+
+  <div class="chip-row">
+    <span class="chip coral" onclick="reveal('dogma')">Central Dogma</span>
+    <span class="chip forest" onclick="reveal('geneexp')">Gene Expression</span>
+    <span class="chip mint" onclick="reveal('protein')">Protein Functions</span>
+    <span class="chip gold" onclick="reveal('codon')">Codon</span>
+    <span class="chip lav" onclick="reveal('aminoacid')">Amino Acid</span>
+    <span class="chip coral" onclick="reveal('mrna')">mRNA</span>
+    <span class="chip forest" onclick="reveal('trna')">tRNA</span>
+    <span class="chip mint" onclick="reveal('rrna')">rRNA</span>
+    <span class="chip gold" onclick="reveal('location')">Cell Location</span>
+  </div>
+
+  <div id="rev-dogma"     class="concept-reveal coral">
+    <strong>Central Dogma of Molecular Biology</strong> — Explains that genetic information flows from <em>DNA → RNA → Protein</em>. DNA is transcribed into RNA, and RNA is translated into protein. This one-way flow of information is the foundation of molecular biology. <em>Q1.</em>
+  </div>
+  <div id="rev-geneexp"   class="concept-reveal forest-border">
+    <strong>Gene Expression</strong> — The entire process by which the information in a gene is used to direct the synthesis of a functional product (a protein, or sometimes a functional RNA). It includes both <em>transcription</em> and <em>translation</em>. <em>Q4, Q5.</em>
+  </div>
+  <div id="rev-protein"   class="concept-reveal mint-border">
+    <strong>Five Functions of Proteins</strong> — Proteins are incredibly versatile. Five major functions: (1) <em>Enzymes</em> (catalyze reactions), (2) <em>Structural</em> (e.g. collagen, keratin), (3) <em>Transport</em> (e.g. hemoglobin), (4) <em>Signaling/hormones</em> (e.g. insulin), (5) <em>Defense/antibodies</em> (immune system) — also receptors and motor proteins. <em>Q2.</em>
+  </div>
+  <div id="rev-codon"     class="concept-reveal gold-border">
+    <strong>Codon</strong> — A sequence of <strong>three nucleotides</strong> in mRNA that codes for one amino acid (or a start/stop signal). Since each codon = 1 amino acid, it takes <strong>3 codons (9 nucleotides)</strong> to code for 3 amino acids. <em>Q6.</em>
+  </div>
+  <div id="rev-aminoacid" class="concept-reveal lav-border">
+    <strong>Amino Acids</strong> — The building blocks (monomers) of proteins. There are <strong>20 different amino acids</strong> used in living cells. Nucleotide sequences determine the order of amino acids, which determines protein structure and function. <em>Q3, Q7.</em>
+  </div>
+  <div id="rev-mrna"      class="concept-reveal coral">
+    <strong>mRNA (messenger RNA)</strong> — Carries the genetic "message" copied from DNA out of the nucleus to the ribosome, where it is translated into a protein. mRNA is crucial because it's the actual molecule that ribosomes "read" to build proteins — it's the go-between linking DNA's code to protein synthesis. <em>Q8.</em>
+  </div>
+  <div id="rev-trna"      class="concept-reveal forest-border">
+    <strong>tRNA (transfer RNA)</strong> — Each tRNA carries a specific amino acid and has an <em>anticodon</em> that base-pairs with a codon on the mRNA, ensuring the correct amino acid is added to the growing protein chain during translation. <em>Q9.</em>
+  </div>
+  <div id="rev-rrna"      class="concept-reveal mint-border">
+    <strong>rRNA (ribosomal RNA)</strong> — A structural and catalytic component of the ribosome itself. rRNA helps form the ribosome's structure and catalyzes the formation of peptide bonds between amino acids during translation. <em>Q9.</em>
+  </div>
+  <div id="rev-location"  class="concept-reveal gold-border">
+    <strong>Cellular Location</strong> — In eukaryotic cells, <strong>transcription occurs in the nucleus</strong> (where DNA is housed), while <strong>translation occurs in the cytoplasm</strong>, at ribosomes (free-floating or on the rough ER). This spatial separation is unique to eukaryotes. <em>Q10.</em>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 The Central Dogma — Step by Step</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:1rem;">Your packet (Q1, Q4, Q5, Q10) asks you to explain this flow — know each arrow and where it happens.</p>
+  <table class="vocab-table">
+    <tr><th>Step</th><th>What happens</th><th>Where (eukaryotes)</th></tr>
+    <tr><td>DNA</td><td>Stores genetic information as a sequence of nucleotides (genes)</td><td>Nucleus</td></tr>
+    <tr><td>Transcription</td><td>DNA sequence is copied into a complementary mRNA strand</td><td>Nucleus</td></tr>
+    <tr><td>mRNA processing</td><td>mRNA travels out of the nucleus through nuclear pores</td><td>Nucleus → Cytoplasm</td></tr>
+    <tr><td>Translation</td><td>Ribosome reads mRNA codons and builds a chain of amino acids</td><td>Cytoplasm (ribosomes)</td></tr>
+    <tr><td>Protein folding</td><td>Amino acid chain folds into a functional 3D protein</td><td>Cytoplasm / ER</td></tr>
+  </table>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(0)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(2)">Next: Transcription →</button>
+  </div>
+</div>
+<!-- ── SECTION 2: TRANSCRIPTION CONCEPTS (10.2) ── -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-gold">3</div>
+    <span class="eyebrow-label">Phase 3 · 10.2 Transcription</span>
+  </div>
+  <h2>🔍 The Machinery of Transcription</h2>
+  <p class="lead">Tap a card to explore each piece of the transcription puzzle. You need to know <strong>what each player does</strong> and be able to <strong>apply it to a DNA sequence</strong> from your packet.</p>
+
+  <div class="evidence-grid">
+    <div class="ev-card" onclick="showEvidence('template')">
+      <div class="ev-icon">🧬</div>
+      <div class="ev-title">DNA Template</div>
+      <div class="ev-sub">Q11</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('promoter')">
+      <div class="ev-icon">🚦</div>
+      <div class="ev-title">Promoter Sequence</div>
+      <div class="ev-sub">Q14 · Q15</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('rnapol')">
+      <div class="ev-icon">⚙️</div>
+      <div class="ev-title">RNA Polymerase</div>
+      <div class="ev-sub">Q14 · Q17 · Q19</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('terminator')">
+      <div class="ev-icon">🛑</div>
+      <div class="ev-title">Terminator Sequence</div>
+      <div class="ev-sub">Q16 · Q19</div>
+    </div>
+  </div>
+
+  <div id="ev-template" class="ev-panel">
+    <h4>🧬 DNA Template & The mRNA Transcript</h4>
+    <p>In transcription, one strand of DNA is used as a <strong>template</strong> for building a complementary, antiparallel <strong>RNA strand</strong>. The mRNA is synthesized using base-pairing rules: A pairs with U (not T, since this is RNA!), and C pairs with G. The mRNA is built in the 5' → 3' direction, antiparallel to the template strand it's reading.</p>
+    <div class="example-box">📌 Q11: "In transcription, DNA is used as a <strong>template</strong> for building an <strong>RNA</strong> strand."<br>📌 Q13: Template 5' ATTACGTAAA 3' → mRNA transcript reads <strong>5' UUUACGUAAU 3'</strong> (complementary AND antiparallel — flip the strand and swap T→U, A→A, etc.)</div>
+  </div>
+  <div id="ev-promoter" class="ev-panel">
+    <h4>🚦 The Promoter</h4>
+    <p>The <strong>promoter</strong> is a specific DNA sequence located before (upstream of) a gene's coding region. It acts like a "landing pad" — it's the sequence that <strong>RNA polymerase binds to</strong> in order to initiate (begin) transcription. Without a promoter, RNA polymerase wouldn't know where to start.</p>
+    <div class="example-box">📌 Q15: The sequence RNA polymerase binds to in order to initiate transcription is the <strong>promoter</strong>.</div>
+  </div>
+  <div id="ev-rnapol" class="ev-panel">
+    <h4>⚙️ RNA Polymerase</h4>
+    <p><strong>RNA polymerase</strong> is the primary enzyme of transcription. It binds to the promoter, unwinds the DNA double helix itself (no helicase needed!), and synthesizes a complementary mRNA strand by adding RNA nucleotides one at a time in the 5'→3' direction. Primase is also NOT needed — RNA polymerase doesn't require a primer the way DNA polymerase does. RNA polymerase detaches from the DNA template when it reaches the <strong>terminator sequence</strong>.</p>
+    <div class="example-box">📌 Q14: The primary enzyme of transcription is <strong>RNA polymerase</strong>.<br>📌 Q17: Helicase is <strong>NOT</strong> needed — RNA polymerase unwinds DNA itself.<br>📌 Q18: Primase is <strong>NOT</strong> needed for transcription.<br>📌 Q19: RNA polymerase detaches when it reaches the <strong>terminator sequence</strong>.</div>
+  </div>
+  <div id="ev-terminator" class="ev-panel">
+    <h4>🛑 The Terminator</h4>
+    <p>The <strong>terminator sequence</strong> marks the end of the gene's coding region. When RNA polymerase transcribes this sequence, it signals the enzyme to stop adding nucleotides and detach from the DNA template, releasing the newly made mRNA transcript.</p>
+    <div class="example-box">📌 Q19: "When does RNA polymerase detach from the DNA template strand?" → When it transcribes the <strong>terminator sequence</strong>.<br>📌 Q20: In eukaryotes, after termination, the mRNA travels out of the <strong>nucleus</strong>, through nuclear pores, to the <strong>cytoplasm/ribosomes</strong> for translation.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 3 Steps of Transcription -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin:.5rem 0 .4rem;">⚙️ The 3 Steps of Transcription — Tap to Explore</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Q17 asks for these three steps. Know the order and what happens at each stage.</p>
+
+  <div class="sel-grid">
+    <div class="sel-card" onclick="showSel('init')">
+      <div class="sel-icon">🚦</div>
+      <div class="sel-name">Initiation</div>
+      <div class="sel-key">binding & unwinding</div>
+    </div>
+    <div class="sel-card" onclick="showSel('elong')">
+      <div class="sel-icon">➡️</div>
+      <div class="sel-name">Elongation</div>
+      <div class="sel-key">building the strand</div>
+    </div>
+    <div class="sel-card" onclick="showSel('term')">
+      <div class="sel-icon">🛑</div>
+      <div class="sel-name">Termination</div>
+      <div class="sel-key">release of mRNA</div>
+    </div>
+    <div class="sel-card" onclick="showSel('process')">
+      <div class="sel-icon">🚪</div>
+      <div class="sel-name">mRNA Export</div>
+      <div class="sel-key">eukaryote-specific</div>
+    </div>
+  </div>
+
+  <div id="sel-init"    class="sel-detail">
+    <h4>🚦 1. Initiation</h4>
+    <p>RNA polymerase binds to the <strong>promoter</strong> sequence on the DNA. The DNA double helix unwinds and separates near the start of the gene, exposing the template strand. No helicase or primase is required — RNA polymerase handles unwinding itself.</p>
+    <p class="examples">📌 Packet connection: Q15 (promoter), Q17 & Q18 (no helicase/primase needed).</p>
+  </div>
+  <div id="sel-elong"   class="sel-detail">
+    <h4>➡️ 2. Elongation</h4>
+    <p>RNA polymerase moves along the DNA template in the 3'→5' direction, synthesizing the new mRNA strand in the 5'→3' direction. It adds complementary RNA nucleotides (remember: U pairs with A) one at a time, following base-pairing rules.</p>
+    <p class="examples">📌 Packet connection: Q13 & Q16 (building the complementary mRNA transcript from a DNA template).</p>
+  </div>
+  <div id="sel-term"    class="sel-detail">
+    <h4>🛑 3. Termination</h4>
+    <p>When RNA polymerase reaches the <strong>terminator sequence</strong> at the end of the gene, it stops adding nucleotides, detaches from the DNA, and releases the completed mRNA transcript.</p>
+    <p class="examples">📌 Packet connection: Q19 (RNA polymerase detaches at the terminator).</p>
+  </div>
+  <div id="sel-process" class="sel-detail">
+    <h4>🚪 mRNA Export (Eukaryotes Only)</h4>
+    <p>In eukaryotic cells, the newly made mRNA must exit the nucleus through nuclear pores to reach the cytoplasm, where ribosomes will translate it into a protein. This extra step is one reason eukaryotic gene expression takes longer than prokaryotic gene expression.</p>
+    <p class="examples">📌 Packet connection: Q20 — after transcription termination, eukaryotic mRNA travels to the <strong>cytoplasm</strong> (to be translated at ribosomes).</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Matching Game -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.4rem;">🎯 Quick Match — Term to Definition</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Tap a term on the left, then tap the matching definition on the right. All matches are drawn from your packet.</p>
+
+  <div class="match-grid" id="matchGrid">
+    <!-- left col -->
+    <div class="match-item" data-pair="a" data-side="term" onclick="matchClick(this)">Promoter</div>
+    <div class="match-item" data-pair="b" data-side="def"  onclick="matchClick(this)">Carries a specific amino acid to the ribosome</div>
+    <div class="match-item" data-pair="c" data-side="term" onclick="matchClick(this)">RNA Polymerase</div>
+    <div class="match-item" data-pair="d" data-side="def"  onclick="matchClick(this)">Sequence where RNA polymerase detaches from DNA</div>
+    <div class="match-item" data-pair="a" data-side="def"  onclick="matchClick(this)">Sequence RNA polymerase binds to start transcription</div>
+    <div class="match-item" data-pair="e" data-side="term" onclick="matchClick(this)">Codon</div>
+    <div class="match-item" data-pair="b" data-side="term" onclick="matchClick(this)">tRNA</div>
+    <div class="match-item" data-pair="c" data-side="def"  onclick="matchClick(this)">Primary enzyme of transcription</div>
+    <div class="match-item" data-pair="d" data-side="term" onclick="matchClick(this)">Terminator</div>
+    <div class="match-item" data-pair="e" data-side="def"  onclick="matchClick(this)">Three-nucleotide sequence coding for one amino acid</div>
+  </div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-ghost" onclick="resetMatch()">↺ Reset Match</button>
+    <span id="match-score" style="margin-left:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted);"></span>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(3)">Next: Transcribe Lab →</button>
+  </div>
+</div>
+<!-- ── SECTION 3: TRANSCRIBE LAB ── -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">4</div>
+    <span class="eyebrow-label">Phase 4 · Lab</span>
+  </div>
+  <h2>🔬 Build-Your-Own mRNA Transcript</h2>
+  <p class="lead">
+    Below is the DNA sequence from <strong>Q16</strong> of your packet: a <span style="color:var(--mint);font-weight:800;">promoter</span> (green), a <span style="color:var(--forest-mid);font-weight:800;">coding sequence</span> (purple, shown here in dark green for contrast), and a <span style="color:var(--coral);font-weight:800;">terminator</span> (red/coral). Step through transcription to build the mRNA transcript yourself.
+  </p>
+
+  <div class="predict-box">
+    <h4>✏️ Before you simulate — your prediction</h4>
+    <textarea id="sim-predict" placeholder="The DNA template strand reads 3' ATTATTATATAAAACGCTACTTTGGGCCGATGATCCACGGGGAATAGGCCCTG 5'. Predict what the mRNA transcript (5'→3') will read, focusing on the coding region. What rules will you use?"></textarea>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🧬 DNA Template Strand (3' → 5')</h3>
+    <div class="hint">Color key: <span style="color:var(--mint);font-weight:800;">green = promoter</span> · <span style="color:var(--forest-mid);font-weight:800;">dark green = coding sequence</span> · <span style="color:var(--coral);font-weight:800;">coral = terminator</span></div>
+
+    <div class="sim-grid" id="dnaGrid"></div>
+
+    <div class="sim-stat-row">
+      <div class="sim-stat"><div class="stat-val" id="stat-pos">0 / 53</div><div class="stat-lbl">Bases Transcribed</div></div>
+      <div class="sim-stat"><div class="stat-val" id="stat-stage">Ready</div><div class="stat-lbl">Stage</div></div>
+    </div>
+
+    <h3 style="margin-top:1.2rem;">📝 mRNA Transcript (building 5' → 3')</h3>
+    <div class="sim-grid" id="mrnaGrid"></div>
+
+    <div class="action-row" style="margin-top:1rem;">
+      <button class="btn btn-coral"   id="btn-start"  onclick="startTranscription()">▶ Bind RNA Polymerase to Promoter</button>
+      <button class="btn btn-mint"    id="btn-step"   onclick="stepTranscription()" disabled>⏩ Transcribe Next Base</button>
+      <button class="btn btn-gold"    id="btn-all"    onclick="finishTranscription()" disabled>⏭ Finish Transcript</button>
+      <button class="btn btn-ghost"   onclick="resetTranscription()">↺ Reset</button>
+    </div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — What did you observe?</h4>
+    <textarea placeholder="Describe the mRNA transcript that was built. Why does the mRNA contain U instead of T? What does the green (promoter) section do versus the coral (terminator) section? Connect this to Q14, Q15, Q16, and Q19..."></textarea>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Practice translating Q16 result -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin:.5rem 0 .8rem;">🧪 Apply It — Worksheet Q13 Practice</h3>
+  <p style="font-size:.9rem;line-height:1.7;margin-bottom:1rem;">
+    If a strand of DNA reads <strong>5' ATTACGTAAA 3'</strong>, what will the mRNA transcript read? Remember: mRNA is built <em>antiparallel</em> and <em>complementary</em> to the template (A↔U, T↔A, C↔G, G↔C), and is always written 5'→3'.
+  </p>
+  <div class="demo-zone">
+    <h3>Try it yourself</h3>
+    <div class="hint">Type your answer in 5'→3' format (just the letters, no spaces needed)</div>
+    <input type="text" class="blank-input" id="q13-input" style="width:220px;text-align:left;" placeholder="e.g. UUUACGUAAU">
+    <button class="btn btn-mint" onclick="checkQ13()" style="margin-left:.6rem;">Check</button>
+    <div id="q13-feedback" class="quiz-feedback" style="margin-top:1rem;"></div>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(4)">Next: Quiz →</button>
+  </div>
+</div>
+<!-- ── SECTION 4: QUIZ ── -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-forest">5</div>
+    <span class="eyebrow-label">Phase 5 · Real Test Practice</span>
+  </div>
+  <h2>📝 Packet Quiz — Sections 10.1 & 10.2</h2>
+  <p class="lead">These questions are taken <strong>directly from your Unit 10 Packet (Q1–20)</strong>. Answer each one — you'll get immediate feedback.</p>
+
+  <div id="quiz-container"></div>
+
+  <div id="score-panel" class="score-panel" style="display:none;">
+    <h3>Quiz Complete! 🎉</h3>
+    <div class="score-num" id="score-display">0/15</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-gold" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(3)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(5)">Next: Reflect →</button>
+  </div>
+</div>
+
+<!-- ── SECTION 5: REFLECT ── -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">6</div>
+    <span class="eyebrow-label">Phase 6 · Reflect</span>
+  </div>
+  <h2>💭 Reflection & Review</h2>
+  <p class="lead">Solidify your learning. Answer all four reflection questions in your own words — this is the most powerful study technique.</p>
+
+  <div class="quiz-card">
+    <div class="quiz-q">1. In your own words, explain the central dogma of molecular biology. Use the terms DNA, transcription, mRNA, translation, and protein.</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer..."></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">2. Describe the role of RNA polymerase, the promoter, and the terminator in transcription. Why don't transcription need helicase or primase?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer..."></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">3. Explain the difference between mRNA, tRNA, and rRNA. What unique role does each play in gene expression?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer..."></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">4. If a DNA template strand reads 3' ATTACGTAAA 5', walk through the steps to determine the mRNA transcript. What base-pairing rules apply, and why is the mRNA antiparallel to the template? (Q13)</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer..."></textarea>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Fill in the blanks from the packet -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.8rem;">✏️ Fill-in-the-Blank Review (from your packet)</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1.2rem;">Type the answer and press Enter or click Check.</p>
+
+  <div id="fill-container"></div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-mint" onclick="checkAllFills()">✓ Check All Answers</button>
+    <button class="btn btn-ghost" onclick="resetFills()" style="margin-left:.6rem;">↺ Reset</button>
+  </div>
+
+  <div class="congrats-panel" style="margin-top:2rem;">
+    <h2>🧬 Gene Expression Mastered!</h2>
+    <p>You've worked through Sections 10.1 and 10.2 of your Unit 10 Packet (Q1–20), explored every step of transcription, matched terms to definitions, and built your own mRNA transcript. You're ready for the next stop: translation!</p>
+    <p style="font-size:.85rem;opacity:.75;">Remember: The AP Bio exam is scored 1–5. With preparation like this, you're aiming for a 4 or 5.</p>
+    <div class="summary-chips">
+      <span class="summary-chip">Central Dogma ✓</span>
+      <span class="summary-chip">Gene Expression ✓</span>
+      <span class="summary-chip">Protein Functions ✓</span>
+      <span class="summary-chip">Codons ✓</span>
+      <span class="summary-chip">mRNA / tRNA / rRNA ✓</span>
+      <span class="summary-chip">Promoter ✓</span>
+      <span class="summary-chip">RNA Polymerase ✓</span>
+      <span class="summary-chip">Terminator ✓</span>
+      <span class="summary-chip">Transcription Steps ✓</span>
+      <span class="summary-chip">Building mRNA ✓</span>
+    </div>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(4)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(0)">↺ Start Over</button>
+  </div>
+</div>
+
+<!-- ── SECTION 6: SUBMIT ── -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">7</div>
+    <span class="eyebrow-label">Your Completed Work</span>
+  </div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Here's a summary of everything you worked on. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> to your teacher.</p>
+
+  <div class="summary-section" style="background:var(--forest);color:white;border-color:var(--forest);">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">STUDENT</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">LESSON</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;">Gene Expression Explorer 🧬</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6;" id="summaryDate"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section">
+    <h3>📝 Quiz Score</h3>
+    <div class="summary-answer" id="sum-quiz"></div>
+  </div>
+
+  <div class="summary-section">
+    <h3>🧬 Section 1 — Opening Prediction</h3>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;">YOUR PREDICTION (what determines gene use)</div>
+    <div class="summary-answer" id="sum-pred"></div>
+  </div>
+
+  <div class="summary-section">
+    <h3>🔬 Section 4 — Transcription Lab Prediction</h3>
+    <div class="summary-answer" id="sum-sim-pred"></div>
+  </div>
+
+  <div class="summary-section">
+    <h3>💭 Section 6 — Reflection Questions</h3>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;">Q1 — The Central Dogma</div>
+    <div class="summary-answer" id="sum-r1"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q2 — RNA Polymerase, Promoter, Terminator</div>
+    <div class="summary-answer" id="sum-r2"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q3 — mRNA vs tRNA vs rRNA</div>
+    <div class="summary-answer" id="sum-r3"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q4 — Building an mRNA Transcript (Q13)</div>
+    <div class="summary-answer" id="sum-r4"></div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.6rem;">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2;">
+      <strong>📋 Copy My Results</strong> — Copies all answers to clipboard. Open Google Classroom, paste into the comment box, and submit.<br>
+      <strong>📧 Email to Teacher</strong> — Opens your email app with answers pre-filled. Add teacher address and send.<br>
+      <strong>🖨️ Print / Save PDF</strong> — Mac: bottom-left dropdown → Save as PDF. Windows: Microsoft Print to PDF. Upload to assignment.
+    </p>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(5)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(0)">↺ Start Over</button>
+  </div>
+</div>
+
+</div><!-- /sheet -->
+
+<!-- COPYRIGHT -->
+<div style="position:relative; z-index:1; text-align:center; padding:1.5rem 2rem 2rem; color:rgba(255,255,255,0.45); font-family:'DM Mono',monospace; font-size:0.7rem; line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+
+<script>
+// ─── NAVIGATION ───
+const steps = document.querySelectorAll('.prog-step');
+const sections = document.querySelectorAll('.section');
+let currentSection = 0;
+
+function goTo(n) {
+  sections.forEach((s,i) => s.classList.toggle('active', i === n));
+  steps.forEach((s,i) => {
+    s.classList.remove('active','done');
+    if (i === n) s.classList.add('active');
+    if (i < n)  s.classList.add('done');
+  });
+  currentSection = n;
+  if (n === 6) buildSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── CONCEPT REVEALS ───
+const revealMap = {
+  dogma:'rev-dogma', geneexp:'rev-geneexp', protein:'rev-protein', codon:'rev-codon',
+  aminoacid:'rev-aminoacid', mrna:'rev-mrna', trna:'rev-trna', rrna:'rev-rrna',
+  location:'rev-location'
+};
+function reveal(key) {
+  Object.values(revealMap).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('show');
+  });
+  const target = document.getElementById(revealMap[key]);
+  if (target) target.classList.add('show');
+}
+
+// ─── EVIDENCE / PROCESS CARDS ───
+function showEvidence(type) {
+  document.querySelectorAll('.ev-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.ev-panel').forEach(p => p.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const panel = document.getElementById('ev-' + type);
+  if (panel) panel.classList.add('show');
+}
+
+// ─── STEP CARDS ───
+function showSel(type) {
+  document.querySelectorAll('.sel-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.sel-detail').forEach(d => d.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const det = document.getElementById('sel-' + type);
+  if (det) det.classList.add('show');
+}
+
+// ─── MATCHING GAME ───
+let matchSelected = null;
+let matchScore = 0;
+
+function matchClick(el) {
+  if (el.classList.contains('matched')) return;
+  if (!matchSelected) {
+    el.classList.add('selected');
+    matchSelected = el;
+  } else if (matchSelected === el) {
+    el.classList.remove('selected');
+    matchSelected = null;
+  } else {
+    const pairA = matchSelected.dataset.pair;
+    const pairB = el.dataset.pair;
+    const sideA = matchSelected.dataset.side;
+    const sideB = el.dataset.side;
+    if (pairA === pairB && sideA !== sideB) {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('matched');
+      el.classList.add('matched');
+      matchScore++;
+      document.getElementById('match-score').textContent = matchScore + '/5 matched';
+      matchSelected = null;
+    } else {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('wrong');
+      el.classList.add('wrong');
+      const a = matchSelected, b = el;
+      setTimeout(() => { a.classList.remove('wrong'); b.classList.remove('wrong'); }, 600);
+      matchSelected = null;
+    }
+  }
+}
+
+function resetMatch() {
+  matchSelected = null; matchScore = 0;
+  document.querySelectorAll('.match-item').forEach(el => {
+    el.classList.remove('selected','matched','wrong');
+  });
+  document.getElementById('match-score').textContent = '';
+}
+
+// ─── TRANSCRIPTION SIMULATOR ───
+// DNA template strand, 3' -> 5' (left to right), from packet Q16
+// Regions: promoter (green) [0-16], coding (dark green) [17-35], terminator (coral) [36-52]
+const dnaTemplate = "ATTATTATATAAAACGCTACTTTGGGCCGATGATCCACGGGGAATAGGCCCTG".split('');
+const regionFor = (i) => {
+  if (i <= 16) return 'promoter';
+  if (i <= 35) return 'coding';
+  return 'terminator';
+};
+const compMap = { A:'U', T:'A', C:'G', G:'C' };
+let transStep = 0; // number of bases transcribed
+let transStarted = false;
+
+function regionColorClass(region) {
+  if (region === 'promoter')   return 'base-G'; // greenish (forest-mid)
+  if (region === 'coding')     return 'base-C2';
+  return 'base-coral';
+}
+
+function renderDNA() {
+  const grid = document.getElementById('dnaGrid');
+  let html = '';
+  dnaTemplate.forEach((b, i) => {
+    const region = regionFor(i);
+    let style = '';
+    if (region === 'promoter')   style = 'border-color:#a8d5b8;background:#eaf6f0;color:var(--mint);';
+    if (region === 'coding')     style = 'border-color:#a8d5b8;background:#d4eadd;color:var(--forest-mid);';
+    if (region === 'terminator') style = 'border-color:#f8c5b8;background:var(--coral-pale);color:var(--coral);';
+    const highlight = i < transStep ? 'box-shadow:0 0 0 2px var(--gold) inset;' : '';
+    html += `<div class="sim-base" style="${style}${highlight}">${b}</div>`;
+  });
+  grid.innerHTML = html;
+}
+
+function renderMRNA() {
+  const grid = document.getElementById('mrnaGrid');
+  let html = '';
+  for (let i = 0; i < transStep; i++) {
+    const b = dnaTemplate[i];
+    const rb = compMap[b];
+    let cls = 'sim-base ';
+    cls += rb === 'A' ? 'base-A' : rb === 'U' ? 'base-U' : rb === 'C' ? 'base-C' : 'base-G';
+    html += `<div class="${cls}">${rb}</div>`;
+  }
+  for (let i = transStep; i < dnaTemplate.length; i++) {
+    html += `<div class="sim-base" style="background:#f5f7fa;border-color:var(--border);color:var(--muted);">·</div>`;
+  }
+  grid.innerHTML = html;
+}
+
+function updateStats() {
+  document.getElementById('stat-pos').textContent = transStep + ' / ' + dnaTemplate.length;
+  let stage = 'Ready';
+  if (transStarted && transStep === 0) stage = 'Initiation';
+  else if (transStep > 0 && transStep < dnaTemplate.length) stage = 'Elongation';
+  else if (transStep === dnaTemplate.length) stage = 'Termination ✓';
+  document.getElementById('stat-stage').textContent = stage;
+}
+
+function startTranscription() {
+  transStarted = true;
+  transStep = 0;
+  document.getElementById('btn-start').disabled = true;
+  document.getElementById('btn-step').disabled = false;
+  document.getElementById('btn-all').disabled = false;
+  renderDNA(); renderMRNA(); updateStats();
+}
+
+function stepTranscription() {
+  if (transStep < dnaTemplate.length) {
+    transStep++;
+    renderDNA(); renderMRNA(); updateStats();
+  }
+  if (transStep === dnaTemplate.length) {
+    document.getElementById('btn-step').disabled = true;
+    document.getElementById('btn-all').disabled = true;
+  }
+}
+
+function finishTranscription() {
+  transStep = dnaTemplate.length;
+  renderDNA(); renderMRNA(); updateStats();
+  document.getElementById('btn-step').disabled = true;
+  document.getElementById('btn-all').disabled = true;
+}
+
+function resetTranscription() {
+  transStarted = false;
+  transStep = 0;
+  document.getElementById('btn-start').disabled = false;
+  document.getElementById('btn-step').disabled = true;
+  document.getElementById('btn-all').disabled = true;
+  renderDNA(); renderMRNA(); updateStats();
+}
+
+renderDNA(); renderMRNA(); updateStats();
+
+// ─── Q13 PRACTICE CHECK ───
+function checkQ13() {
+  const input = document.getElementById('q13-input');
+  const fb = document.getElementById('q13-feedback');
+  const val = input.value.trim().toUpperCase().replace(/[^AUCG]/g, '');
+  const correct = "UUUACGUAAU"; // complementary & antiparallel to 5' ATTACGTAAA 3'
+  fb.classList.add('show');
+  if (val === correct) {
+    fb.className = 'quiz-feedback show correct-fb';
+    fb.textContent = "✅ Correct! 5' ATTACGTAAA 3' → mRNA reads 5' UUUACGUAAU 3'. Flip the strand (antiparallel) and swap T→U, A→A, C→G, G→C.";
+  } else {
+    fb.className = 'quiz-feedback show wrong-fb';
+    fb.textContent = "❌ Not quite. The correct answer is 5' UUUACGUAAU 3'. Remember: read the template 3'→5' (i.e., backwards from how it's written, 5' AAATGCATTA 3'... wait — flip it first!), then write the complementary RNA bases (A↔U, T↔A, C↔G, G↔C) in 5'→3' order.";
+  }
+}
+
+// ─── QUIZ DATA (directly from packet Q1-20) ───
+const quizData = [
+  {
+    q: "Q1 — The central dogma of molecular biology explains:",
+    opts: ["That mutations are always harmful", "How DNA replicates during the S phase", "The flow of genetic information from DNA → RNA → Protein", "How proteins are recycled by lysosomes"],
+    ans: 2,
+    fb: "Correct! The central dogma describes the one-way flow of genetic information: DNA is transcribed into RNA, and RNA is translated into protein."
+  },
+  {
+    q: "Q3 — How are nucleotide sequences related to protein structure?",
+    opts: ["They are unrelated", "The sequence of nucleotides (in codons) determines the sequence of amino acids, which determines protein structure", "Nucleotides become part of the final protein", "Only the number of nucleotides matters, not their order"],
+    ans: 1,
+    fb: "Correct! Each group of three nucleotides (a codon) specifies one amino acid. The order of codons determines the order of amino acids, which determines how the protein folds and functions."
+  },
+  {
+    q: "Q4 — Gene expression is best defined as:",
+    opts: ["The process of DNA replication", "The process by which information in a gene directs synthesis of a functional product (protein or RNA)", "The deletion of unused genes", "The packaging of DNA into chromatin"],
+    ans: 1,
+    fb: "Correct! Gene expression is the overall process — including transcription and translation — by which a gene's information is used to build a functional product, usually a protein."
+  },
+  {
+    q: "Q5 — What are the two major steps in gene expression?",
+    opts: ["Replication and repair", "Mitosis and meiosis", "Transcription and translation", "Initiation and termination only"],
+    ans: 2,
+    fb: "Correct! Transcription (DNA → mRNA in the nucleus) and translation (mRNA → protein at the ribosome) are the two major steps of gene expression."
+  },
+  {
+    q: "Q6 — How many codons does it take to code for 3 amino acids?",
+    opts: ["1 codon", "3 codons", "9 codons", "It varies"],
+    ans: 1,
+    fb: "Correct! Since each codon (3 nucleotides) codes for exactly one amino acid, 3 amino acids require exactly 3 codons (9 nucleotides total)."
+  },
+  {
+    q: "Q7 — How many different amino acids are there in living cells?",
+    opts: ["4", "10", "20", "64"],
+    ans: 2,
+    fb: "Correct! There are 20 different amino acids used to build proteins in living cells (note: 64 is the number of possible codons, not amino acids)."
+  },
+  {
+    q: "Q8 — Why is mRNA a crucial molecule in gene expression?",
+    opts: ["It stores the cell's permanent genetic information", "It carries the genetic message from DNA to the ribosome, where it is translated into protein", "It directly becomes the protein", "It only functions in prokaryotic cells"],
+    ans: 1,
+    fb: "Correct! mRNA is the 'messenger' — it carries a working copy of the gene's instructions out of the nucleus to the ribosome for translation."
+  },
+  {
+    q: "Q9 — What are the roles of tRNA and rRNA in gene expression?",
+    opts: ["tRNA stores DNA; rRNA replicates it", "tRNA carries amino acids to the ribosome (via its anticodon); rRNA is a structural/catalytic component of the ribosome", "tRNA and rRNA are the same molecule", "tRNA codes for proteins directly; rRNA degrades mRNA"],
+    ans: 1,
+    fb: "Correct! tRNA delivers the correct amino acid (matched via its anticodon to the mRNA codon), while rRNA makes up the ribosome's structure and helps catalyze peptide bond formation."
+  },
+  {
+    q: "Q10 — In a eukaryotic cell, where does transcription take place? Where does translation take place?",
+    opts: ["Both occur in the nucleus", "Transcription in the nucleus; translation in the cytoplasm (ribosomes)", "Transcription in the cytoplasm; translation in the nucleus", "Both occur in the mitochondria"],
+    ans: 1,
+    fb: "Correct! Transcription happens in the nucleus where the DNA is located. The mRNA then exits to the cytoplasm, where translation occurs at ribosomes."
+  },
+  {
+    q: "Q11 — In transcription, DNA is used as a ___ for building an ___ strand.",
+    opts: ["Primer; DNA", "Template; RNA", "Codon; protein", "Vector; lipid"],
+    ans: 1,
+    fb: "Correct! DNA serves as the template strand, and RNA polymerase builds a complementary RNA strand from it."
+  },
+  {
+    q: "Q12 — Where does transcription happen in prokaryotic cells? In eukaryotic cells?",
+    opts: ["Prokaryotes: mitochondria; Eukaryotes: nucleus", "Prokaryotes: cytoplasm (no nucleus); Eukaryotes: nucleus", "Both: ribosomes", "Prokaryotes: nucleus; Eukaryotes: cytoplasm"],
+    ans: 1,
+    fb: "Correct! Prokaryotes lack a nucleus, so transcription occurs in the cytoplasm. In eukaryotes, transcription is confined to the nucleus."
+  },
+  {
+    q: "Q13 — If a strand of DNA reads 5' ATTACGTAAA 3', what will the mRNA transcript read?",
+    opts: ["5' UUUACGUAAU 3'", "5' ATTACGTAAA 3'", "5' AAAUGCAUUU 3'", "3' UUUACGUAAU 5'"],
+    ans: 0,
+    fb: "Correct! Flip the template (antiparallel) so it reads 3' AAATGCATTA 5' → then 5' UUUACGUAAU 3' is the complementary RNA, written 5'→3'."
+  },
+  {
+    q: "Q14 — What is the name of the primary enzyme involved in transcription?",
+    opts: ["DNA polymerase", "Helicase", "RNA polymerase", "Ligase"],
+    ans: 2,
+    fb: "Correct! RNA polymerase binds the promoter, unwinds DNA, and synthesizes the mRNA strand — all without needing helicase or primase."
+  },
+  {
+    q: "Q15 — What is the name of the sequence that RNA polymerase binds to on DNA to initiate transcription?",
+    opts: ["Terminator", "Operator", "Promoter", "Origin of replication"],
+    ans: 2,
+    fb: "Correct! The promoter is the DNA sequence upstream of a gene that RNA polymerase binds to in order to begin transcription."
+  },
+  {
+    q: "Q17 — What are the 3 steps of transcription? Is helicase needed?",
+    opts: ["Initiation, elongation, termination; helicase IS needed", "Replication, translation, folding; helicase is needed", "Initiation, elongation, termination; helicase is NOT needed", "Binding, copying, exporting; helicase is needed"],
+    ans: 2,
+    fb: "Correct! The 3 steps are initiation, elongation, and termination. Helicase is NOT needed — RNA polymerase unwinds the DNA itself."
+  },
+  {
+    q: "Q18 — Is primase needed for transcription?",
+    opts: ["Yes, always", "No — RNA polymerase doesn't require a primer", "Only in eukaryotes", "Only during termination"],
+    ans: 1,
+    fb: "Correct! Unlike DNA polymerase (which needs an RNA primer from primase), RNA polymerase can start synthesis without a primer."
+  },
+  {
+    q: "Q19 — When does RNA polymerase detach from the DNA template strand?",
+    opts: ["As soon as it binds the promoter", "When it reaches the terminator sequence", "Only during S phase", "It never detaches"],
+    ans: 1,
+    fb: "Correct! RNA polymerase transcribes through the terminator sequence, which signals it to stop and detach, releasing the completed mRNA."
+  },
+  {
+    q: "Q20 — In eukaryotes, where will mRNA travel to after transcription termination?",
+    opts: ["The mitochondria", "It stays in the nucleus permanently", "Out of the nucleus to the cytoplasm, to be translated at ribosomes", "Back to the DNA to be re-used"],
+    ans: 2,
+    fb: "Correct! The mRNA exits through nuclear pores into the cytoplasm, where ribosomes translate it into a protein."
+  }
+];
+
+let quizScore = 0;
+let quizAnswered = 0;
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  quizScore = 0; quizAnswered = 0;
+  document.getElementById('score-panel').style.display = 'none';
+
+  quizData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `
+      <div class="quiz-q">${item.q}</div>
+      <div class="quiz-options">
+        ${item.opts.map((opt, i) => `
+          <button class="quiz-opt" data-idx="${idx}" data-opt="${i}" onclick="checkAnswer(this, ${idx}, ${i})">
+            ${String.fromCharCode(65+i)}. ${opt}
+          </button>
+        `).join('')}
+      </div>
+      <div class="quiz-feedback" id="qfb-${idx}"></div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function checkAnswer(btn, qIdx, optIdx) {
+  const card = btn.closest('.quiz-card');
+  const buttons = card.querySelectorAll('.quiz-opt');
+  const fb = document.getElementById('qfb-' + qIdx);
+  const correct = quizData[qIdx].ans;
+
+  buttons.forEach(b => b.disabled = true);
+
+  if (optIdx === correct) {
+    btn.classList.add('correct');
+    fb.textContent = '✅ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show correct-fb';
+    quizScore++;
+  } else {
+    btn.classList.add('wrong');
+    buttons[correct].classList.add('correct');
+    fb.textContent = '❌ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show wrong-fb';
+  }
+
+  quizAnswered++;
+  if (quizAnswered === quizData.length) showScore();
+}
+
+function showScore() {
+  const panel = document.getElementById('score-panel');
+  panel.style.display = 'block';
+  document.getElementById('score-display').textContent = quizScore + '/' + quizData.length;
+  const pct = quizScore / quizData.length;
+  let msg;
+  if (pct >= .9) msg = '🌟 Outstanding! You clearly understand gene expression and transcription. AP exam ready.';
+  else if (pct >= .75) msg = '👍 Great work! Review the questions you missed and you\'ll be in great shape.';
+  else if (pct >= .6) msg = '📚 Good start. Revisit Phases 2 and 3 and try again — you\'ve got this.';
+  else msg = '💪 Keep going! Go back through the Concepts and Transcription phases, then retake.';
+  document.getElementById('score-msg').textContent = msg;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function retakeQuiz() { buildQuiz(); }
+
+buildQuiz();
+
+// ─── FILL IN THE BLANK ───
+const fills = [
+  { q: "Q1: The central dogma describes the flow of information from DNA → ___ → Protein.", ans: "rna" },
+  { q: "Q6: How many codons does it take to code for 3 amino acids?", ans: "3" },
+  { q: "Q7: How many different amino acids are there in living cells?", ans: "20" },
+  { q: "Q11: In transcription, DNA is used as a ___ for building an RNA strand.", ans: "template" },
+  { q: "Q14: What is the name of the primary enzyme involved in transcription?", ans: "rna polymerase" },
+  { q: "Q15: RNA polymerase binds to the ___ sequence to initiate transcription.", ans: "promoter" },
+  { q: "Q17: Is helicase needed in transcription? (yes/no)", ans: "no" },
+  { q: "Q18: Is primase needed for transcription? (yes/no)", ans: "no" },
+  { q: "Q19: RNA polymerase detaches from DNA when it reaches the ___ sequence.", ans: "terminator" },
+  { q: "Q20: After transcription, eukaryotic mRNA travels to the ___ for translation.", ans: "cytoplasm" },
+];
+
+function buildFills() {
+  const container = document.getElementById('fill-container');
+  container.innerHTML = '';
+  fills.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-card';
+    div.innerHTML = `
+      <div class="fill-q">${item.q.replace('___', `<input class="blank-input" id="fill-${idx}" type="text" placeholder="?" onkeydown="if(event.key==='Enter')checkFill(${idx})">`)}</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function checkFill(idx) {
+  const input = document.getElementById('fill-' + idx);
+  const val = input.value.trim().toLowerCase();
+  const correct = fills[idx].ans.toLowerCase();
+  if (val === correct || val.includes(correct) || correct.includes(val)) {
+    input.classList.remove('err'); input.classList.add('ok');
+    input.value = fills[idx].ans;
+  } else {
+    input.classList.remove('ok'); input.classList.add('err');
+  }
+}
+
+function checkAllFills() {
+  fills.forEach((_, idx) => checkFill(idx));
+}
+
+function resetFills() {
+  fills.forEach((_, idx) => {
+    const input = document.getElementById('fill-' + idx);
+    if (input) { input.value = ''; input.classList.remove('ok','err'); }
+  });
+}
+
+buildFills();
+
+// ─── SUMMARY / SUBMIT ───
+function fillSummary(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = text && text.trim();
+  el.textContent = val || 'Not answered';
+  el.classList.toggle('empty', !val);
+}
+
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  const scoreEl = document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl ? scoreEl.textContent + ' correct' : 'Quiz not yet completed');
+
+  const predTA = document.querySelector('#sec-0 textarea');
+  fillSummary('sum-pred', predTA ? predTA.value : '');
+
+  const simTA = document.getElementById('sim-predict');
+  fillSummary('sum-sim-pred', simTA ? simTA.value : '');
+
+  const refCards = document.querySelectorAll('#sec-5 .quiz-card textarea');
+  ['sum-r1','sum-r2','sum-r3','sum-r4'].forEach((id, i) => {
+    fillSummary(id, refCards[i] ? refCards[i].value : '');
+  });
+}
+
+function buildPlainText() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const date = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const scoreEl = document.getElementById('score-display');
+  const score = scoreEl ? scoreEl.textContent : 'not completed';
+  const predTA = document.querySelector('#sec-0 textarea');
+  const simTA  = document.getElementById('sim-predict');
+  const refCards = document.querySelectorAll('#sec-5 .quiz-card textarea');
+  const refs = ['','','',''];
+  refCards.forEach((ta, i) => { refs[i] = ta.value.trim() || 'Not answered'; });
+
+  return [
+    'GENE EXPRESSION EXPLORER 🧬 — STUDENT SUBMISSION',
+    '============================================',
+    'Student: ' + name,
+    'Date: ' + date,
+    'Lesson: AP Biology · Unit 10 (10.1 & 10.2) · Gene Expression Explorer',
+    '',
+    '── QUIZ SCORE ──',
+    score,
+    '',
+    '── SECTION 1: OPENING PREDICTION ──',
+    predTA ? (predTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── SECTION 4: TRANSCRIPTION LAB PREDICTION ──',
+    simTA ? (simTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── SECTION 6: REFLECTIONS ──',
+    'Q1 — The Central Dogma:', refs[0],
+    'Q2 — RNA Polymerase, Promoter, Terminator:', refs[1],
+    'Q3 — mRNA vs tRNA vs rRNA:', refs[2],
+    'Q4 — Building an mRNA Transcript (Q13):', refs[3],
+    '',
+    '============================================',
+    '© 2026 Farvour Explorations · farvourexplorations.com\nSubmitted via Gene Expression Explorer · Interactive Digital Lesson · AP Biology'
+  ].join('\n');
+}
+
+function copyResults() {
+  buildSummary();
+  const text = buildPlainText();
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Now paste into Google Classroom or your assignment.';
+    setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '⚠️ Could not copy automatically — try selecting the text above manually.';
+  });
+}
+
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const subject = encodeURIComponent('Gene Expression Explorer — ' + name);
+  const body = encodeURIComponent(buildPlainText());
+  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+}
+
+</script>
+</body>
+</html>
