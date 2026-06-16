@@ -1,0 +1,1995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Translation &amp; Mutations Explorer 🔬</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:    #1a3d2b;
+    --forest-mid:#2d6a4f;
+    --forest-lt: #40916c;
+    --coral:     #e8603c;
+    --coral-pale:#fdf0ec;
+    --mint:      #3aaf85;
+    --mint-pale: #e8f8f2;
+    --gold:      #c9962a;
+    --gold-pale: #fef9e7;
+    --lavender:  #7c6fcd;
+    --lav-pale:  #f0eefb;
+    --paper:     #fffef9;
+    --ink:       #1a2332;
+    --muted:     #7a8899;
+    --border:    #e0e4ea;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: linear-gradient(160deg, #0d2318 0%, #1a3d2b 45%, #2d6a4f 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%, rgba(144,238,144,.45) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 22%  38%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 41%  6%,  rgba(144,238,144,.35) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 60%  24%, rgba(255,255,255,.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 77%  9%,  rgba(144,238,144,.4)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 90%  33%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 33%  55%, rgba(144,238,144,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 70%  48%, rgba(255,255,255,.2)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 55%  70%, rgba(144,238,144,.25) 0%, transparent 100%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 3.5rem 2rem 2rem;
+    color: white;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--forest);
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.85rem;
+    letter-spacing: .05em;
+    padding: .35rem 1.2rem;
+    border-radius: 20px;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 12px rgba(201,150,42,.45);
+  }
+  .hero h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.2rem,6vw,4rem);
+    line-height: 1.1;
+    margin-bottom: .8rem;
+    text-shadow: 0 2px 20px rgba(0,0,0,.35);
+  }
+  .hero h1 .accent { color: var(--gold); }
+  .hero p.intro {
+    font-size: 1.05rem; line-height: 1.7;
+    opacity: .88; max-width: 580px;
+    margin: 0 auto 2rem;
+  }
+
+  /* ─── PROGRESS PILLS ─── */
+  .progress-wrap {
+    display: flex; justify-content: center;
+    gap: .5rem; flex-wrap: wrap; margin-bottom: .5rem;
+  }
+  .prog-step {
+    display: flex; align-items: center; gap: .4rem;
+    background: rgba(255,255,255,.1);
+    border: 1.5px solid rgba(255,255,255,.18);
+    border-radius: 20px; padding: .35rem .9rem;
+    font-size: .78rem; font-weight: 700;
+    color: rgba(255,255,255,.7);
+    cursor: pointer; transition: all .2s;
+    font-family: 'DM Mono', monospace;
+  }
+  .prog-step:hover, .prog-step.done {
+    background: rgba(255,255,255,.2); color: white;
+    border-color: rgba(255,255,255,.35);
+  }
+  .prog-step.active {
+    background: var(--gold); color: var(--forest);
+    border-color: var(--gold);
+    box-shadow: 0 2px 12px rgba(201,150,42,.45);
+  }
+
+  /* ─── SHEET ─── */
+  .sheet {
+    position: relative; z-index: 1;
+    background: var(--paper);
+    border-radius: 24px 24px 0 0;
+    margin-top: 1.5rem;
+    padding: 0 0 6rem;
+    min-height: 80vh;
+    box-shadow: 0 -8px 40px rgba(0,0,0,.3);
+  }
+
+  /* ─── SECTIONS ─── */
+  .section {
+    padding: 3rem 2rem 0;
+    max-width: 820px;
+    margin: 0 auto;
+    display: none;
+  }
+  .section.active { display: block; }
+
+  .section-eyebrow {
+    display: flex; align-items: center;
+    gap: .6rem; margin-bottom: 1rem;
+  }
+  .eyebrow-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem; color: white; flex-shrink: 0;
+  }
+  .num-coral  { background: var(--coral); }
+  .num-mint   { background: var(--mint); }
+  .num-gold   { background: var(--gold); color: var(--forest); }
+  .num-lav    { background: var(--lavender); }
+  .num-forest { background: var(--forest-mid); }
+
+  .eyebrow-label {
+    font-size: .72rem; font-weight: 800;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--muted); font-family: 'DM Mono', monospace;
+  }
+
+  .section h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.6rem,3.5vw,2.2rem);
+    color: var(--forest); margin-bottom: .6rem; line-height: 1.2;
+  }
+  .section .lead {
+    font-size: 1rem; line-height: 1.75; color: #3a4a5a;
+    margin-bottom: 1.8rem;
+  }
+  .section .lead strong { color: var(--coral); }
+
+  /* ─── WONDER BOX ─── */
+  .wonder-box {
+    background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 100%);
+    color: white; border-radius: 16px;
+    padding: 1.8rem 2rem; margin-bottom: 1.8rem;
+    position: relative; overflow: hidden;
+  }
+  .wonder-box::after {
+    content: '🤔';
+    position: absolute; right: 1.5rem; top: 50%;
+    transform: translateY(-50%);
+    font-size: 3rem; opacity: .3;
+  }
+  .wonder-box p { font-size: 1rem; line-height: 1.7; font-style: italic; opacity: .95; max-width: 85%; }
+  .wonder-box strong { color: var(--gold); font-style: normal; }
+  .wonder-box.mint-box { background: linear-gradient(135deg, #1b7a58 0%, #2d9970 100%); }
+  .wonder-box.mint-box::after { content: '⚠️'; }
+  .wonder-box.gold-box { background: linear-gradient(135deg, #8a6a1a 0%, #b8860b 100%); }
+  .wonder-box.gold-box::after { content: '🔬'; }
+  .wonder-box.lav-box  { background: linear-gradient(135deg, #4a3a8a 0%, #6a5acd 100%); }
+  .wonder-box.lav-box::after { content: '🧬'; }
+
+  /* ─── CONCEPT CHIPS ─── */
+  .chip-row { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1.5rem; }
+  .chip {
+    padding: .45rem 1rem; border-radius: 20px;
+    font-size: .82rem; font-weight: 700; cursor: pointer;
+    transition: all .2s; border: 2px solid transparent;
+  }
+  .chip.coral  { background: var(--coral-pale);  color: var(--coral);      border-color: #f8c5b8; }
+  .chip.mint   { background: var(--mint-pale);   color: var(--mint);       border-color: #b8ebd8; }
+  .chip.gold   { background: var(--gold-pale);   color: #8a6a1a;           border-color: #f8e0a0; }
+  .chip.lav    { background: var(--lav-pale);    color: var(--lavender);   border-color: #d0caef; }
+  .chip.forest { background: #d4eadd;            color: var(--forest-mid); border-color: #a8d5b8; }
+  .chip:hover  { transform: scale(1.05); }
+
+  .concept-reveal {
+    background: var(--paper); border-left: 4px solid var(--coral);
+    border-radius: 0 10px 10px 0;
+    padding: 1rem 1.2rem; font-size: .88rem; line-height: 1.7;
+    margin-top: .5rem; margin-bottom: .3rem; display: none;
+    animation: fadeIn .3s ease;
+  }
+  .concept-reveal.show { display: block; }
+  .concept-reveal.mint-border   { border-color: var(--mint); }
+  .concept-reveal.gold-border   { border-color: var(--gold); }
+  .concept-reveal.lav-border    { border-color: var(--lavender); }
+  .concept-reveal.forest-border { border-color: var(--forest-mid); }
+
+  @keyframes fadeIn {
+    from { opacity:0; transform:translateY(-6px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* ─── PREDICT / REFLECT BOXES ─── */
+  .predict-box {
+    background: var(--gold-pale); border: 2px dashed var(--gold);
+    border-radius: 14px; padding: 1.4rem 1.6rem; margin-bottom: 1.5rem;
+  }
+  .predict-box h4 {
+    font-family: 'Fredoka One', cursive; font-size: 1rem;
+    color: #8a6a1a; margin-bottom: .8rem;
+  }
+  .predict-box textarea, .reflect-box textarea {
+    width: 100%; border: 1.5px solid rgba(0,0,0,.12);
+    border-radius: 8px; padding: .7rem;
+    font-family: 'Nunito', sans-serif; font-size: .88rem;
+    resize: vertical; min-height: 64px;
+    background: white; color: var(--ink); outline: none;
+    transition: border-color .2s;
+  }
+  .predict-box textarea:focus { border-color: var(--gold); }
+
+  .reflect-box {
+    background: var(--mint-pale); border: 2px dashed var(--mint);
+    border-radius: 14px; padding: 1.4rem 1.6rem; margin-top: 1.5rem;
+  }
+  .reflect-box h4 {
+    font-family: 'Fredoka One', cursive; font-size: 1rem;
+    color: #1b7a58; margin-bottom: .8rem;
+  }
+  .reflect-box textarea:focus { border-color: var(--mint); }
+
+  /* ─── DEMO ZONE ─── */
+  .demo-zone {
+    background: white; border: 2px solid var(--border);
+    border-radius: 16px; padding: 1.8rem; margin-bottom: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,.07);
+  }
+  .demo-zone h3 {
+    font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+    color: var(--forest); margin-bottom: .3rem;
+  }
+  .demo-zone .hint {
+    font-size: .78rem; color: var(--muted);
+    font-family: 'DM Mono', monospace; margin-bottom: 1.3rem;
+  }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    border: none; border-radius: 10px;
+    padding: .65rem 1.3rem; font-family: 'Nunito', sans-serif;
+    font-size: .88rem; font-weight: 800; cursor: pointer;
+    transition: all .15s; letter-spacing: .02em;
+  }
+  .btn:hover  { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,.15); }
+  .btn:active { transform: translateY(0); }
+  .btn-coral  { background: var(--coral);    color: white; }
+  .btn-mint   { background: var(--mint);     color: white; }
+  .btn-gold   { background: var(--gold);     color: var(--forest); }
+  .btn-lav    { background: var(--lavender); color: white; }
+  .btn-ghost  { background: #f0f2f5;         color: var(--muted); }
+  .btn-forest { background: var(--forest);   color: white; }
+  .btn:disabled { opacity: .4; cursor: default; transform: none; box-shadow: none; }
+
+  .action-row { display: flex; gap: .8rem; flex-wrap: wrap; align-items: center; margin-bottom: .8rem; }
+
+  /* ─── NAV ROW ─── */
+  .nav-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 2.5rem 2rem 0; max-width: 820px; margin: 0 auto;
+  }
+
+  /* ─── QUIZ CARD ─── */
+  .quiz-card {
+    background: white; border: 2px solid var(--border);
+    border-radius: 14px; padding: 1.4rem 1.6rem;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  }
+  .quiz-q {
+    font-weight: 700; font-size: .95rem;
+    color: var(--ink); margin-bottom: 1rem; line-height: 1.5;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: .5rem; }
+  .quiz-opt {
+    padding: .6rem 1rem; border-radius: 8px;
+    border: 2px solid var(--border);
+    background: white; cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: .88rem; font-weight: 600;
+    text-align: left; transition: all .15s;
+    color: var(--ink);
+  }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--forest-mid); background: #f0f7f3; }
+  .quiz-opt.correct   { background: var(--mint-pale); border-color: var(--mint); color: #1b7a58; }
+  .quiz-opt.wrong     { background: var(--coral-pale); border-color: var(--coral); color: #a83020; }
+  .quiz-opt:disabled  { cursor: default; }
+  .quiz-feedback {
+    margin-top: .8rem; font-size: .85rem; line-height: 1.6;
+    padding: .7rem 1rem; border-radius: 8px; display: none;
+    animation: fadeIn .3s ease;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct-fb { background: var(--mint-pale); color: #1b7a58; border-left: 3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background: var(--coral-pale); color: #a83020; border-left: 3px solid var(--coral); }
+
+  /* ─── CODON WHEEL / TRANSLATION SIMULATOR ─── */
+  .codon-table {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px; margin: 1rem 0; font-family: 'DM Mono', monospace;
+  }
+  .codon-cell {
+    background: #f5f7fa; border-radius: 6px; padding: .4rem .3rem;
+    text-align: center; font-size: .7rem;
+    border: 1.5px solid var(--border); cursor: pointer;
+    transition: all .15s;
+  }
+  .codon-cell:hover { background: #d4eadd; border-color: var(--mint); }
+  .codon-cell .codon-cod { font-weight: 700; color: var(--forest); font-size: .72rem; }
+  .codon-cell .codon-aa  { color: var(--coral); font-size: .65rem; margin-top: 2px; }
+  .codon-cell.start-codon { background: var(--mint-pale); border-color: var(--mint); }
+  .codon-cell.stop-codon  { background: var(--coral-pale); border-color: var(--coral); }
+  .codon-cell.highlighted { background: var(--gold-pale); border-color: var(--gold); transform: scale(1.08); }
+
+  /* ─── RIBOSOME SIMULATOR ─── */
+  .mrna-track {
+    display: flex; flex-wrap: nowrap; gap: 2px;
+    overflow-x: auto; padding: .5rem 0; margin: .8rem 0;
+  }
+  .mrna-base {
+    min-width: 32px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace; font-weight: 700; font-size: .9rem;
+    border-radius: 6px; border: 2px solid var(--border);
+    flex-shrink: 0; transition: all .3s;
+  }
+  .mrna-base.bA { background: var(--coral-pale);  color: var(--coral);      border-color: #f8c5b8; }
+  .mrna-base.bU { background: var(--lav-pale);    color: var(--lavender);   border-color: #d0caef; }
+  .mrna-base.bC { background: var(--gold-pale);   color: #8a6a1a;           border-color: #f8e0a0; }
+  .mrna-base.bG { background: #d4eadd;            color: var(--forest-mid); border-color: #a8d5b8; }
+  .mrna-base.reading { box-shadow: 0 0 0 3px var(--gold); transform: scale(1.1); }
+  .mrna-base.codon-pos-0 { border-radius: 6px 0 0 6px; }
+  .mrna-base.codon-pos-2 { border-radius: 0 6px 6px 0; }
+
+  .protein-chain {
+    display: flex; flex-wrap: wrap; gap: 4px;
+    min-height: 44px; padding: .5rem; margin: .8rem 0;
+    background: #f5f7fa; border-radius: 10px; border: 2px solid var(--border);
+  }
+  .aa-bead {
+    padding: .3rem .6rem; border-radius: 20px;
+    font-family: 'DM Mono', monospace; font-size: .72rem; font-weight: 700;
+    color: white; animation: popIn .25s ease;
+  }
+  @keyframes popIn {
+    from { opacity:0; transform: scale(0.5); }
+    to   { opacity:1; transform: scale(1); }
+  }
+
+  .ribosome-display {
+    background: var(--lav-pale); border: 2px solid var(--lavender);
+    border-radius: 12px; padding: .8rem 1.2rem; margin: .5rem 0;
+    font-family: 'DM Mono', monospace; font-size: .82rem; color: var(--lavender);
+    min-height: 44px;
+  }
+
+  .sim-stat-row {
+    display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0;
+  }
+  .sim-stat {
+    background: #f5f7fa; border-radius: 10px;
+    padding: .6rem 1.1rem; flex: 1; min-width: 110px;
+    text-align: center;
+  }
+  .sim-stat .stat-val {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem; color: var(--forest);
+  }
+  .sim-stat .stat-lbl {
+    font-family: 'DM Mono', monospace;
+    font-size: .62rem; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .08em;
+  }
+
+  /* ─── MUTATION VISUALIZER ─── */
+  .mut-sequence {
+    display: flex; flex-wrap: wrap; gap: 3px;
+    margin: .8rem 0; padding: .5rem;
+    background: #f5f7fa; border-radius: 10px; border: 2px solid var(--border);
+  }
+  .mut-base {
+    min-width: 28px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace; font-weight: 700; font-size: .82rem;
+    border-radius: 5px; border: 1.5px solid var(--border);
+    background: white; transition: all .3s;
+  }
+  .mut-base.normal { background: white; color: var(--ink); }
+  .mut-base.changed { background: var(--coral-pale); color: var(--coral); border-color: var(--coral); animation: pulse .5s ease; }
+  .mut-base.inserted { background: var(--lav-pale); color: var(--lavender); border-color: var(--lavender); animation: popIn .3s ease; }
+  .mut-base.deleted { text-decoration: line-through; background: #ffeee8; color: #aaa; border-color: #f8c5b8; }
+  @keyframes pulse {
+    0%,100% { transform: scale(1); }
+    50%      { transform: scale(1.25); }
+  }
+
+  .mut-result-row {
+    display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0;
+  }
+  .mut-result-box {
+    flex: 1; min-width: 200px;
+    border-radius: 12px; padding: 1rem 1.2rem;
+    border: 2px solid var(--border);
+  }
+  .mut-result-box h4 {
+    font-family: 'Fredoka One', cursive; font-size: .95rem;
+    margin-bottom: .5rem;
+  }
+  .mut-result-box p { font-size: .82rem; line-height: 1.6; font-family: 'DM Mono', monospace; }
+  .mut-box-original { background: #f5f7fa; }
+  .mut-box-original h4 { color: var(--forest); }
+  .mut-box-mutated  { background: var(--coral-pale); border-color: var(--coral); }
+  .mut-box-mutated h4 { color: var(--coral); }
+  .mut-box-effect   { background: var(--mint-pale); border-color: var(--mint); }
+  .mut-box-effect h4 { color: #1b7a58; }
+
+  /* ─── EVIDENCE / PROCESS CARDS ─── */
+  .evidence-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem; margin-bottom: 1.5rem;
+  }
+  .ev-card {
+    background: white; border: 2px solid var(--border);
+    border-radius: 14px; padding: 1.2rem; cursor: pointer;
+    transition: all .2s; text-align: center;
+  }
+  .ev-card:hover, .ev-card.active {
+    border-color: var(--forest-mid);
+    box-shadow: 0 4px 16px rgba(45,106,79,.2);
+    transform: translateY(-2px);
+  }
+  .ev-card.active { background: #d4eadd; }
+  .ev-card .ev-icon { font-size: 2.4rem; margin-bottom: .5rem; }
+  .ev-card .ev-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: .95rem; color: var(--forest); margin-bottom: .3rem;
+  }
+  .ev-card .ev-sub { font-size: .72rem; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+  .ev-panel {
+    background: #d4eadd; border-left: 4px solid var(--forest-mid);
+    border-radius: 0 12px 12px 0; padding: 1.2rem 1.4rem;
+    display: none; animation: fadeIn .3s ease; margin-bottom: 1rem;
+  }
+  .ev-panel.show { display: block; }
+  .ev-panel h4 { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: var(--forest); margin-bottom: .5rem; }
+  .ev-panel p  { font-size: .88rem; line-height: 1.7; color: #2a3a2a; }
+  .ev-panel .example-box {
+    background: white; border-radius: 8px; padding: .7rem 1rem;
+    margin-top: .8rem; font-size: .82rem;
+    font-family: 'DM Mono', monospace; color: var(--ink);
+    border: 1.5px solid rgba(45,106,79,.2);
+  }
+
+  /* ─── STEP CARDS ─── */
+  .sel-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: .8rem; margin: 1rem 0 1.5rem;
+  }
+  .sel-card {
+    background: white; border: 2px solid var(--border);
+    border-radius: 14px; padding: 1rem; text-align: center;
+    cursor: pointer; transition: all .2s;
+  }
+  .sel-card:hover, .sel-card.active {
+    border-color: var(--coral);
+    box-shadow: 0 3px 12px rgba(232,96,60,.18);
+    transform: translateY(-2px);
+  }
+  .sel-card.active { background: var(--coral-pale); }
+  .sel-card .sel-icon { font-size: 2rem; margin-bottom: .4rem; }
+  .sel-card .sel-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: .9rem; color: var(--forest); margin-bottom: .2rem;
+  }
+  .sel-card .sel-key {
+    font-family: 'DM Mono', monospace; font-size: .62rem;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .06em;
+  }
+  .sel-detail {
+    background: var(--coral-pale); border-left: 4px solid var(--coral);
+    border-radius: 0 12px 12px 0; padding: 1.2rem 1.4rem;
+    display: none; animation: fadeIn .3s ease; margin-bottom: 1.5rem;
+  }
+  .sel-detail.show { display: block; }
+  .sel-detail h4 { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: var(--forest); margin-bottom: .4rem; }
+  .sel-detail p  { font-size: .88rem; line-height: 1.7; }
+  .sel-detail .examples { margin-top: .6rem; font-style: italic; color: var(--muted); font-size: .82rem; }
+
+  /* ─── MATCHING GAME ─── */
+  .match-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; margin: 1rem 0;
+  }
+  .match-item {
+    padding: .75rem 1rem; border-radius: 10px;
+    border: 2px solid var(--border); cursor: pointer;
+    font-size: .85rem; font-weight: 700;
+    transition: all .2s; background: white;
+    text-align: center; color: var(--ink); line-height: 1.4;
+  }
+  .match-item:hover    { border-color: var(--forest-mid); background: #f0f7f3; }
+  .match-item.selected { border-color: var(--lavender); background: var(--lav-pale); color: var(--lavender); }
+  .match-item.matched  { border-color: var(--mint); background: var(--mint-pale); color: #1b7a58; cursor: default; }
+  .match-item.wrong    { border-color: var(--coral); background: var(--coral-pale); color: var(--coral); animation: shake .3s; }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25%  { transform: translateX(-6px); }
+    75%  { transform: translateX(6px); }
+  }
+
+  /* ─── SCORE PANEL ─── */
+  .score-panel {
+    background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 100%);
+    color: white; border-radius: 16px; padding: 2rem; text-align: center; margin-top: 1.5rem;
+  }
+  .score-panel .score-num {
+    font-family: 'Fredoka One', cursive; font-size: 3.5rem;
+    line-height: 1; color: var(--gold);
+  }
+  .score-panel p { opacity: .88; margin-top: .5rem; font-size: 1rem; }
+  .score-panel h3 { font-family: 'Fredoka One', cursive; font-size: 1.5rem; margin-bottom: .3rem; }
+
+  /* ─── CONGRATS ─── */
+  .congrats-panel {
+    background: linear-gradient(135deg, var(--forest) 0%, #1b7a58 100%);
+    color: white; border-radius: 20px; padding: 2.5rem 2rem; text-align: center;
+    margin-top: 2rem;
+  }
+  .congrats-panel h2 { font-family: 'Fredoka One', cursive; font-size: 2rem; margin-bottom: .6rem; }
+  .congrats-panel p  { opacity: .9; line-height: 1.7; max-width: 480px; margin: 0 auto .8rem; }
+  .summary-chips { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin-top: 1rem; }
+  .summary-chip {
+    background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.3);
+    border-radius: 20px; padding: .3rem .9rem;
+    font-size: .78rem; font-weight: 700;
+    font-family: 'DM Mono', monospace; letter-spacing: .04em;
+  }
+
+  /* ─── VOCAB TABLE ─── */
+  .vocab-table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; }
+  .vocab-table th {
+    background: var(--forest); color: white;
+    font-family: 'Fredoka One', cursive; font-size: .85rem;
+    padding: .7rem 1rem; text-align: left;
+  }
+  .vocab-table td {
+    padding: .65rem 1rem; font-size: .85rem; line-height: 1.5;
+    border-bottom: 1px solid var(--border);
+  }
+  .vocab-table tr:nth-child(even) td { background: #f5f7fa; }
+  .vocab-table tr:hover td { background: #d4eadd; transition: background .15s; }
+  .vocab-table td:first-child { font-weight: 800; color: var(--forest-mid); }
+
+  /* ─── FILL IN THE BLANK ─── */
+  .blank-input {
+    border: none; border-bottom: 2.5px solid var(--forest-mid);
+    background: transparent; font-family: 'Nunito', sans-serif;
+    font-size: 1rem; font-weight: 700; color: var(--forest);
+    width: 180px; text-align: center; outline: none;
+    padding: 0 4px; transition: border-color .2s;
+  }
+  .blank-input:focus { border-color: var(--coral); }
+  .blank-input.ok    { border-color: var(--mint);  color: var(--mint); }
+  .blank-input.err   { border-color: var(--coral); color: var(--coral); }
+  .fill-q { font-size: .95rem; line-height: 2; color: var(--ink); margin-bottom: .8rem; }
+
+  /* divider */
+  .divider { height: 1px; background: var(--border); margin: 2rem 0; }
+
+  /* ─── NAME BAR ─── */
+  .name-bar {
+    background: rgba(255,255,255,.1);
+    border: 1.5px solid rgba(255,255,255,.25);
+    border-radius: 12px; padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    max-width: 420px; margin: 0 auto 1rem;
+  }
+  .name-bar label {
+    font-size: .78rem; font-weight: 700;
+    color: rgba(255,255,255,.8); white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+  }
+  .name-bar input {
+    flex: 1; background: rgba(255,255,255,.15);
+    border: none; border-radius: 8px; padding: .4rem .8rem;
+    font-family: 'Nunito', sans-serif; font-size: .9rem;
+    font-weight: 700; color: white; outline: none;
+  }
+  .name-bar input::placeholder { color: rgba(255,255,255,.4); font-weight: 400; }
+
+  /* ─── SUMMARY / SUBMIT ─── */
+  .summary-section {
+    background: white; border-radius: 14px;
+    padding: 1.4rem 1.6rem; margin-bottom: 1rem;
+    border: 2px solid var(--border);
+  }
+  .summary-section h3 {
+    font-family: 'Fredoka One', cursive; font-size: 1.05rem;
+    color: var(--forest); margin-bottom: .8rem;
+  }
+  .summary-answer {
+    background: #f5f7fa; border-radius: 8px;
+    padding: .7rem 1rem; font-size: .85rem; line-height: 1.6;
+    color: var(--ink); margin-bottom: .5rem;
+    font-style: italic; border-left: 3px solid var(--lavender);
+    min-height: 2rem;
+  }
+  .summary-answer.empty { color: var(--muted); font-style: normal; border-left-color: var(--border); }
+
+  /* ─── SHARE BUTTONS ─── */
+  .share-buttons {
+    display: flex; gap: .8rem; flex-wrap: wrap;
+    margin-top: 1.5rem; justify-content: center;
+  }
+  .share-btn {
+    border: none; border-radius: 12px; padding: .85rem 1.6rem;
+    font-family: 'Fredoka One', cursive; font-size: 1rem;
+    cursor: pointer; transition: all .2s;
+    display: flex; align-items: center; gap: .5rem;
+  }
+  .share-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background: var(--mint);     color: white; }
+  .share-btn.email { background: var(--lavender); color: white; }
+  .share-btn.print { background: var(--forest);   color: white; }
+  .copy-confirm {
+    text-align: center; font-family: 'DM Mono', monospace;
+    font-size: .78rem; color: var(--mint);
+    min-height: 1.2rem; margin-top: .6rem;
+  }
+
+  @media print {
+    .hero, .nav-row, .share-buttons, .copy-confirm, .prog-step, .name-bar { display: none !important; }
+    .sheet { box-shadow: none; border-radius: 0; }
+    .section { display: none !important; }
+    #sec-6 { display: block !important; }
+  }
+</style>
+</head>
+<body>
+<!-- ═══════════ HERO ═══════════ -->
+<div class="hero">
+  <div class="hero-badge">🔬 AP Biology Prep · Unit 10</div>
+  <h1>Translation &amp; <span class="accent">Mutations</span></h1>
+  <p class="intro">Master how mRNA becomes protein and what happens when the code goes wrong — covering Unit 10 Packet sections 10.3 (Translation) and 10.4 (Mutations).</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <span class="prog-step active" onclick="goTo(0)">① Wonder</span>
+    <span class="prog-step"       onclick="goTo(1)">② Translation</span>
+    <span class="prog-step"       onclick="goTo(2)">③ Mutations</span>
+    <span class="prog-step"       onclick="goTo(3)">④ Build-a-Protein Lab</span>
+    <span class="prog-step"       onclick="goTo(4)">⑤ Mutation Lab</span>
+    <span class="prog-step"       onclick="goTo(5)">⑥ Quiz</span>
+    <span class="prog-step"       onclick="goTo(6)">⑦ Reflect</span>
+    <span class="prog-step"       onclick="goTo(7)">📤 Submit</span>
+  </div>
+</div>
+
+<!-- ═══════════ SHEET ═══════════ -->
+<div class="sheet">
+
+<!-- ═══ SECTION 0: WONDER ═══ -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-coral">1</div>
+    <span class="eyebrow-label">Phase 1 · Wonder</span>
+  </div>
+  <h2>🔬 From Code to Protein — and What Goes Wrong</h2>
+  <p class="lead">
+    You've mastered how DNA becomes mRNA. Now the real action begins: <strong>translation</strong> turns that mRNA into a protein, and <strong>mutations</strong> explain why sometimes the protein comes out wrong — with enormous consequences.
+  </p>
+
+  <div class="wonder-box">
+    <p>Sickle cell disease is caused by a <strong>single letter change</strong> in the DNA — one nucleotide swapped for another. That single change alters one amino acid in hemoglobin, and the result is a devastating disease. <strong>How can one tiny change in a 3-billion-letter code cause so much harm?</strong></p>
+  </div>
+
+  <div class="predict-box">
+    <h4>✏️ Your Prediction (before we dig in)</h4>
+    <textarea placeholder="Predict: if a single nucleotide in a gene is changed, what effect might this have on the final protein? Could it always be harmful? Could it sometimes be harmless — or even helpful?"></textarea>
+  </div>
+
+  <div class="wonder-box gold-box">
+    <p>Translation converts a series of <strong>codons</strong> (three-nucleotide mRNA sequences) into a chain of <strong>amino acids</strong>. The ribosome reads the codons, tRNAs bring the matching amino acids, and the chain grows until a <strong>stop codon</strong> signals the end. The result: a folded protein ready to work. If a mutation changes even one codon, the entire protein can be altered — or destroyed entirely.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.6rem;">🗝️ The Big Picture</h3>
+  <p style="font-size:.95rem;line-height:1.75;margin-bottom:1.8rem;">
+    <strong>Translation</strong> (10.3) happens at the <em>ribosome</em> in the cytoplasm. The ribosome reads mRNA three bases at a time (a <em>codon</em>), tRNA delivers the right amino acid, and a peptide bond locks it into the growing chain. <strong>Mutations</strong> (10.4) are changes to the DNA sequence — they can be point mutations (substitutions) or insertion/deletion mutations that shift the entire reading frame.
+  </p>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" disabled>← Back</button>
+    <button class="btn btn-coral" onclick="goTo(1)">Next: Translation →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 1: TRANSLATION CONCEPTS (10.3) ═══ -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-lav">2</div>
+    <span class="eyebrow-label">Phase 2 · 10.3 Translation</span>
+  </div>
+  <h2>📖 Translation — Core Vocabulary</h2>
+  <p class="lead">Tap each term to reveal its definition and packet connection (Q21–39). You must know these cold — the AP exam will test vocabulary <strong>and</strong> application.</p>
+
+  <div class="chip-row">
+    <span class="chip coral"  onclick="reveal('translation')">Translation</span>
+    <span class="chip forest" onclick="reveal('ribosome')">Ribosome</span>
+    <span class="chip mint"   onclick="reveal('start')">Start Codon</span>
+    <span class="chip gold"   onclick="reveal('stop')">Stop Codon</span>
+    <span class="chip lav"    onclick="reveal('anticodon')">Anticodon</span>
+    <span class="chip coral"  onclick="reveal('peptide')">Peptide Bond</span>
+    <span class="chip forest" onclick="reveal('polypeptide')">Polypeptide</span>
+    <span class="chip mint"   onclick="reveal('trna2')">tRNA Role</span>
+    <span class="chip gold"   onclick="reveal('steps3')">3 Steps of Translation</span>
+    <span class="chip lav"    onclick="reveal('genetic-code')">Genetic Code</span>
+  </div>
+
+  <div id="rev-translation"  class="concept-reveal coral">
+    <strong>Translation</strong> — The process of decoding an mRNA sequence into a chain of amino acids (a polypeptide). It occurs at the <em>ribosome</em> in the cytoplasm. Translation reads mRNA codons (three nucleotides at a time) and uses tRNA to deliver the matching amino acid. <em>Q21, Q22.</em>
+  </div>
+  <div id="rev-ribosome"     class="concept-reveal forest-border">
+    <strong>Ribosome</strong> — The molecular machine that carries out translation. Made of <em>rRNA + proteins</em>. It has two subunits (large and small) that clamp around the mRNA. The ribosome holds the mRNA and tRNA in place and <strong>catalyzes peptide bond formation</strong> between amino acids. <em>Q23, Q28.</em>
+  </div>
+  <div id="rev-start"        class="concept-reveal mint-border">
+    <strong>Start Codon (AUG)</strong> — The codon that signals the beginning of translation. <strong>AUG always codes for methionine (Met)</strong> and serves as the initiation signal. Every protein begins with methionine (though it's sometimes removed later). Without a start codon, the ribosome cannot begin. <em>Q24, Q25.</em>
+  </div>
+  <div id="rev-stop"         class="concept-reveal gold-border">
+    <strong>Stop Codons (UAA, UAG, UGA)</strong> — Three codons that signal the end of translation. They do <strong>not</strong> code for any amino acid — instead, when the ribosome reads one, it releases the finished polypeptide chain. There are three stop codons: <strong>UAA, UAG, UGA</strong>. <em>Q26, Q27.</em>
+  </div>
+  <div id="rev-anticodon"    class="concept-reveal lav-border">
+    <strong>Anticodon</strong> — The three-nucleotide sequence on a tRNA molecule that is <em>complementary and antiparallel</em> to a specific mRNA codon. The anticodon ensures the correct amino acid is delivered during translation. Example: if mRNA codon = AUG, the anticodon on tRNA = UAC. <em>Q29, Q30.</em>
+  </div>
+  <div id="rev-peptide"      class="concept-reveal coral">
+    <strong>Peptide Bond</strong> — The covalent bond that links two amino acids together. The ribosome (specifically, the rRNA component) catalyzes the formation of peptide bonds as the polypeptide chain grows. Each new amino acid added extends the chain via a peptide bond. <em>Q31, Q32.</em>
+  </div>
+  <div id="rev-polypeptide"  class="concept-reveal forest-border">
+    <strong>Polypeptide</strong> — A chain of amino acids linked by peptide bonds. This is the direct product of translation. A polypeptide folds into a specific 3D shape to become a functional <em>protein</em>. The sequence of amino acids is determined by the mRNA codons. <em>Q33.</em>
+  </div>
+  <div id="rev-trna2"        class="concept-reveal mint-border">
+    <strong>tRNA (transfer RNA)</strong> — Acts as the "adapter" molecule in translation. Each tRNA carries one specific amino acid at one end, and its anticodon loop base-pairs with the matching mRNA codon. This match ensures the genetic code is faithfully translated — the right amino acid goes in the right place. <em>Q29, Q34.</em>
+  </div>
+  <div id="rev-steps3"       class="concept-reveal gold-border">
+    <strong>3 Steps of Translation</strong> — <em>Initiation</em>: ribosome assembles on mRNA at the start codon (AUG). <em>Elongation</em>: tRNAs deliver amino acids one by one; peptide bonds form; chain grows. <em>Termination</em>: ribosome reaches a stop codon; polypeptide is released. <em>Q35, Q36, Q37.</em>
+  </div>
+  <div id="rev-genetic-code" class="concept-reveal lav-border">
+    <strong>The Genetic Code</strong> — The complete set of rules relating mRNA codons to amino acids. It is <em>universal</em> (same in almost all living things), <em>redundant/degenerate</em> (multiple codons can code for the same amino acid), and <em>nearly unambiguous</em> (each codon specifies only one amino acid). <em>Q38, Q39.</em>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 The 3 Steps of Translation</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:1rem;">Q35–37 on your packet — know the name of each step, what happens, and the key molecules involved.</p>
+  <table class="vocab-table">
+    <tr><th>Step</th><th>What happens</th><th>Key signal / molecule</th></tr>
+    <tr><td>Initiation</td><td>Small ribosome subunit binds mRNA; tRNA with Met anticodon pairs with AUG start codon; large subunit joins</td><td>Start codon AUG · Met-tRNA</td></tr>
+    <tr><td>Elongation</td><td>tRNAs deliver amino acids matching each codon; ribosome catalyzes peptide bonds; ribosome moves 3 bases along mRNA</td><td>tRNA anticodons · rRNA peptidyl transferase</td></tr>
+    <tr><td>Termination</td><td>Ribosome reaches stop codon (UAA, UAG, or UGA); release factor binds; polypeptide is freed; ribosome dissociates</td><td>Stop codons UAA / UAG / UGA · release factor</td></tr>
+  </table>
+
+  <div class="divider"></div>
+
+  <!-- Matching game for Translation -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.4rem;">🎯 Quick Match — Translation Terms</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Tap a term, then tap its match. All five pairs are from your packet.</p>
+  <div class="match-grid" id="matchGrid">
+    <div class="match-item" data-pair="a" data-side="term" onclick="matchClick(this)">Start Codon</div>
+    <div class="match-item" data-pair="b" data-side="def"  onclick="matchClick(this)">UAA, UAG, UGA</div>
+    <div class="match-item" data-pair="c" data-side="term" onclick="matchClick(this)">Anticodon</div>
+    <div class="match-item" data-pair="d" data-side="def"  onclick="matchClick(this)">Links amino acids together</div>
+    <div class="match-item" data-pair="a" data-side="def"  onclick="matchClick(this)">AUG — codes for methionine</div>
+    <div class="match-item" data-pair="e" data-side="term" onclick="matchClick(this)">Polypeptide</div>
+    <div class="match-item" data-pair="b" data-side="term" onclick="matchClick(this)">Stop Codons</div>
+    <div class="match-item" data-pair="c" data-side="def"  onclick="matchClick(this)">Three-base sequence on tRNA that pairs with mRNA codon</div>
+    <div class="match-item" data-pair="d" data-side="term" onclick="matchClick(this)">Peptide Bond</div>
+    <div class="match-item" data-pair="e" data-side="def"  onclick="matchClick(this)">Chain of amino acids — direct product of translation</div>
+  </div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-ghost" onclick="resetMatch()">↺ Reset Match</button>
+    <span id="match-score" style="margin-left:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted);"></span>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(0)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(2)">Next: Mutations →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 2: MUTATIONS CONCEPTS (10.4) ═══ -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-gold">3</div>
+    <span class="eyebrow-label">Phase 3 · 10.4 Mutations</span>
+  </div>
+  <h2>⚠️ Mutations — When the Code Changes</h2>
+  <p class="lead">Tap each card to explore a mutation type. Your packet (Q40–50) tests both <strong>definitions</strong> and your ability to <strong>predict the effect</strong> of a given mutation on a protein.</p>
+
+  <div class="evidence-grid">
+    <div class="ev-card" onclick="showEvidence('pointsub')">
+      <div class="ev-icon">🔄</div>
+      <div class="ev-title">Point Mutation<br><small style="font-size:.7rem;">(Substitution)</small></div>
+      <div class="ev-sub">Q40 · Q41 · Q42</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('silent')">
+      <div class="ev-icon">🤫</div>
+      <div class="ev-title">Silent Mutation</div>
+      <div class="ev-sub">Q43</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('missense')">
+      <div class="ev-icon">🔀</div>
+      <div class="ev-title">Missense Mutation</div>
+      <div class="ev-sub">Q44 · Q47</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('nonsense')">
+      <div class="ev-icon">🛑</div>
+      <div class="ev-title">Nonsense Mutation</div>
+      <div class="ev-sub">Q45 · Q48</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('frameshift')">
+      <div class="ev-icon">📐</div>
+      <div class="ev-title">Frameshift<br><small style="font-size:.7rem;">(Ins / Del)</small></div>
+      <div class="ev-sub">Q46 · Q49 · Q50</div>
+    </div>
+  </div>
+
+  <div id="ev-pointsub" class="ev-panel">
+    <h4>🔄 Point Mutation (Substitution)</h4>
+    <p>A <strong>point mutation</strong> is a change in a single nucleotide in the DNA sequence. In a <strong>substitution</strong>, one base is replaced by a different base (e.g., A→G). Point mutations affect only the codon they occur in — the reading frame is preserved, so codons before and after are unchanged. The effect depends on how the new codon translates.</p>
+    <div class="example-box">📌 Q40: A point mutation changes a <strong>single nucleotide</strong> in the DNA sequence.<br>📌 Q41: The three types of point substitution mutations are: <strong>silent, missense, and nonsense</strong>.<br>📌 Q42: A substitution mutation <strong>replaces one base</strong> with another.</div>
+  </div>
+  <div id="ev-silent" class="ev-panel">
+    <h4>🤫 Silent Mutation</h4>
+    <p>A <strong>silent mutation</strong> is a nucleotide substitution that <strong>does not change the amino acid</strong> coded for — because of the redundancy of the genetic code (multiple codons can code for the same amino acid). The protein produced is <em>identical</em> to the original. Silent mutations have no effect on phenotype.</p>
+    <div class="example-box">📌 Q43: Example — CGA → CGG. Both code for <strong>Arginine (Arg)</strong>. No amino acid change → <strong>silent mutation</strong>.<br>📌 Why does this happen? The genetic code is <em>degenerate</em> — 64 codons code for only 20 amino acids, so many amino acids have multiple synonymous codons.</div>
+  </div>
+  <div id="ev-missense" class="ev-panel">
+    <h4>🔀 Missense Mutation</h4>
+    <p>A <strong>missense mutation</strong> is a substitution that changes the amino acid at that position in the protein. The protein is built with the <em>wrong amino acid</em>, which may alter the protein's shape, stability, or function — or it may have little effect if the substituted amino acid is chemically similar.</p>
+    <div class="example-box">📌 Q44: Example — GAG → GUG (in sickle cell disease). This changes <strong>glutamic acid → valine</strong> in hemoglobin — one amino acid swap that distorts red blood cells.<br>📌 Q47: A missense mutation can still produce a functional protein if the new amino acid is similar in properties to the original.</div>
+  </div>
+  <div id="ev-nonsense" class="ev-panel">
+    <h4>🛑 Nonsense Mutation</h4>
+    <p>A <strong>nonsense mutation</strong> is a substitution that converts a codon that coded for an amino acid into a <strong>premature stop codon</strong> (UAA, UAG, or UGA). Translation halts early, producing a shorter, usually <em>non-functional</em> protein. Nonsense mutations tend to be the most severe of the substitution types.</p>
+    <div class="example-box">📌 Q45: A nonsense mutation creates a <strong>premature stop codon</strong>, truncating the protein early.<br>📌 Q48: This usually results in a non-functional protein because an essential portion was never made.</div>
+  </div>
+  <div id="ev-frameshift" class="ev-panel">
+    <h4>📐 Frameshift Mutation (Insertion / Deletion)</h4>
+    <p>A <strong>frameshift mutation</strong> occurs when nucleotides are <strong>inserted</strong> or <strong>deleted</strong> from the DNA in a number that is not a multiple of three. This shifts the reading frame — all codons downstream of the mutation are now read differently, typically producing a completely different (and usually non-functional) amino acid sequence. Frameshifts are usually more damaging than point substitutions.</p>
+    <div class="example-box">📌 Q46: Insertion or deletion of nucleotides causes a <strong>frameshift</strong> — the entire downstream reading frame shifts.<br>📌 Q49: An insertion of <strong>one</strong> base shifts the reading frame; inserting <strong>three</strong> bases does NOT cause a frameshift (it just adds one amino acid).<br>📌 Q50: Frameshift mutations typically affect <strong>all amino acids downstream</strong> of the mutation site.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 Mutation Type Summary</h3>
+  <table class="vocab-table">
+    <tr><th>Mutation Type</th><th>What changes</th><th>Effect on protein</th><th>Example</th></tr>
+    <tr><td>Silent</td><td>1 nucleotide → same amino acid</td><td>No change — identical protein</td><td>CGA→CGG (both = Arg)</td></tr>
+    <tr><td>Missense</td><td>1 nucleotide → different amino acid</td><td>1 amino acid changed — may alter function</td><td>Sickle cell: GAG→GUG (Glu→Val)</td></tr>
+    <tr><td>Nonsense</td><td>1 nucleotide → premature stop codon</td><td>Protein truncated early — usually nonfunctional</td><td>UGG→UGA (Trp→Stop)</td></tr>
+    <tr><td>Frameshift (insertion)</td><td>Extra nucleotide(s) added</td><td>All downstream codons shifted — usually catastrophic</td><td>Insert 1 base; all codons after shift</td></tr>
+    <tr><td>Frameshift (deletion)</td><td>Nucleotide(s) removed</td><td>All downstream codons shifted — usually catastrophic</td><td>Delete 1 base; all codons after shift</td></tr>
+  </table>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(3)">Next: Build-a-Protein Lab →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 3: BUILD-A-PROTEIN LAB ═══ -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">4</div>
+    <span class="eyebrow-label">Phase 4 · Build-a-Protein Lab</span>
+  </div>
+  <h2>🏗️ Ribosome Simulator — Translate the mRNA</h2>
+  <p class="lead">
+    Below is an mRNA strand with a <span style="color:var(--mint);font-weight:800;">start codon (AUG)</span> and a <span style="color:var(--coral);font-weight:800;">stop codon</span>. Step the ribosome along, watch tRNAs deliver amino acids, and build the polypeptide chain. Connects directly to packet Q21–39.
+  </p>
+
+  <div class="predict-box">
+    <h4>✏️ Before you simulate — your prediction</h4>
+    <textarea id="sim-predict" placeholder="The mRNA sequence reads: 5' AUG-CCU-GAA-UUU-GGC-UAA 3'. Predict: how many amino acids will the final polypeptide contain, and why? (Hint: think about start and stop codons.)"></textarea>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🔬 mRNA Strand (5' → 3')</h3>
+    <div class="hint">Highlighted group = current ribosome position · <span style="color:var(--mint);font-weight:700;">Green = start codon AUG</span> · <span style="color:var(--coral);font-weight:700;">Coral = stop codon UAA</span></div>
+
+    <div class="mrna-track" id="mrnaTrack"></div>
+
+    <div class="sim-stat-row">
+      <div class="sim-stat"><div class="stat-val" id="stat-codon">—</div><div class="stat-lbl">Current Codon</div></div>
+      <div class="sim-stat"><div class="stat-val" id="stat-aa">—</div><div class="stat-lbl">Amino Acid Added</div></div>
+      <div class="sim-stat"><div class="stat-val" id="stat-plen">0</div><div class="stat-lbl">Chain Length</div></div>
+    </div>
+
+    <div class="ribosome-display" id="ribosomeDisplay">
+      🧩 Ribosome not yet assembled — click "Begin Initiation" to start.
+    </div>
+
+    <h3 style="margin-top:1.2rem;">🔗 Growing Polypeptide Chain</h3>
+    <div class="protein-chain" id="proteinChain">
+      <span style="color:var(--muted);font-size:.82rem;font-style:italic;">Amino acids will appear here as the ribosome translates each codon…</span>
+    </div>
+
+    <div class="action-row" style="margin-top:1rem;">
+      <button class="btn btn-mint"   id="btn-init"  onclick="initTranslation()">▶ Begin Initiation</button>
+      <button class="btn btn-coral"  id="btn-step"  onclick="stepTranslation()" disabled>⏩ Translate Next Codon</button>
+      <button class="btn btn-gold"   id="btn-all"   onclick="finishTranslation()" disabled>⏭ Complete Translation</button>
+      <button class="btn btn-ghost"              onclick="resetTranslation()">↺ Reset</button>
+    </div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — What did you observe?</h4>
+    <textarea placeholder="How many amino acids were added before the stop codon? Was Met (methionine) always first? What happened when the ribosome hit the stop codon? Connect this to Q24 (start codon), Q26–27 (stop codons), and Q35–37 (3 steps of translation)…"></textarea>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Codon Table Reference -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.5rem;">📚 Mini Codon Reference Table</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">These are the codons used in the simulator above and in your packet questions. Tap any cell to highlight it.</p>
+  <div class="codon-table" id="codonTable"></div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(4)">Next: Mutation Lab →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 4: MUTATION LAB ═══ -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-lav">5</div>
+    <span class="eyebrow-label">Phase 5 · Mutation Lab</span>
+  </div>
+  <h2>🧪 Mutate the Gene — See the Effect</h2>
+  <p class="lead">
+    Pick a mutation type and watch it happen to a real DNA/mRNA sequence. The lab shows you the <strong>original sequence</strong>, the <strong>mutated sequence</strong>, and the resulting <strong>amino acid change</strong> — connecting directly to Q40–50.
+  </p>
+
+  <div class="demo-zone">
+    <h3>🔬 Mutation Simulator</h3>
+    <div class="hint">Original mRNA (5'→3'): <strong>AUG · CCU · GAA · UGG · UAA</strong> → Met–Pro–Glu–Trp–[Stop]</div>
+
+    <p style="font-size:.88rem;margin-bottom:1rem;line-height:1.6;color:#3a4a5a;">Select a mutation type below to apply it to the sequence. Observe how each mutation affects the codons and the resulting protein.</p>
+
+    <div class="sel-grid" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr));">
+      <div class="sel-card" onclick="applyMutation('silent')">
+        <div class="sel-icon">🤫</div>
+        <div class="sel-name">Silent</div>
+        <div class="sel-key">no effect</div>
+      </div>
+      <div class="sel-card" onclick="applyMutation('missense')">
+        <div class="sel-icon">🔀</div>
+        <div class="sel-name">Missense</div>
+        <div class="sel-key">wrong amino acid</div>
+      </div>
+      <div class="sel-card" onclick="applyMutation('nonsense')">
+        <div class="sel-icon">🛑</div>
+        <div class="sel-name">Nonsense</div>
+        <div class="sel-key">early stop</div>
+      </div>
+      <div class="sel-card" onclick="applyMutation('insertion')">
+        <div class="sel-icon">➕</div>
+        <div class="sel-name">Insertion</div>
+        <div class="sel-key">frameshift</div>
+      </div>
+      <div class="sel-card" onclick="applyMutation('deletion')">
+        <div class="sel-icon">➖</div>
+        <div class="sel-name">Deletion</div>
+        <div class="sel-key">frameshift</div>
+      </div>
+    </div>
+
+    <!-- Original sequence display -->
+    <p style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--muted);margin-bottom:.3rem;margin-top:.5rem;">ORIGINAL mRNA (5'→3'):</p>
+    <div class="mut-sequence" id="origSeq"></div>
+
+    <!-- Mutated sequence display -->
+    <p style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--muted);margin-bottom:.3rem;margin-top:.8rem;">MUTATED mRNA (5'→3'):</p>
+    <div class="mut-sequence" id="mutSeq"></div>
+
+    <!-- Side-by-side results -->
+    <div class="mut-result-row" id="mutResultRow" style="display:none;">
+      <div class="mut-result-box mut-box-original">
+        <h4>Original Protein</h4>
+        <p id="origProtein">—</p>
+      </div>
+      <div class="mut-result-box mut-box-mutated">
+        <h4>Mutated Protein</h4>
+        <p id="mutProtein">—</p>
+      </div>
+      <div class="mut-result-box mut-box-effect">
+        <h4>Effect &amp; Packet Connection</h4>
+        <p id="mutEffect">—</p>
+      </div>
+    </div>
+
+    <div style="margin-top:.8rem;">
+      <button class="btn btn-ghost" onclick="resetMutation()">↺ Reset to Original</button>
+    </div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Mutations in Context</h4>
+    <textarea placeholder="Which mutation type caused the most damage to the protein? Which caused the least? Why might a frameshift be more harmful than a single substitution? Connect to Q41–50 from your packet…"></textarea>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(3)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(5)">Next: Quiz →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 5: QUIZ ═══ -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-forest">6</div>
+    <span class="eyebrow-label">Phase 6 · Real Test Practice</span>
+  </div>
+  <h2>📝 Packet Quiz — Sections 10.3 &amp; 10.4</h2>
+  <p class="lead">These questions come <strong>directly from your Unit 10 Packet (Q21–50)</strong>. Answer each — you'll get immediate feedback with the packet answer explained.</p>
+
+  <div id="quiz-container"></div>
+
+  <div id="score-panel" class="score-panel" style="display:none;">
+    <h3>Quiz Complete! 🎉</h3>
+    <div class="score-num" id="score-display">0/20</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-gold" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(4)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(6)">Next: Reflect →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 6: REFLECT ═══ -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">7</div>
+    <span class="eyebrow-label">Phase 7 · Reflect</span>
+  </div>
+  <h2>💭 Reflection &amp; Review</h2>
+  <p class="lead">Solidify your learning. Answer all five reflection questions in your own words — this is the most powerful AP exam study technique.</p>
+
+  <div class="quiz-card">
+    <div class="quiz-q">1. Describe the three steps of translation (initiation, elongation, termination). For each step, name the key molecules involved and what happens. (Q35–37)</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:90px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">2. Explain the roles of the start codon and stop codons in translation. What would happen if a mutation destroyed the start codon? What if it created a premature stop codon? (Q24–27)</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:90px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">3. Compare silent, missense, nonsense, and frameshift mutations. Which is usually most harmful and why? Give a real-world example of a missense mutation and its consequence. (Q41–50)</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:90px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">4. The genetic code is described as "redundant" (or degenerate). What does this mean, and how does it relate to silent mutations? Why is this redundancy actually beneficial for living organisms? (Q38–39, Q43)</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:90px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">5. An mRNA reads: 5' AUG-GCU-UAC-UGA-AAA 3'. (a) How many amino acids will be in the final polypeptide? (b) What happens to the AAA codon after UGA? (c) If the UAC codon mutated to UAA, what type of mutation would that be and what would happen?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:90px;background:white;outline:none;resize:vertical;" placeholder="Write your answer… (a) (b) (c)"></textarea>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.8rem;">✏️ Fill-in-the-Blank Review (from your packet)</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1.2rem;">Type the answer and press Enter or click Check All.</p>
+  <div id="fill-container"></div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-mint" onclick="checkAllFills()">✓ Check All Answers</button>
+    <button class="btn btn-ghost" onclick="resetFills()" style="margin-left:.6rem;">↺ Reset</button>
+  </div>
+
+  <div class="congrats-panel" style="margin-top:2rem;">
+    <h2>🔬 Translation &amp; Mutations Mastered!</h2>
+    <p>You've worked through all of 10.3 (Translation) and 10.4 (Mutations) — Q21–50 from your packet — simulated a ribosome, mutated a gene, and reflected on the consequences. The entire central dogma is now in your hands.</p>
+    <p style="font-size:.85rem;opacity:.75;">AP Bio exam tip: expect FRQ questions that give you an mRNA and ask you to predict the effect of a specific mutation. Use what you practiced here.</p>
+    <div class="summary-chips">
+      <span class="summary-chip">Translation ✓</span>
+      <span class="summary-chip">Ribosome ✓</span>
+      <span class="summary-chip">Start Codon AUG ✓</span>
+      <span class="summary-chip">Stop Codons ✓</span>
+      <span class="summary-chip">Anticodon ✓</span>
+      <span class="summary-chip">Peptide Bond ✓</span>
+      <span class="summary-chip">Silent Mutation ✓</span>
+      <span class="summary-chip">Missense Mutation ✓</span>
+      <span class="summary-chip">Nonsense Mutation ✓</span>
+      <span class="summary-chip">Frameshift ✓</span>
+    </div>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(5)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(7)">Next: Submit →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 7: SUBMIT ═══ -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">8</div>
+    <span class="eyebrow-label">Your Completed Work</span>
+  </div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Here's a summary of everything you worked on. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> to your teacher.</p>
+
+  <div class="summary-section" style="background:var(--forest);color:white;border-color:var(--forest);">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">STUDENT</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">LESSON</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;">Translation &amp; Mutations Explorer 🔬</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6;" id="summaryDate"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section">
+    <h3>📝 Quiz Score</h3>
+    <div class="summary-answer" id="sum-quiz"></div>
+  </div>
+
+  <div class="summary-section">
+    <h3>🤔 Section 1 — Opening Prediction</h3>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;">YOUR PREDICTION (one nucleotide change)</div>
+    <div class="summary-answer" id="sum-pred"></div>
+  </div>
+
+  <div class="summary-section">
+    <h3>🏗️ Section 4 — Ribosome Lab Prediction</h3>
+    <div class="summary-answer" id="sum-sim-pred"></div>
+  </div>
+
+  <div class="summary-section">
+    <h3>💭 Section 7 — Reflection Questions</h3>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;">Q1 — Three Steps of Translation</div>
+    <div class="summary-answer" id="sum-r1"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q2 — Start Codon &amp; Stop Codons</div>
+    <div class="summary-answer" id="sum-r2"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q3 — Comparing Mutation Types</div>
+    <div class="summary-answer" id="sum-r3"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q4 — Redundancy of the Genetic Code</div>
+    <div class="summary-answer" id="sum-r4"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q5 — Applied mRNA Analysis</div>
+    <div class="summary-answer" id="sum-r5"></div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.6rem;">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2;">
+      <strong>📋 Copy My Results</strong> — Copies all answers to clipboard. Open Google Classroom, paste into the comment box, and submit.<br>
+      <strong>📧 Email to Teacher</strong> — Opens your email app with answers pre-filled. Add teacher address and send.<br>
+      <strong>🖨️ Print / Save PDF</strong> — Mac: bottom-left dropdown → Save as PDF. Windows: Microsoft Print to PDF. Upload to assignment.
+    </p>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(6)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(0)">↺ Start Over</button>
+  </div>
+</div>
+
+</div><!-- /sheet -->
+
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+<script>
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+const steps    = document.querySelectorAll('.prog-step');
+const sections = document.querySelectorAll('.section');
+
+function goTo(n) {
+  sections.forEach((s, i) => s.classList.toggle('active', i === n));
+  steps.forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    if (i === n) s.classList.add('active');
+    if (i < n)  s.classList.add('done');
+  });
+  if (n === 7) buildSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════════════
+// CONCEPT REVEALS (Section 1)
+// ═══════════════════════════════════════════════
+const revealIds = [
+  'translation','ribosome','start','stop','anticodon',
+  'peptide','polypeptide','trna2','steps3','genetic-code'
+];
+function reveal(key) {
+  revealIds.forEach(id => {
+    const el = document.getElementById('rev-' + id);
+    if (el) el.classList.remove('show');
+  });
+  const t = document.getElementById('rev-' + key);
+  if (t) t.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// EVIDENCE CARDS (Section 2 — mutation types)
+// ═══════════════════════════════════════════════
+function showEvidence(type) {
+  document.querySelectorAll('.ev-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.ev-panel').forEach(p => p.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const panel = document.getElementById('ev-' + type);
+  if (panel) panel.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// MATCHING GAME (Section 1)
+// ═══════════════════════════════════════════════
+let matchSelected = null;
+let matchScore = 0;
+
+function matchClick(el) {
+  if (el.classList.contains('matched')) return;
+  if (!matchSelected) {
+    el.classList.add('selected');
+    matchSelected = el;
+  } else if (matchSelected === el) {
+    el.classList.remove('selected');
+    matchSelected = null;
+  } else {
+    const pA = matchSelected.dataset.pair, pB = el.dataset.pair;
+    const sA = matchSelected.dataset.side, sB = el.dataset.side;
+    if (pA === pB && sA !== sB) {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('matched');
+      el.classList.add('matched');
+      matchScore++;
+      document.getElementById('match-score').textContent = matchScore + '/5 matched';
+      matchSelected = null;
+    } else {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('wrong');
+      el.classList.add('wrong');
+      const a = matchSelected, b = el;
+      setTimeout(() => { a.classList.remove('wrong'); b.classList.remove('wrong'); }, 650);
+      matchSelected = null;
+    }
+  }
+}
+
+function resetMatch() {
+  matchSelected = null; matchScore = 0;
+  document.querySelectorAll('.match-item').forEach(el =>
+    el.classList.remove('selected','matched','wrong'));
+  document.getElementById('match-score').textContent = '';
+}
+
+// ═══════════════════════════════════════════════
+// CODON TABLE (Section 3 reference)
+// ═══════════════════════════════════════════════
+const codonData = [
+  { cod:'AUG', aa:'Met (Start)', type:'start' },
+  { cod:'CCU', aa:'Pro',  type:'normal' },
+  { cod:'GAA', aa:'Glu',  type:'normal' },
+  { cod:'UUU', aa:'Phe',  type:'normal' },
+  { cod:'GGC', aa:'Gly',  type:'normal' },
+  { cod:'UAA', aa:'Stop', type:'stop'   },
+  { cod:'UAG', aa:'Stop', type:'stop'   },
+  { cod:'UGA', aa:'Stop', type:'stop'   },
+  { cod:'GCU', aa:'Ala',  type:'normal' },
+  { cod:'UAC', aa:'Tyr',  type:'normal' },
+  { cod:'UGG', aa:'Trp',  type:'normal' },
+  { cod:'CGG', aa:'Arg',  type:'normal' },
+  { cod:'CGA', aa:'Arg',  type:'normal' },
+  { cod:'GUG', aa:'Val',  type:'normal' },
+  { cod:'AAA', aa:'Lys',  type:'normal' },
+  { cod:'UUC', aa:'Phe',  type:'normal' },
+];
+
+function buildCodonTable() {
+  const ct = document.getElementById('codonTable');
+  if (!ct) return;
+  ct.innerHTML = codonData.map(c => `
+    <div class="codon-cell ${c.type === 'start' ? 'start-codon' : c.type === 'stop' ? 'stop-codon' : ''}"
+         onclick="this.classList.toggle('highlighted')">
+      <div class="codon-cod">${c.cod}</div>
+      <div class="codon-aa">${c.aa}</div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════
+// TRANSLATION / RIBOSOME SIMULATOR (Section 3)
+// ═══════════════════════════════════════════════
+// mRNA: 5' AUG-CCU-GAA-UUU-GGC-UAA 3'
+const mrnaBases = 'AUGCCUGAAUUUGGCUAA'.split('');
+const codonLookup = {
+  'AUG':'Met', 'CCU':'Pro', 'GAA':'Glu',
+  'UUU':'Phe', 'GGC':'Gly', 'UAA':'STOP',
+  'UAG':'STOP', 'UGA':'STOP'
+};
+const aaColors = [
+  '#e8603c','#3aaf85','#7c6fcd','#c9962a','#2d6a4f',
+  '#e84c6b','#1a7a8a','#8a5a1a','#5a3aaf'
+];
+
+let transPos = 0;   // index into mrnaBases (increments by 3)
+let transActive = false;
+let proteinAminos = [];
+
+function baseClass(b) {
+  return { A:'bA', U:'bU', C:'bC', G:'bG' }[b] || '';
+}
+
+function renderMrnaTrack() {
+  const track = document.getElementById('mrnaTrack');
+  if (!track) return;
+  track.innerHTML = mrnaBases.map((b, i) => {
+    const ci = Math.floor(i / 3);    // codon index
+    const cp = i % 3;                // position within codon
+    const isReading = transActive && i >= transPos && i < transPos + 3;
+    const isStart = ci === 0;
+    const isStop  = ci === 5;
+    let style = '';
+    if (isStart) style = 'border-color:var(--mint);box-shadow:0 0 0 2px var(--mint);';
+    if (isStop)  style = 'border-color:var(--coral);box-shadow:0 0 0 2px var(--coral);';
+    if (isReading) style += 'box-shadow:0 0 0 3px var(--gold);transform:scale(1.12);';
+    const borderR = cp === 0 ? 'border-radius:6px 0 0 6px;' :
+                    cp === 2 ? 'border-radius:0 6px 6px 0;' : 'border-radius:0;border-left:none;';
+    return `<div class="mrna-base ${baseClass(b)}" style="${style}${borderR}">${b}</div>`;
+  }).join('');
+}
+
+function renderProteinChain() {
+  const chain = document.getElementById('proteinChain');
+  if (!chain) return;
+  if (proteinAminos.length === 0) {
+    chain.innerHTML = '<span style="color:var(--muted);font-size:.82rem;font-style:italic;">Amino acids will appear here…</span>';
+    return;
+  }
+  chain.innerHTML = proteinAminos.map((aa, i) => {
+    const col = aaColors[i % aaColors.length];
+    return `<span class="aa-bead" style="background:${col};">${aa}</span>`;
+  }).join('<span style="color:var(--muted);font-size:.8rem;margin:0 1px;">—</span>');
+}
+
+function updateSimStats(codon, aa) {
+  const sc = document.getElementById('stat-codon');
+  const sa = document.getElementById('stat-aa');
+  const sl = document.getElementById('stat-plen');
+  if (sc) sc.textContent = codon || '—';
+  if (sa) sa.textContent = aa || '—';
+  if (sl) sl.textContent = proteinAminos.length;
+}
+
+function setRiboDisplay(msg) {
+  const rd = document.getElementById('ribosomeDisplay');
+  if (rd) rd.innerHTML = msg;
+}
+
+function initTranslation() {
+  transActive = true;
+  transPos = 0;
+  proteinAminos = [];
+  document.getElementById('btn-init').disabled = true;
+  document.getElementById('btn-step').disabled = false;
+  document.getElementById('btn-all').disabled  = false;
+  renderMrnaTrack();
+  renderProteinChain();
+  updateSimStats('—', '—');
+  setRiboDisplay('🧩 <strong>Initiation:</strong> Small ribosomal subunit scans mRNA and finds AUG. tRNA carrying Met pairs with AUG anticodon. Large subunit joins. Ready to elongate.');
+}
+
+function stepTranslation() {
+  if (transPos >= mrnaBases.length) return;
+  const codon = mrnaBases.slice(transPos, transPos + 3).join('');
+  const aa = codonLookup[codon] || '?';
+
+  renderMrnaTrack();
+
+  if (aa === 'STOP') {
+    setRiboDisplay(`🛑 <strong>Termination:</strong> Stop codon <strong>${codon}</strong> reached. No tRNA matches — release factor enters. Polypeptide is released. Ribosome dissociates.`);
+    updateSimStats(codon, 'STOP — chain released');
+    document.getElementById('btn-step').disabled = true;
+    document.getElementById('btn-all').disabled  = true;
+    transPos += 3;
+    renderMrnaTrack();
+    renderProteinChain();
+    return;
+  }
+
+  proteinAminos.push(aa);
+  const anticodon = codon.split('').map(b => ({A:'U',U:'A',C:'G',G:'C'}[b])).join('');
+  setRiboDisplay(`⏩ <strong>Elongation:</strong> Codon <strong>${codon}</strong> → tRNA anticodon <strong>${anticodon}</strong> delivers <strong>${aa}</strong>. Peptide bond formed. Ribosome advances 3 bases.`);
+  updateSimStats(codon, aa);
+  transPos += 3;
+  renderMrnaTrack();
+  renderProteinChain();
+
+  if (transPos >= mrnaBases.length) {
+    document.getElementById('btn-step').disabled = true;
+    document.getElementById('btn-all').disabled  = true;
+  }
+}
+
+function finishTranslation() {
+  while (transPos < mrnaBases.length) {
+    const codon = mrnaBases.slice(transPos, transPos + 3).join('');
+    const aa = codonLookup[codon] || '?';
+    if (aa === 'STOP') { transPos += 3; break; }
+    proteinAminos.push(aa);
+    transPos += 3;
+  }
+  renderMrnaTrack();
+  renderProteinChain();
+  const lastCodon = mrnaBases.slice(transPos - 3, transPos).join('');
+  setRiboDisplay('🛑 <strong>Termination:</strong> Stop codon reached. Polypeptide chain released. Ribosome dissociates from mRNA.');
+  updateSimStats(lastCodon, 'STOP — translation complete');
+  document.getElementById('btn-step').disabled = true;
+  document.getElementById('btn-all').disabled  = true;
+}
+
+function resetTranslation() {
+  transActive = false;
+  transPos = 0;
+  proteinAminos = [];
+  document.getElementById('btn-init').disabled = false;
+  document.getElementById('btn-step').disabled = true;
+  document.getElementById('btn-all').disabled  = true;
+  renderMrnaTrack();
+  renderProteinChain();
+  updateSimStats('—', '—');
+  setRiboDisplay('🧩 Ribosome not yet assembled — click "Begin Initiation" to start.');
+}
+
+// ═══════════════════════════════════════════════
+// MUTATION LAB (Section 4)
+// ═══════════════════════════════════════════════
+// Original mRNA: AUG · CCU · GAA · UGG · UAA
+// Protein:       Met–Pro–Glu–Trp–[Stop]
+const origMrnaBases = 'AUGCCUGAAUGG'.split(''); // coding only (stop = UAA follows)
+const origStopBases = 'UAA'.split('');
+
+const mutationDefs = {
+  silent: {
+    label: 'Silent Mutation',
+    changedIdx: 9,      // position in coding region (0-indexed): GAA → GAG (still Glu)
+    newBase: 'G',
+    mrnaFull: 'AUGCCUGAAGGG',  // wait — let's keep it simpler
+    // CCU→CCC (Pro→Pro, silent at position 4)
+    changedPos: 4,
+    origBase: 'U',
+    mutBase: 'C',
+    origProtein: 'Met – Pro – Glu – Trp – [Stop]',
+    mutProtein:  'Met – Pro – Glu – Trp – [Stop]',
+    effect: 'Q43: CCU→CCC — both code for Proline. The amino acid sequence is UNCHANGED. This is a SILENT mutation. No effect on the protein.',
+  },
+  missense: {
+    changedPos: 6,  // GAA→GUA (Glu→Val), position 6 (0-based in full mRNA)
+    origBase: 'A',
+    mutBase: 'U',
+    origProtein: 'Met – Pro – Glu – Trp – [Stop]',
+    mutProtein:  'Met – Pro – Val – Trp – [Stop]',
+    effect: 'Q44/Q47: GAA→GUA — Glutamic acid (Glu) changed to Valine (Val). This is a MISSENSE mutation. Similar to sickle cell disease — one wrong amino acid can alter protein folding and function.',
+  },
+  nonsense: {
+    changedPos: 9,  // UGG→UAG (Trp→Stop)
+    origBase: 'G',
+    mutBase: 'A',
+    origProtein: 'Met – Pro – Glu – Trp – [Stop]',
+    mutProtein:  'Met – Pro – Glu – [PREMATURE STOP] ← Trp never added!',
+    effect: 'Q45/Q48: UGG→UAG — Tryptophan codon becomes a STOP codon. This is a NONSENSE mutation. Translation halts early. The last amino acid (Trp) is never added → truncated, usually non-functional protein.',
+  },
+  insertion: {
+    insertPos: 6,   // insert 'C' before position 6 (inside GAA codon)
+    origProtein: 'Met – Pro – Glu – Trp – [Stop]',
+    mutProtein:  'Met – Pro – [FRAMESHIFT: all downstream codons scrambled]',
+    effect: 'Q46/Q49/Q50: Inserting ONE nucleotide causes a FRAMESHIFT. Every codon downstream of the insertion is now read in the wrong frame → completely different (usually garbled) amino acid sequence. Usually catastrophic.',
+  },
+  deletion: {
+    deletePos: 6,   // delete position 6 (first base of GAA)
+    origProtein: 'Met – Pro – Glu – Trp – [Stop]',
+    mutProtein:  'Met – Pro – [FRAMESHIFT: all downstream codons scrambled]',
+    effect: 'Q46/Q49/Q50: Deleting ONE nucleotide causes a FRAMESHIFT. Every codon downstream of the deletion is shifted → different reading frame → scrambled amino acid sequence. The original stop codon may also be lost. Usually catastrophic.',
+  },
+};
+
+const fullOrigMrna = 'AUGCCUGAAUGGUAA'.split(''); // AUG-CCU-GAA-UGG-UAA
+
+function renderOrigSeq(highlightPos, hlClass) {
+  const cont = document.getElementById('origSeq');
+  if (!cont) return;
+  cont.innerHTML = fullOrigMrna.map((b, i) => {
+    const isHL = (i === highlightPos);
+    return `<div class="mut-base ${isHL ? hlClass || 'changed' : 'normal'}">${b}</div>`;
+  }).join('');
+}
+
+function renderMutSeq(mutBases, changedIndices, mutClass) {
+  const cont = document.getElementById('mutSeq');
+  if (!cont) return;
+  cont.innerHTML = mutBases.map((b, i) => {
+    const isMut = changedIndices.includes(i);
+    return `<div class="mut-base ${isMut ? mutClass || 'changed' : 'normal'}">${b}</div>`;
+  }).join('');
+}
+
+function applyMutation(type) {
+  // highlight selected card
+  document.querySelectorAll('#sec-4 .sel-card').forEach(c => c.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+
+  document.getElementById('mutResultRow').style.display = 'flex';
+  renderOrigSeq();  // clean original first
+
+  const d = mutationDefs[type];
+
+  if (type === 'silent') {
+    // CCU→CCC: change position 4 (U→C)
+    renderOrigSeq(4, 'normal');
+    const mut = [...fullOrigMrna];
+    mut[4] = 'C';
+    renderMutSeq(mut, [4], 'changed');
+    document.getElementById('origProtein').textContent = d.origProtein;
+    document.getElementById('mutProtein').textContent  = d.mutProtein;
+    document.getElementById('mutEffect').textContent   = d.effect;
+  } else if (type === 'missense') {
+    // GAA→GUA: change position 7 (A→U)
+    renderOrigSeq(7, 'normal');
+    const mut = [...fullOrigMrna];
+    mut[7] = 'U';
+    renderMutSeq(mut, [7], 'changed');
+    document.getElementById('origProtein').textContent = d.origProtein;
+    document.getElementById('mutProtein').textContent  = d.mutProtein;
+    document.getElementById('mutEffect').textContent   = d.effect;
+  } else if (type === 'nonsense') {
+    // UGG→UAG: change position 10 (G→A)
+    renderOrigSeq(10, 'normal');
+    const mut = [...fullOrigMrna];
+    mut[10] = 'A';
+    renderMutSeq(mut, [10], 'changed');
+    document.getElementById('origProtein').textContent = d.origProtein;
+    document.getElementById('mutProtein').textContent  = d.mutProtein;
+    document.getElementById('mutEffect').textContent   = d.effect;
+  } else if (type === 'insertion') {
+    // insert 'C' at position 6 (between CCU and GAA)
+    renderOrigSeq(6, 'normal');
+    const mut = [...fullOrigMrna.slice(0, 6), 'C', ...fullOrigMrna.slice(6)];
+    renderMutSeq(mut, [6], 'inserted');
+    document.getElementById('origProtein').textContent = d.origProtein;
+    document.getElementById('mutProtein').textContent  = d.mutProtein;
+    document.getElementById('mutEffect').textContent   = d.effect;
+  } else if (type === 'deletion') {
+    // delete position 6
+    renderOrigSeq(6, 'normal');
+    const mut = [...fullOrigMrna.slice(0, 6), ...fullOrigMrna.slice(7)];
+    // show deletion with strikethrough placeholder
+    const mutWithDel = [...fullOrigMrna];
+    mutWithDel[6] = '✕';
+    const contDel = document.getElementById('mutSeq');
+    if (contDel) {
+      contDel.innerHTML = fullOrigMrna.map((b, i) => {
+        if (i === 6) return `<div class="mut-base deleted">✕</div>`;
+        return `<div class="mut-base normal">${b}</div>`;
+      }).join('') + '<div class="mut-base" style="background:var(--lav-pale);border-color:var(--lavender);color:var(--lavender);font-size:.65rem;padding:.2rem;">⬅ shifted</div>';
+    }
+    document.getElementById('origProtein').textContent = d.origProtein;
+    document.getElementById('mutProtein').textContent  = d.mutProtein;
+    document.getElementById('mutEffect').textContent   = d.effect;
+  }
+}
+
+function resetMutation() {
+  document.querySelectorAll('#sec-4 .sel-card').forEach(c => c.classList.remove('active'));
+  renderOrigSeq();
+  const cont = document.getElementById('mutSeq');
+  if (cont) cont.innerHTML = '';
+  document.getElementById('mutResultRow').style.display = 'none';
+  document.getElementById('origProtein').textContent = '—';
+  document.getElementById('mutProtein').textContent  = '—';
+  document.getElementById('mutEffect').textContent   = '—';
+}
+
+// ═══════════════════════════════════════════════
+// QUIZ DATA — Q21–50 (Translation & Mutations)
+// ═══════════════════════════════════════════════
+const quizData = [
+  {
+    q: "Q21 — Translation is best defined as:",
+    opts: ["DNA replication in the nucleus","The process of converting mRNA codons into a chain of amino acids (a polypeptide)","Copying DNA into mRNA","Folding a protein into its 3D shape"],
+    ans: 1,
+    fb: "Translation = mRNA → polypeptide. It happens at the ribosome in the cytoplasm and reads codons three nucleotides at a time."
+  },
+  {
+    q: "Q22 — Where does translation take place in the cell?",
+    opts: ["Nucleus","Mitochondria","Ribosome (in the cytoplasm)","Golgi apparatus"],
+    ans: 2,
+    fb: "Translation occurs at ribosomes in the cytoplasm (free-floating or on the rough ER). Ribosomes are the molecular machines that read mRNA and build polypeptides."
+  },
+  {
+    q: "Q23 — What is the ribosome made of?",
+    opts: ["Only proteins","Only DNA","rRNA and proteins","mRNA and tRNA"],
+    ans: 2,
+    fb: "Ribosomes are composed of ribosomal RNA (rRNA) and proteins. The rRNA component actually catalyzes peptide bond formation between amino acids — it is a ribozyme."
+  },
+  {
+    q: "Q24 — What is the start codon, and what amino acid does it always code for?",
+    opts: ["UAG — codes for Stop","AUG — codes for Methionine (Met)","UGA — codes for Serine","UAA — codes for Glutamine"],
+    ans: 1,
+    fb: "AUG is the universal start codon. It always codes for methionine (Met) and signals the ribosome to begin translation. Every protein starts with Met (though it may be removed later)."
+  },
+  {
+    q: "Q25 — Without a start codon, what happens to translation?",
+    opts: ["It starts at the first codon anyway","The ribosome skips it and continues","Translation cannot begin — the ribosome cannot initiate","A stop codon substitutes"],
+    ans: 2,
+    fb: "The start codon AUG is essential for ribosome assembly and initiation. Without it, translation cannot begin — the ribosomal machinery has no recognized signal to assemble on the mRNA."
+  },
+  {
+    q: "Q26 — Which of the following are the three stop codons?",
+    opts: ["AUG, UAG, UGA","UAA, UAG, UGA","UAA, AUG, UGA","UAA, UAC, UAG"],
+    ans: 1,
+    fb: "The three stop codons are UAA, UAG, and UGA. None code for an amino acid — they signal the ribosome to release the finished polypeptide and disassemble."
+  },
+  {
+    q: "Q27 — When the ribosome reaches a stop codon during translation, what happens?",
+    opts: ["It pauses briefly and then continues","A new amino acid is added","A release factor binds, the polypeptide is released, and the ribosome dissociates","tRNA brings a special 'stop' amino acid"],
+    ans: 2,
+    fb: "Stop codons don't match any tRNA anticodon. Instead, a release factor protein binds, causing the polypeptide to detach and the ribosome subunits to separate from the mRNA."
+  },
+  {
+    q: "Q28 — What is the function of the ribosome during translation?",
+    opts: ["To transcribe DNA into mRNA","To hold mRNA and tRNA in position and catalyze peptide bond formation between amino acids","To degrade mRNA after translation","To replicate the DNA template"],
+    ans: 1,
+    fb: "The ribosome positions the mRNA and tRNAs correctly, and its rRNA component (acting as a ribozyme) catalyzes the peptide bond that links each new amino acid to the growing polypeptide chain."
+  },
+  {
+    q: "Q29 — What is an anticodon?",
+    opts: ["A sequence on mRNA that signals the start of translation","A three-nucleotide sequence on tRNA that is complementary and antiparallel to an mRNA codon","The amino acid attachment site on tRNA","A sequence in the ribosome that catalyzes peptide bonds"],
+    ans: 1,
+    fb: "The anticodon is on tRNA — it base-pairs with the complementary mRNA codon, ensuring the correct amino acid is inserted at each position in the growing polypeptide."
+  },
+  {
+    q: "Q30 — If an mRNA codon reads 5' GCU 3', what is the anticodon on the matching tRNA?",
+    opts: ["5' GCU 3'","5' CGA 3'","3' CGA 5'","3' UGC 5'"],
+    ans: 2,
+    fb: "The anticodon is complementary AND antiparallel to the codon. GCU (5'→3') pairs with CGA (3'→5') on the tRNA. Always reverse-complement the codon to get the anticodon."
+  },
+  {
+    q: "Q31 — What type of bond links amino acids together in a polypeptide chain?",
+    opts: ["Hydrogen bond","Ionic bond","Peptide bond","Phosphodiester bond"],
+    ans: 2,
+    fb: "Peptide bonds are covalent bonds that link the amino group of one amino acid to the carboxyl group of the next. The ribosome (specifically rRNA) catalyzes peptide bond formation."
+  },
+  {
+    q: "Q32 — What molecule catalyzes the formation of peptide bonds?",
+    opts: ["DNA polymerase","RNA polymerase","Helicase","rRNA in the ribosome (acts as a ribozyme)"],
+    ans: 3,
+    fb: "The rRNA component of the ribosome acts as a ribozyme — it is the catalytic RNA that directly catalyzes the peptide bond between amino acids. This was a major discovery showing RNA can act as an enzyme."
+  },
+  {
+    q: "Q33 — What is a polypeptide?",
+    opts: ["A chain of nucleotides","A chain of amino acids linked by peptide bonds — the direct product of translation","A double-stranded RNA molecule","A modified version of mRNA"],
+    ans: 1,
+    fb: "A polypeptide is a polymer of amino acids connected by peptide bonds. It is the direct product of translation and will fold into a functional 3D protein shape."
+  },
+  {
+    q: "Q35 — What are the three steps of translation in order?",
+    opts: ["Replication → Transcription → Translation","Initiation → Elongation → Termination","Binding → Reading → Releasing","Promoter → Coding → Terminator"],
+    ans: 1,
+    fb: "Initiation (ribosome assembles at AUG), Elongation (tRNAs deliver amino acids one by one; chain grows), and Termination (stop codon reached; polypeptide released). Same three-step pattern as transcription."
+  },
+  {
+    q: "Q36 — During elongation, what happens at each step?",
+    opts: ["The ribosome binds the promoter sequence","A tRNA delivers an amino acid matching the current codon, a peptide bond forms, and the ribosome advances 3 bases","The mRNA is degraded","The polypeptide folds into its final shape"],
+    ans: 1,
+    fb: "During elongation, tRNA anticodons base-pair with mRNA codons, the amino acid is attached to the chain by a peptide bond, and the ribosome translocates (moves) 3 nucleotides downstream to read the next codon."
+  },
+  {
+    q: "Q38 — The genetic code is described as 'redundant' or 'degenerate.' What does this mean?",
+    opts: ["Each codon codes for multiple amino acids","Multiple codons can code for the same amino acid","The genetic code is different in every organism","Some amino acids have no codons at all"],
+    ans: 1,
+    fb: "64 codons (4³) code for only 20 amino acids, so most amino acids are specified by 2–6 different codons. This redundancy is the reason silent mutations can exist — changing the third base of a codon often doesn't change the amino acid."
+  },
+  {
+    q: "Q40 — A point mutation is a change in:",
+    opts: ["An entire chromosome","A single nucleotide in the DNA sequence","Multiple genes simultaneously","The number of chromosomes"],
+    ans: 1,
+    fb: "A point mutation affects just one nucleotide. It can be a substitution (one base swapped for another), and the three outcomes are silent, missense, or nonsense mutations — depending on how the codon changes."
+  },
+  {
+    q: "Q41 — What are the three types of point substitution mutations?",
+    opts: ["Insertion, deletion, translocation","Silent, missense, nonsense","Frameshift, inversion, duplication","Dominant, recessive, codominant"],
+    ans: 1,
+    fb: "The three types of substitution point mutations are: Silent (same amino acid), Missense (different amino acid), and Nonsense (becomes a stop codon). Frameshifts are caused by insertions or deletions, not substitutions."
+  },
+  {
+    q: "Q43 — A mutation changes codon CGA to CGG. Both code for Arginine. What type of mutation is this?",
+    opts: ["Missense","Nonsense","Frameshift","Silent"],
+    ans: 3,
+    fb: "This is a SILENT mutation. The nucleotide changed but the amino acid produced is the same (Arg). Because of the genetic code's redundancy, the protein is unaltered. No effect on phenotype."
+  },
+  {
+    q: "Q44 — A mutation changes codon GAG to GUG in hemoglobin, switching Glutamic acid to Valine. What type of mutation is this?",
+    opts: ["Silent","Frameshift","Missense","Nonsense"],
+    ans: 2,
+    fb: "This is a MISSENSE mutation — one amino acid is replaced by a different amino acid. This exact mutation causes sickle cell disease: the single Glu→Val swap changes hemoglobin's shape, causing red blood cells to sickle under low oxygen."
+  },
+  {
+    q: "Q45 — A mutation converts a Tryptophan codon (UGG) into a stop codon (UAG). What type of mutation is this?",
+    opts: ["Silent","Missense","Nonsense","Frameshift"],
+    ans: 2,
+    fb: "This is a NONSENSE mutation. The codon now signals STOP instead of adding tryptophan, so the polypeptide is truncated (cut short). Usually produces a non-functional protein because the rest of the sequence is never made."
+  },
+  {
+    q: "Q46 — What causes a frameshift mutation?",
+    opts: ["A substitution of one base for another","An insertion or deletion of nucleotides in a number NOT divisible by three","The addition of exactly three nucleotides","A change in the stop codon only"],
+    ans: 1,
+    fb: "A frameshift results from inserting or deleting a number of bases that is NOT a multiple of 3. This shifts the reading frame for every codon downstream of the mutation, producing a completely different (usually garbled) amino acid sequence."
+  },
+  {
+    q: "Q49 — An insertion of how many bases would NOT cause a frameshift?",
+    opts: ["1","2","3 (a multiple of three)","4"],
+    ans: 2,
+    fb: "Inserting 3 bases (or any multiple of 3) adds exactly one (or more) whole codon(s) without shifting the reading frame. All downstream codons remain in frame — you just have an extra amino acid inserted, not a scrambled sequence."
+  },
+  {
+    q: "Q50 — Frameshift mutations typically affect which amino acids in the final protein?",
+    opts: ["Only the amino acid at the exact mutation site","All amino acids upstream of the mutation","All amino acids downstream of the mutation site","No amino acids — the protein is unchanged"],
+    ans: 2,
+    fb: "Because the reading frame shifts at the mutation point, every codon DOWNSTREAM is now read in the wrong frame. The amino acids before the mutation are correct; everything after is scrambled. This is why frameshifts are usually catastrophic."
+  },
+];
+
+let quizScore = 0;
+let quizAnswered = 0;
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  quizScore = 0; quizAnswered = 0;
+  document.getElementById('score-panel').style.display = 'none';
+
+  quizData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `
+      <div class="quiz-q">${item.q}</div>
+      <div class="quiz-options">
+        ${item.opts.map((opt, i) => `
+          <button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">
+            ${String.fromCharCode(65+i)}. ${opt}
+          </button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="qfb-${idx}"></div>`;
+    container.appendChild(card);
+  });
+}
+
+function checkAnswer(btn, qIdx, optIdx) {
+  const card = btn.closest('.quiz-card');
+  const buttons = card.querySelectorAll('.quiz-opt');
+  const fb = document.getElementById('qfb-' + qIdx);
+  const correct = quizData[qIdx].ans;
+  buttons.forEach(b => b.disabled = true);
+  if (optIdx === correct) {
+    btn.classList.add('correct');
+    fb.textContent = '✅ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show correct-fb';
+    quizScore++;
+  } else {
+    btn.classList.add('wrong');
+    buttons[correct].classList.add('correct');
+    fb.textContent = '❌ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show wrong-fb';
+  }
+  quizAnswered++;
+  if (quizAnswered === quizData.length) showScore();
+}
+
+function showScore() {
+  const panel = document.getElementById('score-panel');
+  panel.style.display = 'block';
+  document.getElementById('score-display').textContent = quizScore + '/' + quizData.length;
+  const pct = quizScore / quizData.length;
+  let msg;
+  if (pct >= .9) msg = '🌟 Outstanding! You clearly understand translation and mutations. AP exam ready!';
+  else if (pct >= .75) msg = '👍 Great work! Review the questions you missed and you\'ll be in great shape.';
+  else if (pct >= .6) msg = '📚 Good start. Revisit the Translation and Mutations phases, then try again.';
+  else msg = '💪 Keep going! Go back through Phases 2–3 (Translation + Mutations), then retake.';
+  document.getElementById('score-msg').textContent = msg;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function retakeQuiz() { buildQuiz(); }
+
+// ═══════════════════════════════════════════════
+// FILL-IN-THE-BLANK (Section 6)
+// ═══════════════════════════════════════════════
+const fills = [
+  { q: "Q21: Translation converts mRNA into a chain of ___ ___.", ans: "amino acids" },
+  { q: "Q24: The start codon is ___.", ans: "AUG" },
+  { q: "Q26: The three stop codons are UAA, UAG, and ___.", ans: "UGA" },
+  { q: "Q29: The three-nucleotide sequence on tRNA that pairs with an mRNA codon is called an ___.", ans: "anticodon" },
+  { q: "Q31: The bond that links amino acids together in a polypeptide is a ___ bond.", ans: "peptide" },
+  { q: "Q40: A change in a single nucleotide in the DNA sequence is called a ___ mutation.", ans: "point" },
+  { q: "Q43: A mutation that changes the nucleotide but NOT the amino acid is called a ___ mutation.", ans: "silent" },
+  { q: "Q44: A mutation that changes the nucleotide AND the amino acid is called a ___ mutation.", ans: "missense" },
+  { q: "Q45: A mutation that converts a codon into a premature stop codon is called a ___ mutation.", ans: "nonsense" },
+  { q: "Q46: An insertion or deletion that shifts the reading frame is called a ___ mutation.", ans: "frameshift" },
+];
+
+function buildFills() {
+  const container = document.getElementById('fill-container');
+  container.innerHTML = '';
+  fills.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-card';
+    div.innerHTML = `<div class="fill-q">${item.q.replace('___', `<input class="blank-input" id="fill-${idx}" type="text" placeholder="?" onkeydown="if(event.key==='Enter')checkFill(${idx})">`)}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function checkFill(idx) {
+  const input = document.getElementById('fill-' + idx);
+  const val = input.value.trim().toLowerCase();
+  const correct = fills[idx].ans.toLowerCase();
+  if (val === correct || val.includes(correct) || correct.includes(val)) {
+    input.classList.remove('err'); input.classList.add('ok');
+    input.value = fills[idx].ans;
+  } else {
+    input.classList.remove('ok'); input.classList.add('err');
+  }
+}
+
+function checkAllFills() { fills.forEach((_, idx) => checkFill(idx)); }
+
+function resetFills() {
+  fills.forEach((_, idx) => {
+    const input = document.getElementById('fill-' + idx);
+    if (input) { input.value = ''; input.classList.remove('ok','err'); }
+  });
+}
+
+// ═══════════════════════════════════════════════
+// SUMMARY / SUBMIT (Section 7)
+// ═══════════════════════════════════════════════
+function fillSummary(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = text && text.trim();
+  el.textContent = val || 'Not answered';
+  el.classList.toggle('empty', !val);
+}
+
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  const scoreEl = document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl ? scoreEl.textContent + ' correct' : 'Quiz not yet completed');
+
+  const predTA = document.querySelector('#sec-0 textarea');
+  fillSummary('sum-pred', predTA ? predTA.value : '');
+
+  const simTA = document.getElementById('sim-predict');
+  fillSummary('sum-sim-pred', simTA ? simTA.value : '');
+
+  const refCards = document.querySelectorAll('#sec-6 .quiz-card textarea');
+  ['sum-r1','sum-r2','sum-r3','sum-r4','sum-r5'].forEach((id, i) => {
+    fillSummary(id, refCards[i] ? refCards[i].value : '');
+  });
+}
+
+function buildPlainText() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const date = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const scoreEl = document.getElementById('score-display');
+  const score = scoreEl ? scoreEl.textContent : 'not completed';
+  const predTA = document.querySelector('#sec-0 textarea');
+  const simTA  = document.getElementById('sim-predict');
+  const refCards = document.querySelectorAll('#sec-6 .quiz-card textarea');
+  const refs = ['','','','',''];
+  refCards.forEach((ta, i) => { refs[i] = ta.value.trim() || 'Not answered'; });
+
+  return [
+    'TRANSLATION & MUTATIONS EXPLORER 🔬 — STUDENT SUBMISSION',
+    '============================================================',
+    'Student: ' + name,
+    'Date: ' + date,
+    'Lesson: AP Biology · Unit 10 (10.3 & 10.4) · Translation & Mutations Explorer',
+    '',
+    '── QUIZ SCORE ──',
+    score,
+    '',
+    '── SECTION 1: OPENING PREDICTION ──',
+    predTA ? (predTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── SECTION 4: RIBOSOME LAB PREDICTION ──',
+    simTA ? (simTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── SECTION 7: REFLECTIONS ──',
+    'Q1 — Three Steps of Translation:', refs[0],
+    'Q2 — Start Codon & Stop Codons:', refs[1],
+    'Q3 — Comparing Mutation Types:', refs[2],
+    'Q4 — Redundancy of the Genetic Code:', refs[3],
+    'Q5 — Applied mRNA Analysis:', refs[4],
+    '',
+    '============================================================',
+    '© 2026 Farvour Explorations · farvourexplorations.com',
+    'Submitted via Translation & Mutations Explorer · Interactive Digital Lesson · AP Biology'
+  ].join('\n');
+}
+
+function copyResults() {
+  buildSummary();
+  const text = buildPlainText();
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Now paste into Google Classroom or your assignment.';
+    setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '⚠️ Could not copy automatically — try selecting the text above manually.';
+  });
+}
+
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const subject = encodeURIComponent('Translation & Mutations Explorer — ' + name);
+  const body = encodeURIComponent(buildPlainText());
+  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+}
+
+// ═══════════════════════════════════════════════
+// INIT ON PAGE LOAD
+// ═══════════════════════════════════════════════
+buildQuiz();
+buildFills();
+buildCodonTable();
+renderMrnaTrack();
+renderProteinChain();
+renderOrigSeq();
+
+</script>
+</body>
+</html>
