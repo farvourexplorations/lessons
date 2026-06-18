@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cellular Respiration Explorer ⚡</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:    #1a3d2b;
+    --forest-mid:#2d6a4f;
+    --forest-lt: #40916c;
+    --coral:     #e8603c;
+    --coral-pale:#fdf0ec;
+    --mint:      #3aaf85;
+    --mint-pale: #e8f8f2;
+    --gold:      #c9962a;
+    --gold-pale: #fef9e7;
+    --lavender:  #7c6fcd;
+    --lav-pale:  #f0eefb;
+    --paper:     #fffef9;
+    --ink:       #1a2332;
+    --muted:     #7a8899;
+    --border:    #e0e4ea;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: linear-gradient(160deg, #0d2318 0%, #1a3d2b 45%, #2d6a4f 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%, rgba(144,238,144,.45) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 22%  38%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 41%  6%,  rgba(144,238,144,.35) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 60%  24%, rgba(255,255,255,.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 77%  9%,  rgba(144,238,144,.4)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 90%  33%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 33%  55%, rgba(144,238,144,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 70%  48%, rgba(255,255,255,.2)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 55%  70%, rgba(144,238,144,.25) 0%, transparent 100%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ─── HERO ─── */
+  .hero { position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 2rem;color:white; }
+  .hero-badge {
+    display:inline-block;background:var(--gold);color:var(--forest);
+    font-family:'Fredoka One',cursive;font-size:.85rem;letter-spacing:.05em;
+    padding:.35rem 1.2rem;border-radius:20px;margin-bottom:1.2rem;
+    box-shadow:0 2px 12px rgba(201,150,42,.45);
+  }
+  .hero h1 { font-family:'Fredoka One',cursive;font-size:clamp(2.2rem,6vw,4rem);line-height:1.1;margin-bottom:.8rem;text-shadow:0 2px 20px rgba(0,0,0,.35); }
+  .hero h1 .accent { color:var(--gold); }
+  .hero p.intro { font-size:1.05rem;line-height:1.7;opacity:.88;max-width:580px;margin:0 auto 2rem; }
+
+  /* ─── PROGRESS PILLS ─── */
+  .progress-wrap { display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem; }
+  .prog-step {
+    display:flex;align-items:center;gap:.4rem;
+    background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);
+    border-radius:20px;padding:.35rem .9rem;font-size:.78rem;font-weight:700;
+    color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace;
+  }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.35); }
+  .prog-step.active { background:var(--gold);color:var(--forest);border-color:var(--gold);box-shadow:0 2px 12px rgba(201,150,42,.45); }
+
+  /* ─── SHEET ─── */
+  .sheet {
+    position:relative;z-index:1;background:var(--paper);
+    border-radius:24px 24px 0 0;margin-top:1.5rem;
+    padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.3);
+  }
+
+  /* ─── SECTIONS ─── */
+  .section { padding:3rem 2rem 0;max-width:820px;margin:0 auto;display:none; }
+  .section.active { display:block; }
+
+  .section-eyebrow { display:flex;align-items:center;gap:.6rem;margin-bottom:1rem; }
+  .eyebrow-num {
+    width:32px;height:32px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fredoka One',cursive;font-size:1rem;color:white;flex-shrink:0;
+  }
+  .num-coral  { background:var(--coral); }
+  .num-mint   { background:var(--mint); }
+  .num-gold   { background:var(--gold);color:var(--forest); }
+  .num-lav    { background:var(--lavender); }
+  .num-forest { background:var(--forest-mid); }
+
+  .eyebrow-label { font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace; }
+
+  .section h2 { font-family:'Fredoka One',cursive;font-size:clamp(1.6rem,3.5vw,2.2rem);color:var(--forest);margin-bottom:.6rem;line-height:1.2; }
+  .section .lead { font-size:1rem;line-height:1.75;color:#3a4a5a;margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+
+  /* ─── WONDER / INFO BOXES ─── */
+  .wonder-box {
+    background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);
+    color:white;border-radius:16px;padding:1.8rem 2rem;margin-bottom:1.8rem;
+    position:relative;overflow:hidden;
+  }
+  .wonder-box::after { content:'🤔';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3; }
+  .wonder-box p { font-size:1rem;line-height:1.7;font-style:italic;opacity:.95;max-width:85%; }
+  .wonder-box strong { color:var(--gold);font-style:normal; }
+  .wonder-box.gold-box { background:linear-gradient(135deg,#8a6a1a 0%,#b8860b 100%); }
+  .wonder-box.gold-box::after { content:'⚡'; }
+  .wonder-box.lav-box  { background:linear-gradient(135deg,#4a3a8a 0%,#6a5acd 100%); }
+  .wonder-box.lav-box::after { content:'🔋'; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,#1b7a58 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'🍬'; }
+
+  /* ─── PREDICT BOX ─── */
+  .predict-box { background:var(--gold-pale);border:2px dashed var(--gold);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem; }
+  .predict-box textarea,.reflect-box textarea {
+    width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;
+    font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:64px;
+    background:white;color:var(--ink);outline:none;transition:border-color .2s;
+  }
+  .predict-box textarea:focus { border-color:var(--gold); }
+  .reflect-box { background:var(--mint-pale);border:2px dashed var(--mint);border-radius:14px;padding:1.4rem 1.6rem;margin-top:1.5rem; }
+  .reflect-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#1b7a58;margin-bottom:.8rem; }
+  .reflect-box textarea:focus { border-color:var(--mint); }
+
+  /* ─── DEMO ZONE ─── */
+  .demo-zone {
+    background:white;border:2px solid var(--border);border-radius:16px;
+    padding:1.8rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07);
+  }
+  .demo-zone h3 { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.3rem; }
+  .demo-zone .hint { font-size:.78rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:1.3rem; }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    border:none;border-radius:10px;padding:.65rem 1.3rem;font-family:'Nunito',sans-serif;
+    font-size:.88rem;font-weight:800;cursor:pointer;transition:all .15s;letter-spacing:.02em;
+  }
+  .btn:hover  { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  .btn:active { transform:translateY(0); }
+  .btn:disabled { opacity:.4;cursor:default;transform:none;box-shadow:none; }
+  .btn-coral  { background:var(--coral);    color:white; }
+  .btn-mint   { background:var(--mint);     color:white; }
+  .btn-gold   { background:var(--gold);     color:var(--forest); }
+  .btn-lav    { background:var(--lavender); color:white; }
+  .btn-ghost  { background:#f0f2f5;         color:var(--muted); }
+  .btn-forest { background:var(--forest);   color:white; }
+  .action-row { display:flex;gap:.8rem;flex-wrap:wrap;align-items:center;margin-bottom:.8rem; }
+
+  /* ─── NAV ROW ─── */
+  .nav-row { display:flex;justify-content:space-between;align-items:center;padding:2.5rem 2rem 0;max-width:820px;margin:0 auto; }
+
+  /* ─── CONCEPT CHIPS ─── */
+  .chip-row { display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem; }
+  .chip {
+    padding:.45rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;
+    cursor:pointer;transition:all .2s;border:2px solid transparent;
+  }
+  .chip.coral  { background:var(--coral-pale); color:var(--coral);     border-color:#f8c5b8; }
+  .chip.mint   { background:var(--mint-pale);  color:var(--mint);      border-color:#b8ebd8; }
+  .chip.gold   { background:var(--gold-pale);  color:#8a6a1a;          border-color:#f8e0a0; }
+  .chip.lav    { background:var(--lav-pale);   color:var(--lavender);  border-color:#d0caef; }
+  .chip.forest { background:#d4eadd;           color:var(--forest-mid);border-color:#a8d5b8; }
+  .chip:hover  { transform:scale(1.05); }
+
+  .concept-reveal {
+    background:var(--paper);border-left:4px solid var(--coral);
+    border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;
+    margin-top:.5rem;margin-bottom:.3rem;display:none;animation:fadeIn .3s ease;
+  }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border   { border-color:var(--mint); }
+  .concept-reveal.gold-border   { border-color:var(--gold); }
+  .concept-reveal.lav-border    { border-color:var(--lavender); }
+  .concept-reveal.forest-border { border-color:var(--forest-mid); }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ─── EVIDENCE CARDS ─── */
+  .evidence-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin-bottom:1.5rem; }
+  .ev-card {
+    background:white;border:2px solid var(--border);border-radius:14px;
+    padding:1.2rem;cursor:pointer;transition:all .2s;text-align:center;
+  }
+  .ev-card:hover,.ev-card.active { border-color:var(--forest-mid);box-shadow:0 4px 16px rgba(45,106,79,.2);transform:translateY(-2px); }
+  .ev-card.active { background:#d4eadd; }
+  .ev-card .ev-icon { font-size:2.4rem;margin-bottom:.5rem; }
+  .ev-card .ev-title { font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--forest);margin-bottom:.3rem; }
+  .ev-card .ev-sub   { font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace; }
+  .ev-panel {
+    background:#d4eadd;border-left:4px solid var(--forest-mid);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1rem;
+  }
+  .ev-panel.show { display:block; }
+  .ev-panel h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.5rem; }
+  .ev-panel p  { font-size:.88rem;line-height:1.7;color:#2a3a2a; }
+  .ev-panel .example-box {
+    background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;
+    font-size:.82rem;font-family:'DM Mono',monospace;color:var(--ink);
+    border:1.5px solid rgba(45,106,79,.2);
+  }
+
+  /* ─── STEP CARDS ─── */
+  .sel-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0 1.5rem; }
+  .sel-card {
+    background:white;border:2px solid var(--border);border-radius:14px;
+    padding:1rem;text-align:center;cursor:pointer;transition:all .2s;
+  }
+  .sel-card:hover,.sel-card.active { border-color:var(--coral);box-shadow:0 3px 12px rgba(232,96,60,.18);transform:translateY(-2px); }
+  .sel-card.active { background:var(--coral-pale); }
+  .sel-card .sel-icon { font-size:2rem;margin-bottom:.4rem; }
+  .sel-card .sel-name { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--forest);margin-bottom:.2rem; }
+  .sel-card .sel-key  { font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em; }
+  .sel-detail {
+    background:var(--coral-pale);border-left:4px solid var(--coral);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1.5rem;
+  }
+  .sel-detail.show { display:block; }
+  .sel-detail h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.4rem; }
+  .sel-detail p  { font-size:.88rem;line-height:1.7; }
+  .sel-detail .examples { margin-top:.6rem;font-style:italic;color:var(--muted);font-size:.82rem; }
+
+  /* ─── MATCHING GAME ─── */
+  .match-grid { display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1rem 0; }
+  .match-item {
+    padding:.75rem 1rem;border-radius:10px;border:2px solid var(--border);
+    cursor:pointer;font-size:.84rem;font-weight:700;transition:all .2s;
+    background:white;text-align:center;color:var(--ink);line-height:1.4;
+  }
+  .match-item:hover    { border-color:var(--forest-mid);background:#f0f7f3; }
+  .match-item.selected { border-color:var(--lavender);background:var(--lav-pale);color:var(--lavender); }
+  .match-item.matched  { border-color:var(--mint);background:var(--mint-pale);color:#1b7a58;cursor:default; }
+  .match-item.wrong    { border-color:var(--coral);background:var(--coral-pale);color:var(--coral);animation:shake .3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+  /* ─── ATP SIMULATOR ─── */
+  .atp-display {
+    display:flex;align-items:center;justify-content:center;gap:1.5rem;
+    flex-wrap:wrap;margin:1.2rem 0;
+  }
+  .atp-molecule {
+    text-align:center;padding:1rem 1.4rem;border-radius:14px;
+    font-family:'DM Mono',monospace;font-size:.85rem;font-weight:700;
+    border:2px solid;transition:all .4s;min-width:120px;
+  }
+  .atp-molecule .mol-label { font-family:'Fredoka One',cursive;font-size:1.3rem;margin-bottom:.3rem; }
+  .atp-molecule .mol-desc  { font-size:.7rem;color:var(--muted);margin-top:.3rem;font-weight:400; }
+  .mol-atp  { background:var(--gold-pale);border-color:var(--gold);color:#8a6a1a; }
+  .mol-adp  { background:#f5f7fa;border-color:var(--border);color:var(--muted); }
+  .mol-pi   { background:var(--lav-pale);border-color:var(--lavender);color:var(--lavender); }
+  .mol-nadh { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .mol-nad  { background:#f5f7fa;border-color:var(--border);color:var(--muted); }
+  .arrow-label { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest-mid);text-align:center; }
+  .energy-badge {
+    display:inline-block;padding:.25rem .8rem;border-radius:20px;font-size:.72rem;
+    font-weight:800;font-family:'DM Mono',monospace;letter-spacing:.05em;margin-top:.4rem;
+  }
+  .release  { background:#ffeaa7;color:#8a6a1a; }
+  .absorb   { background:var(--lav-pale);color:var(--lavender); }
+
+  /* ─── GLYCOLYSIS TRACKER ─── */
+  .glyc-track {
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:.8rem;margin:1rem 0;
+  }
+  .glyc-box {
+    background:white;border:2px solid var(--border);border-radius:12px;
+    padding:.9rem 1rem;text-align:center;transition:all .3s;
+  }
+  .glyc-box .g-label { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--forest);margin-bottom:.3rem; }
+  .glyc-box .g-val   { font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:700;color:var(--ink); }
+  .glyc-box .g-unit  { font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace; }
+  .glyc-box.active   { border-color:var(--gold);background:var(--gold-pale); }
+  .glyc-box.done     { border-color:var(--mint);background:var(--mint-pale); }
+
+  /* ─── REDOX ANIMATOR ─── */
+  .redox-row { display:flex;gap:1rem;flex-wrap:wrap;margin:1rem 0; }
+  .redox-box {
+    flex:1;min-width:200px;border-radius:14px;padding:1.1rem 1.2rem;
+    border:2px solid var(--border);text-align:center;transition:all .4s;
+  }
+  .redox-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;margin-bottom:.4rem; }
+  .redox-box p  { font-family:'DM Mono',monospace;font-size:.78rem;line-height:1.6; }
+  .redox-oxidized  { background:var(--coral-pale);border-color:var(--coral); }
+  .redox-oxidized h4 { color:var(--coral); }
+  .redox-reduced   { background:var(--mint-pale);border-color:var(--mint); }
+  .redox-reduced h4 { color:#1b7a58; }
+
+  /* ─── QUIZ ─── */
+  .quiz-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .quiz-q { font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:1rem;line-height:1.5; }
+  .quiz-options { display:flex;flex-direction:column;gap:.5rem; }
+  .quiz-opt {
+    padding:.6rem 1rem;border-radius:8px;border:2px solid var(--border);
+    background:white;cursor:pointer;font-family:'Nunito',sans-serif;
+    font-size:.88rem;font-weight:600;text-align:left;transition:all .15s;color:var(--ink);
+  }
+  .quiz-opt:hover:not(:disabled) { border-color:var(--forest-mid);background:#f0f7f3; }
+  .quiz-opt.correct  { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .quiz-opt.wrong    { background:var(--coral-pale);border-color:var(--coral);color:#a83020; }
+  .quiz-opt:disabled { cursor:default; }
+  .quiz-feedback { margin-top:.8rem;font-size:.85rem;line-height:1.6;padding:.7rem 1rem;border-radius:8px;display:none;animation:fadeIn .3s ease; }
+  .quiz-feedback.show { display:block; }
+  .quiz-feedback.correct-fb { background:var(--mint-pale);color:#1b7a58;border-left:3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background:var(--coral-pale);color:#a83020;border-left:3px solid var(--coral); }
+
+  /* ─── SCORE ─── */
+  .score-panel { background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);color:white;border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem; }
+  .score-panel .score-num { font-family:'Fredoka One',cursive;font-size:3.5rem;line-height:1;color:var(--gold); }
+  .score-panel p { opacity:.88;margin-top:.5rem;font-size:1rem; }
+  .score-panel h3 { font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:.3rem; }
+
+  /* ─── CONGRATS ─── */
+  .congrats-panel { background:linear-gradient(135deg,var(--forest) 0%,#1b7a58 100%);color:white;border-radius:20px;padding:2.5rem 2rem;text-align:center;margin-top:2rem; }
+  .congrats-panel h2 { font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:.6rem; }
+  .congrats-panel p  { opacity:.9;line-height:1.7;max-width:480px;margin:0 auto .8rem; }
+  .summary-chips { display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:1rem; }
+  .summary-chip {
+    background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);
+    border-radius:20px;padding:.3rem .9rem;font-size:.78rem;font-weight:700;
+    font-family:'DM Mono',monospace;letter-spacing:.04em;
+  }
+
+  /* ─── VOCAB TABLE ─── */
+  .vocab-table { width:100%;border-collapse:collapse;margin:1rem 0 1.5rem; }
+  .vocab-table th { background:var(--forest);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;padding:.7rem 1rem;text-align:left; }
+  .vocab-table td { padding:.65rem 1rem;font-size:.85rem;line-height:1.5;border-bottom:1px solid var(--border); }
+  .vocab-table tr:nth-child(even) td { background:#f5f7fa; }
+  .vocab-table tr:hover td { background:#d4eadd;transition:background .15s; }
+  .vocab-table td:first-child { font-weight:800;color:var(--forest-mid); }
+
+  /* ─── FILL IN THE BLANK ─── */
+  .blank-input {
+    border:none;border-bottom:2.5px solid var(--forest-mid);background:transparent;
+    font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;color:var(--forest);
+    width:180px;text-align:center;outline:none;padding:0 4px;transition:border-color .2s;
+  }
+  .blank-input:focus { border-color:var(--coral); }
+  .blank-input.ok { border-color:var(--mint);color:var(--mint); }
+  .blank-input.err{ border-color:var(--coral);color:var(--coral); }
+  .fill-q { font-size:.95rem;line-height:2;color:var(--ink);margin-bottom:.8rem; }
+  .divider { height:1px;background:var(--border);margin:2rem 0; }
+
+  /* ─── NAME BAR ─── */
+  .name-bar {
+    background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);
+    border-radius:12px;padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;
+    max-width:420px;margin:0 auto 1rem;
+  }
+  .name-bar label { font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;font-family:'DM Mono',monospace; }
+  .name-bar input {
+    flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;
+    padding:.4rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:white;outline:none;
+  }
+  .name-bar input::placeholder { color:rgba(255,255,255,.4);font-weight:400; }
+
+  /* ─── SUMMARY / SUBMIT ─── */
+  .summary-section { background:white;border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--forest);margin-bottom:.8rem; }
+  .summary-answer {
+    background:#f5f7fa;border-radius:8px;padding:.7rem 1rem;font-size:.85rem;
+    line-height:1.6;color:var(--ink);margin-bottom:.5rem;font-style:italic;
+    border-left:3px solid var(--lavender);min-height:2rem;
+  }
+  .summary-answer.empty { color:var(--muted);font-style:normal;border-left-color:var(--border); }
+  .share-buttons { display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center; }
+  .share-btn {
+    border:none;border-radius:12px;padding:.85rem 1.6rem;font-family:'Fredoka One',cursive;
+    font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem;
+  }
+  .share-btn:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background:var(--mint);color:white; }
+  .share-btn.email { background:var(--lavender);color:white; }
+  .share-btn.print { background:var(--forest);color:white; }
+  .copy-confirm { text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--mint);min-height:1.2rem;margin-top:.6rem; }
+
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm,.prog-step,.name-bar { display:none !important; }
+    .sheet { box-shadow:none;border-radius:0; }
+    .section { display:none !important; }
+    #sec-7 { display:block !important; }
+  }
+</style>
+</head>
+<body>
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-badge">⚡ Biology 8 · Unit 5</div>
+  <h1>Cellular Respiration <span class="accent">Explorer</span></h1>
+  <p class="intro">Master ATP, energy molecules, and glycolysis — covering every question in your Unit 5 Packet, sections 5.1 (Energy Conversion Molecules) and 5.2 (Cellular Respiration Overview &amp; Glycolysis).</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <span class="prog-step active" onclick="goTo(0)">① Wonder</span>
+    <span class="prog-step"       onclick="goTo(1)">② Energy Molecules</span>
+    <span class="prog-step"       onclick="goTo(2)">③ ATP Lab</span>
+    <span class="prog-step"       onclick="goTo(3)">④ Respiration &amp; Glycolysis</span>
+    <span class="prog-step"       onclick="goTo(4)">⑤ Glycolysis Lab</span>
+    <span class="prog-step"       onclick="goTo(5)">⑥ Quiz</span>
+    <span class="prog-step"       onclick="goTo(6)">⑦ Reflect</span>
+    <span class="prog-step"       onclick="goTo(7)">📤 Submit</span>
+  </div>
+</div>
+
+<!-- ═══ SHEET ═══ -->
+<div class="sheet">
+
+<!-- ═══ SECTION 0: WONDER ═══ -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-coral">1</div>
+    <span class="eyebrow-label">Phase 1 · Wonder</span>
+  </div>
+  <h2>⚡ Where Does Your Energy Actually Come From?</h2>
+  <p class="lead">
+    You eat food. You gain energy. But <strong>how does a slice of pizza become a muscle contraction?</strong> The answer involves one of the most elegant molecules in all of biology — ATP — and a carefully choreographed series of chemical reactions we call cellular respiration.
+  </p>
+
+  <div class="wonder-box">
+    <p>Your cells cannot directly use the energy stored in glucose or food. They need to convert it into a form they can actually spend — <strong>ATP</strong> (adenosine triphosphate). Every muscle contraction, every nerve signal, every protein your cells build costs ATP. You produce and consume your body weight in ATP every single day. <strong>So how does it get made — and why does oxygen matter so much?</strong></p>
+  </div>
+
+  <div class="predict-box">
+    <h4>✏️ Your Prediction (before we dig in)</h4>
+    <textarea placeholder="Predict: why do you think your cells need both glucose AND oxygen to make energy? What do you think happens when there is no oxygen available — can your cells still make ATP?"></textarea>
+  </div>
+
+  <div class="wonder-box gold-box">
+    <p>Cellular respiration is the process that converts the chemical energy stored in <strong>glucose</strong> into the usable energy currency of ATP. It happens in three stages — glycolysis (in the cytoplasm), the citric acid cycle (in the mitochondria), and the electron transport chain (on the inner mitochondrial membrane). In this interactive, we'll master Sections 5.1 and 5.2 — <strong>ATP energy molecules and the overview of respiration plus glycolysis</strong>.</p>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" disabled>← Back</button>
+    <button class="btn btn-coral" onclick="goTo(1)">Next: Energy Molecules →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 1: 5.1 ENERGY MOLECULES ═══ -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-lav">2</div>
+    <span class="eyebrow-label">Phase 2 · 5.1 Energy Conversion Molecules</span>
+  </div>
+  <h2>📖 ATP, NAD⁺ &amp; Redox — Core Vocabulary</h2>
+  <p class="lead">Tap each term to reveal its definition and connection to your packet questions (Q1–11). Know all of these — the packet tests both definitions and application to reactions.</p>
+
+  <div class="chip-row">
+    <span class="chip coral"  onclick="reveal('cr')">Cellular Respiration</span>
+    <span class="chip gold"   onclick="reveal('atp')">ATP Structure</span>
+    <span class="chip forest" onclick="reveal('hydrolysis')">ATP Hydrolysis</span>
+    <span class="chip mint"   onclick="reveal('phosph')">ADP Phosphorylation</span>
+    <span class="chip lav"    onclick="reveal('goldcash')">Gold vs. Cash Analogy</span>
+    <span class="chip coral"  onclick="reveal('2ndlaw')">2nd Law of Thermodynamics</span>
+    <span class="chip gold"   onclick="reveal('redox')">Oxidation &amp; Reduction</span>
+    <span class="chip forest" onclick="reveal('nadh')">NAD⁺ / NADH</span>
+    <span class="chip mint"   onclick="reveal('fadh')">FAD / FADH₂</span>
+  </div>
+
+  <div id="rev-cr"       class="concept-reveal coral">
+    <strong>Cellular Respiration</strong> — The process by which cells break down organic molecules (primarily glucose) to produce ATP. The full equation: <em>C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + ATP energy</em>. It is a catabolic, exergonic (energy-releasing) process. All kingdoms of life perform cellular respiration — bacteria, archaea, protists, fungi, plants, and animals. <em>Q1, Q2.</em>
+  </div>
+  <div id="rev-atp"      class="concept-reveal gold-border">
+    <strong>ATP (Adenosine Triphosphate)</strong> — The universal energy currency of the cell. Structure: adenine base + ribose sugar + <strong>3 phosphate groups</strong>. The bond between the 2nd and 3rd phosphate is a <em>high-energy phosphoanhydride bond</em> — breaking it releases energy the cell can use. Draw it: adenine–ribose–P–P–<strong>[P]</strong> where the last P–P bond is the "high energy bond." <em>Q4.</em>
+  </div>
+  <div id="rev-hydrolysis" class="concept-reveal forest-border">
+    <strong>ATP Hydrolysis</strong> — ATP + H₂O → ADP + Pᵢ + energy released. Adding water breaks the high-energy phosphate bond, releasing energy (~7.3 kcal/mol). This is an <em>exergonic</em> reaction — it releases energy, which powers cellular work (muscle contraction, active transport, biosynthesis). <em>Q5.</em>
+  </div>
+  <div id="rev-phosph"   class="concept-reveal mint-border">
+    <strong>ADP Phosphorylation</strong> — ADP + Pᵢ + energy → ATP + H₂O. The reverse of hydrolysis — requires a <em>net input of energy</em> to reform the high-energy bond. This is an <em>endergonic</em> reaction — it stores energy into ATP. In animal cells, this energy comes from the oxidation of glucose (cellular respiration). <em>Q6, Q7.</em>
+  </div>
+  <div id="rev-goldcash" class="concept-reveal lav-border">
+    <strong>Glucose = Bar of Gold / ATP = Cash</strong> — Q3 asks about this analogy. Glucose is like a <em>bar of gold</em> — high stored energy but not directly spendable. ATP is like <em>cash</em> — the immediately usable form of energy currency. Cells can't directly use glucose's energy; they must first "make change" by converting glucose → ATP during respiration. <em>Q3.</em>
+  </div>
+  <div id="rev-2ndlaw"   class="concept-reveal coral">
+    <strong>2nd Law of Thermodynamics</strong> — Energy conversions are never 100% efficient; some energy is always lost as heat (disorder/entropy increases). This helps us understand cellular respiration: cells cannot convert all of glucose's energy into ATP — some is inevitably lost as heat. This is why you feel warm after exercise. <em>Q9.</em>
+  </div>
+  <div id="rev-redox"    class="concept-reveal gold-border">
+    <strong>Oxidation &amp; Reduction</strong> — Two always-paired processes (redox reactions). <em>Oxidation</em> = loss of electrons (OIL — Oxidation Is Loss). <em>Reduction</em> = gain of electrons (RIG — Reduction Is Gain). Remember: <strong>OIL RIG</strong>. In cellular respiration, glucose is <em>oxidized</em> (loses electrons) and oxygen is <em>reduced</em> (gains electrons to become water). <em>Q10.</em>
+  </div>
+  <div id="rev-nadh"     class="concept-reveal forest-border">
+    <strong>NAD⁺ / NADH</strong> — Electron carriers that shuttle electrons through cellular respiration. NAD⁺ + 2e⁻ + H⁺ → NADH is a <em>reduction</em> reaction (NAD⁺ gains electrons → becomes NADH). NADH carries electrons to the electron transport chain, where they are used to pump protons and generate ATP. <em>Q11.</em>
+  </div>
+  <div id="rev-fadh"     class="concept-reveal mint-border">
+    <strong>FAD / FADH₂</strong> — Another electron carrier. FADH₂ → FAD + 2e⁻ + 2H⁺ is an <em>oxidation</em> reaction (FADH₂ loses electrons → becomes FAD). Like NADH, FADH₂ carries electrons to the electron transport chain. Both NADH and FADH₂ are the primary products of the citric acid cycle — they are the "loaded" form of these carriers. <em>Q11.</em>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 ATP Hydrolysis vs. Phosphorylation — Side by Side</h3>
+  <table class="vocab-table">
+    <tr><th>Reaction</th><th>Direction</th><th>Energy</th><th>Packet Q</th></tr>
+    <tr><td>ATP Hydrolysis</td><td>ATP + H₂O → ADP + Pᵢ</td><td>Releases energy (exergonic)</td><td>Q5</td></tr>
+    <tr><td>ADP Phosphorylation</td><td>ADP + Pᵢ → ATP + H₂O</td><td>Requires energy input (endergonic)</td><td>Q6</td></tr>
+    <tr><td>NAD⁺ Reduction</td><td>NAD⁺ + 2e⁻ + H⁺ → NADH</td><td>Reduction — gains electrons</td><td>Q11</td></tr>
+    <tr><td>FADH₂ Oxidation</td><td>FADH₂ → FAD + 2e⁻ + 2H⁺</td><td>Oxidation — loses electrons</td><td>Q11</td></tr>
+  </table>
+
+  <div class="divider"></div>
+
+  <!-- Matching game -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.4rem;">🎯 Quick Match — Energy Terms</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Tap a term, then tap its matching definition.</p>
+  <div class="match-grid" id="matchGrid">
+    <div class="match-item" data-pair="a" data-side="term" onclick="matchClick(this)">ATP Hydrolysis</div>
+    <div class="match-item" data-pair="b" data-side="def"  onclick="matchClick(this)">Gain of electrons</div>
+    <div class="match-item" data-pair="c" data-side="term" onclick="matchClick(this)">Oxidation</div>
+    <div class="match-item" data-pair="d" data-side="def"  onclick="matchClick(this)">ADP + Pᵢ → ATP (energy stored)</div>
+    <div class="match-item" data-pair="a" data-side="def"  onclick="matchClick(this)">ATP → ADP + Pᵢ (energy released)</div>
+    <div class="match-item" data-pair="e" data-side="term" onclick="matchClick(this)">NADH</div>
+    <div class="match-item" data-pair="b" data-side="term" onclick="matchClick(this)">Reduction</div>
+    <div class="match-item" data-pair="c" data-side="def"  onclick="matchClick(this)">Loss of electrons</div>
+    <div class="match-item" data-pair="d" data-side="term" onclick="matchClick(this)">ADP Phosphorylation</div>
+    <div class="match-item" data-pair="e" data-side="def"  onclick="matchClick(this)">Reduced electron carrier — NAD⁺ that gained electrons</div>
+  </div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-ghost" onclick="resetMatch()">↺ Reset Match</button>
+    <span id="match-score" style="margin-left:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted);"></span>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(0)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(2)">Next: ATP Lab →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 2: ATP LAB ═══ -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-gold">3</div>
+    <span class="eyebrow-label">Phase 3 · ATP Interactive Lab</span>
+  </div>
+  <h2>⚡ ATP Hydrolysis &amp; Phosphorylation — Animate It</h2>
+  <p class="lead">Use the buttons below to step through ATP hydrolysis and ADP phosphorylation. Watch energy move in and out of the molecule. This covers Q4–8 on your packet.</p>
+
+  <div class="predict-box">
+    <h4>✏️ Before the lab — your prediction</h4>
+    <textarea id="atp-predict" placeholder="Q3 asks: is glucose more like a bar of gold or more like cash money? And what is ATP more like? Write your reasoning before you interact with the ATP cycle below…"></textarea>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🔋 The ATP Energy Cycle</h3>
+    <div class="hint" id="atp-hint">Click a button to animate ATP hydrolysis or ADP phosphorylation</div>
+
+    <div class="atp-display" id="atpDisplay">
+      <div class="atp-molecule mol-atp" id="mol-atp">
+        <div class="mol-label">ATP</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.78rem;margin:.3rem 0;">Adenine–Ribose–P–P–<strong>P</strong></div>
+        <div class="mol-desc">High-energy phosphate bond</div>
+        <div><span class="energy-badge absorb">🔋 Energy Stored</span></div>
+      </div>
+      <div style="text-align:center;">
+        <div class="arrow-label" id="arrow-top" style="font-size:.9rem;color:var(--muted);">⬅ Phosphorylation<br>(energy IN)</div>
+        <div style="font-size:2rem;color:var(--forest-mid);">⇅</div>
+        <div class="arrow-label" id="arrow-bot" style="font-size:.9rem;color:var(--muted);">Hydrolysis ➡<br>(energy OUT)</div>
+      </div>
+      <div class="atp-molecule mol-adp" id="mol-adp">
+        <div class="mol-label">ADP + Pᵢ</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.78rem;margin:.3rem 0;">Adenine–Ribose–P–P &nbsp;+&nbsp; Pᵢ</div>
+        <div class="mol-desc">Lower energy form</div>
+        <div><span class="energy-badge release" style="opacity:.4;">💸 Energy Spent</span></div>
+      </div>
+    </div>
+
+    <div id="atp-reaction-box" style="background:#f5f7fa;border-radius:10px;padding:1rem;margin:1rem 0;font-family:'DM Mono',monospace;font-size:.85rem;text-align:center;border:2px solid var(--border);min-height:60px;display:flex;align-items:center;justify-content:center;">
+      Select a reaction below to see the equation and energy dynamics…
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-coral" onclick="animateATP('hydrolysis')">⚡ Hydrolyze ATP (release energy)</button>
+      <button class="btn btn-mint"  onclick="animateATP('phosphorylation')">🔋 Phosphorylate ADP (store energy)</button>
+      <button class="btn btn-ghost" onclick="animateATP('reset')">↺ Reset</button>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Redox visualizer -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.5rem;">🔄 Redox Reactions — OIL RIG</h3>
+  <p style="font-size:.9rem;line-height:1.7;margin-bottom:1rem;color:#3a4a5a;">Q10 &amp; Q11: Oxidation = <strong>O</strong>xidation <strong>I</strong>s <strong>L</strong>oss of electrons. Reduction = <strong>R</strong>eduction <strong>I</strong>s <strong>G</strong>ain of electrons. Tap each reaction to classify it.</p>
+
+  <div class="sel-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
+    <div class="sel-card" onclick="showRedox('nad')">
+      <div class="sel-icon">🧪</div>
+      <div class="sel-name">NAD⁺ → NADH</div>
+      <div class="sel-key">Q11 — classify it</div>
+    </div>
+    <div class="sel-card" onclick="showRedox('fadh')">
+      <div class="sel-icon">🧪</div>
+      <div class="sel-name">FADH₂ → FAD</div>
+      <div class="sel-key">Q11 — classify it</div>
+    </div>
+    <div class="sel-card" onclick="showRedox('glucose')">
+      <div class="sel-icon">🍬</div>
+      <div class="sel-name">Glucose in respiration</div>
+      <div class="sel-key">oxidized or reduced?</div>
+    </div>
+    <div class="sel-card" onclick="showRedox('oxygen')">
+      <div class="sel-icon">💨</div>
+      <div class="sel-name">O₂ in respiration</div>
+      <div class="sel-key">oxidized or reduced?</div>
+    </div>
+  </div>
+
+  <div id="sel-nad"     class="sel-detail">
+    <h4>NAD⁺ + 2e⁻ + H⁺ → NADH — This is REDUCTION</h4>
+    <p>NAD⁺ <strong>gains</strong> two electrons (and a hydrogen) → becomes NADH. Gaining electrons = Reduction (<strong>RIG</strong>). NADH is the "loaded" or reduced form — it now carries electrons to the electron transport chain, where those electrons will be used to generate ATP.</p>
+    <p class="examples">📌 Q11: NAD⁺ + 2e⁻ + H⁺ → NADH is a <strong>reduction</strong> reaction.</p>
+  </div>
+  <div id="sel-fadh"    class="sel-detail">
+    <h4>FADH₂ → FAD + 2e⁻ + 2H⁺ — This is OXIDATION</h4>
+    <p>FADH₂ <strong>loses</strong> two electrons → becomes FAD. Losing electrons = Oxidation (<strong>OIL</strong>). This happens at the electron transport chain, where FADH₂ donates its electrons. FAD is then recycled back to pick up more electrons in the citric acid cycle.</p>
+    <p class="examples">📌 Q11: FADH₂ → FAD + 2e⁻ + 2H⁺ is an <strong>oxidation</strong> reaction.</p>
+  </div>
+  <div id="sel-glucose" class="sel-detail">
+    <h4>Glucose is OXIDIZED during cellular respiration</h4>
+    <p>Throughout glycolysis and the citric acid cycle, glucose and its breakdown products <strong>lose electrons</strong> (are oxidized). Those electrons are picked up by NAD⁺ (becoming NADH) and FAD (becoming FADH₂). This is why cellular respiration is called <em>oxidative</em> phosphorylation — glucose is oxidized to release energy.</p>
+    <p class="examples">📌 Q17: In glycolysis, glucose is <strong>oxidized</strong>. NAD⁺ is <strong>reduced</strong> (to NADH).</p>
+  </div>
+  <div id="sel-oxygen"  class="sel-detail">
+    <h4>O₂ is REDUCED during cellular respiration</h4>
+    <p>At the very end of the electron transport chain, O₂ is the <strong>final electron acceptor</strong>. It accepts electrons (and hydrogen ions) and is <strong>reduced</strong> to water (H₂O). This is why oxygen is essential for aerobic respiration — without it, the ETC cannot run and ATP production collapses.</p>
+    <p class="examples">📌 This is why aerobic respiration requires oxygen — O₂ is the final electron acceptor and must be reduced to H₂O.</p>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect on the ATP Cycle</h4>
+    <textarea placeholder="In your own words: what is the difference between ATP hydrolysis and ADP phosphorylation? Which releases energy and which stores it? Why does the cell need BOTH reactions? Connect this to Q5, Q6, and Q7…"></textarea>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(3)">Next: Respiration Overview →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 3: 5.2 RESPIRATION OVERVIEW & GLYCOLYSIS CONCEPTS ═══ -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">4</div>
+    <span class="eyebrow-label">Phase 4 · 5.2 Cellular Respiration Overview &amp; Glycolysis</span>
+  </div>
+  <h2>🔬 Respiration Overview — Tap to Explore</h2>
+  <p class="lead">Tap each card to explore a key concept from your packet (Q12–21). Know the <strong>location, inputs, outputs,</strong> and <strong>aerobic/anaerobic status</strong> of glycolysis cold.</p>
+
+  <div class="evidence-grid">
+    <div class="ev-card" onclick="showEvidence('oxphos')">
+      <div class="ev-icon">🔌</div>
+      <div class="ev-title">Oxidative Phosphorylation</div>
+      <div class="ev-sub">Q12</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('aerana')">
+      <div class="ev-icon">💨</div>
+      <div class="ev-title">Aerobic vs. Anaerobic</div>
+      <div class="ev-sub">Q13</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('3stages')">
+      <div class="ev-icon">📋</div>
+      <div class="ev-title">3 Stages of Respiration</div>
+      <div class="ev-sub">Q14</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('glycloc')">
+      <div class="ev-icon">📍</div>
+      <div class="ev-title">Where is Glycolysis?</div>
+      <div class="ev-sub">Q15</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('glycprod')">
+      <div class="ev-icon">📦</div>
+      <div class="ev-title">Glycolysis Products</div>
+      <div class="ev-sub">Q16 · Q17</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('netatp')">
+      <div class="ev-icon">💰</div>
+      <div class="ev-title">Net ATP in Glycolysis</div>
+      <div class="ev-sub">Q20</div>
+    </div>
+  </div>
+
+  <div id="ev-oxphos"  class="ev-panel">
+    <h4>🔌 Oxidative Phosphorylation — Q12</h4>
+    <p><strong>Oxidative phosphorylation</strong> is the process of making ATP by using the energy from electron transfer (oxidation reactions) to drive the phosphorylation of ADP. "Oxidative" = electrons are transferred (oxidation occurs). "Phosphorylation" = a phosphate group is added to ADP to make ATP. The electron transport chain and ATP synthase are the key machinery — and it requires oxygen as the final electron acceptor.</p>
+    <div class="example-box">📌 Q12: Oxidative phosphorylation = using electron transfer (oxidation) to power ATP synthesis (phosphorylation of ADP).</div>
+  </div>
+  <div id="ev-aerana"  class="ev-panel">
+    <h4>💨 Aerobic vs. Anaerobic — Q13</h4>
+    <p><strong>Aerobic</strong> processes require oxygen (O₂). <strong>Anaerobic</strong> processes do NOT require oxygen. Glycolysis is anaerobic — it happens in the cytoplasm with or without oxygen. The citric acid cycle and electron transport chain are aerobic — they require O₂. This is why you can briefly sprint without breathing heavily, but sustained exercise demands oxygen.</p>
+    <div class="example-box">📌 Q13: Aerobic = requires O₂ (citric acid cycle, ETC). Anaerobic = no O₂ required (glycolysis, fermentation).</div>
+  </div>
+  <div id="ev-3stages" class="ev-panel">
+    <h4>📋 The 3 Stages of Cellular Respiration — Q14</h4>
+    <p>In order: (1) <strong>Glycolysis</strong> — in the cytoplasm, anaerobic, splits glucose into 2 pyruvate; (2) <strong>Citric Acid (Krebs) Cycle</strong> — in the mitochondrial matrix, aerobic, generates NADH/FADH₂/CO₂; (3) <strong>Electron Transport Chain (ETC)</strong> — on the inner mitochondrial membrane, aerobic, generates ~28 ATP via oxidative phosphorylation.</p>
+    <div class="example-box">📌 Q14: Glycolysis → Citric Acid Cycle → Electron Transport Chain</div>
+  </div>
+  <div id="ev-glycloc" class="ev-panel">
+    <h4>📍 Glycolysis Location — Q15</h4>
+    <p>Glycolysis occurs in the <strong>cytoplasm</strong> (cytosol). It is <strong>anaerobic</strong> — it does not require oxygen, and it can occur whether or not oxygen is present. This is why even cells that are temporarily starved of oxygen can still produce a small amount of ATP via glycolysis (followed by fermentation).</p>
+    <div class="example-box">📌 Q15: Location = <strong>cytoplasm</strong>. Aerobic or anaerobic? <strong>Anaerobic</strong> (does not require O₂).</div>
+  </div>
+  <div id="ev-glycprod" class="ev-panel">
+    <h4>📦 Glycolysis Products — Q16 &amp; Q17</h4>
+    <p>Starting from 1 glucose molecule, glycolysis produces three types of products: <strong>2 pyruvate</strong> (3-carbon molecules), <strong>2 ATP net</strong> (actually uses 2 and produces 4, so net = 2), and <strong>2 NADH</strong> (electron carriers). In the process, glucose is <strong>oxidized</strong> (loses electrons) and NAD⁺ is <strong>reduced</strong> (gains those electrons to become NADH).</p>
+    <div class="example-box">📌 Q16: Products per glucose: 2 pyruvate, 2 ATP (net), 2 NADH.<br>📌 Q17: Glucose is <strong>oxidized</strong>. NAD⁺ is <strong>reduced</strong> (becomes NADH).</div>
+  </div>
+  <div id="ev-netatp"  class="ev-panel">
+    <h4>💰 Net ATP in Glycolysis — Q20</h4>
+    <p>Glycolysis invests <strong>2 ATP</strong> in the early "energy investment phase" (to phosphorylate glucose), then generates <strong>4 ATP</strong> in the "energy payoff phase." Net gain = 4 − 2 = <strong>2 ATP per glucose</strong>. This is why we say "net gain" — the cell must spend ATP to make more ATP (like investing money to earn a return).</p>
+    <div class="example-box">📌 Q20: Invest 2 ATP → generate 4 ATP → <strong>net gain = 2 ATP</strong> per glucose.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 Glycolysis at a Glance</h3>
+  <table class="vocab-table">
+    <tr><th>Feature</th><th>Answer</th><th>Packet Q</th></tr>
+    <tr><td>Location</td><td>Cytoplasm (cytosol)</td><td>Q15</td></tr>
+    <tr><td>Aerobic or anaerobic?</td><td>Anaerobic (no O₂ required)</td><td>Q15</td></tr>
+    <tr><td>Reactant</td><td>1 glucose (6 carbons)</td><td>Q16</td></tr>
+    <tr><td>Products</td><td>2 pyruvate, 2 ATP (net), 2 NADH</td><td>Q16</td></tr>
+    <tr><td>Glucose is…</td><td>Oxidized (loses electrons)</td><td>Q17</td></tr>
+    <tr><td>NAD⁺ is…</td><td>Reduced → becomes NADH</td><td>Q17</td></tr>
+    <tr><td>Pyruvate goes to…</td><td>Mitochondria (if O₂ present)</td><td>Q19</td></tr>
+    <tr><td>NADH goes to…</td><td>Electron transport chain (mitochondria)</td><td>Q21</td></tr>
+    <tr><td>Net ATP</td><td>2 (invests 2, produces 4)</td><td>Q20</td></tr>
+  </table>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(4)">Next: Glycolysis Lab →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 4: GLYCOLYSIS LAB ═══ -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-lav">5</div>
+    <span class="eyebrow-label">Phase 5 · Glycolysis Lab</span>
+  </div>
+  <h2>🧪 Step Through Glycolysis</h2>
+  <p class="lead">Step through the two phases of glycolysis and watch the products accumulate. This connects to Q16, Q17, Q19, Q20, and Q21 on your packet.</p>
+
+  <div class="predict-box">
+    <h4>✏️ Before the lab — your prediction</h4>
+    <textarea id="glyc-predict" placeholder="Q20 asks why we say there is a 'net gain' of ATP in glycolysis. Predict: if glycolysis both uses AND produces ATP, what do you think the net gain is, and why? How is this like making an investment?"></textarea>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🍬 Glycolysis Step-Through</h3>
+    <div class="hint" id="glyc-hint">Click "Begin" to start the investment phase of glycolysis</div>
+
+    <div class="glyc-track" id="glycTrack">
+      <div class="glyc-box" id="g-glucose">
+        <div class="g-label">🍬 Glucose</div>
+        <div class="g-val">1</div>
+        <div class="g-unit">6-carbon molecule</div>
+      </div>
+      <div class="glyc-box" id="g-atp-inv">
+        <div class="g-label">💸 ATP Invested</div>
+        <div class="g-val" id="val-inv">0</div>
+        <div class="g-unit">energy input phase</div>
+      </div>
+      <div class="glyc-box" id="g-atp-made">
+        <div class="g-label">⚡ ATP Made</div>
+        <div class="g-val" id="val-made">0</div>
+        <div class="g-unit">energy payoff phase</div>
+      </div>
+      <div class="glyc-box" id="g-nadh">
+        <div class="g-label">🔋 NADH Made</div>
+        <div class="g-val" id="val-nadh">0</div>
+        <div class="g-unit">electron carrier</div>
+      </div>
+      <div class="glyc-box" id="g-pyruvate">
+        <div class="g-label">🧪 Pyruvate</div>
+        <div class="g-val" id="val-pyr">0</div>
+        <div class="g-unit">3-carbon product</div>
+      </div>
+      <div class="glyc-box" id="g-netatp">
+        <div class="g-label">💰 NET ATP</div>
+        <div class="g-val" id="val-net">—</div>
+        <div class="g-unit">payoff − investment</div>
+      </div>
+    </div>
+
+    <div id="glyc-status" style="background:var(--lav-pale);border:2px solid var(--lavender);border-radius:10px;padding:.9rem 1.2rem;margin:1rem 0;font-size:.88rem;line-height:1.6;font-family:'DM Mono',monospace;min-height:50px;color:var(--lavender);">
+      🎬 Ready to begin glycolysis — click the button below.
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-lav"   id="btn-ginit"  onclick="glycStep(1)">▶ Phase 1: Energy Investment</button>
+      <button class="btn btn-coral" id="btn-gpayoff" onclick="glycStep(2)" disabled>⏩ Phase 2: Energy Payoff</button>
+      <button class="btn btn-gold"  id="btn-gdest"   onclick="glycStep(3)" disabled>📦 Destination of Products</button>
+      <button class="btn btn-ghost"                  onclick="glycReset()">↺ Reset</button>
+    </div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Glycolysis Results</h4>
+    <textarea placeholder="How many net ATP were produced? Why do we say 'net'? Where does pyruvate go next (in the presence of oxygen)? Where does NADH go? Connect each answer to your packet questions Q16, Q19, Q20, Q21…"></textarea>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(3)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(5)">Next: Quiz →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 5: QUIZ ═══ -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-forest">6</div>
+    <span class="eyebrow-label">Phase 6 · Real Test Practice</span>
+  </div>
+  <h2>📝 Packet Quiz — Sections 5.1 &amp; 5.2</h2>
+  <p class="lead">These questions come <strong>directly from your Unit 5 Packet (Q1–21)</strong>. Answer each one and get instant feedback with the explanation.</p>
+
+  <div id="quiz-container"></div>
+
+  <div id="score-panel" class="score-panel" style="display:none;">
+    <h3>Quiz Complete! 🎉</h3>
+    <div class="score-num" id="score-display">0/20</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-gold" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(4)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(6)">Next: Reflect →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 6: REFLECT ═══ -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">7</div>
+    <span class="eyebrow-label">Phase 7 · Reflect</span>
+  </div>
+  <h2>💭 Reflection &amp; Review</h2>
+  <p class="lead">Solidify your understanding. Answer all five questions in your own words — this is the study technique that actually works.</p>
+
+  <div class="quiz-card">
+    <div class="quiz-q">1. Explain what cellular respiration is and write its full chemical equation. What kingdoms of life perform it? (Q1 &amp; Q2)</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">2. Using the "gold vs. cash" analogy, explain the roles of glucose and ATP in the cell. What is ATP hydrolysis? What is ADP phosphorylation? Which releases energy and which requires it? (Q3, Q5, Q6, Q7)</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">3. Define oxidation and reduction (OIL RIG). Is NAD⁺ + 2e⁻ + H⁺ → NADH an oxidation or reduction? What about FADH₂ → FAD + 2e⁻ + 2H⁺? Explain. (Q10 &amp; Q11)</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">4. List the 3 stages of cellular respiration in order. For glycolysis specifically: where does it occur? Is it aerobic or anaerobic? What are its three products and how many of each are made per glucose? (Q14, Q15, Q16)</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">5. Explain why glycolysis produces a "net gain" of 2 ATP rather than simply 4 ATP. Where does pyruvate go after glycolysis (in the presence of O₂)? Where does NADH go? (Q19, Q20, Q21)</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.8rem;">✏️ Fill-in-the-Blank Review</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1.2rem;">Type the answer and press Enter or click Check All.</p>
+  <div id="fill-container"></div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-mint" onclick="checkAllFills()">✓ Check All Answers</button>
+    <button class="btn btn-ghost" onclick="resetFills()" style="margin-left:.6rem;">↺ Reset</button>
+  </div>
+
+  <div class="congrats-panel" style="margin-top:2rem;">
+    <h2>⚡ Energy Molecules &amp; Glycolysis Mastered!</h2>
+    <p>You've worked through all of 5.1 (ATP, hydrolysis, phosphorylation, NAD⁺/NADH, redox) and 5.2 (cellular respiration overview and glycolysis) — Q1–21 from your packet — simulated the ATP cycle, classified redox reactions, and stepped through glycolysis.</p>
+    <p style="font-size:.85rem;opacity:.75;">Up next in Unit 5: the Citric Acid Cycle (5.3), Electron Transport Chain (5.4), and Fermentation (5.6)!</p>
+    <div class="summary-chips">
+      <span class="summary-chip">Cellular Respiration ✓</span>
+      <span class="summary-chip">ATP Structure ✓</span>
+      <span class="summary-chip">Hydrolysis ✓</span>
+      <span class="summary-chip">Phosphorylation ✓</span>
+      <span class="summary-chip">OIL RIG ✓</span>
+      <span class="summary-chip">NAD⁺ / NADH ✓</span>
+      <span class="summary-chip">FAD / FADH₂ ✓</span>
+      <span class="summary-chip">Aerobic vs. Anaerobic ✓</span>
+      <span class="summary-chip">3 Stages ✓</span>
+      <span class="summary-chip">Glycolysis ✓</span>
+    </div>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(5)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(7)">Next: Submit →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 7: SUBMIT ═══ -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">8</div>
+    <span class="eyebrow-label">Your Completed Work</span>
+  </div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Here's a summary of everything you worked on. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> to your teacher.</p>
+
+  <div class="summary-section" style="background:var(--forest);color:white;border-color:var(--forest);">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">STUDENT</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">LESSON</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;">Cellular Respiration Explorer ⚡</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6;" id="summaryDate"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section">
+    <h3>📝 Quiz Score</h3>
+    <div class="summary-answer" id="sum-quiz"></div>
+  </div>
+  <div class="summary-section">
+    <h3>🤔 Opening Prediction</h3>
+    <div class="summary-answer" id="sum-pred"></div>
+  </div>
+  <div class="summary-section">
+    <h3>🔋 ATP Lab Prediction</h3>
+    <div class="summary-answer" id="sum-atp-pred"></div>
+  </div>
+  <div class="summary-section">
+    <h3>🍬 Glycolysis Lab Prediction</h3>
+    <div class="summary-answer" id="sum-glyc-pred"></div>
+  </div>
+  <div class="summary-section">
+    <h3>💭 Reflection Questions</h3>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;">Q1 — Cellular Respiration</div>
+    <div class="summary-answer" id="sum-r1"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q2 — ATP Hydrolysis &amp; Phosphorylation</div>
+    <div class="summary-answer" id="sum-r2"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q3 — Oxidation &amp; Reduction</div>
+    <div class="summary-answer" id="sum-r3"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q4 — 3 Stages &amp; Glycolysis Details</div>
+    <div class="summary-answer" id="sum-r4"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q5 — Net ATP &amp; Product Destinations</div>
+    <div class="summary-answer" id="sum-r5"></div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.6rem;">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2;">
+      <strong>📋 Copy My Results</strong> — Copies all answers to clipboard. Paste into Google Classroom assignment.<br>
+      <strong>📧 Email to Teacher</strong> — Opens your email app with answers pre-filled.<br>
+      <strong>🖨️ Print / Save PDF</strong> — Mac: bottom-left dropdown → Save as PDF. Windows: Microsoft Print to PDF.
+    </p>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(6)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(0)">↺ Start Over</button>
+  </div>
+</div>
+
+</div><!-- /sheet -->
+
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+<script>
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+const steps    = document.querySelectorAll('.prog-step');
+const sections = document.querySelectorAll('.section');
+
+function goTo(n) {
+  sections.forEach((s, i) => s.classList.toggle('active', i === n));
+  steps.forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    if (i === n) s.classList.add('active');
+    if (i < n)  s.classList.add('done');
+  });
+  if (n === 7) buildSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════════════
+// CONCEPT REVEALS (Section 1)
+// ═══════════════════════════════════════════════
+const revIds = ['cr','atp','hydrolysis','phosph','goldcash','2ndlaw','redox','nadh','fadh'];
+function reveal(key) {
+  revIds.forEach(id => {
+    const el = document.getElementById('rev-' + id);
+    if (el) el.classList.remove('show');
+  });
+  const t = document.getElementById('rev-' + key);
+  if (t) t.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// MATCHING GAME (Section 1)
+// ═══════════════════════════════════════════════
+let matchSelected = null;
+let matchScore = 0;
+
+function matchClick(el) {
+  if (el.classList.contains('matched')) return;
+  if (!matchSelected) {
+    el.classList.add('selected');
+    matchSelected = el;
+  } else if (matchSelected === el) {
+    el.classList.remove('selected');
+    matchSelected = null;
+  } else {
+    const pA = matchSelected.dataset.pair, pB = el.dataset.pair;
+    const sA = matchSelected.dataset.side, sB = el.dataset.side;
+    if (pA === pB && sA !== sB) {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('matched');
+      el.classList.add('matched');
+      matchScore++;
+      document.getElementById('match-score').textContent = matchScore + '/5 matched';
+      matchSelected = null;
+    } else {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('wrong');
+      el.classList.add('wrong');
+      const a = matchSelected, b = el;
+      setTimeout(() => { a.classList.remove('wrong'); b.classList.remove('wrong'); }, 650);
+      matchSelected = null;
+    }
+  }
+}
+function resetMatch() {
+  matchSelected = null; matchScore = 0;
+  document.querySelectorAll('.match-item').forEach(el => el.classList.remove('selected','matched','wrong'));
+  document.getElementById('match-score').textContent = '';
+}
+
+// ═══════════════════════════════════════════════
+// ATP HYDROLYSIS / PHOSPHORYLATION ANIMATOR
+// ═══════════════════════════════════════════════
+function animateATP(type) {
+  const atpMol  = document.getElementById('mol-atp');
+  const adpMol  = document.getElementById('mol-adp');
+  const rxnBox  = document.getElementById('atp-reaction-box');
+  const hint    = document.getElementById('atp-hint');
+
+  if (type === 'hydrolysis') {
+    atpMol.style.opacity = '0.4';
+    atpMol.style.transform = 'scale(0.92)';
+    adpMol.style.opacity = '1';
+    adpMol.style.background = 'var(--coral-pale)';
+    adpMol.style.borderColor = 'var(--coral)';
+    adpMol.querySelector('.mol-label').textContent = 'ADP + Pᵢ';
+    adpMol.querySelector('.energy-badge').style.opacity = '1';
+    adpMol.querySelector('.energy-badge').textContent = '💸 Energy Released!';
+    rxnBox.innerHTML = '<strong>ATP Hydrolysis:</strong> ATP + H₂O → ADP + Pᵢ + <span style="color:var(--coral);font-weight:700;">ENERGY RELEASED ⚡</span><br><span style="font-size:.75rem;color:var(--muted);">Exergonic reaction — powers cellular work (muscle contraction, active transport, biosynthesis). ~7.3 kcal/mol released. Q5.</span>';
+    rxnBox.style.background = 'var(--coral-pale)';
+    rxnBox.style.borderColor = 'var(--coral)';
+    hint.textContent = '⚡ Hydrolysis: ATP breaks down → energy released. Used to power cellular work.';
+  } else if (type === 'phosphorylation') {
+    atpMol.style.opacity = '1';
+    atpMol.style.transform = 'scale(1.08)';
+    atpMol.style.background = 'var(--gold-pale)';
+    atpMol.style.borderColor = 'var(--gold)';
+    adpMol.style.opacity = '0.4';
+    adpMol.style.background = '#f5f7fa';
+    adpMol.style.borderColor = 'var(--border)';
+    adpMol.querySelector('.energy-badge').style.opacity = '0.3';
+    rxnBox.innerHTML = '<strong>ADP Phosphorylation:</strong> ADP + Pᵢ + <span style="color:var(--lavender);font-weight:700;">ENERGY INPUT</span> → ATP + H₂O<br><span style="font-size:.75rem;color:var(--muted);">Endergonic reaction — stores energy into ATP. Energy comes from cellular respiration (glucose oxidation). Q6, Q7.</span>';
+    rxnBox.style.background = 'var(--gold-pale)';
+    rxnBox.style.borderColor = 'var(--gold)';
+    hint.textContent = '🔋 Phosphorylation: ADP + Pᵢ → ATP. Energy from respiration is stored. Endergonic.';
+  } else {
+    atpMol.style.opacity = '1'; atpMol.style.transform = 'scale(1)';
+    adpMol.style.opacity = '1'; adpMol.style.background = '#f5f7fa';
+    adpMol.style.borderColor = 'var(--border)';
+    adpMol.querySelector('.energy-badge').style.opacity = '0.4';
+    adpMol.querySelector('.energy-badge').textContent = '💸 Energy Spent';
+    rxnBox.style.background = '#f5f7fa'; rxnBox.style.borderColor = 'var(--border)';
+    rxnBox.innerHTML = 'Select a reaction below to see the equation and energy dynamics…';
+    hint.textContent = 'Click a button to animate ATP hydrolysis or ADP phosphorylation';
+  }
+}
+
+// ═══════════════════════════════════════════════
+// REDOX STEP CARDS (Section 2)
+// ═══════════════════════════════════════════════
+function showRedox(type) {
+  document.querySelectorAll('#sec-2 .sel-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('#sec-2 .sel-detail').forEach(d => d.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const det = document.getElementById('sel-' + type);
+  if (det) det.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// EVIDENCE CARDS (Section 3)
+// ═══════════════════════════════════════════════
+function showEvidence(type) {
+  document.querySelectorAll('.ev-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.ev-panel').forEach(p => p.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const panel = document.getElementById('ev-' + type);
+  if (panel) panel.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// GLYCOLYSIS LAB (Section 4)
+// ═══════════════════════════════════════════════
+let glycPhase = 0;
+
+function glycStep(phase) {
+  const status  = document.getElementById('glyc-status');
+  const hint    = document.getElementById('glyc-hint');
+  const btnInit = document.getElementById('btn-ginit');
+  const btnPay  = document.getElementById('btn-gpayoff');
+  const btnDest = document.getElementById('btn-gdest');
+
+  if (phase === 1) {
+    // Energy investment phase
+    document.getElementById('val-inv').textContent  = '2';
+    document.getElementById('val-made').textContent = '0';
+    document.getElementById('val-nadh').textContent = '0';
+    document.getElementById('val-pyr').textContent  = '0';
+    document.getElementById('val-net').textContent  = '—';
+    document.getElementById('g-atp-inv').classList.add('active');
+    document.getElementById('g-glucose').classList.add('active');
+    status.innerHTML = '💸 <strong>Phase 1 — Energy Investment:</strong> 2 ATP are used to phosphorylate glucose, making it more reactive. The 6-carbon glucose is split into two 3-carbon molecules (PGAL/G3P). This costs energy but prepares glucose for the payoff phase.<br><span style="font-size:.75rem;color:var(--muted);">This is why glycolysis has a "cost" before it earns anything back.</span>';
+    status.style.color = 'var(--coral)';
+    status.style.borderColor = 'var(--coral)';
+    status.style.background = 'var(--coral-pale)';
+    hint.textContent = 'Phase 1 complete — 2 ATP invested. Click Phase 2 to see the payoff!';
+    btnInit.disabled = true;
+    btnPay.disabled  = false;
+    glycPhase = 1;
+  } else if (phase === 2) {
+    // Energy payoff phase
+    document.getElementById('val-inv').textContent  = '2';
+    document.getElementById('val-made').textContent = '4';
+    document.getElementById('val-nadh').textContent = '2';
+    document.getElementById('val-pyr').textContent  = '2';
+    document.getElementById('val-net').textContent  = '2';
+    document.getElementById('g-atp-inv').classList.remove('active');
+    document.getElementById('g-atp-made').classList.add('done');
+    document.getElementById('g-nadh').classList.add('done');
+    document.getElementById('g-pyruvate').classList.add('done');
+    document.getElementById('g-netatp').classList.add('done');
+    document.getElementById('g-glucose').classList.remove('active');
+    document.getElementById('g-glucose').classList.add('done');
+    status.innerHTML = '⚡ <strong>Phase 2 — Energy Payoff:</strong> Each of the two 3-carbon molecules goes through the payoff phase, generating 2 ATP each (4 total) and 1 NADH each (2 total). End result: 2 pyruvate, 4 ATP made − 2 ATP invested = <strong>NET 2 ATP</strong>, 2 NADH.<br><span style="font-size:.75rem;color:var(--muted);">Q16: Products = 2 pyruvate, 2 ATP (net), 2 NADH. Q20: Net gain = 2 ATP because 2 were invested in Phase 1.</span>';
+    status.style.color = '#1b7a58';
+    status.style.borderColor = 'var(--mint)';
+    status.style.background = 'var(--mint-pale)';
+    hint.textContent = 'Glycolysis complete! Click "Destination of Products" to see where everything goes next.';
+    btnPay.disabled  = true;
+    btnDest.disabled = false;
+    glycPhase = 2;
+  } else if (phase === 3) {
+    status.innerHTML = '📦 <strong>Where do products go?</strong><br>🧪 <strong>2 Pyruvate</strong> → shuttled to the <strong>mitochondrial matrix</strong> (if O₂ is present) for pyruvate oxidation and the citric acid cycle. Q19.<br>🔋 <strong>2 NADH</strong> → shuttled to the <strong>electron transport chain</strong> on the inner mitochondrial membrane. Q21.<br>⚡ <strong>2 ATP (net)</strong> → immediately available for cellular work in the cytoplasm.';
+    status.style.color = '#4a3a8a';
+    status.style.borderColor = 'var(--lavender)';
+    status.style.background = 'var(--lav-pale)';
+    btnDest.disabled = true;
+    glycPhase = 3;
+  }
+}
+
+function glycReset() {
+  glycPhase = 0;
+  document.getElementById('val-inv').textContent  = '0';
+  document.getElementById('val-made').textContent = '0';
+  document.getElementById('val-nadh').textContent = '0';
+  document.getElementById('val-pyr').textContent  = '0';
+  document.getElementById('val-net').textContent  = '—';
+  ['g-glucose','g-atp-inv','g-atp-made','g-nadh','g-pyruvate','g-netatp'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove('active','done'); }
+  });
+  const status = document.getElementById('glyc-status');
+  status.innerHTML = '🎬 Ready to begin glycolysis — click the button below.';
+  status.style.color = 'var(--lavender)';
+  status.style.borderColor = 'var(--lavender)';
+  status.style.background = 'var(--lav-pale)';
+  document.getElementById('glyc-hint').textContent = 'Click "Begin" to start the investment phase of glycolysis';
+  document.getElementById('btn-ginit').disabled  = false;
+  document.getElementById('btn-gpayoff').disabled = true;
+  document.getElementById('btn-gdest').disabled   = true;
+}
+
+// ═══════════════════════════════════════════════
+// QUIZ DATA — Q1–21 (5.1 & 5.2)
+// ═══════════════════════════════════════════════
+const quizData = [
+  {
+    q: "Q1 — What is cellular respiration? Which choice best describes it?",
+    opts: ["The process by which plants make glucose using sunlight","The process by which cells break down glucose (and other organics) to produce ATP, using oxygen","A process that only occurs in animal cells","The process of building complex molecules from simple ones"],
+    ans: 1,
+    fb: "Cellular respiration breaks down glucose (C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + ATP) to release chemical energy as usable ATP. It is catabolic and exergonic."
+  },
+  {
+    q: "Q2 — Which kingdoms of life perform cellular respiration?",
+    opts: ["Only animals (kingdom Animalia)","Only animals and fungi","Plants only — animals use fermentation","All kingdoms — Bacteria, Archaea, Protists, Fungi, Plants, and Animals"],
+    ans: 3,
+    fb: "All living organisms perform cellular respiration — it is the universal mechanism for ATP production. Plants perform both photosynthesis AND cellular respiration."
+  },
+  {
+    q: "Q3 — Glucose is to a bar of gold as ATP is to ___. What does this analogy mean?",
+    opts: ["A bank account — both are stored for long term","Cash money — ATP is the immediately spendable energy currency; glucose stores energy but can't be directly used","A credit card — both require future payment","A commodity — both can be traded on markets"],
+    ans: 1,
+    fb: "Glucose = bar of gold (high energy but not directly usable). ATP = cash (immediately spendable energy). Cells must convert glucose into ATP via respiration before they can use its energy."
+  },
+  {
+    q: "Q4 — ATP has three phosphate groups. Which bond is the 'high energy bond'?",
+    opts: ["The bond between adenine and ribose","The bond between the 1st and 2nd phosphate groups","The bond between the 2nd and 3rd phosphate groups","The bond between ribose and the 1st phosphate"],
+    ans: 2,
+    fb: "The high-energy phosphoanhydride bond is between the 2nd and 3rd phosphate groups. Breaking this bond releases energy (~7.3 kcal/mol) that powers cellular work."
+  },
+  {
+    q: "Q5 — ATP hydrolysis (ATP + H₂O → ADP + Pᵢ) results in:",
+    opts: ["A net storage of chemical energy (endergonic)","A net release of chemical energy (exergonic)","No energy change — it is energy neutral","The synthesis of glucose"],
+    ans: 1,
+    fb: "ATP hydrolysis is exergonic — it releases energy. This energy is used to power cellular work such as muscle contraction, active transport, and biosynthesis. Energy is released, not stored."
+  },
+  {
+    q: "Q6 — ADP phosphorylation (ADP + Pᵢ → ATP) results in:",
+    opts: ["A net release of energy (exergonic)","No energy change","A net input/storage of energy (endergonic)","Glucose being produced"],
+    ans: 2,
+    fb: "ADP phosphorylation is endergonic — it requires a net input of energy to reform the high-energy phosphate bond in ATP. This energy comes from cellular respiration (oxidation of glucose)."
+  },
+  {
+    q: "Q7 — In animal cells, where does the energy come from to drive ADP phosphorylation (make ATP)?",
+    opts: ["Sunlight (photosynthesis)","From the oxidation of glucose in cellular respiration","From the hydrolysis of proteins","From osmosis across the cell membrane"],
+    ans: 1,
+    fb: "In animal cells, the energy to phosphorylate ADP comes from the oxidation of glucose (and other organic molecules) during cellular respiration. This is why cells need glucose — to power ATP synthesis."
+  },
+  {
+    q: "Q9 — How does the 2nd law of thermodynamics help us understand cellular respiration?",
+    opts: ["It explains why cells can convert 100% of glucose's energy into ATP","It tells us that energy conversions are always perfectly efficient","It explains that energy conversions are never 100% efficient — some energy is always lost as heat (entropy increases)","It proves that respiration does not occur in cold environments"],
+    ans: 2,
+    fb: "The 2nd law of thermodynamics (entropy) tells us that every energy conversion increases disorder and loses some energy as heat. This is why cells can't convert ALL of glucose's energy to ATP — some is inevitably lost as heat, which is why your body generates heat during exercise."
+  },
+  {
+    q: "Q10 — Define oxidation and reduction correctly (OIL RIG):",
+    opts: ["Oxidation = gain of electrons; Reduction = loss of electrons","Oxidation = loss of electrons (OIL); Reduction = gain of electrons (RIG)","Both refer to the same process in different directions","Oxidation always involves oxygen; reduction never does"],
+    ans: 1,
+    fb: "OIL RIG — Oxidation Is Loss (of electrons), Reduction Is Gain (of electrons). These always happen together (redox reactions). In respiration, glucose is oxidized (loses electrons) and oxygen is reduced (gains electrons to become water)."
+  },
+  {
+    q: "Q11 — NAD⁺ + 2e⁻ + H⁺ → NADH. Is this oxidation or reduction?",
+    opts: ["Oxidation — NAD⁺ loses electrons","Reduction — NAD⁺ gains electrons to become NADH","Neither — this is a hydrolysis reaction","This is phosphorylation"],
+    ans: 1,
+    fb: "NAD⁺ gaining electrons = REDUCTION (RIG — Reduction Is Gain). NADH is the 'loaded' reduced form. It carries those electrons to the ETC. Conversely, FADH₂ → FAD + 2e⁻ + 2H⁺ is OXIDATION (FADH₂ loses electrons)."
+  },
+  {
+    q: "Q12 — Oxidative phosphorylation means:",
+    opts: ["Using light energy to make ATP","Using the energy from electron transfer (oxidation) to drive ATP synthesis (phosphorylation of ADP)","Breaking down ATP to release energy","Making glucose from CO₂ and water"],
+    ans: 1,
+    fb: "Oxidative phosphorylation = oxidation (electron transfer in the ETC) + phosphorylation (making ATP from ADP + Pᵢ). The ETC oxidizes NADH and FADH₂, using the released energy to pump H⁺ ions, which then flow through ATP synthase to make ATP."
+  },
+  {
+    q: "Q13 — What is the difference between aerobic and anaerobic processes?",
+    opts: ["Aerobic uses glucose; anaerobic uses proteins","Aerobic requires oxygen (O₂); anaerobic does NOT require oxygen","Aerobic occurs in the nucleus; anaerobic in the cytoplasm","There is no difference — the terms are interchangeable"],
+    ans: 1,
+    fb: "Aerobic = requires O₂ (the citric acid cycle and ETC are aerobic). Anaerobic = does NOT require O₂ (glycolysis and fermentation are anaerobic). Glycolysis is anaerobic but occurs whether oxygen is present or not."
+  },
+  {
+    q: "Q14 — What are the 3 stages of cellular respiration in order?",
+    opts: ["Fermentation → Citric Acid Cycle → Glycolysis","Glycolysis → Electron Transport Chain → Citric Acid Cycle","Glycolysis → Citric Acid Cycle → Electron Transport Chain","Photosynthesis → Glycolysis → Fermentation"],
+    ans: 2,
+    fb: "The correct order is: 1) Glycolysis (cytoplasm), 2) Citric Acid (Krebs) Cycle (mitochondrial matrix), 3) Electron Transport Chain (inner mitochondrial membrane). Each stage feeds the next."
+  },
+  {
+    q: "Q15 — Where in the cell does glycolysis take place? Is it aerobic or anaerobic?",
+    opts: ["Mitochondrial matrix — aerobic","Nucleus — anaerobic","Cytoplasm (cytosol) — anaerobic (does not require O₂)","Inner mitochondrial membrane — aerobic"],
+    ans: 2,
+    fb: "Glycolysis occurs in the cytoplasm (cytosol) and is anaerobic — it does not require oxygen. This means it can occur even when oxygen is absent, which is why cells can briefly function without O₂."
+  },
+  {
+    q: "Q16 — What are the THREE products of glycolysis, and how many of each are produced per glucose?",
+    opts: ["1 pyruvate, 4 ATP, 1 NADH","2 pyruvate, 2 ATP (net), 2 NADH","2 pyruvate, 4 ATP (gross), 0 NADH","3 pyruvate, 2 ATP, 3 NADH"],
+    ans: 1,
+    fb: "Per glucose: 2 pyruvate (3-carbon molecules), 2 ATP net, and 2 NADH (electron carriers). Remember: gross ATP made = 4, but 2 are invested in Phase 1, so net = 2."
+  },
+  {
+    q: "Q17 — In glycolysis, is glucose oxidized or reduced? What about NAD⁺?",
+    opts: ["Glucose is reduced; NAD⁺ is oxidized","Both glucose and NAD⁺ are reduced","Glucose is oxidized (loses electrons); NAD⁺ is reduced (gains electrons → becomes NADH)","Glucose is oxidized; NAD⁺ is also oxidized"],
+    ans: 2,
+    fb: "Glucose is OXIDIZED — it loses electrons (OIL). Those electrons are picked up by NAD⁺, which is REDUCED to NADH (RIG). This is the core redox chemistry of glycolysis. The released energy is used to make ATP."
+  },
+  {
+    q: "Q19 — In the presence of oxygen, where is pyruvate shuttled to after glycolysis?",
+    opts: ["Back to the cytoplasm for fermentation","The nucleus","Into the mitochondrial matrix for pyruvate oxidation and the citric acid cycle","The cell membrane for export"],
+    ans: 2,
+    fb: "When oxygen is present, the 2 pyruvate from glycolysis are transported into the mitochondrial matrix, where they are oxidized (pyruvate oxidation) to acetyl-CoA and then enter the citric acid cycle."
+  },
+  {
+    q: "Q20 — Why is it said that there is a NET gain of ATP in glycolysis?",
+    opts: ["Because glycolysis produces 0 ATP total","Because glycolysis produces 4 ATP and requires 0 investment","Because glycolysis invests 2 ATP in Phase 1 but produces 4 ATP in Phase 2 — net = 2 ATP","Because glycolysis only produces 1 ATP net"],
+    ans: 2,
+    fb: "Glycolysis uses 2 ATP in the energy investment phase (to activate glucose), then produces 4 ATP in the energy payoff phase. 4 − 2 = net 2 ATP. This is why we say 'net' gain rather than just quoting the 4 ATP produced."
+  },
+  {
+    q: "Q21 — In the presence of oxygen, where is NADH shuttled to after glycolysis?",
+    opts: ["Back to the cytoplasm to be re-used in glycolysis","The nucleus for gene expression","The electron transport chain (inner mitochondrial membrane)","The ribosome"],
+    ans: 2,
+    fb: "NADH from glycolysis is shuttled to the electron transport chain (ETC) on the inner mitochondrial membrane, where it donates its electrons. Those electrons power proton pumping, ultimately generating ~2.5 ATP per NADH via ATP synthase."
+  },
+  {
+    q: "BONUS — Which of the following is the correct overall equation for cellular respiration?",
+    opts: ["6CO₂ + 6H₂O + light → C₆H₁₂O₆ + 6O₂","C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + ATP","C₆H₁₂O₆ → 2 pyruvate + 2 ATP + 2 NADH only","6H₂O + 6CO₂ → C₆H₁₂O₆ + ATP"],
+    ans: 1,
+    fb: "The overall equation for aerobic cellular respiration is: C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + ATP. Note: the first option is the equation for PHOTOSYNTHESIS (the reverse process)."
+  },
+];
+
+let quizScore = 0;
+let quizAnswered = 0;
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  quizScore = 0; quizAnswered = 0;
+  document.getElementById('score-panel').style.display = 'none';
+
+  quizData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `
+      <div class="quiz-q">${item.q}</div>
+      <div class="quiz-options">
+        ${item.opts.map((opt, i) => `
+          <button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">
+            ${String.fromCharCode(65+i)}. ${opt}
+          </button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="qfb-${idx}"></div>`;
+    container.appendChild(card);
+  });
+}
+
+function checkAnswer(btn, qIdx, optIdx) {
+  const card    = btn.closest('.quiz-card');
+  const buttons = card.querySelectorAll('.quiz-opt');
+  const fb      = document.getElementById('qfb-' + qIdx);
+  const correct = quizData[qIdx].ans;
+  buttons.forEach(b => b.disabled = true);
+  if (optIdx === correct) {
+    btn.classList.add('correct');
+    fb.textContent = '✅ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show correct-fb';
+    quizScore++;
+  } else {
+    btn.classList.add('wrong');
+    buttons[correct].classList.add('correct');
+    fb.textContent = '❌ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show wrong-fb';
+  }
+  quizAnswered++;
+  if (quizAnswered === quizData.length) showScore();
+}
+
+function showScore() {
+  const panel = document.getElementById('score-panel');
+  panel.style.display = 'block';
+  document.getElementById('score-display').textContent = quizScore + '/' + quizData.length;
+  const pct = quizScore / quizData.length;
+  let msg;
+  if (pct >= .9) msg = '🌟 Outstanding! You clearly understand ATP and glycolysis. Exam ready!';
+  else if (pct >= .75) msg = '👍 Great work! Review the questions you missed and you\'ll be in great shape.';
+  else if (pct >= .6) msg = '📚 Good start. Revisit the Energy Molecules and Respiration phases, then retake.';
+  else msg = '💪 Keep going! Go back through Phases 2–4, then try the quiz again.';
+  document.getElementById('score-msg').textContent = msg;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function retakeQuiz() { buildQuiz(); }
+
+// ═══════════════════════════════════════════════
+// FILL-IN-THE-BLANK
+// ═══════════════════════════════════════════════
+const fills = [
+  { q: "Q1: The full chemical equation for cellular respiration: C₆H₁₂O₆ + 6O₂ → 6___ + 6H₂O + ATP", ans: "CO2" },
+  { q: "Q5: ATP + H₂O → ADP + Pᵢ is called ATP ___.", ans: "hydrolysis" },
+  { q: "Q6: ADP + Pᵢ → ATP is called ADP ___.", ans: "phosphorylation" },
+  { q: "Q10: OIL RIG — Oxidation is ___ of electrons; Reduction is Gain.", ans: "loss" },
+  { q: "Q11: NAD⁺ + 2e⁻ + H⁺ → NADH is a ___ reaction.", ans: "reduction" },
+  { q: "Q13: Processes that require oxygen are ___; those that don't are anaerobic.", ans: "aerobic" },
+  { q: "Q14: The 3 stages of cellular respiration are: Glycolysis, Citric Acid Cycle, and Electron Transport ___.", ans: "chain" },
+  { q: "Q15: Glycolysis takes place in the ___ of the cell.", ans: "cytoplasm" },
+  { q: "Q16: The three products of glycolysis (per glucose) are: 2 pyruvate, 2 ___, and 2 NADH.", ans: "ATP" },
+  { q: "Q20: Glycolysis invests 2 ATP and makes 4 ATP, so the ___ gain is 2 ATP.", ans: "net" },
+];
+
+function buildFills() {
+  const container = document.getElementById('fill-container');
+  container.innerHTML = '';
+  fills.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-card';
+    div.innerHTML = `<div class="fill-q">${item.q.replace('___', `<input class="blank-input" id="fill-${idx}" type="text" placeholder="?" onkeydown="if(event.key==='Enter')checkFill(${idx})">`)}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function checkFill(idx) {
+  const input = document.getElementById('fill-' + idx);
+  const val   = input.value.trim().toLowerCase().replace(/[₂²]/g, '2');
+  const correct = fills[idx].ans.toLowerCase();
+  if (val === correct || val.includes(correct) || correct.includes(val)) {
+    input.classList.remove('err'); input.classList.add('ok');
+    input.value = fills[idx].ans;
+  } else {
+    input.classList.remove('ok'); input.classList.add('err');
+  }
+}
+function checkAllFills() { fills.forEach((_, idx) => checkFill(idx)); }
+function resetFills() {
+  fills.forEach((_, idx) => {
+    const input = document.getElementById('fill-' + idx);
+    if (input) { input.value = ''; input.classList.remove('ok','err'); }
+  });
+}
+
+// ═══════════════════════════════════════════════
+// SUMMARY / SUBMIT
+// ═══════════════════════════════════════════════
+function fillSummary(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = text && text.trim();
+  el.textContent = val || 'Not answered';
+  el.classList.toggle('empty', !val);
+}
+
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  const scoreEl = document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl ? scoreEl.textContent + ' correct' : 'Quiz not yet completed');
+
+  const predTA = document.querySelector('#sec-0 textarea');
+  fillSummary('sum-pred', predTA ? predTA.value : '');
+
+  const atpTA  = document.getElementById('atp-predict');
+  fillSummary('sum-atp-pred', atpTA ? atpTA.value : '');
+
+  const glycTA = document.getElementById('glyc-predict');
+  fillSummary('sum-glyc-pred', glycTA ? glycTA.value : '');
+
+  const refCards = document.querySelectorAll('#sec-6 .quiz-card textarea');
+  ['sum-r1','sum-r2','sum-r3','sum-r4','sum-r5'].forEach((id, i) => {
+    fillSummary(id, refCards[i] ? refCards[i].value : '');
+  });
+}
+
+function buildPlainText() {
+  const name   = document.getElementById('studentName').value.trim() || 'Student';
+  const date   = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const scoreEl= document.getElementById('score-display');
+  const score  = scoreEl ? scoreEl.textContent : 'not completed';
+  const predTA = document.querySelector('#sec-0 textarea');
+  const atpTA  = document.getElementById('atp-predict');
+  const glycTA = document.getElementById('glyc-predict');
+  const refCards = document.querySelectorAll('#sec-6 .quiz-card textarea');
+  const refs = ['','','','',''];
+  refCards.forEach((ta, i) => { refs[i] = ta.value.trim() || 'Not answered'; });
+
+  return [
+    'CELLULAR RESPIRATION EXPLORER ⚡ — STUDENT SUBMISSION',
+    '======================================================',
+    'Student: ' + name,
+    'Date: ' + date,
+    'Lesson: Biology 8 · Unit 5 (5.1 & 5.2) · Cellular Respiration Explorer',
+    '',
+    '── QUIZ SCORE ──',
+    score,
+    '',
+    '── OPENING PREDICTION ──',
+    predTA ? (predTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── ATP LAB PREDICTION ──',
+    atpTA ? (atpTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── GLYCOLYSIS LAB PREDICTION ──',
+    glycTA ? (glycTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── REFLECTIONS ──',
+    'Q1 — Cellular Respiration:', refs[0],
+    'Q2 — ATP Hydrolysis & Phosphorylation:', refs[1],
+    'Q3 — Oxidation & Reduction:', refs[2],
+    'Q4 — 3 Stages & Glycolysis Details:', refs[3],
+    'Q5 — Net ATP & Product Destinations:', refs[4],
+    '',
+    '======================================================',
+    '© 2026 Farvour Explorations · farvourexplorations.com',
+    'Submitted via Cellular Respiration Explorer · Interactive Digital Lesson · Biology 8'
+  ].join('\n');
+}
+
+function copyResults() {
+  buildSummary();
+  const text = buildPlainText();
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Now paste into Google Classroom or your assignment.';
+    setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '⚠️ Could not copy automatically — try selecting the text manually.';
+  });
+}
+
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const subject = encodeURIComponent('Cellular Respiration Explorer — ' + name);
+  const body    = encodeURIComponent(buildPlainText());
+  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+buildQuiz();
+buildFills();
+</script>
+</body>
+</html>
