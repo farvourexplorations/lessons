@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biological Macromolecules Explorer 🧬 (Part 2)</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:    #1a3d2b;
+    --forest-mid:#2d6a4f;
+    --forest-lt: #40916c;
+    --coral:     #e8603c;
+    --coral-pale:#fdf0ec;
+    --mint:      #3aaf85;
+    --mint-pale: #e8f8f2;
+    --gold:      #c9962a;
+    --gold-pale: #fef9e7;
+    --lavender:  #7c6fcd;
+    --lav-pale:  #f0eefb;
+    --paper:     #fffef9;
+    --ink:       #1a2332;
+    --muted:     #7a8899;
+    --border:    #e0e4ea;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: linear-gradient(160deg, #0d2318 0%, #1a3d2b 45%, #2d6a4f 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%, rgba(144,238,144,.45) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 22%  38%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 41%  6%,  rgba(144,238,144,.35) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 60%  24%, rgba(255,255,255,.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 77%  9%,  rgba(144,238,144,.4)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 90%  33%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 33%  55%, rgba(144,238,144,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 70%  48%, rgba(255,255,255,.2)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 55%  70%, rgba(144,238,144,.25) 0%, transparent 100%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ─── HERO ─── */
+  .hero { position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 2rem;color:white; }
+  .hero-badge {
+    display:inline-block;background:var(--gold);color:var(--forest);
+    font-family:'Fredoka One',cursive;font-size:.85rem;letter-spacing:.05em;
+    padding:.35rem 1.2rem;border-radius:20px;margin-bottom:1.2rem;
+    box-shadow:0 2px 12px rgba(201,150,42,.45);
+  }
+  .hero h1 { font-family:'Fredoka One',cursive;font-size:clamp(2.2rem,6vw,4rem);line-height:1.1;margin-bottom:.8rem;text-shadow:0 2px 20px rgba(0,0,0,.35); }
+  .hero h1 .accent { color:var(--gold); }
+  .hero p.intro { font-size:1.05rem;line-height:1.7;opacity:.88;max-width:580px;margin:0 auto 2rem; }
+
+  /* ─── PROGRESS PILLS ─── */
+  .progress-wrap { display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem; }
+  .prog-step {
+    display:flex;align-items:center;gap:.4rem;
+    background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);
+    border-radius:20px;padding:.35rem .9rem;font-size:.78rem;font-weight:700;
+    color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace;
+  }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.35); }
+  .prog-step.active { background:var(--gold);color:var(--forest);border-color:var(--gold);box-shadow:0 2px 12px rgba(201,150,42,.45); }
+
+  /* ─── SHEET ─── */
+  .sheet {
+    position:relative;z-index:1;background:var(--paper);
+    border-radius:24px 24px 0 0;margin-top:1.5rem;
+    padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.3);
+  }
+
+  /* ─── SECTIONS ─── */
+  .section { padding:3rem 2rem 0;max-width:820px;margin:0 auto;display:none; }
+  .section.active { display:block; }
+
+  .section-eyebrow { display:flex;align-items:center;gap:.6rem;margin-bottom:1rem; }
+  .eyebrow-num {
+    width:32px;height:32px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fredoka One',cursive;font-size:1rem;color:white;flex-shrink:0;
+  }
+  .num-coral  { background:var(--coral); }
+  .num-mint   { background:var(--mint); }
+  .num-gold   { background:var(--gold);color:var(--forest); }
+  .num-lav    { background:var(--lavender); }
+  .num-forest { background:var(--forest-mid); }
+
+  .eyebrow-label { font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace; }
+
+  .section h2 { font-family:'Fredoka One',cursive;font-size:clamp(1.6rem,3.5vw,2.2rem);color:var(--forest);margin-bottom:.6rem;line-height:1.2; }
+  .section .lead { font-size:1rem;line-height:1.75;color:#3a4a5a;margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+
+  /* ─── WONDER / INFO BOXES ─── */
+  .wonder-box {
+    background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);
+    color:white;border-radius:16px;padding:1.8rem 2rem;margin-bottom:1.8rem;
+    position:relative;overflow:hidden;
+  }
+  .wonder-box::after { content:'🤔';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3; }
+  .wonder-box p { font-size:1rem;line-height:1.7;font-style:italic;opacity:.95;max-width:85%; }
+  .wonder-box strong { color:var(--gold);font-style:normal; }
+  .wonder-box.gold-box { background:linear-gradient(135deg,#8a6a1a 0%,#b8860b 100%); }
+  .wonder-box.gold-box::after { content:'⚡'; }
+  .wonder-box.lav-box  { background:linear-gradient(135deg,#4a3a8a 0%,#6a5acd 100%); }
+  .wonder-box.lav-box::after { content:'🔋'; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,#1b7a58 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'🍬'; }
+
+  /* ─── PREDICT BOX ─── */
+  .predict-box { background:var(--gold-pale);border:2px dashed var(--gold);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem; }
+  .predict-box textarea,.reflect-box textarea {
+    width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;
+    font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:64px;
+    background:white;color:var(--ink);outline:none;transition:border-color .2s;
+  }
+  .predict-box textarea:focus { border-color:var(--gold); }
+  .reflect-box { background:var(--mint-pale);border:2px dashed var(--mint);border-radius:14px;padding:1.4rem 1.6rem;margin-top:1.5rem; }
+  .reflect-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#1b7a58;margin-bottom:.8rem; }
+  .reflect-box textarea:focus { border-color:var(--mint); }
+
+  /* ─── DEMO ZONE ─── */
+  .demo-zone {
+    background:white;border:2px solid var(--border);border-radius:16px;
+    padding:1.8rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07);
+  }
+  .demo-zone h3 { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.3rem; }
+  .demo-zone .hint { font-size:.78rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:1.3rem; }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    border:none;border-radius:10px;padding:.65rem 1.3rem;font-family:'Nunito',sans-serif;
+    font-size:.88rem;font-weight:800;cursor:pointer;transition:all .15s;letter-spacing:.02em;
+  }
+  .btn:hover  { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  .btn:active { transform:translateY(0); }
+  .btn:disabled { opacity:.4;cursor:default;transform:none;box-shadow:none; }
+  .btn-coral  { background:var(--coral);    color:white; }
+  .btn-mint   { background:var(--mint);     color:white; }
+  .btn-gold   { background:var(--gold);     color:var(--forest); }
+  .btn-lav    { background:var(--lavender); color:white; }
+  .btn-ghost  { background:#f0f2f5;         color:var(--muted); }
+  .btn-forest { background:var(--forest);   color:white; }
+  .action-row { display:flex;gap:.8rem;flex-wrap:wrap;align-items:center;margin-bottom:.8rem; }
+
+  /* ─── NAV ROW ─── */
+  .nav-row { display:flex;justify-content:space-between;align-items:center;padding:2.5rem 2rem 0;max-width:820px;margin:0 auto; }
+
+  /* ─── CONCEPT CHIPS ─── */
+  .chip-row { display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem; }
+  .chip {
+    padding:.45rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;
+    cursor:pointer;transition:all .2s;border:2px solid transparent;
+  }
+  .chip.coral  { background:var(--coral-pale); color:var(--coral);     border-color:#f8c5b8; }
+  .chip.mint   { background:var(--mint-pale);  color:var(--mint);      border-color:#b8ebd8; }
+  .chip.gold   { background:var(--gold-pale);  color:#8a6a1a;          border-color:#f8e0a0; }
+  .chip.lav    { background:var(--lav-pale);   color:var(--lavender);  border-color:#d0caef; }
+  .chip.forest { background:#d4eadd;           color:var(--forest-mid);border-color:#a8d5b8; }
+  .chip:hover  { transform:scale(1.05); }
+
+  .concept-reveal {
+    background:var(--paper);border-left:4px solid var(--coral);
+    border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;
+    margin-top:.5rem;margin-bottom:.3rem;display:none;animation:fadeIn .3s ease;
+  }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border   { border-color:var(--mint); }
+  .concept-reveal.gold-border   { border-color:var(--gold); }
+  .concept-reveal.lav-border    { border-color:var(--lavender); }
+  .concept-reveal.forest-border { border-color:var(--forest-mid); }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ─── EVIDENCE CARDS ─── */
+  .evidence-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin-bottom:1.5rem; }
+  .ev-card {
+    background:white;border:2px solid var(--border);border-radius:14px;
+    padding:1.2rem;cursor:pointer;transition:all .2s;text-align:center;
+  }
+  .ev-card:hover,.ev-card.active { border-color:var(--forest-mid);box-shadow:0 4px 16px rgba(45,106,79,.2);transform:translateY(-2px); }
+  .ev-card.active { background:#d4eadd; }
+  .ev-card .ev-icon { font-size:2.4rem;margin-bottom:.5rem; }
+  .ev-card .ev-title { font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--forest);margin-bottom:.3rem; }
+  .ev-card .ev-sub   { font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace; }
+  .ev-panel {
+    background:#d4eadd;border-left:4px solid var(--forest-mid);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1rem;
+  }
+  .ev-panel.show { display:block; }
+  .ev-panel h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.5rem; }
+  .ev-panel p  { font-size:.88rem;line-height:1.7;color:#2a3a2a; }
+  .ev-panel .example-box {
+    background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;
+    font-size:.82rem;font-family:'DM Mono',monospace;color:var(--ink);
+    border:1.5px solid rgba(45,106,79,.2);
+  }
+
+  /* ─── STEP CARDS ─── */
+  .sel-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0 1.5rem; }
+  .sel-card {
+    background:white;border:2px solid var(--border);border-radius:14px;
+    padding:1rem;text-align:center;cursor:pointer;transition:all .2s;
+  }
+  .sel-card:hover,.sel-card.active { border-color:var(--coral);box-shadow:0 3px 12px rgba(232,96,60,.18);transform:translateY(-2px); }
+  .sel-card.active { background:var(--coral-pale); }
+  .sel-card .sel-icon { font-size:2rem;margin-bottom:.4rem; }
+  .sel-card .sel-name { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--forest);margin-bottom:.2rem; }
+  .sel-card .sel-key  { font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em; }
+  .sel-detail {
+    background:var(--coral-pale);border-left:4px solid var(--coral);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1.5rem;
+  }
+  .sel-detail.show { display:block; }
+  .sel-detail h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.4rem; }
+  .sel-detail p  { font-size:.88rem;line-height:1.7; }
+  .sel-detail .examples { margin-top:.6rem;font-style:italic;color:var(--muted);font-size:.82rem; }
+
+  /* ─── MATCHING GAME ─── */
+  .match-grid { display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1rem 0; }
+  .match-item {
+    padding:.75rem 1rem;border-radius:10px;border:2px solid var(--border);
+    cursor:pointer;font-size:.84rem;font-weight:700;transition:all .2s;
+    background:white;text-align:center;color:var(--ink);line-height:1.4;
+  }
+  .match-item:hover    { border-color:var(--forest-mid);background:#f0f7f3; }
+  .match-item.selected { border-color:var(--lavender);background:var(--lav-pale);color:var(--lavender); }
+  .match-item.matched  { border-color:var(--mint);background:var(--mint-pale);color:#1b7a58;cursor:default; }
+  .match-item.wrong    { border-color:var(--coral);background:var(--coral-pale);color:var(--coral);animation:shake .3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+  /* ─── ATP SIMULATOR ─── */
+  .atp-display {
+    display:flex;align-items:center;justify-content:center;gap:1.5rem;
+    flex-wrap:wrap;margin:1.2rem 0;
+  }
+  .atp-molecule {
+    text-align:center;padding:1rem 1.4rem;border-radius:14px;
+    font-family:'DM Mono',monospace;font-size:.85rem;font-weight:700;
+    border:2px solid;transition:all .4s;min-width:120px;
+  }
+  .atp-molecule .mol-label { font-family:'Fredoka One',cursive;font-size:1.3rem;margin-bottom:.3rem; }
+  .atp-molecule .mol-desc  { font-size:.7rem;color:var(--muted);margin-top:.3rem;font-weight:400; }
+  .mol-atp  { background:var(--gold-pale);border-color:var(--gold);color:#8a6a1a; }
+  .mol-adp  { background:#f5f7fa;border-color:var(--border);color:var(--muted); }
+  .mol-pi   { background:var(--lav-pale);border-color:var(--lavender);color:var(--lavender); }
+  .mol-nadh { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .mol-nad  { background:#f5f7fa;border-color:var(--border);color:var(--muted); }
+  .arrow-label { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest-mid);text-align:center; }
+  .energy-badge {
+    display:inline-block;padding:.25rem .8rem;border-radius:20px;font-size:.72rem;
+    font-weight:800;font-family:'DM Mono',monospace;letter-spacing:.05em;margin-top:.4rem;
+  }
+  .release  { background:#ffeaa7;color:#8a6a1a; }
+  .absorb   { background:var(--lav-pale);color:var(--lavender); }
+
+  /* ─── GLYCOLYSIS TRACKER ─── */
+  .glyc-track {
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:.8rem;margin:1rem 0;
+  }
+  .glyc-box {
+    background:white;border:2px solid var(--border);border-radius:12px;
+    padding:.9rem 1rem;text-align:center;transition:all .3s;
+  }
+  .glyc-box .g-label { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--forest);margin-bottom:.3rem; }
+  .glyc-box .g-val   { font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:700;color:var(--ink); }
+  .glyc-box .g-unit  { font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace; }
+  .glyc-box.active   { border-color:var(--gold);background:var(--gold-pale); }
+  .glyc-box.done     { border-color:var(--mint);background:var(--mint-pale); }
+
+  /* ─── REDOX ANIMATOR ─── */
+  .redox-row { display:flex;gap:1rem;flex-wrap:wrap;margin:1rem 0; }
+  .redox-box {
+    flex:1;min-width:200px;border-radius:14px;padding:1.1rem 1.2rem;
+    border:2px solid var(--border);text-align:center;transition:all .4s;
+  }
+  .redox-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;margin-bottom:.4rem; }
+  .redox-box p  { font-family:'DM Mono',monospace;font-size:.78rem;line-height:1.6; }
+  .redox-oxidized  { background:var(--coral-pale);border-color:var(--coral); }
+  .redox-oxidized h4 { color:var(--coral); }
+  .redox-reduced   { background:var(--mint-pale);border-color:var(--mint); }
+  .redox-reduced h4 { color:#1b7a58; }
+
+  /* ─── QUIZ ─── */
+  .quiz-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .quiz-q { font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:1rem;line-height:1.5; }
+  .quiz-options { display:flex;flex-direction:column;gap:.5rem; }
+  .quiz-opt {
+    padding:.6rem 1rem;border-radius:8px;border:2px solid var(--border);
+    background:white;cursor:pointer;font-family:'Nunito',sans-serif;
+    font-size:.88rem;font-weight:600;text-align:left;transition:all .15s;color:var(--ink);
+  }
+  .quiz-opt:hover:not(:disabled) { border-color:var(--forest-mid);background:#f0f7f3; }
+  .quiz-opt.correct  { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .quiz-opt.wrong    { background:var(--coral-pale);border-color:var(--coral);color:#a83020; }
+  .quiz-opt:disabled { cursor:default; }
+  .quiz-feedback { margin-top:.8rem;font-size:.85rem;line-height:1.6;padding:.7rem 1rem;border-radius:8px;display:none;animation:fadeIn .3s ease; }
+  .quiz-feedback.show { display:block; }
+  .quiz-feedback.correct-fb { background:var(--mint-pale);color:#1b7a58;border-left:3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background:var(--coral-pale);color:#a83020;border-left:3px solid var(--coral); }
+
+  /* ─── SCORE ─── */
+  .score-panel { background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);color:white;border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem; }
+  .score-panel .score-num { font-family:'Fredoka One',cursive;font-size:3.5rem;line-height:1;color:var(--gold); }
+  .score-panel p { opacity:.88;margin-top:.5rem;font-size:1rem; }
+  .score-panel h3 { font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:.3rem; }
+
+  /* ─── CONGRATS ─── */
+  .congrats-panel { background:linear-gradient(135deg,var(--forest) 0%,#1b7a58 100%);color:white;border-radius:20px;padding:2.5rem 2rem;text-align:center;margin-top:2rem; }
+  .congrats-panel h2 { font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:.6rem; }
+  .congrats-panel p  { opacity:.9;line-height:1.7;max-width:480px;margin:0 auto .8rem; }
+  .summary-chips { display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:1rem; }
+  .summary-chip {
+    background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);
+    border-radius:20px;padding:.3rem .9rem;font-size:.78rem;font-weight:700;
+    font-family:'DM Mono',monospace;letter-spacing:.04em;
+  }
+
+  /* ─── VOCAB TABLE ─── */
+  .vocab-table { width:100%;border-collapse:collapse;margin:1rem 0 1.5rem; }
+  .vocab-table th { background:var(--forest);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;padding:.7rem 1rem;text-align:left; }
+  .vocab-table td { padding:.65rem 1rem;font-size:.85rem;line-height:1.5;border-bottom:1px solid var(--border); }
+  .vocab-table tr:nth-child(even) td { background:#f5f7fa; }
+  .vocab-table tr:hover td { background:#d4eadd;transition:background .15s; }
+  .vocab-table td:first-child { font-weight:800;color:var(--forest-mid); }
+
+  /* ─── FILL IN THE BLANK ─── */
+  .blank-input {
+    border:none;border-bottom:2.5px solid var(--forest-mid);background:transparent;
+    font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;color:var(--forest);
+    width:180px;text-align:center;outline:none;padding:0 4px;transition:border-color .2s;
+  }
+  .blank-input:focus { border-color:var(--coral); }
+  .blank-input.ok { border-color:var(--mint);color:var(--mint); }
+  .blank-input.err{ border-color:var(--coral);color:var(--coral); }
+  .fill-q { font-size:.95rem;line-height:2;color:var(--ink);margin-bottom:.8rem; }
+  .divider { height:1px;background:var(--border);margin:2rem 0; }
+
+  /* ─── NAME BAR ─── */
+  .name-bar {
+    background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);
+    border-radius:12px;padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;
+    max-width:420px;margin:0 auto 1rem;
+  }
+  .name-bar label { font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;font-family:'DM Mono',monospace; }
+  .name-bar input {
+    flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;
+    padding:.4rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:white;outline:none;
+  }
+  .name-bar input::placeholder { color:rgba(255,255,255,.4);font-weight:400; }
+
+  /* ─── SUMMARY / SUBMIT ─── */
+  .summary-section { background:white;border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--forest);margin-bottom:.8rem; }
+  .summary-answer {
+    background:#f5f7fa;border-radius:8px;padding:.7rem 1rem;font-size:.85rem;
+    line-height:1.6;color:var(--ink);margin-bottom:.5rem;font-style:italic;
+    border-left:3px solid var(--lavender);min-height:2rem;
+  }
+  .summary-answer.empty { color:var(--muted);font-style:normal;border-left-color:var(--border); }
+  .share-buttons { display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center; }
+  .share-btn {
+    border:none;border-radius:12px;padding:.85rem 1.6rem;font-family:'Fredoka One',cursive;
+    font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem;
+  }
+  .share-btn:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background:var(--mint);color:white; }
+  .share-btn.email { background:var(--lavender);color:white; }
+  .share-btn.print { background:var(--forest);color:white; }
+  .copy-confirm { text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--mint);min-height:1.2rem;margin-top:.6rem; }
+
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm,.prog-step,.name-bar { display:none !important; }
+    .sheet { box-shadow:none;border-radius:0; }
+    .section { display:none !important; }
+    #sec-7 { display:block !important; }
+  }
+  /* ─── FATTY ACID COMPARISON ─── */
+  .fat-compare { display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1rem 0; }
+  .fat-card {
+    border-radius:14px;padding:1.2rem;text-align:center;border:2px solid var(--border);
+    cursor:pointer;transition:all .25s;background:white;
+  }
+  .fat-card:hover,.fat-card.active { transform:translateY(-3px);box-shadow:0 4px 16px rgba(0,0,0,.12); }
+  .fat-card.active.saturated   { border-color:var(--gold); background:var(--gold-pale); }
+  .fat-card.active.unsaturated { border-color:var(--mint); background:var(--mint-pale); }
+  .fat-card.active.trans       { border-color:var(--coral); background:var(--coral-pale); }
+  .fat-chain {
+    font-family:'DM Mono',monospace;font-size:1.3rem;letter-spacing:2px;
+    margin:.8rem 0;color:var(--ink);
+  }
+  .fat-card .fat-name { font-family:'Fredoka One',cursive;font-size:1rem;color:var(--forest);margin-bottom:.3rem; }
+  .fat-card .fat-state { font-size:.75rem;font-family:'DM Mono',monospace;color:var(--muted); }
+
+  /* ─── PROTEIN STRUCTURE LEVELS ─── */
+  .protein-level-track {
+    display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0;justify-content:center;
+  }
+  .protein-level-step {
+    flex:1;min-width:130px;text-align:center;padding:1rem .8rem;border-radius:12px;
+    border:2px solid var(--border);background:white;cursor:pointer;transition:all .25s;
+  }
+  .protein-level-step:hover,.protein-level-step.active { border-color:var(--lavender);box-shadow:0 4px 14px rgba(124,111,205,.2);transform:translateY(-2px); }
+  .protein-level-step.active { background:var(--lav-pale); }
+  .protein-level-step .pl-icon { font-size:1.8rem;margin-bottom:.3rem; }
+  .protein-level-step .pl-name { font-family:'Fredoka One',cursive;font-size:.85rem;color:var(--forest); }
+  .protein-level-detail {
+    background:var(--lav-pale);border-left:4px solid var(--lavender);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1rem;
+  }
+  .protein-level-detail.show { display:block; }
+  .protein-level-detail h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.5rem; }
+  .protein-level-detail p  { font-size:.88rem;line-height:1.7;color:#2a2a3a; }
+
+  /* ─── AMINO ACID CLASSIFIER ─── */
+  .aa-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.6rem;margin:1rem 0; }
+  .aa-tile {
+    border-radius:10px;padding:.7rem .5rem;text-align:center;cursor:pointer;
+    border:2px solid var(--border);background:white;transition:all .2s;
+  }
+  .aa-tile:hover { transform:scale(1.04); }
+  .aa-tile .aa-letter { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest); }
+  .aa-tile .aa-full { font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.2rem; }
+  .aa-tile.cat-nonpolar  { border-color:#a8d5b8; }
+  .aa-tile.cat-polar     { border-color:var(--mint); }
+  .aa-tile.cat-positive  { border-color:var(--coral); }
+  .aa-tile.cat-negative  { border-color:var(--lavender); }
+</style>
+</head>
+<body>
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-badge">🧬 AP Biology · Unit 1 · Chapter 3 (Part 2 of 3)</div>
+  <h1>Biological Macromolecules <span class="accent">Explorer</span></h1>
+  <p class="intro">Master fats, membranes, and the proteins that do almost everything in your cells — covering OpenStax AP Biology Chapter 3, sections 3.3 (Lipids) and 3.4 (Proteins).</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <span class="prog-step active" onclick="goTo(0)">① Wonder</span>
+    <span class="prog-step"       onclick="goTo(1)">② Lipids</span>
+    <span class="prog-step"       onclick="goTo(2)">③ Fatty Acid Lab</span>
+    <span class="prog-step"       onclick="goTo(3)">④ Proteins</span>
+    <span class="prog-step"       onclick="goTo(4)">⑤ Protein Folding Lab</span>
+    <span class="prog-step"       onclick="goTo(5)">⑥ Quiz</span>
+    <span class="prog-step"       onclick="goTo(6)">⑦ Reflect</span>
+    <span class="prog-step"       onclick="goTo(7)">📤 Submit</span>
+  </div>
+</div>
+
+<!-- ═══ SHEET ═══ -->
+<div class="sheet">
+
+<!-- ═══ SECTION 0: WONDER ═══ -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-coral">1</div>
+    <span class="eyebrow-label">Phase 1 · Wonder</span>
+  </div>
+  <h2>🧈 The Molecules That Hate Water</h2>
+  <p class="lead">
+    Pour oil into water and it never mixes — it just sits on top. That same chemical "stubbornness" is exactly what makes <strong>lipids</strong> so essential to life: they form the barrier around every cell on Earth.
+  </p>
+
+  <div class="wonder-box">
+    <p>Your cell membrane is made of phospholipids — molecules with a water-loving head and a water-hating tail. <strong>If lipids are hydrophobic and water is everywhere inside and outside your cells, how does a membrane made of lipids actually hold together and function in a watery environment?</strong></p>
+  </div>
+
+  <div class="predict-box">
+    <h4>✏️ Your Prediction (before we dig in)</h4>
+    <textarea placeholder="Predict: if you dropped a single phospholipid molecule into a glass of water, what do you think it would do? Would it dissolve, sink, float, or arrange itself into some kind of structure?"></textarea>
+  </div>
+
+  <div class="wonder-box gold-box">
+    <p>The answer is elegant: phospholipids are <strong>amphipathic</strong> — part hydrophilic, part hydrophobic. In water, they spontaneously arrange into a <strong>bilayer</strong>, with all the water-hating tails tucked away from water on the inside, and all the water-loving heads facing outward into the watery environment. No energy input required — it just happens. This chapter also covers <strong>proteins</strong>, the macromolecule responsible for nearly every job a cell needs done — from digesting your lunch to contracting your muscles.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.6rem;">🗝️ The Big Picture</h3>
+  <p style="font-size:.95rem;line-height:1.75;margin-bottom:1.8rem;">
+    <strong>Lipids</strong> (3.3) are a diverse, nonpolar group including fats/oils, waxes, phospholipids, and steroids — built from glycerol and fatty acids (or, for steroids, a fused 4-ring structure). <strong>Proteins</strong> (3.4) are the most functionally diverse macromolecule, built from 20 different amino acids and folded into four levels of structure that determine everything about how a protein works.
+  </p>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" disabled>← Back</button>
+    <button class="btn btn-coral" onclick="goTo(1)">Next: Lipids →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 1: 3.3 LIPIDS CONCEPTS ═══ -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-lav">2</div>
+    <span class="eyebrow-label">Phase 2 · 3.3 Lipids</span>
+  </div>
+  <h2>📖 Lipids — Core Vocabulary</h2>
+  <p class="lead">Tap each term to reveal its definition. Lipids are grouped together not because they're structurally similar, but because they all share one key property: <strong>hydrophobic</strong>.</p>
+
+  <div class="chip-row">
+    <span class="chip coral"  onclick="reveal('fourtypes')">4 Major Types</span>
+    <span class="chip forest" onclick="reveal('triglyceride')">Triglycerides</span>
+    <span class="chip mint"   onclick="reveal('satunsat')">Saturated vs. Unsaturated</span>
+    <span class="chip gold"   onclick="reveal('transfat')">Trans Fats</span>
+    <span class="chip lav"    onclick="reveal('omega')">Omega-3 Fatty Acids</span>
+    <span class="chip coral"  onclick="reveal('wax')">Waxes</span>
+    <span class="chip forest" onclick="reveal('phospho')">Phospholipids</span>
+    <span class="chip mint"   onclick="reveal('amphipathic')">Amphipathic &amp; Micelles</span>
+    <span class="chip gold"   onclick="reveal('steroid')">Steroids &amp; Cholesterol</span>
+  </div>
+
+  <div id="rev-fourtypes"    class="concept-reveal coral">
+    <strong>Four Major Types of Lipids</strong> — Fats &amp; Oils (triglycerides — energy storage), Waxes (protective coatings), Phospholipids (membrane structure), and Steroids (signaling, membrane fluidity). All four are grouped together because they are nonpolar and hydrophobic, even though they have very different structures and functions.
+  </div>
+  <div id="rev-triglyceride" class="concept-reveal forest-border">
+    <strong>Triglycerides (Triacylglycerols)</strong> — A fat molecule made of one glycerol backbone (3 carbons, each with an OH group) bonded to <strong>three fatty acid chains</strong> via dehydration synthesis (ester bonds), releasing <strong>three water molecules</strong>. Fatty acids range from 4–36 carbons (most commonly 12–18). Long straight saturated chains pack tightly and are solid at room temperature; bent unsaturated chains can't pack as tightly and are liquid (oils).
+  </div>
+  <div id="rev-satunsat"     class="concept-reveal mint-border">
+    <strong>Saturated vs. Unsaturated Fatty Acids</strong> — A <em>saturated</em> fatty acid has only single bonds between carbons — it's "saturated" with the maximum number of hydrogens (e.g., stearic acid). An <em>unsaturated</em> fatty acid has at least one C=C double bond, which creates a "kink" or bend in the chain (e.g., oleic acid). One double bond = monounsaturated (olive oil); more than one = polyunsaturated (canola oil). Saturated fats tend to be solid at room temp; unsaturated fats/oils tend to be liquid.
+  </div>
+  <div id="rev-transfat"     class="concept-reveal gold-border">
+    <strong>Trans Fats</strong> — Made by artificially hydrogenating oils in food processing, converting some <em>cis</em> double bonds into <em>trans</em> double bonds. In a <em>cis</em> configuration, hydrogens are on the same side of the double bond (causing a kink); in <em>trans</em>, they're on opposite sides (chain stays straighter, behaves more like saturated fat). Trans fats raise LDL ("bad") cholesterol and contribute to heart disease — many restaurants have banned them.
+  </div>
+  <div id="rev-omega"        class="concept-reveal lav-border">
+    <strong>Omega-3 Fatty Acids</strong> — Essential fatty acids (the body cannot synthesize them — must come from diet) that are polyunsaturated, with the first double bond at the 3rd carbon from the omega (tail) end. Examples: ALA, EPA, DHA — found in salmon, trout, tuna. Benefits: reduce risk of sudden cardiac death, lower triglycerides and blood pressure, inhibit blood clotting, reduce inflammation.
+  </div>
+  <div id="rev-wax"          class="concept-reveal coral">
+    <strong>Waxes</strong> — Long fatty acid chains esterified to long-chain alcohols. Their hydrophobic nature makes them excellent waterproof coatings — found on bird feathers (waterproofing) and plant leaf surfaces (preventing water loss/sticking).
+  </div>
+  <div id="rev-phospho"      class="concept-reveal forest-border">
+    <strong>Phospholipids</strong> — The main structural component of all cell membranes. Like triglycerides, they have a glycerol backbone, but with only <strong>2 fatty acid chains</strong> (forming a diacylglycerol) — the 3rd carbon position is occupied by a modified <strong>phosphate group</strong> instead of a third fatty acid. Common examples: phosphatidylcholine, phosphatidylserine.
+  </div>
+  <div id="rev-amphipathic"  class="concept-reveal mint-border">
+    <strong>Amphipathic Molecules &amp; Micelles</strong> — "Amphipathic" means having both a hydrophilic part and a hydrophobic part. Phospholipids are amphipathic: the phosphate "head" is hydrophilic, the fatty acid "tails" are hydrophobic. In water, phospholipids spontaneously form a <strong>bilayer</strong> (heads facing outward toward water, tails facing inward away from water) — or, if dropped as droplets, a spherical <strong>micelle</strong> with tails clustered in the protected interior.
+  </div>
+  <div id="rev-steroid"      class="concept-reveal gold-border">
+    <strong>Steroids &amp; Cholesterol</strong> — Structurally very different from triglycerides/phospholipids (four fused carbon rings instead of a glycerol + fatty acid structure), but still classified as lipids because they're hydrophobic. <strong>Cholesterol</strong> is the most common steroid — synthesized mainly in the liver, it's a precursor to steroid hormones (e.g., testosterone, estradiol), Vitamin D, and bile salts. It's also embedded in animal plasma membranes, where it helps maintain membrane fluidity.
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 The Four Lipid Types at a Glance</h3>
+  <table class="vocab-table">
+    <tr><th>Type</th><th>Structure</th><th>Function</th></tr>
+    <tr><td>Fats / Oils (Triglycerides)</td><td>Glycerol + 3 fatty acids</td><td>Long-term energy storage, insulation</td></tr>
+    <tr><td>Waxes</td><td>Fatty acid + long-chain alcohol</td><td>Waterproof protective coatings</td></tr>
+    <tr><td>Phospholipids</td><td>Glycerol + 2 fatty acids + phosphate group</td><td>Major structural component of cell membranes</td></tr>
+    <tr><td>Steroids</td><td>Four fused carbon rings</td><td>Hormones, membrane fluidity (cholesterol)</td></tr>
+  </table>
+
+  <div class="divider"></div>
+
+  <!-- Matching game -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.4rem;">🎯 Quick Match — Lipid Terms</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Tap a term, then tap its matching definition.</p>
+  <div class="match-grid" id="matchGrid">
+    <div class="match-item" data-pair="a" data-side="term" onclick="matchClick(this)">Saturated Fatty Acid</div>
+    <div class="match-item" data-pair="b" data-side="def"  onclick="matchClick(this)">Has hydrophilic head + hydrophobic tail</div>
+    <div class="match-item" data-pair="c" data-side="term" onclick="matchClick(this)">Cholesterol</div>
+    <div class="match-item" data-pair="d" data-side="def"  onclick="matchClick(this)">Causes a kink/bend in fatty acid chain</div>
+    <div class="match-item" data-pair="a" data-side="def"  onclick="matchClick(this)">Only single bonds — straight chain</div>
+    <div class="match-item" data-pair="e" data-side="term" onclick="matchClick(this)">Triglyceride</div>
+    <div class="match-item" data-pair="b" data-side="term" onclick="matchClick(this)">Amphipathic</div>
+    <div class="match-item" data-pair="c" data-side="def"  onclick="matchClick(this)">Most common steroid; precursor to hormones</div>
+    <div class="match-item" data-pair="d" data-side="term" onclick="matchClick(this)">Double Bond (unsaturated)</div>
+    <div class="match-item" data-pair="e" data-side="def"  onclick="matchClick(this)">Glycerol + 3 fatty acids</div>
+  </div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-ghost" onclick="resetMatch()">↺ Reset Match</button>
+    <span id="match-score" style="margin-left:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted);"></span>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(0)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(2)">Next: Fatty Acid Lab →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 2: FATTY ACID LAB ═══ -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-gold">3</div>
+    <span class="eyebrow-label">Phase 3 · Fatty Acid Lab</span>
+  </div>
+  <h2>🧈 Saturated vs. Unsaturated vs. Trans — Compare Them</h2>
+  <p class="lead">Tap each fatty acid chain to see its structure, physical state, and health implications. Notice how a single double bond changes everything.</p>
+
+  <div class="predict-box">
+    <h4>✏️ Before the lab — your prediction</h4>
+    <textarea id="fat-predict" placeholder="Predict: why might a 'bent' or 'kinked' fatty acid chain be more likely to be liquid at room temperature than a straight chain? Think about how the molecules would pack together."></textarea>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🔬 Compare the Fatty Acid Chains</h3>
+    <div class="hint">Tap each card to see its structure and properties</div>
+
+    <div class="fat-compare">
+      <div class="fat-card" onclick="showFat('saturated')" id="fat-sat">
+        <div class="fat-name">🥓 Saturated</div>
+        <div class="fat-chain">—C–C–C–C–C–C—</div>
+        <div class="fat-state">Stearic acid · straight chain</div>
+      </div>
+      <div class="fat-card" onclick="showFat('unsaturated')" id="fat-unsat">
+        <div class="fat-name">🫒 Unsaturated (cis)</div>
+        <div class="fat-chain">—C–C–C=C–C–C—</div>
+        <div class="fat-state">Oleic acid · kinked chain</div>
+      </div>
+      <div class="fat-card" onclick="showFat('trans')" id="fat-trans">
+        <div class="fat-name">🍟 Trans Fat</div>
+        <div class="fat-chain">—C–C–C=C–C–C—</div>
+        <div class="fat-state">Hydrogenated oil · straighter chain</div>
+      </div>
+    </div>
+
+    <div id="fat-detail-box" style="background:#f5f7fa;border-radius:10px;padding:1.2rem;margin:1rem 0;border:2px solid var(--border);min-height:90px;font-size:.88rem;line-height:1.7;">
+      Tap a fatty acid above to learn about its structure and health effects…
+    </div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Fatty Acid Structure &amp; Health</h4>
+    <textarea placeholder="Why do unsaturated fats tend to be liquid (oils) while saturated fats tend to be solid? What makes trans fats chemically different from naturally occurring cis-unsaturated fats, and why are they considered unhealthy? What roles do omega-3 fatty acids play in the body?"></textarea>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="wonder-box mint-box">
+    <p>Cell membrane "fluidity" depends partly on the ratio of saturated to unsaturated fatty acid tails in its phospholipids. Straight saturated tails pack tightly together (less fluid); kinked unsaturated tails create gaps that keep the membrane flexible (more fluid) — this concept will become critical when you study cell membranes in Unit 2!</p>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(3)">Next: Proteins →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 3: 3.4 PROTEINS CONCEPTS ═══ -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">4</div>
+    <span class="eyebrow-label">Phase 4 · 3.4 Proteins</span>
+  </div>
+  <h2>🧬 Proteins — The Workhorses of the Cell</h2>
+  <p class="lead">Tap each card to explore protein types, amino acid structure, and how proteins are built and shaped. Proteins have the <strong>most diverse range of functions</strong> of any macromolecule.</p>
+
+  <div class="evidence-grid">
+    <div class="ev-card" onclick="showEvidence('types')">
+      <div class="ev-icon">🛠️</div>
+      <div class="ev-title">Types &amp; Functions</div>
+      <div class="ev-sub">7 categories</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('aminostructure')">
+      <div class="ev-icon">⚛️</div>
+      <div class="ev-title">Amino Acid Structure</div>
+      <div class="ev-sub">the monomer</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('peptidebond')">
+      <div class="ev-icon">🔗</div>
+      <div class="ev-title">Peptide Bond</div>
+      <div class="ev-sub">dehydration synthesis</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('denature')">
+      <div class="ev-icon">🍳</div>
+      <div class="ev-title">Denaturation</div>
+      <div class="ev-sub">losing shape, losing function</div>
+    </div>
+  </div>
+
+  <div id="ev-types"           class="ev-panel">
+    <h4>🛠️ 7 Types &amp; Functions of Proteins</h4>
+    <p>Proteins serve more functions than any other macromolecule: <strong>Digestive Enzymes</strong> (amylase, lipase, pepsin — break down food), <strong>Transport</strong> (hemoglobin, albumin — carry substances in blood), <strong>Structural</strong> (actin, tubulin, keratin — build the cytoskeleton), <strong>Hormones</strong> (insulin, thyroxine — coordinate body systems), <strong>Defense</strong> (immunoglobulins/antibodies — fight pathogens), <strong>Contractile</strong> (actin, myosin — muscle contraction), and <strong>Storage</strong> (egg white albumin, legume storage proteins — nourish developing embryos).</p>
+    <div class="example-box">📌 Enzymes are catalysts: catabolic enzymes break down substrates, anabolic enzymes build complex molecules, and ALL enzymes increase reaction rate (are "catalytic").</div>
+  </div>
+  <div id="ev-aminostructure"  class="ev-panel">
+    <h4>⚛️ Amino Acid Structure</h4>
+    <p>Every amino acid shares the same core structure: a central <strong>alpha (α) carbon</strong> bonded to (1) an <strong>amino group</strong> (–NH₂), (2) a <strong>carboxyl group</strong> (–COOH), (3) a <strong>hydrogen atom</strong>, and (4) a variable <strong>R group</strong> (side chain) that gives each of the 20 amino acids its unique chemical identity (nonpolar, polar, positively charged, or negatively charged).</p>
+    <div class="example-box">📌 Nonpolar/hydrophobic: valine, methionine, alanine. Polar/hydrophilic: serine, threonine, cysteine. Positively charged (basic): lysine, arginine. 9 amino acids are "essential" — the human body cannot synthesize them and must obtain them from diet.</div>
+  </div>
+  <div id="ev-peptidebond"     class="ev-panel">
+    <h4>🔗 The Peptide Bond</h4>
+    <p>Amino acids link together via a <strong>peptide bond</strong>, formed by dehydration synthesis: the carboxyl group of one amino acid combines with the amino group of the next, releasing one water molecule. A chain of amino acids is called a <strong>polypeptide</strong>. Each polypeptide has a free amino group at one end (the <strong>N-terminus</strong>) and a free carboxyl group at the other (the <strong>C-terminus</strong>).</p>
+    <div class="example-box">📌 "Polypeptide" and "protein" aren't quite synonyms: a polypeptide is just the amino acid polymer, while "protein" implies the final folded, functional molecule (sometimes multiple polypeptides combined, often with post-translational modifications).</div>
+  </div>
+  <div id="ev-denature"        class="ev-panel">
+    <h4>🍳 Denaturation</h4>
+    <p>When a protein is exposed to extreme temperature, pH change, or certain chemicals, it can lose its 3D shape — this is called <strong>denaturation</strong>. The primary sequence (order of amino acids) usually stays intact, but the protein loses its function because shape determines function. Denaturation is sometimes reversible (if the denaturing agent is removed), but often it's irreversible — like a fried egg, where the albumin protein in egg white permanently unfolds and can never refold.</p>
+    <div class="example-box">📌 Not all proteins denature easily — bacteria in hot springs have proteins that function near boiling temperatures. Your stomach's digestive enzymes function fine in highly acidic conditions (low pH) that would denature most other proteins.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Protein Structure Levels -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin:.5rem 0 .4rem;">🏗️ The Four Levels of Protein Structure — Tap to Explore</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Shape determines function — and shape is built in four progressive levels.</p>
+
+  <div class="protein-level-track">
+    <div class="protein-level-step" onclick="showLevel('primary')">
+      <div class="pl-icon">📝</div>
+      <div class="pl-name">Primary</div>
+    </div>
+    <div class="protein-level-step" onclick="showLevel('secondary')">
+      <div class="pl-icon">🌀</div>
+      <div class="pl-name">Secondary</div>
+    </div>
+    <div class="protein-level-step" onclick="showLevel('tertiary')">
+      <div class="pl-icon">🧶</div>
+      <div class="pl-name">Tertiary</div>
+    </div>
+    <div class="protein-level-step" onclick="showLevel('quaternary')">
+      <div class="pl-icon">🧩</div>
+      <div class="pl-name">Quaternary</div>
+    </div>
+  </div>
+
+  <div id="level-primary"    class="protein-level-detail">
+    <h4>📝 Primary Structure</h4>
+    <p>The unique, linear <strong>sequence of amino acids</strong> in a polypeptide chain — determined directly by the gene encoding the protein. Even a single amino acid substitution can drastically change a protein's structure and function. Example: in sickle cell anemia, a single substitution (glutamic acid → valine) in the hemoglobin beta chain — out of 600 total amino acids — causes red blood cells to sickle and clog blood vessels.</p>
+  </div>
+  <div id="level-secondary"  class="protein-level-detail">
+    <h4>🌀 Secondary Structure</h4>
+    <p>Local folding patterns held together by <strong>hydrogen bonds</strong> between the carbonyl and amino groups in the polypeptide's backbone. Two common forms: the <strong>α-helix</strong> (a coiled spring shape; H-bonds form every 4th amino acid) and the <strong>β-pleated sheet</strong> (a folded, ribbon-like zigzag; H-bonds form between adjacent strands). Found in most globular and fibrous proteins.</p>
+  </div>
+  <div id="level-tertiary"   class="protein-level-detail">
+    <h4>🧶 Tertiary Structure</h4>
+    <p>The overall 3D shape of a single polypeptide, driven by interactions between R groups: <strong>hydrophobic interactions</strong> (nonpolar R groups cluster in the protein's interior, away from water), <strong>ionic bonds</strong> (oppositely charged R groups attract), <strong>hydrogen bonds</strong> (between polar R groups), and <strong>disulfide bonds</strong> (the only covalent bond in folding — forms between two cysteine side chains in the presence of oxygen). Most enzymes function at the tertiary level.</p>
+  </div>
+  <div id="level-quaternary" class="protein-level-detail">
+    <h4>🧩 Quaternary Structure</h4>
+    <p>Formed when <strong>multiple polypeptide subunits</strong> combine and interact to form one functional protein. Not every protein has quaternary structure — only those built from more than one polypeptide chain. Example: hemoglobin is made of 4 subunits (2 alpha chains + 2 beta chains) held together by weak interactions including hydrogen bonds and disulfide bonds.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 Protein Types &amp; Functions Table</h3>
+  <table class="vocab-table">
+    <tr><th>Type</th><th>Examples</th><th>Function</th></tr>
+    <tr><td>Digestive Enzymes</td><td>Amylase, lipase, pepsin, trypsin</td><td>Catabolize nutrients into monomers</td></tr>
+    <tr><td>Transport</td><td>Hemoglobin, albumin</td><td>Carry substances in blood/lymph</td></tr>
+    <tr><td>Structural</td><td>Actin, tubulin, keratin</td><td>Build the cytoskeleton and other structures</td></tr>
+    <tr><td>Hormones</td><td>Insulin, thyroxine</td><td>Coordinate activity of body systems</td></tr>
+    <tr><td>Defense</td><td>Immunoglobulins</td><td>Protect the body from pathogens</td></tr>
+    <tr><td>Contractile</td><td>Actin, myosin</td><td>Effect muscle contraction</td></tr>
+    <tr><td>Storage</td><td>Legume proteins, egg albumin</td><td>Nourish embryo/seedling development</td></tr>
+  </table>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(4)">Next: Protein Folding Lab →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 4: PROTEIN FOLDING LAB ═══ -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-lav">5</div>
+    <span class="eyebrow-label">Phase 5 · Protein Folding Lab</span>
+  </div>
+  <h2>🧩 Classify the Amino Acids</h2>
+  <p class="lead">Tap each amino acid below, then tap the R-group category you think it belongs to. This determines where it ends up in a folded protein.</p>
+
+  <div class="predict-box">
+    <h4>✏️ Before the lab — your prediction</h4>
+    <textarea id="aa-predict" placeholder="Predict: in a protein that's dissolved in the watery cytoplasm of a cell, where do you think nonpolar (hydrophobic) amino acids end up — on the surface of the folded protein, or tucked inside? Why?"></textarea>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🧬 Sort the Amino Acids by R-Group Category</h3>
+    <div class="hint">Tap an amino acid abbreviation, then tap its category. Correct = green, incorrect = shake and try again.</div>
+
+    <div id="aaSortContainer"></div>
+
+    <div style="margin-top:1rem;">
+      <span id="aa-sort-score" style="font-family:'DM Mono',monospace;font-size:.85rem;color:var(--muted);"></span>
+      <button class="btn btn-ghost" onclick="resetAASort()" style="margin-left:1rem;">↺ Reset</button>
+    </div>
+  </div>
+
+  <div style="background:var(--lav-pale);border:2px solid var(--lavender);border-radius:12px;padding:1.2rem 1.4rem;margin:1rem 0;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:var(--lavender);margin-bottom:.5rem;">🔍 Why this matters: Tertiary Structure</p>
+    <p style="font-size:.85rem;line-height:1.7;color:#2a2a3a;">When a protein folds in a watery (aqueous) environment, <strong>nonpolar R groups cluster in the interior</strong> (hiding from water — a hydrophobic interaction), while <strong>polar and charged R groups face the exterior</strong> (interacting with water). This single principle explains a huge amount about how soluble proteins like enzymes achieve their functional 3D shape!</p>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Amino Acids &amp; Folding</h4>
+    <textarea placeholder="What categories of amino acids would you expect to find on the surface of a soluble protein versus the interior? What distribution would you expect in a protein embedded in the lipid bilayer of a cell membrane? Connect this to what you learned about phospholipids in Phase 2."></textarea>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(3)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(5)">Next: Quiz →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 5: QUIZ ═══ -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-forest">6</div>
+    <span class="eyebrow-label">Phase 6 · Real Test Practice</span>
+  </div>
+  <h2>📝 AP-Style Quiz — Sections 3.3 &amp; 3.4</h2>
+  <p class="lead">These questions are written in the style of <strong>AP Biology exam questions</strong> covering OpenStax Chapter 3, Sections 3.3–3.4. Answer each — instant feedback included.</p>
+
+  <div id="quiz-container"></div>
+
+  <div id="score-panel" class="score-panel" style="display:none;">
+    <h3>Quiz Complete! 🎉</h3>
+    <div class="score-num" id="score-display">0/18</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-gold" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(4)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(6)">Next: Reflect →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 6: REFLECT ═══ -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">7</div>
+    <span class="eyebrow-label">Phase 7 · Reflect</span>
+  </div>
+  <h2>💭 Reflection &amp; Review</h2>
+  <p class="lead">Solidify your understanding. Answer all four questions in your own words.</p>
+
+  <div class="quiz-card">
+    <div class="quiz-q">1. Explain the structural difference between a saturated and unsaturated fatty acid, and how that difference affects whether the lipid is solid or liquid at room temperature. What is a trans fat, and why is it considered unhealthy?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">2. Describe the structure of a phospholipid and explain what "amphipathic" means. How does this property allow phospholipids to spontaneously form a bilayer in water?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">3. Describe all four levels of protein structure (primary, secondary, tertiary, quaternary) and the type of bond/interaction responsible for each level.</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">4. Using sickle cell anemia as an example, explain how a single amino acid substitution at the primary structure level can change a protein's overall function. Why is this possible with just ONE changed amino acid out of hundreds?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.8rem;">✏️ Fill-in-the-Blank Review</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1.2rem;">Type the answer and press Enter or click Check All.</p>
+  <div id="fill-container"></div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-mint" onclick="checkAllFills()">✓ Check All Answers</button>
+    <button class="btn btn-ghost" onclick="resetFills()" style="margin-left:.6rem;">↺ Reset</button>
+  </div>
+
+  <div class="congrats-panel" style="margin-top:2rem;">
+    <h2>🧈 Lipids &amp; Proteins Mastered!</h2>
+    <p>You've worked through Sections 3.3 (Lipids) and 3.4 (Proteins) — the molecules that build membranes and do nearly every job in your cells. Up next: Nucleic Acids (Part 3) — the molecule that stores the instructions for everything!</p>
+    <p style="font-size:.85rem;opacity:.75;">AP Bio tip: structure-function relationships (like R-group placement in folding, or fatty acid saturation and membrane fluidity) are exam favorites — practice explaining the "why," not just the "what."</p>
+    <div class="summary-chips">
+      <span class="summary-chip">4 Lipid Types ✓</span>
+      <span class="summary-chip">Triglycerides ✓</span>
+      <span class="summary-chip">Saturated/Unsaturated ✓</span>
+      <span class="summary-chip">Trans Fats ✓</span>
+      <span class="summary-chip">Phospholipids ✓</span>
+      <span class="summary-chip">Steroids ✓</span>
+      <span class="summary-chip">Amino Acids ✓</span>
+      <span class="summary-chip">Peptide Bonds ✓</span>
+      <span class="summary-chip">4 Levels of Structure ✓</span>
+      <span class="summary-chip">Denaturation ✓</span>
+    </div>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(5)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(7)">Next: Submit →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 7: SUBMIT ═══ -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">8</div>
+    <span class="eyebrow-label">Your Completed Work</span>
+  </div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Here's a summary of everything you worked on. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> to your teacher.</p>
+
+  <div class="summary-section" style="background:var(--forest);color:white;border-color:var(--forest);">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">STUDENT</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">LESSON</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;">Biological Macromolecules Explorer 🧬 (Part 2)</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6;" id="summaryDate"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section">
+    <h3>📝 Quiz Score</h3>
+    <div class="summary-answer" id="sum-quiz"></div>
+  </div>
+  <div class="summary-section">
+    <h3>🤔 Opening Prediction</h3>
+    <div class="summary-answer" id="sum-pred"></div>
+  </div>
+  <div class="summary-section">
+    <h3>🧈 Fatty Acid Lab Prediction</h3>
+    <div class="summary-answer" id="sum-fat-pred"></div>
+  </div>
+  <div class="summary-section">
+    <h3>🧩 Protein Folding Lab Prediction</h3>
+    <div class="summary-answer" id="sum-aa-pred"></div>
+  </div>
+  <div class="summary-section">
+    <h3>💭 Reflection Questions</h3>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;">Q1 — Saturated vs. Unsaturated &amp; Trans Fats</div>
+    <div class="summary-answer" id="sum-r1"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q2 — Phospholipid Structure &amp; Amphipathic Nature</div>
+    <div class="summary-answer" id="sum-r2"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q3 — Four Levels of Protein Structure</div>
+    <div class="summary-answer" id="sum-r3"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q4 — Sickle Cell &amp; Primary Structure</div>
+    <div class="summary-answer" id="sum-r4"></div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.6rem;">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2;">
+      <strong>📋 Copy My Results</strong> — Copies all answers to clipboard. Paste into Google Classroom assignment.<br>
+      <strong>📧 Email to Teacher</strong> — Opens your email app with answers pre-filled.<br>
+      <strong>🖨️ Print / Save PDF</strong> — Mac: bottom-left dropdown → Save as PDF. Windows: Microsoft Print to PDF.
+    </p>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(6)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(0)">↺ Start Over</button>
+  </div>
+</div>
+
+</div><!-- /sheet -->
+
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+<script>
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+const steps    = document.querySelectorAll('.prog-step');
+const sections = document.querySelectorAll('.section');
+
+function goTo(n) {
+  sections.forEach((s, i) => s.classList.toggle('active', i === n));
+  steps.forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    if (i === n) s.classList.add('active');
+    if (i < n)  s.classList.add('done');
+  });
+  if (n === 7) buildSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════════════
+// CONCEPT REVEALS (Section 1)
+// ═══════════════════════════════════════════════
+const revIds = ['fourtypes','triglyceride','satunsat','transfat','omega','wax','phospho','amphipathic','steroid'];
+function reveal(key) {
+  revIds.forEach(id => {
+    const el = document.getElementById('rev-' + id);
+    if (el) el.classList.remove('show');
+  });
+  const t = document.getElementById('rev-' + key);
+  if (t) t.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// MATCHING GAME (Section 1)
+// ═══════════════════════════════════════════════
+let matchSelected = null;
+let matchScore = 0;
+
+function matchClick(el) {
+  if (el.classList.contains('matched')) return;
+  if (!matchSelected) {
+    el.classList.add('selected');
+    matchSelected = el;
+  } else if (matchSelected === el) {
+    el.classList.remove('selected');
+    matchSelected = null;
+  } else {
+    const pA = matchSelected.dataset.pair, pB = el.dataset.pair;
+    const sA = matchSelected.dataset.side, sB = el.dataset.side;
+    if (pA === pB && sA !== sB) {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('matched');
+      el.classList.add('matched');
+      matchScore++;
+      document.getElementById('match-score').textContent = matchScore + '/5 matched';
+      matchSelected = null;
+    } else {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('wrong');
+      el.classList.add('wrong');
+      const a = matchSelected, b = el;
+      setTimeout(() => { a.classList.remove('wrong'); b.classList.remove('wrong'); }, 650);
+      matchSelected = null;
+    }
+  }
+}
+function resetMatch() {
+  matchSelected = null; matchScore = 0;
+  document.querySelectorAll('.match-item').forEach(el => el.classList.remove('selected','matched','wrong'));
+  document.getElementById('match-score').textContent = '';
+}
+
+// ═══════════════════════════════════════════════
+// FATTY ACID COMPARATOR (Section 2)
+// ═══════════════════════════════════════════════
+const fatData = {
+  saturated: {
+    title: '🥓 Saturated Fatty Acid (Stearic Acid)',
+    body: 'Only single bonds between carbons — fully "saturated" with hydrogen atoms. The chain stays straight, allowing molecules to pack tightly together. This tight packing is why saturated fats (like those in meat and butter) are typically <strong>solid at room temperature</strong>. A diet high in saturated fat is linked to plaque formation in arteries.'
+  },
+  unsaturated: {
+    title: '🫒 Unsaturated Fatty Acid — Cis (Oleic Acid)',
+    body: 'Contains at least one carbon-carbon double bond. In the natural <em>cis</em> configuration, the hydrogens are on the same side of the double bond, creating a "kink" in the chain. This bend prevents tight packing, so unsaturated fats (like olive oil, canola oil) are typically <strong>liquid at room temperature</strong> — we call them oils. Unsaturated fats help LOWER blood cholesterol.'
+  },
+  trans: {
+    title: '🍟 Trans Fat (Artificially Hydrogenated)',
+    body: 'Made by artificially adding hydrogen gas to oils (hydrogenation) for food processing — this can flip a natural <em>cis</em> double bond into a <em>trans</em> configuration, where hydrogens sit on opposite sides of the double bond. The chain becomes straighter again (behaving more like a saturated fat), found in margarine and shortening. Trans fats <strong>raise LDL ("bad") cholesterol</strong> and are linked to heart disease — many restaurants have banned them.'
+  }
+};
+
+function showFat(type) {
+  document.querySelectorAll('.fat-card').forEach(c => c.classList.remove('active','saturated','unsaturated','trans'));
+  const card = document.getElementById('fat-' + (type === 'saturated' ? 'sat' : type === 'unsaturated' ? 'unsat' : 'trans'));
+  card.classList.add('active', type);
+  const box = document.getElementById('fat-detail-box');
+  box.innerHTML = `<strong style="font-family:'Fredoka One',cursive;color:var(--forest);">${fatData[type].title}</strong><br><br>${fatData[type].body}`;
+}
+
+// ═══════════════════════════════════════════════
+// EVIDENCE CARDS (Section 3)
+// ═══════════════════════════════════════════════
+function showEvidence(type) {
+  document.querySelectorAll('.ev-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.ev-panel').forEach(p => p.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const panel = document.getElementById('ev-' + type);
+  if (panel) panel.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// PROTEIN STRUCTURE LEVEL EXPLORER (Section 3)
+// ═══════════════════════════════════════════════
+function showLevel(level) {
+  document.querySelectorAll('.protein-level-step').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.protein-level-detail').forEach(d => d.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const det = document.getElementById('level-' + level);
+  if (det) det.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// AMINO ACID SORT GAME (Section 4)
+// ═══════════════════════════════════════════════
+const aaItems = [
+  { name: 'Valine (Val)', cat: 'nonpolar' },
+  { name: 'Alanine (Ala)', cat: 'nonpolar' },
+  { name: 'Methionine (Met)', cat: 'nonpolar' },
+  { name: 'Glycine (Gly)', cat: 'nonpolar' },
+  { name: 'Serine (Ser)', cat: 'polar' },
+  { name: 'Threonine (Thr)', cat: 'polar' },
+  { name: 'Cysteine (Cys)', cat: 'polar' },
+  { name: 'Lysine (Lys)', cat: 'positive' },
+  { name: 'Arginine (Arg)', cat: 'positive' },
+  { name: 'Aspartate (Asp)', cat: 'negative' },
+];
+const aaCatLabels = { nonpolar: 'Nonpolar (Hydrophobic)', polar: 'Polar (Hydrophilic)', positive: 'Positively Charged', negative: 'Negatively Charged' };
+let aaSelected = null;
+let aaSortScore = 0;
+let aaSortSolved = new Set();
+
+function buildAASort() {
+  const container = document.getElementById('aaSortContainer');
+  let html = '<div class="match-grid" style="grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.2rem;">';
+  aaItems.forEach((item, idx) => {
+    html += `<div class="match-item" id="aa-item-${idx}" onclick="selectAAItem(${idx})">${item.name}</div>`;
+  });
+  html += '</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.7rem;">';
+  ['nonpolar','polar','positive','negative'].forEach(cat => {
+    html += `<button class="btn btn-lav" onclick="selectAACategory('${cat}')">${aaCatLabels[cat]}</button>`;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+  aaSortScore = 0; aaSortSolved = new Set();
+  document.getElementById('aa-sort-score').textContent = '';
+}
+
+function selectAAItem(idx) {
+  if (aaSortSolved.has(idx)) return;
+  document.querySelectorAll('[id^="aa-item-"]').forEach(el => el.classList.remove('selected'));
+  document.getElementById('aa-item-' + idx).classList.add('selected');
+  aaSelected = idx;
+}
+
+function selectAACategory(cat) {
+  if (aaSelected === null) return;
+  const idx = aaSelected;
+  const el = document.getElementById('aa-item-' + idx);
+  if (aaItems[idx].cat === cat) {
+    el.classList.remove('selected');
+    el.classList.add('matched');
+    el.textContent += '  ✓';
+    aaSortSolved.add(idx);
+    aaSortScore++;
+  } else {
+    el.classList.add('wrong');
+    setTimeout(() => el.classList.remove('wrong'), 600);
+  }
+  aaSelected = null;
+  document.getElementById('aa-sort-score').textContent = aaSortScore + '/' + aaItems.length + ' correctly classified';
+}
+
+function resetAASort() { buildAASort(); }
+
+// ═══════════════════════════════════════════════
+// QUIZ DATA — 3.3 & 3.4
+// ═══════════════════════════════════════════════
+const quizData = [
+  {
+    q: "What are the four major types of lipids?",
+    opts: ["Carbohydrates, fats, oils, proteins", "Fats/oils, waxes, phospholipids, steroids", "Monosaccharides, disaccharides, polysaccharides, glycogen", "Amino acids, nucleotides, fatty acids, glycerol"],
+    ans: 1,
+    fb: "The four major types of lipids are fats/oils (triglycerides), waxes, phospholipids, and steroids. They're grouped together because they're all nonpolar and hydrophobic, despite having different structures."
+  },
+  {
+    q: "A triglyceride is formed from:",
+    opts: ["One glycerol + one fatty acid", "One glycerol + three fatty acids, releasing 3 water molecules", "Three glycerols + one fatty acid", "Two fatty acids + a phosphate group"],
+    ans: 1,
+    fb: "A triglyceride (triacylglycerol) is formed when one glycerol molecule bonds with three fatty acid chains via dehydration synthesis (ester bonds), releasing three water molecules in the process."
+  },
+  {
+    q: "What structurally distinguishes a saturated fatty acid from an unsaturated one?",
+    opts: ["Saturated fatty acids have double bonds; unsaturated do not", "Saturated fatty acids have only single bonds (max hydrogens); unsaturated fatty acids have at least one double bond", "Saturated fatty acids are always shorter chains", "There is no structural difference"],
+    ans: 1,
+    fb: "Saturated fatty acids have only single bonds between carbons, maximizing the number of hydrogens attached (hence 'saturated' with hydrogen). Unsaturated fatty acids have at least one C=C double bond, which removes some hydrogens and creates a bend in the chain."
+  },
+  {
+    q: "Why are most unsaturated fats (oils) liquid at room temperature, while saturated fats tend to be solid?",
+    opts: ["Unsaturated fats have fewer carbons", "The kink from double bonds in unsaturated fats prevents tight molecular packing", "Saturated fats contain more oxygen atoms", "Unsaturated fats are not true lipids"],
+    ans: 1,
+    fb: "The double bond(s) in unsaturated fatty acids create a kink or bend, preventing the fatty acid chains from packing tightly together. Saturated fatty acids are straight and pack tightly, resulting in a solid state at room temperature."
+  },
+  {
+    q: "Trans fats are produced by:",
+    opts: ["Naturally occurring processes in plants", "Artificially hydrogenating oils, converting some cis double bonds to trans configuration", "Removing all double bonds from a fatty acid", "Adding a phosphate group to a fatty acid"],
+    ans: 1,
+    fb: "Trans fats are made by artificially hydrogenating oils in food processing. This can convert natural cis double bonds into trans double bonds, which behave more like saturated fats and have been linked to increased LDL cholesterol and heart disease risk."
+  },
+  {
+    q: "What makes omega-3 fatty acids nutritionally significant?",
+    opts: ["They are produced abundantly by the human body", "They are essential fatty acids that must come from the diet, and provide cardiovascular benefits", "They are saturated fats found only in animal products", "They have no known biological function"],
+    ans: 1,
+    fb: "Omega-3 fatty acids (like ALA, EPA, DHA) are essential — the human body cannot synthesize them, so they must be obtained through diet (e.g., salmon, trout, tuna). They reduce risk of sudden cardiac death, lower triglycerides and blood pressure, and reduce inflammation."
+  },
+  {
+    q: "A phospholipid differs from a triglyceride because a phospholipid has:",
+    opts: ["Three fatty acid chains instead of two", "Two fatty acid chains plus a modified phosphate group on the third carbon", "No glycerol backbone at all", "A fused four-ring structure"],
+    ans: 1,
+    fb: "A phospholipid has a glycerol backbone with two fatty acid chains attached (forming a diacylglycerol), while the third carbon position holds a modified phosphate group instead of a third fatty acid."
+  },
+  {
+    q: "What does it mean for a phospholipid to be 'amphipathic'?",
+    opts: ["It has no charge anywhere on the molecule", "It has both a hydrophilic part (phosphate head) and a hydrophobic part (fatty acid tails)", "It can only exist in a crystalline solid state", "It is unable to interact with water at all"],
+    ans: 1,
+    fb: "Amphipathic means having both hydrophilic and hydrophobic regions. The phosphate-containing head of a phospholipid is hydrophilic (interacts with water), while the fatty acid tails are hydrophobic (avoid water) — this property drives spontaneous bilayer formation."
+  },
+  {
+    q: "When a phospholipid bilayer forms in water, which orientation do the molecules take?",
+    opts: ["Tails face outward into water; heads face inward", "Heads face outward into water; tails face inward, away from water", "Heads and tails are randomly arranged", "Phospholipids do not form any organized structure in water"],
+    ans: 1,
+    fb: "In a bilayer, the hydrophilic phosphate heads face the aqueous (watery) environment on both the outside and inside of the cell, while the hydrophobic fatty acid tails point inward toward each other, away from water."
+  },
+  {
+    q: "Steroids are classified as lipids because:",
+    opts: ["They have the same fused-ring structure as triglycerides", "They are hydrophobic, even though their structure (fused carbon rings) differs from fats and phospholipids", "They contain glycerol and fatty acids like triglycerides", "They are always solid at room temperature"],
+    ans: 1,
+    fb: "Steroids have a completely different structure (four fused carbon rings) compared to triglycerides and phospholipids, but they are grouped as lipids because they share the defining property of being hydrophobic/nonpolar."
+  },
+  {
+    q: "Cholesterol serves as a precursor for all of the following EXCEPT:",
+    opts: ["Steroid hormones like testosterone", "Vitamin D", "Bile salts", "Hemoglobin"],
+    ans: 3,
+    fb: "Cholesterol is a precursor to steroid hormones (testosterone, estradiol), Vitamin D, and bile salts. Hemoglobin is a protein, not derived from cholesterol."
+  },
+  {
+    q: "Which statement about amino acid structure is correct?",
+    opts: ["All amino acids have identical R groups", "Every amino acid has a central alpha carbon bonded to an amino group, carboxyl group, hydrogen, and a variable R group", "Amino acids contain only carbon and hydrogen atoms", "There are only 4 types of amino acids in nature"],
+    ans: 1,
+    fb: "All 20 common amino acids share the same core structure: a central alpha carbon bonded to an amino group (-NH2), a carboxyl group (-COOH), a hydrogen atom, and a variable R group that gives each amino acid its unique properties."
+  },
+  {
+    q: "A peptide bond is formed by:",
+    opts: ["Hydrolysis of two amino acids", "Dehydration synthesis between the carboxyl group of one amino acid and the amino group of the next, releasing water", "An ionic bond between two charged R groups", "A disulfide bond between cysteine residues"],
+    ans: 1,
+    fb: "A peptide bond forms through dehydration synthesis: the carboxyl group of one amino acid bonds to the amino group of the next amino acid, releasing one water molecule. This is the covalent bond that links amino acids into a polypeptide chain."
+  },
+  {
+    q: "Which level of protein structure refers to the unique linear sequence of amino acids?",
+    opts: ["Secondary structure", "Tertiary structure", "Primary structure", "Quaternary structure"],
+    ans: 2,
+    fb: "Primary structure is simply the order/sequence of amino acids in the polypeptide chain, determined by the gene that encodes the protein. This sequence ultimately determines all higher levels of structure."
+  },
+  {
+    q: "The alpha-helix and beta-pleated sheet are examples of which level of protein structure, and what bond holds them together?",
+    opts: ["Primary structure, held by peptide bonds", "Secondary structure, held by hydrogen bonds between the polypeptide backbone", "Tertiary structure, held by disulfide bonds", "Quaternary structure, held by ionic bonds"],
+    ans: 1,
+    fb: "The alpha-helix and beta-pleated sheet are secondary structures, formed by hydrogen bonds between the carbonyl and amino groups along the polypeptide's backbone (not the R groups)."
+  },
+  {
+    q: "In tertiary structure, hydrophobic R groups of nonpolar amino acids tend to:",
+    opts: ["Stay on the surface of the protein, interacting with water", "Cluster in the interior of the protein, away from water", "Form covalent peptide bonds with other R groups", "Have no effect on protein folding"],
+    ans: 1,
+    fb: "During tertiary structure folding in an aqueous environment, hydrophobic (nonpolar) R groups cluster in the protein's interior, away from water, while hydrophilic (polar/charged) R groups remain on the exterior, interacting with water."
+  },
+  {
+    q: "Hemoglobin, made of 4 separate polypeptide subunits (2 alpha + 2 beta chains), is an example of which level of protein structure?",
+    opts: ["Primary structure", "Secondary structure", "Tertiary structure", "Quaternary structure"],
+    ans: 3,
+    fb: "Quaternary structure occurs when multiple polypeptide subunits combine to form one functional protein. Hemoglobin's four subunits (2 alpha + 2 beta chains) interact via weak bonds to form the complete functional protein."
+  },
+  {
+    q: "In sickle cell anemia, a single amino acid substitution (glutamic acid → valine) at position 6 of the hemoglobin beta chain changes the protein's shape and function. This demonstrates that:",
+    opts: ["Primary structure has no effect on a protein's final shape", "Even one amino acid change in primary structure can disrupt all higher levels of structure and function", "Only quaternary structure changes affect protein function", "Hemoglobin cannot be affected by mutations"],
+    ans: 1,
+    fb: "This is a powerful example showing that primary structure (amino acid sequence) determines all higher levels of folding. A single substitution out of ~600 total amino acids is enough to change hemoglobin's shape, causing red blood cells to sickle."
+  },
+  {
+    q: "What happens to a protein during denaturation?",
+    opts: ["Its amino acid sequence changes", "It loses its 3D shape (and often its function), though the primary sequence usually stays intact", "It gains new peptide bonds", "It converts into a carbohydrate"],
+    ans: 1,
+    fb: "Denaturation is the loss of a protein's 3D shape due to extreme temperature, pH change, or chemical exposure. The primary amino acid sequence usually remains intact, but the protein loses its function because shape determines function. This can sometimes be reversed, but is often permanent (like a fried egg)."
+  },
+];
+
+let quizScore = 0;
+let quizAnswered = 0;
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  quizScore = 0; quizAnswered = 0;
+  document.getElementById('score-panel').style.display = 'none';
+
+  quizData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `
+      <div class="quiz-q">${idx+1}. ${item.q}</div>
+      <div class="quiz-options">
+        ${item.opts.map((opt, i) => `
+          <button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">
+            ${String.fromCharCode(65+i)}. ${opt}
+          </button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="qfb-${idx}"></div>`;
+    container.appendChild(card);
+  });
+}
+
+function checkAnswer(btn, qIdx, optIdx) {
+  const card    = btn.closest('.quiz-card');
+  const buttons = card.querySelectorAll('.quiz-opt');
+  const fb      = document.getElementById('qfb-' + qIdx);
+  const correct = quizData[qIdx].ans;
+  buttons.forEach(b => b.disabled = true);
+  if (optIdx === correct) {
+    btn.classList.add('correct');
+    fb.textContent = '✅ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show correct-fb';
+    quizScore++;
+  } else {
+    btn.classList.add('wrong');
+    buttons[correct].classList.add('correct');
+    fb.textContent = '❌ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show wrong-fb';
+  }
+  quizAnswered++;
+  if (quizAnswered === quizData.length) showScore();
+}
+
+function showScore() {
+  const panel = document.getElementById('score-panel');
+  panel.style.display = 'block';
+  document.getElementById('score-display').textContent = quizScore + '/' + quizData.length;
+  const pct = quizScore / quizData.length;
+  let msg;
+  if (pct >= .9) msg = '🌟 Outstanding! You clearly understand lipids and proteins. AP exam ready!';
+  else if (pct >= .75) msg = '👍 Great work! Review the questions you missed and you\'ll be in great shape.';
+  else if (pct >= .6) msg = '📚 Good start. Revisit Phases 2–4, then retake.';
+  else msg = '💪 Keep going! Go back through the Lipids and Proteins phases, then try again.';
+  document.getElementById('score-msg').textContent = msg;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function retakeQuiz() { buildQuiz(); }
+
+// ═══════════════════════════════════════════════
+// FILL-IN-THE-BLANK
+// ═══════════════════════════════════════════════
+const fills = [
+  { q: "A fat molecule made of glycerol + 3 fatty acids is called a ___.", ans: "triglyceride" },
+  { q: "A fatty acid with no double bonds (max hydrogens) is called ___.", ans: "saturated" },
+  { q: "A double bond in a fatty acid chain causes a 'kink' or ___ in the structure.", ans: "bend" },
+  { q: "Artificially hydrogenated oils used in processed foods produce ___ fats.", ans: "trans" },
+  { q: "A molecule with both a hydrophilic and hydrophobic region is described as ___.", ans: "amphipathic" },
+  { q: "The most common steroid, a precursor to many hormones, is ___.", ans: "cholesterol" },
+  { q: "The bond that links amino acids together is called a ___ bond.", ans: "peptide" },
+  { q: "The unique linear sequence of amino acids in a polypeptide is its ___ structure.", ans: "primary" },
+  { q: "The alpha-helix and beta-pleated sheet are examples of ___ structure.", ans: "secondary" },
+  { q: "The loss of a protein's 3D shape due to heat, pH, or chemicals is called ___.", ans: "denaturation" },
+];
+
+function buildFills() {
+  const container = document.getElementById('fill-container');
+  container.innerHTML = '';
+  fills.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-card';
+    div.innerHTML = `<div class="fill-q">${item.q.replace('___', `<input class="blank-input" id="fill-${idx}" type="text" placeholder="?" onkeydown="if(event.key==='Enter')checkFill(${idx})">`)}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function checkFill(idx) {
+  const input = document.getElementById('fill-' + idx);
+  const val   = input.value.trim().toLowerCase();
+  const correct = fills[idx].ans.toLowerCase();
+  if (val === correct || val.includes(correct) || correct.includes(val)) {
+    input.classList.remove('err'); input.classList.add('ok');
+    input.value = fills[idx].ans;
+  } else {
+    input.classList.remove('ok'); input.classList.add('err');
+  }
+}
+function checkAllFills() { fills.forEach((_, idx) => checkFill(idx)); }
+function resetFills() {
+  fills.forEach((_, idx) => {
+    const input = document.getElementById('fill-' + idx);
+    if (input) { input.value = ''; input.classList.remove('ok','err'); }
+  });
+}
+
+// ═══════════════════════════════════════════════
+// SUMMARY / SUBMIT
+// ═══════════════════════════════════════════════
+function fillSummary(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = text && text.trim();
+  el.textContent = val || 'Not answered';
+  el.classList.toggle('empty', !val);
+}
+
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  const scoreEl = document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl ? scoreEl.textContent + ' correct' : 'Quiz not yet completed');
+
+  const predTA = document.querySelector('#sec-0 textarea');
+  fillSummary('sum-pred', predTA ? predTA.value : '');
+
+  const fatTA = document.getElementById('fat-predict');
+  fillSummary('sum-fat-pred', fatTA ? fatTA.value : '');
+
+  const aaTA = document.getElementById('aa-predict');
+  fillSummary('sum-aa-pred', aaTA ? aaTA.value : '');
+
+  const refCards = document.querySelectorAll('#sec-6 .quiz-card textarea');
+  ['sum-r1','sum-r2','sum-r3','sum-r4'].forEach((id, i) => {
+    fillSummary(id, refCards[i] ? refCards[i].value : '');
+  });
+}
+
+function buildPlainText() {
+  const name   = document.getElementById('studentName').value.trim() || 'Student';
+  const date   = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const scoreEl= document.getElementById('score-display');
+  const score  = scoreEl ? scoreEl.textContent : 'not completed';
+  const predTA = document.querySelector('#sec-0 textarea');
+  const fatTA  = document.getElementById('fat-predict');
+  const aaTA   = document.getElementById('aa-predict');
+  const refCards = document.querySelectorAll('#sec-6 .quiz-card textarea');
+  const refs = ['','','',''];
+  refCards.forEach((ta, i) => { refs[i] = ta.value.trim() || 'Not answered'; });
+
+  return [
+    'BIOLOGICAL MACROMOLECULES EXPLORER 🧬 (PART 2) — STUDENT SUBMISSION',
+    '======================================================',
+    'Student: ' + name,
+    'Date: ' + date,
+    'Lesson: AP Biology · OpenStax Chapter 3 (3.3 & 3.4) · Macromolecules Explorer Part 2',
+    '',
+    '── QUIZ SCORE ──',
+    score,
+    '',
+    '── OPENING PREDICTION ──',
+    predTA ? (predTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── FATTY ACID LAB PREDICTION ──',
+    fatTA ? (fatTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── PROTEIN FOLDING LAB PREDICTION ──',
+    aaTA ? (aaTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── REFLECTIONS ──',
+    'Q1 — Saturated vs. Unsaturated & Trans Fats:', refs[0],
+    'Q2 — Phospholipid Structure & Amphipathic Nature:', refs[1],
+    'Q3 — Four Levels of Protein Structure:', refs[2],
+    'Q4 — Sickle Cell & Primary Structure:', refs[3],
+    '',
+    '======================================================',
+    '© 2026 Farvour Explorations · farvourexplorations.com',
+    'Submitted via Biological Macromolecules Explorer Part 2 · Interactive Digital Lesson · AP Biology'
+  ].join('\n');
+}
+
+function copyResults() {
+  buildSummary();
+  const text = buildPlainText();
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Now paste into Google Classroom or your assignment.';
+    setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '⚠️ Could not copy automatically — try selecting the text manually.';
+  });
+}
+
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const subject = encodeURIComponent('Macromolecules Explorer Part 2 — ' + name);
+  const body    = encodeURIComponent(buildPlainText());
+  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+buildQuiz();
+buildFills();
+buildAASort();
+</script>
+</body>
+</html>
