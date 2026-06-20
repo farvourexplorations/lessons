@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biological Macromolecules Explorer 🧬</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:    #1a3d2b;
+    --forest-mid:#2d6a4f;
+    --forest-lt: #40916c;
+    --coral:     #e8603c;
+    --coral-pale:#fdf0ec;
+    --mint:      #3aaf85;
+    --mint-pale: #e8f8f2;
+    --gold:      #c9962a;
+    --gold-pale: #fef9e7;
+    --lavender:  #7c6fcd;
+    --lav-pale:  #f0eefb;
+    --paper:     #fffef9;
+    --ink:       #1a2332;
+    --muted:     #7a8899;
+    --border:    #e0e4ea;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: linear-gradient(160deg, #0d2318 0%, #1a3d2b 45%, #2d6a4f 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%, rgba(144,238,144,.45) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 22%  38%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 41%  6%,  rgba(144,238,144,.35) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 60%  24%, rgba(255,255,255,.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 77%  9%,  rgba(144,238,144,.4)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 90%  33%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 33%  55%, rgba(144,238,144,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 70%  48%, rgba(255,255,255,.2)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 55%  70%, rgba(144,238,144,.25) 0%, transparent 100%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ─── HERO ─── */
+  .hero { position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 2rem;color:white; }
+  .hero-badge {
+    display:inline-block;background:var(--gold);color:var(--forest);
+    font-family:'Fredoka One',cursive;font-size:.85rem;letter-spacing:.05em;
+    padding:.35rem 1.2rem;border-radius:20px;margin-bottom:1.2rem;
+    box-shadow:0 2px 12px rgba(201,150,42,.45);
+  }
+  .hero h1 { font-family:'Fredoka One',cursive;font-size:clamp(2.2rem,6vw,4rem);line-height:1.1;margin-bottom:.8rem;text-shadow:0 2px 20px rgba(0,0,0,.35); }
+  .hero h1 .accent { color:var(--gold); }
+  .hero p.intro { font-size:1.05rem;line-height:1.7;opacity:.88;max-width:580px;margin:0 auto 2rem; }
+
+  /* ─── PROGRESS PILLS ─── */
+  .progress-wrap { display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem; }
+  .prog-step {
+    display:flex;align-items:center;gap:.4rem;
+    background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);
+    border-radius:20px;padding:.35rem .9rem;font-size:.78rem;font-weight:700;
+    color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace;
+  }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.35); }
+  .prog-step.active { background:var(--gold);color:var(--forest);border-color:var(--gold);box-shadow:0 2px 12px rgba(201,150,42,.45); }
+
+  /* ─── SHEET ─── */
+  .sheet {
+    position:relative;z-index:1;background:var(--paper);
+    border-radius:24px 24px 0 0;margin-top:1.5rem;
+    padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.3);
+  }
+
+  /* ─── SECTIONS ─── */
+  .section { padding:3rem 2rem 0;max-width:820px;margin:0 auto;display:none; }
+  .section.active { display:block; }
+
+  .section-eyebrow { display:flex;align-items:center;gap:.6rem;margin-bottom:1rem; }
+  .eyebrow-num {
+    width:32px;height:32px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fredoka One',cursive;font-size:1rem;color:white;flex-shrink:0;
+  }
+  .num-coral  { background:var(--coral); }
+  .num-mint   { background:var(--mint); }
+  .num-gold   { background:var(--gold);color:var(--forest); }
+  .num-lav    { background:var(--lavender); }
+  .num-forest { background:var(--forest-mid); }
+
+  .eyebrow-label { font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace; }
+
+  .section h2 { font-family:'Fredoka One',cursive;font-size:clamp(1.6rem,3.5vw,2.2rem);color:var(--forest);margin-bottom:.6rem;line-height:1.2; }
+  .section .lead { font-size:1rem;line-height:1.75;color:#3a4a5a;margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+
+  /* ─── WONDER / INFO BOXES ─── */
+  .wonder-box {
+    background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);
+    color:white;border-radius:16px;padding:1.8rem 2rem;margin-bottom:1.8rem;
+    position:relative;overflow:hidden;
+  }
+  .wonder-box::after { content:'🤔';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3; }
+  .wonder-box p { font-size:1rem;line-height:1.7;font-style:italic;opacity:.95;max-width:85%; }
+  .wonder-box strong { color:var(--gold);font-style:normal; }
+  .wonder-box.gold-box { background:linear-gradient(135deg,#8a6a1a 0%,#b8860b 100%); }
+  .wonder-box.gold-box::after { content:'⚡'; }
+  .wonder-box.lav-box  { background:linear-gradient(135deg,#4a3a8a 0%,#6a5acd 100%); }
+  .wonder-box.lav-box::after { content:'🔋'; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,#1b7a58 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'🍬'; }
+
+  /* ─── PREDICT BOX ─── */
+  .predict-box { background:var(--gold-pale);border:2px dashed var(--gold);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem; }
+  .predict-box textarea,.reflect-box textarea {
+    width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;
+    font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:64px;
+    background:white;color:var(--ink);outline:none;transition:border-color .2s;
+  }
+  .predict-box textarea:focus { border-color:var(--gold); }
+  .reflect-box { background:var(--mint-pale);border:2px dashed var(--mint);border-radius:14px;padding:1.4rem 1.6rem;margin-top:1.5rem; }
+  .reflect-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#1b7a58;margin-bottom:.8rem; }
+  .reflect-box textarea:focus { border-color:var(--mint); }
+
+  /* ─── DEMO ZONE ─── */
+  .demo-zone {
+    background:white;border:2px solid var(--border);border-radius:16px;
+    padding:1.8rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07);
+  }
+  .demo-zone h3 { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.3rem; }
+  .demo-zone .hint { font-size:.78rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:1.3rem; }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    border:none;border-radius:10px;padding:.65rem 1.3rem;font-family:'Nunito',sans-serif;
+    font-size:.88rem;font-weight:800;cursor:pointer;transition:all .15s;letter-spacing:.02em;
+  }
+  .btn:hover  { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  .btn:active { transform:translateY(0); }
+  .btn:disabled { opacity:.4;cursor:default;transform:none;box-shadow:none; }
+  .btn-coral  { background:var(--coral);    color:white; }
+  .btn-mint   { background:var(--mint);     color:white; }
+  .btn-gold   { background:var(--gold);     color:var(--forest); }
+  .btn-lav    { background:var(--lavender); color:white; }
+  .btn-ghost  { background:#f0f2f5;         color:var(--muted); }
+  .btn-forest { background:var(--forest);   color:white; }
+  .action-row { display:flex;gap:.8rem;flex-wrap:wrap;align-items:center;margin-bottom:.8rem; }
+
+  /* ─── NAV ROW ─── */
+  .nav-row { display:flex;justify-content:space-between;align-items:center;padding:2.5rem 2rem 0;max-width:820px;margin:0 auto; }
+
+  /* ─── CONCEPT CHIPS ─── */
+  .chip-row { display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem; }
+  .chip {
+    padding:.45rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;
+    cursor:pointer;transition:all .2s;border:2px solid transparent;
+  }
+  .chip.coral  { background:var(--coral-pale); color:var(--coral);     border-color:#f8c5b8; }
+  .chip.mint   { background:var(--mint-pale);  color:var(--mint);      border-color:#b8ebd8; }
+  .chip.gold   { background:var(--gold-pale);  color:#8a6a1a;          border-color:#f8e0a0; }
+  .chip.lav    { background:var(--lav-pale);   color:var(--lavender);  border-color:#d0caef; }
+  .chip.forest { background:#d4eadd;           color:var(--forest-mid);border-color:#a8d5b8; }
+  .chip:hover  { transform:scale(1.05); }
+
+  .concept-reveal {
+    background:var(--paper);border-left:4px solid var(--coral);
+    border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;
+    margin-top:.5rem;margin-bottom:.3rem;display:none;animation:fadeIn .3s ease;
+  }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border   { border-color:var(--mint); }
+  .concept-reveal.gold-border   { border-color:var(--gold); }
+  .concept-reveal.lav-border    { border-color:var(--lavender); }
+  .concept-reveal.forest-border { border-color:var(--forest-mid); }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ─── EVIDENCE CARDS ─── */
+  .evidence-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin-bottom:1.5rem; }
+  .ev-card {
+    background:white;border:2px solid var(--border);border-radius:14px;
+    padding:1.2rem;cursor:pointer;transition:all .2s;text-align:center;
+  }
+  .ev-card:hover,.ev-card.active { border-color:var(--forest-mid);box-shadow:0 4px 16px rgba(45,106,79,.2);transform:translateY(-2px); }
+  .ev-card.active { background:#d4eadd; }
+  .ev-card .ev-icon { font-size:2.4rem;margin-bottom:.5rem; }
+  .ev-card .ev-title { font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--forest);margin-bottom:.3rem; }
+  .ev-card .ev-sub   { font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace; }
+  .ev-panel {
+    background:#d4eadd;border-left:4px solid var(--forest-mid);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1rem;
+  }
+  .ev-panel.show { display:block; }
+  .ev-panel h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.5rem; }
+  .ev-panel p  { font-size:.88rem;line-height:1.7;color:#2a3a2a; }
+  .ev-panel .example-box {
+    background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;
+    font-size:.82rem;font-family:'DM Mono',monospace;color:var(--ink);
+    border:1.5px solid rgba(45,106,79,.2);
+  }
+
+  /* ─── STEP CARDS ─── */
+  .sel-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0 1.5rem; }
+  .sel-card {
+    background:white;border:2px solid var(--border);border-radius:14px;
+    padding:1rem;text-align:center;cursor:pointer;transition:all .2s;
+  }
+  .sel-card:hover,.sel-card.active { border-color:var(--coral);box-shadow:0 3px 12px rgba(232,96,60,.18);transform:translateY(-2px); }
+  .sel-card.active { background:var(--coral-pale); }
+  .sel-card .sel-icon { font-size:2rem;margin-bottom:.4rem; }
+  .sel-card .sel-name { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--forest);margin-bottom:.2rem; }
+  .sel-card .sel-key  { font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em; }
+  .sel-detail {
+    background:var(--coral-pale);border-left:4px solid var(--coral);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1.5rem;
+  }
+  .sel-detail.show { display:block; }
+  .sel-detail h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.4rem; }
+  .sel-detail p  { font-size:.88rem;line-height:1.7; }
+  .sel-detail .examples { margin-top:.6rem;font-style:italic;color:var(--muted);font-size:.82rem; }
+
+  /* ─── MATCHING GAME ─── */
+  .match-grid { display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1rem 0; }
+  .match-item {
+    padding:.75rem 1rem;border-radius:10px;border:2px solid var(--border);
+    cursor:pointer;font-size:.84rem;font-weight:700;transition:all .2s;
+    background:white;text-align:center;color:var(--ink);line-height:1.4;
+  }
+  .match-item:hover    { border-color:var(--forest-mid);background:#f0f7f3; }
+  .match-item.selected { border-color:var(--lavender);background:var(--lav-pale);color:var(--lavender); }
+  .match-item.matched  { border-color:var(--mint);background:var(--mint-pale);color:#1b7a58;cursor:default; }
+  .match-item.wrong    { border-color:var(--coral);background:var(--coral-pale);color:var(--coral);animation:shake .3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+  /* ─── ATP SIMULATOR ─── */
+  .atp-display {
+    display:flex;align-items:center;justify-content:center;gap:1.5rem;
+    flex-wrap:wrap;margin:1.2rem 0;
+  }
+  .atp-molecule {
+    text-align:center;padding:1rem 1.4rem;border-radius:14px;
+    font-family:'DM Mono',monospace;font-size:.85rem;font-weight:700;
+    border:2px solid;transition:all .4s;min-width:120px;
+  }
+  .atp-molecule .mol-label { font-family:'Fredoka One',cursive;font-size:1.3rem;margin-bottom:.3rem; }
+  .atp-molecule .mol-desc  { font-size:.7rem;color:var(--muted);margin-top:.3rem;font-weight:400; }
+  .mol-atp  { background:var(--gold-pale);border-color:var(--gold);color:#8a6a1a; }
+  .mol-adp  { background:#f5f7fa;border-color:var(--border);color:var(--muted); }
+  .mol-pi   { background:var(--lav-pale);border-color:var(--lavender);color:var(--lavender); }
+  .mol-nadh { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .mol-nad  { background:#f5f7fa;border-color:var(--border);color:var(--muted); }
+  .arrow-label { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest-mid);text-align:center; }
+  .energy-badge {
+    display:inline-block;padding:.25rem .8rem;border-radius:20px;font-size:.72rem;
+    font-weight:800;font-family:'DM Mono',monospace;letter-spacing:.05em;margin-top:.4rem;
+  }
+  .release  { background:#ffeaa7;color:#8a6a1a; }
+  .absorb   { background:var(--lav-pale);color:var(--lavender); }
+
+  /* ─── GLYCOLYSIS TRACKER ─── */
+  .glyc-track {
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:.8rem;margin:1rem 0;
+  }
+  .glyc-box {
+    background:white;border:2px solid var(--border);border-radius:12px;
+    padding:.9rem 1rem;text-align:center;transition:all .3s;
+  }
+  .glyc-box .g-label { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--forest);margin-bottom:.3rem; }
+  .glyc-box .g-val   { font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:700;color:var(--ink); }
+  .glyc-box .g-unit  { font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace; }
+  .glyc-box.active   { border-color:var(--gold);background:var(--gold-pale); }
+  .glyc-box.done     { border-color:var(--mint);background:var(--mint-pale); }
+
+  /* ─── REDOX ANIMATOR ─── */
+  .redox-row { display:flex;gap:1rem;flex-wrap:wrap;margin:1rem 0; }
+  .redox-box {
+    flex:1;min-width:200px;border-radius:14px;padding:1.1rem 1.2rem;
+    border:2px solid var(--border);text-align:center;transition:all .4s;
+  }
+  .redox-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;margin-bottom:.4rem; }
+  .redox-box p  { font-family:'DM Mono',monospace;font-size:.78rem;line-height:1.6; }
+  .redox-oxidized  { background:var(--coral-pale);border-color:var(--coral); }
+  .redox-oxidized h4 { color:var(--coral); }
+  .redox-reduced   { background:var(--mint-pale);border-color:var(--mint); }
+  .redox-reduced h4 { color:#1b7a58; }
+
+  /* ─── QUIZ ─── */
+  .quiz-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .quiz-q { font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:1rem;line-height:1.5; }
+  .quiz-options { display:flex;flex-direction:column;gap:.5rem; }
+  .quiz-opt {
+    padding:.6rem 1rem;border-radius:8px;border:2px solid var(--border);
+    background:white;cursor:pointer;font-family:'Nunito',sans-serif;
+    font-size:.88rem;font-weight:600;text-align:left;transition:all .15s;color:var(--ink);
+  }
+  .quiz-opt:hover:not(:disabled) { border-color:var(--forest-mid);background:#f0f7f3; }
+  .quiz-opt.correct  { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .quiz-opt.wrong    { background:var(--coral-pale);border-color:var(--coral);color:#a83020; }
+  .quiz-opt:disabled { cursor:default; }
+  .quiz-feedback { margin-top:.8rem;font-size:.85rem;line-height:1.6;padding:.7rem 1rem;border-radius:8px;display:none;animation:fadeIn .3s ease; }
+  .quiz-feedback.show { display:block; }
+  .quiz-feedback.correct-fb { background:var(--mint-pale);color:#1b7a58;border-left:3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background:var(--coral-pale);color:#a83020;border-left:3px solid var(--coral); }
+
+  /* ─── SCORE ─── */
+  .score-panel { background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);color:white;border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem; }
+  .score-panel .score-num { font-family:'Fredoka One',cursive;font-size:3.5rem;line-height:1;color:var(--gold); }
+  .score-panel p { opacity:.88;margin-top:.5rem;font-size:1rem; }
+  .score-panel h3 { font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:.3rem; }
+
+  /* ─── CONGRATS ─── */
+  .congrats-panel { background:linear-gradient(135deg,var(--forest) 0%,#1b7a58 100%);color:white;border-radius:20px;padding:2.5rem 2rem;text-align:center;margin-top:2rem; }
+  .congrats-panel h2 { font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:.6rem; }
+  .congrats-panel p  { opacity:.9;line-height:1.7;max-width:480px;margin:0 auto .8rem; }
+  .summary-chips { display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:1rem; }
+  .summary-chip {
+    background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);
+    border-radius:20px;padding:.3rem .9rem;font-size:.78rem;font-weight:700;
+    font-family:'DM Mono',monospace;letter-spacing:.04em;
+  }
+
+  /* ─── VOCAB TABLE ─── */
+  .vocab-table { width:100%;border-collapse:collapse;margin:1rem 0 1.5rem; }
+  .vocab-table th { background:var(--forest);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;padding:.7rem 1rem;text-align:left; }
+  .vocab-table td { padding:.65rem 1rem;font-size:.85rem;line-height:1.5;border-bottom:1px solid var(--border); }
+  .vocab-table tr:nth-child(even) td { background:#f5f7fa; }
+  .vocab-table tr:hover td { background:#d4eadd;transition:background .15s; }
+  .vocab-table td:first-child { font-weight:800;color:var(--forest-mid); }
+
+  /* ─── FILL IN THE BLANK ─── */
+  .blank-input {
+    border:none;border-bottom:2.5px solid var(--forest-mid);background:transparent;
+    font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;color:var(--forest);
+    width:180px;text-align:center;outline:none;padding:0 4px;transition:border-color .2s;
+  }
+  .blank-input:focus { border-color:var(--coral); }
+  .blank-input.ok { border-color:var(--mint);color:var(--mint); }
+  .blank-input.err{ border-color:var(--coral);color:var(--coral); }
+  .fill-q { font-size:.95rem;line-height:2;color:var(--ink);margin-bottom:.8rem; }
+  .divider { height:1px;background:var(--border);margin:2rem 0; }
+
+  /* ─── NAME BAR ─── */
+  .name-bar {
+    background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);
+    border-radius:12px;padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;
+    max-width:420px;margin:0 auto 1rem;
+  }
+  .name-bar label { font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;font-family:'DM Mono',monospace; }
+  .name-bar input {
+    flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;
+    padding:.4rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:white;outline:none;
+  }
+  .name-bar input::placeholder { color:rgba(255,255,255,.4);font-weight:400; }
+
+  /* ─── SUMMARY / SUBMIT ─── */
+  .summary-section { background:white;border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--forest);margin-bottom:.8rem; }
+  .summary-answer {
+    background:#f5f7fa;border-radius:8px;padding:.7rem 1rem;font-size:.85rem;
+    line-height:1.6;color:var(--ink);margin-bottom:.5rem;font-style:italic;
+    border-left:3px solid var(--lavender);min-height:2rem;
+  }
+  .summary-answer.empty { color:var(--muted);font-style:normal;border-left-color:var(--border); }
+  .share-buttons { display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center; }
+  .share-btn {
+    border:none;border-radius:12px;padding:.85rem 1.6rem;font-family:'Fredoka One',cursive;
+    font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem;
+  }
+  .share-btn:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background:var(--mint);color:white; }
+  .share-btn.email { background:var(--lavender);color:white; }
+  .share-btn.print { background:var(--forest);color:white; }
+  .copy-confirm { text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--mint);min-height:1.2rem;margin-top:.6rem; }
+
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm,.prog-step,.name-bar { display:none !important; }
+    .sheet { box-shadow:none;border-radius:0; }
+    .section { display:none !important; }
+    #sec-7 { display:block !important; }
+  }
+</style>
+</head>
+<body>
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-badge">🧬 AP Biology · Unit 1 · Chapter 3 (Part 1 of 3)</div>
+  <h1>Biological Macromolecules <span class="accent">Explorer</span></h1>
+  <p class="intro">Master how life builds itself from monomers to polymers — covering OpenStax AP Biology Chapter 3, sections 3.1 (Synthesis of Biological Macromolecules) and 3.2 (Carbohydrates).</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <span class="prog-step active" onclick="goTo(0)">① Wonder</span>
+    <span class="prog-step"       onclick="goTo(1)">② Synthesis &amp; Hydrolysis</span>
+    <span class="prog-step"       onclick="goTo(2)">③ Reaction Lab</span>
+    <span class="prog-step"       onclick="goTo(3)">④ Carbohydrates</span>
+    <span class="prog-step"       onclick="goTo(4)">⑤ Sugar Builder Lab</span>
+    <span class="prog-step"       onclick="goTo(5)">⑥ Quiz</span>
+    <span class="prog-step"       onclick="goTo(6)">⑦ Reflect</span>
+    <span class="prog-step"       onclick="goTo(7)">📤 Submit</span>
+  </div>
+</div>
+
+<!-- ═══ SHEET ═══ -->
+<div class="sheet">
+
+<!-- ═══ SECTION 0: WONDER ═══ -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-coral">1</div>
+    <span class="eyebrow-label">Phase 1 · Wonder</span>
+  </div>
+  <h2>🧬 Built From Six Ingredients</h2>
+  <p class="lead">
+    Bread, fruit, cheese, your own muscle and bone — all of it is built from just <strong>six elements</strong>: sulfur, phosphorus, oxygen, nitrogen, carbon, and hydrogen (remember it as <strong>SPONCH</strong>). Yet from these six elements, life builds an almost infinite variety of structures.
+  </p>
+
+  <div class="wonder-box">
+    <p>A strand of your DNA, the keratin in your hair, the starch in a potato, and the fat stored in your cells are all built the exact same way — by linking small repeating units together. <strong>If all of life's macromolecules are built using the same basic chemical reaction, what determines whether the result is a carbohydrate, a protein, a fat, or DNA?</strong></p>
+  </div>
+
+  <div class="predict-box">
+    <h4>✏️ Your Prediction (before we dig in)</h4>
+    <textarea placeholder="Predict: what do you think determines whether smaller building blocks become a carbohydrate vs. a protein vs. a fat? What role might water play in building (or breaking down) these molecules?"></textarea>
+  </div>
+
+  <div class="wonder-box gold-box">
+    <p>Here's the answer: it all comes down to the <strong>type of monomer</strong> used and the <strong>reaction</strong> that links them. Complex polymers are built from monomers through <strong>dehydration synthesis</strong> (removing a water molecule to form a bond), and broken back down into monomers through <strong>hydrolysis</strong> (adding a water molecule to break a bond). Think of a train: each monomer is a boxcar, and the polymer is the entire train.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.6rem;">🗝️ The Big Picture</h3>
+  <p style="font-size:.95rem;line-height:1.75;margin-bottom:1.8rem;">
+    There are <strong>four major classes of biological macromolecules</strong>: carbohydrates, lipids, proteins, and nucleic acids. Each is built from its own type of monomer (simple sugars, fatty acids/glycerol, amino acids, and nucleotides, respectively) using the same basic chemistry — dehydration synthesis to build, hydrolysis to break down. In this interactive, we'll master Sections 3.1 (Synthesis) and 3.2 (Carbohydrates).
+  </p>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" disabled>← Back</button>
+    <button class="btn btn-coral" onclick="goTo(1)">Next: Synthesis &amp; Hydrolysis →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 1: 3.1 SYNTHESIS & HYDROLYSIS CONCEPTS ═══ -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-lav">2</div>
+    <span class="eyebrow-label">Phase 2 · 3.1 Synthesis of Biological Macromolecules</span>
+  </div>
+  <h2>📖 Building &amp; Breaking — Core Vocabulary</h2>
+  <p class="lead">Tap each term to reveal its definition and significance. This is the chemistry that underlies <strong>every single macromolecule</strong> you'll study this chapter.</p>
+
+  <div class="chip-row">
+    <span class="chip coral"  onclick="reveal('sponch')">SPONCH</span>
+    <span class="chip forest" onclick="reveal('monomer')">Monomer &amp; Polymer</span>
+    <span class="chip mint"   onclick="reveal('dehydration')">Dehydration Synthesis</span>
+    <span class="chip gold"   onclick="reveal('hydrolysis')">Hydrolysis</span>
+    <span class="chip lav"    onclick="reveal('energy')">Energy of Each Reaction</span>
+    <span class="chip coral"  onclick="reveal('fourclasses')">Four Classes</span>
+    <span class="chip forest" onclick="reveal('millerurey')">Miller-Urey Experiment</span>
+    <span class="chip mint"   onclick="reveal('enzymes')">Enzyme Catalysis</span>
+  </div>
+
+  <div id="rev-sponch"      class="concept-reveal coral">
+    <strong>SPONCH</strong> — A mnemonic for the six elements that make up most biological macromolecules: <strong>S</strong>ulfur, <strong>P</strong>hosphorus, <strong>O</strong>xygen, <strong>N</strong>itrogen, <strong>C</strong>arbon, <strong>H</strong>ydrogen. All four classes of macromolecules (carbohydrates, lipids, proteins, nucleic acids) are built primarily from these six elements in different combinations and quantities.
+  </div>
+  <div id="rev-monomer"     class="concept-reveal forest-border">
+    <strong>Monomer &amp; Polymer</strong> — A <em>monomer</em> is a single subunit or "building block" molecule (like a train boxcar). When monomers link together via covalent bonds, they form a <em>polymer</em> (like the entire train). Even a single type of monomer can combine in different ways to form very different polymers — for example, glucose monomers alone make up starch, glycogen, AND cellulose, depending on how they're linked.
+  </div>
+  <div id="rev-dehydration" class="concept-reveal mint-border">
+    <strong>Dehydration Synthesis (Condensation)</strong> — The reaction that builds polymers from monomers. The hydrogen of one monomer combines with the hydroxyl (OH) group of another monomer, <strong>releasing a water molecule</strong> as the two monomers form a covalent bond. "Dehydration" = "to put together while losing water." This reaction requires an <strong>investment of energy</strong> to form the new bond.
+  </div>
+  <div id="rev-hydrolysis"  class="concept-reveal gold-border">
+    <strong>Hydrolysis</strong> — The reaction that breaks polymers back down into monomers, using water. "Hydrolysis" = "to split with water." A water molecule is split: one part of the polymer gains an H⁺ and the other gains an OH⁻. This is exactly the reverse of dehydration synthesis, and it <strong>releases energy</strong> that can power cellular processes (this is how digestion works — enzymes hydrolyze the food you eat).
+  </div>
+  <div id="rev-energy"      class="concept-reveal lav-border">
+    <strong>Energy Dynamics</strong> — Dehydration synthesis reactions typically <strong>require an investment of energy</strong> for new bond formation (they are anabolic/endergonic). Hydrolysis reactions typically <strong>release energy</strong> that can be used to power cellular processes (they are catabolic/exergonic). Both reaction types are catalyzed — "sped up" — by specific enzymes.
+  </div>
+  <div id="rev-fourclasses" class="concept-reveal coral">
+    <strong>The Four Classes of Macromolecules</strong> — <strong>Carbohydrates</strong> (monomer: monosaccharides), <strong>Lipids</strong> (not true polymers — built from glycerol + fatty acids), <strong>Proteins</strong> (monomer: amino acids), and <strong>Nucleic Acids</strong> (monomer: nucleotides). Each macromolecule class performs distinct, essential biological functions, and each is broken down by a specific class of enzyme during digestion.
+  </div>
+  <div id="rev-millerurey"  class="concept-reveal forest-border">
+    <strong>The Miller-Urey Experiment (1953)</strong> — Stanley Miller and Harold Urey built an apparatus to simulate early Earth conditions: boiling water (mimicking the ocean), methane, ammonia, and hydrogen gases (mimicking the early atmosphere), and electrical sparks (mimicking lightning). The result: organic compounds, including <strong>amino acids and nucleotides</strong>, spontaneously formed. This supports the hypothesis that the organic precursors of life's macromolecules could form from simple inorganic molecules on primitive Earth.
+  </div>
+  <div id="rev-enzymes"     class="concept-reveal mint-border">
+    <strong>Enzyme Catalysis of Dehydration &amp; Hydrolysis</strong> — Both reaction types are catalyzed by specific enzymes in living cells. Examples from digestion: carbohydrates are broken down by <em>amylase, sucrase, lactase, maltase</em>; proteins are broken down by <em>pepsin and peptidase</em> (plus HCl); lipids are broken down by <em>lipases</em>. Each macromolecule class has its own dedicated set of hydrolyzing enzymes.
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 Dehydration Synthesis vs. Hydrolysis — Side by Side</h3>
+  <table class="vocab-table">
+    <tr><th>Feature</th><th>Dehydration Synthesis</th><th>Hydrolysis</th></tr>
+    <tr><td>Direction</td><td>Monomers → Polymer</td><td>Polymer → Monomers</td></tr>
+    <tr><td>Water</td><td>Water is released (a product)</td><td>Water is used (a reactant)</td></tr>
+    <tr><td>Energy</td><td>Requires energy investment (anabolic)</td><td>Releases energy (catabolic)</td></tr>
+    <tr><td>Bond formed/broken</td><td>New covalent bond formed</td><td>Covalent bond broken</td></tr>
+    <tr><td>Real-world example</td><td>Building starch from glucose in a plant</td><td>Digesting starch into glucose in your gut</td></tr>
+  </table>
+
+  <div class="divider"></div>
+
+  <!-- Matching game -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.4rem;">🎯 Quick Match — Synthesis Terms</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Tap a term, then tap its matching definition.</p>
+  <div class="match-grid" id="matchGrid">
+    <div class="match-item" data-pair="a" data-side="term" onclick="matchClick(this)">Dehydration Synthesis</div>
+    <div class="match-item" data-pair="b" data-side="def"  onclick="matchClick(this)">A single repeating subunit</div>
+    <div class="match-item" data-pair="c" data-side="term" onclick="matchClick(this)">Hydrolysis</div>
+    <div class="match-item" data-pair="d" data-side="def"  onclick="matchClick(this)">A chain of linked monomers</div>
+    <div class="match-item" data-pair="a" data-side="def"  onclick="matchClick(this)">Builds a bond, releases water, requires energy</div>
+    <div class="match-item" data-pair="e" data-side="term" onclick="matchClick(this)">SPONCH</div>
+    <div class="match-item" data-pair="b" data-side="term" onclick="matchClick(this)">Monomer</div>
+    <div class="match-item" data-pair="c" data-side="def"  onclick="matchClick(this)">Breaks a bond, uses water, releases energy</div>
+    <div class="match-item" data-pair="d" data-side="term" onclick="matchClick(this)">Polymer</div>
+    <div class="match-item" data-pair="e" data-side="def"  onclick="matchClick(this)">The 6 elements common to biological macromolecules</div>
+  </div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-ghost" onclick="resetMatch()">↺ Reset Match</button>
+    <span id="match-score" style="margin-left:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted);"></span>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(0)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(2)">Next: Reaction Lab →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 2: REACTION LAB ═══ -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-gold">3</div>
+    <span class="eyebrow-label">Phase 3 · Reaction Lab</span>
+  </div>
+  <h2>🔬 Build &amp; Break a Disaccharide</h2>
+  <p class="lead">Watch two glucose monomers link together by dehydration synthesis to form maltose — then reverse the process with hydrolysis. This is the exact reaction shown in Figures 3.2 and 3.3 of your textbook.</p>
+
+  <div class="predict-box">
+    <h4>✏️ Before the lab — your prediction</h4>
+    <textarea id="rxn-predict" placeholder="Predict: when two glucose monomers join together, where does the water molecule that's released come from? (Hint: think about which atoms are removed from each monomer.) What do you think has to happen in reverse for hydrolysis to break the bond?"></textarea>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🧪 Monomer-to-Polymer Reaction Simulator</h3>
+    <div class="hint" id="rxn-hint">Click a button to animate dehydration synthesis or hydrolysis</div>
+
+    <div class="atp-display" id="rxnDisplay">
+      <div class="atp-molecule mol-atp" id="mol-m1">
+        <div class="mol-label">Glucose</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.78rem;margin:.3rem 0;">Monomer 1</div>
+        <div class="mol-desc">—OH end available</div>
+      </div>
+      <div style="text-align:center;">
+        <div class="arrow-label" id="rxn-arrow-top" style="font-size:.9rem;color:var(--muted);">⬅ Hydrolysis<br>(add H₂O)</div>
+        <div style="font-size:2rem;color:var(--forest-mid);">⇅</div>
+        <div class="arrow-label" id="rxn-arrow-bot" style="font-size:.9rem;color:var(--muted);">Dehydration ➡<br>(release H₂O)</div>
+      </div>
+      <div class="atp-molecule mol-adp" id="mol-m2">
+        <div class="mol-label">Glucose</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.78rem;margin:.3rem 0;">Monomer 2</div>
+        <div class="mol-desc">—H end available</div>
+      </div>
+    </div>
+
+    <div id="rxn-reaction-box" style="background:#f5f7fa;border-radius:10px;padding:1rem;margin:1rem 0;font-family:'DM Mono',monospace;font-size:.85rem;text-align:center;border:2px solid var(--border);min-height:60px;display:flex;align-items:center;justify-content:center;">
+      Select a reaction below to see the equation and energy dynamics…
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-coral" onclick="animateRxn('dehydration')">🔗 Dehydration Synthesis (build maltose)</button>
+      <button class="btn btn-mint"  onclick="animateRxn('hydrolysis')">💧 Hydrolysis (break maltose apart)</button>
+      <button class="btn btn-ghost" onclick="animateRxn('reset')">↺ Reset</button>
+    </div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Building vs. Breaking</h4>
+    <textarea placeholder="Why does dehydration synthesis require energy while hydrolysis releases it? Why is this reaction pattern the same whether you're building carbohydrates, proteins, or nucleic acids? What enzymes break down carbohydrates during digestion?"></textarea>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(3)">Next: Carbohydrates →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 3: 3.2 CARBOHYDRATES CONCEPTS ═══ -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">4</div>
+    <span class="eyebrow-label">Phase 4 · 3.2 Carbohydrates</span>
+  </div>
+  <h2>🍞 Carbohydrates — Tap to Explore</h2>
+  <p class="lead">Tap each card to explore the three subtypes of carbohydrates and how they're built, plus the key polysaccharides every AP student must know.</p>
+
+  <div class="evidence-grid">
+    <div class="ev-card" onclick="showEvidence('mono')">
+      <div class="ev-icon">🍯</div>
+      <div class="ev-title">Monosaccharides</div>
+      <div class="ev-sub">simple sugars</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('di')">
+      <div class="ev-icon">🥛</div>
+      <div class="ev-title">Disaccharides</div>
+      <div class="ev-sub">2 monomers</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('poly')">
+      <div class="ev-icon">🌾</div>
+      <div class="ev-title">Polysaccharides</div>
+      <div class="ev-sub">many monomers</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('isomers')">
+      <div class="ev-icon">🔀</div>
+      <div class="ev-title">Isomers</div>
+      <div class="ev-sub">same formula, different shape</div>
+    </div>
+  </div>
+
+  <div id="ev-mono"    class="ev-panel">
+    <h4>🍯 Monosaccharides</h4>
+    <p>Simple sugars — the basic monomer unit of carbohydrates. The number of carbons usually ranges from 3 to 7. Sugars with an aldehyde group are <strong>aldoses</strong>; sugars with a ketone group are <strong>ketoses</strong>. By carbon count: <em>trioses</em> (3C), <em>pentoses</em> (5C), and <em>hexoses</em> (6C). Glucose (C₆H₁₂O₆) is the most common monosaccharide and the primary energy source for cellular respiration.</p>
+    <div class="example-box">📌 Glucose, galactose, and fructose are all hexoses (C₆H₁₂O₆) — but glucose and galactose are aldoses while fructose is a ketose.</div>
+  </div>
+  <div id="ev-di"      class="ev-panel">
+    <h4>🥛 Disaccharides</h4>
+    <p>Form when two monosaccharides undergo dehydration synthesis, forming a <strong>glycosidic bond</strong> (the carbohydrate-specific name for the covalent bond linking two sugar monomers). Common disaccharides: <strong>maltose</strong> (glucose + glucose, "malt sugar"), <strong>lactose</strong> (glucose + galactose, found in milk), and <strong>sucrose</strong> (glucose + fructose, table sugar — the most common disaccharide).</p>
+    <div class="example-box">📌 Sucrose forms when glucose (carbon 1) bonds to fructose (carbon 2) via a glycosidic linkage, releasing one water molecule.</div>
+  </div>
+  <div id="ev-poly"    class="ev-panel">
+    <h4>🌾 Polysaccharides</h4>
+    <p>Long chains of monosaccharides (may be branched or unbranched). Four key examples: <strong>Starch</strong> (plant energy storage — amylose is unbranched α1-4 links, amylopectin is branched with α1-6 links); <strong>Glycogen</strong> (animal energy storage — highly branched, stored in liver/muscle); <strong>Cellulose</strong> (plant structural support — unbranched β1-4 links, indigestible to humans); <strong>Chitin</strong> (insect/fungal structural support — nitrogen-containing).</p>
+    <div class="example-box">📌 Storing glucose as starch/glycogen (rather than free glucose) prevents it from leaking out of cells and avoids creating high osmotic pressure.</div>
+  </div>
+  <div id="ev-isomers" class="ev-panel">
+    <h4>🔀 Isomers (α vs. β bonds)</h4>
+    <p>Glucose, galactose, and fructose share the same chemical formula (C₆H₁₂O₆) but differ in atom arrangement — they're <strong>structural isomers</strong>. In ring form, glucose can form an <strong>alpha (α)</strong> bond (OH below the ring at carbon 1 — digestible by animals) or a <strong>beta (β)</strong> bond (OH above the ring — NOT digestible by most animal enzymes). This single structural difference is why starch (α bonds) is digestible but cellulose (β bonds) is not!</p>
+    <div class="example-box">📌 Cows and termites can digest cellulose only because of symbiotic bacteria/protists in their gut that produce the enzyme <em>cellulase</em>, which breaks β1-4 bonds.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 Key Polysaccharides at a Glance</h3>
+  <table class="vocab-table">
+    <tr><th>Polysaccharide</th><th>Found in</th><th>Bond type</th><th>Function</th></tr>
+    <tr><td>Starch (amylose)</td><td>Plants</td><td>α 1-4 (unbranched)</td><td>Energy storage</td></tr>
+    <tr><td>Starch (amylopectin)</td><td>Plants</td><td>α 1-4 + α 1-6 (branched)</td><td>Energy storage</td></tr>
+    <tr><td>Glycogen</td><td>Animals (liver, muscle)</td><td>α 1-4 + α 1-6 (highly branched)</td><td>Energy storage</td></tr>
+    <tr><td>Cellulose</td><td>Plant cell walls</td><td>β 1-4 (unbranched)</td><td>Structural support</td></tr>
+    <tr><td>Chitin</td><td>Insect exoskeletons, fungal cell walls</td><td>Modified β-glycosidic, contains N</td><td>Structural support</td></tr>
+  </table>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(4)">Next: Sugar Builder Lab →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 4: SUGAR BUILDER LAB ═══ -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-lav">5</div>
+    <span class="eyebrow-label">Phase 5 · Sugar Builder Lab</span>
+  </div>
+  <h2>🧩 Classify That Carbohydrate</h2>
+  <p class="lead">Tap each carbohydrate example below to classify it as a monosaccharide, disaccharide, or polysaccharide — and check whether you're right.</p>
+
+  <div class="predict-box">
+    <h4>✏️ Before the lab — your prediction</h4>
+    <textarea id="sugar-predict" placeholder="Predict: why do you think plants store excess glucose as starch instead of leaving it as free glucose floating in the cell? Think about osmosis and what you learned about concentration gradients."></textarea>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🧬 Sort the Carbohydrates</h3>
+    <div class="hint">Tap a carbohydrate name, then tap the category you think it belongs to. Correct = green, incorrect = shake and try again.</div>
+
+    <div id="sortContainer"></div>
+
+    <div style="margin-top:1rem;">
+      <span id="sort-score" style="font-family:'DM Mono',monospace;font-size:.85rem;color:var(--muted);"></span>
+      <button class="btn btn-ghost" onclick="resetSort()" style="margin-left:1rem;">↺ Reset</button>
+    </div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Carbohydrate Classification</h4>
+    <textarea placeholder="What clues helped you classify each carbohydrate? What's the difference between how starch and cellulose are linked, even though both are made of glucose monomers? Why does that one structural difference matter so much biologically?"></textarea>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Fun fact / benefits box -->
+  <div class="wonder-box mint-box">
+    <p>Carbohydrates provide about <strong>4.3 Kcal/gram</strong> compared to fat's 9 Kcal/gram. Dietary fiber (mostly cellulose) can't be digested by human enzymes, but it promotes regular digestion, helps regulate blood glucose uptake, and binds to cholesterol in the small intestine to help remove it from the body.</p>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(3)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(5)">Next: Quiz →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 5: QUIZ ═══ -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-forest">6</div>
+    <span class="eyebrow-label">Phase 6 · Real Test Practice</span>
+  </div>
+  <h2>📝 AP-Style Quiz — Sections 3.1 &amp; 3.2</h2>
+  <p class="lead">These questions are written in the style of <strong>AP Biology exam questions</strong> covering OpenStax Chapter 3, Sections 3.1–3.2. Answer each — instant feedback included.</p>
+
+  <div id="quiz-container"></div>
+
+  <div id="score-panel" class="score-panel" style="display:none;">
+    <h3>Quiz Complete! 🎉</h3>
+    <div class="score-num" id="score-display">0/16</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-gold" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(4)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(6)">Next: Reflect →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 6: REFLECT ═══ -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">7</div>
+    <span class="eyebrow-label">Phase 7 · Reflect</span>
+  </div>
+  <h2>💭 Reflection &amp; Review</h2>
+  <p class="lead">Solidify your understanding. Answer all four questions in your own words.</p>
+
+  <div class="quiz-card">
+    <div class="quiz-q">1. Explain dehydration synthesis and hydrolysis in your own words. Use the terms monomer, polymer, water, and energy. Why are these two reactions essentially opposites of each other?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">2. What did the Miller-Urey experiment demonstrate, and why is it significant for understanding the origin of life's macromolecules?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">3. Compare starch, glycogen, cellulose, and chitin. For each, name the organism(s) that use it, its function, and (where relevant) the type of glycosidic bond involved.</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">4. Explain why humans cannot digest cellulose but CAN digest starch, even though both are polymers of glucose. What animals can digest cellulose, and how do they do it?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.8rem;">✏️ Fill-in-the-Blank Review</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1.2rem;">Type the answer and press Enter or click Check All.</p>
+  <div id="fill-container"></div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-mint" onclick="checkAllFills()">✓ Check All Answers</button>
+    <button class="btn btn-ghost" onclick="resetFills()" style="margin-left:.6rem;">↺ Reset</button>
+  </div>
+
+  <div class="congrats-panel" style="margin-top:2rem;">
+    <h2>🧬 Synthesis &amp; Carbohydrates Mastered!</h2>
+    <p>You've worked through Sections 3.1 (Synthesis of Biological Macromolecules) and 3.2 (Carbohydrates) — the foundational chemistry for every macromolecule you'll study. Up next: Lipids and Proteins (Part 2)!</p>
+    <p style="font-size:.85rem;opacity:.75;">AP Bio tip: questions about "structure determines function" are everywhere on the exam — practice explaining WHY a structural difference (like α vs. β bonds) changes a molecule's biological role.</p>
+    <div class="summary-chips">
+      <span class="summary-chip">SPONCH ✓</span>
+      <span class="summary-chip">Monomer/Polymer ✓</span>
+      <span class="summary-chip">Dehydration Synthesis ✓</span>
+      <span class="summary-chip">Hydrolysis ✓</span>
+      <span class="summary-chip">Miller-Urey ✓</span>
+      <span class="summary-chip">Monosaccharides ✓</span>
+      <span class="summary-chip">Disaccharides ✓</span>
+      <span class="summary-chip">Polysaccharides ✓</span>
+      <span class="summary-chip">Starch/Glycogen ✓</span>
+      <span class="summary-chip">Cellulose/Chitin ✓</span>
+    </div>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(5)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(7)">Next: Submit →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 7: SUBMIT ═══ -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">8</div>
+    <span class="eyebrow-label">Your Completed Work</span>
+  </div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Here's a summary of everything you worked on. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> to your teacher.</p>
+
+  <div class="summary-section" style="background:var(--forest);color:white;border-color:var(--forest);">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">STUDENT</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">LESSON</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;">Biological Macromolecules Explorer 🧬 (Part 1)</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6;" id="summaryDate"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section">
+    <h3>📝 Quiz Score</h3>
+    <div class="summary-answer" id="sum-quiz"></div>
+  </div>
+  <div class="summary-section">
+    <h3>🤔 Opening Prediction</h3>
+    <div class="summary-answer" id="sum-pred"></div>
+  </div>
+  <div class="summary-section">
+    <h3>🔬 Reaction Lab Prediction</h3>
+    <div class="summary-answer" id="sum-rxn-pred"></div>
+  </div>
+  <div class="summary-section">
+    <h3>🧩 Sugar Builder Lab Prediction</h3>
+    <div class="summary-answer" id="sum-sugar-pred"></div>
+  </div>
+  <div class="summary-section">
+    <h3>💭 Reflection Questions</h3>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;">Q1 — Dehydration Synthesis &amp; Hydrolysis</div>
+    <div class="summary-answer" id="sum-r1"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q2 — Miller-Urey Experiment</div>
+    <div class="summary-answer" id="sum-r2"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q3 — Comparing Polysaccharides</div>
+    <div class="summary-answer" id="sum-r3"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q4 — Starch vs. Cellulose Digestibility</div>
+    <div class="summary-answer" id="sum-r4"></div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.6rem;">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2;">
+      <strong>📋 Copy My Results</strong> — Copies all answers to clipboard. Paste into Google Classroom assignment.<br>
+      <strong>📧 Email to Teacher</strong> — Opens your email app with answers pre-filled.<br>
+      <strong>🖨️ Print / Save PDF</strong> — Mac: bottom-left dropdown → Save as PDF. Windows: Microsoft Print to PDF.
+    </p>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(6)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(0)">↺ Start Over</button>
+  </div>
+</div>
+
+</div><!-- /sheet -->
+
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+<script>
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+const steps    = document.querySelectorAll('.prog-step');
+const sections = document.querySelectorAll('.section');
+
+function goTo(n) {
+  sections.forEach((s, i) => s.classList.toggle('active', i === n));
+  steps.forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    if (i === n) s.classList.add('active');
+    if (i < n)  s.classList.add('done');
+  });
+  if (n === 7) buildSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════════════
+// CONCEPT REVEALS (Section 1)
+// ═══════════════════════════════════════════════
+const revIds = ['sponch','monomer','dehydration','hydrolysis','energy','fourclasses','millerurey','enzymes'];
+function reveal(key) {
+  revIds.forEach(id => {
+    const el = document.getElementById('rev-' + id);
+    if (el) el.classList.remove('show');
+  });
+  const t = document.getElementById('rev-' + key);
+  if (t) t.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// MATCHING GAME (Section 1)
+// ═══════════════════════════════════════════════
+let matchSelected = null;
+let matchScore = 0;
+
+function matchClick(el) {
+  if (el.classList.contains('matched')) return;
+  if (!matchSelected) {
+    el.classList.add('selected');
+    matchSelected = el;
+  } else if (matchSelected === el) {
+    el.classList.remove('selected');
+    matchSelected = null;
+  } else {
+    const pA = matchSelected.dataset.pair, pB = el.dataset.pair;
+    const sA = matchSelected.dataset.side, sB = el.dataset.side;
+    if (pA === pB && sA !== sB) {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('matched');
+      el.classList.add('matched');
+      matchScore++;
+      document.getElementById('match-score').textContent = matchScore + '/5 matched';
+      matchSelected = null;
+    } else {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('wrong');
+      el.classList.add('wrong');
+      const a = matchSelected, b = el;
+      setTimeout(() => { a.classList.remove('wrong'); b.classList.remove('wrong'); }, 650);
+      matchSelected = null;
+    }
+  }
+}
+function resetMatch() {
+  matchSelected = null; matchScore = 0;
+  document.querySelectorAll('.match-item').forEach(el => el.classList.remove('selected','matched','wrong'));
+  document.getElementById('match-score').textContent = '';
+}
+
+// ═══════════════════════════════════════════════
+// DEHYDRATION / HYDROLYSIS ANIMATOR (Section 2)
+// ═══════════════════════════════════════════════
+function animateRxn(type) {
+  const m1 = document.getElementById('mol-m1');
+  const m2 = document.getElementById('mol-m2');
+  const rxnBox = document.getElementById('rxn-reaction-box');
+  const hint = document.getElementById('rxn-hint');
+
+  if (type === 'dehydration') {
+    m1.style.transform = 'translateX(20px) scale(1.05)';
+    m2.style.transform = 'translateX(-20px) scale(1.05)';
+    m1.querySelector('.mol-label').textContent = 'Maltose';
+    m2.querySelector('.mol-label').textContent = '(linked)';
+    m1.style.background = 'var(--gold-pale)';
+    m1.style.borderColor = 'var(--gold)';
+    m2.style.background = 'var(--gold-pale)';
+    m2.style.borderColor = 'var(--gold)';
+    rxnBox.innerHTML = '<strong>Dehydration Synthesis:</strong> Glucose + Glucose → Maltose + <span style="color:var(--coral);font-weight:700;">H₂O released</span><br><span style="font-size:.75rem;color:var(--muted);">The OH from one glucose combines with H from the other glucose, forming a glycosidic bond. Energy is required to form this new covalent bond.</span>';
+    rxnBox.style.background = 'var(--gold-pale)';
+    rxnBox.style.borderColor = 'var(--gold)';
+    hint.textContent = '🔗 Dehydration synthesis: two monomers join, releasing one water molecule.';
+  } else if (type === 'hydrolysis') {
+    m1.style.transform = 'translateX(0) scale(1)';
+    m2.style.transform = 'translateX(0) scale(1)';
+    m1.querySelector('.mol-label').textContent = 'Glucose';
+    m2.querySelector('.mol-label').textContent = 'Glucose';
+    m1.style.background = 'var(--mint-pale)';
+    m1.style.borderColor = 'var(--mint)';
+    m2.style.background = 'var(--mint-pale)';
+    m2.style.borderColor = 'var(--mint)';
+    rxnBox.innerHTML = '<strong>Hydrolysis:</strong> Maltose + <span style="color:var(--lavender);font-weight:700;">H₂O added</span> → Glucose + Glucose<br><span style="font-size:.75rem;color:var(--muted);">A water molecule splits — one glucose gains an OH, the other gains an H. This breaks the glycosidic bond and releases energy.</span>';
+    rxnBox.style.background = 'var(--mint-pale)';
+    rxnBox.style.borderColor = 'var(--mint)';
+    hint.textContent = '💧 Hydrolysis: water is added to break the bond, releasing two separate monomers.';
+  } else {
+    m1.style.transform = 'translateX(0) scale(1)';
+    m2.style.transform = 'translateX(0) scale(1)';
+    m1.querySelector('.mol-label').textContent = 'Glucose';
+    m2.querySelector('.mol-label').textContent = 'Glucose';
+    m1.style.background = 'var(--gold-pale)';
+    m1.style.borderColor = 'var(--gold)';
+    m2.style.background = '#f5f7fa';
+    m2.style.borderColor = 'var(--border)';
+    rxnBox.style.background = '#f5f7fa';
+    rxnBox.style.borderColor = 'var(--border)';
+    rxnBox.innerHTML = 'Select a reaction below to see the equation and energy dynamics…';
+    hint.textContent = 'Click a button to animate dehydration synthesis or hydrolysis';
+  }
+}
+
+// ═══════════════════════════════════════════════
+// EVIDENCE CARDS (Section 3)
+// ═══════════════════════════════════════════════
+function showEvidence(type) {
+  document.querySelectorAll('.ev-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.ev-panel').forEach(p => p.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const panel = document.getElementById('ev-' + type);
+  if (panel) panel.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// SUGAR SORT GAME (Section 4)
+// ═══════════════════════════════════════════════
+const sortItems = [
+  { name: 'Glucose', cat: 'mono' },
+  { name: 'Fructose', cat: 'mono' },
+  { name: 'Galactose', cat: 'mono' },
+  { name: 'Sucrose (table sugar)', cat: 'di' },
+  { name: 'Lactose (milk sugar)', cat: 'di' },
+  { name: 'Maltose (malt sugar)', cat: 'di' },
+  { name: 'Starch', cat: 'poly' },
+  { name: 'Glycogen', cat: 'poly' },
+  { name: 'Cellulose', cat: 'poly' },
+  { name: 'Chitin', cat: 'poly' },
+];
+const catLabels = { mono: 'Monosaccharide', di: 'Disaccharide', poly: 'Polysaccharide' };
+let sortSelected = null;
+let sortScore = 0;
+let sortSolved = new Set();
+
+function buildSort() {
+  const container = document.getElementById('sortContainer');
+  let html = '<div class="match-grid" style="grid-template-columns:1fr;gap:.5rem;margin-bottom:1.2rem;">';
+  sortItems.forEach((item, idx) => {
+    html += `<div class="match-item" id="sort-item-${idx}" style="text-align:left;" onclick="selectSortItem(${idx})">${item.name}</div>`;
+  });
+  html += '</div>';
+  html += '<div style="display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;">';
+  ['mono','di','poly'].forEach(cat => {
+    html += `<button class="btn btn-lav" onclick="selectSortCategory('${cat}')" style="flex:1;min-width:160px;">${catLabels[cat]}</button>`;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+  sortScore = 0; sortSolved = new Set();
+  document.getElementById('sort-score').textContent = '';
+}
+
+function selectSortItem(idx) {
+  if (sortSolved.has(idx)) return;
+  document.querySelectorAll('[id^="sort-item-"]').forEach(el => el.classList.remove('selected'));
+  document.getElementById('sort-item-' + idx).classList.add('selected');
+  sortSelected = idx;
+}
+
+function selectSortCategory(cat) {
+  if (sortSelected === null) return;
+  const idx = sortSelected;
+  const el = document.getElementById('sort-item-' + idx);
+  if (sortItems[idx].cat === cat) {
+    el.classList.remove('selected');
+    el.classList.add('matched');
+    el.textContent += '  ✓ ' + catLabels[cat];
+    sortSolved.add(idx);
+    sortScore++;
+  } else {
+    el.classList.add('wrong');
+    setTimeout(() => el.classList.remove('wrong'), 600);
+  }
+  sortSelected = null;
+  document.getElementById('sort-score').textContent = sortScore + '/' + sortItems.length + ' correctly classified';
+}
+
+function resetSort() { buildSort(); }
+
+// ═══════════════════════════════════════════════
+// QUIZ DATA — 3.1 & 3.2
+// ═══════════════════════════════════════════════
+const quizData = [
+  {
+    q: "Which six elements (SPONCH) make up most biological macromolecules?",
+    opts: ["Sodium, Potassium, Oxygen, Nitrogen, Calcium, Hydrogen", "Sulfur, Phosphorus, Oxygen, Nitrogen, Carbon, Hydrogen", "Silicon, Phosphorus, Oxygen, Nitrogen, Carbon, Helium", "Sulfur, Potassium, Oxygen, Neon, Carbon, Hydrogen"],
+    ans: 1,
+    fb: "SPONCH = Sulfur, Phosphorus, Oxygen, Nitrogen, Carbon, Hydrogen. These six elements make up the vast majority of biological macromolecules in different quantities and arrangements."
+  },
+  {
+    q: "What happens during a dehydration synthesis reaction?",
+    opts: ["A polymer breaks into monomers, using water", "Two monomers join together, releasing a water molecule", "A monomer is destroyed by an enzyme", "Water is absorbed without any bond formation"],
+    ans: 1,
+    fb: "Dehydration synthesis ('to put together while losing water') joins two monomers via a covalent bond, releasing one water molecule in the process. It requires an investment of energy."
+  },
+  {
+    q: "What happens during hydrolysis?",
+    opts: ["Monomers combine into a polymer, releasing water", "A polymer is split into monomers using a water molecule", "Glucose is converted into starch", "Energy is absorbed without breaking any bonds"],
+    ans: 1,
+    fb: "Hydrolysis ('to split with water') breaks a polymer into its monomer units by adding a water molecule, which splits into H+ and OH- to cap the two new ends. This reaction releases energy."
+  },
+  {
+    q: "Which reaction type typically REQUIRES an investment of energy?",
+    opts: ["Hydrolysis", "Dehydration synthesis", "Both require the same amount of energy", "Neither reaction involves energy"],
+    ans: 1,
+    fb: "Dehydration synthesis requires energy to form new covalent bonds. Hydrolysis, by contrast, typically releases energy as it breaks bonds — which is why digestion can help power cellular processes."
+  },
+  {
+    q: "What did the Miller-Urey experiment (1953) demonstrate?",
+    opts: ["That DNA replicates semi-conservatively", "That organic molecules like amino acids could form from simple inorganic gases under early Earth-like conditions", "That cells require a membrane to survive", "That RNA evolved before DNA"],
+    ans: 1,
+    fb: "Miller and Urey simulated early Earth's atmosphere and ocean, exposing the mixture to electrical sparks. The result: organic compounds including amino acids and nucleotides formed spontaneously, supporting hypotheses about life's chemical origins."
+  },
+  {
+    q: "Which of the following is NOT one of the four major classes of biological macromolecules?",
+    opts: ["Carbohydrates", "Lipids", "Vitamins", "Nucleic Acids"],
+    ans: 2,
+    fb: "The four major classes are carbohydrates, lipids, proteins, and nucleic acids. Vitamins are important nutrients but are not one of the four macromolecule classes."
+  },
+  {
+    q: "Carbohydrates can be represented by the stoichiometric formula:",
+    opts: ["(CH2O)n", "(NH2)n", "(C6H12)n", "(CO2)n"],
+    ans: 0,
+    fb: "Carbohydrates follow the formula (CH2O)n, where n = number of carbons. This 1:2:1 ratio of carbon:hydrogen:oxygen gives carbohydrates their name (carbo + hydrate)."
+  },
+  {
+    q: "A sugar with an aldehyde functional group is called a(n):",
+    opts: ["Ketose", "Aldose", "Pentose", "Disaccharide"],
+    ans: 1,
+    fb: "Sugars with an aldehyde group (R-CHO) are aldoses; sugars with a ketone group are ketoses. Glucose and galactose are aldoses, while fructose is a ketose."
+  },
+  {
+    q: "Glucose, galactose, and fructose all share the formula C6H12O6 but have different structures. What term describes this relationship?",
+    opts: ["Polymers", "Isomers", "Monomers of different elements", "Disaccharides"],
+    ans: 1,
+    fb: "These three sugars are structural isomers — same chemical formula, different arrangement of atoms. This structural difference gives each sugar distinct chemical properties."
+  },
+  {
+    q: "A glycosidic bond forms between:",
+    opts: ["Two amino acids", "Two monosaccharides, via dehydration synthesis", "A nucleotide and a phosphate", "Two fatty acids"],
+    ans: 1,
+    fb: "A glycosidic bond is the covalent bond formed between two monosaccharides during dehydration synthesis. It can be in the alpha or beta configuration, which determines digestibility."
+  },
+  {
+    q: "Which disaccharide is composed of glucose + fructose?",
+    opts: ["Lactose", "Maltose", "Sucrose", "Cellulose"],
+    ans: 2,
+    fb: "Sucrose (table sugar) = glucose + fructose. Lactose = glucose + galactose (milk sugar). Maltose = glucose + glucose (malt sugar). Cellulose is a polysaccharide, not a disaccharide."
+  },
+  {
+    q: "Starch in plants and glycogen in animals are both polysaccharides made of glucose monomers. What is their shared biological function?",
+    opts: ["Structural support", "Genetic information storage", "Energy storage", "Cell signaling"],
+    ans: 2,
+    fb: "Both starch (in plants) and glycogen (in animals) function as energy storage molecules. Storing glucose as a polymer (rather than free monomers) prevents it from leaking out of cells and avoids excessive osmotic pressure."
+  },
+  {
+    q: "Why can't humans digest cellulose, even though it's made of the same glucose monomers as starch?",
+    opts: ["Cellulose has too many carbons", "Cellulose uses beta (β) 1-4 glycosidic linkages, which human digestive enzymes cannot break", "Cellulose isn't actually a carbohydrate", "Humans lack the stomach acid to dissolve cellulose"],
+    ans: 1,
+    fb: "Starch uses alpha (α) glycosidic linkages, which human amylase can break down. Cellulose uses beta (β) 1-4 linkages, which human enzymes cannot hydrolyze. Animals like cows can digest cellulose only with help from gut bacteria/protists that produce cellulase."
+  },
+  {
+    q: "Chitin, found in insect exoskeletons and fungal cell walls, is unique among the major polysaccharides because it:",
+    opts: ["Contains nitrogen", "Is the only carbohydrate found in fungi", "Cannot be broken down by any enzyme", "Is a monosaccharide, not a polysaccharide"],
+    ans: 0,
+    fb: "Chitin is a nitrogen-containing polysaccharide made of repeating N-acetyl-β-D-glucosamine units — distinguishing it from starch, glycogen, and cellulose, which contain only C, H, and O."
+  },
+  {
+    q: "Which statement correctly compares dehydration synthesis and hydrolysis?",
+    opts: ["Both reactions release water as a product", "Dehydration releases water and requires energy; hydrolysis uses water and releases energy", "Hydrolysis builds polymers; dehydration breaks them down", "Neither reaction is catalyzed by enzymes"],
+    ans: 1,
+    fb: "Dehydration synthesis builds polymers and releases water (requires energy investment). Hydrolysis breaks polymers using water (releases energy). Both reactions are catalyzed by specific enzymes in living cells."
+  },
+  {
+    q: "Amylose and amylopectin are both forms of starch. What structurally distinguishes them?",
+    opts: ["Amylose is branched; amylopectin is unbranched", "Amylose is unbranched (only α1-4 links); amylopectin is branched (α1-4 and α1-6 links)", "Amylose contains nitrogen; amylopectin does not", "They are identical in structure"],
+    ans: 1,
+    fb: "Amylose is an unbranched chain of glucose monomers connected only by α1-4 glycosidic linkages. Amylopectin is branched, with α1-6 linkages occurring at the branch points in addition to α1-4 linkages."
+  },
+];
+
+let quizScore = 0;
+let quizAnswered = 0;
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  quizScore = 0; quizAnswered = 0;
+  document.getElementById('score-panel').style.display = 'none';
+
+  quizData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `
+      <div class="quiz-q">${idx+1}. ${item.q}</div>
+      <div class="quiz-options">
+        ${item.opts.map((opt, i) => `
+          <button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">
+            ${String.fromCharCode(65+i)}. ${opt}
+          </button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="qfb-${idx}"></div>`;
+    container.appendChild(card);
+  });
+}
+
+function checkAnswer(btn, qIdx, optIdx) {
+  const card    = btn.closest('.quiz-card');
+  const buttons = card.querySelectorAll('.quiz-opt');
+  const fb      = document.getElementById('qfb-' + qIdx);
+  const correct = quizData[qIdx].ans;
+  buttons.forEach(b => b.disabled = true);
+  if (optIdx === correct) {
+    btn.classList.add('correct');
+    fb.textContent = '✅ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show correct-fb';
+    quizScore++;
+  } else {
+    btn.classList.add('wrong');
+    buttons[correct].classList.add('correct');
+    fb.textContent = '❌ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show wrong-fb';
+  }
+  quizAnswered++;
+  if (quizAnswered === quizData.length) showScore();
+}
+
+function showScore() {
+  const panel = document.getElementById('score-panel');
+  panel.style.display = 'block';
+  document.getElementById('score-display').textContent = quizScore + '/' + quizData.length;
+  const pct = quizScore / quizData.length;
+  let msg;
+  if (pct >= .9) msg = '🌟 Outstanding! You clearly understand macromolecule synthesis and carbohydrates. AP exam ready!';
+  else if (pct >= .75) msg = '👍 Great work! Review the questions you missed and you\'ll be in great shape.';
+  else if (pct >= .6) msg = '📚 Good start. Revisit Phases 2–4, then retake.';
+  else msg = '💪 Keep going! Go back through the Synthesis and Carbohydrates phases, then try again.';
+  document.getElementById('score-msg').textContent = msg;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function retakeQuiz() { buildQuiz(); }
+
+// ═══════════════════════════════════════════════
+// FILL-IN-THE-BLANK
+// ═══════════════════════════════════════════════
+const fills = [
+  { q: "The six elements common to biological macromolecules are abbreviated ___.", ans: "SPONCH" },
+  { q: "A single repeating subunit of a polymer is called a ___.", ans: "monomer" },
+  { q: "Joining two monomers and releasing water is called dehydration ___.", ans: "synthesis" },
+  { q: "Breaking a polymer apart using water is called ___.", ans: "hydrolysis" },
+  { q: "The 1953 experiment by Miller and Urey modeled conditions on early ___.", ans: "Earth" },
+  { q: "The bond between two monosaccharides is called a ___ bond.", ans: "glycosidic" },
+  { q: "Table sugar, or sucrose, is made of glucose + ___.", ans: "fructose" },
+  { q: "The animal storage form of glucose, found in liver and muscle, is called ___.", ans: "glycogen" },
+  { q: "The plant cell wall structural polysaccharide is called ___.", ans: "cellulose" },
+  { q: "The nitrogen-containing polysaccharide found in insect exoskeletons is called ___.", ans: "chitin" },
+];
+
+function buildFills() {
+  const container = document.getElementById('fill-container');
+  container.innerHTML = '';
+  fills.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-card';
+    div.innerHTML = `<div class="fill-q">${item.q.replace('___', `<input class="blank-input" id="fill-${idx}" type="text" placeholder="?" onkeydown="if(event.key==='Enter')checkFill(${idx})">`)}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function checkFill(idx) {
+  const input = document.getElementById('fill-' + idx);
+  const val   = input.value.trim().toLowerCase();
+  const correct = fills[idx].ans.toLowerCase();
+  if (val === correct || val.includes(correct) || correct.includes(val)) {
+    input.classList.remove('err'); input.classList.add('ok');
+    input.value = fills[idx].ans;
+  } else {
+    input.classList.remove('ok'); input.classList.add('err');
+  }
+}
+function checkAllFills() { fills.forEach((_, idx) => checkFill(idx)); }
+function resetFills() {
+  fills.forEach((_, idx) => {
+    const input = document.getElementById('fill-' + idx);
+    if (input) { input.value = ''; input.classList.remove('ok','err'); }
+  });
+}
+
+// ═══════════════════════════════════════════════
+// SUMMARY / SUBMIT
+// ═══════════════════════════════════════════════
+function fillSummary(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = text && text.trim();
+  el.textContent = val || 'Not answered';
+  el.classList.toggle('empty', !val);
+}
+
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  const scoreEl = document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl ? scoreEl.textContent + ' correct' : 'Quiz not yet completed');
+
+  const predTA = document.querySelector('#sec-0 textarea');
+  fillSummary('sum-pred', predTA ? predTA.value : '');
+
+  const rxnTA = document.getElementById('rxn-predict');
+  fillSummary('sum-rxn-pred', rxnTA ? rxnTA.value : '');
+
+  const sugarTA = document.getElementById('sugar-predict');
+  fillSummary('sum-sugar-pred', sugarTA ? sugarTA.value : '');
+
+  const refCards = document.querySelectorAll('#sec-6 .quiz-card textarea');
+  ['sum-r1','sum-r2','sum-r3','sum-r4'].forEach((id, i) => {
+    fillSummary(id, refCards[i] ? refCards[i].value : '');
+  });
+}
+
+function buildPlainText() {
+  const name   = document.getElementById('studentName').value.trim() || 'Student';
+  const date   = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const scoreEl= document.getElementById('score-display');
+  const score  = scoreEl ? scoreEl.textContent : 'not completed';
+  const predTA = document.querySelector('#sec-0 textarea');
+  const rxnTA  = document.getElementById('rxn-predict');
+  const sugarTA= document.getElementById('sugar-predict');
+  const refCards = document.querySelectorAll('#sec-6 .quiz-card textarea');
+  const refs = ['','','',''];
+  refCards.forEach((ta, i) => { refs[i] = ta.value.trim() || 'Not answered'; });
+
+  return [
+    'BIOLOGICAL MACROMOLECULES EXPLORER 🧬 (PART 1) — STUDENT SUBMISSION',
+    '======================================================',
+    'Student: ' + name,
+    'Date: ' + date,
+    'Lesson: AP Biology · OpenStax Chapter 3 (3.1 & 3.2) · Macromolecules Explorer Part 1',
+    '',
+    '── QUIZ SCORE ──',
+    score,
+    '',
+    '── OPENING PREDICTION ──',
+    predTA ? (predTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── REACTION LAB PREDICTION ──',
+    rxnTA ? (rxnTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── SUGAR BUILDER LAB PREDICTION ──',
+    sugarTA ? (sugarTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── REFLECTIONS ──',
+    'Q1 — Dehydration Synthesis & Hydrolysis:', refs[0],
+    'Q2 — Miller-Urey Experiment:', refs[1],
+    'Q3 — Comparing Polysaccharides:', refs[2],
+    'Q4 — Starch vs. Cellulose Digestibility:', refs[3],
+    '',
+    '======================================================',
+    '© 2026 Farvour Explorations · farvourexplorations.com',
+    'Submitted via Biological Macromolecules Explorer Part 1 · Interactive Digital Lesson · AP Biology'
+  ].join('\n');
+}
+
+function copyResults() {
+  buildSummary();
+  const text = buildPlainText();
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Now paste into Google Classroom or your assignment.';
+    setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '⚠️ Could not copy automatically — try selecting the text manually.';
+  });
+}
+
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const subject = encodeURIComponent('Macromolecules Explorer Part 1 — ' + name);
+  const body    = encodeURIComponent(buildPlainText());
+  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+buildQuiz();
+buildFills();
+buildSort();
+</script>
+</body>
+</html>
