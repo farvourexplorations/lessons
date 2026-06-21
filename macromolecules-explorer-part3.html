@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biological Macromolecules Explorer 🧬 (Part 3)</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:    #1a3d2b;
+    --forest-mid:#2d6a4f;
+    --forest-lt: #40916c;
+    --coral:     #e8603c;
+    --coral-pale:#fdf0ec;
+    --mint:      #3aaf85;
+    --mint-pale: #e8f8f2;
+    --gold:      #c9962a;
+    --gold-pale: #fef9e7;
+    --lavender:  #7c6fcd;
+    --lav-pale:  #f0eefb;
+    --paper:     #fffef9;
+    --ink:       #1a2332;
+    --muted:     #7a8899;
+    --border:    #e0e4ea;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: linear-gradient(160deg, #0d2318 0%, #1a3d2b 45%, #2d6a4f 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%, rgba(144,238,144,.45) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 22%  38%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 41%  6%,  rgba(144,238,144,.35) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 60%  24%, rgba(255,255,255,.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 77%  9%,  rgba(144,238,144,.4)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 90%  33%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 33%  55%, rgba(144,238,144,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 70%  48%, rgba(255,255,255,.2)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 55%  70%, rgba(144,238,144,.25) 0%, transparent 100%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ─── HERO ─── */
+  .hero { position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 2rem;color:white; }
+  .hero-badge {
+    display:inline-block;background:var(--gold);color:var(--forest);
+    font-family:'Fredoka One',cursive;font-size:.85rem;letter-spacing:.05em;
+    padding:.35rem 1.2rem;border-radius:20px;margin-bottom:1.2rem;
+    box-shadow:0 2px 12px rgba(201,150,42,.45);
+  }
+  .hero h1 { font-family:'Fredoka One',cursive;font-size:clamp(2.2rem,6vw,4rem);line-height:1.1;margin-bottom:.8rem;text-shadow:0 2px 20px rgba(0,0,0,.35); }
+  .hero h1 .accent { color:var(--gold); }
+  .hero p.intro { font-size:1.05rem;line-height:1.7;opacity:.88;max-width:580px;margin:0 auto 2rem; }
+
+  /* ─── PROGRESS PILLS ─── */
+  .progress-wrap { display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem; }
+  .prog-step {
+    display:flex;align-items:center;gap:.4rem;
+    background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);
+    border-radius:20px;padding:.35rem .9rem;font-size:.78rem;font-weight:700;
+    color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace;
+  }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.35); }
+  .prog-step.active { background:var(--gold);color:var(--forest);border-color:var(--gold);box-shadow:0 2px 12px rgba(201,150,42,.45); }
+
+  /* ─── SHEET ─── */
+  .sheet {
+    position:relative;z-index:1;background:var(--paper);
+    border-radius:24px 24px 0 0;margin-top:1.5rem;
+    padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.3);
+  }
+
+  /* ─── SECTIONS ─── */
+  .section { padding:3rem 2rem 0;max-width:820px;margin:0 auto;display:none; }
+  .section.active { display:block; }
+
+  .section-eyebrow { display:flex;align-items:center;gap:.6rem;margin-bottom:1rem; }
+  .eyebrow-num {
+    width:32px;height:32px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fredoka One',cursive;font-size:1rem;color:white;flex-shrink:0;
+  }
+  .num-coral  { background:var(--coral); }
+  .num-mint   { background:var(--mint); }
+  .num-gold   { background:var(--gold);color:var(--forest); }
+  .num-lav    { background:var(--lavender); }
+  .num-forest { background:var(--forest-mid); }
+
+  .eyebrow-label { font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace; }
+
+  .section h2 { font-family:'Fredoka One',cursive;font-size:clamp(1.6rem,3.5vw,2.2rem);color:var(--forest);margin-bottom:.6rem;line-height:1.2; }
+  .section .lead { font-size:1rem;line-height:1.75;color:#3a4a5a;margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+
+  /* ─── WONDER / INFO BOXES ─── */
+  .wonder-box {
+    background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);
+    color:white;border-radius:16px;padding:1.8rem 2rem;margin-bottom:1.8rem;
+    position:relative;overflow:hidden;
+  }
+  .wonder-box::after { content:'🤔';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3; }
+  .wonder-box p { font-size:1rem;line-height:1.7;font-style:italic;opacity:.95;max-width:85%; }
+  .wonder-box strong { color:var(--gold);font-style:normal; }
+  .wonder-box.gold-box { background:linear-gradient(135deg,#8a6a1a 0%,#b8860b 100%); }
+  .wonder-box.gold-box::after { content:'⚡'; }
+  .wonder-box.lav-box  { background:linear-gradient(135deg,#4a3a8a 0%,#6a5acd 100%); }
+  .wonder-box.lav-box::after { content:'🔋'; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,#1b7a58 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'🍬'; }
+
+  /* ─── PREDICT BOX ─── */
+  .predict-box { background:var(--gold-pale);border:2px dashed var(--gold);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem; }
+  .predict-box textarea,.reflect-box textarea {
+    width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;
+    font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:64px;
+    background:white;color:var(--ink);outline:none;transition:border-color .2s;
+  }
+  .predict-box textarea:focus { border-color:var(--gold); }
+  .reflect-box { background:var(--mint-pale);border:2px dashed var(--mint);border-radius:14px;padding:1.4rem 1.6rem;margin-top:1.5rem; }
+  .reflect-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#1b7a58;margin-bottom:.8rem; }
+  .reflect-box textarea:focus { border-color:var(--mint); }
+
+  /* ─── DEMO ZONE ─── */
+  .demo-zone {
+    background:white;border:2px solid var(--border);border-radius:16px;
+    padding:1.8rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07);
+  }
+  .demo-zone h3 { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.3rem; }
+  .demo-zone .hint { font-size:.78rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:1.3rem; }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    border:none;border-radius:10px;padding:.65rem 1.3rem;font-family:'Nunito',sans-serif;
+    font-size:.88rem;font-weight:800;cursor:pointer;transition:all .15s;letter-spacing:.02em;
+  }
+  .btn:hover  { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  .btn:active { transform:translateY(0); }
+  .btn:disabled { opacity:.4;cursor:default;transform:none;box-shadow:none; }
+  .btn-coral  { background:var(--coral);    color:white; }
+  .btn-mint   { background:var(--mint);     color:white; }
+  .btn-gold   { background:var(--gold);     color:var(--forest); }
+  .btn-lav    { background:var(--lavender); color:white; }
+  .btn-ghost  { background:#f0f2f5;         color:var(--muted); }
+  .btn-forest { background:var(--forest);   color:white; }
+  .action-row { display:flex;gap:.8rem;flex-wrap:wrap;align-items:center;margin-bottom:.8rem; }
+
+  /* ─── NAV ROW ─── */
+  .nav-row { display:flex;justify-content:space-between;align-items:center;padding:2.5rem 2rem 0;max-width:820px;margin:0 auto; }
+
+  /* ─── CONCEPT CHIPS ─── */
+  .chip-row { display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem; }
+  .chip {
+    padding:.45rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;
+    cursor:pointer;transition:all .2s;border:2px solid transparent;
+  }
+  .chip.coral  { background:var(--coral-pale); color:var(--coral);     border-color:#f8c5b8; }
+  .chip.mint   { background:var(--mint-pale);  color:var(--mint);      border-color:#b8ebd8; }
+  .chip.gold   { background:var(--gold-pale);  color:#8a6a1a;          border-color:#f8e0a0; }
+  .chip.lav    { background:var(--lav-pale);   color:var(--lavender);  border-color:#d0caef; }
+  .chip.forest { background:#d4eadd;           color:var(--forest-mid);border-color:#a8d5b8; }
+  .chip:hover  { transform:scale(1.05); }
+
+  .concept-reveal {
+    background:var(--paper);border-left:4px solid var(--coral);
+    border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;
+    margin-top:.5rem;margin-bottom:.3rem;display:none;animation:fadeIn .3s ease;
+  }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border   { border-color:var(--mint); }
+  .concept-reveal.gold-border   { border-color:var(--gold); }
+  .concept-reveal.lav-border    { border-color:var(--lavender); }
+  .concept-reveal.forest-border { border-color:var(--forest-mid); }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ─── EVIDENCE CARDS ─── */
+  .evidence-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin-bottom:1.5rem; }
+  .ev-card {
+    background:white;border:2px solid var(--border);border-radius:14px;
+    padding:1.2rem;cursor:pointer;transition:all .2s;text-align:center;
+  }
+  .ev-card:hover,.ev-card.active { border-color:var(--forest-mid);box-shadow:0 4px 16px rgba(45,106,79,.2);transform:translateY(-2px); }
+  .ev-card.active { background:#d4eadd; }
+  .ev-card .ev-icon { font-size:2.4rem;margin-bottom:.5rem; }
+  .ev-card .ev-title { font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--forest);margin-bottom:.3rem; }
+  .ev-card .ev-sub   { font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace; }
+  .ev-panel {
+    background:#d4eadd;border-left:4px solid var(--forest-mid);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1rem;
+  }
+  .ev-panel.show { display:block; }
+  .ev-panel h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.5rem; }
+  .ev-panel p  { font-size:.88rem;line-height:1.7;color:#2a3a2a; }
+  .ev-panel .example-box {
+    background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;
+    font-size:.82rem;font-family:'DM Mono',monospace;color:var(--ink);
+    border:1.5px solid rgba(45,106,79,.2);
+  }
+
+  /* ─── STEP CARDS ─── */
+  .sel-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0 1.5rem; }
+  .sel-card {
+    background:white;border:2px solid var(--border);border-radius:14px;
+    padding:1rem;text-align:center;cursor:pointer;transition:all .2s;
+  }
+  .sel-card:hover,.sel-card.active { border-color:var(--coral);box-shadow:0 3px 12px rgba(232,96,60,.18);transform:translateY(-2px); }
+  .sel-card.active { background:var(--coral-pale); }
+  .sel-card .sel-icon { font-size:2rem;margin-bottom:.4rem; }
+  .sel-card .sel-name { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--forest);margin-bottom:.2rem; }
+  .sel-card .sel-key  { font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em; }
+  .sel-detail {
+    background:var(--coral-pale);border-left:4px solid var(--coral);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1.5rem;
+  }
+  .sel-detail.show { display:block; }
+  .sel-detail h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.4rem; }
+  .sel-detail p  { font-size:.88rem;line-height:1.7; }
+  .sel-detail .examples { margin-top:.6rem;font-style:italic;color:var(--muted);font-size:.82rem; }
+
+  /* ─── MATCHING GAME ─── */
+  .match-grid { display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1rem 0; }
+  .match-item {
+    padding:.75rem 1rem;border-radius:10px;border:2px solid var(--border);
+    cursor:pointer;font-size:.84rem;font-weight:700;transition:all .2s;
+    background:white;text-align:center;color:var(--ink);line-height:1.4;
+  }
+  .match-item:hover    { border-color:var(--forest-mid);background:#f0f7f3; }
+  .match-item.selected { border-color:var(--lavender);background:var(--lav-pale);color:var(--lavender); }
+  .match-item.matched  { border-color:var(--mint);background:var(--mint-pale);color:#1b7a58;cursor:default; }
+  .match-item.wrong    { border-color:var(--coral);background:var(--coral-pale);color:var(--coral);animation:shake .3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+  /* ─── ATP SIMULATOR ─── */
+  .atp-display {
+    display:flex;align-items:center;justify-content:center;gap:1.5rem;
+    flex-wrap:wrap;margin:1.2rem 0;
+  }
+  .atp-molecule {
+    text-align:center;padding:1rem 1.4rem;border-radius:14px;
+    font-family:'DM Mono',monospace;font-size:.85rem;font-weight:700;
+    border:2px solid;transition:all .4s;min-width:120px;
+  }
+  .atp-molecule .mol-label { font-family:'Fredoka One',cursive;font-size:1.3rem;margin-bottom:.3rem; }
+  .atp-molecule .mol-desc  { font-size:.7rem;color:var(--muted);margin-top:.3rem;font-weight:400; }
+  .mol-atp  { background:var(--gold-pale);border-color:var(--gold);color:#8a6a1a; }
+  .mol-adp  { background:#f5f7fa;border-color:var(--border);color:var(--muted); }
+  .mol-pi   { background:var(--lav-pale);border-color:var(--lavender);color:var(--lavender); }
+  .mol-nadh { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .mol-nad  { background:#f5f7fa;border-color:var(--border);color:var(--muted); }
+  .arrow-label { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest-mid);text-align:center; }
+  .energy-badge {
+    display:inline-block;padding:.25rem .8rem;border-radius:20px;font-size:.72rem;
+    font-weight:800;font-family:'DM Mono',monospace;letter-spacing:.05em;margin-top:.4rem;
+  }
+  .release  { background:#ffeaa7;color:#8a6a1a; }
+  .absorb   { background:var(--lav-pale);color:var(--lavender); }
+
+  /* ─── GLYCOLYSIS TRACKER ─── */
+  .glyc-track {
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:.8rem;margin:1rem 0;
+  }
+  .glyc-box {
+    background:white;border:2px solid var(--border);border-radius:12px;
+    padding:.9rem 1rem;text-align:center;transition:all .3s;
+  }
+  .glyc-box .g-label { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--forest);margin-bottom:.3rem; }
+  .glyc-box .g-val   { font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:700;color:var(--ink); }
+  .glyc-box .g-unit  { font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace; }
+  .glyc-box.active   { border-color:var(--gold);background:var(--gold-pale); }
+  .glyc-box.done     { border-color:var(--mint);background:var(--mint-pale); }
+
+  /* ─── REDOX ANIMATOR ─── */
+  .redox-row { display:flex;gap:1rem;flex-wrap:wrap;margin:1rem 0; }
+  .redox-box {
+    flex:1;min-width:200px;border-radius:14px;padding:1.1rem 1.2rem;
+    border:2px solid var(--border);text-align:center;transition:all .4s;
+  }
+  .redox-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;margin-bottom:.4rem; }
+  .redox-box p  { font-family:'DM Mono',monospace;font-size:.78rem;line-height:1.6; }
+  .redox-oxidized  { background:var(--coral-pale);border-color:var(--coral); }
+  .redox-oxidized h4 { color:var(--coral); }
+  .redox-reduced   { background:var(--mint-pale);border-color:var(--mint); }
+  .redox-reduced h4 { color:#1b7a58; }
+
+  /* ─── QUIZ ─── */
+  .quiz-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .quiz-q { font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:1rem;line-height:1.5; }
+  .quiz-options { display:flex;flex-direction:column;gap:.5rem; }
+  .quiz-opt {
+    padding:.6rem 1rem;border-radius:8px;border:2px solid var(--border);
+    background:white;cursor:pointer;font-family:'Nunito',sans-serif;
+    font-size:.88rem;font-weight:600;text-align:left;transition:all .15s;color:var(--ink);
+  }
+  .quiz-opt:hover:not(:disabled) { border-color:var(--forest-mid);background:#f0f7f3; }
+  .quiz-opt.correct  { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .quiz-opt.wrong    { background:var(--coral-pale);border-color:var(--coral);color:#a83020; }
+  .quiz-opt:disabled { cursor:default; }
+  .quiz-feedback { margin-top:.8rem;font-size:.85rem;line-height:1.6;padding:.7rem 1rem;border-radius:8px;display:none;animation:fadeIn .3s ease; }
+  .quiz-feedback.show { display:block; }
+  .quiz-feedback.correct-fb { background:var(--mint-pale);color:#1b7a58;border-left:3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background:var(--coral-pale);color:#a83020;border-left:3px solid var(--coral); }
+
+  /* ─── SCORE ─── */
+  .score-panel { background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);color:white;border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem; }
+  .score-panel .score-num { font-family:'Fredoka One',cursive;font-size:3.5rem;line-height:1;color:var(--gold); }
+  .score-panel p { opacity:.88;margin-top:.5rem;font-size:1rem; }
+  .score-panel h3 { font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:.3rem; }
+
+  /* ─── CONGRATS ─── */
+  .congrats-panel { background:linear-gradient(135deg,var(--forest) 0%,#1b7a58 100%);color:white;border-radius:20px;padding:2.5rem 2rem;text-align:center;margin-top:2rem; }
+  .congrats-panel h2 { font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:.6rem; }
+  .congrats-panel p  { opacity:.9;line-height:1.7;max-width:480px;margin:0 auto .8rem; }
+  .summary-chips { display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:1rem; }
+  .summary-chip {
+    background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);
+    border-radius:20px;padding:.3rem .9rem;font-size:.78rem;font-weight:700;
+    font-family:'DM Mono',monospace;letter-spacing:.04em;
+  }
+
+  /* ─── VOCAB TABLE ─── */
+  .vocab-table { width:100%;border-collapse:collapse;margin:1rem 0 1.5rem; }
+  .vocab-table th { background:var(--forest);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;padding:.7rem 1rem;text-align:left; }
+  .vocab-table td { padding:.65rem 1rem;font-size:.85rem;line-height:1.5;border-bottom:1px solid var(--border); }
+  .vocab-table tr:nth-child(even) td { background:#f5f7fa; }
+  .vocab-table tr:hover td { background:#d4eadd;transition:background .15s; }
+  .vocab-table td:first-child { font-weight:800;color:var(--forest-mid); }
+
+  /* ─── FILL IN THE BLANK ─── */
+  .blank-input {
+    border:none;border-bottom:2.5px solid var(--forest-mid);background:transparent;
+    font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;color:var(--forest);
+    width:180px;text-align:center;outline:none;padding:0 4px;transition:border-color .2s;
+  }
+  .blank-input:focus { border-color:var(--coral); }
+  .blank-input.ok { border-color:var(--mint);color:var(--mint); }
+  .blank-input.err{ border-color:var(--coral);color:var(--coral); }
+  .fill-q { font-size:.95rem;line-height:2;color:var(--ink);margin-bottom:.8rem; }
+  .divider { height:1px;background:var(--border);margin:2rem 0; }
+
+  /* ─── NAME BAR ─── */
+  .name-bar {
+    background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);
+    border-radius:12px;padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;
+    max-width:420px;margin:0 auto 1rem;
+  }
+  .name-bar label { font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;font-family:'DM Mono',monospace; }
+  .name-bar input {
+    flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;
+    padding:.4rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:white;outline:none;
+  }
+  .name-bar input::placeholder { color:rgba(255,255,255,.4);font-weight:400; }
+
+  /* ─── SUMMARY / SUBMIT ─── */
+  .summary-section { background:white;border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--forest);margin-bottom:.8rem; }
+  .summary-answer {
+    background:#f5f7fa;border-radius:8px;padding:.7rem 1rem;font-size:.85rem;
+    line-height:1.6;color:var(--ink);margin-bottom:.5rem;font-style:italic;
+    border-left:3px solid var(--lavender);min-height:2rem;
+  }
+  .summary-answer.empty { color:var(--muted);font-style:normal;border-left-color:var(--border); }
+  .share-buttons { display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center; }
+  .share-btn {
+    border:none;border-radius:12px;padding:.85rem 1.6rem;font-family:'Fredoka One',cursive;
+    font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem;
+  }
+  .share-btn:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background:var(--mint);color:white; }
+  .share-btn.email { background:var(--lavender);color:white; }
+  .share-btn.print { background:var(--forest);color:white; }
+  .copy-confirm { text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--mint);min-height:1.2rem;margin-top:.6rem; }
+
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm,.prog-step,.name-bar { display:none !important; }
+    .sheet { box-shadow:none;border-radius:0; }
+    .section { display:none !important; }
+    #sec-7 { display:block !important; }
+  }
+  /* ─── FATTY ACID COMPARISON ─── */
+  .fat-compare { display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1rem 0; }
+  .fat-card {
+    border-radius:14px;padding:1.2rem;text-align:center;border:2px solid var(--border);
+    cursor:pointer;transition:all .25s;background:white;
+  }
+  .fat-card:hover,.fat-card.active { transform:translateY(-3px);box-shadow:0 4px 16px rgba(0,0,0,.12); }
+  .fat-card.active.saturated   { border-color:var(--gold); background:var(--gold-pale); }
+  .fat-card.active.unsaturated { border-color:var(--mint); background:var(--mint-pale); }
+  .fat-card.active.trans       { border-color:var(--coral); background:var(--coral-pale); }
+  .fat-chain {
+    font-family:'DM Mono',monospace;font-size:1.3rem;letter-spacing:2px;
+    margin:.8rem 0;color:var(--ink);
+  }
+  .fat-card .fat-name { font-family:'Fredoka One',cursive;font-size:1rem;color:var(--forest);margin-bottom:.3rem; }
+  .fat-card .fat-state { font-size:.75rem;font-family:'DM Mono',monospace;color:var(--muted); }
+
+  /* ─── PROTEIN STRUCTURE LEVELS ─── */
+  .protein-level-track {
+    display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0;justify-content:center;
+  }
+  .protein-level-step {
+    flex:1;min-width:130px;text-align:center;padding:1rem .8rem;border-radius:12px;
+    border:2px solid var(--border);background:white;cursor:pointer;transition:all .25s;
+  }
+  .protein-level-step:hover,.protein-level-step.active { border-color:var(--lavender);box-shadow:0 4px 14px rgba(124,111,205,.2);transform:translateY(-2px); }
+  .protein-level-step.active { background:var(--lav-pale); }
+  .protein-level-step .pl-icon { font-size:1.8rem;margin-bottom:.3rem; }
+  .protein-level-step .pl-name { font-family:'Fredoka One',cursive;font-size:.85rem;color:var(--forest); }
+  .protein-level-detail {
+    background:var(--lav-pale);border-left:4px solid var(--lavender);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1rem;
+  }
+  .protein-level-detail.show { display:block; }
+  .protein-level-detail h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.5rem; }
+  .protein-level-detail p  { font-size:.88rem;line-height:1.7;color:#2a2a3a; }
+
+  /* ─── AMINO ACID CLASSIFIER ─── */
+  .aa-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.6rem;margin:1rem 0; }
+  .aa-tile {
+    border-radius:10px;padding:.7rem .5rem;text-align:center;cursor:pointer;
+    border:2px solid var(--border);background:white;transition:all .2s;
+  }
+  .aa-tile:hover { transform:scale(1.04); }
+  .aa-tile .aa-letter { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest); }
+  .aa-tile .aa-full { font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.2rem; }
+  .aa-tile.cat-nonpolar  { border-color:#a8d5b8; }
+  .aa-tile.cat-polar     { border-color:var(--mint); }
+  .aa-tile.cat-positive  { border-color:var(--coral); }
+  /* ─── NUCLEOTIDE BUILDER ─── */
+  .nuc-parts { display:flex;justify-content:center;gap:1.2rem;flex-wrap:wrap;margin:1.2rem 0; }
+  .nuc-part {
+    text-align:center;padding:1rem 1.3rem;border-radius:14px;
+    border:2px solid var(--border);background:white;min-width:130px;
+    transition:all .3s;
+  }
+  .nuc-part .np-icon { font-size:1.8rem;margin-bottom:.4rem; }
+  .nuc-part .np-name { font-family:'Fredoka One',cursive;font-size:.92rem;color:var(--forest); }
+  .nuc-part .np-sub  { font-size:.68rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.3rem; }
+  .nuc-part.sugar     { border-color:var(--mint); background:var(--mint-pale); }
+  .nuc-part.phosphate { border-color:var(--gold); background:var(--gold-pale); }
+  .nuc-part.base      { border-color:var(--coral); background:var(--coral-pale); }
+
+  /* ─── BASE PAIRING TABLE / SELECTOR ─── */
+  .base-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.7rem;margin:1rem 0; }
+  .base-tile {
+    border-radius:12px;padding:1rem .6rem;text-align:center;cursor:pointer;
+    border:2px solid var(--border);background:white;transition:all .2s;
+  }
+  .base-tile:hover,.base-tile.active { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.12); }
+  .base-tile .bt-letter { font-family:'Fredoka One',cursive;font-size:1.5rem; }
+  .base-tile .bt-name   { font-size:.68rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.3rem; }
+  .base-tile.purine     { border-color:var(--lavender); }
+  .base-tile.purine.active { background:var(--lav-pale); }
+  .base-tile.pyrimidine { border-color:var(--coral); }
+  .base-tile.pyrimidine.active { background:var(--coral-pale); }
+
+  /* ─── DOUBLE HELIX STRAND BUILDER ─── */
+  .helix-row { display:flex; flex-wrap:nowrap; gap:3px; overflow-x:auto; padding:.6rem 0; margin:.6rem 0; }
+  .helix-base {
+    min-width:34px;height:38px;display:flex;align-items:center;justify-content:center;
+    font-family:'DM Mono',monospace;font-weight:700;font-size:.92rem;
+    border-radius:6px;border:2px solid var(--border);flex-shrink:0;transition:all .3s;
+  }
+  .helix-base.hA { background:var(--coral-pale); color:var(--coral); border-color:#f8c5b8; }
+  .helix-base.hT { background:var(--lav-pale);   color:var(--lavender); border-color:#d0caef; }
+  .helix-base.hU { background:#eafaf3;           color:#1b7a58; border-color:#b8ebd8; }
+  .helix-base.hC { background:var(--gold-pale);  color:#8a6a1a; border-color:#f8e0a0; }
+  .helix-base.hG { background:#d4eadd;           color:var(--forest-mid); border-color:#a8d5b8; }
+  .helix-base.empty { background:#f5f7fa; color:var(--border); border-style:dashed; }
+
+  /* ─── RNA TYPE CARDS already covered by sel-card / ev-card patterns ─── */
+</style>
+</head>
+<body>
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-badge">🧬 AP Biology · Unit 1 · Chapter 3 (Part 3 of 3)</div>
+  <h1>Biological Macromolecules <span class="accent">Explorer</span></h1>
+  <p class="intro">Master the molecule that stores the instructions for all of life — covering OpenStax AP Biology Chapter 3, section 3.5 (Nucleic Acids).</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <span class="prog-step active" onclick="goTo(0)">① Wonder</span>
+    <span class="prog-step"       onclick="goTo(1)">② Nucleotides</span>
+    <span class="prog-step"       onclick="goTo(2)">③ Base-Pairing Lab</span>
+    <span class="prog-step"       onclick="goTo(3)">④ DNA vs. RNA</span>
+    <span class="prog-step"       onclick="goTo(4)">⑤ Build-a-Strand Lab</span>
+    <span class="prog-step"       onclick="goTo(5)">⑥ Quiz</span>
+    <span class="prog-step"       onclick="goTo(6)">⑦ Reflect</span>
+    <span class="prog-step"       onclick="goTo(7)">📤 Submit</span>
+  </div>
+</div>
+
+<!-- ═══ SHEET ═══ -->
+<div class="sheet">
+
+<!-- ═══ SECTION 0: WONDER ═══ -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-coral">1</div>
+    <span class="eyebrow-label">Phase 1 · Wonder</span>
+  </div>
+  <h2>🧬 The Molecule That Remembers Everything</h2>
+  <p class="lead">
+    Every instruction for building you — eye color, height, how your cells repair a paper cut — is written in a molecule just <strong>2 nanometers wide</strong>. If unwound, the DNA in just one of your cells would stretch about <strong>2 meters long</strong>. You have trillions of cells.
+  </p>
+
+  <div class="wonder-box">
+    <p>DNA only uses a four-letter alphabet (A, T, C, G), yet it encodes the instructions to build an entire human being — and every other organism on Earth. <strong>How can a molecule built from just four repeating letters store such an enormous, precise amount of information?</strong></p>
+  </div>
+
+  <div class="predict-box">
+    <h4>✏️ Your Prediction (before we dig in)</h4>
+    <textarea placeholder="Predict: if DNA only has 4 different letters to work with, how do you think it manages to store so much unique information? Think about how the English alphabet (26 letters) can create unlimited word combinations."></textarea>
+  </div>
+
+  <div class="wonder-box gold-box">
+    <p>The answer is <strong>sequence and length</strong>. Just like 26 letters can form millions of unique words and sentences, the order and arrangement of millions (or billions) of A, T, C, and G nucleotides can encode an almost unlimited amount of information. DNA also has a second superpower: its <strong>double-helix, complementary structure</strong> means it can be precisely copied — which is exactly how your cells pass identical genetic information to every new cell they create.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.6rem;">🗝️ The Big Picture</h3>
+  <p style="font-size:.95rem;line-height:1.75;margin-bottom:1.8rem;">
+    <strong>Nucleic acids</strong> are the fourth class of macromolecule, built from <strong>nucleotide</strong> monomers. There are two types: <strong>DNA</strong> (deoxyribonucleic acid — stores genetic information as a double helix) and <strong>RNA</strong> (ribonucleic acid — mostly single-stranded, involved in protein synthesis). Together, they carry out the Central Dogma of Life: <em>DNA → RNA → Protein</em>.
+  </p>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" disabled>← Back</button>
+    <button class="btn btn-coral" onclick="goTo(1)">Next: Nucleotides →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 1: NUCLEOTIDE STRUCTURE CONCEPTS ═══ -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-lav">2</div>
+    <span class="eyebrow-label">Phase 2 · 3.5 Nucleic Acids — Building Blocks</span>
+  </div>
+  <h2>📖 Nucleotides — Core Vocabulary</h2>
+  <p class="lead">Tap each term to reveal its definition. Every nucleic acid — DNA or RNA — is built from the exact same three-part monomer.</p>
+
+  <div class="chip-row">
+    <span class="chip coral"  onclick="reveal('nucleotide')">Nucleotide (3 Parts)</span>
+    <span class="chip forest" onclick="reveal('pentose')">Pentose Sugar</span>
+    <span class="chip mint"   onclick="reveal('nitrobase')">Nitrogenous Base</span>
+    <span class="chip gold"   onclick="reveal('purpyr')">Purines vs. Pyrimidines</span>
+    <span class="chip lav"    onclick="reveal('phosphodiester')">Phosphodiester Bond</span>
+    <span class="chip coral"  onclick="reveal('genome')">Genome &amp; Chromatin</span>
+    <span class="chip forest" onclick="reveal('directionality')">5' &amp; 3' Directionality</span>
+  </div>
+
+  <div id="rev-nucleotide"      class="concept-reveal coral">
+    <strong>Nucleotide — The Monomer of Nucleic Acids</strong> — Every nucleotide has exactly <strong>three components</strong>: (1) a <em>pentose (5-carbon) sugar</em>, (2) a <em>nitrogenous base</em>, and (3) one or more <em>phosphate groups</em>. The base attaches to the 1′ carbon of the sugar; the phosphate attaches to the 5′ carbon. Nucleotides link together to form a <strong>polynucleotide</strong> (DNA or RNA).
+  </div>
+  <div id="rev-pentose"         class="concept-reveal forest-border">
+    <strong>Pentose Sugar</strong> — The 5-carbon sugar backbone of a nucleotide. In <strong>DNA</strong>, the sugar is <em>deoxyribose</em>; in <strong>RNA</strong>, it's <em>ribose</em>. The only structural difference: deoxyribose has an <strong>H</strong> at the 2′ carbon position, while ribose has an <strong>OH</strong> group there. This single oxygen atom difference is where "deoxy" (without oxygen) gets its name.
+  </div>
+  <div id="rev-nitrobase"       class="concept-reveal mint-border">
+    <strong>Nitrogenous Bases</strong> — Organic, ring-shaped molecules containing carbon and nitrogen. There are 5 total: Adenine (A), Guanine (G), Cytosine (C), Thymine (T), and Uracil (U). <strong>DNA contains A, T, G, C</strong>. <strong>RNA contains A, U, G, C</strong> (uracil replaces thymine).
+  </div>
+  <div id="rev-purpyr"          class="concept-reveal gold-border">
+    <strong>Purines vs. Pyrimidines</strong> — <em>Purines</em> (Adenine, Guanine) have a <strong>double-ring</strong> structure (two fused carbon-nitrogen rings). <em>Pyrimidines</em> (Cytosine, Thymine, Uracil) have a <strong>single-ring</strong> structure. In base pairing, a purine always pairs with a pyrimidine — this keeps the double helix a consistent width all the way down its length.
+  </div>
+  <div id="rev-phosphodiester"  class="concept-reveal lav-border">
+    <strong>Phosphodiester Bond</strong> — The covalent bond linking nucleotides together into a polynucleotide chain. It forms between the <strong>5′ phosphate</strong> of one nucleotide and the <strong>3′ hydroxyl group</strong> of the next nucleotide's sugar. Important AP distinction: this bond does <strong>NOT</strong> form via simple dehydration synthesis like other macromolecule linkages — its formation involves the removal of two phosphate groups, not just one water molecule.
+  </div>
+  <div id="rev-genome"          class="concept-reveal coral">
+    <strong>Genome &amp; Chromatin</strong> — The entire genetic content of a cell is its <strong>genome</strong> (the study of genomes = genomics). In eukaryotic cells, DNA wraps around <strong>histone proteins</strong> to form <strong>chromatin</strong> — the substance that makes up chromosomes. A single chromosome may contain tens of thousands of genes. Prokaryotic DNA is NOT enclosed in a membrane-bound nucleus and does not form chromatin the same way.
+  </div>
+  <div id="rev-directionality"  class="concept-reveal forest-border">
+    <strong>5′ and 3′ Directionality</strong> — The carbons of the pentose sugar are numbered 1′ through 5′. Each strand of a nucleic acid has direction: a free phosphate at the <strong>5′ end</strong> and a free hydroxyl at the <strong>3′ end</strong>. In double-stranded DNA, the two strands run <strong>antiparallel</strong> — one strand runs 5′→3′ while its partner runs 3′→5′ in the opposite direction. This directionality is essential for DNA replication, transcription, and translation.
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 Building a Nucleotide — Visual Reference</h3>
+  <div class="nuc-parts">
+    <div class="nuc-part phosphate">
+      <div class="np-icon">⚡</div>
+      <div class="np-name">Phosphate Group</div>
+      <div class="np-sub">attaches at 5′ carbon</div>
+    </div>
+    <div class="nuc-part sugar">
+      <div class="np-icon">⬡</div>
+      <div class="np-name">Pentose Sugar</div>
+      <div class="np-sub">deoxyribose (DNA) / ribose (RNA)</div>
+    </div>
+    <div class="nuc-part base">
+      <div class="np-icon">🔤</div>
+      <div class="np-name">Nitrogenous Base</div>
+      <div class="np-sub">attaches at 1′ carbon</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Matching game -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.4rem;">🎯 Quick Match — Nucleotide Terms</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Tap a term, then tap its matching definition.</p>
+  <div class="match-grid" id="matchGrid">
+    <div class="match-item" data-pair="a" data-side="term" onclick="matchClick(this)">Deoxyribose</div>
+    <div class="match-item" data-pair="b" data-side="def"  onclick="matchClick(this)">Single-ring nitrogenous bases</div>
+    <div class="match-item" data-pair="c" data-side="term" onclick="matchClick(this)">Phosphodiester Bond</div>
+    <div class="match-item" data-pair="d" data-side="def"  onclick="matchClick(this)">Double-ring nitrogenous bases</div>
+    <div class="match-item" data-pair="a" data-side="def"  onclick="matchClick(this)">DNA's pentose sugar — has H at 2′ carbon</div>
+    <div class="match-item" data-pair="e" data-side="term" onclick="matchClick(this)">Chromatin</div>
+    <div class="match-item" data-pair="b" data-side="term" onclick="matchClick(this)">Pyrimidines</div>
+    <div class="match-item" data-pair="c" data-side="def"  onclick="matchClick(this)">Bond linking nucleotides together</div>
+    <div class="match-item" data-pair="d" data-side="term" onclick="matchClick(this)">Purines</div>
+    <div class="match-item" data-pair="e" data-side="def"  onclick="matchClick(this)">DNA wrapped around histone proteins</div>
+  </div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-ghost" onclick="resetMatch()">↺ Reset Match</button>
+    <span id="match-score" style="margin-left:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted);"></span>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(0)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(2)">Next: Base-Pairing Lab →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 2: BASE-PAIRING LAB ═══ -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-gold">3</div>
+    <span class="eyebrow-label">Phase 3 · Base-Pairing Lab</span>
+  </div>
+  <h2>🔗 Explore the 5 Nitrogenous Bases</h2>
+  <p class="lead">Tap each base to see its category (purine or pyrimidine) and which nucleic acid(s) it's found in. Then test your knowledge of the base complementary rule.</p>
+
+  <div class="predict-box">
+    <h4>✏️ Before the lab — your prediction</h4>
+    <textarea id="base-predict" placeholder="Predict: why might it matter that a purine (double-ring) always pairs with a pyrimidine (single-ring), rather than two purines pairing together or two pyrimidines pairing together? Think about the width of the DNA double helix."></textarea>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🧬 The 5 Nitrogenous Bases</h3>
+    <div class="hint">Tap each base to see its details</div>
+
+    <div class="base-grid" id="baseGrid">
+      <div class="base-tile purine" onclick="showBase('A')"><div class="bt-letter" style="color:var(--lavender);">A</div><div class="bt-name">Adenine</div></div>
+      <div class="base-tile purine" onclick="showBase('G')"><div class="bt-letter" style="color:var(--lavender);">G</div><div class="bt-name">Guanine</div></div>
+      <div class="base-tile pyrimidine" onclick="showBase('C')"><div class="bt-letter" style="color:var(--coral);">C</div><div class="bt-name">Cytosine</div></div>
+      <div class="base-tile pyrimidine" onclick="showBase('T')"><div class="bt-letter" style="color:var(--coral);">T</div><div class="bt-name">Thymine</div></div>
+      <div class="base-tile pyrimidine" onclick="showBase('U')"><div class="bt-letter" style="color:var(--coral);">U</div><div class="bt-name">Uracil</div></div>
+    </div>
+
+    <div id="base-detail-box" style="background:#f5f7fa;border-radius:10px;padding:1.2rem;margin:1rem 0;border:2px solid var(--border);min-height:90px;font-size:.88rem;line-height:1.7;">
+      Tap a base above to learn about its structure and where it's found…
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Complementary base pairing quick-check -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.5rem;">🧪 Practice: The Base Complementary Rule</h3>
+  <p style="font-size:.9rem;line-height:1.7;margin-bottom:1rem;">
+    In DNA: <strong>A pairs with T</strong> (2 hydrogen bonds), and <strong>G pairs with C</strong> (3 hydrogen bonds). In RNA, <strong>U replaces T</strong>, so A pairs with U.
+  </p>
+  <div class="demo-zone">
+    <h3>Try it yourself</h3>
+    <div class="hint">DNA template strand: 5' AATTGGCC 3' — what is the complementary DNA strand?</div>
+    <input type="text" class="blank-input" id="bp-input" style="width:220px;text-align:left;" placeholder="e.g. TTAACCGG">
+    <button class="btn btn-mint" onclick="checkBasePairing()" style="margin-left:.6rem;">Check</button>
+    <div id="bp-feedback" class="quiz-feedback" style="margin-top:1rem;"></div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Base Pairing Rules</h4>
+    <textarea placeholder="Why does a purine always pair with a pyrimidine rather than purine-purine or pyrimidine-pyrimidine? Why does RNA use uracil instead of thymine? Connect this to what you predicted earlier."></textarea>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(3)">Next: DNA vs. RNA →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 3: DNA vs. RNA ═══ -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">4</div>
+    <span class="eyebrow-label">Phase 4 · DNA vs. RNA &amp; the 4 Types of RNA</span>
+  </div>
+  <h2>🧬 Two Nucleic Acids, Two Very Different Jobs</h2>
+  <p class="lead">Tap each card to explore how DNA and RNA differ — and the four specialized types of RNA that carry out protein synthesis.</p>
+
+  <div class="evidence-grid">
+    <div class="ev-card" onclick="showEvidence('dnastructure')">
+      <div class="ev-icon">🧬</div>
+      <div class="ev-title">DNA Double Helix</div>
+      <div class="ev-sub">structure</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('rnastructure')">
+      <div class="ev-icon">➰</div>
+      <div class="ev-title">RNA Structure</div>
+      <div class="ev-sub">single-stranded</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('mrna')">
+      <div class="ev-icon">📨</div>
+      <div class="ev-title">mRNA</div>
+      <div class="ev-sub">messenger RNA</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('rrna')">
+      <div class="ev-icon">🏭</div>
+      <div class="ev-title">rRNA</div>
+      <div class="ev-sub">ribosomal RNA</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('trna')">
+      <div class="ev-icon">🚚</div>
+      <div class="ev-title">tRNA</div>
+      <div class="ev-sub">transfer RNA</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('mirna')">
+      <div class="ev-icon">🔇</div>
+      <div class="ev-title">microRNA</div>
+      <div class="ev-sub">gene regulation</div>
+    </div>
+  </div>
+
+  <div id="ev-dnastructure" class="ev-panel">
+    <h4>🧬 DNA's Double-Helix Structure</h4>
+    <p>DNA's sugar-phosphate backbone forms the outside of the helix; nitrogenous bases stack in the interior like the steps of a staircase, held by hydrogen bonds. Each base pair is separated from the next by <strong>0.34 nm</strong>. The two strands run in opposite directions — <strong>antiparallel</strong> — meaning the 5′ end of one strand faces the 3′ end of the other. Adenine pairs with Thymine; Guanine pairs with Cytosine (the base complementary rule).</p>
+    <div class="example-box">📌 If one strand reads 5' AATTGGCC 3', its complementary strand reads 3' TTAACCGG 5' — written 5'→3' that's 5' GGCCAATT 3'.</div>
+  </div>
+  <div id="ev-rnastructure" class="ev-panel">
+    <h4>➰ RNA's Single-Stranded Structure</h4>
+    <p>RNA is usually <strong>single-stranded</strong> (unlike DNA's double helix), made of ribonucleotides linked by phosphodiester bonds. Even though it's single-stranded, RNA often folds back on itself, forming extensive <strong>intramolecular base pairing</strong> between complementary sequences within the same strand — creating predictable 3D shapes essential for its function (especially in tRNA and rRNA).</p>
+    <div class="example-box">📌 Some viruses contain double-stranded RNA, but this does NOT occur in plants or animals — their RNA is single-stranded.</div>
+  </div>
+  <div id="ev-mrna"          class="ev-panel">
+    <h4>📨 Messenger RNA (mRNA)</h4>
+    <p>Carries the genetic "message" copied from DNA. It's synthesized in the nucleus (in eukaryotes), then travels to the cytoplasm where it interacts with ribosomes. The mRNA sequence is complementary to its DNA template, with <strong>U replacing T</strong>. The mRNA is read in sets of <strong>three bases (codons)</strong> — each codon specifies one amino acid.</p>
+    <div class="example-box">📌 If a DNA template reads AATTGCGC, the complementary mRNA reads UUAACGCG.</div>
+  </div>
+  <div id="ev-rrna"          class="ev-panel">
+    <h4>🏭 Ribosomal RNA (rRNA)</h4>
+    <p>A major structural constituent of <strong>ribosomes</strong> — the molecular machines where mRNA binds for translation. rRNA ensures the proper alignment of mRNA within the ribosome. Critically, rRNA also has <strong>enzymatic activity</strong> (called peptidyl transferase activity) — it directly catalyzes the formation of peptide bonds between amino acids during protein synthesis. This makes rRNA a ribozyme — an RNA that acts as an enzyme.</p>
+    <div class="example-box">📌 A ribosome has two parts: a large subunit and a small subunit, both built largely from rRNA + protein, with the mRNA sandwiched between them.</div>
+  </div>
+  <div id="ev-trna"          class="ev-panel">
+    <h4>🚚 Transfer RNA (tRNA)</h4>
+    <p>One of the <strong>smallest</strong> RNA types (usually 70–90 nucleotides long). Its job: carry the correct amino acid to the ribosome during protein synthesis. Base pairing between the tRNA's anticodon and the mRNA's codon is what ensures the <strong>correct amino acid</strong> is added to the growing polypeptide chain at each step.</p>
+    <div class="example-box">📌 Despite being single-stranded, tRNA folds into a complex 3D "cloverleaf" shape due to extensive intramolecular base pairing.</div>
+  </div>
+  <div id="ev-mirna"         class="ev-panel">
+    <h4>🔇 microRNA (miRNA)</h4>
+    <p>The <strong>smallest</strong> RNA molecules. Their role is <strong>gene regulation</strong> — they interfere with the expression of specific mRNA messages, effectively turning genes "down" or "off" after transcription has already occurred. This is a more recently understood layer of control over which genes actually get expressed as proteins.</p>
+    <div class="example-box">📌 miRNA isn't involved in building proteins directly — it's a regulator that controls whether other mRNAs get used.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 DNA vs. RNA — Side by Side (Table 3.2)</h3>
+  <table class="vocab-table">
+    <tr><th>Feature</th><th>DNA</th><th>RNA</th></tr>
+    <tr><td>Function</td><td>Carries genetic information</td><td>Involved in protein synthesis</td></tr>
+    <tr><td>Location</td><td>Remains in the nucleus</td><td>Leaves the nucleus</td></tr>
+    <tr><td>Structure</td><td>Double helix</td><td>Usually single-stranded</td></tr>
+    <tr><td>Sugar</td><td>Deoxyribose</td><td>Ribose</td></tr>
+    <tr><td>Pyrimidines</td><td>Cytosine, Thymine</td><td>Cytosine, Uracil</td></tr>
+    <tr><td>Purines</td><td>Adenine, Guanine</td><td>Adenine, Guanine</td></tr>
+  </table>
+
+  <div class="wonder-box lav-box" style="margin-top:1.5rem;">
+    <p>The flow of genetic information — <strong>DNA → RNA → Protein</strong> — is called the <strong>Central Dogma of Life</strong>. DNA dictates the structure of mRNA through <em>transcription</em>; RNA then dictates the structure of a protein through <em>translation</em>. This holds true for virtually all organisms (with some exceptions in viral infections)!</p>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(4)">Next: Build-a-Strand Lab →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 4: BUILD-A-STRAND LAB ═══ -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-lav">5</div>
+    <span class="eyebrow-label">Phase 5 · Build-a-Strand Lab</span>
+  </div>
+  <h2>🏗️ Build the Complementary DNA Strand</h2>
+  <p class="lead">Below is a DNA template strand. Step through and build its complementary, antiparallel partner strand — exactly how it works inside a real double helix.</p>
+
+  <div class="predict-box">
+    <h4>✏️ Before the lab — your prediction</h4>
+    <textarea id="strand-predict" placeholder="The template strand reads 5' GGTACCAATCGGAT 3'. Predict what the complementary strand will read, and which direction (5'→3' or 3'→5') it will run relative to the template."></textarea>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🧬 DNA Template Strand (5' → 3')</h3>
+    <div class="hint" id="strand-hint">Click "Build Complementary Strand" to pair each base</div>
+
+    <div class="helix-row" id="templateRow"></div>
+
+    <h3 style="margin-top:1.2rem;">🔗 Complementary Strand (building 3' → 5')</h3>
+    <div class="helix-row" id="complementRow"></div>
+
+    <div class="sim-stat-row">
+      <div class="sim-stat"><div class="stat-val" id="strand-pos">0 / 14</div><div class="stat-lbl">Bases Paired</div></div>
+      <div class="sim-stat"><div class="stat-val" id="strand-bonds">—</div><div class="stat-lbl">H-Bonds (this pair)</div></div>
+    </div>
+
+    <div class="action-row" style="margin-top:1rem;">
+      <button class="btn btn-coral" id="btn-strand-step" onclick="stepStrand()">⏩ Pair Next Base</button>
+      <button class="btn btn-gold"  id="btn-strand-all"  onclick="finishStrand()">⏭ Finish Strand</button>
+      <button class="btn btn-ghost" onclick="resetStrand()">↺ Reset</button>
+    </div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Building the Strand</h4>
+    <textarea placeholder="What direction does the complementary strand run in relative to the template? How many hydrogen bonds form between A-T pairs versus G-C pairs? Why does this matter for separating the two strands during processes like DNA replication or transcription?"></textarea>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Practice: DNA -> RNA transcript -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin:.5rem 0 .8rem;">🧪 Apply It — DNA to mRNA</h3>
+  <p style="font-size:.9rem;line-height:1.7;margin-bottom:1rem;">
+    If a DNA template strand reads <strong>5' AATTGCGC 3'</strong>, what will the complementary mRNA transcript read? Remember: RNA uses <strong>U instead of T</strong>, and the mRNA is antiparallel to the template.
+  </p>
+  <div class="demo-zone">
+    <h3>Try it yourself</h3>
+    <div class="hint">Type your answer in 5'→3' format</div>
+    <input type="text" class="blank-input" id="mrna-input" style="width:220px;text-align:left;" placeholder="e.g. GCGCAAUU">
+    <button class="btn btn-mint" onclick="checkMrnaTranscript()" style="margin-left:.6rem;">Check</button>
+    <div id="mrna-feedback" class="quiz-feedback" style="margin-top:1rem;"></div>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(3)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(5)">Next: Quiz →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 5: QUIZ ═══ -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-forest">6</div>
+    <span class="eyebrow-label">Phase 6 · Real Test Practice</span>
+  </div>
+  <h2>📝 AP-Style Quiz — Section 3.5 Nucleic Acids</h2>
+  <p class="lead">These questions are written in the style of <strong>AP Biology exam questions</strong> covering OpenStax Chapter 3, Section 3.5. Answer each — instant feedback included.</p>
+
+  <div id="quiz-container"></div>
+
+  <div id="score-panel" class="score-panel" style="display:none;">
+    <h3>Quiz Complete! 🎉</h3>
+    <div class="score-num" id="score-display">0/16</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-gold" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(4)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(6)">Next: Reflect →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 6: REFLECT ═══ -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">7</div>
+    <span class="eyebrow-label">Phase 7 · Reflect</span>
+  </div>
+  <h2>💭 Reflection &amp; Review</h2>
+  <p class="lead">Solidify your understanding. Answer all four questions in your own words.</p>
+
+  <div class="quiz-card">
+    <div class="quiz-q">1. Describe the three components of a nucleotide. What is the structural difference between deoxyribose and ribose, and why does that difference matter for naming DNA vs. RNA?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">2. Explain the base complementary rule (which bases pair with which) and why a purine always pairs with a pyrimidine rather than purine-purine or pyrimidine-pyrimidine.</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">3. Compare and contrast DNA and RNA across structure, sugar, bases, and location in the cell. Why does RNA need to be more "mobile" than DNA?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">4. Describe the role of each of the four types of RNA (mRNA, rRNA, tRNA, miRNA) in protein synthesis and gene regulation. Which one acts as an enzyme, and what is that called?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.8rem;">✏️ Fill-in-the-Blank Review</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1.2rem;">Type the answer and press Enter or click Check All.</p>
+  <div id="fill-container"></div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-mint" onclick="checkAllFills()">✓ Check All Answers</button>
+    <button class="btn btn-ghost" onclick="resetFills()" style="margin-left:.6rem;">↺ Reset</button>
+  </div>
+
+  <div class="congrats-panel" style="margin-top:2rem;">
+    <h2>🧬 Chapter 3 Complete!</h2>
+    <p>You've now mastered all five sections of OpenStax AP Biology Chapter 3 — Synthesis (3.1), Carbohydrates (3.2), Lipids (3.3), Proteins (3.4), and Nucleic Acids (3.5). You understand how all four classes of macromolecules are built, broken down, and function — the foundation for everything that comes next in AP Biology, especially DNA Structure &amp; Replication and Gene Expression.</p>
+    <p style="font-size:.85rem;opacity:.75;">AP Bio tip: Chapter 3 content shows up constantly in later FRQs — expect questions that ask you to connect macromolecule structure to function across units all year.</p>
+    <div class="summary-chips">
+      <span class="summary-chip">Nucleotide Structure ✓</span>
+      <span class="summary-chip">Purines vs. Pyrimidines ✓</span>
+      <span class="summary-chip">Base Complementary Rule ✓</span>
+      <span class="summary-chip">Phosphodiester Bonds ✓</span>
+      <span class="summary-chip">DNA Double Helix ✓</span>
+      <span class="summary-chip">RNA Structure ✓</span>
+      <span class="summary-chip">mRNA / rRNA / tRNA ✓</span>
+      <span class="summary-chip">microRNA ✓</span>
+      <span class="summary-chip">DNA vs RNA Table ✓</span>
+      <span class="summary-chip">Central Dogma ✓</span>
+    </div>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(5)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(7)">Next: Submit →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 7: SUBMIT ═══ -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">8</div>
+    <span class="eyebrow-label">Your Completed Work</span>
+  </div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Here's a summary of everything you worked on. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> to your teacher.</p>
+
+  <div class="summary-section" style="background:var(--forest);color:white;border-color:var(--forest);">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">STUDENT</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">LESSON</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;">Biological Macromolecules Explorer 🧬 (Part 3)</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6;" id="summaryDate"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section">
+    <h3>📝 Quiz Score</h3>
+    <div class="summary-answer" id="sum-quiz"></div>
+  </div>
+  <div class="summary-section">
+    <h3>🤔 Opening Prediction</h3>
+    <div class="summary-answer" id="sum-pred"></div>
+  </div>
+  <div class="summary-section">
+    <h3>🔗 Base-Pairing Lab Prediction</h3>
+    <div class="summary-answer" id="sum-base-pred"></div>
+  </div>
+  <div class="summary-section">
+    <h3>🏗️ Build-a-Strand Lab Prediction</h3>
+    <div class="summary-answer" id="sum-strand-pred"></div>
+  </div>
+  <div class="summary-section">
+    <h3>💭 Reflection Questions</h3>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;">Q1 — Nucleotide Structure</div>
+    <div class="summary-answer" id="sum-r1"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q2 — Base Complementary Rule</div>
+    <div class="summary-answer" id="sum-r2"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q3 — DNA vs. RNA Comparison</div>
+    <div class="summary-answer" id="sum-r3"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q4 — The Four Types of RNA</div>
+    <div class="summary-answer" id="sum-r4"></div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.6rem;">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2;">
+      <strong>📋 Copy My Results</strong> — Copies all answers to clipboard. Paste into Google Classroom assignment.<br>
+      <strong>📧 Email to Teacher</strong> — Opens your email app with answers pre-filled.<br>
+      <strong>🖨️ Print / Save PDF</strong> — Mac: bottom-left dropdown → Save as PDF. Windows: Microsoft Print to PDF.
+    </p>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(6)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(0)">↺ Start Over</button>
+  </div>
+</div>
+
+</div><!-- /sheet -->
+
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.<br>
+  Content informed by OpenStax Biology for AP Courses, CC BY-NC-SA 4.0
+</div>
+<script>
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+const steps    = document.querySelectorAll('.prog-step');
+const sections = document.querySelectorAll('.section');
+
+function goTo(n) {
+  sections.forEach((s, i) => s.classList.toggle('active', i === n));
+  steps.forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    if (i === n) s.classList.add('active');
+    if (i < n)  s.classList.add('done');
+  });
+  if (n === 7) buildSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════════════
+// CONCEPT REVEALS (Section 1)
+// ═══════════════════════════════════════════════
+const revIds = ['nucleotide','pentose','nitrobase','purpyr','phosphodiester','genome','directionality'];
+function reveal(key) {
+  revIds.forEach(id => {
+    const el = document.getElementById('rev-' + id);
+    if (el) el.classList.remove('show');
+  });
+  const t = document.getElementById('rev-' + key);
+  if (t) t.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// MATCHING GAME (Section 1)
+// ═══════════════════════════════════════════════
+let matchSelected = null;
+let matchScore = 0;
+
+function matchClick(el) {
+  if (el.classList.contains('matched')) return;
+  if (!matchSelected) {
+    el.classList.add('selected');
+    matchSelected = el;
+  } else if (matchSelected === el) {
+    el.classList.remove('selected');
+    matchSelected = null;
+  } else {
+    const pA = matchSelected.dataset.pair, pB = el.dataset.pair;
+    const sA = matchSelected.dataset.side, sB = el.dataset.side;
+    if (pA === pB && sA !== sB) {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('matched');
+      el.classList.add('matched');
+      matchScore++;
+      document.getElementById('match-score').textContent = matchScore + '/5 matched';
+      matchSelected = null;
+    } else {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('wrong');
+      el.classList.add('wrong');
+      const a = matchSelected, b = el;
+      setTimeout(() => { a.classList.remove('wrong'); b.classList.remove('wrong'); }, 650);
+      matchSelected = null;
+    }
+  }
+}
+function resetMatch() {
+  matchSelected = null; matchScore = 0;
+  document.querySelectorAll('.match-item').forEach(el => el.classList.remove('selected','matched','wrong'));
+  document.getElementById('match-score').textContent = '';
+}
+
+// ═══════════════════════════════════════════════
+// BASE DETAIL VIEWER (Section 2)
+// ═══════════════════════════════════════════════
+const baseData = {
+  A: { name: 'Adenine', type: 'Purine (double-ring)', found: 'DNA and RNA', pairs: 'Pairs with Thymine (DNA) or Uracil (RNA) via 2 hydrogen bonds.' },
+  G: { name: 'Guanine', type: 'Purine (double-ring)', found: 'DNA and RNA', pairs: 'Pairs with Cytosine via 3 hydrogen bonds.' },
+  C: { name: 'Cytosine', type: 'Pyrimidine (single-ring)', found: 'DNA and RNA', pairs: 'Pairs with Guanine via 3 hydrogen bonds.' },
+  T: { name: 'Thymine', type: 'Pyrimidine (single-ring)', found: 'DNA ONLY', pairs: 'Pairs with Adenine via 2 hydrogen bonds. Replaced by Uracil in RNA.' },
+  U: { name: 'Uracil', type: 'Pyrimidine (single-ring)', found: 'RNA ONLY', pairs: 'Pairs with Adenine via 2 hydrogen bonds. Takes the place of Thymine in RNA.' },
+};
+
+function showBase(letter) {
+  document.querySelectorAll('.base-tile').forEach(t => t.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  const d = baseData[letter];
+  const box = document.getElementById('base-detail-box');
+  box.innerHTML = `<strong style="font-family:'Fredoka One',cursive;color:var(--forest);font-size:1.05rem;">${d.name} (${letter})</strong><br>
+    <span style="color:var(--muted);font-family:'DM Mono',monospace;font-size:.78rem;">${d.type} · Found in: ${d.found}</span><br><br>
+    ${d.pairs}`;
+}
+
+// ═══════════════════════════════════════════════
+// BASE PAIRING PRACTICE CHECK (Section 2)
+// ═══════════════════════════════════════════════
+function checkBasePairing() {
+  const input = document.getElementById('bp-input');
+  const fb = document.getElementById('bp-feedback');
+  const val = input.value.trim().toUpperCase().replace(/[^ATCG]/g, '');
+  const correct = "TTAACCGG"; // complement of 5' AATTGGCC 3' written 5'->3' (antiparallel mirror)
+  fb.classList.add('show');
+  if (val === correct) {
+    fb.className = 'quiz-feedback show correct-fb';
+    fb.textContent = "✅ Correct! 5' AATTGGCC 3' pairs with 3' TTAACCGG 5' — written 5'→3', that's 5' GGCCAATT 3'. Either direction of writing the answer (3'→5' as TTAACCGG, or 5'→3' as GGCCAATT) demonstrates the same complementary, antiparallel pairing.";
+  } else {
+    fb.className = 'quiz-feedback show wrong-fb';
+    fb.textContent = "❌ Not quite. Using A-T and G-C pairing: 5' AATTGGCC 3' → complementary strand (written 3'→5') is TTAACCGG. Swap each base for its partner (A↔T, G↔C) — the order stays the same since you're reading both strands in opposite directions.";
+  }
+}
+
+// ═══════════════════════════════════════════════
+// EVIDENCE CARDS (Section 3)
+// ═══════════════════════════════════════════════
+function showEvidence(type) {
+  document.querySelectorAll('.ev-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.ev-panel').forEach(p => p.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const panel = document.getElementById('ev-' + type);
+  if (panel) panel.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// BUILD-A-STRAND LAB (Section 4)
+// ═══════════════════════════════════════════════
+const templateBases = "GGTACCAATCGGAT".split('');
+const dnaComp = { A:'T', T:'A', C:'G', G:'C' };
+const bondCount = { 'A-T':2, 'T-A':2, 'G-C':3, 'C-G':3 };
+let strandPos = 0;
+
+function baseClassDNA(b) {
+  return { A:'hA', T:'hT', C:'hC', G:'hG' }[b] || '';
+}
+
+function renderTemplate() {
+  const row = document.getElementById('templateRow');
+  row.innerHTML = templateBases.map((b, i) => {
+    const highlight = i < strandPos ? 'box-shadow:0 0 0 2px var(--gold) inset;' : '';
+    return `<div class="helix-base ${baseClassDNA(b)}" style="${highlight}">${b}</div>`;
+  }).join('');
+}
+
+function renderComplement() {
+  const row = document.getElementById('complementRow');
+  let html = '';
+  for (let i = 0; i < strandPos; i++) {
+    const b = templateBases[i];
+    const cb = dnaComp[b];
+    html += `<div class="helix-base ${baseClassDNA(cb)}">${cb}</div>`;
+  }
+  for (let i = strandPos; i < templateBases.length; i++) {
+    html += `<div class="helix-base empty">·</div>`;
+  }
+  row.innerHTML = html;
+}
+
+function updateStrandStats() {
+  document.getElementById('strand-pos').textContent = strandPos + ' / ' + templateBases.length;
+  if (strandPos > 0 && strandPos <= templateBases.length) {
+    const b = templateBases[strandPos - 1];
+    const cb = dnaComp[b];
+    const bonds = bondCount[b + '-' + cb];
+    document.getElementById('strand-bonds').textContent = bonds + ' H-bonds';
+  } else {
+    document.getElementById('strand-bonds').textContent = '—';
+  }
+}
+
+function stepStrand() {
+  if (strandPos < templateBases.length) {
+    strandPos++;
+    renderTemplate(); renderComplement(); updateStrandStats();
+  }
+  if (strandPos === templateBases.length) {
+    document.getElementById('btn-strand-step').disabled = true;
+    document.getElementById('btn-strand-all').disabled = true;
+    document.getElementById('strand-hint').textContent = '✅ Complete! The complementary strand runs 3′→5′, antiparallel to the 5′→3′ template.';
+  }
+}
+
+function finishStrand() {
+  strandPos = templateBases.length;
+  renderTemplate(); renderComplement(); updateStrandStats();
+  document.getElementById('btn-strand-step').disabled = true;
+  document.getElementById('btn-strand-all').disabled = true;
+  document.getElementById('strand-hint').textContent = '✅ Complete! The complementary strand runs 3′→5′, antiparallel to the 5′→3′ template.';
+}
+
+function resetStrand() {
+  strandPos = 0;
+  renderTemplate(); renderComplement(); updateStrandStats();
+  document.getElementById('btn-strand-step').disabled = false;
+  document.getElementById('btn-strand-all').disabled = false;
+  document.getElementById('strand-hint').textContent = "Click \"Build Complementary Strand\" to pair each base";
+}
+
+renderTemplate(); renderComplement(); updateStrandStats();
+
+// ═══════════════════════════════════════════════
+// DNA → mRNA PRACTICE CHECK (Section 4)
+// ═══════════════════════════════════════════════
+function checkMrnaTranscript() {
+  const input = document.getElementById('mrna-input');
+  const fb = document.getElementById('mrna-feedback');
+  const val = input.value.trim().toUpperCase().replace(/[^AUCG]/g, '');
+  const correct = "GCGCAAUU"; // complementary, antiparallel, T->U; written 5'->3'
+  fb.classList.add('show');
+  if (val === correct) {
+    fb.className = 'quiz-feedback show correct-fb';
+    fb.textContent = "✅ Correct! 5' AATTGCGC 3' → complementary mRNA (5'→3') is GCGCAAUU. Flip the strand (antiparallel) and swap A→U, T→A, C→G, G→C.";
+  } else {
+    fb.className = 'quiz-feedback show wrong-fb';
+    fb.textContent = "❌ Not quite. The correct answer is 5' GCGCAAUU 3'. Remember: the mRNA is antiparallel and complementary to the DNA template, with U replacing T.";
+  }
+}
+
+// ═══════════════════════════════════════════════
+// QUIZ DATA — 3.5 Nucleic Acids
+// ═══════════════════════════════════════════════
+const quizData = [
+  {
+    q: "What are the three components of every nucleotide?",
+    opts: ["Amino acid, fatty acid, glycerol", "A pentose sugar, a nitrogenous base, and a phosphate group", "Two fatty acid chains and a phosphate group", "Glucose, fructose, and a phosphate group"],
+    ans: 1,
+    fb: "Every nucleotide — whether in DNA or RNA — is built from three parts: a pentose (5-carbon) sugar, a nitrogenous base, and one or more phosphate groups."
+  },
+  {
+    q: "What is the structural difference between deoxyribose and ribose?",
+    opts: ["Deoxyribose has one more carbon than ribose", "Deoxyribose has an H at the 2′ carbon; ribose has an OH at the 2′ carbon", "Ribose contains nitrogen; deoxyribose does not", "There is no structural difference"],
+    ans: 1,
+    fb: "The only structural difference is at the 2′ carbon: deoxyribose has just a hydrogen (H) there, while ribose has a hydroxyl group (OH). This is why deoxyribose is 'deoxy' — without that oxygen."
+  },
+  {
+    q: "Which nitrogenous bases are classified as purines?",
+    opts: ["Cytosine and Thymine", "Adenine and Guanine", "Uracil and Cytosine", "Thymine and Uracil"],
+    ans: 1,
+    fb: "Adenine and Guanine are purines — they have a double-ring structure (two fused carbon-nitrogen rings). Cytosine, Thymine, and Uracil are pyrimidines, with a single ring."
+  },
+  {
+    q: "In DNA, which base pairs with adenine, and how many hydrogen bonds form?",
+    opts: ["Guanine, 3 hydrogen bonds", "Cytosine, 2 hydrogen bonds", "Thymine, 2 hydrogen bonds", "Uracil, 3 hydrogen bonds"],
+    ans: 2,
+    fb: "In DNA, Adenine pairs with Thymine via 2 hydrogen bonds. Guanine pairs with Cytosine via 3 hydrogen bonds. (Uracil takes thymine's place only in RNA.)"
+  },
+  {
+    q: "Why does a purine always pair with a pyrimidine (never purine-purine or pyrimidine-pyrimidine)?",
+    opts: ["It's a random rule with no chemical basis", "This maintains a consistent width of the double helix all the way down its length", "Pyrimidines are too large to pair with each other", "Purines repel each other electrically"],
+    ans: 1,
+    fb: "Pairing a double-ring purine with a single-ring pyrimidine keeps the DNA double helix a uniform width throughout its entire length — a purine-purine pair would be too wide, and a pyrimidine-pyrimidine pair would be too narrow."
+  },
+  {
+    q: "What is a phosphodiester bond, and how does its formation differ from typical dehydration synthesis?",
+    opts: ["It's identical to the bond linking amino acids; one water molecule is released", "It's the bond linking nucleotides (5′ phosphate to 3′ OH); its formation involves removing two phosphate groups, not a simple water molecule", "It only forms between RNA nucleotides, never DNA", "It's a hydrogen bond between two bases"],
+    ans: 1,
+    fb: "The phosphodiester bond links the 5′ phosphate of one nucleotide to the 3′ hydroxyl of the next. Unlike most macromolecule linkages, its formation isn't a simple dehydration reaction — it involves the removal of two phosphate groups instead."
+  },
+  {
+    q: "If one DNA strand reads 5' AATTGGCC 3', what does the complementary strand read?",
+    opts: ["5' AATTGGCC 3'", "3' TTAACCGG 5'", "5' UUAACCGG 3'", "3' AATTGGCC 5'"],
+    ans: 1,
+    fb: "Using base pairing rules (A-T, G-C) and antiparallel orientation, the complementary strand reads 3' TTAACCGG 5' — directly across from the original 5' AATTGGCC 3' strand."
+  },
+  {
+    q: "What does 'antiparallel' mean in the context of the DNA double helix?",
+    opts: ["The two strands are identical copies of each other", "The two strands run in opposite directions — one 5′→3′, the other 3′→5′", "The two strands never touch each other", "The two strands are made of different sugars"],
+    ans: 1,
+    fb: "Antiparallel means the two DNA strands run in opposite directions: where one strand's 5′ end is, the other strand has its 3′ end, and vice versa. This is essential for processes like DNA replication."
+  },
+  {
+    q: "What is chromatin, and how is it formed?",
+    opts: ["A type of RNA found only in prokaryotes", "DNA wrapped around histone proteins in eukaryotic cells", "The enzyme that replicates DNA", "A nucleotide found only in mitochondria"],
+    ans: 1,
+    fb: "Chromatin is formed when eukaryotic DNA wraps around histone proteins. This chromatin is the substance that makes up eukaryotic chromosomes. Prokaryotic DNA does not form chromatin this way, since it lacks a membrane-bound nucleus."
+  },
+  {
+    q: "Which type of RNA carries the genetic message from DNA to the ribosome for protein synthesis?",
+    opts: ["tRNA", "rRNA", "mRNA", "miRNA"],
+    ans: 2,
+    fb: "Messenger RNA (mRNA) is synthesized in the nucleus as a copy of the DNA's coding sequence, then travels to the cytoplasm where it delivers its 'message' to ribosomes for protein synthesis."
+  },
+  {
+    q: "Which type of RNA carries amino acids to the ribosome and has an anticodon that pairs with mRNA codons?",
+    opts: ["mRNA", "rRNA", "tRNA", "miRNA"],
+    ans: 2,
+    fb: "Transfer RNA (tRNA) is one of the smallest RNA types (70-90 nucleotides). It carries the correct amino acid to the ribosome, using its anticodon to base-pair with the matching mRNA codon."
+  },
+  {
+    q: "Which type of RNA is a major structural and CATALYTIC component of the ribosome itself?",
+    opts: ["mRNA", "rRNA", "tRNA", "miRNA"],
+    ans: 1,
+    fb: "Ribosomal RNA (rRNA) makes up much of the ribosome's structure and has enzymatic (peptidyl transferase) activity — it directly catalyzes the formation of peptide bonds during translation. This makes rRNA a ribozyme."
+  },
+  {
+    q: "What is the primary function of microRNA (miRNA)?",
+    opts: ["Carrying amino acids to ribosomes", "Forming the structure of ribosomes", "Regulating gene expression by interfering with specific mRNA messages", "Storing the cell's permanent genetic blueprint"],
+    ans: 2,
+    fb: "microRNAs are the smallest RNA molecules. Rather than participating directly in building proteins, their job is gene regulation — they interfere with specific mRNA messages, controlling whether those genes actually get expressed."
+  },
+  {
+    q: "According to the DNA vs. RNA comparison table, which statement is correct?",
+    opts: ["DNA is usually single-stranded; RNA is double-stranded", "DNA contains uracil; RNA contains thymine", "DNA remains in the nucleus; RNA leaves the nucleus", "Both DNA and RNA use the same pentose sugar"],
+    ans: 2,
+    fb: "DNA carries genetic information and stays in the nucleus (its job is information storage). RNA, particularly mRNA, leaves the nucleus to carry out protein synthesis in the cytoplasm. DNA is double helix/deoxyribose with T; RNA is single-stranded/ribose with U."
+  },
+  {
+    q: "What is the 'Central Dogma of Life'?",
+    opts: ["Protein → RNA → DNA", "DNA → RNA → Protein", "RNA → DNA → Protein", "DNA replicates directly into protein with no intermediate"],
+    ans: 1,
+    fb: "The Central Dogma describes the typical flow of genetic information: DNA → RNA (via transcription) → Protein (via translation). This holds true for virtually all organisms, with some exceptions during certain viral infections."
+  },
+  {
+    q: "If a DNA template strand reads AATTGCGC, what will the complementary mRNA sequence read?",
+    opts: ["AATTGCGC", "TTAACGCG", "UUAACGCG", "GCGCAATT"],
+    ans: 2,
+    fb: "The mRNA is complementary to the DNA template, with U replacing T: AATTGCGC (DNA) → UUAACGCG (mRNA). Each A in the template pairs with U in the RNA; each T pairs with A; G pairs with C and vice versa."
+  },
+];
+
+let quizScore = 0;
+let quizAnswered = 0;
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  quizScore = 0; quizAnswered = 0;
+  document.getElementById('score-panel').style.display = 'none';
+
+  quizData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `
+      <div class="quiz-q">${idx+1}. ${item.q}</div>
+      <div class="quiz-options">
+        ${item.opts.map((opt, i) => `
+          <button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">
+            ${String.fromCharCode(65+i)}. ${opt}
+          </button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="qfb-${idx}"></div>`;
+    container.appendChild(card);
+  });
+}
+
+function checkAnswer(btn, qIdx, optIdx) {
+  const card    = btn.closest('.quiz-card');
+  const buttons = card.querySelectorAll('.quiz-opt');
+  const fb      = document.getElementById('qfb-' + qIdx);
+  const correct = quizData[qIdx].ans;
+  buttons.forEach(b => b.disabled = true);
+  if (optIdx === correct) {
+    btn.classList.add('correct');
+    fb.textContent = '✅ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show correct-fb';
+    quizScore++;
+  } else {
+    btn.classList.add('wrong');
+    buttons[correct].classList.add('correct');
+    fb.textContent = '❌ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show wrong-fb';
+  }
+  quizAnswered++;
+  if (quizAnswered === quizData.length) showScore();
+}
+
+function showScore() {
+  const panel = document.getElementById('score-panel');
+  panel.style.display = 'block';
+  document.getElementById('score-display').textContent = quizScore + '/' + quizData.length;
+  const pct = quizScore / quizData.length;
+  let msg;
+  if (pct >= .9) msg = '🌟 Outstanding! You clearly understand nucleic acids. AP exam ready — and on to DNA Replication!';
+  else if (pct >= .75) msg = '👍 Great work! Review the questions you missed and you\'ll be in great shape.';
+  else if (pct >= .6) msg = '📚 Good start. Revisit Phases 2–4, then retake.';
+  else msg = '💪 Keep going! Go back through the Nucleotides and DNA vs. RNA phases, then try again.';
+  document.getElementById('score-msg').textContent = msg;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function retakeQuiz() { buildQuiz(); }
+
+// ═══════════════════════════════════════════════
+// FILL-IN-THE-BLANK
+// ═══════════════════════════════════════════════
+const fills = [
+  { q: "A nucleotide consists of a pentose sugar, a nitrogenous base, and a ___ group.", ans: "phosphate" },
+  { q: "DNA's sugar is called ___.", ans: "deoxyribose" },
+  { q: "RNA's sugar is called ___.", ans: "ribose" },
+  { q: "Adenine and guanine are classified as ___ (double-ring bases).", ans: "purines" },
+  { q: "Cytosine, thymine, and uracil are classified as ___ (single-ring bases).", ans: "pyrimidines" },
+  { q: "The bond linking nucleotides together is called a ___ bond.", ans: "phosphodiester" },
+  { q: "The two strands of DNA run in opposite directions, a property called ___.", ans: "antiparallel" },
+  { q: "DNA wrapped around histone proteins forms ___.", ans: "chromatin" },
+  { q: "The RNA type that carries amino acids to the ribosome is ___.", ans: "tRNA" },
+  { q: "The flow of information DNA → RNA → Protein is called the Central ___ of Life.", ans: "Dogma" },
+];
+
+function buildFills() {
+  const container = document.getElementById('fill-container');
+  container.innerHTML = '';
+  fills.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-card';
+    div.innerHTML = `<div class="fill-q">${item.q.replace('___', `<input class="blank-input" id="fill-${idx}" type="text" placeholder="?" onkeydown="if(event.key==='Enter')checkFill(${idx})">`)}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function checkFill(idx) {
+  const input = document.getElementById('fill-' + idx);
+  const val   = input.value.trim().toLowerCase();
+  const correct = fills[idx].ans.toLowerCase();
+  if (val === correct || val.includes(correct) || correct.includes(val)) {
+    input.classList.remove('err'); input.classList.add('ok');
+    input.value = fills[idx].ans;
+  } else {
+    input.classList.remove('ok'); input.classList.add('err');
+  }
+}
+function checkAllFills() { fills.forEach((_, idx) => checkFill(idx)); }
+function resetFills() {
+  fills.forEach((_, idx) => {
+    const input = document.getElementById('fill-' + idx);
+    if (input) { input.value = ''; input.classList.remove('ok','err'); }
+  });
+}
+
+// ═══════════════════════════════════════════════
+// SUMMARY / SUBMIT
+// ═══════════════════════════════════════════════
+function fillSummary(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = text && text.trim();
+  el.textContent = val || 'Not answered';
+  el.classList.toggle('empty', !val);
+}
+
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  const scoreEl = document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl ? scoreEl.textContent + ' correct' : 'Quiz not yet completed');
+
+  const predTA = document.querySelector('#sec-0 textarea');
+  fillSummary('sum-pred', predTA ? predTA.value : '');
+
+  const baseTA = document.getElementById('base-predict');
+  fillSummary('sum-base-pred', baseTA ? baseTA.value : '');
+
+  const strandTA = document.getElementById('strand-predict');
+  fillSummary('sum-strand-pred', strandTA ? strandTA.value : '');
+
+  const refCards = document.querySelectorAll('#sec-6 .quiz-card textarea');
+  ['sum-r1','sum-r2','sum-r3','sum-r4'].forEach((id, i) => {
+    fillSummary(id, refCards[i] ? refCards[i].value : '');
+  });
+}
+
+function buildPlainText() {
+  const name   = document.getElementById('studentName').value.trim() || 'Student';
+  const date   = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const scoreEl= document.getElementById('score-display');
+  const score  = scoreEl ? scoreEl.textContent : 'not completed';
+  const predTA = document.querySelector('#sec-0 textarea');
+  const baseTA = document.getElementById('base-predict');
+  const strandTA = document.getElementById('strand-predict');
+  const refCards = document.querySelectorAll('#sec-6 .quiz-card textarea');
+  const refs = ['','','',''];
+  refCards.forEach((ta, i) => { refs[i] = ta.value.trim() || 'Not answered'; });
+
+  return [
+    'BIOLOGICAL MACROMOLECULES EXPLORER 🧬 (PART 3) — STUDENT SUBMISSION',
+    '======================================================',
+    'Student: ' + name,
+    'Date: ' + date,
+    'Lesson: AP Biology · OpenStax Chapter 3 (3.5) · Macromolecules Explorer Part 3',
+    '',
+    '── QUIZ SCORE ──',
+    score,
+    '',
+    '── OPENING PREDICTION ──',
+    predTA ? (predTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── BASE-PAIRING LAB PREDICTION ──',
+    baseTA ? (baseTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── BUILD-A-STRAND LAB PREDICTION ──',
+    strandTA ? (strandTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── REFLECTIONS ──',
+    'Q1 — Nucleotide Structure:', refs[0],
+    'Q2 — Base Complementary Rule:', refs[1],
+    'Q3 — DNA vs. RNA Comparison:', refs[2],
+    'Q4 — The Four Types of RNA:', refs[3],
+    '',
+    '======================================================',
+    '© 2026 Farvour Explorations · farvourexplorations.com',
+    'Submitted via Biological Macromolecules Explorer Part 3 · Interactive Digital Lesson · AP Biology'
+  ].join('\n');
+}
+
+function copyResults() {
+  buildSummary();
+  const text = buildPlainText();
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Now paste into Google Classroom or your assignment.';
+    setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '⚠️ Could not copy automatically — try selecting the text manually.';
+  });
+}
+
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const subject = encodeURIComponent('Macromolecules Explorer Part 3 — ' + name);
+  const body    = encodeURIComponent(buildPlainText());
+  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+buildQuiz();
+buildFills();
+</script>
+</body>
+</html>
