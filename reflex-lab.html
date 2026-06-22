@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reflex Lab ⚡</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #1e3a5f;
+    --sky-mid: #2d5282;
+    --sun: #f6c343;
+    --sun-pale: #fef9e7;
+    --coral: #e8603c;
+    --coral-pale: #fdf0ec;
+    --mint: #3aaf85;
+    --mint-pale: #e8f8f2;
+    --lavender: #7c6fcd;
+    --lavender-pale: #f0eefb;
+    --paper: #fffef9;
+    --ink: #1a2332;
+    --muted: #7a8899;
+    --border: rgba(0,0,0,0.08);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: linear-gradient(160deg, #0f2540 0%, #1e3a5f 40%, #2d5282 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* ── STARS BG ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 45% 8%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(2px 2px at 65% 22%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 5%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 92% 35%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 35% 28%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 72% 12%, rgba(255,255,255,0.5) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HERO HEADER ── */
+  .hero {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 3.5rem 2rem 2rem;
+    color: white;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--sun);
+    color: var(--sky);
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    padding: 0.35rem 1.2rem;
+    border-radius: 20px;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 12px rgba(246,195,67,0.4);
+  }
+  .hero h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    line-height: 1.1;
+    margin-bottom: 0.8rem;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+  .hero h1 .accent { color: var(--sun); }
+  .hero p.intro {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    opacity: 0.88;
+    max-width: 560px;
+    margin: 0 auto 2rem;
+    font-weight: 400;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+  }
+  .prog-step {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(255,255,255,0.12);
+    border: 1.5px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .prog-step:hover, .prog-step.done {
+    background: rgba(255,255,255,0.22);
+    color: white;
+    border-color: rgba(255,255,255,0.4);
+  }
+  .prog-step.active {
+    background: var(--sun);
+    color: var(--sky);
+    border-color: var(--sun);
+    box-shadow: 0 2px 12px rgba(246,195,67,0.4);
+  }
+  .prog-dot { font-size: 1rem; }
+
+  /* ── MAIN SHEET ── */
+  .sheet {
+    position: relative;
+    z-index: 1;
+    background: var(--paper);
+    border-radius: 24px 24px 0 0;
+    margin-top: 1.5rem;
+    padding: 0 0 6rem;
+    min-height: 80vh;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.25);
+  }
+
+  /* ── SECTION ── */
+  .section {
+    padding: 3rem 2rem 0;
+    max-width: 820px;
+    margin: 0 auto;
+    display: none;
+  }
+  .section.active { display: block; }
+
+  .section-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+  .eyebrow-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: white;
+    flex-shrink: 0;
+  }
+  .num-coral { background: var(--coral); }
+  .num-mint  { background: var(--mint); }
+  .num-sun   { background: var(--sun); color: var(--sky); }
+  .num-lav   { background: var(--lavender); }
+  .num-sky   { background: var(--sky-mid); }
+
+  .eyebrow-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .section h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    color: var(--sky);
+    margin-bottom: 0.6rem;
+    line-height: 1.2;
+  }
+  .section .lead {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: #3a4a5a;
+    margin-bottom: 1.8rem;
+  }
+  .section .lead strong { color: var(--coral); }
+
+  /* ── WONDER BOX ── */
+  .wonder-box {
+    background: linear-gradient(135deg, var(--sky) 0%, var(--sky-mid) 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 1.8rem 2rem;
+    margin-bottom: 1.8rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .wonder-box::after {
+    content: '🤔';
+    position: absolute;
+    right: 1.5rem; top: 50%;
+    transform: translateY(-50%);
+    font-size: 3rem;
+    opacity: 0.3;
+  }
+  .wonder-box p {
+    font-size: 1rem;
+    line-height: 1.7;
+    font-style: italic;
+    opacity: 0.95;
+    max-width: 85%;
+  }
+  .wonder-box strong { color: var(--sun); font-style: normal; }
+
+  /* ── CONCEPT CHIPS ── */
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+  }
+  .chip {
+    padding: 0.45rem 1rem;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+  }
+  .chip.coral  { background: var(--coral-pale);   color: var(--coral);     border-color: #f8c5b8; }
+  .chip.mint   { background: var(--mint-pale);    color: var(--mint);      border-color: #b8ebd8; }
+  .chip.sun    { background: var(--sun-pale);     color: #b8860b;          border-color: #f8e0a0; }
+  .chip.lav    { background: var(--lavender-pale); color: var(--lavender); border-color: #d0caef; }
+  .chip.sky    { background: #e8f0f8;             color: var(--sky-mid);   border-color: #c0d4ea; }
+  .chip:hover  { transform: scale(1.05); }
+
+  .concept-reveal {
+    background: var(--paper);
+    border-left: 4px solid var(--coral);
+    border-radius: 0 10px 10px 0;
+    padding: 1rem 1.2rem;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    margin-top: 0.5rem;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .concept-reveal.show { display: block; }
+  .concept-reveal.mint-border  { border-color: var(--mint); }
+  .concept-reveal.sun-border   { border-color: var(--sun); }
+  .concept-reveal.lav-border   { border-color: var(--lavender); }
+  .concept-reveal.sky-border   { border-color: var(--sky-mid); }
+
+  @keyframes fadeIn {
+    from { opacity:0; transform: translateY(-6px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  /* ── PREDICTION BOX ── */
+  .predict-box {
+    background: var(--sun-pale);
+    border: 2px dashed var(--sun);
+    border-radius: 14px;
+    padding: 1.4rem 1.6rem;
+    margin-bottom: 1.5rem;
+  }
+  .predict-box h4 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: #b8860b;
+    margin-bottom: 0.8rem;
+  }
+  .predict-box textarea {
+    width: 100%;
+    border: 1.5px solid rgba(0,0,0,0.12);
+    border-radius: 8px;
+    padding: 0.7rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    resize: vertical;
+    min-height: 64px;
+    background: white;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .predict-box textarea:focus { border-color: var(--sun); }
+
+  /* ── DEMO ZONE ── */
+  .demo-zone {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .demo-zone h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    color: var(--sky);
+    margin-bottom: 0.3rem;
+  }
+  .demo-zone .hint {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 1.3rem;
+  }
+
+  .action-row {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 0.8rem;
+  }
+  .btn {
+    border: none;
+    border-radius: 10px;
+    padding: 0.65rem 1.3rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
+  .btn:active { transform: translateY(0); }
+  .btn-coral  { background: var(--coral);     color: white; }
+  .btn-mint   { background: var(--mint);      color: white; }
+  .btn-sun    { background: var(--sun);       color: var(--sky); }
+  .btn-lav    { background: var(--lavender);  color: white; }
+  .btn-ghost  { background: #f0f2f5; color: var(--muted); }
+
+  /* ── NEURON DIAGRAM ── */
+  .neuron-wrap {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  .neuron-wrap svg { max-width: 100%; height: auto; }
+  .neuron-part {
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .neuron-part:hover { opacity: 0.7; }
+  .neuron-label-box {
+    background: var(--paper);
+    border-left: 4px solid var(--lavender);
+    border-radius: 0 10px 10px 0;
+    padding: 0.9rem 1.1rem;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin-top: 1rem;
+    text-align: left;
+    min-height: 3rem;
+  }
+
+  /* ── ARC STEPPER ── */
+  .arc-stepper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+  .arc-card {
+    flex: 1;
+    min-width: 130px;
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 0.8rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .arc-card:hover { transform: translateY(-3px); box-shadow: 0 4px 14px rgba(0,0,0,0.1); }
+  .arc-card.active { border-color: var(--coral); background: var(--coral-pale); }
+  .arc-card .arc-icon { font-size: 1.8rem; margin-bottom: 0.4rem; display: block; }
+  .arc-card .arc-name { font-family: 'Fredoka One', cursive; font-size: 0.85rem; color: var(--sky); }
+  .arc-card .arc-step-num {
+    position: absolute; top: -8px; left: -8px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--sky);
+    color: white;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .arc-detail {
+    background: var(--paper);
+    border-left: 4px solid var(--coral);
+    border-radius: 0 10px 10px 0;
+    padding: 1.1rem 1.3rem;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    min-height: 4rem;
+  }
+
+  /* ── DRAG ORDER ── */
+  .order-zone {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .order-pool, .order-slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    min-height: 50px;
+    margin-bottom: 1rem;
+    padding: 0.6rem;
+    border-radius: 10px;
+  }
+  .order-pool { background: #f5f7fa; border: 2px dashed #ddd; }
+  .order-slots { background: var(--lavender-pale); border: 2px dashed var(--lavender); }
+  .order-chip {
+    background: var(--sky);
+    color: white;
+    border-radius: 8px;
+    padding: 0.5rem 0.9rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.15s;
+  }
+  .order-chip:active { cursor: grabbing; }
+  .order-chip.placed { background: var(--mint); }
+  .order-feedback { font-size: 0.85rem; min-height: 1.3rem; font-weight: 700; }
+
+  /* ── REACTION TEST ZONE ── */
+  .react-zone {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .react-zone h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    color: var(--sky);
+    margin-bottom: 0.3rem;
+  }
+  .react-zone .hint {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 1.3rem;
+  }
+  .react-stage {
+    background: linear-gradient(160deg, #fafbfc 0%, #f0f2f5 100%);
+    border: 3px dashed var(--border);
+    border-radius: 14px;
+    min-height: 240px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .react-stage.armed { border-color: var(--coral); background: var(--coral-pale); }
+  .react-stage.go { border-color: var(--mint); background: var(--mint-pale); }
+  .react-stage.caught { border-color: var(--sky); background: var(--lavender-pale); }
+  .react-msg {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem;
+    color: var(--sky);
+    text-align: center;
+    padding: 0 1.5rem;
+  }
+  .react-sub {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 0.5rem;
+    text-align: center;
+    padding: 0 1.5rem;
+  }
+  .react-emoji { font-size: 3rem; margin-bottom: 0.6rem; }
+
+  .trial-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.2rem;
+    font-size: 0.85rem;
+  }
+  .trial-table th, .trial-table td {
+    border: 1.5px solid var(--border);
+    padding: 0.5rem 0.6rem;
+    text-align: center;
+  }
+  .trial-table th {
+    background: #f5f7fa;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .trial-table input[type=number] {
+    width: 80px;
+    border: 1.5px solid rgba(0,0,0,0.12);
+    border-radius: 6px;
+    padding: 0.35rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .trial-table input[type=number]:focus { border-color: var(--coral); }
+  .avg-banner {
+    margin-top: 1rem;
+    background: var(--mint-pale);
+    border: 2px solid #b8ebd8;
+    border-radius: 12px;
+    padding: 1rem 1.3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .avg-banner .avg-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--mint);
+  }
+  .avg-banner .avg-value {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.6rem;
+    color: #1b7a58;
+  }
+  .fun-fact-box {
+    background: var(--lavender-pale);
+    border-left: 4px solid var(--lavender);
+    border-radius: 0 10px 10px 0;
+    padding: 1rem 1.2rem;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    margin-top: 1rem;
+  }
+
+  /* ── COMPARISON CHART ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  @media (max-width: 560px) { .compare-grid { grid-template-columns: 1fr; } }
+  .compare-card {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 1.3rem;
+  }
+  .compare-card h4 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.95rem;
+    color: var(--sky);
+    margin-bottom: 0.6rem;
+  }
+  .compare-card textarea {
+    width: 100%;
+    border: 1.5px solid rgba(0,0,0,0.1);
+    border-radius: 8px;
+    padding: 0.6rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    resize: vertical;
+    min-height: 70px;
+    background: #fafbfc;
+    outline: none;
+  }
+  .compare-card textarea:focus { border-color: var(--lavender); }
+
+  /* ── REFLECTION ── */
+  .reflection-card {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 1.4rem;
+    margin-bottom: 1rem;
+  }
+  .reflection-card .q {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: var(--sky);
+    margin-bottom: 0.7rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+  }
+  .reflection-card .q .qnum {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .reflection-card textarea {
+    width: 100%;
+    border: 1.5px solid rgba(0,0,0,0.1);
+    border-radius: 8px;
+    padding: 0.7rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    resize: vertical;
+    min-height: 72px;
+    background: #fafbfc;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .reflection-card textarea:focus { border-color: var(--lavender); }
+
+  /* ── REAL WORLD CARDS ── */
+  .world-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .world-card {
+    border-radius: 14px;
+    padding: 1.4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .world-card.coral-bg { background: var(--coral-pale); }
+  .world-card.mint-bg  { background: var(--mint-pale); }
+  .world-card.lav-bg   { background: var(--lavender-pale); }
+  .world-card .wc-icon { font-size: 2rem; margin-bottom: 0.6rem; }
+  .world-card h4 { font-family: 'Fredoka One', cursive; font-size: 1rem; margin-bottom: 0.4rem; color: var(--sky); }
+  .world-card p  { font-size: 0.82rem; line-height: 1.6; color: #3a4a5a; }
+
+  /* ── NEXT BUTTON ── */
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2.5rem 2rem 0;
+    max-width: 820px;
+    margin: 0 auto;
+  }
+  .btn-next {
+    background: var(--sky);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 0.9rem 2rem;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(30,58,95,0.25);
+  }
+  .btn-next:hover { background: var(--sky-mid); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(30,58,95,0.3); }
+  .btn-prev {
+    background: transparent;
+    color: var(--muted);
+    border: 2px solid var(--border);
+    border-radius: 50px;
+    padding: 0.9rem 1.6rem;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-prev:hover { border-color: var(--muted); color: var(--ink); }
+  .btn-prev:disabled, .btn-next:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+  /* ── CONGRATS ── */
+  .congrats {
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+  .congrats .trophy { font-size: 4rem; margin-bottom: 1rem; animation: bounce 0.8s ease infinite alternate; }
+  @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+  .congrats h2 { font-family: 'Fredoka One', cursive; font-size: 2rem; color: var(--sky); margin-bottom: 0.8rem; }
+  .congrats p  { font-size: 0.95rem; line-height: 1.7; color: #3a4a5a; max-width: 500px; margin: 0 auto 1.5rem; }
+  .summary-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; }
+  .summary-chip {
+    padding: 0.5rem 1.1rem;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    background: var(--sun-pale);
+    color: #b8860b;
+    border: 1.5px solid #f8e0a0;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 1.5rem 0;
+  }
+
+  @media (max-width: 560px) {
+    .hero { padding: 2.5rem 1.2rem 1.5rem; }
+    .section { padding: 2rem 1.2rem 0; }
+    .nav-row { padding: 2rem 1.2rem 0; }
+    .arc-stepper { flex-direction: column; }
+  }
+
+  /* ── NAME BAR ── */
+  .name-bar {
+    background: rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    border-radius: 12px;
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    max-width: 420px;
+    margin: 0 auto 1rem;
+  }
+  .name-bar label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.8);
+    white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+  }
+  .name-bar input {
+    flex: 1;
+    background: rgba(255,255,255,0.15);
+    border: none;
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: white;
+    outline: none;
+  }
+  .name-bar input::placeholder { color: rgba(255,255,255,0.45); font-weight: 400; }
+
+  /* ── SUMMARY PAGE ── */
+  .summary-section {
+    background: white;
+    border-radius: 16px;
+    padding: 1.8rem;
+    margin-bottom: 1.2rem;
+    border: 2px solid var(--border);
+  }
+  .summary-section h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.05rem;
+    color: var(--sky);
+    margin-bottom: 0.8rem;
+  }
+  .summary-answer {
+    background: #f5f7fa;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+    font-style: italic;
+    border-left: 3px solid var(--lavender);
+    min-height: 2rem;
+  }
+  .summary-answer.empty { color: var(--muted); font-style: normal; border-left-color: var(--border); }
+  .sum-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+    margin-top: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .s-chip {
+    display: inline-block;
+    background: var(--mint-pale);
+    border: 1.5px solid #b8ebd8;
+    border-radius: 8px;
+    padding: 0.35rem 0.8rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.76rem;
+    color: var(--mint);
+    font-weight: 600;
+    margin: 0.2rem;
+  }
+  .s-chip.coral { background: var(--coral-pale); border-color: #f8c5b8; color: var(--coral); }
+  .s-chip.lav   { background: var(--lavender-pale); border-color: #d0caef; color: var(--lavender); }
+  .share-buttons {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+    justify-content: center;
+  }
+  .share-btn {
+    border: none;
+    border-radius: 12px;
+    padding: 0.85rem 1.6rem;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .share-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+  .share-btn.copy  { background: var(--mint);     color: white; }
+  .share-btn.email { background: var(--lavender); color: white; }
+  .share-btn.print { background: var(--sky);      color: white; }
+  .copy-confirm {
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--mint);
+    min-height: 1.2rem;
+    margin-top: 0.6rem;
+  }
+  @media print {
+    .hero, .nav-row, .share-buttons, .copy-confirm { display: none !important; }
+    .sheet { box-shadow: none; border-radius: 0; }
+    .section { display: none !important; }
+    #sec-6 { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">⚡ Transition Day · Reflex Lab</div>
+  <h1>Catch the Ruler,<br><span class="accent">Meet Your Nerves</span> ⚡</h1>
+  <p class="intro">Welcome to 6th grade science! Today you'll find out how fast your brain really is — using nothing but a ruler, a partner, and your own nervous system.</p>
+
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+
+  <div class="progress-wrap">
+    <a class="prog-step active" id="pill-0" onclick="goTo(0)"><span class="prog-dot">⚡</span> Wonder</a>
+    <a class="prog-step" id="pill-1" onclick="goTo(1)"><span class="prog-dot">🧠</span> Neuron</a>
+    <a class="prog-step" id="pill-2" onclick="goTo(2)"><span class="prog-dot">🔁</span> Reflex Arc</a>
+    <a class="prog-step" id="pill-3" onclick="goTo(3)"><span class="prog-dot">📏</span> Ruler Drop</a>
+    <a class="prog-step" id="pill-4" onclick="goTo(4)"><span class="prog-dot">🌍</span> Real Life</a>
+    <a class="prog-step" id="pill-5" onclick="goTo(5)"><span class="prog-dot">💭</span> Reflect</a>
+    <a class="prog-step" id="pill-6" onclick="goTo(6)"><span class="prog-dot">📤</span> Submit</a>
+  </div>
+</div>
+
+<!-- SHEET -->
+<div class="sheet">
+
+  <!-- ══ SECTION 0: WONDER ══ -->
+  <div class="section active" id="sec-0">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-coral">1</div>
+      <span class="eyebrow-label">The Big Question</span>
+    </div>
+    <h2>How fast is "fast"?</h2>
+    <p class="lead">Touch a hot pan and your hand pulls back <strong>before you even decide to move it</strong>. A ball flies at your face and you blink <strong>without thinking</strong>. Something in your body is faster than your thoughts. Today, we're going to measure it.</p>
+
+    <div class="wonder-box">
+      <p>Think about the fastest you've ever reacted to something — dodging a dodgeball, catching a falling phone, slamming the brakes on your bike. What did that feel like? Did you have time to "think," or did your body just <strong>do it</strong>?</p>
+    </div>
+
+    <p style="font-size:0.9rem; font-weight:700; color:var(--sky); margin-bottom:0.8rem;">🧠 Quick guess — drag the slider:</p>
+
+    <div style="background:white; border:2px solid var(--border); border-radius:14px; padding:1.5rem; margin-bottom:1.5rem;">
+      <p style="font-size:0.88rem; margin-bottom:1rem; color:#3a4a5a;">A friend will drop a ruler without warning, and you'll grab it as fast as you can. How far do you think it will fall before you catch it?</p>
+      <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--muted);">10 mm</span>
+        <input type="range" id="dropGuess" min="10" max="250" value="100" oninput="updateDropGuess(this.value)"
+          style="flex:1; accent-color:var(--coral);">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--muted);">250 mm</span>
+      </div>
+      <p style="text-align:center; font-family:'Fredoka One',cursive; font-size:1.2rem; color:var(--coral); margin-top:0.8rem;" id="dropGuessLabel">My guess: 100 mm</p>
+      <p style="text-align:center; font-size:0.8rem; color:var(--muted); margin-top:0.3rem;" id="dropGuessNote">We'll test this for real later 👀</p>
+    </div>
+
+    <div class="wonder-box" style="background: linear-gradient(135deg, var(--mint) 0%, #2d9970 100%);">
+      <p>Every single reaction — blinking, catching, flinching — travels through your <strong>nervous system</strong> as an electrical signal. Today you'll meet the cells that carry it, the pathway it follows, and then you'll measure your own speed.</p>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 1: NEURON ══ -->
+  <div class="section" id="sec-1">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-mint">2</div>
+      <span class="eyebrow-label">Meet the Messenger</span>
+    </div>
+    <h2>The neuron: your body's wiring</h2>
+    <p class="lead">Every thought, twitch, and reflex you've ever had traveled through cells called <strong>neurons</strong>. Click each glowing part of the neuron below to find out what it does.</p>
+
+    <div class="neuron-wrap">
+      <svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg">
+        <!-- dendrites -->
+        <g class="neuron-part" onclick="revealNeuron('dendrite')">
+          <line x1="60" y1="130" x2="95" y2="70" stroke="#7c6fcd" stroke-width="4" stroke-linecap="round"/>
+          <line x1="60" y1="130" x2="100" y2="105" stroke="#7c6fcd" stroke-width="4" stroke-linecap="round"/>
+          <line x1="60" y1="130" x2="95" y2="160" stroke="#7c6fcd" stroke-width="4" stroke-linecap="round"/>
+          <line x1="60" y1="130" x2="100" y2="195" stroke="#7c6fcd" stroke-width="4" stroke-linecap="round"/>
+          <line x1="80" y1="130" x2="110" y2="130" stroke="#7c6fcd" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="95" cy="70" r="5" fill="#7c6fcd"/>
+          <circle cx="100" cy="105" r="5" fill="#7c6fcd"/>
+          <circle cx="100" cy="195" r="5" fill="#7c6fcd"/>
+          <circle cx="95" cy="160" r="5" fill="#7c6fcd"/>
+        </g>
+        <!-- cell body -->
+        <g class="neuron-part" onclick="revealNeuron('soma')">
+          <circle cx="150" cy="130" r="48" fill="#f0eefb" stroke="#7c6fcd" stroke-width="3"/>
+          <circle cx="150" cy="130" r="14" fill="#7c6fcd"/>
+        </g>
+        <!-- axon -->
+        <g class="neuron-part" onclick="revealNeuron('axon')">
+          <line x1="198" y1="130" x2="480" y2="130" stroke="#3aaf85" stroke-width="10" stroke-linecap="round"/>
+        </g>
+        <!-- myelin sheath -->
+        <g class="neuron-part" onclick="revealNeuron('myelin')">
+          <ellipse cx="250" cy="130" rx="22" ry="17" fill="#fef9e7" stroke="#f6c343" stroke-width="2.5"/>
+          <ellipse cx="300" cy="130" rx="22" ry="17" fill="#fef9e7" stroke="#f6c343" stroke-width="2.5"/>
+          <ellipse cx="350" cy="130" rx="22" ry="17" fill="#fef9e7" stroke="#f6c343" stroke-width="2.5"/>
+          <ellipse cx="400" cy="130" rx="22" ry="17" fill="#fef9e7" stroke="#f6c343" stroke-width="2.5"/>
+        </g>
+        <!-- axon terminals -->
+        <g class="neuron-part" onclick="revealNeuron('terminal')">
+          <line x1="480" y1="130" x2="540" y2="85" stroke="#e8603c" stroke-width="4" stroke-linecap="round"/>
+          <line x1="480" y1="130" x2="545" y2="115" stroke="#e8603c" stroke-width="4" stroke-linecap="round"/>
+          <line x1="480" y1="130" x2="545" y2="145" stroke="#e8603c" stroke-width="4" stroke-linecap="round"/>
+          <line x1="480" y1="130" x2="540" y2="175" stroke="#e8603c" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="540" cy="85" r="7" fill="#e8603c"/>
+          <circle cx="545" cy="115" r="7" fill="#e8603c"/>
+          <circle cx="545" cy="145" r="7" fill="#e8603c"/>
+          <circle cx="540" cy="175" r="7" fill="#e8603c"/>
+        </g>
+        <!-- next neuron hint -->
+        <g class="neuron-part" onclick="revealNeuron('synapse')">
+          <circle cx="610" cy="130" r="34" fill="#fdf0ec" stroke="#e8603c" stroke-width="2.5" stroke-dasharray="5,4"/>
+          <text x="610" y="135" text-anchor="middle" font-family="Nunito" font-size="11" fill="#e8603c" font-weight="700">gap</text>
+        </g>
+        <text x="150" y="200" text-anchor="middle" font-family="'Fredoka One',cursive" font-size="13" fill="#7c6fcd">Dendrites + Cell Body</text>
+        <text x="340" y="165" text-anchor="middle" font-family="'Fredoka One',cursive" font-size="13" fill="#3aaf85">Axon (myelin = speed boost)</text>
+        <text x="540" y="205" text-anchor="middle" font-family="'Fredoka One',cursive" font-size="13" fill="#e8603c">Axon Terminals</text>
+      </svg>
+      <div class="neuron-label-box" id="neuronLabel">👆 Click any part of the neuron above to learn what it does.</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <p style="font-size:0.88rem; font-weight:700; color:var(--sky); margin-bottom:0.8rem;">🗂️ Three types of neurons work together in every reflex:</p>
+    <div class="chip-row">
+      <span class="chip lav"  onclick="revealConcept('sensory')">👁️ Sensory Neuron</span>
+      <span class="chip sun"  onclick="revealConcept('inter')">🧠 Interneuron</span>
+      <span class="chip mint" onclick="revealConcept('motor')">💪 Motor Neuron</span>
+    </div>
+    <div class="concept-reveal lav-border" id="cr-sensory">
+      <strong>Sensory Neuron — the lookout</strong><br>
+      Detects information from the outside world (light, sound, touch, the ruler falling past your fingers) and carries that signal <em>toward</em> the spinal cord and brain.
+    </div>
+    <div class="concept-reveal sun-border" id="cr-inter">
+      <strong>Interneuron — the relay</strong><br>
+      Lives inside the spinal cord and brain. It connects sensory neurons to motor neurons — sometimes skipping the brain entirely, which is exactly what makes reflexes so fast.
+    </div>
+    <div class="concept-reveal mint-border" id="cr-motor">
+      <strong>Motor Neuron — the action-taker</strong><br>
+      Carries the "do something!" signal away from the spinal cord/brain to your muscles — telling your fingers to snap shut around that ruler.
+    </div>
+  </div>
+
+  <!-- ══ SECTION 2: REFLEX ARC ══ -->
+  <div class="section" id="sec-2">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-sun">3</div>
+      <span class="eyebrow-label">The Pathway</span>
+    </div>
+    <h2>🔁 The reflex arc</h2>
+    <p class="lead">A <strong>reflex arc</strong> is the exact path a signal takes to make a reflex happen — and it's faster than normal thinking because it often <strong>skips the brain</strong>. Click each step in order to walk through it.</p>
+
+    <div class="arc-stepper">
+      <div class="arc-card" data-step="1" onclick="showArcStep(1)">
+        <span class="arc-step-num">1</span>
+        <span class="arc-icon">📏</span>
+        <span class="arc-name">Stimulus</span>
+      </div>
+      <div class="arc-card" data-step="2" onclick="showArcStep(2)">
+        <span class="arc-step-num">2</span>
+        <span class="arc-icon">👁️</span>
+        <span class="arc-name">Receptor</span>
+      </div>
+      <div class="arc-card" data-step="3" onclick="showArcStep(3)">
+        <span class="arc-step-num">3</span>
+        <span class="arc-icon">➡️</span>
+        <span class="arc-name">Sensory Neuron</span>
+      </div>
+      <div class="arc-card" data-step="4" onclick="showArcStep(4)">
+        <span class="arc-step-num">4</span>
+        <span class="arc-icon">🦴</span>
+        <span class="arc-name">Spinal Cord</span>
+      </div>
+      <div class="arc-card" data-step="5" onclick="showArcStep(5)">
+        <span class="arc-step-num">5</span>
+        <span class="arc-icon">⬅️</span>
+        <span class="arc-name">Motor Neuron</span>
+      </div>
+      <div class="arc-card" data-step="6" onclick="showArcStep(6)">
+        <span class="arc-step-num">6</span>
+        <span class="arc-icon">✊</span>
+        <span class="arc-name">Effector (Muscle)</span>
+      </div>
+    </div>
+    <div class="arc-detail" id="arcDetail">👆 Click "1. Stimulus" to begin walking through the pathway.</div>
+
+    <div class="divider"></div>
+
+    <p style="font-size:0.88rem; font-weight:700; color:var(--sky); margin-bottom:0.8rem;">🧩 Now you try — drag the steps into the correct order:</p>
+    <div class="order-zone">
+      <p style="font-size:0.8rem; color:var(--muted); margin-bottom:0.8rem;">Pool (unordered):</p>
+      <div class="order-pool" id="orderPool"></div>
+      <p style="font-size:0.8rem; color:var(--muted); margin-bottom:0.8rem;">Your sequence (drop here, in order):</p>
+      <div class="order-slots" id="orderSlots"></div>
+      <div class="action-row">
+        <button class="btn btn-coral" onclick="checkOrder()">✅ Check My Order</button>
+        <button class="btn btn-ghost" onclick="resetOrder()">↺ Reset</button>
+      </div>
+      <div class="order-feedback" id="orderFeedback"></div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 3: RULER DROP EXPERIMENT ══ -->
+  <div class="section" id="sec-3">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-lav">4</div>
+      <span class="eyebrow-label">Investigation</span>
+    </div>
+    <h2>📏 The Ruler Drop Experiment</h2>
+    <p class="lead">Time to test your own reflex arc for real, with a partner. <strong>Read the instructions below, then go run the experiment</strong> — come back here to log your results.</p>
+
+    <div class="demo-zone">
+      <h3>🧪 How to run it</h3>
+      <p class="hint">You'll need: 1 ruler (30 cm, marked in mm) + 1 partner</p>
+      <ol style="font-size:0.88rem; line-height:1.9; color:#3a4a5a; padding-left:1.4rem; margin-bottom:1rem;">
+        <li><strong>Catcher:</strong> Rest your thumb and finger open around the bottom of the ruler (the 0 mm end) — but don't touch it.</li>
+        <li><strong>Dropper:</strong> Hold the ruler from the top, vertically, so the bottom of the ruler sits right between the catcher's open fingers.</li>
+        <li><strong>Dropper:</strong> Without counting down or giving any warning, let go of the ruler.</li>
+        <li><strong>Catcher:</strong> Grab the ruler as fast as you possibly can, using only your finger and thumb — don't move your whole hand down to meet it!</li>
+        <li><strong>Both:</strong> Read the number (in mm) lined up with the TOP of the catcher's thumb. That's how far the ruler fell before being caught — a smaller number means a faster reaction!</li>
+        <li>Repeat <strong>5 times in silence</strong> and record your "Quiet" trials.</li>
+        <li>Then your teacher will play music — repeat <strong>5 more times while the music plays</strong> and record your "Music" trials.</li>
+        <li>Switch roles so both partners get a turn catching for both conditions.</li>
+      </ol>
+      <div class="fun-fact-box">
+        💡 <strong>Why mm and not seconds?</strong> A falling ruler accelerates due to gravity, so the distance it falls tells us how long it fell — scientists can convert this into an actual reaction time using a simple drop-distance formula. We won't do that maths today, but just know: every measurement in mm is secretly also a measurement in milliseconds!
+      </div>
+    </div>
+
+    <div class="react-zone">
+      <h3>🖱️ Optional: Try a screen version first</h3>
+      <p class="hint">Click "Arm" below, then click the stage the instant it turns green. This won't replace the real ruler test — but it's a fun warm-up for the idea of waiting for a signal.</p>
+      <div class="react-stage" id="reactStage" onclick="handleReactClick()">
+        <div>
+          <div class="react-emoji" id="reactEmoji">👀</div>
+          <div class="react-msg" id="reactMsg">Click "Arm" to start</div>
+          <div class="react-sub" id="reactSub">Then wait for green...</div>
+        </div>
+      </div>
+      <div class="action-row" style="margin-top:1rem;">
+        <button class="btn btn-mint" onclick="armReact()">🟡 Arm</button>
+        <button class="btn btn-ghost" onclick="resetReact()">↺ Reset</button>
+      </div>
+    </div>
+
+    <div class="demo-zone">
+      <h3>📝 Log your real ruler-drop results (in mm)</h3>
+      <p class="hint">Run 5 trials in silence, then 5 more trials while your teacher plays music — does sound change your reaction time?</p>
+      <table class="trial-table">
+        <thead><tr><th>Condition</th><th>Trial 1</th><th>Trial 2</th><th>Trial 3</th><th>Trial 4</th><th>Trial 5</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:700; color:var(--sky); font-size:0.78rem;">🤫 Quiet</td>
+            <td><input type="number" id="trial1" min="0" max="300" oninput="calcAverage()" placeholder="mm"></td>
+            <td><input type="number" id="trial2" min="0" max="300" oninput="calcAverage()" placeholder="mm"></td>
+            <td><input type="number" id="trial3" min="0" max="300" oninput="calcAverage()" placeholder="mm"></td>
+            <td><input type="number" id="trial4" min="0" max="300" oninput="calcAverage()" placeholder="mm"></td>
+            <td><input type="number" id="trial5" min="0" max="300" oninput="calcAverage()" placeholder="mm"></td>
+          </tr>
+          <tr>
+            <td style="font-weight:700; color:var(--lavender); font-size:0.78rem;">🎵 Music</td>
+            <td><input type="number" id="mtrial1" min="0" max="300" oninput="calcAverage()" placeholder="mm"></td>
+            <td><input type="number" id="mtrial2" min="0" max="300" oninput="calcAverage()" placeholder="mm"></td>
+            <td><input type="number" id="mtrial3" min="0" max="300" oninput="calcAverage()" placeholder="mm"></td>
+            <td><input type="number" id="mtrial4" min="0" max="300" oninput="calcAverage()" placeholder="mm"></td>
+            <td><input type="number" id="mtrial5" min="0" max="300" oninput="calcAverage()" placeholder="mm"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="avg-banner">
+        <span class="avg-label">📊 Quiet average:</span>
+        <span class="avg-value" id="avgDisplay">— mm</span>
+      </div>
+      <div class="avg-banner" style="background:var(--lavender-pale); border-color:#d0caef;">
+        <span class="avg-label" style="color:var(--lavender);">📊 Music average:</span>
+        <span class="avg-value" id="avgDisplayMusic" style="color:var(--lavender);">— mm</span>
+      </div>
+    </div>
+
+    <div class="predict-box">
+      <h4>📝 Write about your results:</h4>
+      <textarea id="ruler-reflection" placeholder="My quiet average was... My music average was... Music made my reaction time... I think this happened because..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 4: REAL LIFE ══ -->
+  <div class="section" id="sec-4">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-coral">5</div>
+      <span class="eyebrow-label">Why This Matters</span>
+    </div>
+    <h2>🌍 Reflexes in the real world</h2>
+    <p class="lead">The nervous system isn't just a science-class idea — it's working every second of your life, often before you even notice.</p>
+
+    <div class="world-grid">
+      <div class="world-card coral-bg">
+        <div class="wc-icon">🏎️</div>
+        <h4>Sports</h4>
+        <p>A goalkeeper diving for a shot, or a sprinter exploding off the blocks — both rely on trained reflex speed. Athletes practice reactions just like muscles, to shave milliseconds off their response time.</p>
+      </div>
+      <div class="world-card mint-bg">
+        <div class="wc-icon">🚗</div>
+        <h4>Driving Safety</h4>
+        <p>Reaction time is exactly why following distance matters. A driver going 60 km/h travels several metres in the time it takes their reflex arc to respond to a brake light.</p>
+      </div>
+      <div class="world-card lav-bg">
+        <div class="wc-icon">🩺</div>
+        <h4>Doctors & Reflex Tests</h4>
+        <p>That little hammer-tap-on-the-knee test? Doctors check reflexes like the knee-jerk to make sure your spinal cord and nervous system are working correctly — no brain required for that one!</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <p style="font-size:0.88rem; font-weight:700; color:var(--sky); margin-bottom:0.8rem;">🤔 Compare: Reflex vs. Decision</p>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h4>⚡ Reflex Action</h4>
+        <p style="font-size:0.82rem; color:var(--muted); margin-bottom:0.6rem;">Automatic, doesn't need conscious thought, often skips the brain (just spinal cord).</p>
+        <textarea id="reflex-example" placeholder="An example of a reflex action is..."></textarea>
+      </div>
+      <div class="compare-card">
+        <h4>🧠 Conscious Decision</h4>
+        <p style="font-size:0.82rem; color:var(--muted); margin-bottom:0.6rem;">Involves the brain weighing choices — slower, but more flexible.</p>
+        <textarea id="decision-example" placeholder="An example of a conscious decision is..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 5: REFLECT ══ -->
+  <div class="section" id="sec-5">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-coral">6</div>
+      <span class="eyebrow-label">Synthesis & Wonder</span>
+    </div>
+    <h2>💭 Let's think it through</h2>
+    <p class="lead">You're starting 6th grade as a scientist who has already run a real experiment on your own body. Take a few minutes with these questions — there's no single right answer.</p>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q1 /</span> What surprised you most about your reflex arc or your ruler-drop results?</div>
+      <textarea placeholder="I was surprised when... I didn't expect... The thing that made me go 'whoa, really?' was..."></textarea>
+    </div>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q2 /</span> Why does the reflex arc skip the brain — and why might that be useful?</div>
+      <textarea placeholder="The reflex arc skips the brain because... This is useful because if we waited for the brain, then..."></textarea>
+    </div>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q3 /</span> How would you explain the reflex arc to a 5th grader using only the words "stimulus," "neuron," and "muscle"?</div>
+      <textarea placeholder="I'd say: imagine something happens, like..."></textarea>
+    </div>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q4 /</span> What question does today's lesson leave you wondering about?</div>
+      <textarea placeholder="I'm still wondering... I want to know more about... What would happen if..."></textarea>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="congrats">
+      <div class="trophy">🎉</div>
+      <h2>You're thinking like a neuroscientist!</h2>
+      <p>Today you explored the cells, pathways, and speed of your own nervous system — and you start 6th grade already knowing how to design and run a real experiment. Welcome to secondary science!</p>
+      <div class="summary-chips">
+        <span class="summary-chip">Neuron: dendrite → axon → terminal</span>
+        <span class="summary-chip">Sensory → Interneuron → Motor</span>
+        <span class="summary-chip">Reflex arc skips the brain</span>
+        <span class="summary-chip">Smaller mm = faster reflex</span>
+        <span class="summary-chip">Repeated trials → reliable average</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 6: SUMMARY & SUBMIT ══ -->
+  <div class="section" id="sec-6">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-mint">7</div>
+      <span class="eyebrow-label">Your Completed Work</span>
+    </div>
+    <h2>📤 Ready to Share</h2>
+    <p class="lead">Here's everything you worked on today. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> directly to your teacher.</p>
+
+    <!-- STUDENT INFO HEADER -->
+    <div class="summary-section" style="background:var(--sky); color:white; border-color:var(--sky);">
+      <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; align-items:center;">
+        <div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; opacity:0.6; margin-bottom:0.3rem;">STUDENT</div>
+          <div style="font-family:'Fredoka One',cursive; font-size:1.4rem;" id="summaryName">—</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; opacity:0.6; margin-bottom:0.3rem;">LESSON</div>
+          <div style="font-family:'Fredoka One',cursive; font-size:1rem;">Reflex Lab ⚡</div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.72rem; opacity:0.6;" id="summaryDate"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPENING GUESS -->
+    <div class="summary-section">
+      <h3>⚡ Section 1 — Opening Prediction</h3>
+      <div class="sum-label">Drop-distance guess</div>
+      <div class="summary-answer" id="sum-guess"></div>
+    </div>
+
+    <!-- RULER DROP DATA -->
+    <div class="summary-section">
+      <h3>📏 Section 4 — Ruler Drop Results</h3>
+      <div class="sum-label">🤫 Quiet — 5 trials (mm)</div>
+      <div id="sum-trials"></div>
+      <div class="sum-label">Quiet average (mm)</div>
+      <div class="summary-answer" id="sum-avg"></div>
+      <div class="sum-label">🎵 Music — 5 trials (mm)</div>
+      <div id="sum-mtrials"></div>
+      <div class="sum-label">Music average (mm)</div>
+      <div class="summary-answer" id="sum-mavg"></div>
+      <div class="sum-label">Written reflection</div>
+      <div class="summary-answer" id="sum-ruler-ref"></div>
+    </div>
+
+
+    <!-- REAL LIFE COMPARE -->
+    <div class="summary-section">
+      <h3>🌍 Section 5 — Reflex vs. Decision</h3>
+      <div class="sum-label">Reflex action example</div>
+      <div class="summary-answer" id="sum-reflex-ex"></div>
+      <div class="sum-label">Conscious decision example</div>
+      <div class="summary-answer" id="sum-decision-ex"></div>
+    </div>
+
+    <!-- REFLECTIONS -->
+    <div class="summary-section">
+      <h3>💭 Section 6 — Reflection Questions</h3>
+      <div class="sum-label">Q1 — What surprised you most?</div>
+      <div class="summary-answer" id="sum-q1"></div>
+      <div class="sum-label">Q2 — Why skip the brain?</div>
+      <div class="summary-answer" id="sum-q2"></div>
+      <div class="sum-label">Q3 — Explain to a 5th grader</div>
+      <div class="summary-answer" id="sum-q3"></div>
+      <div class="sum-label">Q4 — What are you still wondering about?</div>
+      <div class="summary-answer" id="sum-q4"></div>
+    </div>
+
+    <!-- SHARE BUTTONS -->
+    <div class="share-buttons">
+      <button class="share-btn copy" onclick="copyResults()">📋 Copy My Results</button>
+      <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+      <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+    <div class="copy-confirm" id="copyConfirm"></div>
+
+    <div style="margin-top:1.5rem; background:var(--sun-pale); border:2px dashed var(--sun); border-radius:12px; padding:1.2rem 1.4rem;">
+      <p style="font-family:'Fredoka One',cursive; font-size:1rem; color:#b8860b; margin-bottom:0.8rem;">📋 How to submit your work:</p>
+      <p style="font-size:0.82rem; color:#b8860b; font-family:'DM Mono',monospace; line-height:2;">
+        <strong>📋 Copy My Results</strong> — Copies all your answers to your clipboard. Then open Google Classroom, click your assignment, paste into the comment or document box, and submit.<br>
+        <strong>📧 Email to Teacher</strong> — Opens your email app with your answers already typed in the body. Just add your teacher's address and hit send.<br>
+        <strong>🖨️ Print / Save PDF</strong> — Opens your browser's print window. To save as a PDF on a Mac, click the dropdown at the bottom left and choose "Save as PDF". On Windows, choose "Microsoft Print to PDF". Then upload the PDF to your assignment.
+      </p>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div class="nav-row">
+    <button class="btn-prev" id="prevBtn" onclick="navigate(-1)" disabled>← Back</button>
+    <button class="btn-next" id="nextBtn" onclick="navigate(1)">Next <span>→</span></button>
+  </div>
+
+</div><!-- /sheet -->
+
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+
+<script>
+// ── NAVIGATION ──
+let currentSection = 0;
+const totalSections = 7;
+
+function goTo(n) {
+  document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===n));
+  document.querySelectorAll('.prog-step').forEach((p,i) => {
+    p.classList.toggle('active', i===n);
+    if (i < n) p.classList.add('done');
+    else p.classList.remove('done');
+  });
+  currentSection = n;
+  document.getElementById('prevBtn').disabled = n === 0;
+  if (n === totalSections - 1) {
+    document.getElementById('nextBtn').textContent = '✓ Complete!';
+    document.getElementById('nextBtn').disabled = true;
+    buildSummary();
+  } else {
+    document.getElementById('nextBtn').innerHTML = 'Next <span>→</span>';
+    document.getElementById('nextBtn').disabled = false;
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function navigate(dir) { goTo(Math.min(Math.max(currentSection + dir, 0), totalSections-1)); }
+
+// ── OPENING GUESS ──
+function updateDropGuess(v) {
+  document.getElementById('dropGuessLabel').textContent = `My guess: ${v} mm`;
+  const notes = v < 40 ? 'Wow, lightning fast!' : v < 90 ? 'Pretty quick reflexes!' : v < 150 ? 'A typical human guess!' : v < 200 ? 'That would be a bit slow...' : 'That would mean a very slow reaction!';
+  document.getElementById('dropGuessNote').textContent = notes;
+}
+
+// ── NEURON DIAGRAM ──
+const neuronInfo = {
+  dendrite: '<strong>Dendrites</strong> — these branch-like extensions receive incoming signals from other neurons (or from sensory receptors) and pass them toward the cell body.',
+  soma: '<strong>Cell Body (Soma)</strong> — contains the nucleus and keeps the neuron alive. It collects signals from the dendrites and decides whether to pass them on.',
+  axon: '<strong>Axon</strong> — a long fiber that carries the electrical signal away from the cell body, sometimes over a metre long in the human body (think: neurons running down your leg!).',
+  myelin: '<strong>Myelin Sheath</strong> — a fatty insulating layer wrapped around the axon. It dramatically speeds up signal transmission, like insulation on an electrical wire.',
+  terminal: '<strong>Axon Terminals</strong> — the branching tips at the end of the axon that release chemical messengers (neurotransmitters) to pass the signal to the next cell.',
+  synapse: '<strong>Synapse</strong> — the tiny gap between one neuron\'s axon terminal and the next neuron\'s dendrite. Signals cross this gap chemically, not electrically.'
+};
+function revealNeuron(part) {
+  document.getElementById('neuronLabel').innerHTML = neuronInfo[part] || '';
+}
+
+// ── CONCEPT REVEALS (neuron types) ──
+const conceptMap = { sensory:'cr-sensory', inter:'cr-inter', motor:'cr-motor' };
+let openConcept = null;
+function revealConcept(key) {
+  if (openConcept) document.getElementById(conceptMap[openConcept]).classList.remove('show');
+  if (openConcept === key) { openConcept = null; return; }
+  document.getElementById(conceptMap[key]).classList.add('show');
+  openConcept = key;
+}
+
+// ── REFLEX ARC STEPPER ──
+const arcSteps = {
+  1: '<strong>1. Stimulus</strong> — something happens in the environment that can be detected, like a ruler suddenly falling, a hot surface, or a bright light.',
+  2: '<strong>2. Receptor</strong> — specialized cells (often in your skin, eyes, or ears) detect the stimulus and convert it into an electrical signal.',
+  3: '<strong>3. Sensory Neuron</strong> — carries that signal from the receptor toward the spinal cord and brain.',
+  4: '<strong>4. Spinal Cord (Relay/Interneuron)</strong> — the signal arrives at the spinal cord, where an interneuron can immediately relay it to a motor neuron — often without waiting for the brain to "decide" anything.',
+  5: '<strong>5. Motor Neuron</strong> — carries the "act now!" signal from the spinal cord out to the muscle.',
+  6: '<strong>6. Effector (Muscle)</strong> — the muscle receives the signal and contracts, producing the action — your fingers snapping shut on the ruler!'
+};
+function showArcStep(n) {
+  document.querySelectorAll('.arc-card').forEach(c => c.classList.toggle('active', parseInt(c.dataset.step) === n));
+  document.getElementById('arcDetail').innerHTML = arcSteps[n];
+}
+
+// ── DRAG-TO-ORDER REFLEX ARC ──
+const arcItems = [
+  { id:'stimulus', label:'📏 Stimulus' },
+  { id:'receptor', label:'👁️ Receptor' },
+  { id:'sensory',  label:'➡️ Sensory Neuron' },
+  { id:'spinal',   label:'🦴 Spinal Cord' },
+  { id:'motor',    label:'⬅️ Motor Neuron' },
+  { id:'effector', label:'✊ Effector (Muscle)' }
+];
+let draggedId = null;
+
+function shuffleArr(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function buildOrderUI() {
+  const pool = document.getElementById('orderPool');
+  const slots = document.getElementById('orderSlots');
+  pool.innerHTML = '';
+  slots.innerHTML = '';
+  document.getElementById('orderFeedback').textContent = '';
+  document.getElementById('orderFeedback').style.color = '';
+  const shuffled = shuffleArr(arcItems);
+  shuffled.forEach(item => {
+    const chip = document.createElement('span');
+    chip.className = 'order-chip';
+    chip.draggable = true;
+    chip.dataset.id = item.id;
+    chip.textContent = item.label;
+    chip.addEventListener('dragstart', () => { draggedId = item.id; });
+    pool.appendChild(chip);
+  });
+  [pool, slots].forEach(zone => {
+    zone.addEventListener('dragover', e => e.preventDefault());
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      if (!draggedId) return;
+      const chip = document.querySelector(`.order-chip[data-id="${draggedId}"]`);
+      if (chip) {
+        zone.appendChild(chip);
+        chip.classList.toggle('placed', zone === slots);
+      }
+      draggedId = null;
+    });
+  });
+}
+function checkOrder() {
+  const slots = document.getElementById('orderSlots');
+  const chips = Array.from(slots.querySelectorAll('.order-chip'));
+  const fb = document.getElementById('orderFeedback');
+  if (chips.length !== arcItems.length) {
+    fb.style.color = 'var(--coral)';
+    fb.textContent = `⚠️ Drag all ${arcItems.length} steps into the sequence box first (you have ${chips.length}/${arcItems.length}).`;
+    return;
+  }
+  const order = chips.map(c => c.dataset.id);
+  const correct = arcItems.map(i => i.id);
+  const isCorrect = order.every((id, i) => id === correct[i]);
+  if (isCorrect) {
+    fb.style.color = 'var(--mint)';
+    fb.textContent = '🎉 Perfect! That\'s the exact path a reflex signal travels.';
+  } else {
+    fb.style.color = 'var(--coral)';
+    fb.textContent = '🤔 Not quite the right order yet — think about where the signal starts (stimulus) and ends (muscle), then try again.';
+  }
+}
+function resetOrder() { buildOrderUI(); }
+buildOrderUI();
+
+// ── SCREEN REACTION GAME ──
+let reactState = 'idle'; // idle, armed, go, caught
+let reactTimeout = null;
+let reactStartTime = 0;
+
+function armReact() {
+  clearTimeout(reactTimeout);
+  const stage = document.getElementById('reactStage');
+  stage.className = 'react-stage armed';
+  document.getElementById('reactEmoji').textContent = '⏳';
+  document.getElementById('reactMsg').textContent = 'Wait for it...';
+  document.getElementById('reactSub').textContent = 'Don\'t click yet!';
+  reactState = 'armed';
+  const delay = 1200 + Math.random() * 2500;
+  reactTimeout = setTimeout(() => {
+    stage.className = 'react-stage go';
+    document.getElementById('reactEmoji').textContent = '🟢';
+    document.getElementById('reactMsg').textContent = 'CLICK NOW!';
+    document.getElementById('reactSub').textContent = '';
+    reactState = 'go';
+    reactStartTime = performance.now();
+  }, delay);
+}
+function handleReactClick() {
+  const stage = document.getElementById('reactStage');
+  if (reactState === 'go') {
+    const ms = Math.round(performance.now() - reactStartTime);
+    stage.className = 'react-stage caught';
+    document.getElementById('reactEmoji').textContent = '⚡';
+    document.getElementById('reactMsg').textContent = `${ms} ms!`;
+    document.getElementById('reactSub').textContent = ms < 250 ? 'Lightning reflexes!' : ms < 400 ? 'Solid reaction time!' : 'Nice — try again to beat it!';
+    reactState = 'idle';
+  } else if (reactState === 'armed') {
+    clearTimeout(reactTimeout);
+    stage.className = 'react-stage';
+    document.getElementById('reactEmoji').textContent = '😅';
+    document.getElementById('reactMsg').textContent = 'Too early!';
+    document.getElementById('reactSub').textContent = 'Wait for green next time. Click "Arm" to retry.';
+    reactState = 'idle';
+  }
+}
+function resetReact() {
+  clearTimeout(reactTimeout);
+  reactState = 'idle';
+  const stage = document.getElementById('reactStage');
+  stage.className = 'react-stage';
+  document.getElementById('reactEmoji').textContent = '👀';
+  document.getElementById('reactMsg').textContent = 'Click "Arm" to start';
+  document.getElementById('reactSub').textContent = 'Then wait for green...';
+}
+
+// ── RULER DROP DATA ──
+function calcAverage() {
+  const vals = [1,2,3,4,5].map(i => {
+    const el = document.getElementById('trial'+i);
+    const v = parseFloat(el.value);
+    return isNaN(v) ? null : v;
+  }).filter(v => v !== null);
+  const display = document.getElementById('avgDisplay');
+  if (vals.length === 0) { display.textContent = '— mm'; }
+  else {
+    const avg = vals.reduce((a,b) => a+b, 0) / vals.length;
+    display.textContent = `${avg.toFixed(1)} mm (from ${vals.length} trial${vals.length>1?'s':''})`;
+  }
+
+  const mvals = [1,2,3,4,5].map(i => {
+    const el = document.getElementById('mtrial'+i);
+    const v = parseFloat(el.value);
+    return isNaN(v) ? null : v;
+  }).filter(v => v !== null);
+  const mdisplay = document.getElementById('avgDisplayMusic');
+  if (mvals.length === 0) { mdisplay.textContent = '— mm'; }
+  else {
+    const mavg = mvals.reduce((a,b) => a+b, 0) / mvals.length;
+    mdisplay.textContent = `${mavg.toFixed(1)} mm (from ${mvals.length} trial${mvals.length>1?'s':''})`;
+  }
+}
+
+
+// ── SUMMARY ──
+function fill(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = text && text.toString().trim();
+  el.textContent = val || 'Not answered';
+  el.classList.toggle('empty', !val);
+}
+
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  const guessVal = document.getElementById('dropGuess').value;
+  fill('sum-guess', `My guess: ${guessVal} mm before catching the ruler`);
+
+  const trialVals = [1,2,3,4,5].map(i => document.getElementById('trial'+i).value || '—');
+  document.getElementById('sum-trials').innerHTML = trialVals.map((v,i) =>
+    `<span class="s-chip">T${i+1}: ${v === '—' ? '—' : v+' mm'}</span>`
+  ).join('');
+  fill('sum-avg', document.getElementById('avgDisplay').textContent);
+
+  const mtrialVals = [1,2,3,4,5].map(i => document.getElementById('mtrial'+i).value || '—');
+  document.getElementById('sum-mtrials').innerHTML = mtrialVals.map((v,i) =>
+    `<span class="s-chip lav">T${i+1}: ${v === '—' ? '—' : v+' mm'}</span>`
+  ).join('');
+  fill('sum-mavg', document.getElementById('avgDisplayMusic').textContent);
+
+  fill('sum-ruler-ref', document.getElementById('ruler-reflection').value);
+
+  fill('sum-reflex-ex', document.getElementById('reflex-example').value);
+  fill('sum-decision-ex', document.getElementById('decision-example').value);
+
+  const refTextareas = document.querySelectorAll('#sec-5 .reflection-card textarea');
+  ['sum-q1','sum-q2','sum-q3','sum-q4'].forEach((id, i) => {
+    fill(id, refTextareas[i] ? refTextareas[i].value : '');
+  });
+}
+
+function buildPlainText() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const date = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const guessVal = document.getElementById('dropGuess').value;
+  const trialVals = [1,2,3,4,5].map(i => document.getElementById('trial'+i).value || 'Not recorded');
+  const trialsText = trialVals.map((v,i) => `  • Trial ${i+1}: ${v}${v!=='Not recorded' ? ' mm' : ''}`).join('\n');
+  const mtrialVals = [1,2,3,4,5].map(i => document.getElementById('mtrial'+i).value || 'Not recorded');
+  const mtrialsText = mtrialVals.map((v,i) => `  • Trial ${i+1}: ${v}${v!=='Not recorded' ? ' mm' : ''}`).join('\n');
+
+  const refTextareas = document.querySelectorAll('#sec-5 .reflection-card textarea');
+  const qs = ['Not answered','Not answered','Not answered','Not answered'];
+  refTextareas.forEach((ta, i) => { if (ta.value.trim()) qs[i] = ta.value.trim(); });
+
+  return `
+REFLEX LAB ⚡ — STUDENT SUBMISSION
+=============================================
+Student: ${name}
+Date: ${date}
+Lesson: Transition Day · Reflex Lab (Nerves, Reflex Arc & Ruler Drop)
+
+── SECTION 1: OPENING PREDICTION ──
+Drop-distance guess: ${guessVal} mm
+
+── SECTION 4: RULER DROP RESULTS — QUIET ──
+${trialsText}
+
+Quiet average: ${document.getElementById('avgDisplay').textContent}
+
+── SECTION 4: RULER DROP RESULTS — WITH MUSIC ──
+${mtrialsText}
+
+Music average: ${document.getElementById('avgDisplayMusic').textContent}
+
+Reflection:
+${document.getElementById('ruler-reflection').value.trim() || 'Not answered'}
+
+── SECTION 5: REFLEX VS. DECISION ──
+Reflex action example:
+${document.getElementById('reflex-example').value.trim() || 'Not answered'}
+
+Conscious decision example:
+${document.getElementById('decision-example').value.trim() || 'Not answered'}
+
+── SECTION 6: REFLECTIONS ──
+Q1 — What surprised you most?
+${qs[0]}
+
+Q2 — Why skip the brain?
+${qs[1]}
+
+Q3 — Explain to a 5th grader
+${qs[2]}
+
+Q4 — What are you still wondering about?
+${qs[3]}
+
+=============================================
+Submitted via Reflex Lab · Interactive Digital Lesson
+`.trim();
+}
+
+function copyResults() {
+  const text = buildPlainText();
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Now paste into Google Classroom or your assignment.';
+    setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '⚠️ Could not copy automatically — try selecting the text above manually.';
+  });
+}
+
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const subject = encodeURIComponent(`Reflex Lab — ${name}`);
+  const body = encodeURIComponent(buildPlainText());
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+</script>
+</body>
+</html>
