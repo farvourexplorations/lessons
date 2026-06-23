@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genetics &amp; Heredity — IB DP Biology B1.1</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--forest:#1a3d2b;--forest-mid:#2d6a4f;--coral:#e8603c;--coral-pale:#fdf0ec;--mint:#3aaf85;--mint-pale:#e8f8f2;--gold:#c9962a;--gold-pale:#fef9e7;--lavender:#7c6fcd;--lav-pale:#f0eefb;--paper:#fffef9;--ink:#1a2332;--muted:#7a8899;--border:#e0e4ea}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:linear-gradient(160deg,#0d2318 0%,#1a3d2b 45%,#2d6a4f 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--ink);overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(1.5px 1.5px at 8% 12%,rgba(144,238,144,.4) 0%,transparent 100%),radial-gradient(1px 1px at 22% 38%,rgba(255,255,255,.28) 0%,transparent 100%),radial-gradient(2px 2px at 41% 6%,rgba(144,238,144,.32) 0%,transparent 100%),radial-gradient(1px 1px at 60% 24%,rgba(255,255,255,.22) 0%,transparent 100%),radial-gradient(1.5px 1.5px at 77% 9%,rgba(144,238,144,.38) 0%,transparent 100%);pointer-events:none;z-index:0}
+.hero{position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 2rem;color:white}
+.hero-badge{display:inline-block;background:var(--gold);color:var(--forest);font-family:'Fredoka One',cursive;font-size:.85rem;letter-spacing:.05em;padding:.35rem 1.2rem;border-radius:20px;margin-bottom:1.2rem;box-shadow:0 2px 12px rgba(201,150,42,.45)}
+.hero h1{font-family:'Fredoka One',cursive;font-size:clamp(2rem,6vw,3.6rem);line-height:1.1;margin-bottom:.8rem;text-shadow:0 2px 20px rgba(0,0,0,.35)}
+.hero h1 .accent{color:var(--gold)}
+.hero p.intro{font-size:1.05rem;line-height:1.7;opacity:.88;max-width:580px;margin:0 auto 2rem}
+.name-bar{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);border-radius:12px;padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;max-width:420px;margin:0 auto 1rem}
+.name-bar label{font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;font-family:'DM Mono',monospace}
+.name-bar input{flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.4rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:white;outline:none}
+.name-bar input::placeholder{color:rgba(255,255,255,.4);font-weight:400}
+.progress-wrap{display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem}
+.prog-step{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);border-radius:20px;padding:.35rem .9rem;font-size:.75rem;font-weight:700;color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace;display:inline-block}
+.prog-step:hover,.prog-step.done{background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.35)}
+.prog-step.active{background:var(--gold);color:var(--forest);border-color:var(--gold);box-shadow:0 2px 12px rgba(201,150,42,.45)}
+.sheet{position:relative;z-index:1;background:var(--paper);border-radius:24px 24px 0 0;margin-top:1.5rem;padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.25)}
+.section{padding:3rem 2rem 0;max-width:820px;margin:0 auto;display:none}
+.section.active{display:block}
+.section-eyebrow{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem}
+.eyebrow-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1rem;color:white;flex-shrink:0}
+.num-coral{background:var(--coral)}.num-mint{background:var(--mint)}.num-gold{background:var(--gold);color:var(--forest)}.num-lav{background:var(--lavender)}.num-forest{background:var(--forest-mid)}
+.eyebrow-label{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace}
+.section h2{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,3.5vw,2.1rem);color:var(--forest);margin-bottom:.6rem;line-height:1.2}
+.section .lead{font-size:1rem;line-height:1.75;color:#3a4a5a;margin-bottom:1.8rem}
+.section .lead strong{color:var(--coral)}
+.wonder-box{background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);color:white;border-radius:16px;padding:1.8rem 2rem;margin-bottom:1.8rem;position:relative;overflow:hidden}
+.wonder-box::after{content:'\1F914';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3}
+.wonder-box p{font-size:1rem;line-height:1.7;font-style:italic;opacity:.95;max-width:88%}
+.wonder-box strong{color:var(--gold);font-style:normal}
+.wonder-box.gold-box{background:linear-gradient(135deg,#8a6a1a 0%,#b8860b 100%)}
+.wonder-box.mint-box{background:linear-gradient(135deg,#1b7a58 0%,#2d9970 100%)}
+.wonder-box.lav-box{background:linear-gradient(135deg,#4a3a8a 0%,#6a5acd 100%)}
+.wonder-box.coral-box{background:linear-gradient(135deg,#a03020 0%,#c8502a 100%)}
+.wonder-box.teal-box{background:linear-gradient(135deg,#0d5c6e 0%,#0e8a8a 100%)}
+.predict-box{background:var(--gold-pale);border:2px dashed var(--gold);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem}
+.predict-box h4{font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem}
+.predict-box textarea,.reflect-box textarea,.pp-textarea{width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:64px;background:white;color:var(--ink);outline:none;transition:border-color .2s}
+.predict-box textarea:focus{border-color:var(--gold)}
+.reflect-box{background:var(--mint-pale);border:2px dashed var(--mint);border-radius:14px;padding:1.4rem 1.6rem;margin-top:1.5rem}
+.reflect-box h4{font-family:'Fredoka One',cursive;font-size:1rem;color:#1b7a58;margin-bottom:.8rem}
+.demo-zone{background:white;border:2px solid var(--border);border-radius:16px;padding:1.6rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.demo-zone h3{font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.3rem}
+.demo-zone .hint{font-size:.76rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:1rem}
+.chip-row{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem}
+.chip{padding:.45rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;border:2px solid transparent}
+.chip.coral{background:var(--coral-pale);color:var(--coral);border-color:#f8c5b8}.chip.mint{background:var(--mint-pale);color:var(--mint);border-color:#b8ebd8}.chip.gold{background:var(--gold-pale);color:#8a6a1a;border-color:#f8e0a0}.chip.lav{background:var(--lav-pale);color:var(--lavender);border-color:#d0caef}.chip.forest{background:#d4eadd;color:var(--forest-mid);border-color:#a8d5b8}
+.chip:hover{transform:scale(1.05)}
+.concept-reveal{background:var(--paper);border-left:4px solid var(--coral);border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;margin-top:.5rem;display:none;animation:fadeIn .3s ease}
+.concept-reveal.show{display:block}
+.concept-reveal.mint-border{border-color:var(--mint)}.concept-reveal.gold-border{border-color:var(--gold)}.concept-reveal.lav-border{border-color:var(--lavender)}.concept-reveal.forest-border{border-color:var(--forest-mid)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0}
+.info-card{background:white;border:2px solid var(--border);border-radius:14px;padding:1.1rem;text-align:center;cursor:pointer;transition:all .2s}
+.info-card:hover,.info-card.active{border-color:var(--forest-mid);transform:translateY(-2px);box-shadow:0 4px 14px rgba(45,106,79,.18)}
+.info-card.active{background:#d4eadd}
+.info-card .ic-icon{font-size:2rem;margin-bottom:.4rem}
+.info-card .ic-title{font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--forest);margin-bottom:.2rem}
+.info-card .ic-sub{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.info-panel{background:#d4eadd;border-left:4px solid var(--forest-mid);border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;display:none;animation:fadeIn .3s ease;margin-bottom:1rem}
+.info-panel.show{display:block}
+.info-panel h4{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.5rem}
+.info-panel p{font-size:.88rem;line-height:1.7;color:#2a3a2a}
+.info-panel .eg{background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;font-size:.82rem;font-family:'DM Mono',monospace;border:1.5px solid rgba(45,106,79,.2)}
+.vocab-table{width:100%;border-collapse:collapse;margin:1rem 0 1.5rem}
+.vocab-table th{background:var(--forest);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;padding:.65rem 1rem;text-align:left}
+.vocab-table td{padding:.6rem 1rem;font-size:.83rem;line-height:1.5;border-bottom:1px solid var(--border)}
+.vocab-table tr:nth-child(even) td{background:#f5f7fa}
+.vocab-table tr:hover td{background:#d4eadd}
+.vocab-table td:first-child{font-weight:800;color:var(--forest-mid)}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1rem 0}
+.match-item{padding:.75rem 1rem;border-radius:10px;border:2px solid var(--border);cursor:pointer;font-size:.84rem;font-weight:700;transition:all .2s;background:white;text-align:center;color:var(--ink)}
+.match-item:hover{border-color:var(--forest-mid);background:#f0f7f3}
+.match-item.selected{border-color:var(--lavender);background:var(--lav-pale);color:var(--lavender)}
+.match-item.matched{border-color:var(--mint);background:var(--mint-pale);color:#1b7a58;cursor:default}
+.match-item.wrong{border-color:var(--coral);background:var(--coral-pale);color:var(--coral);animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.pp-card{background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+.pp-label{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--forest-mid);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem}
+.pp-q{font-size:.93rem;font-weight:700;color:var(--ink);line-height:1.5;margin-bottom:.8rem}
+.pp-answer{background:#d4eadd;border-left:4px solid var(--forest-mid);border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.85rem;line-height:1.7;margin-top:.8rem;display:none;animation:fadeIn .3s ease}
+.pp-answer.show{display:block}
+.pp-answer strong{color:var(--forest)}
+.pp-answer ul{margin:.4rem 0 0 1rem}
+.pp-answer li{margin-bottom:.3rem}
+.quiz-card{background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.quiz-q{font-weight:700;font-size:.93rem;color:var(--ink);margin-bottom:1rem;line-height:1.5}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem}
+.quiz-opt{padding:.6rem 1rem;border-radius:8px;border:2px solid var(--border);background:white;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:600;text-align:left;transition:all .15s;color:var(--ink)}
+.quiz-opt:hover:not(:disabled){border-color:var(--forest-mid);background:#f0f7f3}
+.quiz-opt.correct{background:var(--mint-pale);border-color:var(--mint);color:#1b7a58}
+.quiz-opt.wrong{background:var(--coral-pale);border-color:var(--coral);color:#a83020}
+.quiz-opt:disabled{cursor:default}
+.quiz-feedback{margin-top:.8rem;font-size:.84rem;line-height:1.6;padding:.7rem 1rem;border-radius:8px;display:none;animation:fadeIn .3s ease}
+.quiz-feedback.show{display:block}
+.quiz-feedback.correct-fb{background:var(--mint-pale);color:#1b7a58;border-left:3px solid var(--mint)}
+.quiz-feedback.wrong-fb{background:var(--coral-pale);color:#a83020;border-left:3px solid var(--coral)}
+.score-panel{background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);color:white;border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem}
+.score-panel .score-num{font-family:'Fredoka One',cursive;font-size:3.5rem;line-height:1;color:var(--gold)}
+.score-panel p{opacity:.88;margin-top:.5rem;font-size:1rem}
+.score-panel h3{font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:.3rem}
+.nav-row{display:flex;justify-content:space-between;align-items:center;padding:2.5rem 2rem 0;max-width:820px;margin:0 auto}
+.btn-next{background:var(--forest);color:white;border:none;border-radius:50px;padding:.9rem 2rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;display:flex;align-items:center;gap:.6rem;transition:all .2s;box-shadow:0 4px 16px rgba(26,61,43,.35)}
+.btn-next:hover{background:var(--forest-mid);transform:translateY(-2px)}
+.btn-prev{background:transparent;color:var(--muted);border:2px solid var(--border);border-radius:50px;padding:.9rem 1.6rem;font-family:'Fredoka One',cursive;font-size:.95rem;cursor:pointer;transition:all .2s}
+.btn-prev:hover{border-color:var(--muted);color:var(--ink)}
+.btn-prev:disabled,.btn-next:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.summary-section{background:white;border-radius:16px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:2px solid var(--border)}
+.summary-section h3{font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--forest);margin-bottom:.8rem}
+.summary-answer{background:#f5f7fa;border-radius:8px;padding:.65rem 1rem;font-size:.83rem;line-height:1.6;color:var(--ink);margin-bottom:.4rem;font-style:italic;border-left:3px solid var(--lavender);min-height:1.8rem}
+.summary-answer.empty{color:var(--muted);font-style:normal;border-left-color:var(--border)}
+.sum-label{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);margin-bottom:.3rem;margin-top:.5rem;text-transform:uppercase;letter-spacing:.06em}
+.share-buttons{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center}
+.share-btn{border:none;border-radius:12px;padding:.85rem 1.6rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem}
+.share-btn:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.share-btn.copy{background:var(--mint);color:white}.share-btn.email{background:var(--lavender);color:white}.share-btn.print{background:var(--forest);color:white}
+.copy-confirm{text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--mint);min-height:1.2rem;margin-top:.6rem}
+.btn{border:none;border-radius:10px;padding:.65rem 1.2rem;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;transition:all .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15)}
+.btn-mint{background:var(--mint);color:white}.btn-ghost{background:#f0f2f5;color:var(--muted)}.btn-forest{background:var(--forest);color:white}.btn-gold{background:var(--gold);color:var(--forest)}
+.fill-wrap{background:white;border:2px solid var(--border);border-radius:14px;padding:1rem 1.2rem;margin-bottom:.7rem}
+.fill-q{font-size:.92rem;line-height:1.9;color:var(--ink)}
+.blank-input{border:none;border-bottom:2.5px solid var(--forest-mid);background:transparent;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:var(--forest);width:160px;text-align:center;outline:none;padding:0 4px}
+.blank-input.ok{border-color:var(--mint);color:var(--mint)}.blank-input.err{border-color:var(--coral);color:var(--coral)}
+.action-row{display:flex;gap:.6rem;flex-wrap:wrap;margin:.8rem 0}
+.divider{height:1px;background:var(--border);margin:2rem 0}
+.hl-badge{display:inline-block;background:var(--lavender);color:white;font-family:'DM Mono',monospace;font-size:.65rem;font-weight:700;padding:.2rem .5rem;border-radius:8px;margin-left:.3rem}
+.sl-badge{display:inline-block;background:var(--mint);color:white;font-family:'DM Mono',monospace;font-size:.65rem;font-weight:700;padding:.2rem .5rem;border-radius:8px;margin-left:.3rem}
+.explory-banner{background:linear-gradient(135deg,#0d2f5c 0%,#1a4a9c 100%);color:white;border-radius:16px;padding:1.4rem 1.8rem;margin-bottom:1.5rem;border-left:5px solid #f0c040;position:relative;overflow:hidden}
+.explory-banner::after{content:'🏆';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:2.5rem;opacity:.25}
+.explory-banner h4{font-family:'Fredoka One',cursive;font-size:1rem;color:#f0c040;margin-bottom:.4rem}
+.explory-banner p{font-size:.86rem;line-height:1.65;opacity:.92;max-width:90%}
+.dna-builder{display:flex;flex-direction:column;gap:.4rem;align-items:center;margin:1rem 0;padding:1rem;background:#f0f7f3;border-radius:14px}
+.dna-rung{display:flex;align-items:center;gap:4px;font-family:'DM Mono',monospace;font-size:.78rem}
+.base-btn{width:36px;height:36px;border-radius:6px;border:none;cursor:pointer;font-weight:800;font-size:.82rem;transition:all .15s;color:white}
+.base-btn.A{background:#e85c3a}.base-btn.T{background:#3aaf85}.base-btn.G{background:#7c6fcd}.base-btn.C{background:#c9962a;color:#1a2332}
+.base-btn.empty{background:#e0e4ea;color:#7a8899}
+.base-btn:hover{transform:scale(1.1)}
+.dna-sugar{width:28px;height:28px;border-radius:50%;background:#b8d8f8;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:800;color:#1a4a8a}
+.dna-backbone{width:4px;height:28px;background:linear-gradient(180deg,#5a8aba,#3a6a9a);border-radius:2px}
+.dna-rung-line{width:60px;height:4px;background:linear-gradient(90deg,#8ab8e8,#e8c888,#8ab8e8);border-radius:2px}
+.mut-demo{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.mut-box{background:white;border:2px solid var(--border);border-radius:12px;padding:1rem;font-family:'DM Mono',monospace;font-size:.78rem;line-height:1.8}
+.mut-box h5{font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--forest);margin-bottom:.5rem;font-family:'Fredoka One',cursive}
+.mut-orig{color:#1b7a58}.mut-changed{color:var(--coral);font-weight:800}
+.genome-bar{height:20px;background:linear-gradient(90deg,#3aaf85 0%,#7c6fcd 18%,#e8603c 34%,#c9962a 52%,#3aaf85 68%,#7c6fcd 84%,#e8603c 100%);border-radius:10px;margin:1rem 0;position:relative;cursor:pointer}
+.genome-bar-label{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);margin-top:.3rem;text-align:center}
+.research-card{background:linear-gradient(135deg,#fff9e6 0%,#fffcf0 100%);border:2px solid var(--gold);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem}
+.research-card h4{font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+.research-step{display:flex;gap:.8rem;align-items:flex-start;margin-bottom:.8rem}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--forest);font-family:'Fredoka One',cursive;font-size:.9rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-content{font-size:.85rem;line-height:1.6;color:var(--ink)}
+.step-content strong{color:#8a6a1a}
+@media(max-width:560px){.hero{padding:2.5rem 1.2rem 1.5rem}.section{padding:2rem 1.2rem 0}.nav-row{padding:2rem 1.2rem 0}.match-grid{grid-template-columns:1fr}.mut-demo{grid-template-columns:1fr}}
+@media print{.hero,.nav-row,.share-buttons,.copy-confirm{display:none!important}.sheet{box-shadow:none;border-radius:0}.section{display:none!important}#sec-8{display:block!important}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">&#128049; IB DP Biology 2023 &middot; B1 Genes &middot; Part 1 of 4</div>
+  <h1>Genetics &amp; <span class="accent">Heredity</span></h1>
+  <p class="intro">DNA structure, genes, the genome, and mutations. B1.1.1&ndash;B1.1.9 with IB-style exam questions, mark-scheme answers, and your science competition research journey.</p>
+  <div class="name-bar"><label>&#128100; YOUR NAME:</label><input type="text" id="studentName" placeholder="Type your name here..."></div>
+  <div class="progress-wrap">
+    <a class="prog-step active" onclick="goTo(0)">&#127807; Wonder</a>
+    <a class="prog-step" onclick="goTo(1)">&#128049; DNA Structure</a>
+    <a class="prog-step" onclick="goTo(2)">&#9881;&#65039; Genes &amp; Alleles</a>
+    <a class="prog-step" onclick="goTo(3)">&#127381; The Genome</a>
+    <a class="prog-step" onclick="goTo(4)">&#9889; Mutations</a>
+    <a class="prog-step" onclick="goTo(5)">&#128221; IB Questions</a>
+    <a class="prog-step" onclick="goTo(6)">&#129513; Quiz</a>
+    <a class="prog-step" onclick="goTo(7)">&#128270; Reflect &amp; Submit</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+<!-- SEC 0: WONDER -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">Phase 1 &mdash; Wonder</span></div>
+  <h2>&#127807; What Makes You, <em>You</em>?</h2>
+  <p class="lead">Every cell in your body carries approximately <strong>3.2 billion base pairs</strong> of DNA &mdash; a molecule so thin that if you stretched it out, the DNA from a single cell would reach about 2 metres. All of human heredity, from eye colour to disease risk, is written in that molecule.</p>
+  <div class="wonder-box">
+    <p>&#10024; Two siblings can share the same parents but look and act completely differently. A mutation of just <strong>one single nucleotide</strong> can cause sickle cell anaemia. The DNA of a human and a chimpanzee differs by less than <strong>1.2%</strong>. What does that tell us about how genetic information works?</p>
+  </div>
+  <div class="wonder-box gold-box">
+    <p>This workshop covers <strong>B1.1.1&ndash;B1.1.9</strong> of the IB DP Biology 2023 syllabus: nucleotide structure, DNA double helix, complementary base pairing, antiparallel strands, genes, alleles, the genome, and mutations. <span class="sl-badge">SL</span> and <span class="hl-badge">HL</span> content is labelled throughout.</p>
+  </div>
+
+  <div class="explory-banner">
+    <h4>&#127881; Science Competition Track: Explory &amp; ISEF</h4>
+    <p>Throughout this Genetics series you will build the biological knowledge needed to design and run your own genetics experiment &mdash; worthy of the <strong>Explory Competition</strong> in Poland and potentially the <strong>ISEF</strong> in the USA. Each interactive includes a <em>Research Journey</em> section to develop your question, hypothesis, and methodology step by step.</p>
+  </div>
+
+  <div class="research-card">
+    <h4>&#128269; Research Journey &#8212; Step 1: Generating Your Question</h4>
+    <div class="research-step"><div class="step-num">1</div><div class="step-content"><strong>What fascinates you about genetics?</strong> The best science competition projects start with genuine curiosity. Think about traits you have noticed in families, populations, or organisms around you. ISEF judges value original questions &mdash; not just replicated ones.</div></div>
+    <div class="research-step"><div class="step-num">2</div><div class="step-content"><strong>Good question qualities:</strong> Testable in a school setting, involves a measurable genetic variable, ethically straightforward (surveys or plant/model organisms work best), and novel enough to be interesting.</div></div>
+  </div>
+
+  <div class="predict-box">
+    <h4>&#9997;&#65039; Before We Begin &#8212; Predict</h4>
+    <p style="font-size:.84rem;color:#8a6a1a;margin-bottom:.7rem">Answer in your own words before working through the lesson. You can change your mind later!</p>
+    <p style="font-size:.88rem;font-weight:700;margin-bottom:.4rem">Q1. What is a gene? How is it different from a chromosome and from an allele?</p>
+    <textarea id="ta-wonder1" placeholder="Write your prediction here..."></textarea>
+    <p style="font-size:.88rem;font-weight:700;margin:.8rem 0 .4rem">Q2. What type of mutation do you think would have the biggest impact on a protein? Explain your reasoning.</p>
+    <textarea id="ta-wonder2" placeholder="Write your prediction here..."></textarea>
+  </div>
+
+  <div class="predict-box" style="background:var(--lav-pale);border-color:var(--lavender)">
+    <h4 style="color:var(--lavender)">&#127381; Competition Idea Spark</h4>
+    <textarea id="ta-comp-idea" placeholder="In 2-3 sentences: what genetic topic or trait are you most curious about? This could become your Explory / ISEF project idea. Don't worry about it being perfect — just get it down!"></textarea>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" disabled>&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 1: DNA STRUCTURE -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">2</div><span class="eyebrow-label">Phase 2 &middot; B1.1.1&ndash;B1.1.4 &mdash; DNA Structure</span></div>
+  <h2>&#128049; The DNA Double Helix <span class="sl-badge">SL</span></h2>
+  <p class="lead">DNA is a <strong>double-stranded polynucleotide</strong>. Its structure &mdash; discovered by Watson, Crick, Franklin and Wilkins in 1953 &mdash; directly explains how genetic information is stored and copied. Every IB exam tests nucleotide structure, base pairing, and the antiparallel arrangement.</p>
+
+  <div class="wonder-box mint-box">
+    <p><strong>Key structural facts the IB tests:</strong><br>
+    &bull; DNA is made of nucleotides: deoxyribose sugar + phosphate + nitrogenous base<br>
+    &bull; Purines (A, G) always pair with pyrimidines (T, C) &mdash; Chargaff's rules: A=T, G=C<br>
+    &bull; The two strands are <strong>antiparallel</strong> (one runs 5&prime;&rarr;3&prime;, the other 3&prime;&rarr;5&prime;)<br>
+    &bull; Strands are held together by <strong>hydrogen bonds</strong> between complementary bases<br>
+    &bull; A&ndash;T: <strong>2</strong> hydrogen bonds &nbsp;|&nbsp; G&ndash;C: <strong>3</strong> hydrogen bonds</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin:.5rem 0 .8rem">&#128218; Nucleotide Components &mdash; Tap Each</h3>
+  <div class="card-grid">
+    <div class="info-card" onclick="showCard('sugar',this)"><div class="ic-icon">&#128473;&#65039;</div><div class="ic-title">Deoxyribose</div><div class="ic-sub">Pentose sugar</div></div>
+    <div class="info-card" onclick="showCard('phosphate',this)"><div class="ic-icon">&#9899;</div><div class="ic-title">Phosphate</div><div class="ic-sub">Backbone charge</div></div>
+    <div class="info-card" onclick="showCard('purine',this)"><div class="ic-icon">&#128144;</div><div class="ic-title">Purines</div><div class="ic-sub">A &amp; G (double ring)</div></div>
+    <div class="info-card" onclick="showCard('pyrimidine',this)"><div class="ic-icon">&#128145;</div><div class="ic-title">Pyrimidines</div><div class="ic-sub">T &amp; C (single ring)</div></div>
+    <div class="info-card" onclick="showCard('hbond',this)"><div class="ic-icon">&#128279;</div><div class="ic-title">H-bonds</div><div class="ic-sub">Hold strands together</div></div>
+    <div class="info-card" onclick="showCard('antipar',this)"><div class="ic-icon">&#8645;</div><div class="ic-title">Antiparallel</div><div class="ic-sub">5&prime;&rarr;3&prime; orientation</div></div>
+  </div>
+  <div id="panel-sugar" class="info-panel"><h4>Deoxyribose Sugar</h4><p>A <strong>5-carbon (pentose) sugar</strong>. The "deoxy" refers to the missing hydroxyl group at position 2' compared to ribose (RNA's sugar). Carbon 1' attaches to the base; carbon 3' and 5' attach to phosphate groups forming the backbone. The difference between 3' and 5' ends defines directionality.</p><div class="eg">IB link: You need to distinguish deoxyribose (DNA) from ribose (RNA). The 2'-OH group in ribose makes RNA less chemically stable than DNA.</div></div>
+  <div id="panel-phosphate" class="info-panel"><h4>Phosphate Group</h4><p>Links adjacent deoxyribose sugars via <strong>phosphodiester bonds</strong>, forming the sugar-phosphate backbone on the outside of the helix. The negative charge of phosphate groups makes DNA hydrophilic on the outside and is why DNA binds to positively-charged histone proteins in eukaryotes.</p><div class="eg">IB link: Phosphodiester bonds form by condensation (releasing water). DNA replication breaks them using nucleases; DNA polymerase creates them using dNTPs.</div></div>
+  <div id="panel-purine" class="info-panel"><h4>Purines: Adenine (A) and Guanine (G)</h4><p>Purines have a <strong>double-ring</strong> structure. A always pairs with T (2 H-bonds); G always pairs with C (3 H-bonds). Because a purine always pairs with a pyrimidine, the width of the helix stays constant at ~2 nm along its entire length &mdash; this is why X-ray diffraction showed a regular repeating pattern.</p><div class="eg">Chargaff's Rule: In any DNA sample, %A = %T and %G = %C. This is testable. If you know %G, you can calculate all four bases.</div></div>
+  <div id="panel-pyrimidine" class="info-panel"><h4>Pyrimidines: Thymine (T) and Cytosine (C)</h4><p>Pyrimidines have a <strong>single-ring</strong> structure. Thymine is unique to DNA (RNA uses Uracil instead of Thymine). Cytosine pairs with Guanine via 3 hydrogen bonds, making G-C-rich regions more thermally stable &mdash; relevant to PCR annealing temperatures and to whether an organism adapted to heat has higher G+C content.</p><div class="eg">IB link: RNA uses Uracil (U) in place of Thymine (T). This is a key DNA vs RNA comparison tested in exams.</div></div>
+  <div id="panel-hbond" class="info-panel"><h4>Hydrogen Bonds Between Base Pairs</h4><p>The two strands are held together by <strong>hydrogen bonds</strong>: A&ndash;T forms 2 H-bonds; G&ndash;C forms 3 H-bonds. These bonds are individually weak but collectively strong enough to maintain double-helix structure, yet weak enough to be broken by helicase during replication. High G+C content = more H-bonds = higher melting temperature.</p><div class="eg">Exam tip: DNA helicase breaks H-bonds during replication. This is different from nucleases which break phosphodiester bonds.</div></div>
+  <div id="panel-antipar" class="info-panel"><h4>Antiparallel Strands</h4><p>The two strands run in <strong>opposite directions</strong>: one from 5&prime;&rarr;3&prime; top to bottom, the other 3&prime;&rarr;5&prime; top to bottom. The 5' end has a free phosphate group; the 3' end has a free hydroxyl group. DNA polymerase can only add nucleotides to the 3&prime; end, which is why one strand (leading) is synthesised continuously and the other (lagging) in fragments.</p><div class="eg">IB HL link: Antiparallel structure explains Okazaki fragments during replication &mdash; the lagging strand must be synthesised in short segments moving away from the replication fork.</div></div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin:.5rem 0 .8rem">&#127381; Complementary Base Pairing Practice</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem">Given the template strand below, write the complementary strand (5'&rarr;3'). Use A, T, G, C. Remember the antiparallel rule!</p>
+  <div class="fill-wrap">
+    <div class="fill-q">Template strand (3'&rarr;5'): &nbsp;<strong style="font-family:'DM Mono',monospace;font-size:1rem;color:var(--forest)">A - T - G - C - C - A - T</strong></div>
+    <div style="margin-top:.8rem;font-size:.85rem;color:var(--muted)">Complementary strand (5'&rarr;3'):</div>
+    <div style="display:flex;gap:.4rem;margin-top:.4rem;flex-wrap:wrap">
+      <input class="blank-input" id="bp1" maxlength="1" placeholder="?">
+      <span style="line-height:2.5;color:var(--muted)">-</span>
+      <input class="blank-input" id="bp2" maxlength="1" placeholder="?">
+      <span style="line-height:2.5;color:var(--muted)">-</span>
+      <input class="blank-input" id="bp3" maxlength="1" placeholder="?">
+      <span style="line-height:2.5;color:var(--muted)">-</span>
+      <input class="blank-input" id="bp4" maxlength="1" placeholder="?">
+      <span style="line-height:2.5;color:var(--muted)">-</span>
+      <input class="blank-input" id="bp5" maxlength="1" placeholder="?">
+      <span style="line-height:2.5;color:var(--muted)">-</span>
+      <input class="blank-input" id="bp6" maxlength="1" placeholder="?">
+      <span style="line-height:2.5;color:var(--muted)">-</span>
+      <input class="blank-input" id="bp7" maxlength="1" placeholder="?">
+    </div>
+    <div class="action-row">
+      <button class="btn btn-mint" onclick="checkBP()">Check</button>
+      <button class="btn btn-ghost" onclick="resetBP()">Reset</button>
+    </div>
+    <div id="bp-feedback" style="font-size:.84rem;color:var(--forest-mid);font-family:'DM Mono',monospace;min-height:1.2rem"></div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin:.5rem 0 .8rem">&#128272; Vocabulary Check &mdash; Tap Each Term</h3>
+  <div class="chip-row">
+    <span class="chip coral" onclick="revealChip('nucleotide')">Nucleotide</span>
+    <span class="chip mint" onclick="revealChip('polynucleotide')">Polynucleotide</span>
+    <span class="chip gold" onclick="revealChip('chargaff')">Chargaff's Rules</span>
+    <span class="chip lav" onclick="revealChip('helix')">Double Helix</span>
+    <span class="chip forest" onclick="revealChip('phosphodiester')">Phosphodiester Bond</span>
+  </div>
+  <div id="chip-nucleotide" class="concept-reveal coral"><strong>Nucleotide:</strong> The monomer of DNA. Each nucleotide consists of three components: a deoxyribose sugar, a phosphate group, and one of four nitrogenous bases (A, T, G, or C). Nucleotides are joined by condensation reactions to form a polynucleotide strand.</div>
+  <div id="chip-polynucleotide" class="concept-reveal mint-border"><strong>Polynucleotide:</strong> A chain of many nucleotides linked by phosphodiester bonds between the 3' carbon of one sugar and the 5' carbon of the next. DNA consists of two antiparallel polynucleotide strands. The sequence of bases along a polynucleotide encodes genetic information.</div>
+  <div id="chip-chargaff" class="concept-reveal gold-border"><strong>Chargaff's Rules:</strong> Erwin Chargaff found that in any DNA sample: %A = %T and %G = %C. This meant A always pairs with T and G always pairs with C &mdash; the principle of complementary base pairing. If you know any one base percentage, you can calculate all four.</div>
+  <div id="chip-helix" class="concept-reveal lav-border"><strong>Double Helix:</strong> The three-dimensional structure of DNA. Two antiparallel polynucleotide strands coil around each other. The sugar-phosphate backbones form the outside; the paired bases face inward. The helix makes one complete turn every 10 base pairs (3.4 nm).</div>
+  <div id="chip-phosphodiester" class="concept-reveal forest-border"><strong>Phosphodiester Bond:</strong> The covalent bond that joins adjacent nucleotides in a strand, linking the 3' carbon of one deoxyribose to the 5' carbon of the next via a phosphate group. Formed by condensation. Broken by nucleases.</div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 2: GENES AND ALLELES -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow"><div class="eyebrow-num num-gold">3</div><span class="eyebrow-label">Phase 3 &middot; B1.1.5&ndash;B1.1.6 &mdash; Genes &amp; Alleles</span></div>
+  <h2>&#9881;&#65039; Genes, Alleles &amp; Loci <span class="sl-badge">SL</span></h2>
+  <p class="lead">A <strong>gene</strong> is a heritable factor that controls a specific characteristic. It consists of a specific sequence of DNA nucleotides that codes for a functional product (usually a protein). Understanding how genes vary &mdash; through <strong>alleles</strong> &mdash; is the foundation of all inheritance genetics.</p>
+
+  <div class="wonder-box lav-box">
+    <p>Every human has approximately <strong>20,000&ndash;25,000 protein-coding genes</strong> occupying about 1.5% of the genome. The rest &mdash; once called "junk DNA" &mdash; includes regulatory sequences, introns, repeated sequences, and non-coding RNA genes. <span class="hl-badge">HL</span></p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin:.5rem 0 .8rem">&#128218; Core Concepts &mdash; Tap Each</h3>
+  <div class="card-grid">
+    <div class="info-card" onclick="showCard('gene-def',this)"><div class="ic-icon">&#129520;</div><div class="ic-title">Gene</div><div class="ic-sub">Definition</div></div>
+    <div class="info-card" onclick="showCard('locus',this)"><div class="ic-icon">&#128205;</div><div class="ic-title">Locus</div><div class="ic-sub">Position on chromosome</div></div>
+    <div class="info-card" onclick="showCard('allele',this)"><div class="ic-icon">&#9895;&#65039;</div><div class="ic-title">Allele</div><div class="ic-sub">Variant form</div></div>
+    <div class="info-card" onclick="showCard('homozygous',this)"><div class="ic-icon">&#128101;</div><div class="ic-title">Homozygous</div><div class="ic-sub">Two identical alleles</div></div>
+    <div class="info-card" onclick="showCard('heterozygous',this)"><div class="ic-icon">&#128104;&#8205;&#128105;</div><div class="ic-title">Heterozygous</div><div class="ic-sub">Two different alleles</div></div>
+    <div class="info-card" onclick="showCard('dominant',this)"><div class="ic-icon">&#11088;</div><div class="ic-title">Dominant/Recessive</div><div class="ic-sub">Expression</div></div>
+  </div>
+  <div id="panel-gene-def" class="info-panel"><h4>Gene</h4><p>A gene is a <strong>heritable factor that controls a specific characteristic</strong>. It consists of a specific sequence of DNA nucleotides at a particular locus on a chromosome. This sequence codes for a polypeptide (protein), or in some cases a functional RNA molecule (e.g. ribosomal RNA, tRNA). One gene = one polypeptide (with important exceptions).</p><div class="eg">IB definition (memorise exactly): "A heritable factor that consists of a length of DNA and influences a specific characteristic." Genes code for proteins; proteins control traits.</div></div>
+  <div id="panel-locus" class="info-panel"><h4>Locus (plural: loci)</h4><p>The <strong>specific position of a gene on a chromosome</strong>. All members of a species have the same loci for the same genes on homologous chromosomes. Because humans are diploid, we have two copies of each autosomal locus &mdash; one on each homologue. The locus is fixed; what varies is the allele at that locus.</p><div class="eg">Analogy: The locus is the address on the chromosome; the allele is whoever lives at that address. Different people may have different "residents" (alleles) at the same address (locus).</div></div>
+  <div id="panel-allele" class="info-panel"><h4>Allele</h4><p>An <strong>alternative form of a gene</strong>, occupying the same locus on homologous chromosomes. Alleles arise by mutation. A gene can have many alleles in a population (e.g. ABO blood group has three alleles: I&#8491;, I&#7495;, i), but a diploid individual can carry at most two alleles at any locus.</p><div class="eg">IB definition: "One specific form of a gene, differing from other alleles by one or a few bases only, and occupying the same gene locus as other alleles of the gene." Exam note: allele &#8800; gene; allele &#8800; trait.</div></div>
+  <div id="panel-homozygous" class="info-panel"><h4>Homozygous</h4><p>An individual is <strong>homozygous</strong> at a locus when both alleles at that locus are identical. Homozygous dominant (AA) expresses the dominant phenotype; homozygous recessive (aa) expresses the recessive phenotype. A homozygous individual is "true-breeding" for that trait and produces only one type of gamete for that locus.</p><div class="eg">Example: A plant with genotype TT is homozygous dominant for height. All of its gametes will carry T.</div></div>
+  <div id="panel-heterozygous" class="info-panel"><h4>Heterozygous</h4><p>An individual is <strong>heterozygous</strong> at a locus when the two alleles are different (e.g. Aa). The phenotype expressed depends on dominance relationships. A heterozygous individual produces two types of gametes (A and a) in equal proportions. Heterozygous individuals that carry a recessive allele without showing its phenotype are called <strong>carriers</strong>.</p><div class="eg">Example: Aa individual for cystic fibrosis is a carrier &mdash; they express normal phenotype but can pass the recessive allele to offspring. Critical for genetics problems.</div></div>
+  <div id="panel-dominant" class="info-panel"><h4>Dominant and Recessive Alleles</h4><p>A <strong>dominant</strong> allele is expressed in the phenotype even when only one copy is present (in a heterozygote). A <strong>recessive</strong> allele is expressed only when two copies are present (homozygous recessive). Written as uppercase (dominant) and lowercase (recessive). In codominance, both alleles are expressed simultaneously &mdash; neither is dominant.</p><div class="eg">IB note: Not all traits follow simple dominance. Codominance (e.g. AB blood type), incomplete dominance (e.g. snapdragon flower colour), and multiple alleles (e.g. ABO) are all testable.</div></div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin:.5rem 0 .8rem">&#127381; Match the Terms</h3>
+  <p style="font-size:.84rem;color:var(--muted);margin-bottom:.8rem">Click a term, then click its matching definition. Score: <span id="match2-score" style="font-weight:800;color:var(--forest)">0</span>/5</p>
+  <div class="match-grid" id="matchGrid2"></div>
+  <div id="match2-result" style="font-size:.84rem;color:var(--forest-mid);font-family:'DM Mono',monospace;min-height:1.2rem;margin-top:.4rem"></div>
+  <button class="btn btn-ghost" style="margin-top:.6rem" onclick="resetMatch2()">Reset</button>
+
+  <div class="divider"></div>
+  <div class="explory-banner">
+    <h4>&#128269; Research Journey &#8212; Step 2: Framing a Genetics Research Question</h4>
+    <p>Your Explory/ISEF project needs a clear, testable question about a genetic trait. Ideal topics for school-level genetics projects include: <strong>inheritance patterns in families</strong> (e.g. tongue rolling, earlobe attachment, handedness), <strong>population genetics surveys</strong> (allele frequency estimation), or <strong>model organisms</strong> (e.g. Drosophila wing traits, fast plant seed colour). Your question should reference an observable phenotype and an underlying genotype or allele.</p>
+  </div>
+  <div class="predict-box" style="background:var(--lav-pale);border-color:var(--lavender)">
+    <h4 style="color:var(--lavender)">&#127381; Develop Your Research Question</h4>
+    <p style="font-size:.84rem;color:var(--lavender);margin-bottom:.6rem">Draft a research question for your competition project. Use the format: <em>"How does [independent variable] affect [dependent variable] in [organism/population]?"</em></p>
+    <textarea id="ta-rq" placeholder="Example: How does the frequency of the tongue-rolling allele vary between different year groups in my school? — or write your own!"></textarea>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 3: THE GENOME -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">4</div><span class="eyebrow-label">Phase 4 &middot; B1.1.7 &mdash; The Genome</span></div>
+  <h2>&#127381; The Genome <span class="sl-badge">SL</span></h2>
+  <p class="lead">The <strong>genome</strong> is the complete set of genetic information of an organism &mdash; including all genes and all non-coding DNA sequences. Understanding the genome is essential for modern genetics, and it links directly to your research project and to the growing field of genomic medicine.</p>
+
+  <div class="wonder-box teal-box">
+    <p>The Human Genome Project (completed 2003) sequenced all ~3.2 billion base pairs of the human genome. Result: ~20,000&ndash;25,000 protein-coding genes &mdash; only about <strong>1.5% of the genome</strong>. The rest includes regulatory DNA, introns, repeated sequences, transposons, and non-coding RNA genes. <span class="hl-badge">HL</span></p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin:.5rem 0 .8rem">&#128218; Genome Components &mdash; Tap Each</h3>
+  <div class="card-grid">
+    <div class="info-card" onclick="showCard('genome-def',this)"><div class="ic-icon">&#128202;</div><div class="ic-title">Genome</div><div class="ic-sub">Complete DNA set</div></div>
+    <div class="info-card" onclick="showCard('coding',this)"><div class="ic-icon">&#129520;</div><div class="ic-title">Coding DNA</div><div class="ic-sub">Exons &amp; genes</div></div>
+    <div class="info-card" onclick="showCard('noncoding',this)"><div class="ic-icon">&#128274;</div><div class="ic-title">Non-coding DNA</div><div class="ic-sub">Introns, repeats</div></div>
+    <div class="info-card" onclick="showCard('prokgenome',this)"><div class="ic-icon">&#129440;</div><div class="ic-title">Prokaryotic Genome</div><div class="ic-sub">Circular, no introns</div></div>
+  </div>
+  <div id="panel-genome-def" class="info-panel"><h4>The Genome</h4><p>The IB defines the genome as <strong>"the complete set of genes and other DNA sequences of a cell, an organism, or a species."</strong> This includes both coding and non-coding DNA. Different species have wildly different genome sizes (the C-value paradox): a human genome is ~3.2 Gb; a wheat genome is ~17 Gb; the Paris japonica plant has ~150 Gb. Genome size does not correlate with organism complexity.</p><div class="eg">The term "genome" encompasses all DNA in the nucleus (and mitochondria/chloroplasts). Each human cell contains ~2 metres of DNA packed into a nucleus ~6 micrometres across.</div></div>
+  <div id="panel-coding" class="info-panel"><h4>Coding DNA (Exons)</h4><p>Coding sequences are the <strong>exons</strong> &mdash; stretches of DNA that are transcribed into mRNA and translated into protein. In eukaryotes, exons are interrupted by introns and spliced together. Only about 1.5% of the human genome is exonic. Each exon encodes part of a protein; alternative splicing allows one gene to produce multiple different proteins.</p><div class="eg">IB HL: Alternative splicing is a key mechanism for proteome diversity &mdash; one gene (one sequence of exons) can produce many different proteins depending on which exons are included.</div></div>
+  <div id="panel-noncoding" class="info-panel"><h4>Non-coding DNA</h4><p>The ~98.5% of the human genome that does not code for proteins includes: <strong>introns</strong> (interrupted sequences within genes, removed during RNA processing), <strong>regulatory sequences</strong> (promoters, enhancers &mdash; control gene expression), <strong>repetitive sequences</strong> (used in DNA fingerprinting), and <strong>transposons</strong> (mobile genetic elements). Non-coding is not the same as non-functional.</p><div class="eg">IB link: Repetitive sequences (STRs &mdash; short tandem repeats) are the basis of DNA profiling/fingerprinting, which appears on both genetics and forensics questions.</div></div>
+  <div id="panel-prokgenome" class="info-panel"><h4>Prokaryotic vs Eukaryotic Genomes</h4><p>Prokaryotic genomes: <strong>single circular chromosome</strong> in the nucleoid, no introns, no histones, smaller (E. coli ~4.6 Mb), plus plasmids. Eukaryotic genomes: <strong>multiple linear chromosomes</strong> in the nucleus, extensive non-coding DNA, introns, wrapped around histones. This distinction is heavily tested in IB exams.</p><div class="eg">Comparison table: Prokaryote = circular, no introns, no membrane, no histones. Eukaryote = linear, introns present, membrane-bound, histones. You will need this for genetics questions and for evolution (horizontal gene transfer).</div></div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin:.5rem 0 .8rem">&#128202; Chargaff's Rules Calculation Practice</h3>
+  <div class="fill-wrap">
+    <div class="fill-q">In a DNA sample, Guanine makes up 22% of the bases.<br>
+    Therefore Cytosine = <input class="blank-input" id="calc-c" maxlength="4" placeholder="?%"> &nbsp; Adenine = <input class="blank-input" id="calc-a" maxlength="4" placeholder="?%"> &nbsp; Thymine = <input class="blank-input" id="calc-t" maxlength="4" placeholder="?%"></div>
+    <div class="action-row"><button class="btn btn-mint" onclick="checkChargaff()">Check</button><button class="btn btn-ghost" onclick="resetChargaff()">Reset</button></div>
+    <div id="chargaff-fb" style="font-size:.84rem;min-height:1.4rem;color:var(--forest-mid);font-family:'DM Mono',monospace"></div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="explory-banner">
+    <h4>&#128269; Research Journey &#8212; Step 3: Literature Review Starter</h4>
+    <p>Every strong Explory / ISEF project references prior research. For a genetics project, your literature review should address: (1) What is already known about the trait/gene you are studying? (2) What alleles exist and at what population frequencies? (3) What methods have previous researchers used to study this? Use Google Scholar, PubMed, or your school library databases.</p>
+  </div>
+  <div class="predict-box" style="background:var(--lav-pale);border-color:var(--lavender)">
+    <h4 style="color:var(--lavender)">&#128218; My Literature Notes</h4>
+    <textarea id="ta-lit" placeholder="Summarise one thing you already know (or can find) about the genetics of your chosen trait. Include a source if possible (even a textbook page is fine at this stage)."></textarea>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 4: MUTATIONS -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">5</div><span class="eyebrow-label">Phase 5 &middot; B1.1.8&ndash;B1.1.9 &mdash; Mutations</span></div>
+  <h2>&#9889; Gene Mutations <span class="sl-badge">SL</span></h2>
+  <p class="lead">A <strong>gene mutation</strong> is a change in the base sequence of DNA. Mutations are the ultimate source of all genetic variation &mdash; they create new alleles. Some mutations have no effect, some are harmful, and some are beneficial. The IB expects you to classify and evaluate mutations with specific named examples.</p>
+
+  <div class="wonder-box coral-box">
+    <p>The sickle cell allele is the result of a <strong>single base substitution</strong>: one nucleotide changed in the &#946;-globin gene. This changes a single amino acid in haemoglobin, yet in homozygous form it causes a life-threatening blood disorder. In heterozygous form, it provides protection against malaria. One mutation &mdash; two opposite effects depending on allele dosage.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin:.5rem 0 .8rem">&#9889; Types of Gene Mutation &mdash; Tap Each</h3>
+  <div class="chip-row">
+    <span class="chip coral" onclick="revealChip('substitution')">Substitution</span>
+    <span class="chip mint" onclick="revealChip('insertion')">Insertion</span>
+    <span class="chip gold" onclick="revealChip('deletion')">Deletion</span>
+    <span class="chip lav" onclick="revealChip('frameshift')">Frameshift</span>
+    <span class="chip forest" onclick="revealChip('silent')">Silent Mutation</span>
+  </div>
+  <div id="chip-substitution" class="concept-reveal coral"><strong>Substitution:</strong> One nucleotide is replaced by a different nucleotide. This changes only one codon and therefore potentially only one amino acid. Because the genetic code is degenerate (multiple codons can code for the same amino acid), some substitutions are silent. Others cause missense (different amino acid) or nonsense (stop codon) mutations. Example: sickle cell anaemia &mdash; GAG changed to GTG in HBB gene, changing glutamic acid to valine.</div>
+  <div id="chip-insertion" class="concept-reveal mint-border"><strong>Insertion:</strong> One or more extra nucleotides are added into the DNA sequence. Unless inserted in multiples of three, this causes a <strong>frameshift</strong> &mdash; all codons downstream of the insertion are read in the wrong frame, usually producing a completely non-functional protein. Insertions are generally more damaging than substitutions.</div>
+  <div id="chip-deletion" class="concept-reveal gold-border"><strong>Deletion:</strong> One or more nucleotides are removed from the DNA sequence. Like insertion, a deletion that is not a multiple of three causes a frameshift. Even a single nucleotide deletion can completely destroy a protein's function by shifting every codon after the deletion. Example: deltaF508 deletion in the CFTR gene causes ~70% of cystic fibrosis cases.</div>
+  <div id="chip-frameshift" class="concept-reveal lav-border"><strong>Frameshift Mutation:</strong> Caused by insertions or deletions that are not multiples of three. The reading frame shifts, so all codons from the mutation point onwards are misread. This typically produces a highly altered polypeptide or introduces an early stop codon. Frameshifts are almost always loss-of-function mutations and are very rarely beneficial.</div>
+  <div id="chip-silent" class="concept-reveal forest-border"><strong>Silent (Synonymous) Mutation:</strong> A nucleotide change that does NOT alter the amino acid sequence of the protein. This is possible because the genetic code is degenerate &mdash; 64 codons code for only 20 amino acids + stop. Example: changing CGA to CGG &mdash; both code for Arginine. Silent mutations still change allele frequency in populations and can occasionally affect RNA splicing.</div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin:.5rem 0 .8rem">&#128202; Mutation Impact Comparison</h3>
+  <div class="mut-demo">
+    <div class="mut-box">
+      <h5>Original Sequence</h5>
+      <div class="mut-orig">ATG &middot; GAG &middot; CTG &middot; GTG</div>
+      <div style="margin-top:.4rem;font-size:.72rem;color:var(--muted)">Met &middot; Glu &middot; Leu &middot; Val</div>
+    </div>
+    <div class="mut-box">
+      <h5>Substitution (GAG&#8594;GTG)</h5>
+      <div class="mut-orig">ATG &middot; </div><span class="mut-changed">GTG</span><div class="mut-orig"> &middot; CTG &middot; GTG</div>
+      <div style="margin-top:.4rem;font-size:.72rem;color:var(--muted)">Met &middot; <span style="color:var(--coral);font-weight:800">Val</span> &middot; Leu &middot; Val</div>
+      <div style="font-size:.7rem;color:var(--coral);margin-top:.3rem">1 amino acid changed &mdash; Sickle cell!</div>
+    </div>
+    <div class="mut-box">
+      <h5>Insertion (+C after base 3)</h5>
+      <div class="mut-orig">ATG</div><span class="mut-changed">C</span><div class="mut-orig"> &middot; GAG &middot; CTG &middot; GTG</div>
+      <div style="margin-top:.4rem;font-size:.72rem;color:var(--muted)"><span style="color:var(--coral)">ATG&bull;CGA&bull;GCT&bull;GGT&bull;G</span></div>
+      <div style="font-size:.7rem;color:var(--coral);margin-top:.3rem">Frameshift &mdash; all codons altered!</div>
+    </div>
+    <div class="mut-box">
+      <h5>Silent Substitution</h5>
+      <div class="mut-orig">ATG &middot; GAG &middot; </div><span class="mut-changed">CTT</span><div class="mut-orig"> &middot; GTG</div>
+      <div style="margin-top:.4rem;font-size:.72rem;color:var(--muted)">Met &middot; Glu &middot; <span style="color:var(--lavender)">Leu</span> &middot; Val</div>
+      <div style="font-size:.7rem;color:var(--lavender);margin-top:.3rem">CTG&#8594;CTT: still Leucine. No change!</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin:.5rem 0 .8rem">&#128221; Causes and Effects of Mutation</h3>
+  <div class="wonder-box mint-box" style="margin-bottom:1rem">
+    <p><strong>Mutagens</strong> increase the rate of mutation: ionising radiation (UV light, X-rays, gamma rays), chemical mutagens (e.g. benzene, nitrous acid), certain viruses. <strong>Spontaneous</strong> mutations occur at a low background rate during DNA replication errors. The vast majority of mutations are: repaired by DNA repair enzymes, neutral in effect, or harmful. Beneficial mutations are rare but are the raw material for evolution by natural selection.</p>
+  </div>
+  <div class="reflect-box">
+    <h4>&#9997;&#65039; Evaluate: Why are frameshifts usually more damaging than substitutions?</h4>
+    <textarea id="ta-frameshift" placeholder="Explain why a single nucleotide insertion is usually more damaging than a single nucleotide substitution. Reference the reading frame, codon changes, and give an example where possible. [IB-style: 4 marks]"></textarea>
+  </div>
+
+  <div class="divider"></div>
+  <div class="explory-banner">
+    <h4>&#128269; Research Journey &#8212; Step 4: Mutations &amp; Your Project</h4>
+    <p>If your project involves studying a genetic disorder or variation, this is a good time to identify which type of mutation is involved. For example: sickle cell = substitution; cystic fibrosis deltaF508 = deletion; Huntington's disease = trinucleotide repeat expansion. Understanding the mutation type helps you explain the mechanism in your research paper and ISEF abstract.</p>
+  </div>
+  <div class="predict-box" style="background:var(--lav-pale);border-color:var(--lavender)">
+    <h4 style="color:var(--lavender)">&#127381; Hypothesis Draft</h4>
+    <p style="font-size:.84rem;color:var(--lavender);margin-bottom:.6rem">Write a draft hypothesis for your research project. Format: <em>"If [independent variable] then [predicted outcome], because [genetic mechanism]."</em></p>
+    <textarea id="ta-hypothesis" placeholder="Example: If I survey tongue-rolling ability across 100 individuals in my school, then I predict a 70% roller frequency, because prior literature suggests this is the approximate population frequency of the dominant rolling allele. — Or write your own!"></textarea>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 5: IB QUESTIONS -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">6</div><span class="eyebrow-label">Phase 6 &mdash; IB-Style Exam Questions</span></div>
+  <h2>&#128221; IB Exam Practice <span class="sl-badge">SL</span> <span class="hl-badge">HL</span></h2>
+  <p class="lead">Work through these exam-style questions, write your own answers first, then reveal the mark-scheme response. Focus on using precise IB terminology and meeting the command terms (state, describe, explain, evaluate).</p>
+
+  <div class="pp-card">
+    <div class="pp-label">B1.1.1 &mdash; SL &mdash; State (2 marks)</div>
+    <div class="pp-q">State two structural differences between a DNA nucleotide and an RNA nucleotide.</div>
+    <textarea class="pp-textarea" id="pp1" placeholder="Write your answer here..."></textarea>
+    <button class="btn btn-forest" style="margin-top:.6rem" onclick="toggleAnswer('ans1')">Reveal Mark Scheme</button>
+    <div id="ans1" class="pp-answer"><strong>Award 1 mark each (max 2):</strong><ul><li>DNA nucleotide contains <strong>deoxyribose</strong>; RNA nucleotide contains <strong>ribose</strong> (with 2'-OH group)</li><li>DNA uses <strong>thymine</strong>; RNA uses <strong>uracil</strong> instead of thymine</li><li>DNA is double-stranded / RNA is single-stranded <em>(accept if clearly referring to structural difference)</em></li></ul><p style="margin-top:.6rem;font-size:.82rem;color:var(--muted)">Examiner note: "Sugar is different" alone scores 0 &mdash; you must name the sugars. "Base is different" alone scores 0 &mdash; you must name which base differs.</p></div>
+  </div>
+
+  <div class="pp-card">
+    <div class="pp-label">B1.1.2 &mdash; SL &mdash; Describe (3 marks)</div>
+    <div class="pp-q">Describe the structure of the DNA double helix.</div>
+    <textarea class="pp-textarea" id="pp2" placeholder="Write your answer here..."></textarea>
+    <button class="btn btn-forest" style="margin-top:.6rem" onclick="toggleAnswer('ans2')">Reveal Mark Scheme</button>
+    <div id="ans2" class="pp-answer"><strong>Award 1 mark each (max 3):</strong><ul><li>Two polynucleotide strands wound around each other in a <strong>double helix</strong></li><li>Strands are <strong>antiparallel</strong> (one 5'&rarr;3', the other 3'&rarr;5')</li><li>Sugar-phosphate backbone on the <strong>outside</strong>; bases on the inside</li><li>Complementary base pairing via <strong>hydrogen bonds</strong> (A-T: 2 H-bonds; G-C: 3 H-bonds)</li><li>The helix makes one complete turn every 10 base pairs (3.4 nm)</li></ul></div>
+  </div>
+
+  <div class="pp-card">
+    <div class="pp-label">B1.1.5 &mdash; SL &mdash; Distinguish (2 marks)</div>
+    <div class="pp-q">Distinguish between a gene and an allele.</div>
+    <textarea class="pp-textarea" id="pp3" placeholder="Write your answer here..."></textarea>
+    <button class="btn btn-forest" style="margin-top:.6rem" onclick="toggleAnswer('ans3')">Reveal Mark Scheme</button>
+    <div id="ans3" class="pp-answer"><strong>Award 1 mark each:</strong><ul><li>A <strong>gene</strong> is a heritable factor consisting of a specific sequence of DNA that controls a specific characteristic / codes for a specific polypeptide</li><li>An <strong>allele</strong> is one specific form of a gene, occupying the same locus as other alleles of that gene, differing by one or a few bases</li></ul><p style="margin-top:.5rem;font-size:.82rem;color:var(--muted)">Examiner note: Many students lose marks by defining allele as "a variant gene" without specifying that it occupies the same locus and differs only in base sequence. Use the IB definition exactly.</p></div>
+  </div>
+
+  <div class="pp-card">
+    <div class="pp-label">B1.1.8 &mdash; SL &mdash; Explain (4 marks)</div>
+    <div class="pp-q">Explain why a frameshift mutation is usually more damaging than a substitution mutation.</div>
+    <textarea class="pp-textarea" id="pp4" placeholder="Write your answer here..."></textarea>
+    <button class="btn btn-forest" style="margin-top:.6rem" onclick="toggleAnswer('ans4')">Reveal Mark Scheme</button>
+    <div id="ans4" class="pp-answer"><strong>Award 1 mark each (max 4):</strong><ul><li>A substitution changes only <strong>one codon</strong>; may result in one amino acid change</li><li>Due to degeneracy of the genetic code, substitution may be <strong>silent</strong> (no amino acid change)</li><li>A frameshift (insertion/deletion not in multiples of 3) <strong>shifts the reading frame</strong></li><li>All codons <strong>downstream</strong> of the mutation are misread</li><li>Likely produces a completely non-functional / drastically altered polypeptide</li><li>May introduce a <strong>premature stop codon</strong>, truncating the protein</li></ul></div>
+  </div>
+
+  <div class="pp-card">
+    <div class="pp-label">B1.1.3 &mdash; HL &mdash; Calculate (2 marks)</div>
+    <div class="pp-q">A DNA sample contains 18% adenine. Calculate the percentage of guanine in this sample. Show your working.</div>
+    <textarea class="pp-textarea" id="pp5" placeholder="Show your calculation..."></textarea>
+    <button class="btn btn-forest" style="margin-top:.6rem" onclick="toggleAnswer('ans5')">Reveal Mark Scheme</button>
+    <div id="ans5" class="pp-answer"><strong>Working:</strong><ul><li>%A = %T = 18%, so A + T = 36% (1 mark)</li><li>G + C = 100 &minus; 36 = 64%, therefore %G = 32% (1 mark)</li></ul><p style="margin-top:.5rem;font-size:.82rem;color:var(--muted)">Always show working &mdash; if you write 32% only, you may score 1/2. If your arithmetic is wrong but your method is correct, you still score the method mark.</p></div>
+  </div>
+
+  <div class="pp-card">
+    <div class="pp-label">B1.1.9 &mdash; SL &mdash; Evaluate (5 marks)</div>
+    <div class="pp-q">Evaluate the possible consequences of a point mutation in a protein-coding gene.</div>
+    <textarea class="pp-textarea" id="pp6" placeholder="Write your answer here..."></textarea>
+    <button class="btn btn-forest" style="margin-top:.6rem" onclick="toggleAnswer('ans6')">Reveal Mark Scheme</button>
+    <div id="ans6" class="pp-answer"><strong>For full marks, cover: consequences, mechanisms, examples, and balanced evaluation</strong><ul><li><strong>Silent:</strong> No amino acid change due to degenerate code; no phenotypic effect; still creates a new allele (1)</li><li><strong>Missense:</strong> One amino acid substituted; effect depends on position and chemical nature change; example: sickle cell (GAG&rarr;GTG, Glu&rarr;Val in HBB) (1)</li><li><strong>Nonsense:</strong> Creates a premature stop codon; truncated, non-functional protein (1)</li><li>Consequences range from <strong>no effect to lethal</strong> depending on: which protein, which domain, whether homozygous/heterozygous (1)</li><li>Some mutations are beneficial in certain environments, e.g. sickle cell heterozygote has malaria resistance; raw material for <strong>evolution by natural selection</strong> (1)</li></ul></div>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 6: QUIZ -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow"><div class="eyebrow-num num-gold">7</div><span class="eyebrow-label">Phase 7 &mdash; 12-Question Multiple Choice Quiz</span></div>
+  <h2>&#129513; Test Yourself <span class="sl-badge">SL</span> <span class="hl-badge">HL</span></h2>
+  <p class="lead">Answer all 12 questions. Each question has one correct answer. You will see your score and detailed feedback at the end.</p>
+  <div id="quiz-container"></div>
+  <div class="score-panel" id="score-panel" style="display:none">
+    <h3>Quiz Complete!</h3>
+    <div class="score-num" id="score-display">0/12</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-gold" style="margin-top:1rem" onclick="retakeQuiz()">&#128257; Retake Quiz</button>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 7: REFLECT + SUBMIT -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow"><div class="eyebrow-num num-forest">8</div><span class="eyebrow-label">Phase 8 &mdash; Reflect &amp; Submit</span></div>
+  <h2>&#128270; Reflect &amp; Submit</h2>
+  <p class="lead">Review your answers from throughout the lesson, then submit to your teacher via ManageBac, Google Classroom, or email.</p>
+
+  <div class="research-card">
+    <h4>&#127881; Research Journey Summary</h4>
+    <div class="research-step"><div class="step-num">&#10003;</div><div class="step-content">Step 1: Generated your initial curiosity question</div></div>
+    <div class="research-step"><div class="step-num">&#10003;</div><div class="step-content">Step 2: Drafted a formal research question</div></div>
+    <div class="research-step"><div class="step-num">&#10003;</div><div class="step-content">Step 3: Began your literature review</div></div>
+    <div class="research-step"><div class="step-num">&#10003;</div><div class="step-content">Step 4: Drafted a hypothesis</div></div>
+    <p style="font-size:.82rem;color:#8a6a1a;margin-top:.6rem">&#128249; In the next interactive (B1.2 Chromosomes), you will design your methodology. Keep developing your Explory / ISEF project across the series!</p>
+  </div>
+
+  <div class="summary-section">
+    <h3>&#128100; Student: <span id="summaryName">&#8212;</span> &nbsp;|&nbsp; <span id="summaryDate"></span></h3>
+    <div class="sum-label">Quiz Score</div><div class="summary-answer" id="sum-quiz"></div>
+    <div class="sum-label">Opening Prediction &#8212; Q1 (Gene vs Allele)</div><div class="summary-answer" id="sum-wonder1"></div>
+    <div class="sum-label">Opening Prediction &#8212; Q2 (Mutation impact)</div><div class="summary-answer" id="sum-wonder2"></div>
+    <div class="sum-label">Research Question</div><div class="summary-answer" id="sum-rq"></div>
+    <div class="sum-label">Hypothesis</div><div class="summary-answer" id="sum-hyp"></div>
+    <div class="sum-label">Competition Idea</div><div class="summary-answer" id="sum-idea"></div>
+    <div class="sum-label">Frameshift Evaluation</div><div class="summary-answer" id="sum-frame"></div>
+    <div class="sum-label">IB Q1 (DNA vs RNA nucleotide)</div><div class="summary-answer" id="sum-pp1"></div>
+    <div class="sum-label">IB Q2 (Double helix structure)</div><div class="summary-answer" id="sum-pp2"></div>
+    <div class="sum-label">IB Q3 (Gene vs allele)</div><div class="summary-answer" id="sum-pp3"></div>
+    <div class="sum-label">IB Q4 (Frameshift vs substitution)</div><div class="summary-answer" id="sum-pp4"></div>
+    <div class="sum-label">IB Q5 (Chargaff calculation)</div><div class="summary-answer" id="sum-pp5"></div>
+    <div class="sum-label">IB Q6 (Point mutation evaluate)</div><div class="summary-answer" id="sum-pp6"></div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>&#128161; Final Reflection</h4>
+    <textarea id="ta-reflect" placeholder="What is the most important thing you learned today? How has your understanding of genetics changed since the opening predictions? Is there anything you are still uncertain about?"></textarea>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy" onclick="copyResults()">&#128203; Copy &amp; Paste</button>
+    <button class="share-btn email" onclick="emailResults()">&#128231; Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">&#128424;&#65039; Print</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <p style="text-align:center;font-size:.72rem;color:var(--muted);margin-top:2rem;font-family:'DM Mono',monospace;">&copy; 2026 Farvour Explorations &middot; All Rights Reserved &middot; single-classroom use only &middot; not for redistribution</p>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" disabled>&#10003; Complete!</button></div>
+</div>
+
+</div><!-- end .sheet -->
+
+<script>
+(function(){
+'use strict';
+
+// ── NAVIGATION ──
+var TOTAL = 8;
+var cur = 0;
+function goTo(n){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('sec-'+n).classList.add('active');
+  document.querySelectorAll('.prog-step').forEach(function(p,i){
+    p.classList.remove('active','done');
+    if(i===n) p.classList.add('active');
+    else if(i<n) p.classList.add('done');
+  });
+  cur=n;
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n===6) buildQuiz();
+  if(n===7) buildSummary();
+}
+function navigate(dir){ goTo(Math.max(0,Math.min(TOTAL-1,cur+dir))); }
+window.goTo=goTo; window.navigate=navigate;
+
+// ── INFO CARDS ──
+var cardPanels = {};
+function showCard(id,el){
+  var panel = document.getElementById('panel-'+id);
+  if(!panel) return;
+  var parentSection = el.closest('.section');
+  var group = parentSection.querySelectorAll('.info-card');
+  group.forEach(function(c){c.classList.remove('active');});
+  parentSection.querySelectorAll('.info-panel').forEach(function(p){
+    if(p!==panel){p.classList.remove('show');}
+  });
+  el.classList.toggle('active');
+  panel.classList.toggle('show');
+}
+window.showCard=showCard;
+
+// ── CHIP REVEALS ──
+function revealChip(id){
+  var el = document.getElementById('chip-'+id);
+  if(!el) return;
+  var wasOpen = el.classList.contains('show');
+  el.closest('.section').querySelectorAll('.concept-reveal').forEach(function(c){c.classList.remove('show');});
+  if(!wasOpen) el.classList.add('show');
+}
+window.revealChip=revealChip;
+
+// ── TOGGLE ANSWER ──
+function toggleAnswer(id){
+  var el = document.getElementById(id);
+  if(el) el.classList.toggle('show');
+}
+window.toggleAnswer=toggleAnswer;
+
+// ── BASE PAIRING CHECK ──
+var BP_ANSWERS = ['T','A','C','G','G','T','A'];
+function checkBP(){
+  var correct = 0;
+  for(var i=1;i<=7;i++){
+    var inp = document.getElementById('bp'+i);
+    if(!inp) continue;
+    var v = inp.value.toUpperCase().trim();
+    inp.classList.remove('ok','err');
+    if(v === BP_ANSWERS[i-1]){ inp.classList.add('ok'); correct++; }
+    else { inp.classList.add('err'); }
+  }
+  document.getElementById('bp-feedback').textContent = correct===7 ? 'Perfect! All 7 bases correct.' : correct+'/7 correct. Remember: A pairs with T, G pairs with C. Read antiparallel (5\u2032\u21923\u2032).';
+}
+function resetBP(){
+  for(var i=1;i<=7;i++){
+    var inp = document.getElementById('bp'+i);
+    if(inp){inp.value='';inp.classList.remove('ok','err');}
+  }
+  document.getElementById('bp-feedback').textContent='';
+}
+window.checkBP=checkBP; window.resetBP=resetBP;
+
+// ── CHARGAFF CHECK ──
+function checkChargaff(){
+  var c = document.getElementById('calc-c');
+  var a = document.getElementById('calc-a');
+  var t = document.getElementById('calc-t');
+  [c,a,t].forEach(function(el){el.classList.remove('ok','err');});
+  var cv=parseFloat(c.value), av=parseFloat(a.value), tv=parseFloat(t.value);
+  var allOk = (cv===22 && av===28 && tv===28);
+  if(cv===22) c.classList.add('ok'); else c.classList.add('err');
+  if(av===28) a.classList.add('ok'); else a.classList.add('err');
+  if(tv===28) t.classList.add('ok'); else t.classList.add('err');
+  document.getElementById('chargaff-fb').textContent = allOk ? 'Correct! G=C=22%, A=T=28% (100-44=56%, divided by 2).' : 'Check again: G=C (so C=22%). A+T = 100-22-22 = 56%, so A=T=28%.';
+}
+function resetChargaff(){
+  ['calc-c','calc-a','calc-t'].forEach(function(id){
+    var el=document.getElementById(id); if(el){el.value='';el.classList.remove('ok','err');}
+  });
+  document.getElementById('chargaff-fb').textContent='';
+}
+window.checkChargaff=checkChargaff; window.resetChargaff=resetChargaff;
+
+// ── MATCHING GAME (Section 2) ──
+var MATCH2_PAIRS = [
+  {term:'Locus', def:'Fixed position of a gene on a chromosome'},
+  {term:'Allele', def:'Alternative form of a gene at the same locus'},
+  {term:'Homozygous', def:'Two identical alleles at the same locus'},
+  {term:'Heterozygous', def:'Two different alleles at the same locus'},
+  {term:'Dominant', def:'Expressed when one or two copies present'}
+];
+var m2Selected = null;
+var m2Score = 0;
+var m2Matched = [];
+function buildMatch2(){
+  var terms = MATCH2_PAIRS.map(function(p){return p.term;});
+  var defs = MATCH2_PAIRS.map(function(p){return p.def;});
+  for(var i=defs.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=defs[i];defs[i]=defs[j];defs[j]=tmp;}
+  var grid = document.getElementById('matchGrid2');
+  if(!grid) return;
+  grid.innerHTML='';
+  terms.forEach(function(t,i){
+    var d1=document.createElement('div'); d1.className='match-item'; d1.textContent=t; d1.dataset.type='term'; d1.dataset.val=t;
+    var d2=document.createElement('div'); d2.className='match-item'; d2.textContent=defs[i]; d2.dataset.type='def'; d2.dataset.val=defs[i];
+    d1.onclick=function(){matchClick2(this);}; d2.onclick=function(){matchClick2(this);};
+    grid.appendChild(d1); grid.appendChild(d2);
+  });
+  m2Selected=null; m2Score=0; m2Matched=[];
+  document.getElementById('match2-score').textContent='0';
+  document.getElementById('match2-result').textContent='';
+}
+function matchClick2(el){
+  if(el.classList.contains('matched')) return;
+  if(m2Selected===null){
+    el.classList.add('selected'); m2Selected=el;
+  } else {
+    if(m2Selected===el){m2Selected.classList.remove('selected');m2Selected=null;return;}
+    var a=m2Selected, b=el;
+    var termEl = a.dataset.type==='term' ? a : (b.dataset.type==='term' ? b : null);
+    var defEl  = a.dataset.type==='def'  ? a : (b.dataset.type==='def'  ? b : null);
+    if(!termEl||!defEl){[a,b].forEach(function(x){x.classList.remove('selected');});m2Selected=null;return;}
+    var pair = MATCH2_PAIRS.find(function(p){return p.term===termEl.dataset.val;});
+    if(pair && pair.def===defEl.dataset.val){
+      [termEl,defEl].forEach(function(x){x.classList.remove('selected');x.classList.add('matched');});
+      m2Score++; m2Matched.push(termEl.dataset.val);
+      document.getElementById('match2-score').textContent=m2Score;
+      if(m2Score===MATCH2_PAIRS.length) document.getElementById('match2-result').textContent='All matched! Great work.';
+    } else {
+      [a,b].forEach(function(x){x.classList.add('wrong');});
+      setTimeout(function(){[a,b].forEach(function(x){x.classList.remove('wrong','selected');});},700);
+    }
+    m2Selected=null;
+  }
+}
+function resetMatch2(){ buildMatch2(); }
+window.matchClick2=matchClick2; window.resetMatch2=resetMatch2;
+buildMatch2();
+
+// ── QUIZ ──
+var QD=[
+  {q:'Which of the following correctly describes the structure of a DNA nucleotide?',
+   opts:['Ribose sugar + phosphate + nitrogenous base','Deoxyribose sugar + phosphate + nitrogenous base','Deoxyribose sugar + amino acid + phosphate','Ribose sugar + amino acid + nitrogenous base'],
+   ans:1,fb:'A DNA nucleotide consists of a deoxyribose sugar (not ribose), a phosphate group, and one of four nitrogenous bases (A, T, G, or C). RNA nucleotides use ribose instead.'},
+  {q:'According to Chargaff\'s rules, if a DNA sample contains 30% cytosine, what percentage of the bases is thymine?',
+   opts:['30%','20%','40%','60%'],
+   ans:1,fb:'C=30% therefore G=30%. A+T = 100-60 = 40%, so T=20%. Chargaff\'s rules: %A=%T and %G=%C. Always show the calculation steps in an exam.'},
+  {q:'The two strands of DNA are described as antiparallel. What does this mean?',
+   opts:['The two strands are identical in sequence','The two strands run in opposite directions (one 5\'→3\', the other 3\'→5\')','The two strands are not bonded to each other','The strands alternate between purine and pyrimidine bases'],
+   ans:1,fb:'Antiparallel means the two strands run in opposite directions. One strand has its 5\' end at the top and its 3\' end at the bottom; the other runs 3\'→5\' from top to bottom. This is critical for understanding DNA replication.'},
+  {q:'How many hydrogen bonds form between guanine and cytosine?',
+   opts:['1','2','3','4'],
+   ans:2,fb:'G-C pairs form 3 hydrogen bonds; A-T pairs form 2 hydrogen bonds. This is why DNA with high G+C content has a higher melting temperature than A+T-rich DNA.'},
+  {q:'Which of the following is the correct IB definition of a gene?',
+   opts:['A section of DNA that codes for a specific trait','A heritable factor that consists of a length of DNA and influences a specific characteristic','A protein that controls cell function','A sequence of amino acids forming a polypeptide'],
+   ans:1,fb:'The IB definition is: "A heritable factor that consists of a length of DNA and influences a specific characteristic." Note: genes influence characteristics; they do not directly code for traits (they code for proteins which then produce traits).'},
+  {q:'A diploid organism has two alleles at a locus. One allele codes for brown eyes (B) and the other for blue eyes (b). The organism has brown eyes. Which genotype is possible?',
+   opts:['BB only','bb only','BB or Bb','bb or Bb'],
+   ans:2,fb:'Brown eyes are dominant. The organism could be homozygous dominant (BB) or heterozygous (Bb) — both give brown eye phenotype. Only bb would give blue eyes. This is a fundamental dominance question.'},
+  {q:'Which type of mutation is MOST likely to produce a non-functional protein through drastic alteration of all codons after the mutation site?',
+   opts:['Silent substitution','Frameshift mutation','Missense substitution','Nonsense substitution'],
+   ans:1,fb:'A frameshift (caused by insertion or deletion not in multiples of 3) shifts the reading frame for all codons downstream of the mutation. All subsequent codons are misread, almost always producing a non-functional protein. Silent mutations have no protein effect; missense and nonsense substitutions affect only one codon.'},
+  {q:'The sickle cell mutation changes GAG to GTG in the HBB gene. What type of mutation is this?',
+   opts:['Deletion','Frameshift','Substitution — missense','Substitution — silent'],
+   ans:2,fb:'This is a point substitution (A→T at position 2 of the codon). It is missense because it changes the amino acid: glutamic acid (GAG) is replaced by valine (GTG). This single amino acid change is sufficient to cause haemoglobin polymerisation under low oxygen conditions.'},
+  {q:'In a human genome, approximately what percentage of the DNA consists of protein-coding sequences?',
+   opts:['50%','25%','10%','1.5%'],
+   ans:3,fb:'Only about 1.5% of the human genome codes for proteins (exons). The remaining 98.5% includes introns, regulatory sequences, repetitive DNA, non-coding RNA genes, and other elements. Genome size does not correlate with gene number or organism complexity.'},
+  {q:'Which of the following mutations would be expected to have NO effect on the amino acid sequence of a protein?',
+   opts:['A deletion of two nucleotides','A substitution that changes a codon from CGA to AGA','A substitution that changes CGA to CGG','An insertion of one nucleotide'],
+   ans:2,fb:'CGA and CGG both code for Arginine — this is a silent (synonymous) substitution. The genetic code is degenerate so multiple codons encode the same amino acid. Deletions and single insertions cause frameshifts; CGA→AGA changes Arg to Arg only if both code for Arg (check: CGA=Arg, AGA=Arg — this is also silent; but CGG=Arg too. CGG is the correct silent example here).'},
+  {q:'Homologous chromosomes carry alleles at the same loci. Which statement about homologous chromosomes is correct?',
+   opts:['They are always identical in base sequence','They have the same genes at the same loci but may carry different alleles','They are found only in haploid cells','They are produced only during mitosis'],
+   ans:1,fb:'Homologous chromosomes carry the same genes at the same loci but may have different alleles at those loci. They are found in diploid cells (one from each parent), and are separated during meiosis I.'},
+  {q:'A mutation introduces a premature stop codon into a gene. Which type of mutation is this?',
+   opts:['Silent substitution','Missense substitution','Nonsense substitution','Conservative substitution'],
+   ans:2,fb:'A nonsense mutation changes a codon that codes for an amino acid into a stop codon (UAA, UAG, or UGA in mRNA). This truncates the protein prematurely. Nonsense mutations are usually loss-of-function mutations.'}
+];
+
+var qScore=0,qAnswered=0;
+function buildQuiz(){
+  var c=document.getElementById('quiz-container');
+  if(!c) return;
+  c.innerHTML=''; qScore=0; qAnswered=0;
+  document.getElementById('score-panel').style.display='none';
+  QD.forEach(function(item,idx){
+    var card=document.createElement('div'); card.className='quiz-card';
+    var opts=item.opts.map(function(o,i){
+      return '<button class="quiz-opt" onclick="checkAnswer(this,'+idx+','+i+')">'+String.fromCharCode(65+i)+'. '+o+'</button>';
+    }).join('');
+    card.innerHTML='<div class="quiz-q">Q'+(idx+1)+'. '+item.q+'</div><div class="quiz-options">'+opts+'</div><div class="quiz-feedback" id="qfb-'+idx+'"></div>';
+    c.appendChild(card);
+  });
+}
+function checkAnswer(btn,qIdx,optIdx){
+  var card=btn.closest('.quiz-card');
+  var buttons=card.querySelectorAll('.quiz-opt');
+  var fb=document.getElementById('qfb-'+qIdx);
+  var correct=QD[qIdx].ans;
+  buttons.forEach(function(b){b.disabled=true;});
+  if(optIdx===correct){btn.classList.add('correct');fb.textContent='Correct! '+QD[qIdx].fb;fb.className='quiz-feedback show correct-fb';qScore++;}
+  else{btn.classList.add('wrong');buttons[correct].classList.add('correct');fb.textContent='Incorrect. '+QD[qIdx].fb;fb.className='quiz-feedback show wrong-fb';}
+  qAnswered++;
+  if(qAnswered===QD.length){
+    var panel=document.getElementById('score-panel');
+    panel.style.display='block';
+    document.getElementById('score-display').textContent=qScore+'/'+QD.length;
+    var pct=qScore/QD.length;
+    document.getElementById('score-msg').textContent=pct>=.9?'Excellent \u2014 IB exam ready on B1.1!':pct>=.75?'Good work! Review the questions you missed.':pct>=.6?'Solid start \u2014 revisit mutation types and base pairing.':'Go back through the lesson phases, then retake.';
+    panel.scrollIntoView({behavior:'smooth'});
+  }
+}
+function retakeQuiz(){buildQuiz();}
+window.checkAnswer=checkAnswer; window.retakeQuiz=retakeQuiz;
+
+// ── SUMMARY ──
+function getV(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+function setS(id,text){var el=document.getElementById(id);if(!el)return;el.textContent=text||'Not answered';el.classList.toggle('empty',!text);}
+function buildSummary(){
+  var name=document.getElementById('studentName').value.trim()||'Student';
+  document.getElementById('summaryName').textContent=name;
+  document.getElementById('summaryDate').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  var sc=document.getElementById('score-display');
+  setS('sum-quiz',sc?sc.textContent+' correct':'Quiz not yet completed');
+  setS('sum-wonder1',getV('ta-wonder1'));
+  setS('sum-wonder2',getV('ta-wonder2'));
+  setS('sum-rq',getV('ta-rq'));
+  setS('sum-hyp',getV('ta-hypothesis'));
+  setS('sum-idea',getV('ta-comp-idea'));
+  setS('sum-frame',getV('ta-frameshift'));
+  for(var i=1;i<=6;i++) setS('sum-pp'+i,getV('pp'+i));
+}
+window.buildSummary=buildSummary;
+
+function buildPlainText(){
+  var name=document.getElementById('studentName').value.trim()||'Student';
+  var date=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  var sc=document.getElementById('score-display');
+  var lines=[
+    'IB DP BIOLOGY - B1.1 GENES - GENETICS & HEREDITY PART 1 - STUDENT SUBMISSION',
+    '='.repeat(70),
+    'Student: '+name,'Date: '+date,'',
+    '-- QUIZ SCORE --',sc?sc.textContent:'Not completed','',
+    '-- OPENING PREDICTIONS --',
+    'Q1 Gene vs Allele: '+( getV('ta-wonder1')||'Not answered'),
+    'Q2 Mutation impact: '+(getV('ta-wonder2')||'Not answered'),'',
+    '-- COMPETITION RESEARCH JOURNEY --',
+    'Competition idea: '+(getV('ta-comp-idea')||'Not answered'),
+    'Research question: '+(getV('ta-rq')||'Not answered'),
+    'Literature notes: '+(getV('ta-lit')||'Not answered'),
+    'Hypothesis: '+(getV('ta-hypothesis')||'Not answered'),'',
+    '-- IB EXAM QUESTIONS --',
+    'Q1 DNA vs RNA nucleotide: '+getV('pp1'),
+    'Q2 Double helix structure: '+getV('pp2'),
+    'Q3 Gene vs allele: '+getV('pp3'),
+    'Q4 Frameshift vs substitution: '+getV('pp4'),
+    'Q5 Chargaff calculation: '+getV('pp5'),
+    'Q6 Point mutation evaluate: '+getV('pp6'),'',
+    '-- FRAMESHIFT EVALUATION --',
+    getV('ta-frameshift')||'Not answered','',
+    '-- FINAL REFLECTION --',
+    getV('ta-reflect')||'Not answered','',
+    '='.repeat(70),
+    '(c) 2026 Farvour Explorations - farvourexplorations.com',
+    'Submitted via IB DP Biology B1.1 Genetics Part 1 - Interactive Lesson'
+  ];
+  return lines.join('\n');
+}
+
+function copyResults(){
+  buildSummary();
+  var text=buildPlainText();
+  navigator.clipboard.writeText(text).then(function(){
+    var el=document.getElementById('copyConfirm');
+    el.textContent='Copied! Paste into ManageBac, Google Classroom, or email.';
+    setTimeout(function(){el.textContent='';},4000);
+  }).catch(function(){
+    document.getElementById('copyConfirm').textContent='Could not copy automatically \u2014 try selecting text manually.';
+  });
+}
+function emailResults(){
+  var name=document.getElementById('studentName').value.trim()||'Student';
+  var subject=encodeURIComponent('IB Bio B1.1 Genetics Part 1 - '+name);
+  var body=encodeURIComponent(buildPlainText());
+  window.location.href='mailto:?subject='+subject+'&body='+body;
+}
+window.copyResults=copyResults; window.emailResults=emailResults;
+
+})();
+</script>
+</body>
+</html>
