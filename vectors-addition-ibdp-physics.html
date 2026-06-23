@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vectors &amp; Vector Addition — IB DP Physics A1.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ocean:#0a2a4a;--ocean-mid:#0d4a7a;--sky:#1a7ab8;--sky-pale:#e8f4fd;--teal:#17a8a8;--teal-pale:#e0f7f7;--amber:#e8a030;--amber-pale:#fef5e0;--violet:#7c6fcd;--vio-pale:#f0eefb;--paper:#fffef9;--ink:#1a2332;--muted:#7a8899;--border:#d8e4f0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:linear-gradient(160deg,#061828 0%,#0a2a4a 45%,#0d4a7a 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--ink);overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(1.5px 1.5px at 8% 12%,rgba(100,180,255,.4) 0%,transparent 100%),radial-gradient(1px 1px at 22% 38%,rgba(255,255,255,.28) 0%,transparent 100%),radial-gradient(2px 2px at 41% 6%,rgba(100,180,255,.32) 0%,transparent 100%),radial-gradient(1px 1px at 60% 24%,rgba(255,255,255,.22) 0%,transparent 100%),radial-gradient(1.5px 1.5px at 77% 9%,rgba(100,180,255,.38) 0%,transparent 100%),radial-gradient(1px 1px at 90% 55%,rgba(255,255,255,.18) 0%,transparent 100%),radial-gradient(1.5px 1.5px at 32% 78%,rgba(100,180,255,.25) 0%,transparent 100%);pointer-events:none;z-index:0}
+.hero{position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 2rem;color:white}
+.hero-badge{display:inline-block;background:var(--amber);color:var(--ocean);font-family:'Fredoka One',cursive;font-size:.85rem;letter-spacing:.05em;padding:.35rem 1.2rem;border-radius:20px;margin-bottom:1.2rem;box-shadow:0 2px 12px rgba(232,160,48,.45)}
+.hero h1{font-family:'Fredoka One',cursive;font-size:clamp(2rem,6vw,3.6rem);line-height:1.1;margin-bottom:.8rem;text-shadow:0 2px 20px rgba(0,0,0,.35)}
+.hero h1 .accent{color:var(--amber)}
+.hero p.intro{font-size:1.05rem;line-height:1.7;opacity:.88;max-width:580px;margin:0 auto 2rem}
+.name-bar{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);border-radius:12px;padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;max-width:420px;margin:0 auto 1rem}
+.name-bar label{font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;font-family:'DM Mono',monospace}
+.name-bar input{flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.4rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:white;outline:none}
+.name-bar input::placeholder{color:rgba(255,255,255,.4);font-weight:400}
+.progress-wrap{display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem}
+.prog-step{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);border-radius:20px;padding:.35rem .9rem;font-size:.75rem;font-weight:700;color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace;display:inline-block}
+.prog-step:hover,.prog-step.done{background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.35)}
+.prog-step.active{background:var(--amber);color:var(--ocean);border-color:var(--amber);box-shadow:0 2px 12px rgba(232,160,48,.45)}
+.sheet{position:relative;z-index:1;background:var(--paper);border-radius:24px 24px 0 0;margin-top:1.5rem;padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.3)}
+.section{padding:3rem 2rem 0;max-width:820px;margin:0 auto;display:none}
+.section.active{display:block}
+.section-eyebrow{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem}
+.eyebrow-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1rem;color:white;flex-shrink:0}
+.num-sky{background:var(--sky)}.num-teal{background:var(--teal)}.num-amber{background:var(--amber);color:var(--ocean)}.num-vio{background:var(--violet)}.num-ocean{background:var(--ocean-mid)}
+.eyebrow-label{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace}
+.section h2{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,3.5vw,2.1rem);color:var(--ocean);margin-bottom:.6rem;line-height:1.2}
+.section .lead{font-size:1rem;line-height:1.75;color:#2a3a4a;margin-bottom:1.8rem}
+.section .lead strong{color:var(--sky)}
+.wonder-box{background:linear-gradient(135deg,var(--ocean) 0%,var(--ocean-mid) 100%);color:white;border-radius:16px;padding:1.8rem 2rem;margin-bottom:1.8rem;position:relative;overflow:hidden}
+.wonder-box::after{content:'🤔';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3}
+.wonder-box p{font-size:1rem;line-height:1.7;font-style:italic;opacity:.95;max-width:88%}
+.wonder-box strong{color:var(--amber);font-style:normal}
+.wonder-box.amber-box{background:linear-gradient(135deg,#8a5c10 0%,#b87c18 100%)}
+.wonder-box.teal-box{background:linear-gradient(135deg,#0d6e6e 0%,#0a9898 100%)}
+.wonder-box.vio-box{background:linear-gradient(135deg,#4a3a8a 0%,#6a5acd 100%)}
+.wonder-box.sky-box{background:linear-gradient(135deg,#0a5080 0%,#1070b0 100%)}
+.wonder-box.red-box{background:linear-gradient(135deg,#7a2010 0%,#b03020 100%)}
+.predict-box{background:var(--amber-pale);border:2px dashed var(--amber);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem}
+.predict-box h4{font-family:'Fredoka One',cursive;font-size:1rem;color:#8a5c10;margin-bottom:.8rem}
+.predict-box textarea,.reflect-box textarea,.pp-textarea{width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:64px;background:white;color:var(--ink);outline:none;transition:border-color .2s}
+.predict-box textarea:focus{border-color:var(--amber)}
+.reflect-box{background:var(--teal-pale);border:2px dashed var(--teal);border-radius:14px;padding:1.4rem 1.6rem;margin-top:1.5rem}
+.reflect-box h4{font-family:'Fredoka One',cursive;font-size:1rem;color:#0d6e6e;margin-bottom:.8rem}
+.demo-zone{background:white;border:2px solid var(--border);border-radius:16px;padding:1.6rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.demo-zone h3{font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin-bottom:.3rem}
+.demo-zone .hint{font-size:.76rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:1rem}
+.chip-row{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem}
+.chip{padding:.45rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;border:2px solid transparent}
+.chip.sky{background:var(--sky-pale);color:var(--sky);border-color:#b0d8f0}.chip.teal{background:var(--teal-pale);color:var(--teal);border-color:#a0e0e0}.chip.amber{background:var(--amber-pale);color:#8a5c10;border-color:#f0d090}.chip.vio{background:var(--vio-pale);color:var(--violet);border-color:#d0caef}.chip.ocean{background:#d0e8f8;color:var(--ocean-mid);border-color:#90c0e0}
+.chip:hover{transform:scale(1.05)}
+.concept-reveal{background:var(--paper);border-left:4px solid var(--sky);border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;margin-top:.5rem;display:none;animation:fadeIn .3s ease}
+.concept-reveal.show{display:block}
+.concept-reveal.teal-border{border-color:var(--teal)}.concept-reveal.amber-border{border-color:var(--amber)}.concept-reveal.vio-border{border-color:var(--violet)}.concept-reveal.ocean-border{border-color:var(--ocean-mid)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0}
+.info-card{background:white;border:2px solid var(--border);border-radius:14px;padding:1.1rem;text-align:center;cursor:pointer;transition:all .2s}
+.info-card:hover,.info-card.active{border-color:var(--ocean-mid);transform:translateY(-2px);box-shadow:0 4px 14px rgba(13,74,122,.18)}
+.info-card.active{background:#d0e8f8}
+.info-card .ic-icon{font-size:2rem;margin-bottom:.4rem}
+.info-card .ic-title{font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--ocean);margin-bottom:.2rem}
+.info-card .ic-sub{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.info-panel{background:#d0e8f8;border-left:4px solid var(--ocean-mid);border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;display:none;animation:fadeIn .3s ease;margin-bottom:1rem}
+.info-panel.show{display:block}
+.info-panel h4{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ocean);margin-bottom:.5rem}
+.info-panel p{font-size:.88rem;line-height:1.7;color:#1a2a3a}
+.info-panel .eg{background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;font-size:.82rem;font-family:'DM Mono',monospace;border:1.5px solid rgba(13,74,122,.2)}
+.vocab-table{width:100%;border-collapse:collapse;margin:1rem 0 1.5rem}
+.vocab-table th{background:var(--ocean);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;padding:.65rem 1rem;text-align:left}
+.vocab-table td{padding:.6rem 1rem;font-size:.83rem;line-height:1.5;border-bottom:1px solid var(--border)}
+.vocab-table tr:nth-child(even) td{background:#f0f6fc}
+.vocab-table tr:hover td{background:#d0e8f8}
+.vocab-table td:first-child{font-weight:800;color:var(--ocean-mid)}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1rem 0}
+.match-item{padding:.75rem 1rem;border-radius:10px;border:2px solid var(--border);cursor:pointer;font-size:.84rem;font-weight:700;transition:all .2s;background:white;text-align:center;color:var(--ink)}
+.match-item:hover{border-color:var(--ocean-mid);background:#e8f4fd}
+.match-item.selected{border-color:var(--violet);background:var(--vio-pale);color:var(--violet)}
+.match-item.matched{border-color:var(--teal);background:var(--teal-pale);color:#0d6e6e;cursor:default}
+.match-item.wrong{border-color:#e85c3a;background:#fdf0ec;color:#a03020;animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.pp-card{background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+.pp-label{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--ocean-mid);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem}
+.pp-q{font-size:.93rem;font-weight:700;color:var(--ink);line-height:1.5;margin-bottom:.8rem}
+.pp-answer{background:#d0e8f8;border-left:4px solid var(--ocean-mid);border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.85rem;line-height:1.7;margin-top:.8rem;display:none;animation:fadeIn .3s ease}
+.pp-answer.show{display:block}
+.pp-answer strong{color:var(--ocean)}
+.pp-answer ul{margin:.4rem 0 0 1rem}
+.pp-answer li{margin-bottom:.3rem}
+.quiz-card{background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.quiz-q{font-weight:700;font-size:.93rem;color:var(--ink);margin-bottom:1rem;line-height:1.5}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem}
+.quiz-opt{padding:.6rem 1rem;border-radius:8px;border:2px solid var(--border);background:white;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:600;text-align:left;transition:all .15s;color:var(--ink)}
+.quiz-opt:hover:not(:disabled){border-color:var(--ocean-mid);background:#e8f4fd}
+.quiz-opt.correct{background:var(--teal-pale);border-color:var(--teal);color:#0d6e6e}
+.quiz-opt.wrong{background:#fdf0ec;border-color:#e85c3a;color:#a03020}
+.quiz-opt:disabled{cursor:default}
+.quiz-feedback{margin-top:.8rem;font-size:.84rem;line-height:1.6;padding:.7rem 1rem;border-radius:8px;display:none;animation:fadeIn .3s ease}
+.quiz-feedback.show{display:block}
+.quiz-feedback.correct-fb{background:var(--teal-pale);color:#0d6e6e;border-left:3px solid var(--teal)}
+.quiz-feedback.wrong-fb{background:#fdf0ec;color:#a03020;border-left:3px solid #e85c3a}
+.score-panel{background:linear-gradient(135deg,var(--ocean) 0%,var(--ocean-mid) 100%);color:white;border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem}
+.score-panel .score-num{font-family:'Fredoka One',cursive;font-size:3.5rem;line-height:1;color:var(--amber)}
+.score-panel p{opacity:.88;margin-top:.5rem;font-size:1rem}
+.score-panel h3{font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:.3rem}
+.nav-row{display:flex;justify-content:space-between;align-items:center;padding:2.5rem 2rem 0;max-width:820px;margin:0 auto}
+.btn-next{background:var(--ocean);color:white;border:none;border-radius:50px;padding:.9rem 2rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;display:flex;align-items:center;gap:.6rem;transition:all .2s;box-shadow:0 4px 16px rgba(10,42,74,.35)}
+.btn-next:hover{background:var(--ocean-mid);transform:translateY(-2px)}
+.btn-prev{background:transparent;color:var(--muted);border:2px solid var(--border);border-radius:50px;padding:.9rem 1.6rem;font-family:'Fredoka One',cursive;font-size:.95rem;cursor:pointer;transition:all .2s}
+.btn-prev:hover{border-color:var(--muted);color:var(--ink)}
+.btn-prev:disabled,.btn-next:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.summary-section{background:white;border-radius:16px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:2px solid var(--border)}
+.summary-section h3{font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--ocean);margin-bottom:.8rem}
+.summary-answer{background:#f0f6fc;border-radius:8px;padding:.65rem 1rem;font-size:.83rem;line-height:1.6;color:var(--ink);margin-bottom:.4rem;font-style:italic;border-left:3px solid var(--violet);min-height:1.8rem}
+.summary-answer.empty{color:var(--muted);font-style:normal;border-left-color:var(--border)}
+.sum-label{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);margin-bottom:.3rem;margin-top:.5rem;text-transform:uppercase;letter-spacing:.06em}
+.share-buttons{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center}
+.share-btn{border:none;border-radius:12px;padding:.85rem 1.6rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem}
+.share-btn:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.share-btn.copy{background:var(--teal);color:white}.share-btn.email{background:var(--violet);color:white}.share-btn.print{background:var(--ocean);color:white}
+.copy-confirm{text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--teal);min-height:1.2rem;margin-top:.6rem}
+.btn{border:none;border-radius:10px;padding:.65rem 1.2rem;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;transition:all .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15)}
+.btn-teal{background:var(--teal);color:white}.btn-ghost{background:#f0f2f5;color:var(--muted)}.btn-ocean{background:var(--ocean);color:white}.btn-amber{background:var(--amber);color:var(--ocean)}
+.fill-wrap{background:white;border:2px solid var(--border);border-radius:14px;padding:1rem 1.2rem;margin-bottom:.7rem}
+.fill-q{font-size:.92rem;line-height:1.9;color:var(--ink)}
+.blank-input{border:none;border-bottom:2.5px solid var(--ocean-mid);background:transparent;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:var(--ocean);width:160px;text-align:center;outline:none;padding:0 4px}
+.blank-input.ok{border-color:var(--teal);color:var(--teal)}.blank-input.err{border-color:#e85c3a;color:#e85c3a}
+.action-row{display:flex;gap:.6rem;flex-wrap:wrap;margin:.8rem 0}
+.divider{height:1px;background:var(--border);margin:2rem 0}
+.hl-badge{display:inline-block;background:var(--violet);color:white;font-family:'DM Mono',monospace;font-size:.65rem;font-weight:700;padding:.2rem .5rem;border-radius:8px;margin-left:.3rem}
+.sl-badge{display:inline-block;background:var(--teal);color:white;font-family:'DM Mono',monospace;font-size:.65rem;font-weight:700;padding:.2rem .5rem;border-radius:8px;margin-left:.3rem}
+.explory-banner{background:linear-gradient(135deg,#0d2f5c 0%,#1a4a9c 100%);color:white;border-radius:16px;padding:1.4rem 1.8rem;margin-bottom:1.5rem;border-left:5px solid var(--amber);position:relative;overflow:hidden}
+.explory-banner::after{content:'🏆';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:2.5rem;opacity:.25}
+.explory-banner h4{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--amber);margin-bottom:.4rem}
+.explory-banner p{font-size:.86rem;line-height:1.65;opacity:.92;max-width:90%}
+.research-card{background:linear-gradient(135deg,#fff9e6 0%,#fffcf0 100%);border:2px solid var(--amber);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem}
+.research-card h4{font-family:'Fredoka One',cursive;font-size:1rem;color:#8a5c10;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+.research-step{display:flex;gap:.8rem;align-items:flex-start;margin-bottom:.8rem}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--amber);color:var(--ocean);font-family:'Fredoka One',cursive;font-size:.9rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-content{font-size:.85rem;line-height:1.6;color:var(--ink)}
+.step-content strong{color:#8a5c10}
+/* Vector diagram canvas area */
+.vec-canvas-wrap{background:#f0f6fc;border:2px solid var(--border);border-radius:14px;padding:1rem;margin:1rem 0;display:flex;justify-content:center}
+canvas{border-radius:8px;background:white;display:block;max-width:100%}
+/* component table */
+.comp-table{width:100%;border-collapse:collapse;margin:1rem 0}
+.comp-table th{background:var(--ocean-mid);color:white;padding:.5rem .8rem;font-family:'Fredoka One',cursive;font-size:.82rem;text-align:center}
+.comp-table td{padding:.5rem .8rem;text-align:center;border-bottom:1px solid var(--border);font-size:.84rem;font-family:'DM Mono',monospace}
+.comp-table tr:nth-child(even) td{background:#f0f6fc}
+.comp-table .total-row td{background:var(--amber-pale);font-weight:800;color:var(--ocean);border-top:2px solid var(--amber)}
+/* slider control */
+.vec-controls{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:.8rem 0}
+.vec-ctrl-group{background:white;border:1.5px solid var(--border);border-radius:10px;padding:.8rem 1rem}
+.vec-ctrl-group label{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--ocean);font-weight:700;letter-spacing:.05em;display:block;margin-bottom:.3rem}
+.vec-ctrl-group input[type=range]{width:100%;accent-color:var(--sky)}
+.vec-readout{font-size:.8rem;font-family:'DM Mono',monospace;color:var(--muted);margin-top:.2rem}
+@media(max-width:560px){.hero{padding:2.5rem 1.2rem 1.5rem}.section{padding:2rem 1.2rem 0}.nav-row{padding:2rem 1.2rem 0}.match-grid{grid-template-columns:1fr}.vec-controls{grid-template-columns:1fr}}
+@media print{.hero,.nav-row,.share-buttons,.copy-confirm{display:none!important}.sheet{box-shadow:none;border-radius:0}.section{display:none!important}#sec-7{display:block!important}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">⚡ IB DP Physics 2023 · A1 Kinematics · Vectors Part 1</div>
+  <h1>Vectors &amp; <span class="accent">Vector Addition</span></h1>
+  <p class="intro">Scalar and vector quantities, vector components, graphical and algebraic addition. A1.2.1–A1.2.7 with interactive diagrams, IB-style exam questions, and mark-scheme answers.</p>
+  <div class="name-bar"><label>👤 YOUR NAME:</label><input type="text" id="studentName" placeholder="Type your name here..."></div>
+  <div class="progress-wrap">
+    <a class="prog-step active" onclick="goTo(0)">🌌 Wonder</a>
+    <a class="prog-step" onclick="goTo(1)">📐 Scalars vs Vectors</a>
+    <a class="prog-step" onclick="goTo(2)">➕ Adding Vectors</a>
+    <a class="prog-step" onclick="goTo(3)">📊 Components</a>
+    <a class="prog-step" onclick="goTo(4)">⚖️ Equilibrium</a>
+    <a class="prog-step" onclick="goTo(5)">📝 IB Questions</a>
+    <a class="prog-step" onclick="goTo(6)">🧩 Quiz</a>
+    <a class="prog-step" onclick="goTo(7)">🔍 Reflect &amp; Submit</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+<!-- SEC 0: WONDER -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow"><div class="eyebrow-num num-sky">1</div><span class="eyebrow-label">Phase 1 — Wonder</span></div>
+  <h2>🌌 Why Do Directions Matter?</h2>
+  <p class="lead">A pilot flying at <strong>300 km/h into a 100 km/h headwind</strong> moves at 200 km/h relative to the ground. The same pilot flying with the wind reaches 400 km/h. But crosswinds are more complex — you can't just add or subtract them. Direction changes everything in physics.</p>
+  <div class="wonder-box">
+    <p>✨ A river flows east at 2 m s⁻¹. A swimmer strikes out north at 1.5 m s⁻¹. Where do they actually go? A force of <strong>100 N north</strong> and a force of <strong>100 N east</strong> do NOT add up to 200 N. Understanding why — and what the resultant really is — is the foundation of all Newtonian mechanics, projectile motion, and beyond.</p>
+  </div>
+  <div class="wonder-box amber-box">
+    <p>This workshop covers <strong>A1.2.1–A1.2.7</strong> of the IB DP Physics 2023 syllabus: scalar vs vector quantities, vector representation, addition by triangle and parallelogram rules, resolving into perpendicular components, and resultant vectors. <span class="sl-badge">SL</span> and <span class="hl-badge">HL</span> content is labelled throughout.</p>
+  </div>
+
+  <div class="explory-banner">
+    <h4>🏆 Physics in the Real World: Why Vectors Matter</h4>
+    <p>Every engineering structure, every GPS system, every flight plan, and every robotics system relies on vector mathematics. Architects use vector force analysis to ensure bridges don't collapse. Physicists use vectors to model particle collisions at CERN. Mastering vector addition here unlocks all of mechanics, fields, and waves.</p>
+  </div>
+
+  <div class="predict-box">
+    <h4>✏️ Before We Begin — Predict</h4>
+    <p style="font-size:.84rem;color:#8a5c10;margin-bottom:.7rem">Answer in your own words before working through the lesson. You can change your mind later!</p>
+    <p style="font-size:.88rem;font-weight:700;margin-bottom:.4rem">Q1. What is the difference between a scalar quantity and a vector quantity? Give two examples of each.</p>
+    <textarea id="ta-wonder1" placeholder="Write your prediction here..."></textarea>
+    <p style="font-size:.88rem;font-weight:700;margin:.8rem 0 .4rem">Q2. A force of 60 N acts north and a force of 80 N acts east. Without calculating, predict the magnitude of the resultant. How did you estimate it?</p>
+    <textarea id="ta-wonder2" placeholder="Write your prediction here..."></textarea>
+  </div>
+
+  <div class="predict-box" style="background:var(--vio-pale);border-color:var(--violet)">
+    <h4 style="color:var(--violet)">🚀 Real World Curiosity</h4>
+    <textarea id="ta-curiosity" placeholder="Name a real-world situation (sport, engineering, nature) where vector addition matters. What quantities are being combined, and why does direction matter in that situation?"></textarea>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" disabled>← Back</button><button class="btn-next" onclick="navigate(1)">Next →</button></div>
+</div>
+
+<!-- SEC 1: SCALARS vs VECTORS -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow"><div class="eyebrow-num num-vio">2</div><span class="eyebrow-label">Phase 2 · A1.2.1–A1.2.2 — Scalars &amp; Vectors</span></div>
+  <h2>📐 Scalar and Vector Quantities <span class="sl-badge">SL</span></h2>
+  <p class="lead">A <strong>scalar quantity</strong> has magnitude only. A <strong>vector quantity</strong> has both magnitude and direction. This distinction is not cosmetic — it changes the rules of arithmetic entirely. You cannot add vectors the way you add scalars unless they are perfectly aligned.</p>
+
+  <div class="wonder-box sky-box">
+    <p><strong>Key IB definitions:</strong><br>
+    • Scalar: described completely by a magnitude and a unit (e.g. 35 J, 12 kg, 20°C)<br>
+    • Vector: described by a magnitude, a unit, AND a direction (e.g. 40 N east, 15 m s⁻¹ at 30° above horizontal)<br>
+    • Vectors are represented by arrows — the length encodes magnitude, the arrowhead encodes direction<br>
+    • On paper: bold type (<strong>F</strong>) or an overarrow (F⃗) denotes a vector. In IB exams, context usually makes it clear.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ocean);margin:.5rem 0 .8rem">🗂️ Scalar or Vector? — Tap Each</h3>
+  <div class="chip-row">
+    <span class="chip sky" onclick="revealChip('displacement')">Displacement</span>
+    <span class="chip teal" onclick="revealChip('distance')">Distance</span>
+    <span class="chip amber" onclick="revealChip('velocity')">Velocity</span>
+    <span class="chip vio" onclick="revealChip('speed')">Speed</span>
+    <span class="chip ocean" onclick="revealChip('force')">Force</span>
+    <span class="chip sky" onclick="revealChip('mass')">Mass</span>
+    <span class="chip teal" onclick="revealChip('acceleration')">Acceleration</span>
+    <span class="chip amber" onclick="revealChip('energy')">Energy</span>
+  </div>
+  <div id="chip-displacement" class="concept-reveal sky"><strong>Displacement — Vector.</strong> Displacement is the straight-line distance from start to finish point, with direction. "5 km north-east" is displacement; "5 km" is distance. When you walk 3 m north then 4 m east, your displacement is 5 m north-east (not 7 m). IB note: always specify a reference direction or angle when stating displacement.</div>
+  <div id="chip-distance" class="concept-reveal teal-border"><strong>Distance — Scalar.</strong> Distance is the total path length travelled, regardless of direction. It is always positive and never negative. "I walked 400 m" is a distance — no direction needed. Distance ≥ magnitude of displacement. They are only equal when motion is in a straight line with no backtracking.</div>
+  <div id="chip-velocity" class="concept-reveal amber-border"><strong>Velocity — Vector.</strong> Velocity is the rate of change of displacement. It has both magnitude (speed) and direction. "10 m s⁻¹ east" is a velocity; "10 m s⁻¹" is speed. An object in circular motion has constant speed but continuously changing velocity (direction changes), so it is always accelerating.</div>
+  <div id="chip-speed" class="concept-reveal vio-border"><strong>Speed — Scalar.</strong> Speed is the magnitude of velocity. It tells you how fast something moves but not where it is going. Average speed = total distance / total time. Instantaneous speed = magnitude of instantaneous velocity. Because it has no direction, two objects with the same speed can be heading in completely different directions.</div>
+  <div id="chip-force" class="concept-reveal ocean-border"><strong>Force — Vector.</strong> Forces have both magnitude (in newtons) and direction. A 10 N force upward and a 10 N force downward do NOT cancel to 20 N — they produce a net force of 0 N. This is the key reason vectors matter in mechanics. Forces must always be added using vector addition, not simple arithmetic.</div>
+  <div id="chip-mass" class="concept-reveal sky"><strong>Mass — Scalar.</strong> Mass is the amount of matter in an object, measured in kilograms. It has no direction. Regardless of where you are in the universe or how you are oriented, the mass of a 2 kg ball is 2 kg. Mass is often confused with weight — weight is a force (a vector); mass is a scalar.</div>
+  <div id="chip-acceleration" class="concept-reveal teal-border"><strong>Acceleration — Vector.</strong> Acceleration is the rate of change of velocity. Since velocity is a vector, its rate of change is also a vector. Acceleration can be caused by a change in speed, a change in direction, or both. IB HL note: centripetal acceleration points toward the centre of a circular path even when speed is constant.</div>
+  <div id="chip-energy" class="concept-reveal amber-border"><strong>Energy — Scalar.</strong> Energy (kinetic, potential, thermal, etc.) has magnitude and a unit (joules) but no direction. You cannot say "3 J upward." Energy is stored, transferred, or dissipated — these are all scalar processes. This makes energy calculations simpler: you can add and subtract energy values algebraically without worrying about direction.</div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ocean);margin:.5rem 0 .8rem">📋 Key Scalar/Vector Pairs</h3>
+  <table class="vocab-table">
+    <tr><th>Scalar</th><th>Related Vector</th><th>Key Difference</th></tr>
+    <tr><td>Distance</td><td>Displacement</td><td>Displacement specifies direction from start to end</td></tr>
+    <tr><td>Speed</td><td>Velocity</td><td>Velocity includes direction of motion</td></tr>
+    <tr><td>—</td><td>Acceleration</td><td>Rate of change of velocity (always a vector)</td></tr>
+    <tr><td>Mass</td><td>Weight</td><td>Weight = mg, acts toward centre of Earth</td></tr>
+    <tr><td>Energy</td><td>Force</td><td>Forces combine by vector rules; energies add algebraically</td></tr>
+    <tr><td>Pressure</td><td>Momentum</td><td>Momentum = mv; direction is that of velocity</td></tr>
+  </table>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ocean);margin:.5rem 0 .8rem">🔗 Match — Scalar or Vector?</h3>
+  <p style="font-size:.84rem;color:var(--muted);margin-bottom:.8rem;font-family:'DM Mono',monospace">Tap a left-hand item then the matching right-hand item.</p>
+  <div class="match-grid" id="match1-grid"></div>
+  <div style="font-size:.84rem;font-family:'DM Mono',monospace;color:var(--ocean-mid);margin-top:.3rem">Score: <span id="match1-score">0</span> / 5 &nbsp;<button class="btn btn-ghost" style="font-size:.75rem;padding:.3rem .7rem" onclick="resetMatch1()">Reset</button></div>
+  <div id="match1-result" style="font-size:.84rem;color:var(--teal);font-family:'DM Mono',monospace;min-height:1.2rem;margin-top:.3rem"></div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next →</button></div>
+</div>
+
+<!-- SEC 2: ADDING VECTORS -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow"><div class="eyebrow-num num-teal">3</div><span class="eyebrow-label">Phase 3 · A1.2.3–A1.2.4 — Vector Addition</span></div>
+  <h2>➕ Adding Vectors: Triangle &amp; Parallelogram Rules <span class="sl-badge">SL</span></h2>
+  <p class="lead">The <strong>resultant vector</strong> is the single vector that has the same effect as two or more vectors combined. There are two equivalent graphical methods: the tip-to-tail (triangle) rule and the parallelogram rule. For calculation, we use Pythagoras and trigonometry.</p>
+
+  <div class="wonder-box teal-box">
+    <p><strong>Triangle Rule (Tip-to-Tail):</strong> Draw vector A, then draw vector B starting at the tip of A. The resultant R goes from the tail of A to the tip of B. Order doesn't matter — you get the same resultant.<br><br>
+    <strong>Parallelogram Rule:</strong> Draw both vectors from the same point. Complete the parallelogram. The diagonal from the shared origin is the resultant. Useful when vectors act on a single point simultaneously (like two forces on a hook).</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ocean);margin:.5rem 0 .8rem">🎮 Interactive Vector Addition</h3>
+  <p style="font-size:.84rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:.8rem">Adjust the sliders to change vector magnitudes and angles. Watch the resultant (gold arrow) update live.</p>
+  <div class="vec-controls">
+    <div class="vec-ctrl-group">
+      <label>VECTOR A — MAGNITUDE (N)</label>
+      <input type="range" id="magA" min="20" max="120" value="60" oninput="drawVectors()">
+      <div class="vec-readout" id="readA">60 N</div>
+      <label style="margin-top:.6rem">VECTOR A — ANGLE (°)</label>
+      <input type="range" id="angA" min="0" max="359" value="0" oninput="drawVectors()">
+      <div class="vec-readout" id="readAngA">0° (East)</div>
+    </div>
+    <div class="vec-ctrl-group">
+      <label>VECTOR B — MAGNITUDE (N)</label>
+      <input type="range" id="magB" min="20" max="120" value="80" oninput="drawVectors()">
+      <div class="vec-readout" id="readB">80 N</div>
+      <label style="margin-top:.6rem">VECTOR B — ANGLE (°)</label>
+      <input type="range" id="angB" min="0" max="359" value="90" oninput="drawVectors()">
+      <div class="vec-readout" id="readAngB">90° (North)</div>
+    </div>
+  </div>
+  <div class="vec-canvas-wrap">
+    <canvas id="vecCanvas" width="440" height="340"></canvas>
+  </div>
+  <div id="vec-result" style="background:var(--amber-pale);border:2px solid var(--amber);border-radius:10px;padding:.9rem 1.2rem;font-family:'DM Mono',monospace;font-size:.85rem;color:var(--ocean);margin-top:.5rem"></div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ocean);margin:.5rem 0 .8rem">🔢 Worked Example: Two Perpendicular Forces</h3>
+  <div class="wonder-box sky-box" style="margin-bottom:1rem">
+    <p>A hook is pulled by force A = <strong>60 N east</strong> and force B = <strong>80 N north</strong>. Find the resultant force.<br><br>
+    <strong>Step 1 — Sketch:</strong> draw A east and B north from the same point.<br>
+    <strong>Step 2 — Magnitude:</strong> R = √(60² + 80²) = √(3600 + 6400) = √10000 = <strong>100 N</strong><br>
+    <strong>Step 3 — Direction:</strong> θ = arctan(80/60) = arctan(1.333) = <strong>53.1° north of east</strong> (i.e. bearing 036.9°)<br>
+    <strong>Answer:</strong> Resultant = 100 N at 53.1° north of east (N53.1°E)</p>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✏️ Practice: Non-perpendicular vectors</h4>
+    <p style="font-size:.84rem;color:#0d6e6e;margin-bottom:.6rem">Two forces act on a ball: <strong>F₁ = 50 N at 30° above horizontal</strong> and <strong>F₂ = 30 N horizontal</strong>. Using components (or a scale drawing), find the magnitude and direction of the resultant. Show all working.</p>
+    <textarea id="ta-practice1" placeholder="Show your working: resolve components, add, find magnitude and angle..."></textarea>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next →</button></div>
+</div>
+
+<!-- SEC 3: COMPONENTS -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow"><div class="eyebrow-num num-amber">4</div><span class="eyebrow-label">Phase 4 · A1.2.5–A1.2.6 — Resolving Vectors</span></div>
+  <h2>📊 Resolving into Components <span class="sl-badge">SL</span> <span class="hl-badge">HL</span></h2>
+  <p class="lead">Any vector can be split (resolved) into two <strong>perpendicular components</strong>, usually horizontal (x) and vertical (y). This transforms a 2D vector problem into two independent 1D problems. Resolving is the algebraic method of vector addition — and is essential for IB exam calculations.</p>
+
+  <div class="wonder-box vio-box">
+    <p>For a vector of magnitude <strong>F</strong> at angle <strong>θ</strong> above the horizontal:<br><br>
+    • <strong>Horizontal component:</strong> Fₓ = F cos θ<br>
+    • <strong>Vertical component:</strong> F_y = F sin θ<br><br>
+    To add multiple vectors algebraically: resolve each into components, sum all x-components (ΣFₓ), sum all y-components (ΣF_y), then reconstruct: R = √(ΣFₓ² + ΣF_y²) and θ = arctan(ΣF_y / ΣFₓ).</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ocean);margin:.5rem 0 .8rem">📊 Component Method — Three Vectors</h3>
+  <div class="demo-zone">
+    <h3>Vector Components Calculator</h3>
+    <p class="hint">Three forces act on an object. Their components are resolved below.</p>
+    <table class="comp-table">
+      <tr><th>Vector</th><th>Magnitude (N)</th><th>Angle (° from +x)</th><th>Fₓ = F cos θ</th><th>F_y = F sin θ</th></tr>
+      <tr><td>F₁</td><td>100</td><td>30°</td><td>+86.6</td><td>+50.0</td></tr>
+      <tr><td>F₂</td><td>60</td><td>150°</td><td>−52.0</td><td>+30.0</td></tr>
+      <tr><td>F₃</td><td>80</td><td>270°</td><td>0.0</td><td>−80.0</td></tr>
+      <tr class="total-row"><td colspan="3"><strong>Resultant</strong></td><td><strong>ΣFₓ = +34.6</strong></td><td><strong>ΣF_y = 0.0</strong></td></tr>
+    </table>
+    <div style="background:var(--sky-pale);border-left:4px solid var(--sky);border-radius:0 8px 8px 0;padding:.8rem 1rem;font-size:.85rem;font-family:'DM Mono',monospace;color:var(--ocean)">
+      R = √(34.6² + 0²) = <strong>34.6 N</strong> &nbsp;|&nbsp; θ = arctan(0/34.6) = <strong>0° (pure horizontal)</strong>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ocean);margin:.5rem 0 .8rem">⬇️ Inclined Plane — Tap Each Component</h3>
+  <div class="card-grid">
+    <div class="info-card" onclick="showCard('weight-comp',this)"><div class="ic-icon">⬇️</div><div class="ic-title">Weight (W)</div><div class="ic-sub">mg downward</div></div>
+    <div class="info-card" onclick="showCard('parallel-comp',this)"><div class="ic-icon">↙️</div><div class="ic-title">W∥ (parallel)</div><div class="ic-sub">Down the slope</div></div>
+    <div class="info-card" onclick="showCard('perp-comp',this)"><div class="ic-icon">↗️</div><div class="ic-title">W⊥ (perpendicular)</div><div class="ic-sub">Into the slope</div></div>
+    <div class="info-card" onclick="showCard('normal-comp',this)"><div class="ic-icon">⬆️</div><div class="ic-title">Normal Force N</div><div class="ic-sub">Reaction from slope</div></div>
+  </div>
+  <div id="panel-weight-comp" class="info-panel"><h4>Weight (W = mg)</h4><p>Weight acts vertically downward with magnitude mg. On a slope, it cannot be balanced directly by the normal force (which acts perpendicular to the slope surface). This is why we must resolve weight into two components — one along the slope, one perpendicular to it.</p><div class="eg">W = mg e.g. for m = 5 kg: W = 5 × 9.81 = 49.1 N downward</div></div>
+  <div id="panel-parallel-comp" class="info-panel"><h4>W∥ — Component Parallel to Slope</h4><p>W∥ = mg sin θ, where θ is the angle of the slope to the horizontal. This is the component that would cause the object to accelerate down the slope (if friction is insufficient). On a steeper slope, sin θ is larger, so this component is larger — explaining why steeper slopes feel harder to climb.</p><div class="eg">θ = 30°: W∥ = mg sin 30° = 0.5 mg &nbsp;|&nbsp; θ = 45°: W∥ = mg sin 45° = 0.707 mg</div></div>
+  <div id="panel-perp-comp" class="info-panel"><h4>W⊥ — Component Perpendicular to Slope</h4><p>W⊥ = mg cos θ. This component pushes the object into the slope surface. The normal force exactly balances W⊥ when the object is stationary or moving at constant speed (no acceleration perpendicular to slope). IB HL: friction force ≤ μN = μ mg cos θ.</p><div class="eg">θ = 30°: W⊥ = mg cos 30° = 0.866 mg &nbsp;|&nbsp; θ = 0° (flat): W⊥ = mg (all weight goes into surface)</div></div>
+  <div id="panel-normal-comp" class="info-panel"><h4>Normal Force N</h4><p>The normal force acts perpendicular to the slope surface, away from the surface. In equilibrium: N = W⊥ = mg cos θ. Note: the normal force is NOT equal to mg unless the slope is horizontal (θ = 0). This is a very common IB exam mistake — always resolve the weight before stating the normal force on an incline.</p><div class="eg">Common IB error: writing N = mg on a slope. Correct: N = mg cos θ</div></div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ocean);margin:.5rem 0 .8rem">🧮 Vector Components — Fill In</h3>
+  <div class="fill-wrap">
+    <div class="fill-q">A force of 50 N acts at 37° above the horizontal.<br>
+    Horizontal component Fₓ = <input class="blank-input" id="calc-fx" maxlength="6" placeholder="? N"> &nbsp;&nbsp; Vertical component F_y = <input class="blank-input" id="calc-fy" maxlength="6" placeholder="? N"></div>
+    <div class="action-row"><button class="btn btn-teal" onclick="checkComponents()">Check</button><button class="btn btn-ghost" onclick="resetComponents()">Reset</button></div>
+    <div id="comp-fb" style="font-size:.84rem;min-height:1.4rem;color:var(--ocean-mid);font-family:'DM Mono',monospace"></div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✏️ Evaluate: Why do we resolve vectors into perpendicular components?</h4>
+    <textarea id="ta-resolve" placeholder="Explain why resolving into perpendicular components simplifies vector addition. Why must the two components be perpendicular? What would happen if they were not?"></textarea>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next →</button></div>
+</div>
+
+<!-- SEC 4: EQUILIBRIUM -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow"><div class="eyebrow-num num-sky">5</div><span class="eyebrow-label">Phase 5 · A1.2.7 — Equilibrium</span></div>
+  <h2>⚖️ Equilibrium and the Zero Resultant <span class="sl-badge">SL</span></h2>
+  <p class="lead">An object is in <strong>translational equilibrium</strong> when the vector sum of all forces acting on it equals zero. This means ΣF = 0, or equivalently, ΣFₓ = 0 <em>and</em> ΣF_y = 0. The object is either at rest or moving at constant velocity (Newton's 1st Law).</p>
+
+  <div class="wonder-box red-box">
+    <p>A traffic light hanging from two wires does not fall. The tension in the wires, resolved into vertical components, must exactly balance the downward weight. If the wires are at a shallow angle, the tensions must be enormous — this is why suspension bridge cables are never horizontal. The <strong>shallow angle problem</strong> is a classic IB exam scenario.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ocean);margin:.5rem 0 .8rem">⚖️ Equilibrium Conditions — Tap Each</h3>
+  <div class="chip-row">
+    <span class="chip sky" onclick="revealChip('trans-eq')">Translational Equilibrium</span>
+    <span class="chip teal" onclick="revealChip('closed-tri')">Closed Triangle Rule</span>
+    <span class="chip amber" onclick="revealChip('three-forces')">Three Force Problem</span>
+    <span class="chip vio" onclick="revealChip('lami')">Lami's Theorem</span>
+  </div>
+  <div id="chip-trans-eq" class="concept-reveal sky"><strong>Translational Equilibrium:</strong> The vector sum of all forces = 0. This requires BOTH ΣFₓ = 0 and ΣF_y = 0. A body in equilibrium may be at rest (static equilibrium) or moving at constant velocity (dynamic equilibrium). IB note: you must state the vector condition, not just "forces are balanced" — examiners want ΣF = 0 or a diagram showing the closed triangle.</div>
+  <div id="chip-closed-tri" class="concept-reveal teal-border"><strong>Closed Triangle (Polygon) Rule:</strong> If three (or more) forces are in equilibrium, their vectors drawn tip-to-tail form a closed polygon. For three forces, they form a closed triangle. This graphical test is useful for checking equilibrium problems. If the vectors do NOT close (gap at the end), the body is NOT in equilibrium.</div>
+  <div id="chip-three-forces" class="concept-reveal amber-border"><strong>Three Force Problem:</strong> A very common IB scenario: weight W acts downward; two cables make angles θ₁ and θ₂ with the vertical. Set ΣFₓ = 0: T₁ sin θ₁ = T₂ sin θ₂. Set ΣF_y = 0: T₁ cos θ₁ + T₂ cos θ₂ = W. Solve simultaneously. Always draw a clear free-body diagram first.</div>
+  <div id="chip-lami" class="concept-reveal vio-border"><strong>Lami's Theorem (HL extension):</strong> For three concurrent forces in equilibrium, each force divided by the sine of the angle between the other two is equal: F₁/sin α = F₂/sin β = F₃/sin γ, where α, β, γ are the angles between the force pairs (not the angles each force makes with a reference). Useful shortcut for three-force equilibrium problems.</div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ocean);margin:.5rem 0 .8rem">🔢 Worked Example: Traffic Light on Two Cables</h3>
+  <div class="wonder-box sky-box" style="margin-bottom:1rem">
+    <p>A 20 kg traffic light hangs from two cables each making <strong>40°</strong> with the vertical.<br><br>
+    <strong>Step 1 — Weight:</strong> W = mg = 20 × 9.81 = <strong>196 N</strong> downward<br>
+    <strong>Step 2 — Vertical:</strong> T₁cos40° + T₂cos40° = W. By symmetry T₁ = T₂ = T.<br>
+    2T cos40° = 196 → T = 196 / (2 × cos40°) = 196 / 1.532 = <strong>128 N</strong><br>
+    <strong>Check horizontal:</strong> T₁sin40° − T₂sin40° = 0 ✓ (equal and opposite by symmetry)<br>
+    <strong>Answer:</strong> Each cable has tension ≈ 128 N. If angle is 80° instead: T = 196/(2cos80°) = 565 N — huge!</p>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✏️ Explain: Why does reducing the cable angle increase tension so dramatically?</h4>
+    <textarea id="ta-shallow" placeholder="Explain using components why making cables more horizontal (smaller angle with horizontal) requires much greater tension to support the same weight. Reference the vector components in your answer."></textarea>
+  </div>
+
+  <div class="explory-banner">
+    <h4>🔬 Physics in Context: Structural Engineering</h4>
+    <p>Every bridge, crane, and cable-stayed structure is a vector equilibrium problem. Engineers must ensure ΣF = 0 at every joint. The Sydney Harbour Bridge, the Burj Khalifa's foundation, and the cables of the Golden Gate Bridge are all designed so that vector sums of forces equal zero. This is not abstract — it is why buildings stand up.</p>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next →</button></div>
+</div>
+
+<!-- SEC 5: IB QUESTIONS -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow"><div class="eyebrow-num num-vio">6</div><span class="eyebrow-label">Phase 6 — IB-Style Exam Questions</span></div>
+  <h2>📝 IB Exam Practice <span class="sl-badge">SL</span> <span class="hl-badge">HL</span></h2>
+  <p class="lead">Work through these exam-style questions, write your own answers first, then reveal the mark-scheme response. Focus on precise language, correct significant figures, and meeting the command terms (state, define, calculate, show, evaluate).</p>
+
+  <div class="pp-card">
+    <div class="pp-label">A1.2.1 — SL — State (2 marks)</div>
+    <div class="pp-q">State the difference between a scalar quantity and a vector quantity. Give one example of each.</div>
+    <textarea class="pp-textarea" id="pp1" placeholder="Write your answer here..."></textarea>
+    <button class="btn btn-ocean" style="margin-top:.6rem" onclick="toggleAnswer('ans1')">Reveal Mark Scheme</button>
+    <div id="ans1" class="pp-answer"><strong>Award 1 mark each (max 2):</strong><ul><li>A <strong>scalar</strong> has magnitude only; a <strong>vector</strong> has both magnitude and direction (1)</li><li>Scalar example: speed / mass / temperature / energy / distance (1); Vector example: velocity / force / displacement / acceleration / momentum (1)</li></ul><p style="margin-top:.6rem;font-size:.82rem;color:var(--muted)">Examiner note: "Vectors have direction" alone is insufficient for the definition mark — you must contrast with scalars. "Vector has magnitude and direction; scalar has magnitude only" scores both marks.</p></div>
+  </div>
+
+  <div class="pp-card">
+    <div class="pp-label">A1.2.4 — SL — Calculate (3 marks)</div>
+    <div class="pp-q">A boat has a velocity of 4.0 m s⁻¹ due east relative to the water. The current flows at 3.0 m s⁻¹ due north. Calculate the magnitude and direction of the boat's resultant velocity relative to the ground.</div>
+    <textarea class="pp-textarea" id="pp2" placeholder="Show your calculation..."></textarea>
+    <button class="btn btn-ocean" style="margin-top:.6rem" onclick="toggleAnswer('ans2')">Reveal Mark Scheme</button>
+    <div id="ans2" class="pp-answer"><strong>Award 1 mark each (max 3):</strong><ul><li>Correct method: uses Pythagoras (1) — R = √(4.0² + 3.0²) = √(16 + 9) = √25</li><li>Magnitude: R = <strong>5.0 m s⁻¹</strong> (1) (accept 5 m s⁻¹ with correct working)</li><li>Direction: θ = arctan(3.0/4.0) = arctan(0.75) = <strong>36.9° north of east</strong> (accept 37° N of E or bearing 053°) (1)</li></ul><p style="margin-top:.5rem;font-size:.82rem;color:var(--muted)">Examiner note: Full marks require both magnitude and direction. Magnitude alone scores 2/3. Direction must be given relative to a named reference — "north of east" or a bearing is acceptable; "at an angle" alone is not.</p></div>
+  </div>
+
+  <div class="pp-card">
+    <div class="pp-label">A1.2.5 — SL — Show (3 marks)</div>
+    <div class="pp-q">A force of 80 N acts at 60° above the horizontal. Show that its horizontal component is approximately 40 N.</div>
+    <textarea class="pp-textarea" id="pp3" placeholder="Show your working here..."></textarea>
+    <button class="btn btn-ocean" style="margin-top:.6rem" onclick="toggleAnswer('ans3')">Reveal Mark Scheme</button>
+    <div id="ans3" class="pp-answer"><strong>Full marks require:</strong><ul><li>States formula: Fₓ = F cos θ (1)</li><li>Substitution: Fₓ = 80 × cos 60° = 80 × 0.5 (1)</li><li>Result: Fₓ = <strong>40 N</strong> (1) — "show" questions require all working visible; do not just state the answer</li></ul><p style="margin-top:.5rem;font-size:.82rem;color:var(--muted)">IB note: In "show" questions, every step must be shown — even if the arithmetic seems trivial. An unsupported answer of 40 N scores 0/3.</p></div>
+  </div>
+
+  <div class="pp-card">
+    <div class="pp-label">A1.2.7 — SL — Deduce (4 marks)</div>
+    <div class="pp-q">A 30 kg box is in equilibrium on a frictionless ramp inclined at 25° to the horizontal, held in place by a rope parallel to the slope. Deduce the tension in the rope. (g = 9.81 m s⁻²)</div>
+    <textarea class="pp-textarea" id="pp4" placeholder="Draw a free-body diagram first, then calculate..."></textarea>
+    <button class="btn btn-ocean" style="margin-top:.6rem" onclick="toggleAnswer('ans4')">Reveal Mark Scheme</button>
+    <div id="ans4" class="pp-answer"><strong>Award 1 mark each (max 4):</strong><ul><li>States or implies ΣF = 0 along the slope (equilibrium condition) (1)</li><li>Identifies component of weight along slope: W∥ = mg sin 25° (1)</li><li>Substitution: T = 30 × 9.81 × sin 25° = 294.3 × 0.4226 (1)</li><li>Answer: T = <strong>124 N</strong> (accept 120–125 N) with correct unit (1)</li></ul><p style="margin-top:.5rem;font-size:.82rem;color:var(--muted)">Common errors: using cos instead of sin (confusing parallel and perpendicular components), or omitting the equilibrium reasoning. A free-body diagram that correctly shows weight resolved into two components earns the method marks even if the arithmetic is slightly off.</p></div>
+  </div>
+
+  <div class="pp-card">
+    <div class="pp-label">A1.2.6 — HL — Calculate (4 marks)</div>
+    <div class="pp-q">Three forces act on a point: F₁ = 120 N at 0°, F₂ = 90 N at 120°, F₃ = 60 N at 240°. Calculate the magnitude and direction of the resultant force.</div>
+    <textarea class="pp-textarea" id="pp5" placeholder="Resolve each force into x and y components, then combine..."></textarea>
+    <button class="btn btn-ocean" style="margin-top:.6rem" onclick="toggleAnswer('ans5')">Reveal Mark Scheme</button>
+    <div id="ans5" class="pp-answer"><strong>Award 1 mark each (max 4):</strong><ul><li>Correct x-components: F₁ₓ=120, F₂ₓ=90cos120°=−45, F₃ₓ=60cos240°=−30; ΣFₓ = 120−45−30 = <strong>+45 N</strong> (1)</li><li>Correct y-components: F₁_y=0, F₂_y=90sin120°=+77.9, F₃_y=60sin240°=−52.0; ΣF_y = 0+77.9−52.0 = <strong>+25.9 N</strong> (1)</li><li>Magnitude: R = √(45² + 25.9²) = √(2025+671) = √2696 ≈ <strong>51.9 N</strong> (accept 52 N) (1)</li><li>Direction: θ = arctan(25.9/45) = arctan(0.576) = <strong>30.0° above positive x-axis</strong> (1)</li></ul></div>
+  </div>
+
+  <div class="pp-card">
+    <div class="pp-label">A1.2.7 — SL/HL — Evaluate (4 marks)</div>
+    <div class="pp-q">A sign of weight W hangs from two ropes making equal angles θ with the vertical. Evaluate what happens to the tension in the ropes as θ increases from 0° to 90°. What is the physical significance of θ → 90°?</div>
+    <textarea class="pp-textarea" id="pp6" placeholder="Derive T in terms of W and θ, then analyse limiting cases..."></textarea>
+    <button class="btn btn-ocean" style="margin-top:.6rem" onclick="toggleAnswer('ans6')">Reveal Mark Scheme</button>
+    <div id="ans6" class="pp-answer"><strong>For full marks (4):</strong><ul><li>Derives: 2T cos θ = W → T = W/(2cos θ) (1)</li><li>At θ = 0°: T = W/2 — ropes vertical, each carries half the weight (1)</li><li>As θ increases, cos θ decreases, so T increases (1)</li><li>As θ → 90°: cos θ → 0, T → ∞ — ropes horizontal is physically impossible for a finite rope material; explains why cables must always have some sag (1)</li></ul><p style="margin-top:.5rem;font-size:.82rem;color:var(--muted)">Evaluating includes the limiting cases and a physical interpretation. "T increases as θ increases" without the formula or limit scores only 1–2.</p></div>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next →</button></div>
+</div>
+
+<!-- SEC 6: QUIZ -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow"><div class="eyebrow-num num-amber">7</div><span class="eyebrow-label">Phase 7 — 12-Question Multiple Choice Quiz</span></div>
+  <h2>🧩 Test Yourself <span class="sl-badge">SL</span> <span class="hl-badge">HL</span></h2>
+  <p class="lead">Answer all 12 questions. Each question has one correct answer. You will see your score and detailed feedback at the end.</p>
+  <div id="quiz-container"></div>
+  <div class="score-panel" id="score-panel" style="display:none">
+    <h3>Quiz Complete!</h3>
+    <div class="score-num" id="score-display">0/12</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-amber" style="margin-top:1rem" onclick="retakeQuiz()">🔁 Retake Quiz</button>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next →</button></div>
+</div>
+
+<!-- SEC 7: REFLECT + SUBMIT -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow"><div class="eyebrow-num num-ocean">8</div><span class="eyebrow-label">Phase 8 — Reflect &amp; Submit</span></div>
+  <h2>🔍 Reflect &amp; Submit</h2>
+  <p class="lead">Review your answers from throughout the lesson, then submit to your teacher via ManageBac, Google Classroom, or email.</p>
+
+  <div class="research-card">
+    <h4>✅ Learning Journey Summary</h4>
+    <div class="research-step"><div class="step-num">✓</div><div class="step-content">Phase 1: Made initial predictions about vectors and direction</div></div>
+    <div class="research-step"><div class="step-num">✓</div><div class="step-content">Phase 2: Distinguished scalar and vector quantities</div></div>
+    <div class="research-step"><div class="step-num">✓</div><div class="step-content">Phase 3: Added vectors graphically and algebraically</div></div>
+    <div class="research-step"><div class="step-num">✓</div><div class="step-content">Phase 4: Resolved vectors into perpendicular components</div></div>
+    <div class="research-step"><div class="step-num">✓</div><div class="step-content">Phase 5: Applied equilibrium conditions (ΣF = 0)</div></div>
+    <p style="font-size:.82rem;color:#8a5c10;margin-top:.6rem">📌 In the next interactive (A1.3 — Kinematics), you will apply vector addition to displacement, velocity, and acceleration in projectile motion. Keep these component techniques sharp!</p>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✏️ Final Reflection</h4>
+    <textarea id="ta-reflect" placeholder="What was the most surprising thing you learned about vectors today? How has your understanding of direction in physics changed? What concept are you still uncertain about?"></textarea>
+  </div>
+
+  <div class="summary-section">
+    <h3>👤 Student: <span id="summaryName">—</span> &nbsp;|&nbsp; <span id="summaryDate"></span></h3>
+    <div class="sum-label">Quiz Score</div><div class="summary-answer" id="sum-quiz"></div>
+    <div class="sum-label">Opening Prediction — Scalar vs Vector</div><div class="summary-answer" id="sum-wonder1"></div>
+    <div class="sum-label">Opening Prediction — Resultant Estimate</div><div class="summary-answer" id="sum-wonder2"></div>
+    <div class="sum-label">Real World Curiosity</div><div class="summary-answer" id="sum-curiosity"></div>
+    <div class="sum-label">Practice: Non-perpendicular vectors</div><div class="summary-answer" id="sum-practice1"></div>
+    <div class="sum-label">Evaluate: Why resolve into components?</div><div class="summary-answer" id="sum-resolve"></div>
+    <div class="sum-label">Explain: Shallow cable angle tension</div><div class="summary-answer" id="sum-shallow"></div>
+    <div class="sum-label">IB Q1 (Scalar vs Vector)</div><div class="summary-answer" id="sum-pp1"></div>
+    <div class="sum-label">IB Q2 (Boat velocity calculation)</div><div class="summary-answer" id="sum-pp2"></div>
+    <div class="sum-label">IB Q3 (Show horizontal component)</div><div class="summary-answer" id="sum-pp3"></div>
+    <div class="sum-label">IB Q4 (Box on ramp)</div><div class="summary-answer" id="sum-pp4"></div>
+    <div class="sum-label">IB Q5 (Three-force resultant)</div><div class="summary-answer" id="sum-pp5"></div>
+    <div class="sum-label">IB Q6 (Tension evaluate)</div><div class="summary-answer" id="sum-pp6"></div>
+    <div class="sum-label">Final Reflection</div><div class="summary-answer" id="sum-reflect"></div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy" onclick="copyResults()">📋 Copy Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+</div>
+
+</div><!-- end .sheet -->
+
+<script>
+(function(){
+'use strict';
+
+// ── NAVIGATION ──
+var sections=document.querySelectorAll('.section');
+var steps=document.querySelectorAll('.prog-step');
+var current=0;
+
+function goTo(n){
+  sections[current].classList.remove('active');
+  steps[current].classList.remove('active');
+  steps[current].classList.add('done');
+  current=n;
+  sections[current].classList.add('active');
+  steps[current].classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n===6) buildQuiz();
+  if(n===7) buildSummary();
+  if(n===2) setTimeout(drawVectors,100);
+}
+function navigate(dir){ goTo(Math.max(0,Math.min(sections.length-1,current+dir))); }
+window.navigate=navigate; window.goTo=goTo;
+
+// ── CHIPS ──
+function revealChip(id){
+  var el=document.getElementById('chip-'+id);
+  if(!el) return;
+  var isShow=el.classList.contains('show');
+  document.querySelectorAll('.concept-reveal').forEach(function(e){e.classList.remove('show');});
+  if(!isShow) el.classList.add('show');
+}
+window.revealChip=revealChip;
+
+// ── INFO CARDS ──
+function showCard(id,cardEl){
+  document.querySelectorAll('.info-panel').forEach(function(p){p.classList.remove('show');});
+  document.querySelectorAll('.info-card').forEach(function(c){c.classList.remove('active');});
+  var panel=document.getElementById('panel-'+id);
+  if(panel){ panel.classList.add('show'); cardEl.classList.add('active'); }
+}
+window.showCard=showCard;
+
+// ── PP ANSWERS ──
+function toggleAnswer(id){
+  var el=document.getElementById(id);
+  if(el) el.classList.toggle('show');
+}
+window.toggleAnswer=toggleAnswer;
+
+// ── VECTOR CANVAS ──
+function deg2rad(d){ return d*Math.PI/180; }
+function compass(deg){
+  var dirs=['East','NE','North','NW','West','SW','South','SE'];
+  var idx=Math.round(deg/45)%8;
+  return dirs[idx<0?idx+8:idx];
+}
+
+function drawVectors(){
+  var canvas=document.getElementById('vecCanvas');
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  // grid
+  ctx.strokeStyle='#e8f0f8'; ctx.lineWidth=1;
+  for(var x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(var y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  // axes
+  ctx.strokeStyle='#c0d4e8'; ctx.lineWidth=1.5;
+  var ox=W/2, oy=H/2;
+  ctx.beginPath();ctx.moveTo(0,oy);ctx.lineTo(W,oy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(ox,H);ctx.stroke();
+  ctx.fillStyle='#7a9ab8'; ctx.font='11px DM Mono,monospace';
+  ctx.fillText('E',W-14,oy-4); ctx.fillText('N',ox+4,10); ctx.fillText('W',4,oy-4); ctx.fillText('S',ox+4,H-4);
+
+  var scale=1.2;
+  var mA=parseFloat(document.getElementById('magA').value);
+  var mB=parseFloat(document.getElementById('magB').value);
+  var aA=parseFloat(document.getElementById('angA').value);
+  var aB=parseFloat(document.getElementById('angB').value);
+
+  // IB convention: 0=East, 90=North (standard math)
+  var axA=Math.cos(deg2rad(aA))*mA*scale;
+  var ayA=Math.sin(deg2rad(aA))*mA*scale; // positive = north = up in canvas (flip)
+  var axB=Math.cos(deg2rad(aB))*mB*scale;
+  var ayB=Math.sin(deg2rad(aB))*mB*scale;
+
+  // Resultant
+  var rxC=(axA+axB), ryC=(ayA+ayB);
+  var rMag=Math.sqrt(rxC*rxC+ryC*ryC)/scale;
+  var rAngle=Math.atan2(ryC,rxC)*180/Math.PI;
+
+  function drawArrow(ctx,x1,y1,x2,y2,color,label,lw){
+    var hw=10,hl=14;
+    var dx=x2-x1, dy=y2-y1, len=Math.sqrt(dx*dx+dy*dy);
+    if(len<1) return;
+    var ux=dx/len, uy=dy/len;
+    var tx=x2-ux*hl, ty=y2-uy*hl;
+    ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=lw||2.5;
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(tx,ty);ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(tx-uy*hw,ty+ux*hw);
+    ctx.lineTo(tx+uy*hw,ty-ux*hw);
+    ctx.closePath();ctx.fill();
+    if(label){
+      ctx.font='bold 12px Nunito,sans-serif';ctx.fillStyle=color;
+      var mx=(x1+x2)/2-uy*16, my=(y1+y2)/2+ux*16;
+      ctx.fillText(label,mx-8,my+4);
+    }
+  }
+
+  // Tip-to-tail: A from origin, B from tip of A
+  var tipAx=ox+axA, tipAy=oy-ayA;
+  var tipBx=tipAx+axB, tipBy=tipAy-ayB;
+
+  drawArrow(ctx,ox,oy,tipAx,tipAy,'#1a7ab8','A');
+  drawArrow(ctx,tipAx,tipAy,tipBx,tipBy,'#17a8a8','B');
+  drawArrow(ctx,ox,oy,tipBx,tipBy,'#e8a030','R',3.5);
+
+  // Dashed parallelogram lines
+  ctx.setLineDash([4,4]); ctx.strokeStyle='#c0d4e8'; ctx.lineWidth=1;
+  var tipA2x=ox+axB, tipA2y=oy-ayB;
+  ctx.beginPath();ctx.moveTo(tipA2x,tipA2y);ctx.lineTo(tipBx,tipBy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(tipAx,tipAy);ctx.lineTo(tipBx,tipBy);ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Labels on axes
+  ctx.fillStyle='#7a9ab8'; ctx.font='10px DM Mono,monospace';
+  ctx.fillText('40px='+Math.round(40/scale)+'N',4,H-6);
+
+  // Update readouts
+  document.getElementById('readA').textContent=mA+' N';
+  document.getElementById('readAngA').textContent=aA+'° ('+compass(aA)+')';
+  document.getElementById('readB').textContent=mB+' N';
+  document.getElementById('readAngB').textContent=aB+'° ('+compass(aB)+')';
+
+  var rDir=rAngle<0?rAngle+360:rAngle;
+  document.getElementById('vec-result').innerHTML=
+    '📐 <strong>Resultant R</strong> = '+rMag.toFixed(1)+' N &nbsp;|&nbsp; Direction: '+rDir.toFixed(1)+'° ('+compass(rDir)+')'+
+    '<br><span style="font-size:.78rem;color:var(--muted)">R = √('+
+    (axA+axB).toFixed(1)+'² + '+
+    (ayA+ayB).toFixed(1)+'²) &nbsp;· &nbsp;Tip-to-tail rule shown; dashed lines form parallelogram</span>';
+}
+window.drawVectors=drawVectors;
+// draw on load for sec-2
+setTimeout(drawVectors,300);
+
+// ── COMPONENTS CHECK ──
+function checkComponents(){
+  var fx=document.getElementById('calc-fx').value.trim().replace('N','').trim();
+  var fy=document.getElementById('calc-fy').value.trim().replace('N','').trim();
+  var fb=document.getElementById('comp-fb');
+  var fxV=parseFloat(fx), fyV=parseFloat(fy);
+  var fxOk=Math.abs(fxV-39.97)<1.5, fyOk=Math.abs(fyV-30.09)<1.5;
+  document.getElementById('calc-fx').className='blank-input'+(fxOk?' ok':' err');
+  document.getElementById('calc-fy').className='blank-input'+(fyOk?' ok':' err');
+  if(fxOk&&fyOk){fb.textContent='✓ Correct! Fₓ = 50 cos 37° ≈ 39.9 N; F_y = 50 sin 37° ≈ 30.1 N';fb.style.color='var(--teal)';}
+  else{fb.textContent='Not quite. Recall: Fₓ = F cos θ = 50 cos 37°; F_y = F sin θ = 50 sin 37°. Try again!';fb.style.color='#e85c3a';}
+}
+function resetComponents(){
+  document.getElementById('calc-fx').value='';
+  document.getElementById('calc-fy').value='';
+  document.getElementById('calc-fx').className='blank-input';
+  document.getElementById('calc-fy').className='blank-input';
+  document.getElementById('comp-fb').textContent='';
+}
+window.checkComponents=checkComponents; window.resetComponents=resetComponents;
+
+// ── MATCHING ──
+var MATCH1_PAIRS=[
+  {term:'Force',def:'Vector'},
+  {term:'Temperature',def:'Scalar'},
+  {term:'Momentum',def:'Vector'},
+  {term:'Distance',def:'Scalar'},
+  {term:'Acceleration',def:'Vector'}
+];
+var m1Selected=null, m1Score=0, m1Matched=[];
+
+function buildMatch1(){
+  var grid=document.getElementById('match1-grid');
+  if(!grid) return;
+  m1Selected=null; m1Score=0; m1Matched=[];
+  document.getElementById('match1-score').textContent='0';
+  document.getElementById('match1-result').textContent='';
+  var terms=MATCH1_PAIRS.map(function(p){return p.term;});
+  var defs=['Vector','Scalar','Vector','Scalar','Vector'];
+  // Shuffle defs display
+  var shuffled=['Scalar','Vector','Scalar','Vector','Scalar'];
+  // Use original defs
+  var thtml='', dhtml='';
+  MATCH1_PAIRS.forEach(function(p,i){
+    thtml+='<div class="match-item" data-type="term" data-val="'+p.term+'" onclick="matchClick1(this)">'+p.term+'</div>';
+  });
+  var defVals=MATCH1_PAIRS.map(function(p){return p.def;});
+  // Shuffle defs
+  for(var i=defVals.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=defVals[i];defVals[i]=defVals[j];defVals[j]=t;}
+  defVals.forEach(function(d){
+    dhtml+='<div class="match-item" data-type="def" data-val="'+d+'" onclick="matchClick1(this)">'+d+'</div>';
+  });
+  grid.innerHTML=thtml+dhtml;
+}
+function matchClick1(el){
+  if(el.classList.contains('matched')) return;
+  if(!m1Selected){el.classList.add('selected');m1Selected=el;return;}
+  if(m1Selected===el){el.classList.remove('selected');m1Selected=null;return;}
+  var a=m1Selected, b=el;
+  var termEl=a.dataset.type==='term'?a:(b.dataset.type==='term'?b:null);
+  var defEl=a.dataset.type==='def'?a:(b.dataset.type==='def'?b:null);
+  if(!termEl||!defEl){[a,b].forEach(function(x){x.classList.remove('selected');});m1Selected=null;return;}
+  var pair=MATCH1_PAIRS.find(function(p){return p.term===termEl.dataset.val;});
+  if(pair&&pair.def===defEl.dataset.val){
+    [termEl,defEl].forEach(function(x){x.classList.remove('selected');x.classList.add('matched');});
+    m1Score++;m1Matched.push(termEl.dataset.val);
+    document.getElementById('match1-score').textContent=m1Score;
+    if(m1Score===MATCH1_PAIRS.length) document.getElementById('match1-result').textContent='All matched! Great work.';
+  } else {
+    [a,b].forEach(function(x){x.classList.add('wrong');});
+    setTimeout(function(){[a,b].forEach(function(x){x.classList.remove('wrong','selected');});},700);
+  }
+  m1Selected=null;
+}
+function resetMatch1(){ buildMatch1(); }
+window.matchClick1=matchClick1; window.resetMatch1=resetMatch1;
+buildMatch1();
+
+// ── QUIZ ──
+var QD=[
+  {q:'Which of the following is a vector quantity?',
+   opts:['Mass','Temperature','Kinetic energy','Velocity'],
+   ans:3,fb:'Velocity has both magnitude and direction — it is a vector. Mass, temperature, and kinetic energy are all scalars (magnitude only). The IB distinguishes carefully between speed (scalar) and velocity (vector).'},
+  {q:'A displacement of 3 m east is added to a displacement of 4 m north. What is the magnitude of the resultant displacement?',
+   opts:['1 m','7 m','5 m','12 m'],
+   ans:2,fb:'Use Pythagoras: R = √(3² + 4²) = √(9+16) = √25 = 5 m. The directions are perpendicular so simple addition (7 m) is wrong — that is the scalar sum of distances, not the vector resultant.'},
+  {q:'A force of 40 N acts at 30° above the horizontal. What is its vertical component?',
+   opts:['34.6 N','20 N','40 N','23.1 N'],
+   ans:1,fb:'Vertical component = F sin θ = 40 × sin 30° = 40 × 0.5 = 20 N. Common error: using cos instead of sin. The vertical component uses sin(angle above horizontal); horizontal uses cos.'},
+  {q:'Two forces of equal magnitude F act at right angles to each other. What is the magnitude of their resultant?',
+   opts:['F','2F','F√2','F/√2'],
+   ans:2,fb:'R = √(F² + F²) = √(2F²) = F√2 ≈ 1.414F. Two equal perpendicular forces do not simply add to 2F (that would be the scalar sum). The vector addition gives a resultant at 45° between them with magnitude F√2.'},
+  {q:'An object is in translational equilibrium. Which statement must be true?',
+   opts:['The object is at rest','All individual forces are zero','The vector sum of all forces is zero','The object moves with constant acceleration'],
+   ans:2,fb:'Translational equilibrium requires ΣF = 0 (vector sum). The object may be at rest OR moving at constant velocity — both satisfy Newton\'s 1st Law. Individual forces do not need to be zero; they just need to cancel. Constant acceleration would mean ΣF ≠ 0.'},
+  {q:'A vector is resolved into components Fₓ = 30 N and F_y = 40 N. What is the angle this vector makes with the x-axis?',
+   opts:['36.9°','53.1°','30°','45°'],
+   ans:1,fb:'θ = arctan(F_y/Fₓ) = arctan(40/30) = arctan(1.333) = 53.1°. Note: arctan(30/40) = 36.9° gives the angle with the y-axis. Make sure you identify which angle you are finding — the question asks for the angle with the x-axis, so use F_y in the numerator.'},
+  {q:'Which method correctly describes the "tip-to-tail" rule for vector addition?',
+   opts:['Place both vectors from the same point and draw the diagonal','Draw vector A, then draw vector B starting at the tip of A; the resultant goes from the tail of A to the tip of B','Add the magnitudes and the angles separately','Multiply the magnitudes and find the average angle'],
+   ans:1,fb:'The tip-to-tail (triangle) rule: draw A, then start B at the tip of A. The resultant R goes from the tail of A to the tip of B. The parallelogram rule places both from the same point; the diagonal is the resultant. Both methods give the same resultant.'},
+  {q:'A mass hangs on a string from a ceiling. The string makes 60° with the vertical. The tension in the string is T. What is the vertical component of tension?',
+   opts:['T sin 60°','T cos 60°','T tan 60°','T'],
+   ans:1,fb:'The vertical component of tension = T cos 60°. The angle is measured from the vertical, so the vertical component uses cosine. T sin 60° would give the horizontal component. IB note: always identify which angle is being used and with respect to which axis.'},
+  {q:'The resultant of two vectors is zero. What can be concluded?',
+   opts:['The vectors have the same direction','The vectors have opposite directions but not necessarily equal magnitudes','The vectors are equal in magnitude and opposite in direction','The vectors are perpendicular'],
+   ans:2,fb:'For two vectors to have a zero resultant, they must be equal in magnitude and opposite in direction. If magnitudes are unequal (even in opposite directions), the resultant is non-zero. Perpendicular vectors cannot sum to zero unless both are zero.'},
+  {q:'A box of mass 10 kg sits on a frictionless slope at 30° to the horizontal (g = 10 m s⁻²). What is the component of weight parallel to the slope?',
+   opts:['86.6 N','100 N','50 N','10 N'],
+   ans:2,fb:'W∥ = mg sin 30° = 10 × 10 × 0.5 = 50 N. This is the component that would cause the box to accelerate down the slope. The normal force balances W⊥ = mg cos 30° = 86.6 N. A very common error is using cos instead of sin for the parallel component.'},
+  {q:'Which of these quantities is a scalar?',
+   opts:['Momentum','Gravitational field strength','Electric field strength','Gravitational potential energy'],
+   ans:3,fb:'Gravitational potential energy (GPE = mgh) is a scalar — it has magnitude and unit (joules) but no direction. Momentum (mv), gravitational field strength (g, force per unit mass), and electric field strength are all vectors with associated directions.'},
+  {q:'Three forces in equilibrium are represented by the sides of a triangle drawn tip-to-tail. One force is 50 N at 0°, another is 40 N at 120°. What is the approximate magnitude of the third force?',
+   opts:['10 N','90 N','45.8 N','30 N'],
+   ans:2,fb:'Resolve: F₁=(50,0); F₂=(40cos120°, 40sin120°)=(−20, +34.6). Sum=(30, 34.6). The third force must cancel this: (−30, −34.6), magnitude = √(900+1197) = √2097 ≈ 45.8 N. Correct answer C. Equilibrium means all three form a closed triangle.'}
+];
+
+var qScore=0, qAnswered=0;
+function buildQuiz(){
+  var c=document.getElementById('quiz-container');
+  if(!c) return;
+  c.innerHTML=''; qScore=0; qAnswered=0;
+  document.getElementById('score-panel').style.display='none';
+  QD.forEach(function(item,idx){
+    var card=document.createElement('div'); card.className='quiz-card';
+    var opts=item.opts.map(function(o,i){
+      return '<button class="quiz-opt" onclick="checkAnswer(this,'+idx+','+i+')">'+String.fromCharCode(65+i)+'. '+o+'</button>';
+    }).join('');
+    card.innerHTML='<div class="quiz-q">Q'+(idx+1)+'. '+item.q+'</div><div class="quiz-options">'+opts+'</div><div class="quiz-feedback" id="qfb-'+idx+'"></div>';
+    c.appendChild(card);
+  });
+}
+function checkAnswer(btn,qIdx,optIdx){
+  var card=btn.closest('.quiz-card');
+  var buttons=card.querySelectorAll('.quiz-opt');
+  var fb=document.getElementById('qfb-'+qIdx);
+  var correct=QD[qIdx].ans;
+  buttons.forEach(function(b){b.disabled=true;});
+  if(optIdx===correct){btn.classList.add('correct');fb.textContent='✓ Correct! '+QD[qIdx].fb;fb.className='quiz-feedback show correct-fb';qScore++;}
+  else{btn.classList.add('wrong');buttons[correct].classList.add('correct');fb.textContent='✗ Incorrect. '+QD[qIdx].fb;fb.className='quiz-feedback show wrong-fb';}
+  qAnswered++;
+  if(qAnswered===QD.length){
+    var panel=document.getElementById('score-panel');
+    panel.style.display='block';
+    document.getElementById('score-display').textContent=qScore+'/'+QD.length;
+    var pct=qScore/QD.length;
+    document.getElementById('score-msg').textContent=pct>=.9?'Excellent — IB exam ready on A1.2!':pct>=.75?'Good work! Review the questions you missed.':pct>=.6?'Solid start — revisit component resolution and equilibrium.':'Go back through the lesson phases, then retake.';
+    panel.scrollIntoView({behavior:'smooth'});
+  }
+}
+function retakeQuiz(){ buildQuiz(); }
+window.checkAnswer=checkAnswer; window.retakeQuiz=retakeQuiz;
+
+// ── SUMMARY ──
+function getV(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+function setS(id,text){var el=document.getElementById(id);if(!el)return;el.textContent=text||'Not answered';el.classList.toggle('empty',!text);}
+function buildSummary(){
+  var name=document.getElementById('studentName').value.trim()||'Student';
+  document.getElementById('summaryName').textContent=name;
+  document.getElementById('summaryDate').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  var sc=document.getElementById('score-display');
+  setS('sum-quiz',sc?sc.textContent+' correct':'Quiz not yet completed');
+  setS('sum-wonder1',getV('ta-wonder1'));
+  setS('sum-wonder2',getV('ta-wonder2'));
+  setS('sum-curiosity',getV('ta-curiosity'));
+  setS('sum-practice1',getV('ta-practice1'));
+  setS('sum-resolve',getV('ta-resolve'));
+  setS('sum-shallow',getV('ta-shallow'));
+  for(var i=1;i<=6;i++) setS('sum-pp'+i,getV('pp'+i));
+  setS('sum-reflect',getV('ta-reflect'));
+}
+window.buildSummary=buildSummary;
+
+function buildPlainText(){
+  var name=document.getElementById('studentName').value.trim()||'Student';
+  var date=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  var sc=document.getElementById('score-display');
+  var lines=[
+    'IB DP PHYSICS - A1.2 VECTORS - VECTOR ADDITION - STUDENT SUBMISSION',
+    '='.repeat(70),
+    'Student: '+name,'Date: '+date,'',
+    '-- QUIZ SCORE --',sc?sc.textContent:'Not completed','',
+    '-- OPENING PREDICTIONS --',
+    'Q1 Scalar vs Vector: '+(getV('ta-wonder1')||'Not answered'),
+    'Q2 Resultant estimate: '+(getV('ta-wonder2')||'Not answered'),'',
+    '-- REAL WORLD CURIOSITY --',getV('ta-curiosity')||'Not answered','',
+    '-- PRACTICE QUESTIONS --',
+    'Non-perpendicular vectors: '+(getV('ta-practice1')||'Not answered'),
+    'Why resolve components: '+(getV('ta-resolve')||'Not answered'),
+    'Shallow cable tension: '+(getV('ta-shallow')||'Not answered'),'',
+    '-- IB EXAM QUESTIONS --',
+    'Q1 Scalar vs Vector: '+getV('pp1'),
+    'Q2 Boat velocity: '+getV('pp2'),
+    'Q3 Show component: '+getV('pp3'),
+    'Q4 Box on ramp: '+getV('pp4'),
+    'Q5 Three-force resultant: '+getV('pp5'),
+    'Q6 Tension evaluate: '+getV('pp6'),'',
+    '-- FINAL REFLECTION --',
+    getV('ta-reflect')||'Not answered','',
+    '='.repeat(70),
+    '(c) 2026 Farvour Explorations - farvourexplorations.com',
+    'Submitted via IB DP Physics A1.2 Vectors — Interactive Lesson'
+  ];
+  return lines.join('\n');
+}
+
+function copyResults(){
+  buildSummary();
+  var text=buildPlainText();
+  navigator.clipboard.writeText(text).then(function(){
+    var el=document.getElementById('copyConfirm');
+    el.textContent='Copied! Paste into ManageBac, Google Classroom, or email.';
+    setTimeout(function(){el.textContent='';},4000);
+  }).catch(function(){
+    document.getElementById('copyConfirm').textContent='Could not copy automatically — try selecting text manually.';
+  });
+}
+function emailResults(){
+  var name=document.getElementById('studentName').value.trim()||'Student';
+  var subject=encodeURIComponent('IB Physics A1.2 Vectors - '+name);
+  var body=encodeURIComponent(buildPlainText());
+  window.location.href='mailto:?subject='+subject+'&body='+body;
+}
+window.copyResults=copyResults; window.emailResults=emailResults;
+
+})();
+</script>
+</body>
+</html>
