@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soaring Structures — Farvour Explorations PYP 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Baloo+2:wght@500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#1a6fb0;--sky-mid:#3a9bd9;--sun:#ffb627;--sun-pale:#fff6e3;--bird:#ff7a5c;--bird-pale:#ffece7;--leaf:#3aaf85;--leaf-pale:#e8f8f2;--cloud:#8ecae6;--cloud-pale:#eaf6fb;--kite:#7c6fcd;--kite-pale:#f0eefb;--paper:#fffef9;--ink:#1a2332;--muted:#6b7a8c;--border:#e0e4ea}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:linear-gradient(160deg,#0d4a7a 0%,#1a6fb0 40%,#3a9bd9 75%,#8ecae6 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--ink);overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(40px 24px at 10% 15%,rgba(255,255,255,.5) 50%,transparent 52%),radial-gradient(50px 28px at 85% 10%,rgba(255,255,255,.4) 50%,transparent 52%),radial-gradient(36px 20px at 70% 22%,rgba(255,255,255,.35) 50%,transparent 52%),radial-gradient(45px 25px at 25% 30%,rgba(255,255,255,.3) 50%,transparent 52%);pointer-events:none;z-index:0;opacity:.7}
+.hero{position:relative;z-index:1;text-align:center;padding:2.6rem 1.5rem 2rem;color:white}
+.hero-badge{display:inline-block;background:var(--sun);color:#7a4a00;font-family:'Baloo 2',cursive;font-weight:700;font-size:.85rem;letter-spacing:.02em;padding:.4rem 1.3rem;border-radius:24px;margin-bottom:1rem;box-shadow:0 3px 14px rgba(255,182,39,.5)}
+.hero h1{font-family:'Baloo 2',cursive;font-weight:800;font-size:clamp(2.1rem,7vw,3.8rem);line-height:1.1;margin-bottom:.7rem;text-shadow:0 2px 18px rgba(0,0,0,.3)}
+.hero h1 .accent{color:var(--sun)}
+.hero p.intro{font-size:1.05rem;line-height:1.6;opacity:.92;max-width:520px;margin:0 auto 1.6rem;font-weight:600}
+.name-bar{background:rgba(255,255,255,.16);border:2px solid rgba(255,255,255,.3);border-radius:14px;padding:.6rem 1rem;display:flex;align-items:center;gap:.7rem;max-width:380px;margin:0 auto 1.1rem}
+.name-bar label{font-size:.85rem;font-weight:800;color:white;white-space:nowrap}
+.name-bar input{flex:1;background:rgba(255,255,255,.22);border:none;border-radius:9px;padding:.5rem .8rem;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;color:white;outline:none}
+.name-bar input::placeholder{color:rgba(255,255,255,.5);font-weight:600}
+.progress-wrap{display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.3rem}
+.prog-step{background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.22);border-radius:22px;padding:.45rem 1rem;font-size:.85rem;font-weight:800;color:rgba(255,255,255,.8);cursor:pointer;transition:all .2s;font-family:'Baloo 2',cursive}
+.prog-step:hover,.prog-step.done{background:rgba(255,255,255,.26);color:white;border-color:rgba(255,255,255,.4)}
+.prog-step.active{background:var(--sun);color:#7a4a00;border-color:var(--sun);box-shadow:0 3px 14px rgba(255,182,39,.5)}
+.sheet{position:relative;z-index:1;background:var(--paper);border-radius:28px 28px 0 0;margin-top:1.4rem;padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.22)}
+.section{padding:2.6rem 1.6rem 0;max-width:780px;margin:0 auto;display:none}
+.section.active{display:block}
+.section-eyebrow{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem}
+.eyebrow-num{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Baloo 2',cursive;font-weight:800;font-size:1.15rem;color:white;flex-shrink:0}
+.num-bird{background:var(--bird)}.num-cloud{background:var(--cloud)}.num-sun{background:var(--sun);color:#7a4a00}.num-kite{background:var(--kite)}.num-leaf{background:var(--leaf)}
+.eyebrow-label{font-size:.85rem;font-weight:800;letter-spacing:.02em;text-transform:uppercase;color:var(--muted)}
+.section h2{font-family:'Baloo 2',cursive;font-weight:800;font-size:clamp(1.7rem,4vw,2.3rem);color:var(--sky);margin-bottom:.6rem;line-height:1.15}
+.section .lead{font-size:1.08rem;line-height:1.7;color:#3a4a5a;margin-bottom:1.6rem;font-weight:600}
+.section .lead strong{color:var(--bird)}
+.wonder-box{background:linear-gradient(135deg,var(--sky) 0%,var(--sky-mid) 100%);color:white;border-radius:18px;padding:1.6rem 1.8rem;margin-bottom:1.6rem;position:relative;overflow:hidden}
+.wonder-box::after{content:'\1F4C4';position:absolute;right:1.3rem;top:50%;transform:translateY(-50%);font-size:2.8rem;opacity:.3}
+.wonder-box p{font-size:1.05rem;line-height:1.65;font-weight:700;opacity:.97;max-width:85%}
+.wonder-box strong{color:var(--sun)}
+.demo-zone{background:white;border:3px solid var(--border);border-radius:18px;padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 3px 12px rgba(0,0,0,.06)}
+.demo-zone h3{font-family:'Baloo 2',cursive;font-weight:700;font-size:1.25rem;color:var(--sky);margin-bottom:.3rem}
+.demo-zone .hint{font-size:.85rem;color:var(--muted);margin-bottom:1rem;font-weight:600}
+.btn{border:none;border-radius:12px;padding:.6rem 1.2rem;font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15)}
+.btn-leaf{background:var(--leaf);color:white}.btn-ghost{background:#eef1f4;color:var(--muted)}.btn-sky{background:var(--sky);color:white}.btn-sun{background:var(--sun);color:#7a4a00}
+/* fold steps */
+.fold-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin:1.2rem 0}
+.fold-step{background:var(--cloud-pale);border:3px solid var(--cloud);border-radius:16px;padding:1rem;text-align:center}
+.fold-step .fs-num{width:32px;height:32px;border-radius:50%;background:var(--sky);color:white;font-family:'Baloo 2',cursive;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem}
+.fold-step .fs-icon{font-size:2.2rem;margin-bottom:.4rem}
+.fold-step .fs-label{font-family:'Baloo 2',cursive;font-weight:700;font-size:.95rem;color:var(--sky)}
+/* sequencing drag-like (click to order) */
+.seq-pool{display:flex;flex-wrap:wrap;gap:.8rem;margin-bottom:1.2rem;justify-content:center}
+.seq-card{background:white;border:3px solid var(--border);border-radius:16px;padding:1rem;text-align:center;cursor:pointer;transition:all .2s;width:120px;user-select:none}
+.seq-card:hover{transform:translateY(-2px);border-color:var(--sky-mid)}
+.seq-card.placed{opacity:.35;cursor:not-allowed;transform:none}
+.seq-card .sc-icon{font-size:2.4rem;display:block;margin-bottom:.3rem}
+.seq-card .sc-label{font-family:'Baloo 2',cursive;font-weight:700;font-size:.85rem;color:var(--sky)}
+.seq-slots{display:flex;gap:.8rem;justify-content:center;margin-bottom:1rem;flex-wrap:wrap}
+.seq-slot{width:120px;height:128px;border:3px dashed var(--border);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--sun-pale);position:relative}
+.seq-slot .slot-label{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--sun);color:#7a4a00;font-family:'Baloo 2',cursive;font-weight:800;font-size:.8rem;padding:.15rem .6rem;border-radius:10px}
+.seq-slot.filled{border-style:solid;border-color:var(--leaf);background:var(--leaf-pale)}
+.seq-slot .sc-icon{font-size:2.4rem}
+.seq-slot .sc-label{font-family:'Baloo 2',cursive;font-weight:700;font-size:.85rem;color:#1b7a58}
+.order-words{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin:1rem 0}
+.order-word{background:var(--kite-pale);color:var(--kite);font-family:'Baloo 2',cursive;font-weight:800;font-size:.95rem;padding:.5rem 1.1rem;border-radius:20px;border:2px solid #cac0ef}
+/* chips */
+.chip-row{display:flex;flex-wrap:wrap;gap:.7rem;margin-bottom:1.4rem;justify-content:center}
+.vchip{padding:.7rem 1.3rem;border-radius:24px;font-size:1.02rem;font-weight:800;cursor:pointer;transition:all .2s;border:3px solid transparent;font-family:'Baloo 2',cursive;display:flex;align-items:center;gap:.5rem}
+.vchip .vemoji{font-size:1.3rem}
+.vchip.c1{background:var(--bird-pale);color:#c84a30;border-color:#ffc9b8}
+.vchip.c2{background:var(--cloud-pale);color:#0d6a9a;border-color:#a8d8ee}
+.vchip.c3{background:var(--sun-pale);color:#8a6a1a;border-color:#ffe0a0}
+.vchip.c4{background:var(--kite-pale);color:#5a4ab0;border-color:#cac0ef}
+.vchip.c5{background:var(--leaf-pale);color:#1b7a58;border-color:#a8e0c8}
+.vchip:hover{transform:scale(1.06)}
+.vchip.said{box-shadow:0 0 0 3px rgba(0,0,0,.08) inset}
+.chant-box{background:linear-gradient(135deg,#1b7a58 0%,#3aaf85 100%);color:white;border-radius:18px;padding:1.6rem 1.8rem;text-align:center;margin-bottom:1.5rem}
+.chant-box h4{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.2rem;margin-bottom:.6rem}
+.chant-box p{font-size:1.15rem;line-height:1.7;font-weight:700}
+.nav-row{display:flex;justify-content:space-between;align-items:center;padding:2.2rem 1.6rem 0;max-width:780px;margin:0 auto;gap:1rem}
+.btn-next{background:var(--sky);color:white;border:none;border-radius:50px;padding:.95rem 2rem;font-family:'Baloo 2',cursive;font-weight:700;font-size:1.05rem;cursor:pointer;display:flex;align-items:center;gap:.6rem;transition:all .2s;box-shadow:0 4px 16px rgba(26,111,176,.35)}
+.btn-next:hover{background:var(--sky-mid);transform:translateY(-2px)}
+.btn-prev{background:transparent;color:var(--muted);border:3px solid var(--border);border-radius:50px;padding:.9rem 1.6rem;font-family:'Baloo 2',cursive;font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s}
+.btn-prev:hover{border-color:var(--muted);color:var(--ink)}
+.btn-prev:disabled,.btn-next:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.summary-section{background:white;border-radius:18px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:3px solid var(--border)}
+.summary-section h3{font-family:'Baloo 2',cursive;font-weight:700;font-size:1.1rem;color:var(--sky);margin-bottom:.7rem}
+.summary-answer{background:#f5f7fa;border-radius:10px;padding:.7rem 1rem;font-size:.95rem;line-height:1.5;color:var(--ink);margin-bottom:.4rem;border-left:4px solid var(--kite);min-height:1.8rem;font-weight:600}
+.summary-answer.empty{color:var(--muted);font-weight:400;border-left-color:var(--border)}
+.share-buttons{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.4rem;justify-content:center}
+.share-btn{border:none;border-radius:14px;padding:.9rem 1.6rem;font-family:'Baloo 2',cursive;font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem}
+.share-btn:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.share-btn.copy{background:var(--leaf);color:white}.share-btn.email{background:var(--kite);color:white}.share-btn.print{background:var(--sky);color:white}
+.copy-confirm{text-align:center;font-size:.9rem;color:var(--leaf);min-height:1.2rem;margin-top:.6rem;font-weight:700}
+.star-row{display:flex;justify-content:center;gap:.5rem;margin:1rem 0}
+.star-row span{font-size:1.8rem;cursor:pointer;opacity:.35;transition:transform .15s}
+.star-row span.lit{opacity:1;transform:scale(1.15)}
+.divider{height:3px;background:repeating-linear-gradient(90deg,var(--border) 0 10px,transparent 10px 20px);margin:1.8rem 0;border-radius:2px}
+@media(max-width:560px){.hero{padding:2rem 1rem 1.4rem}.section{padding:2rem 1.1rem 0}.nav-row{padding:1.8rem 1.1rem 0}}
+@media print{.hero,.nav-row,.share-buttons,.copy-confirm{display:none!important}.sheet{box-shadow:none;border-radius:0}.section{display:none!important}#sec-4{display:block!important}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">🛠️ Farvour Explorations · PYP 1 · Camp Day 2</div>
+  <h1>Soaring <span class="accent">Structures</span></h1>
+  <p class="intro">Today we build a paper airplane! We will learn First, Next, and Last — the words that put steps in order. ✈️</p>
+  <div class="name-bar"><label>😊 MY NAME:</label><input type="text" id="studentName" placeholder="Type your name..."></div>
+  <div class="progress-wrap">
+    <a class="prog-step active" onclick="goTo(0)">👋 Hello</a>
+    <a class="prog-step" onclick="goTo(1)">🛠️ Build It</a>
+    <a class="prog-step" onclick="goTo(2)">🔢 Put In Order</a>
+    <a class="prog-step" onclick="goTo(3)">✏️ My Sentence</a>
+    <a class="prog-step" onclick="goTo(4)">🌟 All Done!</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+<!-- SEC 0: HELLO -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow"><div class="eyebrow-num num-bird">1</div><span class="eyebrow-label">Let's Begin</span></div>
+  <h2>👋 Hello, Builders!</h2>
+  <p class="lead">Yesterday we learned about things that fly. Today <strong>we</strong> will build something that flies — a paper airplane!</p>
+
+  <div class="wonder-box">
+    <p>✨ When we build something, we follow <strong>steps</strong>, one after another. First we do one thing... then the next... then the last! Let's learn those words.</p>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🙋 Warm-Up: Fold in the Air!</h3>
+    <p class="hint">Stand up. Pretend to fold paper in the air as your teacher reads.</p>
+    <div class="chip-row">
+      <span class="vchip c1" onclick="sayChip(this)"><span class="vemoji">1️⃣</span>First</span>
+      <span class="vchip c2" onclick="sayChip(this)"><span class="vemoji">2️⃣</span>Next</span>
+      <span class="vchip c5" onclick="sayChip(this)"><span class="vemoji">3️⃣</span>Last</span>
+    </div>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" disabled>&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 1: BUILD IT (teacher demo steps + vocab) -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow"><div class="eyebrow-num num-cloud">2</div><span class="eyebrow-label">Watch &amp; Build</span></div>
+  <h2>🛠️ Let's Build a Paper Airplane!</h2>
+  <p class="lead">Watch your teacher fold a real paper airplane. Here are the 4 steps we will follow:</p>
+
+  <div class="fold-steps">
+    <div class="fold-step"><div class="fs-num">1</div><div class="fs-icon">📄</div><div class="fs-label">Fold in half</div></div>
+    <div class="fold-step"><div class="fs-num">2</div><div class="fs-icon">📐</div><div class="fs-label">Fold the wings</div></div>
+    <div class="fold-step"><div class="fs-num">3</div><div class="fs-icon">✈️</div><div class="fs-label">Press the lines</div></div>
+    <div class="fold-step"><div class="fs-num">4</div><div class="fs-icon">🚀</div><div class="fs-label">Throw it!</div></div>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🔤 New Words For Today</h3>
+    <p class="hint">Tap each word. Say it with your teacher.</p>
+    <div class="chip-row">
+      <span class="vchip c1" onclick="sayChip(this)"><span class="vemoji">📁</span>Fold</span>
+      <span class="vchip c2" onclick="sayChip(this)"><span class="vemoji">🏗️</span>Build</span>
+      <span class="vchip c3" onclick="sayChip(this)"><span class="vemoji">👣</span>Step</span>
+      <span class="vchip c4" onclick="sayChip(this)"><span class="vemoji">📏</span>Tall</span>
+      <span class="vchip c5" onclick="sayChip(this)"><span class="vemoji">💪</span>Strong</span>
+      <span class="vchip c1" onclick="sayChip(this)"><span class="vemoji">😵</span>Fall Down</span>
+      <span class="vchip c2" onclick="sayChip(this)"><span class="vemoji">🙆</span>Stand Up</span>
+    </div>
+  </div>
+
+  <p style="text-align:center;font-size:.95rem;color:var(--muted);font-weight:700">Words tapped: <span id="chipCount">0</span> / 10</p>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 2: SEQUENCING GAME -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow"><div class="eyebrow-num num-sun">3</div><span class="eyebrow-label">Sequencing</span></div>
+  <h2>🔢 Put the Steps In Order!</h2>
+  <p class="lead">Tap each picture in the correct order: <strong>First → Next → Then → Last</strong>.</p>
+
+  <div class="order-words">
+    <span class="order-word">1. First</span>
+    <span class="order-word">2. Next</span>
+    <span class="order-word">3. Then</span>
+    <span class="order-word">4. Last</span>
+  </div>
+
+  <div class="seq-slots" id="seqSlots">
+    <div class="seq-slot" data-slot="0"><div class="slot-label">First</div></div>
+    <div class="seq-slot" data-slot="1"><div class="slot-label">Next</div></div>
+    <div class="seq-slot" data-slot="2"><div class="slot-label">Then</div></div>
+    <div class="seq-slot" data-slot="3"><div class="slot-label">Last</div></div>
+  </div>
+
+  <p style="text-align:center;font-size:.9rem;color:var(--muted);font-weight:600;margin-bottom:.8rem">Tap a picture below to place it in the next open box.</p>
+
+  <div class="seq-pool" id="seqPool">
+    <div class="seq-card" data-order="0" onclick="seqTap(this)"><span class="sc-icon">📄</span><span class="sc-label">Fold in half</span></div>
+    <div class="seq-card" data-order="2" onclick="seqTap(this)"><span class="sc-icon">✈️</span><span class="sc-label">Press the lines</span></div>
+    <div class="seq-card" data-order="1" onclick="seqTap(this)"><span class="sc-icon">📐</span><span class="sc-label">Fold the wings</span></div>
+    <div class="seq-card" data-order="3" onclick="seqTap(this)"><span class="sc-icon">🚀</span><span class="sc-label">Throw it!</span></div>
+  </div>
+
+  <p style="text-align:center;font-size:1rem;color:var(--sky);font-weight:800" id="seqFeedback">Tap the FIRST step to begin! 🌟</p>
+  <div style="text-align:center;margin-top:.6rem"><button class="btn btn-ghost" onclick="resetSeq()">🔄 Try Again</button></div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 3: MY SENTENCE -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow"><div class="eyebrow-num num-kite">4</div><span class="eyebrow-label">Show What You Know</span></div>
+  <h2>✏️ Write Your Building Steps</h2>
+  <p class="lead">Now it's your turn! Use the words <strong>First, Next, Last</strong> to tell how you built your airplane.</p>
+
+  <div class="demo-zone">
+    <h3>📝 Finish My Sentences</h3>
+    <p class="hint">Say each sentence out loud first. Then type the missing word, or ask your teacher to help write.</p>
+    <div style="display:flex;flex-direction:column;gap:.9rem">
+      <div>
+        <label style="font-family:'Baloo 2',cursive;font-weight:700;color:var(--sky);display:block;margin-bottom:.3rem">First, I _____</label>
+        <input type="text" id="seq-first" placeholder="e.g. fold the paper" style="width:100%;padding:.7rem 1rem;border-radius:10px;border:2px solid var(--border);font-family:'Nunito';font-size:1rem;font-weight:600">
+      </div>
+      <div>
+        <label style="font-family:'Baloo 2',cursive;font-weight:700;color:var(--sky);display:block;margin-bottom:.3rem">Next, I _____</label>
+        <input type="text" id="seq-next" placeholder="e.g. fold the wings" style="width:100%;padding:.7rem 1rem;border-radius:10px;border:2px solid var(--border);font-family:'Nunito';font-size:1rem;font-weight:600">
+      </div>
+      <div>
+        <label style="font-family:'Baloo 2',cursive;font-weight:700;color:var(--sky);display:block;margin-bottom:.3rem">Last, I _____</label>
+        <input type="text" id="seq-last" placeholder="e.g. throw my airplane" style="width:100%;padding:.7rem 1rem;border-radius:10px;border:2px solid var(--border);font-family:'Nunito';font-size:1rem;font-weight:600">
+      </div>
+    </div>
+  </div>
+
+  <div class="chant-box">
+    <h4>🎵 Building Chant</h4>
+    <p>"First, next, last — we build so fast!<br>Fold and fold, then watch it fly past!"</p>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 4: REFLECT / SUMMARY -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow"><div class="eyebrow-num num-leaf">5</div><span class="eyebrow-label">All Done!</span></div>
+  <h2>🌟 Great Building, <span id="finalName">Friend</span>!</h2>
+  <p class="lead">You learned First, Next, and Last — and you built a flying machine! Rate how much fun you had:</p>
+
+  <div class="star-row" id="starRow">
+    <span onclick="setStars(1)">⭐</span><span onclick="setStars(2)">⭐</span><span onclick="setStars(3)">⭐</span><span onclick="setStars(4)">⭐</span><span onclick="setStars(5)">⭐</span>
+  </div>
+
+  <div class="summary-section">
+    <h3>📋 My Work Today</h3>
+    <div id="sum-name" class="summary-answer empty">Not answered</div>
+    <div id="sum-seq" class="summary-answer empty">Not answered</div>
+    <div id="sum-sentences" class="summary-answer empty">Not answered</div>
+    <div id="sum-stars" class="summary-answer empty">Not answered</div>
+  </div>
+
+  <div class="chant-box" style="background:linear-gradient(135deg,#1a6fb0 0%,#3a9bd9 100%)">
+    <h4>🎵 Sing It Once More!</h4>
+    <p>"First, next, last — we build so fast!<br>Fold and fold, then watch it fly past!"</p>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy" onclick="copyResults()">📋 Copy My Work</button>
+    <button class="share-btn email" onclick="emailResults()">✉️ Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" disabled>All Done! 🎉</button></div>
+</div>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+// ── NAVIGATION ──
+var TOTAL = 5;
+var cur = 0;
+function goTo(n){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('sec-'+n).classList.add('active');
+  document.querySelectorAll('.prog-step').forEach(function(p,i){
+    p.classList.remove('active','done');
+    if(i===n) p.classList.add('active');
+    else if(i<n) p.classList.add('done');
+  });
+  cur=n;
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n===4) buildSummary();
+}
+function navigate(dir){ goTo(Math.max(0,Math.min(TOTAL-1,cur+dir))); }
+window.goTo=goTo; window.navigate=navigate;
+
+// ── VOCAB CHIPS ──
+var chipsSaid = 0;
+function sayChip(el){
+  if(!el.classList.contains('said')){
+    el.classList.add('said');
+    chipsSaid++;
+    document.getElementById('chipCount').textContent = chipsSaid;
+  }
+}
+window.sayChip=sayChip;
+
+// ── SEQUENCING GAME ──
+var nextSlotIndex = 0;
+var seqDone = false;
+function seqTap(el){
+  if(seqDone || el.classList.contains('placed')) return;
+  var order = parseInt(el.dataset.order, 10);
+  var feedback = document.getElementById('seqFeedback');
+  if(order === nextSlotIndex){
+    var slot = document.querySelector('.seq-slot[data-slot="'+order+'"]');
+    slot.classList.add('filled');
+    slot.innerHTML = slot.querySelector('.slot-label').outerHTML + el.innerHTML;
+    el.classList.add('placed');
+    nextSlotIndex++;
+    if(nextSlotIndex >= 4){
+      feedback.textContent = 'Perfect! All steps are in order! 🎉✈️';
+      seqDone = true;
+    } else {
+      var names = ['FIRST','NEXT','THEN','LAST'];
+      feedback.textContent = 'Great! Now tap the '+names[nextSlotIndex]+' step! 🌟';
+    }
+  } else {
+    feedback.textContent = 'Not quite — try a different one! Think about what happens '+(nextSlotIndex===0?'FIRST':'next')+'.';
+  }
+}
+function resetSeq(){
+  nextSlotIndex = 0;
+  seqDone = false;
+  document.querySelectorAll('.seq-slot').forEach(function(slot){
+    slot.classList.remove('filled');
+    var label = slot.querySelector('.slot-label').outerHTML;
+    slot.innerHTML = label;
+  });
+  document.querySelectorAll('.seq-card').forEach(function(card){ card.classList.remove('placed'); });
+  document.getElementById('seqFeedback').textContent = 'Tap the FIRST step to begin! 🌟';
+}
+window.seqTap=seqTap; window.resetSeq=resetSeq;
+
+// ── STARS ──
+var starsGiven = 0;
+function setStars(n){
+  starsGiven = n;
+  document.querySelectorAll('#starRow span').forEach(function(s,i){
+    s.classList.toggle('lit', i < n);
+  });
+}
+window.setStars = setStars;
+
+// ── SUMMARY ──
+function getV(id){ var el=document.getElementById(id); return el ? el.value.trim() : ''; }
+function setS(id,text){ var el=document.getElementById(id); if(!el) return; el.textContent=text||'Not answered'; el.classList.toggle('empty',!text); }
+function buildSummary(){
+  var name = document.getElementById('studentName').value.trim() || 'Friend';
+  document.getElementById('finalName').textContent = name;
+  setS('sum-name', 'Name: '+name);
+  setS('sum-seq', seqDone ? 'Sequencing game: completed all 4 steps in order! ✅' : 'Sequencing game: not yet completed');
+  var first = getV('seq-first'), next = getV('seq-next'), last = getV('seq-last');
+  var sentences = [];
+  if(first) sentences.push('First, I '+first+'.');
+  if(next) sentences.push('Next, I '+next+'.');
+  if(last) sentences.push('Last, I '+last+'.');
+  setS('sum-sentences', sentences.join(' '));
+  setS('sum-stars', starsGiven ? 'Fun rating: '+'⭐'.repeat(starsGiven) : '');
+}
+window.buildSummary = buildSummary;
+
+function buildPlainText(){
+  var name = document.getElementById('studentName').value.trim() || 'Friend';
+  var date = new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  var lines = [
+    'FARVOUR EXPLORATIONS - PYP 1 SUMMER CAMP - DAY 2: SOARING STRUCTURES',
+    '='.repeat(65),
+    'Student: '+name, 'Date: '+date, '',
+    '-- VOCABULARY WORDS TAPPED --', chipsSaid+' of 10 words practiced', '',
+    '-- SEQUENCING GAME --', seqDone ? 'Completed all 4 steps in order!' : 'Not yet completed', '',
+    '-- MY BUILDING SENTENCES --',
+    'First, I '+(getV('seq-first')||'___')+'.',
+    'Next, I '+(getV('seq-next')||'___')+'.',
+    'Last, I '+(getV('seq-last')||'___')+'.', '',
+    '-- FUN RATING --', starsGiven ? '⭐'.repeat(starsGiven)+' ('+starsGiven+'/5)' : 'Not answered', '',
+    '='.repeat(65),
+    '(c) 2026 Farvour Explorations - farvourexplorations.com',
+    'Camp Week 1, Day 2 - English Lesson'
+  ];
+  return lines.join('\n');
+}
+
+function copyResults(){
+  buildSummary();
+  var text = buildPlainText();
+  navigator.clipboard.writeText(text).then(function(){
+    var el = document.getElementById('copyConfirm');
+    el.textContent = 'Copied! Paste into a message or email to share.';
+    setTimeout(function(){el.textContent='';},4000);
+  }).catch(function(){
+    document.getElementById('copyConfirm').textContent = 'Could not copy automatically — try selecting text manually.';
+  });
+}
+function emailResults(){
+  var name = document.getElementById('studentName').value.trim() || 'Friend';
+  var subject = encodeURIComponent('PYP 1 Camp Day 2 - '+name);
+  var body = encodeURIComponent(buildPlainText());
+  window.location.href = 'mailto:?subject='+subject+'&body='+body;
+}
+window.copyResults = copyResults; window.emailResults = emailResults;
+
+})();
+</script>
+</body>
+</html>
