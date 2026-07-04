@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cell Structure Explorer 🔬 (Chapter 4, Part 1)</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:    #1a3d2b;
+    --forest-mid:#2d6a4f;
+    --forest-lt: #40916c;
+    --coral:     #e8603c;
+    --coral-pale:#fdf0ec;
+    --mint:      #3aaf85;
+    --mint-pale: #e8f8f2;
+    --gold:      #c9962a;
+    --gold-pale: #fef9e7;
+    --lavender:  #7c6fcd;
+    --lav-pale:  #f0eefb;
+    --paper:     #fffef9;
+    --ink:       #1a2332;
+    --muted:     #7a8899;
+    --border:    #e0e4ea;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: linear-gradient(160deg, #0d2318 0%, #1a3d2b 45%, #2d6a4f 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%, rgba(144,238,144,.45) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 22%  38%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 41%  6%,  rgba(144,238,144,.35) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 60%  24%, rgba(255,255,255,.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 77%  9%,  rgba(144,238,144,.4)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 90%  33%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 33%  55%, rgba(144,238,144,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 70%  48%, rgba(255,255,255,.2)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 55%  70%, rgba(144,238,144,.25) 0%, transparent 100%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ─── HERO ─── */
+  .hero { position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 2rem;color:white; }
+  .hero-badge {
+    display:inline-block;background:var(--gold);color:var(--forest);
+    font-family:'Fredoka One',cursive;font-size:.85rem;letter-spacing:.05em;
+    padding:.35rem 1.2rem;border-radius:20px;margin-bottom:1.2rem;
+    box-shadow:0 2px 12px rgba(201,150,42,.45);
+  }
+  .hero h1 { font-family:'Fredoka One',cursive;font-size:clamp(2.2rem,6vw,4rem);line-height:1.1;margin-bottom:.8rem;text-shadow:0 2px 20px rgba(0,0,0,.35); }
+  .hero h1 .accent { color:var(--gold); }
+  .hero p.intro { font-size:1.05rem;line-height:1.7;opacity:.88;max-width:580px;margin:0 auto 2rem; }
+
+  /* ─── PROGRESS PILLS ─── */
+  .progress-wrap { display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem; }
+  .prog-step {
+    display:flex;align-items:center;gap:.4rem;
+    background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);
+    border-radius:20px;padding:.35rem .9rem;font-size:.78rem;font-weight:700;
+    color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace;
+  }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.35); }
+  .prog-step.active { background:var(--gold);color:var(--forest);border-color:var(--gold);box-shadow:0 2px 12px rgba(201,150,42,.45); }
+
+  /* ─── SHEET ─── */
+  .sheet {
+    position:relative;z-index:1;background:var(--paper);
+    border-radius:24px 24px 0 0;margin-top:1.5rem;
+    padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.3);
+  }
+
+  /* ─── SECTIONS ─── */
+  .section { padding:3rem 2rem 0;max-width:820px;margin:0 auto;display:none; }
+  .section.active { display:block; }
+
+  .section-eyebrow { display:flex;align-items:center;gap:.6rem;margin-bottom:1rem; }
+  .eyebrow-num {
+    width:32px;height:32px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fredoka One',cursive;font-size:1rem;color:white;flex-shrink:0;
+  }
+  .num-coral  { background:var(--coral); }
+  .num-mint   { background:var(--mint); }
+  .num-gold   { background:var(--gold);color:var(--forest); }
+  .num-lav    { background:var(--lavender); }
+  .num-forest { background:var(--forest-mid); }
+
+  .eyebrow-label { font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace; }
+
+  .section h2 { font-family:'Fredoka One',cursive;font-size:clamp(1.6rem,3.5vw,2.2rem);color:var(--forest);margin-bottom:.6rem;line-height:1.2; }
+  .section .lead { font-size:1rem;line-height:1.75;color:#3a4a5a;margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+
+  /* ─── WONDER / INFO BOXES ─── */
+  .wonder-box {
+    background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);
+    color:white;border-radius:16px;padding:1.8rem 2rem;margin-bottom:1.8rem;
+    position:relative;overflow:hidden;
+  }
+  .wonder-box::after { content:'🤔';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3; }
+  .wonder-box p { font-size:1rem;line-height:1.7;font-style:italic;opacity:.95;max-width:85%; }
+  .wonder-box strong { color:var(--gold);font-style:normal; }
+  .wonder-box.gold-box { background:linear-gradient(135deg,#8a6a1a 0%,#b8860b 100%); }
+  .wonder-box.gold-box::after { content:'⚡'; }
+  .wonder-box.lav-box  { background:linear-gradient(135deg,#4a3a8a 0%,#6a5acd 100%); }
+  .wonder-box.lav-box::after { content:'🔋'; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,#1b7a58 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'🍬'; }
+
+  /* ─── PREDICT BOX ─── */
+  .predict-box { background:var(--gold-pale);border:2px dashed var(--gold);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem; }
+  .predict-box textarea,.reflect-box textarea {
+    width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;
+    font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:64px;
+    background:white;color:var(--ink);outline:none;transition:border-color .2s;
+  }
+  .predict-box textarea:focus { border-color:var(--gold); }
+  .reflect-box { background:var(--mint-pale);border:2px dashed var(--mint);border-radius:14px;padding:1.4rem 1.6rem;margin-top:1.5rem; }
+  .reflect-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#1b7a58;margin-bottom:.8rem; }
+  .reflect-box textarea:focus { border-color:var(--mint); }
+
+  /* ─── DEMO ZONE ─── */
+  .demo-zone {
+    background:white;border:2px solid var(--border);border-radius:16px;
+    padding:1.8rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07);
+  }
+  .demo-zone h3 { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.3rem; }
+  .demo-zone .hint { font-size:.78rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:1.3rem; }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    border:none;border-radius:10px;padding:.65rem 1.3rem;font-family:'Nunito',sans-serif;
+    font-size:.88rem;font-weight:800;cursor:pointer;transition:all .15s;letter-spacing:.02em;
+  }
+  .btn:hover  { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  .btn:active { transform:translateY(0); }
+  .btn:disabled { opacity:.4;cursor:default;transform:none;box-shadow:none; }
+  .btn-coral  { background:var(--coral);    color:white; }
+  .btn-mint   { background:var(--mint);     color:white; }
+  .btn-gold   { background:var(--gold);     color:var(--forest); }
+  .btn-lav    { background:var(--lavender); color:white; }
+  .btn-ghost  { background:#f0f2f5;         color:var(--muted); }
+  .btn-forest { background:var(--forest);   color:white; }
+  .action-row { display:flex;gap:.8rem;flex-wrap:wrap;align-items:center;margin-bottom:.8rem; }
+
+  /* ─── NAV ROW ─── */
+  .nav-row { display:flex;justify-content:space-between;align-items:center;padding:2.5rem 2rem 0;max-width:820px;margin:0 auto; }
+
+  /* ─── CONCEPT CHIPS ─── */
+  .chip-row { display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem; }
+  .chip {
+    padding:.45rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;
+    cursor:pointer;transition:all .2s;border:2px solid transparent;
+  }
+  .chip.coral  { background:var(--coral-pale); color:var(--coral);     border-color:#f8c5b8; }
+  .chip.mint   { background:var(--mint-pale);  color:var(--mint);      border-color:#b8ebd8; }
+  .chip.gold   { background:var(--gold-pale);  color:#8a6a1a;          border-color:#f8e0a0; }
+  .chip.lav    { background:var(--lav-pale);   color:var(--lavender);  border-color:#d0caef; }
+  .chip.forest { background:#d4eadd;           color:var(--forest-mid);border-color:#a8d5b8; }
+  .chip:hover  { transform:scale(1.05); }
+
+  .concept-reveal {
+    background:var(--paper);border-left:4px solid var(--coral);
+    border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;
+    margin-top:.5rem;margin-bottom:.3rem;display:none;animation:fadeIn .3s ease;
+  }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border   { border-color:var(--mint); }
+  .concept-reveal.gold-border   { border-color:var(--gold); }
+  .concept-reveal.lav-border    { border-color:var(--lavender); }
+  .concept-reveal.forest-border { border-color:var(--forest-mid); }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ─── EVIDENCE CARDS ─── */
+  .evidence-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin-bottom:1.5rem; }
+  .ev-card {
+    background:white;border:2px solid var(--border);border-radius:14px;
+    padding:1.2rem;cursor:pointer;transition:all .2s;text-align:center;
+  }
+  .ev-card:hover,.ev-card.active { border-color:var(--forest-mid);box-shadow:0 4px 16px rgba(45,106,79,.2);transform:translateY(-2px); }
+  .ev-card.active { background:#d4eadd; }
+  .ev-card .ev-icon { font-size:2.4rem;margin-bottom:.5rem; }
+  .ev-card .ev-title { font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--forest);margin-bottom:.3rem; }
+  .ev-card .ev-sub   { font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace; }
+  .ev-panel {
+    background:#d4eadd;border-left:4px solid var(--forest-mid);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1rem;
+  }
+  .ev-panel.show { display:block; }
+  .ev-panel h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.5rem; }
+  .ev-panel p  { font-size:.88rem;line-height:1.7;color:#2a3a2a; }
+  .ev-panel .example-box {
+    background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;
+    font-size:.82rem;font-family:'DM Mono',monospace;color:var(--ink);
+    border:1.5px solid rgba(45,106,79,.2);
+  }
+
+  /* ─── STEP CARDS ─── */
+  .sel-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0 1.5rem; }
+  .sel-card {
+    background:white;border:2px solid var(--border);border-radius:14px;
+    padding:1rem;text-align:center;cursor:pointer;transition:all .2s;
+  }
+  .sel-card:hover,.sel-card.active { border-color:var(--coral);box-shadow:0 3px 12px rgba(232,96,60,.18);transform:translateY(-2px); }
+  .sel-card.active { background:var(--coral-pale); }
+  .sel-card .sel-icon { font-size:2rem;margin-bottom:.4rem; }
+  .sel-card .sel-name { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--forest);margin-bottom:.2rem; }
+  .sel-card .sel-key  { font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em; }
+  .sel-detail {
+    background:var(--coral-pale);border-left:4px solid var(--coral);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1.5rem;
+  }
+  .sel-detail.show { display:block; }
+  .sel-detail h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.4rem; }
+  .sel-detail p  { font-size:.88rem;line-height:1.7; }
+  .sel-detail .examples { margin-top:.6rem;font-style:italic;color:var(--muted);font-size:.82rem; }
+
+  /* ─── MATCHING GAME ─── */
+  .match-grid { display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1rem 0; }
+  .match-item {
+    padding:.75rem 1rem;border-radius:10px;border:2px solid var(--border);
+    cursor:pointer;font-size:.84rem;font-weight:700;transition:all .2s;
+    background:white;text-align:center;color:var(--ink);line-height:1.4;
+  }
+  .match-item:hover    { border-color:var(--forest-mid);background:#f0f7f3; }
+  .match-item.selected { border-color:var(--lavender);background:var(--lav-pale);color:var(--lavender); }
+  .match-item.matched  { border-color:var(--mint);background:var(--mint-pale);color:#1b7a58;cursor:default; }
+  .match-item.wrong    { border-color:var(--coral);background:var(--coral-pale);color:var(--coral);animation:shake .3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+  /* ─── ATP SIMULATOR ─── */
+  .atp-display {
+    display:flex;align-items:center;justify-content:center;gap:1.5rem;
+    flex-wrap:wrap;margin:1.2rem 0;
+  }
+  .atp-molecule {
+    text-align:center;padding:1rem 1.4rem;border-radius:14px;
+    font-family:'DM Mono',monospace;font-size:.85rem;font-weight:700;
+    border:2px solid;transition:all .4s;min-width:120px;
+  }
+  .atp-molecule .mol-label { font-family:'Fredoka One',cursive;font-size:1.3rem;margin-bottom:.3rem; }
+  .atp-molecule .mol-desc  { font-size:.7rem;color:var(--muted);margin-top:.3rem;font-weight:400; }
+  .mol-atp  { background:var(--gold-pale);border-color:var(--gold);color:#8a6a1a; }
+  .mol-adp  { background:#f5f7fa;border-color:var(--border);color:var(--muted); }
+  .mol-pi   { background:var(--lav-pale);border-color:var(--lavender);color:var(--lavender); }
+  .mol-nadh { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .mol-nad  { background:#f5f7fa;border-color:var(--border);color:var(--muted); }
+  .arrow-label { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest-mid);text-align:center; }
+  .energy-badge {
+    display:inline-block;padding:.25rem .8rem;border-radius:20px;font-size:.72rem;
+    font-weight:800;font-family:'DM Mono',monospace;letter-spacing:.05em;margin-top:.4rem;
+  }
+  .release  { background:#ffeaa7;color:#8a6a1a; }
+  .absorb   { background:var(--lav-pale);color:var(--lavender); }
+
+  /* ─── GLYCOLYSIS TRACKER ─── */
+  .glyc-track {
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:.8rem;margin:1rem 0;
+  }
+  .glyc-box {
+    background:white;border:2px solid var(--border);border-radius:12px;
+    padding:.9rem 1rem;text-align:center;transition:all .3s;
+  }
+  .glyc-box .g-label { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--forest);margin-bottom:.3rem; }
+  .glyc-box .g-val   { font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:700;color:var(--ink); }
+  .glyc-box .g-unit  { font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace; }
+  .glyc-box.active   { border-color:var(--gold);background:var(--gold-pale); }
+  .glyc-box.done     { border-color:var(--mint);background:var(--mint-pale); }
+
+  /* ─── REDOX ANIMATOR ─── */
+  .redox-row { display:flex;gap:1rem;flex-wrap:wrap;margin:1rem 0; }
+  .redox-box {
+    flex:1;min-width:200px;border-radius:14px;padding:1.1rem 1.2rem;
+    border:2px solid var(--border);text-align:center;transition:all .4s;
+  }
+  .redox-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;margin-bottom:.4rem; }
+  .redox-box p  { font-family:'DM Mono',monospace;font-size:.78rem;line-height:1.6; }
+  .redox-oxidized  { background:var(--coral-pale);border-color:var(--coral); }
+  .redox-oxidized h4 { color:var(--coral); }
+  .redox-reduced   { background:var(--mint-pale);border-color:var(--mint); }
+  .redox-reduced h4 { color:#1b7a58; }
+
+  /* ─── QUIZ ─── */
+  .quiz-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .quiz-q { font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:1rem;line-height:1.5; }
+  .quiz-options { display:flex;flex-direction:column;gap:.5rem; }
+  .quiz-opt {
+    padding:.6rem 1rem;border-radius:8px;border:2px solid var(--border);
+    background:white;cursor:pointer;font-family:'Nunito',sans-serif;
+    font-size:.88rem;font-weight:600;text-align:left;transition:all .15s;color:var(--ink);
+  }
+  .quiz-opt:hover:not(:disabled) { border-color:var(--forest-mid);background:#f0f7f3; }
+  .quiz-opt.correct  { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .quiz-opt.wrong    { background:var(--coral-pale);border-color:var(--coral);color:#a83020; }
+  .quiz-opt:disabled { cursor:default; }
+  .quiz-feedback { margin-top:.8rem;font-size:.85rem;line-height:1.6;padding:.7rem 1rem;border-radius:8px;display:none;animation:fadeIn .3s ease; }
+  .quiz-feedback.show { display:block; }
+  .quiz-feedback.correct-fb { background:var(--mint-pale);color:#1b7a58;border-left:3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background:var(--coral-pale);color:#a83020;border-left:3px solid var(--coral); }
+
+  /* ─── SCORE ─── */
+  .score-panel { background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);color:white;border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem; }
+  .score-panel .score-num { font-family:'Fredoka One',cursive;font-size:3.5rem;line-height:1;color:var(--gold); }
+  .score-panel p { opacity:.88;margin-top:.5rem;font-size:1rem; }
+  .score-panel h3 { font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:.3rem; }
+
+  /* ─── CONGRATS ─── */
+  .congrats-panel { background:linear-gradient(135deg,var(--forest) 0%,#1b7a58 100%);color:white;border-radius:20px;padding:2.5rem 2rem;text-align:center;margin-top:2rem; }
+  .congrats-panel h2 { font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:.6rem; }
+  .congrats-panel p  { opacity:.9;line-height:1.7;max-width:480px;margin:0 auto .8rem; }
+  .summary-chips { display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:1rem; }
+  .summary-chip {
+    background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);
+    border-radius:20px;padding:.3rem .9rem;font-size:.78rem;font-weight:700;
+    font-family:'DM Mono',monospace;letter-spacing:.04em;
+  }
+
+  /* ─── VOCAB TABLE ─── */
+  .vocab-table { width:100%;border-collapse:collapse;margin:1rem 0 1.5rem; }
+  .vocab-table th { background:var(--forest);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;padding:.7rem 1rem;text-align:left; }
+  .vocab-table td { padding:.65rem 1rem;font-size:.85rem;line-height:1.5;border-bottom:1px solid var(--border); }
+  .vocab-table tr:nth-child(even) td { background:#f5f7fa; }
+  .vocab-table tr:hover td { background:#d4eadd;transition:background .15s; }
+  .vocab-table td:first-child { font-weight:800;color:var(--forest-mid); }
+
+  /* ─── FILL IN THE BLANK ─── */
+  .blank-input {
+    border:none;border-bottom:2.5px solid var(--forest-mid);background:transparent;
+    font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;color:var(--forest);
+    width:180px;text-align:center;outline:none;padding:0 4px;transition:border-color .2s;
+  }
+  .blank-input:focus { border-color:var(--coral); }
+  .blank-input.ok { border-color:var(--mint);color:var(--mint); }
+  .blank-input.err{ border-color:var(--coral);color:var(--coral); }
+  .fill-q { font-size:.95rem;line-height:2;color:var(--ink);margin-bottom:.8rem; }
+  .divider { height:1px;background:var(--border);margin:2rem 0; }
+
+  /* ─── NAME BAR ─── */
+  .name-bar {
+    background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);
+    border-radius:12px;padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;
+    max-width:420px;margin:0 auto 1rem;
+  }
+  .name-bar label { font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;font-family:'DM Mono',monospace; }
+  .name-bar input {
+    flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;
+    padding:.4rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:white;outline:none;
+  }
+  .name-bar input::placeholder { color:rgba(255,255,255,.4);font-weight:400; }
+
+  /* ─── SUMMARY / SUBMIT ─── */
+  .summary-section { background:white;border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--forest);margin-bottom:.8rem; }
+  .summary-answer {
+    background:#f5f7fa;border-radius:8px;padding:.7rem 1rem;font-size:.85rem;
+    line-height:1.6;color:var(--ink);margin-bottom:.5rem;font-style:italic;
+    border-left:3px solid var(--lavender);min-height:2rem;
+  }
+  .summary-answer.empty { color:var(--muted);font-style:normal;border-left-color:var(--border); }
+  .share-buttons { display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center; }
+  .share-btn {
+    border:none;border-radius:12px;padding:.85rem 1.6rem;font-family:'Fredoka One',cursive;
+    font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem;
+  }
+  .share-btn:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background:var(--mint);color:white; }
+  .share-btn.email { background:var(--lavender);color:white; }
+  .share-btn.print { background:var(--forest);color:white; }
+  .copy-confirm { text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--mint);min-height:1.2rem;margin-top:.6rem; }
+
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm,.prog-step,.name-bar { display:none !important; }
+    .sheet { box-shadow:none;border-radius:0; }
+    .section { display:none !important; }
+    #sec-7 { display:block !important; }
+  }
+  /* ─── FATTY ACID COMPARISON ─── */
+  .fat-compare { display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1rem 0; }
+  .fat-card {
+    border-radius:14px;padding:1.2rem;text-align:center;border:2px solid var(--border);
+    cursor:pointer;transition:all .25s;background:white;
+  }
+  .fat-card:hover,.fat-card.active { transform:translateY(-3px);box-shadow:0 4px 16px rgba(0,0,0,.12); }
+  .fat-card.active.saturated   { border-color:var(--gold); background:var(--gold-pale); }
+  .fat-card.active.unsaturated { border-color:var(--mint); background:var(--mint-pale); }
+  .fat-card.active.trans       { border-color:var(--coral); background:var(--coral-pale); }
+  .fat-chain {
+    font-family:'DM Mono',monospace;font-size:1.3rem;letter-spacing:2px;
+    margin:.8rem 0;color:var(--ink);
+  }
+  .fat-card .fat-name { font-family:'Fredoka One',cursive;font-size:1rem;color:var(--forest);margin-bottom:.3rem; }
+  .fat-card .fat-state { font-size:.75rem;font-family:'DM Mono',monospace;color:var(--muted); }
+
+  /* ─── PROTEIN STRUCTURE LEVELS ─── */
+  .protein-level-track {
+    display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0;justify-content:center;
+  }
+  .protein-level-step {
+    flex:1;min-width:130px;text-align:center;padding:1rem .8rem;border-radius:12px;
+    border:2px solid var(--border);background:white;cursor:pointer;transition:all .25s;
+  }
+  .protein-level-step:hover,.protein-level-step.active { border-color:var(--lavender);box-shadow:0 4px 14px rgba(124,111,205,.2);transform:translateY(-2px); }
+  .protein-level-step.active { background:var(--lav-pale); }
+  .protein-level-step .pl-icon { font-size:1.8rem;margin-bottom:.3rem; }
+  .protein-level-step .pl-name { font-family:'Fredoka One',cursive;font-size:.85rem;color:var(--forest); }
+  .protein-level-detail {
+    background:var(--lav-pale);border-left:4px solid var(--lavender);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1rem;
+  }
+  .protein-level-detail.show { display:block; }
+  .protein-level-detail h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.5rem; }
+  .protein-level-detail p  { font-size:.88rem;line-height:1.7;color:#2a2a3a; }
+
+  /* ─── AMINO ACID CLASSIFIER ─── */
+  .aa-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.6rem;margin:1rem 0; }
+  .aa-tile {
+    border-radius:10px;padding:.7rem .5rem;text-align:center;cursor:pointer;
+    border:2px solid var(--border);background:white;transition:all .2s;
+  }
+  .aa-tile:hover { transform:scale(1.04); }
+  .aa-tile .aa-letter { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest); }
+  .aa-tile .aa-full { font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.2rem; }
+  .aa-tile.cat-nonpolar  { border-color:#a8d5b8; }
+  .aa-tile.cat-polar     { border-color:var(--mint); }
+  .aa-tile.cat-positive  { border-color:var(--coral); }
+  /* ─── NUCLEOTIDE BUILDER ─── */
+  .nuc-parts { display:flex;justify-content:center;gap:1.2rem;flex-wrap:wrap;margin:1.2rem 0; }
+  .nuc-part {
+    text-align:center;padding:1rem 1.3rem;border-radius:14px;
+    border:2px solid var(--border);background:white;min-width:130px;
+    transition:all .3s;
+  }
+  .nuc-part .np-icon { font-size:1.8rem;margin-bottom:.4rem; }
+  .nuc-part .np-name { font-family:'Fredoka One',cursive;font-size:.92rem;color:var(--forest); }
+  .nuc-part .np-sub  { font-size:.68rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.3rem; }
+  .nuc-part.sugar     { border-color:var(--mint); background:var(--mint-pale); }
+  .nuc-part.phosphate { border-color:var(--gold); background:var(--gold-pale); }
+  .nuc-part.base      { border-color:var(--coral); background:var(--coral-pale); }
+
+  /* ─── BASE PAIRING TABLE / SELECTOR ─── */
+  .base-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.7rem;margin:1rem 0; }
+  .base-tile {
+    border-radius:12px;padding:1rem .6rem;text-align:center;cursor:pointer;
+    border:2px solid var(--border);background:white;transition:all .2s;
+  }
+  .base-tile:hover,.base-tile.active { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.12); }
+  .base-tile .bt-letter { font-family:'Fredoka One',cursive;font-size:1.5rem; }
+  .base-tile .bt-name   { font-size:.68rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.3rem; }
+  .base-tile.purine     { border-color:var(--lavender); }
+  .base-tile.purine.active { background:var(--lav-pale); }
+  .base-tile.pyrimidine { border-color:var(--coral); }
+  .base-tile.pyrimidine.active { background:var(--coral-pale); }
+
+  /* ─── DOUBLE HELIX STRAND BUILDER ─── */
+  .helix-row { display:flex; flex-wrap:nowrap; gap:3px; overflow-x:auto; padding:.6rem 0; margin:.6rem 0; }
+  .helix-base {
+    min-width:34px;height:38px;display:flex;align-items:center;justify-content:center;
+    font-family:'DM Mono',monospace;font-weight:700;font-size:.92rem;
+    border-radius:6px;border:2px solid var(--border);flex-shrink:0;transition:all .3s;
+  }
+  .helix-base.hA { background:var(--coral-pale); color:var(--coral); border-color:#f8c5b8; }
+  .helix-base.hT { background:var(--lav-pale);   color:var(--lavender); border-color:#d0caef; }
+  .helix-base.hU { background:#eafaf3;           color:#1b7a58; border-color:#b8ebd8; }
+  .helix-base.hC { background:var(--gold-pale);  color:#8a6a1a; border-color:#f8e0a0; }
+  .helix-base.hG { background:#d4eadd;           color:var(--forest-mid); border-color:#a8d5b8; }
+  .helix-base.empty { background:#f5f7fa; color:var(--border); border-style:dashed; }
+
+  /* ─── SA:V CALCULATOR ─── */
+  .sav-display {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem; margin: 1rem 0;
+  }
+  .sav-box {
+    border-radius: 14px; padding: 1.2rem; text-align: center;
+    border: 2px solid var(--border); background: white; transition: all .3s;
+  }
+  .sav-box .sav-title { font-family:'Fredoka One',cursive; font-size:.95rem; color:var(--forest); margin-bottom:.5rem; }
+  .sav-box .sav-num   { font-family:'DM Mono',monospace; font-size:1.6rem; font-weight:700; }
+  .sav-box .sav-unit  { font-size:.68rem; color:var(--muted); font-family:'DM Mono',monospace; margin-top:.2rem; }
+  .sav-box.highlight-good { border-color:var(--mint); background:var(--mint-pale); }
+  .sav-box.highlight-good .sav-num { color:var(--mint); }
+  .sav-box.highlight-bad  { border-color:var(--coral); background:var(--coral-pale); }
+  .sav-box.highlight-bad  .sav-num { color:var(--coral); }
+
+  .sav-slider-row { display:flex; align-items:center; gap:1rem; margin:.8rem 0; flex-wrap:wrap; }
+  .sav-slider-row label { font-family:'DM Mono',monospace; font-size:.82rem; color:var(--muted); min-width:140px; }
+  .sav-slider-row input[type=range] { flex:1; min-width:120px; accent-color:var(--forest-mid); }
+  .sav-slider-row .sav-readout { font-family:'DM Mono',monospace; font-weight:700; color:var(--forest); min-width:50px; text-align:right; }
+
+  /* ─── PROKARYOTE STRUCTURE DIAGRAM ─── */
+  .prok-part {
+    display: inline-block; padding:.5rem 1rem; border-radius:20px;
+    font-family:'Fredoka One',cursive; font-size:.88rem; cursor:pointer;
+    border:2px solid var(--border); background:white; transition:all .2s; margin:.3rem;
+  }
+  .prok-part:hover,.prok-part.active { transform:scale(1.06); }
+  .prok-part.p-membrane   { border-color:var(--coral); color:var(--coral); }
+  .prok-part.p-membrane.active { background:var(--coral-pale); }
+  .prok-part.p-wall       { border-color:var(--gold); color:#8a6a1a; }
+  .prok-part.p-wall.active { background:var(--gold-pale); }
+  .prok-part.p-nucleoid   { border-color:var(--lavender); color:var(--lavender); }
+  .prok-part.p-nucleoid.active { background:var(--lav-pale); }
+  .prok-part.p-ribosome   { border-color:var(--mint); color:var(--mint); }
+  .prok-part.p-ribosome.active { background:var(--mint-pale); }
+  .prok-part.p-flagella   { border-color:var(--forest-mid); color:var(--forest-mid); }
+  .prok-part.p-flagella.active { background:#d4eadd; }
+  .prok-part.p-capsule    { border-color:#888; color:#555; }
+  .prok-part.p-capsule.active { background:#f0f0f0; }
+  .prok-part.p-pili       { border-color:var(--forest-lt); color:var(--forest-lt); }
+  .prok-part.p-pili.active { background:#e0f5e8; }
+</style>
+</head>
+<body>
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-badge">🔬 AP Biology · Chapter 4 (Part 1 of 2)</div>
+  <h1>Cell Structure <span class="accent">Explorer</span></h1>
+  <p class="intro">Master microscopy, cell theory, and the structure of prokaryotic cells — covering OpenStax AP Biology Chapter 4, sections 4.1 (Studying Cells) and 4.2 (Prokaryotic Cells).</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <span class="prog-step active" onclick="goTo(0)">① Wonder</span>
+    <span class="prog-step"       onclick="goTo(1)">② Microscopy &amp; Cell Theory</span>
+    <span class="prog-step"       onclick="goTo(2)">③ Prokaryotic Cells</span>
+    <span class="prog-step"       onclick="goTo(3)">④ SA:V Ratio Lab</span>
+    <span class="prog-step"       onclick="goTo(4)">⑤ Prokaryote Builder Lab</span>
+    <span class="prog-step"       onclick="goTo(5)">⑥ Quiz</span>
+    <span class="prog-step"       onclick="goTo(6)">⑦ Reflect</span>
+    <span class="prog-step"       onclick="goTo(7)">📤 Submit</span>
+  </div>
+</div>
+
+<!-- ═══ SHEET ═══ -->
+<div class="sheet">
+
+<!-- ═══ SECTION 0: WONDER ═══ -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-coral">1</div>
+    <span class="eyebrow-label">Phase 1 · Wonder</span>
+  </div>
+  <h2>🔬 The Universe Inside a Single Cell</h2>
+  <p class="lead">
+    About 250 human red blood cells could fit on the head of a pin. A typical bacterium is <strong>10× smaller</strong> than that. Yet inside each of those bacteria is a complete, self-sustaining chemical factory — with its own DNA, protein-building machinery, and energy system.
+  </p>
+
+  <div class="wonder-box">
+    <p>A bacterium and a human cell are both alive — they both have DNA, make proteins, and maintain homeostasis. Yet one fits inside the other with room to spare. <strong>If cells are so tiny, how do scientists actually study them? And what structural features determine whether a cell can even survive at a given size?</strong></p>
+  </div>
+
+  <div class="predict-box">
+    <h4>✏️ Your Prediction (before we dig in)</h4>
+    <textarea placeholder="Predict: why do you think cells are so small? Is there a fundamental reason why cells can't just keep growing larger and larger? What happens to a cell's ability to exchange nutrients and wastes as it grows?"></textarea>
+  </div>
+
+  <div class="wonder-box gold-box">
+    <p>The answer lies in the <strong>surface area-to-volume ratio</strong>. As a cell grows larger, its volume increases much faster than its surface area — meaning the plasma membrane can't keep up with the demands of the larger interior. This is why cells either divide when they get too large, or develop specialized internal compartments (organelles). Understanding how cells are studied and how they're structured is the foundation of all of biology.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.6rem;">🗝️ The Big Picture</h3>
+  <p style="font-size:.95rem;line-height:1.75;margin-bottom:1.8rem;">
+    In this interactive, we'll cover <strong>4.1 Studying Cells</strong> (how we observe cells using microscopes, plus the foundational Cell Theory) and <strong>4.2 Prokaryotic Cells</strong> (the structure, components, and size constraints of the world's most successful and ancient organisms — bacteria and archaea).
+  </p>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" disabled>← Back</button>
+    <button class="btn btn-coral" onclick="goTo(1)">Next: Microscopy &amp; Cell Theory →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 1: 4.1 STUDYING CELLS ═══ -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-lav">2</div>
+    <span class="eyebrow-label">Phase 2 · 4.1 Studying Cells</span>
+  </div>
+  <h2>📖 Microscopy &amp; Cell Theory — Core Vocabulary</h2>
+  <p class="lead">Tap each term to reveal its definition. These are the foundational tools and ideas that make all of cell biology possible.</p>
+
+  <div class="chip-row">
+    <span class="chip coral"  onclick="reveal('celltheory')">Cell Theory</span>
+    <span class="chip forest" onclick="reveal('lightmicro')">Light Microscope</span>
+    <span class="chip mint"   onclick="reveal('electronmicro')">Electron Microscope</span>
+    <span class="chip gold"   onclick="reveal('sem')">SEM vs. TEM</span>
+    <span class="chip lav"    onclick="reveal('magres')">Magnification vs. Resolution</span>
+    <span class="chip coral"  onclick="reveal('twotypes')">Two Types of Cells</span>
+    <span class="chip forest" onclick="reveal('hierarchy')">Biological Hierarchy</span>
+  </div>
+
+  <div id="rev-celltheory"    class="concept-reveal coral">
+    <strong>Cell Theory (Schleiden, Schwann &amp; Virchow, late 1830s)</strong> — Three tenets: (1) All living things are composed of one or more cells. (2) The cell is the basic unit of life. (3) New cells arise from existing cells (cells don't appear spontaneously). First proposed by Matthias Schleiden (botanist) and Theodor Schwann (zoologist); Rudolf Virchow later added the third tenet. Antony van Leeuwenhoek (1670s) first observed bacteria and protozoa; Robert Hooke coined the term "cell" in 1665.
+  </div>
+  <div id="rev-lightmicro"    class="concept-reveal forest-border">
+    <strong>Light Microscope</strong> — Uses visible light bent through lens systems to magnify specimens. Advantages: can view <em>living</em> organisms; disadvantages: cells are transparent so require staining (which often kills cells). College lab light microscopes magnify up to ~400× (oil immersion lenses up to 1,000×). Resolution ~200 nanometers. Images appear inverted — moving the slide left makes the image appear to move right.
+  </div>
+  <div id="rev-electronmicro" class="concept-reveal mint-border">
+    <strong>Electron Microscope</strong> — Uses a beam of electrons instead of light, providing much higher magnification (up to 100,000×) and resolution (~50 picometers). <em>Disadvantage</em>: the preparation method kills specimens — living cells cannot be viewed. Significantly more expensive and bulky than light microscopes. Electrons move best in a vacuum, so living specimens cannot be observed.
+  </div>
+  <div id="rev-sem"           class="concept-reveal gold-border">
+    <strong>SEM vs. TEM</strong> — <em>Scanning Electron Microscope (SEM)</em>: the electron beam moves back and forth across the cell's <em>surface</em>, creating detailed 3D images of surface features. <em>Transmission Electron Microscope (TEM)</em>: the electron beam <em>penetrates</em> the cell and provides high-detail images of internal structures. SEM = surface; TEM = internal.
+  </div>
+  <div id="rev-magres"        class="concept-reveal lav-border">
+    <strong>Magnification vs. Resolving Power</strong> — <em>Magnification</em> is simply enlarging an image — but a highly magnified image can still be blurry. <em>Resolving power</em> (resolution) is the ability to distinguish two adjacent structures as separate. Higher resolution = better clarity and detail. Resolution in light microscopy is limited by the wavelength of visible light; electron microscopes achieve far higher resolution because electrons have shorter wavelengths.
+  </div>
+  <div id="rev-twotypes"      class="concept-reveal coral">
+    <strong>Two Broad Cell Types</strong> — <em>Prokaryotic cells</em> (domains Bacteria and Archaea) — no true nucleus, no membrane-bound organelles, generally smaller (0.1–5.0 μm). <em>Eukaryotic cells</em> (animals, plants, fungi, protists) — have a true membrane-bound nucleus, membrane-bound organelles, generally larger (10–100 μm). Both share: plasma membrane, cytoplasm, ribosomes, and DNA.
+  </div>
+  <div id="rev-hierarchy"     class="concept-reveal forest-border">
+    <strong>Biological Hierarchy</strong> — Cells are the fundamental unit of life; cells of one kind working together form a <em>tissue</em>; multiple tissues combine to form an <em>organ</em>; multiple organs form an <em>organ system</em>; multiple organ systems form an <em>organism</em>. Life cannot be divided into pieces smaller than the cell and still be independently alive — which is why viruses are considered particles, not cells (they can't replicate independently).
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 Light vs. Electron Microscope — Side by Side</h3>
+  <table class="vocab-table">
+    <tr><th>Feature</th><th>Light Microscope</th><th>Electron Microscope</th></tr>
+    <tr><td>Energy source</td><td>Visible light</td><td>Beam of electrons</td></tr>
+    <tr><td>Max magnification</td><td>~1,000× (oil immersion)</td><td>~100,000×</td></tr>
+    <tr><td>Resolution</td><td>~200 nm</td><td>~50 picometers</td></tr>
+    <tr><td>Living specimens?</td><td>Yes (but hard to see without staining)</td><td>No — preparation kills cells</td></tr>
+    <tr><td>Cost &amp; size</td><td>Low cost, compact</td><td>Very expensive, large</td></tr>
+    <tr><td>SEM type</td><td>—</td><td>Images cell surface (3D)</td></tr>
+    <tr><td>TEM type</td><td>—</td><td>Images internal structures</td></tr>
+  </table>
+
+  <div class="divider"></div>
+
+  <!-- Matching game -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.4rem;">🎯 Quick Match — Microscopy Terms</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Tap a term, then tap its matching definition.</p>
+  <div class="match-grid" id="matchGrid">
+    <div class="match-item" data-pair="a" data-side="term" onclick="matchClick(this)">Cell Theory</div>
+    <div class="match-item" data-pair="b" data-side="def"  onclick="matchClick(this)">Ability to distinguish two adjacent structures as separate</div>
+    <div class="match-item" data-pair="c" data-side="term" onclick="matchClick(this)">SEM</div>
+    <div class="match-item" data-pair="d" data-side="def"  onclick="matchClick(this)">Uses electrons to image internal cell structure</div>
+    <div class="match-item" data-pair="a" data-side="def"  onclick="matchClick(this)">All living things are cells; new cells come from existing cells</div>
+    <div class="match-item" data-pair="e" data-side="term" onclick="matchClick(this)">Eukaryotic Cell</div>
+    <div class="match-item" data-pair="b" data-side="term" onclick="matchClick(this)">Resolving Power</div>
+    <div class="match-item" data-pair="c" data-side="def"  onclick="matchClick(this)">Images a cell's 3D surface using electrons</div>
+    <div class="match-item" data-pair="d" data-side="term" onclick="matchClick(this)">TEM</div>
+    <div class="match-item" data-pair="e" data-side="def"  onclick="matchClick(this)">Has a true membrane-bound nucleus and organelles</div>
+  </div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-ghost" onclick="resetMatch()">↺ Reset Match</button>
+    <span id="match-score" style="margin-left:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted);"></span>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(0)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(2)">Next: Prokaryotic Cells →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 2: 4.2 PROKARYOTIC CELLS ═══ -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-gold">3</div>
+    <span class="eyebrow-label">Phase 3 · 4.2 Prokaryotic Cells</span>
+  </div>
+  <h2>🦠 Prokaryotic Cells — Tap to Explore</h2>
+  <p class="lead">Tap each card to learn about the structures of prokaryotic cells. These are the oldest, most abundant life forms on Earth — know them cold for the AP exam.</p>
+
+  <div class="evidence-grid">
+    <div class="ev-card" onclick="showEvidence('shared')">
+      <div class="ev-icon">🤝</div>
+      <div class="ev-title">4 Shared Features</div>
+      <div class="ev-sub">all cells</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('prokfeatures')">
+      <div class="ev-icon">🦠</div>
+      <div class="ev-title">Prokaryote-Only Features</div>
+      <div class="ev-sub">nucleoid, cell wall…</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('cellwall')">
+      <div class="ev-icon">🧱</div>
+      <div class="ev-title">Cell Wall &amp; Capsule</div>
+      <div class="ev-sub">peptidoglycan</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('flagella')">
+      <div class="ev-icon">🌀</div>
+      <div class="ev-title">Flagella, Pili &amp; Fimbriae</div>
+      <div class="ev-sub">motility &amp; attachment</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('archaea')">
+      <div class="ev-icon">🌋</div>
+      <div class="ev-title">Archaea</div>
+      <div class="ev-sub">extreme environments</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('sizematters')">
+      <div class="ev-icon">📐</div>
+      <div class="ev-title">Why Cell Size Matters</div>
+      <div class="ev-sub">SA:V ratio</div>
+    </div>
+  </div>
+
+  <div id="ev-shared"       class="ev-panel">
+    <h4>🤝 The 4 Features All Cells Share</h4>
+    <p>All cells — prokaryotic or eukaryotic — share these four features: (1) a <strong>plasma membrane</strong> separating the interior from the environment; (2) <strong>cytoplasm</strong> (the gel-like cytosol inside the cell, containing other components); (3) <strong>ribosomes</strong> for protein synthesis; (4) <strong>DNA</strong> to store and transmit hereditary information. These shared features reflect common ancestry — all life descended from a single common ancestor.</p>
+    <div class="example-box">📌 AP tip: "Do prokaryotes have ribosomes?" YES — ribosomes are found in ALL cells. Prokaryotic ribosomes are smaller (70S) than eukaryotic ribosomes (80S), but both types exist.</div>
+  </div>
+  <div id="ev-prokfeatures" class="ev-panel">
+    <h4>🦠 Prokaryote-Specific Features</h4>
+    <p>Prokaryotes ("before nucleus") lack a membrane-bound nucleus. Their DNA exists as a single circular chromosome in the <strong>nucleoid</strong> — a central region of the cell (not a membrane-bound organelle). Many bacteria also carry small circular DNA molecules called <strong>plasmids</strong>, which often contain genes for antibiotic resistance. Plasmids are transferred between bacteria via horizontal gene transfer, spreading antibiotic resistance rapidly.</p>
+    <div class="example-box">📌 Prokaryotes: 0.1–5.0 μm in diameter. Eukaryotes: 10–100 μm. Prokaryotes are about 10× smaller, allowing faster diffusion of nutrients and wastes.</div>
+  </div>
+  <div id="ev-cellwall"     class="ev-panel">
+    <h4>🧱 Cell Wall &amp; Capsule</h4>
+    <p>Most bacteria have a <strong>peptidoglycan cell wall</strong> surrounding the plasma membrane — a rigid network of complex sugars linked by peptide bridges. The cell wall provides shape, protection against osmotic pressure, and prevents dehydration. Antibiotics like penicillin disrupt peptidoglycan synthesis, causing bacterial cells to lyse (burst). Many bacteria also have a <strong>polysaccharide capsule</strong> outside the cell wall that helps cells adhere to surfaces and evade immune systems.</p>
+    <div class="example-box">📌 The peptidoglycan layer is unique to bacteria — eukaryotic cells lack it entirely. This is why antibiotics that target peptidoglycan synthesis can kill bacteria without harming human cells.</div>
+  </div>
+  <div id="ev-flagella"     class="ev-panel">
+    <h4>🌀 Flagella, Pili &amp; Fimbriae</h4>
+    <p><strong>Flagella</strong> (singular: flagellum) are whip-like appendages used for <em>locomotion</em> — they rotate like a propeller to move the cell through liquid environments. <strong>Pili</strong> (singular: pilus) are protein appendages used to exchange genetic material during a type of reproduction called <em>conjugation</em> (a form of horizontal gene transfer). <strong>Fimbriae</strong> are shorter, bristle-like appendages that help bacteria <em>attach to host cells</em> during infection.</p>
+    <div class="example-box">📌 Key distinction: flagella = locomotion; pili = genetic exchange (conjugation); fimbriae = attachment to surfaces/host cells.</div>
+  </div>
+  <div id="ev-archaea"      class="ev-panel">
+    <h4>🌋 Archaea — Ancient Extremophiles</h4>
+    <p><strong>Archaea</strong> are the second domain of prokaryotes (alongside Bacteria). They likely evolved in the harsh conditions of early Earth — high temperatures, extreme acidity, or high salinity — and many archaea today are still found in extreme environments like hot springs, polar regions, hydrothermal vents, and highly salty lakes. Archaea are distinct from bacteria in cell membrane composition, ribosomal RNA sequences, and other molecular features, but share the general prokaryotic body plan.</p>
+    <div class="example-box">📌 The earliest fossil evidence for life — microbial mats ~3.5 billion years old — suggests prokaryotes (likely archaea or their ancestors) were among the first life forms on Earth.</div>
+  </div>
+  <div id="ev-sizematters"  class="ev-panel">
+    <h4>📐 Why Cell Size Matters — SA:V Ratio</h4>
+    <p>As a cell's radius increases, surface area increases as the <em>square</em> of the radius (4πr²), but volume increases as the <em>cube</em> (4/3πr³) — much faster. This means a larger cell has <em>less</em> surface area relative to its volume, limiting how efficiently nutrients can enter and wastes can exit. If a cell grows too large, the plasma membrane can't supply the interior fast enough. Solution: divide, flatten, develop organelles, or fold membranes.</p>
+    <div class="example-box">📌 Example (from textbook): A 1mm cube has SA:V = 6:1. A 2mm cube has SA:V = 3:1 — half as efficient per unit volume. Smaller = more efficient exchange.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 Prokaryotic Cell Structures Summary</h3>
+  <table class="vocab-table">
+    <tr><th>Structure</th><th>Found in…</th><th>Function</th></tr>
+    <tr><td>Plasma Membrane</td><td>ALL cells</td><td>Separates cell interior from environment; controls passage of substances</td></tr>
+    <tr><td>Cytoplasm / Cytosol</td><td>ALL cells</td><td>Gel-like interior; suspends organelles and molecules</td></tr>
+    <tr><td>Ribosomes</td><td>ALL cells (70S in prokaryotes)</td><td>Protein synthesis</td></tr>
+    <tr><td>DNA / Nucleoid</td><td>ALL cells (in nucleoid region — no membrane)</td><td>Hereditary information storage</td></tr>
+    <tr><td>Cell Wall (peptidoglycan)</td><td>Most bacteria</td><td>Protection, shape, prevents dehydration</td></tr>
+    <tr><td>Capsule (polysaccharide)</td><td>Some bacteria</td><td>Attachment to surfaces; immune evasion</td></tr>
+    <tr><td>Plasmids</td><td>Some bacteria</td><td>Extra DNA; often carries antibiotic resistance genes</td></tr>
+    <tr><td>Flagella</td><td>Some prokaryotes</td><td>Locomotion (propeller rotation)</td></tr>
+    <tr><td>Pili</td><td>Some bacteria</td><td>Genetic exchange during conjugation</td></tr>
+    <tr><td>Fimbriae</td><td>Some bacteria</td><td>Attachment to host cells</td></tr>
+  </table>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(3)">Next: SA:V Ratio Lab →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 3: SA:V RATIO LAB ═══ -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">4</div>
+    <span class="eyebrow-label">Phase 4 · Surface Area:Volume Ratio Lab</span>
+  </div>
+  <h2>📐 Why Can't Cells Just Keep Growing?</h2>
+  <p class="lead">Drag the slider to change cell size and watch what happens to the surface area-to-volume ratio in real time. This explains one of the most fundamental constraints in all of biology.</p>
+
+  <div class="predict-box">
+    <h4>✏️ Before the lab — your prediction</h4>
+    <textarea id="sav-predict" placeholder="Predict: if a cell's radius doubles (say, from 1 μm to 2 μm), how do you expect the surface area-to-volume ratio to change — double, halve, or stay the same? Write your reasoning."></textarea>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🔬 Cell Size &amp; SA:V Ratio Calculator</h3>
+    <div class="hint">Drag the slider to change the cell radius — watch how surface area, volume, and the SA:V ratio change</div>
+
+    <div class="sav-slider-row">
+      <label>Cell radius (μm):</label>
+      <input type="range" id="sav-slider" min="1" max="50" value="1" oninput="updateSAV()">
+      <span class="sav-readout" id="sav-r-readout">1 μm</span>
+    </div>
+
+    <div class="sav-display" id="savDisplay">
+      <div class="sav-box" id="sav-sa-box">
+        <div class="sav-title">🔲 Surface Area</div>
+        <div class="sav-num" id="sav-sa">12.6</div>
+        <div class="sav-unit">μm²  (4πr²)</div>
+      </div>
+      <div class="sav-box" id="sav-vol-box">
+        <div class="sav-title">📦 Volume</div>
+        <div class="sav-num" id="sav-vol">4.2</div>
+        <div class="sav-unit">μm³  (4/3πr³)</div>
+      </div>
+      <div class="sav-box" id="sav-ratio-box">
+        <div class="sav-title">📊 SA:V Ratio</div>
+        <div class="sav-num" id="sav-ratio">3.0</div>
+        <div class="sav-unit">μm⁻¹ (higher = more efficient)</div>
+      </div>
+    </div>
+
+    <div id="sav-verdict" style="background:var(--mint-pale);border:2px solid var(--mint);border-radius:10px;padding:1rem 1.2rem;margin-top:.8rem;font-size:.88rem;line-height:1.7;">
+      🟢 <strong>Small cell (r = 1 μm):</strong> High SA:V ratio — nutrients and wastes diffuse efficiently across the plasma membrane. This is the optimal size for most prokaryotes.
+    </div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — What the SA:V ratio means for cells</h4>
+    <textarea placeholder="What happened to the SA:V ratio as the cell grew larger? At what radius did the ratio become so small that you'd expect problems with nutrient/waste exchange? How does this constraint explain why cells divide instead of growing indefinitely?"></textarea>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="wonder-box mint-box">
+    <p>Cells solve the SA:V problem in different ways: prokaryotes stay small; some cells become flat (like squamous epithelial cells); intestinal cells develop <strong>microvilli</strong> — fingerlike projections that massively increase surface area; and eukaryotic cells evolved <strong>membrane-bound organelles</strong> to compartmentalize functions internally.</p>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(4)">Next: Prokaryote Builder →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 4: PROKARYOTE BUILDER LAB ═══ -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-lav">5</div>
+    <span class="eyebrow-label">Phase 5 · Prokaryote Builder Lab</span>
+  </div>
+  <h2>🦠 Identify the Prokaryotic Structures</h2>
+  <p class="lead">Tap each cell structure below to learn its function and whether it appears in all prokaryotes or only some. Match every structure to its role before moving to the quiz.</p>
+
+  <div class="predict-box">
+    <h4>✏️ Before the lab — your prediction</h4>
+    <textarea id="prok-predict" placeholder="A biologist observes a prokaryote moving rapidly through liquid and finds it can transfer antibiotic resistance genes to neighboring cells. Which specific structures must this organism have? Predict and explain."></textarea>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🔬 Tap a Structure to Learn More</h3>
+    <div class="hint">Each structure lights up with its function and whether it's found in all or some prokaryotes</div>
+
+    <div style="text-align:center;padding:.5rem 0 1rem;flex-wrap:wrap;">
+      <span class="prok-part p-membrane"  onclick="showProkPart('membrane')">Plasma Membrane</span>
+      <span class="prok-part p-wall"      onclick="showProkPart('wall')">Cell Wall</span>
+      <span class="prok-part p-capsule"   onclick="showProkPart('capsule')">Capsule</span>
+      <span class="prok-part p-nucleoid"  onclick="showProkPart('nucleoid')">Nucleoid</span>
+      <span class="prok-part p-ribosome"  onclick="showProkPart('ribosome')">Ribosomes</span>
+      <span class="prok-part p-flagella"  onclick="showProkPart('flagella')">Flagella</span>
+      <span class="prok-part p-pili"      onclick="showProkPart('pili')">Pili</span>
+    </div>
+
+    <div id="prok-detail" style="background:#f5f7fa;border-radius:12px;padding:1.2rem;margin:1rem 0;border:2px solid var(--border);min-height:90px;font-size:.88rem;line-height:1.7;">
+      Tap a structure above to see its function…
+    </div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Prokaryotic Cell Structures</h4>
+    <textarea placeholder="Which structures are found in ALL prokaryotes? Which are found only in SOME? How does the peptidoglycan cell wall make bacteria vulnerable to certain antibiotics but not to human cells? How do pili and fimbriae differ in function?"></textarea>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(3)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(5)">Next: Quiz →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 5: QUIZ ═══ -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-forest">6</div>
+    <span class="eyebrow-label">Phase 6 · Real Test Practice</span>
+  </div>
+  <h2>📝 AP-Style Quiz — Chapter 4, Sections 4.1 &amp; 4.2</h2>
+  <p class="lead">These questions cover OpenStax AP Biology Chapter 4, Sections 4.1–4.2 in AP exam style. Answer each — instant feedback with explanations.</p>
+
+  <div id="quiz-container"></div>
+
+  <div id="score-panel" class="score-panel" style="display:none;">
+    <h3>Quiz Complete! 🎉</h3>
+    <div class="score-num" id="score-display">0/18</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-gold" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(4)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(6)">Next: Reflect →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 6: REFLECT ═══ -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">7</div>
+    <span class="eyebrow-label">Phase 7 · Reflect</span>
+  </div>
+  <h2>💭 Reflection &amp; Review</h2>
+  <p class="lead">Solidify your understanding. Answer all four questions in your own words.</p>
+
+  <div class="quiz-card">
+    <div class="quiz-q">1. State all three tenets of the Cell Theory and name the scientists associated with it. Why are viruses NOT considered cells under cell theory?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">2. Compare and contrast light microscopes and electron microscopes. For each type, explain the maximum magnification, resolution, whether living specimens can be viewed, and what each type is best used to observe.</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">3. List the four structural features shared by ALL cells. Then describe at least five prokaryote-specific structures and the function of each. Which structures are present in ALL prokaryotes vs. only SOME?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">4. Explain the surface area-to-volume (SA:V) ratio and why it constrains cell size. What happens to the SA:V ratio as a cell grows larger? What are three different ways cells and organisms solve this problem?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.8rem;">✏️ Fill-in-the-Blank Review</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1.2rem;">Type the answer and press Enter or click Check All.</p>
+  <div id="fill-container"></div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-mint" onclick="checkAllFills()">✓ Check All Answers</button>
+    <button class="btn btn-ghost" onclick="resetFills()" style="margin-left:.6rem;">↺ Reset</button>
+  </div>
+
+  <div class="congrats-panel" style="margin-top:2rem;">
+    <h2>🔬 Studying Cells &amp; Prokaryotes Mastered!</h2>
+    <p>You've worked through OpenStax AP Biology Chapter 4, Sections 4.1 (Studying Cells) and 4.2 (Prokaryotic Cells) — microscopy types, cell theory, prokaryotic structures, and the SA:V ratio. Up next: Eukaryotic Cells, the Endomembrane System, the Cytoskeleton, and Cell Connections (Chapter 4, Part 2)!</p>
+    <p style="font-size:.85rem;opacity:.75;">AP Bio tip: prokaryote structure questions (especially "what does X do?") appear frequently. Know every structure and its function — especially which are universal vs. optional.</p>
+    <div class="summary-chips">
+      <span class="summary-chip">Cell Theory ✓</span>
+      <span class="summary-chip">Light Microscope ✓</span>
+      <span class="summary-chip">SEM vs. TEM ✓</span>
+      <span class="summary-chip">Magnification vs. Resolution ✓</span>
+      <span class="summary-chip">Prokaryote vs. Eukaryote ✓</span>
+      <span class="summary-chip">Nucleoid ✓</span>
+      <span class="summary-chip">Peptidoglycan Cell Wall ✓</span>
+      <span class="summary-chip">Plasmids ✓</span>
+      <span class="summary-chip">Flagella / Pili / Fimbriae ✓</span>
+      <span class="summary-chip">SA:V Ratio ✓</span>
+    </div>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(5)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(7)">Next: Submit →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 7: SUBMIT ═══ -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">8</div>
+    <span class="eyebrow-label">Your Completed Work</span>
+  </div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Here's a summary of everything you worked on. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> to your teacher.</p>
+
+  <div class="summary-section" style="background:var(--forest);color:white;border-color:var(--forest);">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">STUDENT</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">LESSON</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;">Cell Structure Explorer 🔬 (Ch. 4 Part 1)</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6;" id="summaryDate"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section">
+    <h3>📝 Quiz Score</h3>
+    <div class="summary-answer" id="sum-quiz"></div>
+  </div>
+  <div class="summary-section">
+    <h3>🤔 Opening Prediction</h3>
+    <div class="summary-answer" id="sum-pred"></div>
+  </div>
+  <div class="summary-section">
+    <h3>📐 SA:V Lab Prediction</h3>
+    <div class="summary-answer" id="sum-sav-pred"></div>
+  </div>
+  <div class="summary-section">
+    <h3>🦠 Prokaryote Builder Lab Prediction</h3>
+    <div class="summary-answer" id="sum-prok-pred"></div>
+  </div>
+  <div class="summary-section">
+    <h3>💭 Reflection Questions</h3>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;">Q1 — Cell Theory</div>
+    <div class="summary-answer" id="sum-r1"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q2 — Light vs. Electron Microscope</div>
+    <div class="summary-answer" id="sum-r2"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q3 — Shared &amp; Prokaryote-Specific Structures</div>
+    <div class="summary-answer" id="sum-r3"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q4 — SA:V Ratio &amp; Cell Size</div>
+    <div class="summary-answer" id="sum-r4"></div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.6rem;">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2;">
+      <strong>📋 Copy My Results</strong> — Copies all answers to clipboard. Paste into Google Classroom assignment.<br>
+      <strong>📧 Email to Teacher</strong> — Opens your email app with answers pre-filled.<br>
+      <strong>🖨️ Print / Save PDF</strong> — Mac: bottom-left dropdown → Save as PDF. Windows: Microsoft Print to PDF.
+    </p>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(6)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(0)">↺ Start Over</button>
+  </div>
+</div>
+
+</div><!-- /sheet -->
+
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.<br>
+  Content informed by OpenStax Biology for AP Courses (CC BY-NC-SA 4.0)
+</div>
+<script>
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+const steps    = document.querySelectorAll('.prog-step');
+const sections = document.querySelectorAll('.section');
+
+function goTo(n) {
+  sections.forEach((s, i) => s.classList.toggle('active', i === n));
+  steps.forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    if (i === n) s.classList.add('active');
+    if (i < n)  s.classList.add('done');
+  });
+  if (n === 7) buildSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════════════
+// CONCEPT REVEALS (Section 1)
+// ═══════════════════════════════════════════════
+const revIds = ['celltheory','lightmicro','electronmicro','sem','magres','twotypes','hierarchy'];
+function reveal(key) {
+  revIds.forEach(id => {
+    const el = document.getElementById('rev-' + id);
+    if (el) el.classList.remove('show');
+  });
+  const t = document.getElementById('rev-' + key);
+  if (t) t.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// MATCHING GAME (Section 1)
+// ═══════════════════════════════════════════════
+let matchSelected = null;
+let matchScore = 0;
+
+function matchClick(el) {
+  if (el.classList.contains('matched')) return;
+  if (!matchSelected) {
+    el.classList.add('selected');
+    matchSelected = el;
+  } else if (matchSelected === el) {
+    el.classList.remove('selected');
+    matchSelected = null;
+  } else {
+    const pA = matchSelected.dataset.pair, pB = el.dataset.pair;
+    const sA = matchSelected.dataset.side, sB = el.dataset.side;
+    if (pA === pB && sA !== sB) {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('matched');
+      el.classList.add('matched');
+      matchScore++;
+      document.getElementById('match-score').textContent = matchScore + '/5 matched';
+      matchSelected = null;
+    } else {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('wrong');
+      el.classList.add('wrong');
+      const a = matchSelected, b = el;
+      setTimeout(() => { a.classList.remove('wrong'); b.classList.remove('wrong'); }, 650);
+      matchSelected = null;
+    }
+  }
+}
+function resetMatch() {
+  matchSelected = null; matchScore = 0;
+  document.querySelectorAll('.match-item').forEach(el => el.classList.remove('selected','matched','wrong'));
+  document.getElementById('match-score').textContent = '';
+}
+
+// ═══════════════════════════════════════════════
+// EVIDENCE CARDS (Section 2)
+// ═══════════════════════════════════════════════
+function showEvidence(type) {
+  document.querySelectorAll('.ev-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.ev-panel').forEach(p => p.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const panel = document.getElementById('ev-' + type);
+  if (panel) panel.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// SA:V RATIO CALCULATOR (Section 3)
+// ═══════════════════════════════════════════════
+function updateSAV() {
+  const r   = parseFloat(document.getElementById('sav-slider').value);
+  const sa  = (4 * Math.PI * r * r).toFixed(1);
+  const vol = ((4/3) * Math.PI * r * r * r).toFixed(1);
+  const ratio = (sa / vol).toFixed(2);
+
+  document.getElementById('sav-r-readout').textContent = r + ' μm';
+  document.getElementById('sav-sa').textContent    = sa;
+  document.getElementById('sav-vol').textContent   = vol;
+  document.getElementById('sav-ratio').textContent = ratio;
+
+  const saBox    = document.getElementById('sav-sa-box');
+  const volBox   = document.getElementById('sav-vol-box');
+  const ratioBox = document.getElementById('sav-ratio-box');
+  const verdict  = document.getElementById('sav-verdict');
+
+  saBox.classList.remove('highlight-good','highlight-bad');
+  volBox.classList.remove('highlight-good','highlight-bad');
+  ratioBox.classList.remove('highlight-good','highlight-bad');
+
+  if (ratio >= 2) {
+    ratioBox.classList.add('highlight-good');
+    verdict.style.background = 'var(--mint-pale)';
+    verdict.style.borderColor = 'var(--mint)';
+    verdict.innerHTML = `🟢 <strong>Small cell (r = ${r} μm), SA:V = ${ratio}:</strong> High ratio — efficient nutrient and waste exchange. This is the optimal range for most prokaryotes (0.1–5 μm).`;
+  } else if (ratio >= 0.5) {
+    ratioBox.classList.add('highlight-bad');
+    verdict.style.background = 'var(--gold-pale)';
+    verdict.style.borderColor = 'var(--gold)';
+    verdict.innerHTML = `🟡 <strong>Medium cell (r = ${r} μm), SA:V = ${ratio}:</strong> SA:V is getting low — the cell would need internal compartments (organelles) or specialized membrane folding to function efficiently. Most eukaryotes fall in this range.`;
+  } else {
+    ratioBox.classList.add('highlight-bad');
+    verdict.style.background = 'var(--coral-pale)';
+    verdict.style.borderColor = 'var(--coral)';
+    verdict.innerHTML = `🔴 <strong>Large cell (r = ${r} μm), SA:V = ${ratio}:</strong> Critically low ratio — the plasma membrane area is far too small relative to the cell's volume to supply nutrients or remove wastes fast enough. A cell this size would die or would need to divide.`;
+  }
+}
+
+// ═══════════════════════════════════════════════
+// PROKARYOTE BUILDER (Section 4)
+// ═══════════════════════════════════════════════
+const prokData = {
+  membrane: {
+    title: '🔴 Plasma Membrane',
+    found: 'ALL cells (prokaryotes and eukaryotes)',
+    fn: 'Acts as the selective barrier separating the cell\'s interior from the outside environment. Controls what enters and exits the cell. Made of a phospholipid bilayer embedded with proteins.'
+  },
+  wall: {
+    title: '🟡 Cell Wall (Peptidoglycan)',
+    found: 'Most bacteria (NOT in archaea or eukaryotes)',
+    fn: 'A rigid layer of peptidoglycan outside the plasma membrane. Provides structural support and shape, prevents the cell from bursting due to osmotic pressure, and protects from physical damage. Antibiotics like penicillin target peptidoglycan synthesis.'
+  },
+  capsule: {
+    title: '⚫ Polysaccharide Capsule',
+    found: 'Some bacteria only',
+    fn: 'A sticky polysaccharide layer outside the cell wall. Helps bacteria adhere to surfaces (forming biofilms) and to host cells during infection. Also helps bacteria evade the immune system by preventing phagocytosis.'
+  },
+  nucleoid: {
+    title: '🟣 Nucleoid Region',
+    found: 'ALL prokaryotes (NOT membrane-bound)',
+    fn: 'The region of the cytoplasm where the single circular chromosome is located. NOT enclosed by a membrane — there is no true nucleus in prokaryotes. The chromosome is compact and often associated with proteins that help organize the DNA.'
+  },
+  ribosome: {
+    title: '🟢 Ribosomes (70S)',
+    found: 'ALL cells — but prokaryotic ribosomes are 70S (smaller than eukaryotic 80S)',
+    fn: 'The molecular machines that synthesize proteins. Prokaryotic ribosomes (70S) are the target of many antibiotics (streptomycin, erythromycin) because they differ enough from eukaryotic ribosomes (80S) that the antibiotics don\'t harm human cells.'
+  },
+  flagella: {
+    title: '🌀 Flagella',
+    found: 'Some prokaryotes only',
+    fn: 'Long, whip-like protein appendages that rotate like a propeller to propel the cell through liquid. Made of the protein flagellin. A cell may have one, a few, or many flagella. Important distinction: prokaryotic flagella are structurally different from eukaryotic flagella.'
+  },
+  pili: {
+    title: '🟦 Pili (sex pili)',
+    found: 'Some bacteria only',
+    fn: 'Long protein appendages used during conjugation — a form of horizontal gene transfer in which a bacterium transfers genetic material (often plasmids, including antibiotic resistance genes) directly to another bacterium. Also called sex pili. Fimbriae are shorter, bristle-like versions used for adhesion to surfaces, not for genetic exchange.'
+  }
+};
+
+function showProkPart(key) {
+  document.querySelectorAll('.prok-part').forEach(p => p.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  const d = prokData[key];
+  document.getElementById('prok-detail').innerHTML =
+    `<strong style="font-family:'Fredoka One',cursive;color:var(--forest);font-size:1rem;">${d.title}</strong><br>
+     <span style="font-family:'DM Mono',monospace;font-size:.73rem;color:var(--muted);">Found in: ${d.found}</span><br><br>
+     ${d.fn}`;
+}
+
+// ═══════════════════════════════════════════════
+// QUIZ DATA — 4.1 & 4.2
+// ═══════════════════════════════════════════════
+const quizData = [
+  {
+    q: "Which of the following is NOT one of the three tenets of Cell Theory?",
+    opts: [
+      "All living things are composed of one or more cells",
+      "The cell is the basic unit of life",
+      "Cells arise spontaneously from non-living matter",
+      "New cells arise from existing cells"
+    ],
+    ans: 2,
+    fb: "The three tenets of Cell Theory are: (1) all living things are made of cells, (2) the cell is the basic unit of life, and (3) new cells arise from existing cells. The idea that cells arise spontaneously from non-living matter (spontaneous generation) was DISPROVED by Pasteur and contradicts Cell Theory."
+  },
+  {
+    q: "Who first coined the term 'cell' in 1665 when observing cork under a microscope?",
+    opts: ["Antony van Leeuwenhoek", "Matthias Schleiden", "Robert Hooke", "Rudolf Virchow"],
+    ans: 2,
+    fb: "Robert Hooke coined the term 'cell' in 1665 when he observed the box-like compartments in cork bark under a simple microscope. Leeuwenhoek later observed living bacteria and protozoa in the 1670s."
+  },
+  {
+    q: "What is the key advantage of a light microscope over an electron microscope?",
+    opts: [
+      "Higher magnification (up to 100,000×)",
+      "Better resolution (~50 picometers)",
+      "Ability to view living specimens",
+      "Produces 3D images of cell surfaces"
+    ],
+    ans: 2,
+    fb: "The key advantage of light microscopes is that they can be used to observe living cells. Electron microscopes require preparation methods that kill specimens — they provide much higher magnification and resolution but cannot be used with living cells."
+  },
+  {
+    q: "A researcher wants to study the detailed 3D surface features of a bacterium's outer membrane. Which microscope type should they use?",
+    opts: [
+      "Light microscope with oil immersion",
+      "Transmission electron microscope (TEM)",
+      "Scanning electron microscope (SEM)",
+      "Fluorescence microscope"
+    ],
+    ans: 2,
+    fb: "The Scanning Electron Microscope (SEM) sweeps an electron beam across the surface of a specimen, producing detailed 3D images of surface features. TEM penetrates through the specimen to image internal structures."
+  },
+  {
+    q: "What is 'resolving power' (resolution) in microscopy?",
+    opts: [
+      "How much a microscope enlarges an image",
+      "The ability to distinguish two adjacent structures as separate, distinct objects",
+      "The maximum size of specimen a microscope can accommodate",
+      "The wavelength of light used in the microscope"
+    ],
+    ans: 1,
+    fb: "Resolving power is the ability to distinguish two nearby points as separate. A highly magnified image can still be blurry (low resolution). Electron microscopes achieve much higher resolution than light microscopes because electrons have shorter wavelengths than visible light."
+  },
+  {
+    q: "Which of the following structures is found in ALL cells — both prokaryotic and eukaryotic?",
+    opts: [
+      "Nucleus",
+      "Mitochondria",
+      "Cell wall",
+      "Ribosomes"
+    ],
+    ans: 3,
+    fb: "Ribosomes are present in ALL cells — both prokaryotic and eukaryotic. The nucleus, mitochondria, and membrane-bound organelles are found only in eukaryotic cells. Prokaryotic ribosomes (70S) are smaller than eukaryotic ribosomes (80S)."
+  },
+  {
+    q: "What is the 'nucleoid' region of a prokaryotic cell?",
+    opts: [
+      "A membrane-bound nucleus containing multiple chromosomes",
+      "The region of cytoplasm where the single circular chromosome is located — NOT enclosed by a membrane",
+      "A small membrane-bound organelle containing DNA",
+      "The site of ribosome assembly in prokaryotes"
+    ],
+    ans: 1,
+    fb: "The nucleoid is simply the region of the prokaryotic cytoplasm where DNA is concentrated — it is NOT enclosed by a membrane. Prokaryotes don't have a true nucleus. This is the defining difference between prokaryotes ('before nucleus') and eukaryotes ('true nucleus')."
+  },
+  {
+    q: "What are plasmids, and why are they medically significant?",
+    opts: [
+      "Large chromosomes that store all prokaryotic genetic information",
+      "Membrane-bound organelles unique to bacteria",
+      "Small, circular DNA molecules separate from the main chromosome — often carry antibiotic resistance genes",
+      "RNA molecules used in protein synthesis"
+    ],
+    ans: 2,
+    fb: "Plasmids are small, circular DNA molecules found in many bacteria, separate from the main chromosome. They frequently carry genes for antibiotic resistance and can be transferred between bacteria via horizontal gene transfer (conjugation) — a major driver of antibiotic resistance spread."
+  },
+  {
+    q: "Why do antibiotics like penicillin kill bacteria but not human cells?",
+    opts: [
+      "Human cells are too large for antibiotics to enter",
+      "Penicillin targets peptidoglycan synthesis in the bacterial cell wall — a structure absent in human cells",
+      "Bacteria have no DNA, so penicillin can't interfere with replication",
+      "Human cells have special pumps that eject antibiotics"
+    ],
+    ans: 1,
+    fb: "Penicillin works by disrupting peptidoglycan synthesis — the unique cross-linked polymer that makes up bacterial cell walls. Human cells have no cell wall and no peptidoglycan, so penicillin has nothing to target in them."
+  },
+  {
+    q: "Which prokaryotic appendage is responsible for locomotion?",
+    opts: ["Pili", "Fimbriae", "Capsule", "Flagella"],
+    ans: 3,
+    fb: "Flagella are whip-like appendages that rotate like propellers to move prokaryotes through liquid environments. Pili are used for genetic exchange (conjugation); fimbriae are used for attachment to surfaces and host cells."
+  },
+  {
+    q: "How do pili differ in function from fimbriae?",
+    opts: [
+      "Pili are used for locomotion; fimbriae for genetic exchange",
+      "Pili are used for genetic material exchange during conjugation; fimbriae are shorter appendages used for attachment to surfaces",
+      "They are identical in structure and function",
+      "Pili are found only in archaea; fimbriae only in bacteria"
+    ],
+    ans: 1,
+    fb: "Pili (sex pili) are long appendages that facilitate conjugation — the transfer of genetic material between bacteria. Fimbriae are shorter, bristle-like appendages used for physical attachment to surfaces and host cells during infection."
+  },
+  {
+    q: "A bacterium with a polysaccharide capsule would MOST LIKELY have an advantage in which situation?",
+    opts: [
+      "Moving through a liquid medium",
+      "Exchanging genetic material with neighboring bacteria",
+      "Evading destruction by immune system cells and adhering to host tissues",
+      "Resisting antibiotic drugs that target ribosomes"
+    ],
+    ans: 2,
+    fb: "The polysaccharide capsule helps bacteria adhere to surfaces and evade the immune system by preventing phagocytosis (engulfment by white blood cells). This makes capsule-forming bacteria more virulent (disease-causing)."
+  },
+  {
+    q: "As a spherical cell's radius doubles, what happens to its surface area-to-volume ratio?",
+    opts: [
+      "It doubles",
+      "It stays the same",
+      "It is cut in half",
+      "It quadruples"
+    ],
+    ans: 2,
+    fb: "When radius doubles (r → 2r), surface area increases by a factor of 4 (r²) but volume increases by a factor of 8 (r³). So the SA:V ratio = 4/8 = 1/2 of the original. The ratio is halved every time the radius doubles."
+  },
+  {
+    q: "Why is a high surface area-to-volume ratio important for a cell?",
+    opts: [
+      "It allows the cell to store more genetic information",
+      "It allows the plasma membrane to efficiently supply nutrients to the interior and remove wastes",
+      "It increases the number of ribosomes a cell can contain",
+      "It prevents the cell from dividing"
+    ],
+    ans: 1,
+    fb: "All exchange of materials between a cell and its environment must pass through the plasma membrane (the surface). If volume grows much faster than surface area, the membrane can't supply the interior fast enough — the cell becomes metabolically limited."
+  },
+  {
+    q: "Which of the following correctly distinguishes prokaryotic from eukaryotic cells?",
+    opts: [
+      "Prokaryotes have ribosomes; eukaryotes do not",
+      "Prokaryotes have a membrane-bound nucleus; eukaryotes have a nucleoid",
+      "Prokaryotes lack a membrane-bound nucleus and membrane-bound organelles; eukaryotes have both",
+      "Prokaryotes are always larger than eukaryotes"
+    ],
+    ans: 2,
+    fb: "The defining difference is the presence of a membrane-bound nucleus and membrane-bound organelles in eukaryotes. Prokaryotes lack these — their DNA is in a nucleoid region, not in a true nucleus. Both cell types have ribosomes, plasma membranes, DNA, and cytoplasm."
+  },
+  {
+    q: "The domains Bacteria and Archaea are both prokaryotic. How do archaea differ from bacteria?",
+    opts: [
+      "Archaea have a true nucleus; bacteria do not",
+      "Archaea differ in membrane lipids, ribosomal RNA sequences, and other molecular features — many live in extreme environments",
+      "Archaea have peptidoglycan cell walls; bacteria do not",
+      "Archaea can perform photosynthesis; bacteria cannot"
+    ],
+    ans: 1,
+    fb: "Archaea and bacteria both lack a nucleus, but differ significantly in membrane lipid composition, ribosomal RNA sequences, and cell wall chemistry. Many archaea (extremophiles) survive in extreme environments (high heat, acidity, salinity) where bacteria cannot."
+  },
+  {
+    q: "A student observes a microscope slide and moves the slide to the RIGHT. The image appears to move to the LEFT. This is:",
+    opts: [
+      "A mistake — the image should move in the same direction as the slide",
+      "Expected — light microscopes invert and reverse images",
+      "A sign of a broken microscope",
+      "Only true for electron microscopes"
+    ],
+    ans: 1,
+    fb: "Light microscopes invert images — moving the slide right makes the image appear to move left, and moving it up makes the image appear to move down. This is a characteristic optical property of compound light microscopes."
+  },
+  {
+    q: "Which statement about prokaryotic cell size is most accurate?",
+    opts: [
+      "Prokaryotes range from 10–100 μm in diameter",
+      "Prokaryotes are typically 0.1–5.0 μm in diameter — about 10 times smaller than eukaryotes",
+      "Prokaryotes and eukaryotes are about the same size",
+      "Prokaryotes must be larger than eukaryotes to house their single chromosome"
+    ],
+    ans: 1,
+    fb: "Prokaryotic cells typically range from 0.1–5.0 μm in diameter. Eukaryotic cells are typically 10–100 μm — roughly 10 times larger. The smaller size of prokaryotes gives them a higher surface area-to-volume ratio, allowing efficient diffusion of nutrients and wastes."
+  },
+];
+
+let quizScore = 0;
+let quizAnswered = 0;
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  quizScore = 0; quizAnswered = 0;
+  document.getElementById('score-panel').style.display = 'none';
+
+  quizData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `
+      <div class="quiz-q">${idx+1}. ${item.q}</div>
+      <div class="quiz-options">
+        ${item.opts.map((opt, i) => `
+          <button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">
+            ${String.fromCharCode(65+i)}. ${opt}
+          </button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="qfb-${idx}"></div>`;
+    container.appendChild(card);
+  });
+}
+
+function checkAnswer(btn, qIdx, optIdx) {
+  const card    = btn.closest('.quiz-card');
+  const buttons = card.querySelectorAll('.quiz-opt');
+  const fb      = document.getElementById('qfb-' + qIdx);
+  const correct = quizData[qIdx].ans;
+  buttons.forEach(b => b.disabled = true);
+  if (optIdx === correct) {
+    btn.classList.add('correct');
+    fb.textContent = '✅ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show correct-fb';
+    quizScore++;
+  } else {
+    btn.classList.add('wrong');
+    buttons[correct].classList.add('correct');
+    fb.textContent = '❌ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show wrong-fb';
+  }
+  quizAnswered++;
+  if (quizAnswered === quizData.length) showScore();
+}
+
+function showScore() {
+  const panel = document.getElementById('score-panel');
+  panel.style.display = 'block';
+  document.getElementById('score-display').textContent = quizScore + '/' + quizData.length;
+  const pct = quizScore / quizData.length;
+  let msg;
+  if (pct >= .9) msg = '🌟 Outstanding! You clearly understand cell theory, microscopy, and prokaryotic cells. AP exam ready!';
+  else if (pct >= .75) msg = '👍 Great work! Review the questions you missed and you\'ll be in great shape.';
+  else if (pct >= .6) msg = '📚 Good start. Revisit Phases 2–4, then retake.';
+  else msg = '💪 Keep going! Go back through the Microscopy and Prokaryotic Cells phases, then try again.';
+  document.getElementById('score-msg').textContent = msg;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function retakeQuiz() { buildQuiz(); }
+
+// ═══════════════════════════════════════════════
+// FILL-IN-THE-BLANK
+// ═══════════════════════════════════════════════
+const fills = [
+  { q: "The three tenets of ___ state that all life is made of cells, cells are the basic unit of life, and new cells come from existing cells.", ans: "cell theory" },
+  { q: "The term 'cell' was coined in 1665 by ___.", ans: "Robert Hooke" },
+  { q: "The ability to distinguish two adjacent structures as separate is called ___ power.", ans: "resolving" },
+  { q: "A ___ electron microscope (SEM) images the 3D surface of a cell.", ans: "scanning" },
+  { q: "Prokaryotes have their DNA in an area of the cytoplasm called the ___.", ans: "nucleoid" },
+  { q: "The rigid layer made of ___ surrounding most bacterial cells provides shape and protection.", ans: "peptidoglycan" },
+  { q: "Small circular DNA molecules in bacteria, often carrying antibiotic resistance genes, are called ___.", ans: "plasmids" },
+  { q: "Prokaryotic appendages used for locomotion are called ___.", ans: "flagella" },
+  { q: "Appendages used for genetic exchange between bacteria are called ___.", ans: "pili" },
+  { q: "As a cell's radius increases, its surface area-to-volume ratio ___.", ans: "decreases" },
+];
+
+function buildFills() {
+  const container = document.getElementById('fill-container');
+  container.innerHTML = '';
+  fills.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-card';
+    div.innerHTML = `<div class="fill-q">${item.q.replace('___',
+      `<input class="blank-input" id="fill-${idx}" type="text" placeholder="?"
+       onkeydown="if(event.key==='Enter')checkFill(${idx})">`)}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function checkFill(idx) {
+  const input = document.getElementById('fill-' + idx);
+  const val   = input.value.trim().toLowerCase();
+  const correct = fills[idx].ans.toLowerCase();
+  if (val === correct || val.includes(correct) || correct.includes(val)) {
+    input.classList.remove('err'); input.classList.add('ok');
+    input.value = fills[idx].ans;
+  } else {
+    input.classList.remove('ok'); input.classList.add('err');
+  }
+}
+function checkAllFills() { fills.forEach((_, idx) => checkFill(idx)); }
+function resetFills() {
+  fills.forEach((_, idx) => {
+    const input = document.getElementById('fill-' + idx);
+    if (input) { input.value = ''; input.classList.remove('ok','err'); }
+  });
+}
+
+// ═══════════════════════════════════════════════
+// SUMMARY / SUBMIT
+// ═══════════════════════════════════════════════
+function fillSummary(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = text && text.trim();
+  el.textContent = val || 'Not answered';
+  el.classList.toggle('empty', !val);
+}
+
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent =
+    new Date().toLocaleDateString('en-GB', {
+      weekday:'long', year:'numeric', month:'long', day:'numeric'
+    });
+
+  const scoreEl = document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl ? scoreEl.textContent + ' correct' : 'Quiz not yet completed');
+
+  const predTA = document.querySelector('#sec-0 textarea');
+  fillSummary('sum-pred', predTA ? predTA.value : '');
+
+  const savTA  = document.getElementById('sav-predict');
+  fillSummary('sum-sav-pred', savTA ? savTA.value : '');
+
+  const prokTA = document.getElementById('prok-predict');
+  fillSummary('sum-prok-pred', prokTA ? prokTA.value : '');
+
+  const refCards = document.querySelectorAll('#sec-6 .quiz-card textarea');
+  ['sum-r1','sum-r2','sum-r3','sum-r4'].forEach((id, i) => {
+    fillSummary(id, refCards[i] ? refCards[i].value : '');
+  });
+}
+
+function buildPlainText() {
+  const name    = document.getElementById('studentName').value.trim() || 'Student';
+  const date    = new Date().toLocaleDateString('en-GB', {
+    weekday:'long', year:'numeric', month:'long', day:'numeric'
+  });
+  const scoreEl = document.getElementById('score-display');
+  const score   = scoreEl ? scoreEl.textContent : 'not completed';
+  const predTA  = document.querySelector('#sec-0 textarea');
+  const savTA   = document.getElementById('sav-predict');
+  const prokTA  = document.getElementById('prok-predict');
+  const refCards = document.querySelectorAll('#sec-6 .quiz-card textarea');
+  const refs = ['','','',''];
+  refCards.forEach((ta, i) => { refs[i] = ta.value.trim() || 'Not answered'; });
+
+  return [
+    'CELL STRUCTURE EXPLORER 🔬 (CH. 4 PART 1) — STUDENT SUBMISSION',
+    '======================================================',
+    'Student: ' + name,
+    'Date: ' + date,
+    'Lesson: AP Biology · OpenStax Chapter 4 (4.1 & 4.2) · Cell Structure Explorer Part 1',
+    '',
+    '── QUIZ SCORE ──', score,
+    '',
+    '── OPENING PREDICTION ──',
+    predTA ? (predTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── SA:V LAB PREDICTION ──',
+    savTA ? (savTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── PROKARYOTE BUILDER LAB PREDICTION ──',
+    prokTA ? (prokTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── REFLECTIONS ──',
+    'Q1 — Cell Theory:', refs[0],
+    'Q2 — Light vs. Electron Microscope:', refs[1],
+    'Q3 — Shared & Prokaryote-Specific Structures:', refs[2],
+    'Q4 — SA:V Ratio & Cell Size:', refs[3],
+    '',
+    '======================================================',
+    '© 2026 Farvour Explorations · farvourexplorations.com',
+    'Submitted via Cell Structure Explorer Part 1 · Interactive Digital Lesson · AP Biology'
+  ].join('\n');
+}
+
+function copyResults() {
+  buildSummary();
+  navigator.clipboard.writeText(buildPlainText()).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Now paste into Google Classroom or your assignment.';
+    setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => {
+    document.getElementById('copyConfirm').textContent =
+      '⚠️ Could not copy automatically — try selecting the text manually.';
+  });
+}
+
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  window.location.href = 'mailto:?subject=' +
+    encodeURIComponent('Cell Structure Explorer Part 1 — ' + name) +
+    '&body=' + encodeURIComponent(buildPlainText());
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+buildQuiz();
+buildFills();
+updateSAV();
+</script>
+</body>
+</html>
