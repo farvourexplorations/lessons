@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Do Organisms Regulate Their Functions? — VCE Biology Unit 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:    #1a3d2b;
+    --forest-mid:#2d6a4f;
+    --forest-lt: #40916c;
+    --coral:     #e8603c;
+    --coral-pale:#fdf0ec;
+    --mint:      #3aaf85;
+    --mint-pale: #e8f8f2;
+    --gold:      #c9962a;
+    --gold-pale: #fef9e7;
+    --lavender:  #7c6fcd;
+    --lav-pale:  #f0eefb;
+    --paper:     #fffef9;
+    --ink:       #1a2332;
+    --muted:     #7a8899;
+    --border:    #e0e4ea;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: linear-gradient(160deg, #0d2318 0%, #1a3d2b 45%, #2d6a4f 100%);
+    min-height: 100vh; font-family: 'Nunito', sans-serif; color: var(--ink); overflow-x: hidden;
+  }
+  body::before {
+    content:''; position:fixed; inset:0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%, rgba(144,238,144,.45) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 22% 38%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 41% 6%,  rgba(144,238,144,.35) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 60% 24%, rgba(255,255,255,.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 77% 9%,  rgba(144,238,144,.4)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 90% 33%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 33% 55%, rgba(144,238,144,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 70% 48%, rgba(255,255,255,.2)  0%, transparent 100%);
+    pointer-events:none; z-index:0;
+  }
+
+  /* ── HERO ── */
+  .hero { position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 2rem;color:white; }
+  .hero-badge { display:inline-block;background:var(--gold);color:var(--forest);font-family:'Fredoka One',cursive;font-size:.85rem;letter-spacing:.05em;padding:.35rem 1.2rem;border-radius:20px;margin-bottom:1.2rem;box-shadow:0 2px 12px rgba(201,150,42,.45); }
+  .hero h1 { font-family:'Fredoka One',cursive;font-size:clamp(2.2rem,6vw,3.8rem);line-height:1.1;margin-bottom:.8rem;text-shadow:0 2px 20px rgba(0,0,0,.35); }
+  .hero h1 .accent { color:var(--gold); }
+  .hero .intro { font-size:1rem;line-height:1.7;opacity:.88;max-width:620px;margin:0 auto 1.5rem; }
+  .student-tag { display:inline-block;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:20px;padding:.4rem 1.2rem;font-family:'DM Mono',monospace;font-size:.8rem;color:rgba(255,255,255,.9);margin-bottom:1.2rem; }
+
+  /* ── NAME BAR ── */
+  .name-bar { background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);border-radius:12px;padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;max-width:420px;margin:0 auto 1rem; }
+  .name-bar label { font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;font-family:'DM Mono',monospace; }
+  .name-bar input { flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.4rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:white;outline:none; }
+  .name-bar input::placeholder { color:rgba(255,255,255,.4);font-weight:400; }
+
+  /* ── PROGRESS ── */
+  .progress-wrap { display:flex;justify-content:center;gap:.4rem;flex-wrap:wrap;margin-bottom:.5rem; }
+  .prog-step { background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);border-radius:20px;padding:.3rem .85rem;font-size:.74rem;font-weight:700;color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace; }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.35); }
+  .prog-step.active { background:var(--gold);color:var(--forest);border-color:var(--gold);box-shadow:0 2px 12px rgba(201,150,42,.45); }
+
+  /* ── SHEET ── */
+  .sheet { position:relative;z-index:1;background:var(--paper);border-radius:24px 24px 0 0;margin-top:1.5rem;padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.3); }
+
+  /* ── SECTIONS ── */
+  .section { padding:3rem 2rem 0;max-width:820px;margin:0 auto;display:none; }
+  .section.active { display:block; }
+  .section-eyebrow { display:flex;align-items:center;gap:.6rem;margin-bottom:1rem; }
+  .eyebrow-num { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1rem;color:white;flex-shrink:0; }
+  .num-coral{background:var(--coral)}.num-mint{background:var(--mint)}.num-gold{background:var(--gold);color:var(--forest)}.num-lav{background:var(--lavender)}.num-forest{background:var(--forest-mid)}
+  .eyebrow-label { font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace; }
+  .section h2 { font-family:'Fredoka One',cursive;font-size:clamp(1.6rem,3.5vw,2.2rem);color:var(--forest);margin-bottom:.6rem;line-height:1.2; }
+  .section .lead { font-size:1rem;line-height:1.75;color:#3a4a5a;margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+
+  /* ── WONDER BOXES ── */
+  .wonder-box { background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);color:white;border-radius:16px;padding:1.8rem 2rem;margin-bottom:1.8rem;position:relative;overflow:hidden; }
+  .wonder-box::after { content:'🤔';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3; }
+  .wonder-box p { font-size:1rem;line-height:1.7;font-style:italic;opacity:.95;max-width:85%; }
+  .wonder-box strong { color:var(--gold);font-style:normal; }
+  .wonder-box.gold-box  { background:linear-gradient(135deg,#8a6a1a 0%,#b8860b 100%); }
+  .wonder-box.gold-box::after  { content:'⚡'; }
+  .wonder-box.mint-box  { background:linear-gradient(135deg,#1b7a58 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after  { content:'🌱'; }
+  .wonder-box.lav-box   { background:linear-gradient(135deg,#4a3a8a 0%,#6a5acd 100%); }
+  .wonder-box.lav-box::after   { content:'🔬'; }
+  .wonder-box.coral-box { background:linear-gradient(135deg,#a03020 0%,#c8502a 100%); }
+  .wonder-box.coral-box::after { content:'🫀'; }
+  .wonder-box.teal-box  { background:linear-gradient(135deg,#0d5c6e 0%,#0e8a8a 100%); }
+  .wonder-box.teal-box::after  { content:'💧'; }
+
+  /* ── PREDICT / REFLECT ── */
+  .predict-box { background:var(--gold-pale);border:2px dashed var(--gold);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem; }
+  .predict-box textarea { width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:68px;background:white;color:var(--ink);outline:none;transition:border-color .2s; }
+  .predict-box textarea:focus { border-color:var(--gold); }
+  .reflect-box { background:var(--mint-pale);border:2px dashed var(--mint);border-radius:14px;padding:1.4rem 1.6rem;margin-top:1.5rem; }
+  .reflect-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#1b7a58;margin-bottom:.8rem; }
+  .reflect-box textarea { width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:68px;background:white;color:var(--ink);outline:none; }
+  .reflect-box textarea:focus { border-color:var(--mint); }
+
+  /* ── CHIP REVEALS ── */
+  .chip-row { display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem; }
+  .chip { padding:.45rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;border:2px solid transparent; }
+  .chip.coral  { background:var(--coral-pale);color:var(--coral);border-color:#f8c5b8; }
+  .chip.mint   { background:var(--mint-pale);color:var(--mint);border-color:#b8ebd8; }
+  .chip.gold   { background:var(--gold-pale);color:#8a6a1a;border-color:#f8e0a0; }
+  .chip.lav    { background:var(--lav-pale);color:var(--lavender);border-color:#d0caef; }
+  .chip.forest { background:#d4eadd;color:var(--forest-mid);border-color:#a8d5b8; }
+  .chip:hover  { transform:scale(1.05); }
+  .concept-reveal { background:var(--paper);border-left:4px solid var(--coral);border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;margin-top:.5rem;margin-bottom:.3rem;display:none;animation:fadeIn .3s ease; }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border   { border-color:var(--mint); }
+  .concept-reveal.gold-border   { border-color:var(--gold); }
+  .concept-reveal.lav-border    { border-color:var(--lavender); }
+  .concept-reveal.forest-border { border-color:var(--forest-mid); }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── INFO CARDS ── */
+  .card-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:.8rem;margin:1rem 0 1.5rem; }
+  .info-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.1rem;text-align:center;cursor:pointer;transition:all .2s; }
+  .info-card:hover,.info-card.active { border-color:var(--forest-mid);transform:translateY(-2px);box-shadow:0 4px 14px rgba(45,106,79,.18); }
+  .info-card.active { background:#d4eadd; }
+  .info-card .ic-icon { font-size:2rem;margin-bottom:.4rem; }
+  .info-card .ic-title { font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--forest);margin-bottom:.2rem; }
+  .info-card .ic-sub { font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em; }
+  .info-panel { background:#d4eadd;border-left:4px solid var(--forest-mid);border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;display:none;animation:fadeIn .3s ease;margin-bottom:1rem; }
+  .info-panel.show { display:block; }
+  .info-panel h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.5rem; }
+  .info-panel p { font-size:.88rem;line-height:1.7;color:#2a3a2a; }
+  .info-panel .eg { background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;font-size:.82rem;font-family:'DM Mono',monospace;color:var(--ink);border:1.5px solid rgba(45,106,79,.2); }
+
+  /* ── VOCAB TABLE ── */
+  .vocab-table { width:100%;border-collapse:collapse;margin:1rem 0 1.5rem; }
+  .vocab-table th { background:var(--forest);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;padding:.7rem 1rem;text-align:left; }
+  .vocab-table td { padding:.65rem 1rem;font-size:.85rem;line-height:1.5;border-bottom:1px solid var(--border); }
+  .vocab-table tr:nth-child(even) td { background:#f5f7fa; }
+  .vocab-table tr:hover td { background:#d4eadd;transition:background .15s; }
+  .vocab-table td:first-child { font-weight:800;color:var(--forest-mid); }
+
+  /* ── MATCHING ── */
+  .match-grid { display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1rem 0; }
+  .match-item { padding:.75rem 1rem;border-radius:10px;border:2px solid var(--border);cursor:pointer;font-size:.82rem;font-weight:700;transition:all .2s;background:white;text-align:center;color:var(--ink);line-height:1.35; }
+  .match-item:hover    { border-color:var(--forest-mid);background:#f0f7f3; }
+  .match-item.selected { border-color:var(--lavender);background:var(--lav-pale);color:var(--lavender); }
+  .match-item.matched  { border-color:var(--mint);background:var(--mint-pale);color:#1b7a58;cursor:default; }
+  .match-item.wrong    { border-color:var(--coral);background:var(--coral-pale);color:var(--coral);animation:shake .3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+  /* ── ACCORDION STEPS ── */
+  .accord-list { display:flex;flex-direction:column;gap:.6rem;margin:1rem 0; }
+  .accord-item { background:white;border:2px solid var(--border);border-radius:12px;padding:.9rem 1.1rem;cursor:pointer;transition:all .2s;display:flex;align-items:flex-start;gap:.8rem; }
+  .accord-item:hover { border-color:var(--forest-mid);background:#f0f7f3; }
+  .accord-item.open  { border-color:var(--mint);background:var(--mint-pale); }
+  .accord-badge { width:28px;height:28px;border-radius:50%;background:var(--forest);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.1rem; }
+  .accord-content .ac-title { font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--forest); }
+  .accord-content .ac-body  { font-size:.85rem;line-height:1.7;color:var(--ink);margin-top:.5rem;display:none; }
+  .accord-item.open .ac-body { display:block; }
+  .accord-content .ac-vcaa { font-size:.75rem;font-family:'DM Mono',monospace;color:var(--muted);margin-top:.4rem; }
+
+  /* ── FEEDBACK LOOP DIAGRAM ── */
+  .loop-wrap { background:#f5f7fa;border-radius:14px;padding:1.4rem;margin:1rem 0;text-align:center; }
+  .loop-row  { display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap;margin:.4rem 0; }
+  .loop-box  { background:white;border:2px solid var(--border);border-radius:10px;padding:.6rem 1rem;font-size:.82rem;font-weight:700;color:var(--ink);min-width:110px;text-align:center;line-height:1.3; }
+  .loop-box.stimulus { border-color:var(--coral);background:var(--coral-pale);color:var(--coral); }
+  .loop-box.receptor { border-color:var(--gold);background:var(--gold-pale);color:#8a6a1a; }
+  .loop-box.control  { border-color:var(--lavender);background:var(--lav-pale);color:var(--lavender); }
+  .loop-box.effector { border-color:var(--mint);background:var(--mint-pale);color:#1b7a58; }
+  .loop-box.response { border-color:var(--forest-mid);background:#d4eadd;color:var(--forest); }
+  .loop-arrow { font-size:1.2rem;color:var(--muted); }
+  .loop-label { font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);margin-top:.2rem; }
+
+  /* ── QUIZ ── */
+  .quiz-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .quiz-q { font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:1rem;line-height:1.5; }
+  .quiz-options { display:flex;flex-direction:column;gap:.5rem; }
+  .quiz-opt { padding:.6rem 1rem;border-radius:8px;border:2px solid var(--border);background:white;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:600;text-align:left;transition:all .15s;color:var(--ink); }
+  .quiz-opt:hover:not(:disabled) { border-color:var(--forest-mid);background:#f0f7f3; }
+  .quiz-opt.correct { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .quiz-opt.wrong   { background:var(--coral-pale);border-color:var(--coral);color:#a83020; }
+  .quiz-opt:disabled { cursor:default; }
+  .quiz-feedback { margin-top:.8rem;font-size:.85rem;line-height:1.6;padding:.7rem 1rem;border-radius:8px;display:none;animation:fadeIn .3s ease; }
+  .quiz-feedback.show { display:block; }
+  .quiz-feedback.correct-fb { background:var(--mint-pale);color:#1b7a58;border-left:3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background:var(--coral-pale);color:#a83020;border-left:3px solid var(--coral); }
+
+  /* ── SCORE ── */
+  .score-panel { background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);color:white;border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem; }
+  .score-panel .score-num { font-family:'Fredoka One',cursive;font-size:3.5rem;line-height:1;color:var(--gold); }
+  .score-panel p { opacity:.88;margin-top:.5rem;font-size:1rem; }
+  .score-panel h3 { font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:.3rem; }
+
+  /* ── BUTTONS ── */
+  .btn { border:none;border-radius:10px;padding:.65rem 1.3rem;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;transition:all .15s; }
+  .btn:hover  { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  .btn:active { transform:translateY(0); }
+  .btn:disabled { opacity:.4;cursor:default;transform:none; }
+  .btn-coral  { background:var(--coral);color:white; }
+  .btn-mint   { background:var(--mint);color:white; }
+  .btn-gold   { background:var(--gold);color:var(--forest); }
+  .btn-ghost  { background:#f0f2f5;color:var(--muted); }
+  .btn-forest { background:var(--forest);color:white; }
+
+  /* ── NAV ── */
+  .nav-row { display:flex;justify-content:space-between;align-items:center;padding:2.5rem 2rem 0;max-width:820px;margin:0 auto; }
+
+  /* ── DIVIDER ── */
+  .divider { height:1px;background:var(--border);margin:2rem 0; }
+
+  /* ── FILL BLANK ── */
+  .blank-input { border:none;border-bottom:2.5px solid var(--forest-mid);background:transparent;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;color:var(--forest);width:170px;text-align:center;outline:none;padding:0 4px;transition:border-color .2s; }
+  .blank-input:focus { border-color:var(--coral); }
+  .blank-input.ok  { border-color:var(--mint);color:var(--mint); }
+  .blank-input.err { border-color:var(--coral);color:var(--coral); }
+  .fill-q { font-size:.95rem;line-height:2.1;color:var(--ink);margin-bottom:.8rem; }
+
+  /* ── GLUCOSE FEEDBACK LOOP INTERACTIVE ── */
+  .glucose-sim { background:white;border:2px solid var(--border);border-radius:16px;padding:1.6rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07); }
+  .glucose-sim h3 { font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.3rem; }
+  .glucose-sim .hint { font-size:.76rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:1.2rem; }
+  .glucose-bar-wrap { margin:1rem 0; }
+  .glucose-bar { height:28px;border-radius:14px;background:linear-gradient(to right,#c00 0%,#e88800 20%,#3aaf85 35%,#3aaf85 65%,#e88800 80%,#c00 100%);position:relative;cursor:pointer; }
+  .glucose-marker { position:absolute;top:-22px;transform:translateX(-50%);transition:left .5s; }
+  .glucose-marker .gpin { width:3px;height:42px;background:var(--forest);margin:0 auto; }
+  .glucose-marker .glabel { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--forest);text-align:center;white-space:nowrap;margin-bottom:2px; }
+  .glucose-scale { display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);margin-top:4px;padding:0 2px; }
+  .glucose-btns { display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0; }
+  .g-tag { padding:.4rem .9rem;border-radius:20px;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;border:2px solid transparent;font-family:'DM Mono',monospace; }
+  .g-tag:hover { transform:scale(1.05); }
+  .glucose-result { margin-top:.8rem;padding:.8rem 1rem;border-radius:10px;font-size:.85rem;min-height:3rem;transition:all .3s;line-height:1.6; }
+
+  /* ── WATER BALANCE DIAGRAM ── */
+  .wb-tabs { display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap; }
+  .wb-tab { padding:.45rem 1.1rem;border-radius:20px;border:2px solid var(--border);background:white;cursor:pointer;font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--muted);transition:all .2s; }
+  .wb-tab:hover { border-color:var(--forest-mid); }
+  .wb-tab.active { background:var(--forest);color:white;border-color:var(--forest); }
+  .wb-panel { display:none;animation:fadeIn .3s ease; }
+  .wb-panel.show { display:block; }
+
+  /* ── STEM CELL ── */
+  .stem-flow { display:flex;flex-wrap:wrap;gap:.8rem;margin:1rem 0;align-items:center;justify-content:center; }
+  .stem-node { background:white;border:2px solid var(--border);border-radius:12px;padding:.9rem 1.1rem;text-align:center;min-width:120px;transition:all .2s;cursor:pointer; }
+  .stem-node:hover,.stem-node.active { border-color:var(--lavender);background:var(--lav-pale);transform:translateY(-2px); }
+  .stem-node .sn-icon { font-size:1.6rem;margin-bottom:.3rem; }
+  .stem-node .sn-label { font-family:'Fredoka One',cursive;font-size:.82rem;color:var(--forest); }
+  .stem-node .sn-sub { font-family:'DM Mono',monospace;font-size:.6rem;color:var(--muted);text-transform:uppercase; }
+  .stem-detail { background:var(--lav-pale);border-left:4px solid var(--lavender);border-radius:0 12px 12px 0;padding:1.1rem 1.3rem;display:none;animation:fadeIn .3s ease;margin-bottom:1rem;font-size:.86rem;line-height:1.7; }
+  .stem-detail.show { display:block; }
+  .stem-detail h5 { font-family:'Fredoka One',cursive;font-size:1rem;color:var(--lavender);margin-bottom:.4rem; }
+  .stem-arrow { font-size:1.8rem;color:var(--muted); }
+
+  /* ── LIVER ── */
+  .liver-cards { display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.8rem;margin:1rem 0; }
+  .liver-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.1rem;cursor:pointer;transition:all .2s;text-align:center; }
+  .liver-card:hover,.liver-card.active { border-color:#8b2c00;transform:translateY(-2px);box-shadow:0 4px 14px rgba(139,44,0,.15); }
+  .liver-card.active { background:#fff3ef; }
+  .liver-card .lc-icon { font-size:2rem;margin-bottom:.4rem; }
+  .liver-card .lc-title { font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--forest);margin-bottom:.2rem; }
+  .liver-card .lc-sub { font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted); }
+  .liver-panel { background:#fff3ef;border-left:4px solid #c8502a;border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;display:none;animation:fadeIn .3s ease;margin-bottom:1rem; }
+  .liver-panel.show { display:block; }
+  .liver-panel h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:#8b2c00;margin-bottom:.5rem; }
+  .liver-panel p { font-size:.88rem;line-height:1.7;color:#2a1a10; }
+  .liver-panel .eg { background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;font-size:.82rem;font-family:'DM Mono',monospace;border:1.5px solid rgba(200,80,42,.2); }
+
+  /* ── SUMMARY ── */
+  .summary-section { background:white;border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--forest);margin-bottom:.8rem; }
+  .summary-answer { background:#f5f7fa;border-radius:8px;padding:.7rem 1rem;font-size:.85rem;line-height:1.6;color:var(--ink);margin-bottom:.5rem;font-style:italic;border-left:3px solid var(--lavender);min-height:2rem; }
+  .summary-answer.empty { color:var(--muted);font-style:normal;border-left-color:var(--border); }
+  .sum-label { font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.6rem;text-transform:uppercase;letter-spacing:.06em; }
+  .share-buttons { display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center; }
+  .share-btn { border:none;border-radius:12px;padding:.85rem 1.6rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem; }
+  .share-btn:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background:var(--mint);color:white; }
+  .share-btn.email { background:var(--lavender);color:white; }
+  .share-btn.print { background:var(--forest);color:white; }
+  .copy-confirm { text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--mint);min-height:1.2rem;margin-top:.6rem; }
+
+  /* ── CONGRATS ── */
+  .congrats-panel { background:linear-gradient(135deg,var(--forest) 0%,#1b7a58 100%);color:white;border-radius:20px;padding:2.5rem 2rem;text-align:center;margin-top:2rem; }
+  .congrats-panel h2 { font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:.6rem; }
+  .congrats-panel p { opacity:.9;line-height:1.7;max-width:480px;margin:0 auto .8rem; }
+  .summary-chips { display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:1rem; }
+  .summary-chip { background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:20px;padding:.3rem .9rem;font-size:.78rem;font-weight:700;font-family:'DM Mono',monospace; }
+
+  @media(max-width:560px){
+    .hero{padding:2.5rem 1.2rem 1.5rem} .section{padding:2rem 1.2rem 0} .nav-row{padding:2rem 1.2rem 0}
+    .match-grid{grid-template-columns:1fr} .dom-example{grid-template-columns:1fr}
+  }
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm,.progress-wrap,.name-bar{display:none!important}
+    .sheet{box-shadow:none;border-radius:0} .section{display:none!important} #sec-9{display:block!important}
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ HERO ══ -->
+<div class="hero">
+  <div class="hero-badge">🔬 VCE Biology 2022 · Unit 1 · Personalised Review</div>
+  <div class="student-tag">👋 Hey Lakshanya — this one's for you!</div>
+  <h1>How Do Organisms <span class="accent">Regulate</span> Their Functions?</h1>
+  <p class="intro">A focused review of cell functions, plant &amp; animal systems, embryonic stem cells, the liver, and homeostatic regulation of water and glucose balance.</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <span class="prog-step active" onclick="goTo(0)">① Wonder</span>
+    <span class="prog-step"        onclick="goTo(1)">② Cell Structure</span>
+    <span class="prog-step"        onclick="goTo(2)">③ Stem Cells</span>
+    <span class="prog-step"        onclick="goTo(3)">④ Plant Systems</span>
+    <span class="prog-step"        onclick="goTo(4)">⑤ Animal Systems</span>
+    <span class="prog-step"        onclick="goTo(5)">⑥ The Liver</span>
+    <span class="prog-step"        onclick="goTo(6)">⑦ Homeostasis</span>
+    <span class="prog-step"        onclick="goTo(7)">⑧ Glucose Balance</span>
+    <span class="prog-step"        onclick="goTo(8)">⑨ Water Balance</span>
+    <span class="prog-step"        onclick="goTo(9)">📝 Quiz</span>
+    <span class="prog-step"        onclick="goTo(10)">📤 Submit</span>
+  </div>
+</div>
+
+<div class="sheet">
+
+<!-- ══ SEC 0: WONDER ══ -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">Phase 1 · Wonder</span></div>
+  <h2>🔬 How Does One Cell Become a Whole Body?</h2>
+  <p class="lead">Every human being begins as a single fertilised egg cell. That one cell divides, specialises, and organises itself into trillions of cells across hundreds of different types — liver cells, neurons, muscle fibres, immune cells — all with identical DNA but radically different functions. How?</p>
+  <div class="wonder-box">
+    <p>Your liver right now is simultaneously <strong>detoxifying alcohol</strong>, <strong>storing glucose as glycogen</strong>, <strong>making bile to digest fats</strong>, and <strong>regulating your blood protein levels</strong> — all at the same time, in the same organ. Meanwhile, your kidneys are adjusting exactly how much water to keep based on signals from your brain. <strong>How does your body coordinate all of this without you thinking about it?</strong></p>
+  </div>
+  <div class="predict-box">
+    <h4>✏️ Lakshanya's Starting Point</h4>
+    <textarea id="ta-wonder" placeholder="What do you already remember about cell organelles and their functions? What is the difference between a prokaryotic and eukaryotic cell? And what is homeostasis — have you come across that word before?"></textarea>
+  </div>
+  <div class="wonder-box gold-box">
+    <p>This review covers <strong>VCE Biology Unit 1</strong>: cell structure and function (AoS 1), stem cells, plant vascular systems, animal digestive/endocrine/excretory systems (AoS 2), and homeostatic regulation of temperature, blood glucose and water balance — including the liver's central role.</p>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-ghost" disabled>← Back</button>
+    <button class="btn btn-coral" onclick="goTo(1)">Next: Cell Structure →</button>
+  </div>
+</div>
+
+<!-- ══ SEC 1: CELL STRUCTURE ══ -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">2</div><span class="eyebrow-label">Phase 2 · Cell Structure &amp; Function</span></div>
+  <h2>🧫 Prokaryotic vs Eukaryotic Cells</h2>
+  <p class="lead">All cells are either <strong>prokaryotic</strong> (simple, no membrane-bound nucleus) or <strong>eukaryotic</strong> (complex, with a nucleus and organelles). The VCE Study Design requires you to explain cell structure, the surface area-to-volume ratio, and the specialised functions of key organelles.</p>
+
+  <div class="wonder-box lav-box">
+    <p>A cell must be small enough to exchange materials across its membrane efficiently. As a cell grows, its <strong>volume increases faster than its surface area</strong>. A large cell has too little surface area relative to its volume — it can't get enough nutrients in or waste out quickly enough. This is why cells are small, and why large organisms need <strong>internal compartments (organelles)</strong> with specialised membranes.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin:.5rem 0 .8rem">⚖️ Prokaryote vs Eukaryote — Key Differences</h3>
+  <table class="vocab-table">
+    <tr><th>Feature</th><th>Prokaryotic Cell</th><th>Eukaryotic Cell</th></tr>
+    <tr><td>Nucleus</td><td>No — DNA free in cytoplasm (nucleoid)</td><td>Yes — membrane-bound nucleus</td></tr>
+    <tr><td>DNA</td><td>Single circular chromosome + plasmids</td><td>Multiple linear chromosomes</td></tr>
+    <tr><td>Membrane-bound organelles</td><td>None</td><td>Yes (mitochondria, ER, Golgi, etc.)</td></tr>
+    <tr><td>Ribosomes</td><td>Yes (70S, smaller)</td><td>Yes (80S, larger)</td></tr>
+    <tr><td>Size</td><td>1–10 µm (smaller)</td><td>10–100 µm (larger)</td></tr>
+    <tr><td>Examples</td><td>Bacteria, Archaea</td><td>Plants, animals, fungi, protists</td></tr>
+  </table>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin:.5rem 0 .8rem">🔬 Organelle Functions — Tap Each</h3>
+  <div class="card-grid">
+    <div class="info-card" onclick="showCard('nucleus')"><div class="ic-icon">🔵</div><div class="ic-title">Nucleus</div><div class="ic-sub">Control centre</div></div>
+    <div class="info-card" onclick="showCard('mito')"><div class="ic-icon">⚡</div><div class="ic-title">Mitochondria</div><div class="ic-sub">ATP production</div></div>
+    <div class="info-card" onclick="showCard('chloro')"><div class="ic-icon">🌿</div><div class="ic-title">Chloroplast</div><div class="ic-sub">Photosynthesis</div></div>
+    <div class="info-card" onclick="showCard('er')"><div class="ic-icon">🌀</div><div class="ic-title">Endoplasmic Reticulum</div><div class="ic-sub">Rough &amp; smooth</div></div>
+    <div class="info-card" onclick="showCard('golgi')"><div class="ic-icon">📦</div><div class="ic-title">Golgi Apparatus</div><div class="ic-sub">Protein packaging</div></div>
+    <div class="info-card" onclick="showCard('plasma')"><div class="ic-icon">🛡️</div><div class="ic-title">Plasma Membrane</div><div class="ic-sub">Transport &amp; barrier</div></div>
+    <div class="info-card" onclick="showCard('ribosome')"><div class="ic-icon">🔴</div><div class="ic-title">Ribosomes</div><div class="ic-sub">Protein synthesis</div></div>
+    <div class="info-card" onclick="showCard('vacuole')"><div class="ic-icon">💧</div><div class="ic-title">Vacuole</div><div class="ic-sub">Storage &amp; turgor</div></div>
+  </div>
+  <div id="panel-nucleus"   class="info-panel"><h4>🔵 Nucleus</h4><p>The control centre of the eukaryotic cell. Contains the cell's DNA in the form of chromatin (chromosomes during division). Enclosed by the <strong>nuclear envelope</strong> (double membrane with pores). The <strong>nucleolus</strong> inside the nucleus assembles ribosomal RNA. Instructions for all protein synthesis originate here — DNA is transcribed to mRNA, which exits through nuclear pores to ribosomes.</p><div class="eg">📌 VCE: The nucleus is the defining feature of a eukaryotic cell. Prokaryotes have a nucleoid region — DNA in the cytoplasm — not a membrane-bound nucleus.</div></div>
+  <div id="panel-mito"      class="info-panel"><h4>⚡ Mitochondria</h4><p>The "powerhouse" — sites of <strong>aerobic cellular respiration</strong>, converting glucose and oxygen into ATP (adenosine triphosphate), the cell's energy currency. Have a <strong>double membrane</strong>: smooth outer membrane and highly folded inner membrane (cristae), which increases surface area for ATP production. Contain their own DNA and ribosomes — evidence for endosymbiotic origin. Cells with high energy needs (muscle, liver) have many mitochondria.</p><div class="eg">📌 Glucose + O₂ → CO₂ + H₂O + ATP (in the presence of mitochondria). The liver cell's high metabolic activity requires abundant mitochondria.</div></div>
+  <div id="panel-chloro"    class="info-panel"><h4>🌿 Chloroplast</h4><p>Found only in plant cells and algae. Site of <strong>photosynthesis</strong> — converting light energy, CO₂ and water into glucose and oxygen. Have a <strong>double outer membrane</strong> plus an internal system of thylakoid membranes (stacked into grana) where light reactions occur, and the stroma where the Calvin cycle occurs. Like mitochondria, contain their own DNA — evidence for endosymbiotic origin from cyanobacteria.</p><div class="eg">📌 VCE link: Plant cells have chloroplasts AND mitochondria — they photosynthesise AND respire. Animals only respire (no chloroplasts).</div></div>
+  <div id="panel-er"        class="info-panel"><h4>🌀 Endoplasmic Reticulum (ER)</h4><p><strong>Rough ER</strong> — studded with ribosomes; site of protein synthesis for export. Proteins are synthesised, folded, and moved to the Golgi. <strong>Smooth ER</strong> — no ribosomes; involved in lipid synthesis, detoxification (especially in liver cells), and calcium storage. The ER is an extensive network of membranes connected to the nuclear envelope, providing an internal transport system.</p><div class="eg">📌 The liver's smooth ER is especially well-developed — liver cells use it to detoxify alcohol, drugs, and metabolic waste products.</div></div>
+  <div id="panel-golgi"     class="info-panel"><h4>📦 Golgi Apparatus</h4><p>The "post office" of the cell — receives proteins from the rough ER, modifies them (e.g. adds sugar chains), sorts them, and packages them into <strong>vesicles</strong> for export (secretion) or delivery to other organelles. The protein secretory pathway: ribosome → rough ER → Golgi → secretory vesicle → plasma membrane. Critical for secreted proteins like hormones (e.g. insulin) and digestive enzymes.</p><div class="eg">📌 Insulin is made on ribosomes of rough ER in pancreatic beta cells, processed through the Golgi, packaged into vesicles, and released by exocytosis.</div></div>
+  <div id="panel-plasma"    class="info-panel"><h4>🛡️ Plasma Membrane</h4><p>The <strong>fluid mosaic model</strong>: a phospholipid bilayer with embedded proteins. Controls what enters and leaves the cell. Transport across it: <strong>osmosis</strong> (water — from high to low water potential), <strong>facilitated diffusion</strong> (polar/large molecules via protein channels — no energy required), <strong>active transport</strong> (against concentration gradient — requires ATP and carrier proteins). The hydrophobic core blocks polar molecules; proteins provide selective passage.</p><div class="eg">📌 Glucose enters cells via facilitated diffusion (GLUT proteins). Sodium is pumped out against its gradient by the Na⁺/K⁺ pump using active transport (ATP).</div></div>
+  <div id="panel-ribosome"  class="info-panel"><h4>🔴 Ribosomes</h4><p>Sites of <strong>protein synthesis</strong> (translation). Made of ribosomal RNA (rRNA) and proteins. Found free in cytoplasm (make proteins for use inside the cell) or on rough ER (make proteins for secretion or membranes). Prokaryotic ribosomes (70S) are smaller than eukaryotic (80S) — this difference is exploited by antibiotics like streptomycin, which bind 70S ribosomes and disrupt bacterial protein synthesis without affecting human cells.</p><div class="eg">📌 All cells have ribosomes — they are the only organelle found in both prokaryotes and eukaryotes.</div></div>
+  <div id="panel-vacuole"   class="info-panel"><h4>💧 Vacuole</h4><p>Plant cells have a large central vacuole filled with cell sap, maintaining <strong>turgor pressure</strong> — pushing the plasma membrane against the cell wall, keeping the cell rigid (turgid). When a plant wilts, the vacuoles lose water and turgor is lost. Animal cells have small, temporary vacuoles for transporting materials. Contractile vacuoles in some protists pump out excess water by active transport.</p><div class="eg">📌 Turgor pressure in plant cells is what keeps non-woody plants upright. This is why plants wilt when dehydrated — loss of turgor in cells causes the plant to droop.</div></div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.5rem">🎯 Quick Match — Organelle to Function</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem">Tap a term, then its matching function.</p>
+  <div class="match-grid" id="matchGrid1">
+    <div class="match-item" data-pair="a" data-side="term" onclick="matchClick(this,'m1')">Mitochondria</div>
+    <div class="match-item" data-pair="b" data-side="def"  onclick="matchClick(this,'m1')">Protein synthesis &amp; export via vesicles</div>
+    <div class="match-item" data-pair="c" data-side="term" onclick="matchClick(this,'m1')">Chloroplast</div>
+    <div class="match-item" data-pair="d" data-side="def"  onclick="matchClick(this,'m1')">Maintains turgor pressure in plant cells</div>
+    <div class="match-item" data-pair="a" data-side="def"  onclick="matchClick(this,'m1')">Aerobic respiration — produces ATP</div>
+    <div class="match-item" data-pair="e" data-side="term" onclick="matchClick(this,'m1')">Nucleus</div>
+    <div class="match-item" data-pair="b" data-side="term" onclick="matchClick(this,'m1')">Golgi Apparatus</div>
+    <div class="match-item" data-pair="c" data-side="def"  onclick="matchClick(this,'m1')">Photosynthesis — converts light to glucose</div>
+    <div class="match-item" data-pair="d" data-side="term" onclick="matchClick(this,'m1')">Vacuole</div>
+    <div class="match-item" data-pair="e" data-side="def"  onclick="matchClick(this,'m1')">Contains DNA; controls gene expression</div>
+  </div>
+  <div style="margin-top:.8rem">
+    <button class="btn btn-ghost" onclick="resetMatch('m1','mscore1')">↺ Reset</button>
+    <span id="mscore1" style="margin-left:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted)"></span>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Surface Area to Volume</h4>
+    <textarea id="ta-cell-reflect" placeholder="A cube with sides of 1 cm has a surface area of 6 cm² and a volume of 1 cm³ (ratio 6:1). A cube with sides of 2 cm has a surface area of 24 cm² and volume of 8 cm³ (ratio 3:1). What does this tell you about why cells must be small? And why do large, active cells like liver cells need so many mitochondria?"></textarea>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(0)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(2)">Next: Stem Cells →</button>
+  </div>
+</div>
+
+<!-- ══ SEC 2: STEM CELLS ══ -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow"><div class="eyebrow-num num-gold">3</div><span class="eyebrow-label">Phase 3 · Stem Cells &amp; Differentiation</span></div>
+  <h2>🌱 Stem Cells — From One to Many</h2>
+  <p class="lead">A <strong>stem cell</strong> is an undifferentiated cell capable of self-renewal and differentiation into specialised cell types. The VCE Study Design requires you to understand <strong>pluripotency</strong>, <strong>totipotency</strong>, stem cell types, and differentiation — including the role of <strong>embryonic stem cells</strong>.</p>
+
+  <div class="wonder-box mint-box">
+    <p>All ~37 trillion cells in your body descended from a single fertilised egg — a <strong>totipotent</strong> cell. As development progresses, cells become progressively more restricted in what they can become. Embryonic stem cells are <strong>pluripotent</strong> — they can become almost any cell type. This makes them powerful for medicine, but raises profound ethical questions about the status of early embryos.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin:.5rem 0 .8rem">🌱 Types of Stem Cells — Tap Each Node</h3>
+  <div class="stem-flow">
+    <div class="stem-node" onclick="showStem('totipotent')"><div class="sn-icon">🥚</div><div class="sn-label">Totipotent</div><div class="sn-sub">Days 1–4</div></div>
+    <div class="stem-arrow">→</div>
+    <div class="stem-node" onclick="showStem('pluripotent')"><div class="sn-icon">🌟</div><div class="sn-label">Pluripotent</div><div class="sn-sub">Embryonic SC</div></div>
+    <div class="stem-arrow">→</div>
+    <div class="stem-node" onclick="showStem('multipotent')"><div class="sn-icon">🔀</div><div class="sn-label">Multipotent</div><div class="sn-sub">Adult SC</div></div>
+    <div class="stem-arrow">→</div>
+    <div class="stem-node" onclick="showStem('unipotent')"><div class="sn-icon">🎯</div><div class="sn-label">Unipotent</div><div class="sn-sub">Progenitor cell</div></div>
+    <div class="stem-arrow">→</div>
+    <div class="stem-node" onclick="showStem('differentiated')"><div class="sn-icon">🫀</div><div class="sn-label">Differentiated</div><div class="sn-sub">Specialised cell</div></div>
+  </div>
+
+  <div id="stem-totipotent"    class="stem-detail"><h5>🥚 Totipotent Stem Cells</h5>Can differentiate into <strong>any cell type</strong> — including extra-embryonic tissues like the placenta. Found only in the very early embryo (zygote and cells up to the 8-cell morula stage, ~days 1–4). If you split a totipotent cell, each half can develop into a complete embryo — this is how identical twins form naturally. Totipotency is lost as the embryo develops past the morula stage.</div>
+  <div id="stem-pluripotent"   class="stem-detail"><h5>🌟 Pluripotent Stem Cells — Embryonic Stem Cells (ESCs)</h5>Can differentiate into <strong>almost any cell type</strong> — all three germ layers (ectoderm, mesoderm, endoderm) — but NOT extra-embryonic tissues like the placenta. Found in the <strong>inner cell mass (ICM) of the blastocyst</strong> (~day 5–6 after fertilisation). Embryonic stem cells (ESCs) are derived from the ICM of donated embryos (usually surplus IVF embryos). They are the most therapeutically valuable stem cells because of their broad differentiation potential. Ethical debate: harvesting ESCs destroys the embryo — is this acceptable? <div style="margin-top:.6rem;font-family:'DM Mono',monospace;font-size:.75rem;color:var(--muted)">📌 VCE: Know the difference between totipotent and pluripotent. Know where embryonic stem cells come from (blastocyst ICM) and why they are ethically controversial.</div></div>
+  <div id="stem-multipotent"   class="stem-detail"><h5>🔀 Multipotent Stem Cells — Adult Stem Cells</h5>Can differentiate into a <strong>limited range of cell types</strong> within a particular tissue. Examples: <strong>haematopoietic stem cells</strong> (bone marrow → all blood cell types), <strong>neural stem cells</strong> (brain), <strong>mesenchymal stem cells</strong> (connective tissue, bone, cartilage, fat). Less flexible than ESCs but ethically uncontroversial — no embryo is destroyed. Used clinically in bone marrow transplants.</div>
+  <div id="stem-unipotent"     class="stem-detail"><h5>🎯 Unipotent / Progenitor Cells</h5>Can only differentiate into <strong>one specific cell type</strong>. Examples: muscle satellite cells (→ muscle fibres only), skin progenitor cells (→ keratinocytes only). These are tissue-specific cells that replace worn-out cells. They have limited but important renewal capacity.</div>
+  <div id="stem-differentiated" class="stem-detail"><h5>🫀 Differentiated Cells</h5>Fully specialised — have switched on specific genes and switched off others. Examples: red blood cells (no nucleus, full of haemoglobin), neurons (long axons for signal transmission), hepatocytes (liver cells — packed with smooth ER for detox). <strong>Differentiation</strong> is the process of gene expression changes that transform an unspecialised cell into a specialised one — the DNA sequence doesn't change, but which genes are active does. This is epigenetics in action.</div>
+
+  <div class="divider"></div>
+  <div class="wonder-box coral-box">
+    <p><strong>Why are embryonic stem cells so important for medicine?</strong> Diseases like Parkinson's disease, type 1 diabetes, and spinal cord injuries involve the death or malfunction of specific cell types. ESCs could potentially be grown into replacement neurons, beta cells, or nerve fibres. However, there are significant challenges: immune rejection, risk of tumour formation (teratomas), and the ethical issue of embryo destruction. <strong>Induced pluripotent stem cells (iPSCs)</strong> — adult cells reprogrammed back to a pluripotent state — may offer an ethical alternative.</p>
+  </div>
+
+  <div class="predict-box">
+    <h4>✏️ Ethical Reasoning — Embryonic Stem Cells</h4>
+    <textarea id="ta-stem" placeholder="A scientist proposes using surplus IVF embryos (embryos that would otherwise be discarded) as a source of embryonic stem cells to develop treatments for Parkinson's disease. Write one argument FOR and one argument AGAINST this proposal. Try to use biological AND ethical reasoning in each argument."></textarea>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(3)">Next: Plant Systems →</button>
+  </div>
+</div>
+
+<!-- ══ SEC 3: PLANT SYSTEMS ══ -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">4</div><span class="eyebrow-label">Phase 4 · Plant Systems &amp; Water Regulation</span></div>
+  <h2>🌿 Vascular Plants — Transport &amp; Water Regulation</h2>
+  <p class="lead">Plants must move water, minerals, and sugars between roots, stems and leaves across large distances without a pump. They do this through two specialised vascular tissues: <strong>xylem</strong> (water and minerals up) and <strong>phloem</strong> (sugars in both directions). The VCE Study Design requires you to explain <strong>water regulation in vascular plants</strong>.</p>
+
+  <div class="accord-list">
+    <div class="accord-item" onclick="toggleAccord(this)">
+      <div class="accord-badge">1</div>
+      <div class="accord-content">
+        <div class="ac-title">Xylem — Water &amp; Mineral Transport (Upward)</div>
+        <div class="ac-body">Xylem consists of dead, hollow cells (vessels and tracheids) arranged end-to-end to form continuous tubes. Water moves from roots → stem → leaves by <strong>transpiration pull</strong>: as water evaporates from leaf surfaces (stomata), it creates tension that pulls water up the xylem. This works because of water's <strong>cohesion</strong> (hydrogen bonds between water molecules) and <strong>adhesion</strong> (water sticking to xylem walls). The continuous water column extends from soil to leaf. Dissolved minerals (nitrates, phosphates) are carried along.
+          <div class="ac-vcaa">VCE: The TACT mechanism — Transpiration, Adhesion, Cohesion, Tension — drives water movement in xylem. You need to be able to explain why water moves upward without a pump.</div>
+        </div>
+      </div>
+    </div>
+    <div class="accord-item" onclick="toggleAccord(this)">
+      <div class="accord-badge">2</div>
+      <div class="accord-content">
+        <div class="ac-title">Phloem — Sugar Transport (Both Directions)</div>
+        <div class="ac-body">Phloem consists of living sieve tube cells connected by sieve plates, with companion cells that provide energy. It transports sugars (mainly sucrose) produced by photosynthesis from <strong>source</strong> (leaves) to <strong>sink</strong> (roots, growing tips, fruit) by <strong>pressure flow</strong>. High sugar concentration at source → water moves in by osmosis → high pressure pushes fluid toward sink. Phloem can carry sugars both upward and downward (unlike xylem which is always upward).
+          <div class="ac-vcaa">VCE: Unlike xylem (dead cells, passive), phloem (living cells, active) requires energy. The distinction between xylem (water + minerals) and phloem (sugars) is frequently tested.</div>
+        </div>
+      </div>
+    </div>
+    <div class="accord-item" onclick="toggleAccord(this)">
+      <div class="accord-badge">3</div>
+      <div class="accord-content">
+        <div class="ac-title">Stomata &amp; Water Loss — Guard Cells</div>
+        <div class="ac-body">Stomata are pores on leaf surfaces (mainly underside) surrounded by two <strong>guard cells</strong>. When guard cells take up water (by osmosis) → they swell and bow outward → stoma opens → gas exchange (CO₂ in, O₂ out) and transpiration occur. When water is scarce → guard cells lose water → become flaccid → stoma closes → transpiration stops. The hormone <strong>abscisic acid (ABA)</strong> signals guard cells to close during drought. Factors affecting transpiration rate: temperature, humidity, wind speed, light intensity.
+          <div class="ac-vcaa">VCE: Be able to explain how guard cells control stomatal opening and closing using osmosis and turgor pressure. This links plant water regulation to the plasma membrane section.</div>
+        </div>
+      </div>
+    </div>
+    <div class="accord-item" onclick="toggleAccord(this)">
+      <div class="accord-badge">4</div>
+      <div class="accord-content">
+        <div class="ac-title">Plant Cells — Specialisation for Transport</div>
+        <div class="ac-body">Root hair cells — long extensions that dramatically increase surface area for water absorption. No chloroplasts (no light underground). Thin cell walls for easy water movement. Epidermal cells — thin, no chloroplasts, transparent to allow light through. Mesophyll cells — packed with chloroplasts for maximum photosynthesis. Palisade mesophyll (upper layer) — columnar, tightly packed. Spongy mesophyll (lower layer) — loosely arranged with large air spaces for gas exchange.
+          <div class="ac-vcaa">VCE: Each cell type has a structure specifically suited to its function. "Structure determines function" is a recurring exam theme.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Why Do Plants Wilt?</h4>
+    <textarea id="ta-plant" placeholder="On a hot day with no rain, a sunflower wilts. Using your knowledge of xylem, phloem, stomata, and turgor pressure, explain the chain of events that leads to wilting. Then explain what happens at the cellular level when the plant is watered and recovers. Use the terms: transpiration, osmosis, turgor pressure, guard cells, stomata."></textarea>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(4)">Next: Animal Systems →</button>
+  </div>
+</div>
+
+<!-- ══ SEC 4: ANIMAL SYSTEMS ══ -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">5</div><span class="eyebrow-label">Phase 5 · Animal Systems</span></div>
+  <h2>🫀 Animal Systems — Digestive, Endocrine &amp; Excretory</h2>
+  <p class="lead">Multicellular animals have specialised organ systems. The VCE Study Design covers the <strong>digestive</strong>, <strong>endocrine</strong>, and <strong>excretory</strong> systems and how cells within them are specialised for specific functions.</p>
+
+  <div class="chip-row">
+    <span class="chip coral"  onclick="revealChip('digestive')">Digestive System</span>
+    <span class="chip mint"   onclick="revealChip('endocrine')">Endocrine System</span>
+    <span class="chip gold"   onclick="revealChip('excretory')">Excretory System</span>
+    <span class="chip lav"    onclick="revealChip('specialise')">Cell Specialisation</span>
+    <span class="chip forest" onclick="revealChip('tissue')">Tissues &amp; Organs</span>
+  </div>
+
+  <div id="chip-digestive"  class="concept-reveal coral"><strong>Digestive System</strong> — Breaks down food into small molecules (nutrients) that can be absorbed into the bloodstream. Key organs: mouth (amylase in saliva breaks down starch), oesophagus (peristalsis), stomach (pepsin and HCl break down proteins; pH ~2), small intestine (lipase, amylase, peptidase from pancreas; bile from liver emulsifies fats; villi increase surface area for absorption), large intestine (water absorption; bacterial fermentation of fibre). Enzymes are specific to substrate: amylase → starch, lipase → lipids, pepsin/peptidase → proteins.</div>
+  <div id="chip-endocrine"  class="concept-reveal mint-border"><strong>Endocrine System</strong> — A chemical communication system using <strong>hormones</strong> — chemical messengers secreted by glands directly into the bloodstream and carried to target organs. Slower than nervous system but longer-lasting effects. Key glands: pituitary (master gland — controls others), thyroid (metabolic rate), adrenal (stress response — adrenalin), pancreas (blood glucose — insulin and glucagon), ovaries/testes (sex hormones). Hormones bind to specific receptors — only target cells respond.</div>
+  <div id="chip-excretory"  class="concept-reveal gold-border"><strong>Excretory System</strong> — Removes metabolic waste products from the body. The kidneys filter blood (producing urine containing urea, excess water, and salts), regulated by ADH (antidiuretic hormone). The liver converts toxic ammonia (from protein breakdown) to less toxic urea (urea cycle). Lungs excrete CO₂ (waste from cellular respiration). Skin excretes small amounts of water and salts in sweat. Urea = main nitrogen-containing waste in humans.</div>
+  <div id="chip-specialise" class="concept-reveal lav-border"><strong>Cell Specialisation</strong> — Different cell types have different structures because they express different subsets of their genes, producing different proteins. Examples: intestinal epithelial cells have microvilli (brush border) to maximise absorption surface area; goblet cells secrete mucus to protect the gut lining; smooth muscle cells in gut walls contract rhythmically (peristalsis) to move food; pancreatic beta cells have abundant rough ER and Golgi for insulin production and secretion.</div>
+  <div id="chip-tissue"     class="concept-reveal forest-border"><strong>Tissues, Organs and Systems</strong> — Organisation hierarchy: cell → tissue → organ → organ system → organism. A tissue is a group of similar cells performing a common function (e.g. muscle tissue, epithelial tissue, nervous tissue, connective tissue). An organ is made of multiple tissue types working together (e.g. the stomach has smooth muscle, epithelium, and connective tissue). An organ system is multiple organs coordinated for a larger function (e.g. digestive system).</div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.6rem">🫀 Comparing Digestive Enzymes</h3>
+  <table class="vocab-table">
+    <tr><th>Enzyme</th><th>Substrate</th><th>Product</th><th>Location</th><th>Optimal pH</th></tr>
+    <tr><td>Salivary amylase</td><td>Starch</td><td>Maltose</td><td>Mouth</td><td>~7 (neutral)</td></tr>
+    <tr><td>Pepsin</td><td>Proteins</td><td>Peptides</td><td>Stomach</td><td>~2 (acidic)</td></tr>
+    <tr><td>Pancreatic amylase</td><td>Starch</td><td>Maltose</td><td>Small intestine</td><td>~7–8</td></tr>
+    <tr><td>Lipase</td><td>Lipids (fats)</td><td>Fatty acids + glycerol</td><td>Small intestine</td><td>~7–8</td></tr>
+    <tr><td>Peptidase</td><td>Peptides</td><td>Amino acids</td><td>Small intestine</td><td>~7–8</td></tr>
+    <tr><td>Bile salts</td><td>Lipid droplets</td><td>Tiny fat droplets (emulsification)</td><td>Small intestine</td><td>—</td></tr>
+  </table>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Why Does pH Change Along the Gut?</h4>
+    <textarea id="ta-animal" placeholder="The stomach has a pH of about 2 (very acidic) while the small intestine has a pH of about 7-8 (neutral to slightly alkaline). Why is it important that the pH changes? What would happen to pancreatic enzymes if the stomach's acid wasn't neutralised before food entered the small intestine? What produces the alkali that neutralises stomach acid?"></textarea>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(3)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(5)">Next: The Liver →</button>
+  </div>
+</div>
+
+<!-- ══ SEC 5: LIVER ══ -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">6</div><span class="eyebrow-label">Phase 6 · The Liver</span></div>
+  <h2>🫁 The Liver — The Body's Chemical Processing Plant</h2>
+  <p class="lead">The liver (hepatic organ) is the most metabolically active organ in the body. A single <strong>hepatocyte</strong> (liver cell) performs over 500 known functions. The VCE Study Design requires you to understand the liver's role in maintaining homeostasis, particularly in <strong>blood glucose regulation</strong> and <strong>detoxification</strong>.</p>
+
+  <div class="wonder-box teal-box">
+    <p>Hepatocytes are packed with <strong>smooth endoplasmic reticulum</strong> (for detoxification), <strong>mitochondria</strong> (for high energy demands), <strong>Golgi apparatus</strong> (for protein secretion), and <strong>glycogen granules</strong> (for glucose storage). They are among the most structurally complex cells in the body — because they need to be.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin:.5rem 0 .8rem">🫁 Liver Functions — Tap Each Card</h3>
+  <div class="liver-cards">
+    <div class="liver-card" onclick="showLiver('glycogen')"><div class="lc-icon">🍯</div><div class="lc-title">Glycogen Storage</div><div class="lc-sub">Glucose regulation</div></div>
+    <div class="liver-card" onclick="showLiver('bile')"><div class="lc-icon">🟡</div><div class="lc-title">Bile Production</div><div class="lc-sub">Fat digestion</div></div>
+    <div class="liver-card" onclick="showLiver('detox')"><div class="lc-icon">🧹</div><div class="lc-title">Detoxification</div><div class="lc-sub">Alcohol, drugs, hormones</div></div>
+    <div class="liver-card" onclick="showLiver('urea')"><div class="lc-icon">♻️</div><div class="lc-title">Urea Production</div><div class="lc-sub">Nitrogen waste</div></div>
+    <div class="liver-card" onclick="showLiver('protein')"><div class="lc-icon">🩸</div><div class="lc-title">Plasma Proteins</div><div class="lc-sub">Albumin, clotting factors</div></div>
+    <div class="liver-card" onclick="showLiver('heat')"><div class="lc-icon">🌡️</div><div class="lc-title">Heat Production</div><div class="lc-sub">Metabolic furnace</div></div>
+  </div>
+
+  <div id="liver-glycogen" class="liver-panel"><h4>🍯 Glycogen Storage — Blood Glucose Buffering</h4><p>When blood glucose rises (e.g. after a meal), the liver removes excess glucose from the portal vein and converts it to <strong>glycogen</strong> (glucose polymer) by <strong>glycogenesis</strong>, under the influence of <strong>insulin</strong>. This lowers blood glucose back to normal. When blood glucose falls (e.g. between meals), the liver converts glycogen back to glucose by <strong>glycogenolysis</strong>, under the influence of <strong>glucagon</strong>. The liver can also make new glucose from non-carbohydrate sources (amino acids, glycerol) by <strong>gluconeogenesis</strong>.</p><div class="eg">📌 VCE: Glycogenesis (building glycogen) is stimulated by insulin. Glycogenolysis (breaking glycogen down) is stimulated by glucagon. The liver acts as a glucose buffer — smoothing out blood glucose spikes and troughs.</div></div>
+  <div id="liver-bile"     class="liver-panel"><h4>🟡 Bile Production</h4><p>Hepatocytes produce <strong>bile</strong> — a yellow-green alkaline liquid stored in the gall bladder and released into the small intestine when fats arrive. Bile contains <strong>bile salts</strong> (emulsify fats into tiny droplets, increasing surface area for lipase) and <strong>bile pigments</strong> (bilirubin — from breakdown of haemoglobin in old red blood cells). Bile is not an enzyme — it doesn't break chemical bonds — but it is essential for efficient fat digestion. Bile also neutralises the acid from the stomach, raising small intestine pH to ~7–8.</p><div class="eg">📌 Bile emulsification is like dishwashing liquid on a greasy pan — it breaks large fat globules into tiny droplets so lipase has more surface to work on.</div></div>
+  <div id="liver-detox"    class="liver-panel"><h4>🧹 Detoxification</h4><p>The liver is the primary site of detoxification. Its smooth ER contains enzymes that chemically modify toxic substances into less harmful, more water-soluble forms that can be excreted in bile or urine. Substances detoxified include: <strong>alcohol</strong> (ethanol → acetaldehyde → acetate; the acetaldehyde is what causes hangover and liver damage), <strong>drugs and medications</strong> (aspirin, paracetamol, antibiotics), <strong>hormones</strong> (used insulin and estrogen are broken down), and <strong>ammonia</strong> (converted to urea). Paracetamol overdose destroys liver cells because the toxic intermediate overwhelms the detox enzymes.</p><div class="eg">📌 This is why drug dosing matters — the liver's detox capacity is finite. And why alcohol + paracetamol combination is dangerous: both tax the same enzyme system.</div></div>
+  <div id="liver-urea"     class="liver-panel"><h4>♻️ Urea Production (Urea Cycle)</h4><p>When amino acids are broken down (deamination), the amino group (−NH₂) is removed and converted to <strong>ammonia (NH₃)</strong> — which is highly toxic. The liver converts ammonia to <strong>urea</strong> (less toxic, water-soluble) via the <strong>urea cycle</strong>. Urea is released into the bloodstream, transported to the kidneys, and excreted in urine. Without a functional liver, ammonia builds up in the blood → <strong>hepatic encephalopathy</strong> (confusion, coma). The kidneys excrete urea but cannot make it — that's the liver's job.</p><div class="eg">📌 VCE link: Urea is the main nitrogenous waste in humans. Liver makes it; kidneys excrete it. Both organs are essential for nitrogen waste management.</div></div>
+  <div id="liver-protein"  class="liver-panel"><h4>🩸 Plasma Protein Synthesis</h4><p>Hepatocytes synthesise most of the proteins found in blood plasma, including: <strong>albumin</strong> (maintains blood osmotic pressure — prevents water leaking out of blood vessels), <strong>fibrinogen and prothrombin</strong> (clotting factors — essential for blood clotting), <strong>globulins</strong> (immune function, transport proteins). Liver failure leads to oedema (fluid accumulation in tissues) because albumin levels drop and water leaks out of blood vessels. It also leads to uncontrolled bleeding because clotting factors are not produced.</p><div class="eg">📌 Vitamin K (fat-soluble) is needed to make some clotting factors. Since fat absorption requires bile, liver disease → reduced bile → poor fat absorption → vitamin K deficiency → bleeding problems. Multiple system effects!</div></div>
+  <div id="liver-heat"     class="liver-panel"><h4>🌡️ Heat Production</h4><p>The liver is the body's largest internal heat-generating organ. Its intense metabolic activity — performing hundreds of chemical reactions simultaneously — releases significant heat as a by-product. This heat is distributed via blood flow throughout the body. The liver contributes substantially to maintaining core body temperature (37°C). This is why when you shiver (trying to generate heat), the liver also ramps up its metabolism. Liver temperature itself can be ~0.5°C higher than core blood temperature.</p><div class="eg">📌 This is why hypothermia can be treated in part by warming the blood — the liver continues to generate heat if metabolically active.</div></div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Liver Disease Consequences</h4>
+    <textarea id="ta-liver" placeholder="A patient has severe liver disease and can no longer produce bile, make urea, or store glycogen. Explain THREE separate problems this patient would experience — one from each lost function — and link each problem back to the underlying biology. Be as specific as you can."></textarea>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(4)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(6)">Next: Homeostasis →</button>
+  </div>
+</div>
+
+<!-- ══ SEC 6: HOMEOSTASIS ══ -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow"><div class="eyebrow-num num-forest">7</div><span class="eyebrow-label">Phase 7 · Homeostasis &amp; Feedback Loops</span></div>
+  <h2>⚖️ Homeostasis — Keeping the Internal Environment Stable</h2>
+  <p class="lead"><strong>Homeostasis</strong> is the maintenance of a stable internal environment despite changes in external conditions. The VCE Study Design requires you to understand <strong>stimulus-response models</strong>, <strong>negative feedback loops</strong>, and the homeostatic regulation of body temperature, blood glucose, and water balance.</p>
+
+  <div class="wonder-box gold-box">
+    <p>Your body temperature is kept at ~37°C even when it's 0°C outside or 40°C. Your blood glucose stays between ~4–8 mmol/L regardless of whether you just ate a full meal or haven't eaten for 8 hours. Your blood pressure, pH, and osmolarity are all tightly regulated. This continuous, automatic self-correction is homeostasis — and it requires constant sensing, communicating, and responding.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin:.5rem 0 .8rem">🔄 The Stimulus-Response Model</h3>
+  <div class="loop-wrap">
+    <div class="loop-row">
+      <div class="loop-box stimulus">Stimulus<div class="loop-label">Change in internal environment</div></div>
+      <div class="loop-arrow">→</div>
+      <div class="loop-box receptor">Receptor<div class="loop-label">Detects the change</div></div>
+      <div class="loop-arrow">→</div>
+      <div class="loop-box control">Control Centre<div class="loop-label">Processes signal, sends instructions</div></div>
+    </div>
+    <div class="loop-row" style="margin-top:.5rem">
+      <div class="loop-box response">Response<div class="loop-label">Returns variable to set point → reduces original stimulus</div></div>
+      <div class="loop-arrow">←</div>
+      <div class="loop-box effector">Effector<div class="loop-label">Carries out the corrective action</div></div>
+    </div>
+    <p style="font-size:.78rem;color:var(--muted);margin-top:.8rem;font-family:'DM Mono',monospace;text-align:center">⟳ NEGATIVE FEEDBACK — the response opposes and corrects the original change</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin:1rem 0 .6rem">🌡️ Temperature Regulation — Thermoregulation</h3>
+  <div class="accord-list">
+    <div class="accord-item" onclick="toggleAccord(this)">
+      <div class="accord-badge">↑</div>
+      <div class="accord-content">
+        <div class="ac-title">Too Hot — Cooling Responses</div>
+        <div class="ac-body"><strong>Stimulus:</strong> Body temperature rises above 37°C → <strong>Receptor:</strong> Thermoreceptors in skin and hypothalamus detect increase → <strong>Control Centre:</strong> Hypothalamus (thermostat of the body) → <strong>Effectors:</strong>
+          <br>• Sweat glands increase sweat production → evaporation cools skin
+          <br>• Skin blood vessels <strong>dilate</strong> (vasodilation) → more blood near skin surface → more heat lost by radiation
+          <br>• Reduced metabolic rate → less internal heat generated
+          <br>• Behavioural: seek shade, remove clothing
+          <br><strong>Result:</strong> Temperature drops back to 37°C → negative feedback reduces further response
+          <div class="ac-vcaa">VCE: Always include all 5 components: stimulus, receptor, control centre, effector, response. Vasodilation = arterioles widen near skin. Do NOT say "blood goes to skin" — say "blood vessels near the skin dilate, increasing blood flow to the skin surface."</div>
+        </div>
+      </div>
+    </div>
+    <div class="accord-item" onclick="toggleAccord(this)">
+      <div class="accord-badge">↓</div>
+      <div class="accord-content">
+        <div class="ac-title">Too Cold — Warming Responses</div>
+        <div class="ac-body"><strong>Stimulus:</strong> Body temperature falls below 37°C → <strong>Receptor:</strong> Thermoreceptors detect decrease → <strong>Control Centre:</strong> Hypothalamus → <strong>Effectors:</strong>
+          <br>• Skeletal muscles <strong>shiver</strong> — rapid, involuntary contractions generate heat
+          <br>• Skin blood vessels <strong>constrict</strong> (vasoconstriction) → less blood near skin → less heat lost
+          <br>• Increased metabolic rate → more internal heat
+          <br>• Arrector pili muscles contract → goosebumps (raise hair for insulation — vestigial in humans)
+          <br>• Behavioural: put on clothes, move to warm area
+          <br><strong>Result:</strong> Temperature rises back to 37°C → feedback reduces shivering etc.
+          <div class="ac-vcaa">VCE: Vasoconstriction = arterioles near skin narrow, diverting blood deeper. This reduces heat loss by radiation. Shivering generates heat through ATP hydrolysis in muscle.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Apply It — A Marathon Runner</h4>
+    <textarea id="ta-homeo" placeholder="During a marathon, a runner's core body temperature rises to 39°C due to the heat produced by exercising muscles. Using the stimulus-response model, describe all the homeostatic responses their body would activate to return their temperature to 37°C. Include: stimulus, receptor, control centre, effectors, and the corrective responses. Name at least 3 specific responses."></textarea>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(5)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(7)">Next: Glucose Balance →</button>
+  </div>
+</div>
+
+<!-- ══ SEC 7: GLUCOSE BALANCE ══ -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">8</div><span class="eyebrow-label">Phase 8 · Blood Glucose Regulation</span></div>
+  <h2>🍬 Blood Glucose Regulation</h2>
+  <p class="lead">Blood glucose must stay between approximately <strong>4–8 mmol/L</strong>. Too low (hypoglycaemia) → brain and organs starve. Too high (hyperglycaemia) → damages blood vessels, nerves, and organs. The pancreas regulates blood glucose using two antagonistic hormones: <strong>insulin</strong> and <strong>glucagon</strong>.</p>
+
+  <div class="glucose-sim">
+    <h3>🔬 Interactive Blood Glucose Simulator</h3>
+    <div class="hint">Tap a scenario to see where blood glucose lands and what the body does</div>
+    <div class="glucose-bar-wrap">
+      <div class="glucose-bar">
+        <div class="glucose-marker" id="gMarker" style="left:50%">
+          <div class="glabel" id="gLabel">Normal</div>
+          <div class="gpin"></div>
+        </div>
+      </div>
+      <div class="glucose-scale">
+        <span>LOW<br>(&lt;4)</span><span>4 mmol/L</span><span>Normal Range<br>4–8 mmol/L</span><span>8 mmol/L</span><span>HIGH<br>(&gt;8)</span>
+      </div>
+    </div>
+    <div class="glucose-btns">
+      <button class="g-tag" style="background:#ffe0e0;color:#900;border-color:#f88" onclick="setGlucose(15,'After a large carbohydrate meal','HIGH — Blood glucose rises. Pancreatic beta cells detect high glucose and secrete INSULIN into blood. Insulin signals liver to convert glucose → glycogen (glycogenesis). Insulin signals muscle and fat cells to take up glucose. Blood glucose falls back toward 4–8 mmol/L. ✅ Negative feedback restores normal range.')">After a big meal 🍝</button>
+      <button class="g-tag" style="background:#fff0cc;color:#806;border-color:#fc8" onclick="setGlucose(6,'Normal resting blood glucose','NORMAL RANGE — Approx 5–6 mmol/L. Both insulin and glucagon secretion are low and balanced. Cells receive steady glucose supply. Liver maintains glycogen stores. No corrective action needed.')">Resting normal ✅</button>
+      <button class="g-tag" style="background:#ffe0e0;color:#700;border-color:#f66" onclick="setGlucose(3,'After 10 hours fasting','LOW — Blood glucose falls. Pancreatic alpha cells detect low glucose and secrete GLUCAGON. Glucagon signals liver to break down glycogen → glucose (glycogenolysis). Liver also makes new glucose from amino acids (gluconeogenesis). Blood glucose rises back toward normal. ✅ Negative feedback restores normal range.')">10-hour fast 😴</button>
+      <button class="g-tag" style="background:#ffe0e0;color:#900;border-color:#f88" onclick="setGlucose(18,'Type 1 Diabetes — no insulin produced','TYPE 1 DIABETES — Pancreatic beta cells destroyed by immune system. No insulin produced. Blood glucose stays HIGH even after meals. Cells cannot take up glucose despite high levels. Body breaks down fat → ketone bodies → ketoacidosis. Treatment: external insulin injections to replace missing hormone.')">Type 1 Diabetes ⚠️</button>
+      <button class="g-tag" style="background:#fff0cc;color:#806;border-color:#fc8" onclick="setGlucose(2,'Severe hypoglycaemia','DANGEROUSLY LOW — Below 2 mmol/L. Brain is almost entirely dependent on glucose — cannot use fat for fuel. Symptoms: confusion, seizures, unconsciousness. This is a medical emergency. Treatment: oral glucose or intravenous dextrose. Glucagon injection (EpiPen equivalent for diabetics). Can be fatal if untreated.')">Severe hypo 🚨</button>
+    </div>
+    <div class="glucose-result" id="gResult" style="background:#f5f7fa;border:2px solid var(--border);border-radius:10px;">Select a scenario above to see the blood glucose level and body response.</div>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin:.5rem 0 .8rem">🔄 Insulin vs Glucagon — The Antagonistic Pair</h3>
+  <table class="vocab-table">
+    <tr><th>Feature</th><th>Insulin</th><th>Glucagon</th></tr>
+    <tr><td>Produced by</td><td>Beta cells of islets of Langerhans (pancreas)</td><td>Alpha cells of islets of Langerhans (pancreas)</td></tr>
+    <tr><td>Released when</td><td>Blood glucose is HIGH (after meals)</td><td>Blood glucose is LOW (fasting, exercise)</td></tr>
+    <tr><td>Effect on liver</td><td>Glycogenesis (glucose → glycogen storage)</td><td>Glycogenolysis (glycogen → glucose release)</td></tr>
+    <tr><td>Effect on cells</td><td>Increases glucose uptake by cells</td><td>Stimulates gluconeogenesis (making glucose)</td></tr>
+    <tr><td>Net effect on blood glucose</td><td>LOWERS blood glucose</td><td>RAISES blood glucose</td></tr>
+    <tr><td>Failure leads to</td><td>Hyperglycaemia (Type 1 = no insulin produced)</td><td>Severe hypoglycaemia</td></tr>
+  </table>
+
+  <div class="wonder-box coral-box">
+    <p><strong>Type 1 vs Type 2 Diabetes:</strong> Type 1 = autoimmune destruction of beta cells → no insulin produced → requires insulin injections. Type 2 = cells become resistant to insulin → beta cells work harder → eventually fail → insulin is produced but doesn't work effectively. Type 2 is linked to obesity, inactivity, and diet — and is largely preventable/reversible in early stages.</p>
+  </div>
+
+  <div class="predict-box">
+    <h4>✏️ Apply Your Knowledge — Hormones After Exercise</h4>
+    <textarea id="ta-glucose" placeholder="During a 45-minute run, your muscles use glucose rapidly and blood glucose starts to fall. Explain step by step how your body prevents blood glucose from dropping to a dangerously low level. Name the hormone involved, where it is produced, its target organ(s), and exactly what those organs do in response. Then explain what happens to blood glucose AFTER the run when you eat a meal."></textarea>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(6)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(8)">Next: Water Balance →</button>
+  </div>
+</div>
+
+<!-- ══ SEC 8: WATER BALANCE ══ -->
+<div class="section" id="sec-8">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">9</div><span class="eyebrow-label">Phase 9 · Water Balance Regulation</span></div>
+  <h2>💧 Water Balance — Osmoregulation</h2>
+  <p class="lead">The body must maintain the <strong>water content and solute concentration of blood</strong> within tight limits. This is <strong>osmoregulation</strong>. Too much water dilutes blood (low osmolarity); too little concentrates it (high osmolarity). The kidneys are the primary osmoregulatory organ, controlled by the hormone <strong>ADH (antidiuretic hormone)</strong> from the pituitary gland.</p>
+
+  <div class="wb-tabs">
+    <div class="wb-tab active" onclick="showWB('dehydrated',this)">Dehydrated 🏜️</div>
+    <div class="wb-tab"        onclick="showWB('overhydrated',this)">Overhydrated 💦</div>
+    <div class="wb-tab"        onclick="showWB('adh',this)">How ADH Works 💉</div>
+    <div class="wb-tab"        onclick="showWB('kidney',this)">The Kidney 🫘</div>
+  </div>
+
+  <div id="wb-dehydrated" class="wb-panel show">
+    <div class="wonder-box teal-box" style="margin-bottom:1rem">
+      <p><strong>Scenario: You haven't drunk water for 4 hours and you've been exercising.</strong></p>
+    </div>
+    <div class="loop-wrap">
+      <div class="loop-row">
+        <div class="loop-box stimulus">Stimulus<div class="loop-label">Blood osmolarity rises (too concentrated)</div></div>
+        <div class="loop-arrow">→</div>
+        <div class="loop-box receptor">Receptor<div class="loop-label">Osmoreceptors in hypothalamus detect high blood osmolarity</div></div>
+      </div>
+      <div class="loop-row" style="margin:.5rem 0">
+        <div class="loop-box control">Control Centre<div class="loop-label">Hypothalamus signals posterior pituitary</div></div>
+        <div class="loop-arrow">→</div>
+        <div class="loop-box effector">Effector<div class="loop-label">Posterior pituitary releases MORE ADH into blood</div></div>
+      </div>
+      <div class="loop-row">
+        <div class="loop-box response">Response<div class="loop-label">Kidneys reabsorb MORE water → concentrated, small volume urine → blood osmolarity returns to normal. You feel THIRSTY.</div></div>
+      </div>
+    </div>
+    <p style="font-size:.85rem;color:var(--ink);line-height:1.7;margin-top:.8rem">ADH makes the collecting ducts and distal tubules of the kidney <strong>more permeable to water</strong>, so more water is reabsorbed back into the bloodstream rather than lost in urine. Result: small volume of dark, concentrated urine.</p>
+  </div>
+
+  <div id="wb-overhydrated" class="wb-panel">
+    <div class="wonder-box mint-box" style="margin-bottom:1rem">
+      <p><strong>Scenario: You've just drunk 2 litres of water quickly.</strong></p>
+    </div>
+    <div class="loop-wrap">
+      <div class="loop-row">
+        <div class="loop-box stimulus">Stimulus<div class="loop-label">Blood osmolarity falls (too dilute)</div></div>
+        <div class="loop-arrow">→</div>
+        <div class="loop-box receptor">Receptor<div class="loop-label">Osmoreceptors in hypothalamus detect low blood osmolarity</div></div>
+      </div>
+      <div class="loop-row" style="margin:.5rem 0">
+        <div class="loop-box control">Control Centre<div class="loop-label">Hypothalamus signals posterior pituitary</div></div>
+        <div class="loop-arrow">→</div>
+        <div class="loop-box effector">Effector<div class="loop-label">Posterior pituitary releases LESS ADH into blood</div></div>
+      </div>
+      <div class="loop-row">
+        <div class="loop-box response">Response<div class="loop-label">Kidneys reabsorb LESS water → large volume of dilute urine is produced → blood osmolarity rises back to normal.</div></div>
+      </div>
+    </div>
+    <p style="font-size:.85rem;color:var(--ink);line-height:1.7;margin-top:.8rem">Less ADH → kidney tubules less permeable to water → water stays in the filtrate and is excreted as urine. Result: large volume of pale, dilute urine. This is why you urinate frequently after drinking a lot of fluid.</p>
+  </div>
+
+  <div id="wb-adh" class="wb-panel">
+    <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.6rem">💉 ADH — Antidiuretic Hormone</h3>
+    <table class="vocab-table">
+      <tr><th>Feature</th><th>Details</th></tr>
+      <tr><td>Full name</td><td>Antidiuretic hormone (ADH), also called vasopressin</td></tr>
+      <tr><td>Produced by</td><td>Hypothalamus (then stored and released by posterior pituitary gland)</td></tr>
+      <tr><td>Released when</td><td>Blood osmolarity is HIGH (dehydrated) or blood pressure drops</td></tr>
+      <tr><td>Target organ</td><td>Kidneys (collecting ducts and distal convoluted tubules)</td></tr>
+      <tr><td>Mechanism</td><td>Inserts water channels (aquaporins) into kidney tubule walls → makes them permeable to water</td></tr>
+      <tr><td>Effect</td><td>More water reabsorbed from filtrate → smaller volume, more concentrated urine</td></tr>
+      <tr><td>High ADH levels</td><td>When dehydrated → concentrated urine (dark yellow)</td></tr>
+      <tr><td>Low ADH levels</td><td>When overhydrated → dilute urine (pale/clear)</td></tr>
+      <tr><td>Diabetes insipidus</td><td>No ADH produced → uncontrolled water loss → litres of dilute urine daily</td></tr>
+    </table>
+    <div class="wonder-box lav-box" style="margin-top:1rem">
+      <p>Alcohol <strong>suppresses ADH release</strong> — which is why drinking alcohol causes you to urinate more frequently and become dehydrated. The hangover headache is partly due to dehydration of brain tissue. Caffeine has a similar but milder diuretic effect.</p>
+    </div>
+  </div>
+
+  <div id="wb-kidney" class="wb-panel">
+    <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.6rem">🫘 The Kidney — Key Structures</h3>
+    <table class="vocab-table">
+      <tr><th>Structure</th><th>Function</th></tr>
+      <tr><td>Glomerulus</td><td>Ball of capillaries where blood is filtered under pressure — small molecules pass through (water, glucose, urea, ions)</td></tr>
+      <tr><td>Bowman's capsule</td><td>Cup surrounding glomerulus — collects the filtrate</td></tr>
+      <tr><td>Proximal convoluted tubule</td><td>Reabsorbs most glucose, amino acids, water, and useful ions back into blood (active transport)</td></tr>
+      <tr><td>Loop of Henle</td><td>Creates an osmotic gradient in kidney tissue that drives water reabsorption further along</td></tr>
+      <tr><td>Distal convoluted tubule</td><td>Fine-tunes ion balance; ADH acts here</td></tr>
+      <tr><td>Collecting duct</td><td>Final water reabsorption — highly regulated by ADH; determines final urine concentration</td></tr>
+      <tr><td>Ureter</td><td>Carries urine from kidney to bladder</td></tr>
+    </table>
+    <p style="font-size:.85rem;color:#3a4a5a;line-height:1.7;margin-top:.5rem"><strong>Key principle:</strong> The kidney filters ~180 litres of blood plasma per day but produces only ~1.5 litres of urine. 99% of the filtrate is reabsorbed! This is why kidney failure is so serious — waste products accumulate and fluid balance is lost.</p>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Malfunctions in Water Balance</h4>
+    <textarea id="ta-water" placeholder="Explain what would happen to a person who developed 'diabetes insipidus' — a rare condition where the posterior pituitary stops producing ADH. What would their urine look like? What would happen to their blood osmolarity? What symptoms would they experience? How does this differ from Type 1 diabetes mellitus (which involves insulin, not ADH)?"></textarea>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(7)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(9)">Next: Quiz →</button>
+  </div>
+</div>
+
+<!-- ══ SEC 9: QUIZ ══ -->
+<div class="section" id="sec-9">
+  <div class="section-eyebrow"><div class="eyebrow-num num-forest">10</div><span class="eyebrow-label">Phase 10 · VCE-Style Review Quiz</span></div>
+  <h2>📝 VCE-Style Questions — Unit 1 Review</h2>
+  <p class="lead">18 questions covering everything in today's session. Written in VCE Biology exam style — with instant feedback.</p>
+  <div id="quiz-container"></div>
+  <div id="score-panel" class="score-panel" style="display:none">
+    <h3>Quiz Complete! 🎉</h3>
+    <div class="score-num" id="score-display">0/18</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-gold" onclick="retakeQuiz()" style="margin-top:1rem">↺ Retake Quiz</button>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(8)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(10)">📤 Submit My Work →</button>
+  </div>
+</div>
+
+<!-- ══ SEC 10: SUBMIT ══ -->
+<div class="section" id="sec-10">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">11</div><span class="eyebrow-label">Your Completed Work</span></div>
+  <h2>📤 Ready to Submit</h2>
+  <p class="lead">Great work, Lakshanya! Here's a summary of everything you covered today.</p>
+
+  <div class="summary-section" style="background:var(--forest);color:white;border-color:var(--forest)">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem">STUDENT</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem" id="summaryName">—</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem">LESSON</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem">VCE Biology Unit 1 · How Do Organisms Regulate Their Functions? 🔬</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6" id="summaryDate"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section"><h3>📝 Quiz Score</h3><div class="summary-answer" id="sum-quiz"></div></div>
+  <div class="summary-section">
+    <h3>✏️ All Written Responses</h3>
+    <div class="sum-label">Opening — What Do You Remember?</div><div class="summary-answer" id="sum-wonder"></div>
+    <div class="sum-label">Cell Structure — Surface Area to Volume Reflection</div><div class="summary-answer" id="sum-cell"></div>
+    <div class="sum-label">Stem Cells — Ethical Reasoning</div><div class="summary-answer" id="sum-stem"></div>
+    <div class="sum-label">Plant Systems — Why Plants Wilt</div><div class="summary-answer" id="sum-plant"></div>
+    <div class="sum-label">Animal Systems — pH Along the Gut</div><div class="summary-answer" id="sum-animal"></div>
+    <div class="sum-label">Liver — Disease Consequences</div><div class="summary-answer" id="sum-liver"></div>
+    <div class="sum-label">Homeostasis — Marathon Runner Response</div><div class="summary-answer" id="sum-homeo"></div>
+    <div class="sum-label">Blood Glucose — Hormones After Exercise</div><div class="summary-answer" id="sum-glucose"></div>
+    <div class="sum-label">Water Balance — Diabetes Insipidus</div><div class="summary-answer" id="sum-water"></div>
+  </div>
+
+  <div class="congrats-panel">
+    <h2>🔬 Unit 1 Review Complete!</h2>
+    <p>You've worked through every major topic Lakshanya requested — cells, stem cells, plant &amp; animal systems, the liver, homeostasis, blood glucose, and water balance. Keep building on these concepts!</p>
+    <p style="font-size:.85rem;opacity:.75">VCE tip: For homeostasis questions, always use ALL five components of the stimulus-response model. Name the specific hormone, where it's made, and exactly what target organ does.</p>
+    <div class="summary-chips">
+      <span class="summary-chip">Cell Organelles ✓</span>
+      <span class="summary-chip">Prokaryote vs Eukaryote ✓</span>
+      <span class="summary-chip">Stem Cells ✓</span>
+      <span class="summary-chip">Embryonic SC ✓</span>
+      <span class="summary-chip">Pluripotency ✓</span>
+      <span class="summary-chip">Xylem &amp; Phloem ✓</span>
+      <span class="summary-chip">Stomata ✓</span>
+      <span class="summary-chip">Digestive System ✓</span>
+      <span class="summary-chip">The Liver ✓</span>
+      <span class="summary-chip">Homeostasis ✓</span>
+      <span class="summary-chip">Insulin &amp; Glucagon ✓</span>
+      <span class="summary-chip">ADH &amp; Kidneys ✓</span>
+    </div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.6rem">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2">
+      <strong>📋 Copy</strong> — Copies all your answers. Paste into Google Classroom.<br>
+      <strong>📧 Email</strong> — Opens email pre-filled. Add teacher address and send.<br>
+      <strong>🖨️ Print / PDF</strong> — Save as PDF for your records.
+    </p>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(9)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(0)">↺ Start Over</button>
+  </div>
+</div>
+
+</div><!-- /sheet -->
+
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+
+<script>
+'use strict';
+
+// ══ NAVIGATION ══
+const TOTAL = 11;
+let cur = 0;
+function goTo(n) {
+  document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===n));
+  document.querySelectorAll('.prog-step').forEach((s,i) => {
+    s.classList.remove('active','done');
+    if(i===n) s.classList.add('active');
+    if(i<n)   s.classList.add('done');
+  });
+  cur = n;
+  if(n===10) buildSummary();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ══ CHIP REVEALS ══
+function revealChip(id) {
+  const all = document.querySelectorAll('.concept-reveal');
+  const t   = document.getElementById('chip-'+id);
+  const was = t && t.classList.contains('show');
+  all.forEach(c=>c.classList.remove('show'));
+  if(!was && t) t.classList.add('show');
+}
+
+// ══ INFO CARDS ══
+function showCard(id) {
+  const all = document.querySelectorAll('.info-panel');
+  const allC= document.querySelectorAll('.info-card');
+  const t   = document.getElementById('panel-'+id);
+  const was = t && t.classList.contains('show');
+  all.forEach(p=>p.classList.remove('show'));
+  allC.forEach(c=>c.classList.remove('active'));
+  if(!was && t){ t.classList.add('show'); event.currentTarget.classList.add('active'); }
+}
+
+// ══ MATCHING ══
+const matchState = {};
+function matchClick(el, gid) {
+  if(!matchState[gid]) matchState[gid]={sel:null,score:0};
+  const st = matchState[gid];
+  if(el.classList.contains('matched')) return;
+  if(!st.sel) {
+    el.classList.add('selected'); st.sel=el;
+  } else if(st.sel===el) {
+    el.classList.remove('selected'); st.sel=null;
+  } else {
+    const pA=st.sel.dataset.pair, pB=el.dataset.pair;
+    const sA=st.sel.dataset.side, sB=el.dataset.side;
+    if(pA===pB && sA!==sB) {
+      st.sel.classList.remove('selected'); st.sel.classList.add('matched');
+      el.classList.add('matched'); st.score++;
+      const sc=document.getElementById('mscore'+gid.slice(1));
+      if(sc) sc.textContent=st.score+'/5 matched';
+    } else {
+      const a=st.sel,b=el;
+      a.classList.remove('selected'); a.classList.add('wrong'); b.classList.add('wrong');
+      setTimeout(()=>{ a.classList.remove('wrong'); b.classList.remove('wrong'); },650);
+    }
+    st.sel=null;
+  }
+}
+function resetMatch(gid,scoreId){
+  matchState[gid]={sel:null,score:0};
+  document.querySelectorAll('#'+gid+' .match-item').forEach(el=>el.classList.remove('selected','matched','wrong'));
+  const s=document.getElementById(scoreId); if(s) s.textContent='';
+}
+
+// ══ ACCORDION ══
+function toggleAccord(el) {
+  const was = el.classList.contains('open');
+  el.closest('.accord-list').querySelectorAll('.accord-item').forEach(s=>s.classList.remove('open'));
+  if(!was) el.classList.add('open');
+}
+
+// ══ STEM CELLS ══
+function showStem(id) {
+  const all = document.querySelectorAll('.stem-detail');
+  const allN= document.querySelectorAll('.stem-node');
+  const t   = document.getElementById('stem-'+id);
+  const was = t && t.classList.contains('show');
+  all.forEach(p=>p.classList.remove('show'));
+  allN.forEach(c=>c.classList.remove('active'));
+  if(!was && t){ t.classList.add('show'); event.currentTarget.classList.add('active'); }
+}
+
+// ══ LIVER CARDS ══
+function showLiver(id) {
+  const all = document.querySelectorAll('.liver-panel');
+  const allC= document.querySelectorAll('.liver-card');
+  const t   = document.getElementById('liver-'+id);
+  const was = t && t.classList.contains('show');
+  all.forEach(p=>p.classList.remove('show'));
+  allC.forEach(c=>c.classList.remove('active'));
+  if(!was && t){ t.classList.add('show'); event.currentTarget.classList.add('active'); }
+}
+
+// ══ WATER BALANCE TABS ══
+function showWB(id, tab) {
+  document.querySelectorAll('.wb-panel').forEach(p=>p.classList.remove('show'));
+  document.querySelectorAll('.wb-tab').forEach(t=>t.classList.remove('active'));
+  const p = document.getElementById('wb-'+id);
+  if(p) p.classList.add('show');
+  tab.classList.add('active');
+}
+
+// ══ GLUCOSE SIMULATOR ══
+function setGlucose(val, name, desc) {
+  const min=0, max=20;
+  const pct = ((val-min)/(max-min))*100;
+  document.getElementById('gMarker').style.left = Math.min(95,Math.max(5,pct))+'%';
+  document.getElementById('gLabel').textContent = val+' mmol/L';
+  let bg='#f5f7fa', border='var(--border)';
+  if(val<4){ bg='#ffe0e0'; border='#f88'; }
+  else if(val<=8){ bg='var(--mint-pale)'; border='var(--mint)'; }
+  else { bg='#ffe0e0'; border='#f88'; }
+  const r = document.getElementById('gResult');
+  r.style.background=bg; r.style.borderColor=border;
+  r.innerHTML='<strong>'+name+'</strong><br>'+desc;
+}
+
+// ══ QUIZ ══
+const quizData = [
+  { q:'Which of the following is a feature of PROKARYOTIC cells only?',
+    opts:['Ribosomes','Cell membrane','DNA in the cytoplasm (no membrane-bound nucleus)','Ability to reproduce'],
+    ans:2, fb:'Prokaryotic cells have their DNA in the cytoplasm in a region called the nucleoid — they have no membrane-bound nucleus. All cells (prokaryote and eukaryote) have ribosomes, cell membranes, and can reproduce.' },
+  { q:'A cell\'s surface area to volume ratio decreases as the cell grows larger. What is the main biological consequence of this?',
+    opts:['The cell can produce more ATP per unit volume','The cell cannot exchange materials (oxygen, nutrients, waste) fast enough across its membrane to sustain its volume','The cell will divide more rapidly','The cell becomes more efficient at protein synthesis'],
+    ans:1, fb:'As a cell grows, its volume increases faster than its surface area. A low SA:V ratio means the plasma membrane surface is insufficient to supply nutrients and remove waste from the whole cell volume — limiting cell size. This is why cells are small and why large cells need internal compartments (organelles) with their own membranes.' },
+  { q:'What is the correct order of the protein secretory pathway in a eukaryotic cell?',
+    opts:['Ribosome → Golgi → Rough ER → vesicle','Ribosome → Rough ER → Golgi → vesicle → secretion','Rough ER → ribosome → vesicle → Golgi','Golgi → Ribosome → Rough ER → vesicle'],
+    ans:1, fb:'Proteins destined for secretion are made on ribosomes attached to the rough ER, enter the ER lumen, are transported to the Golgi apparatus for modification and packaging, then exit in secretory vesicles that fuse with the plasma membrane to release the protein. This is how insulin, digestive enzymes, and antibodies are secreted.' },
+  { q:'Embryonic stem cells are described as "pluripotent." What does this mean?',
+    opts:['They can only become one specific cell type','They can become any cell type, including placenta','They can become almost any cell type in the body (all three germ layers), but not extra-embryonic tissues like placenta','They can only divide a limited number of times'],
+    ans:2, fb:'Pluripotent = can give rise to almost all cell types from all three embryonic germ layers (ectoderm, mesoderm, endoderm), but NOT extra-embryonic tissues like the placenta. Totipotent cells (early embryo) can produce ALL cell types including placenta. Embryonic stem cells from the inner cell mass of the blastocyst are pluripotent.' },
+  { q:'Water moves up a tall tree from roots to leaves by "transpiration pull." Which property of water makes this possible?',
+    opts:['Water\'s high heat capacity','Water\'s cohesion (hydrogen bonds between water molecules) creating an unbroken column','Water\'s low density as a liquid','Water\'s role as a universal solvent'],
+    ans:1, fb:'Transpiration pull works because water molecules cling to each other via hydrogen bonds (cohesion) — when a water molecule evaporates from a leaf, it pulls the molecule below it, which pulls the one below that, all the way down to the roots. Adhesion to xylem walls also helps. This creates a continuous water column under tension.' },
+  { q:'Which of the following correctly describes the role of XYLEM in vascular plants?',
+    opts:['Transports sugars from leaves to roots using active transport in living cells','Transports water and dissolved minerals from roots to leaves through dead hollow cells, driven by transpiration','Transports water downward from leaves to roots','Stores sugars in the stem and root tissues'],
+    ans:1, fb:'Xylem: dead hollow cells arranged in tubes, transports water and dissolved minerals UPWARD from roots to leaves by transpiration pull. Phloem: living cells, transports sugars (sucrose) in both directions from source (leaves) to sink (roots, fruits, growing tips).' },
+  { q:'In the digestive system, what is the role of BILE?',
+    opts:['Bile is an enzyme that breaks down fat molecules chemically','Bile emulsifies large fat globules into tiny droplets, increasing surface area for lipase to work on','Bile digests proteins in the small intestine','Bile neutralises the alkaline pH of the small intestine to make it acidic'],
+    ans:1, fb:'Bile is NOT an enzyme — it does not break chemical bonds. Bile salts emulsify fats — breaking large fat globules into tiny droplets, massively increasing surface area for lipase to hydrolyse. Bile also neutralises the stomach acid entering the small intestine (raising pH from ~2 to ~7–8). Bile is made in the liver, stored in the gall bladder, and released into the small intestine.' },
+  { q:'Which organ converts toxic ammonia (from amino acid breakdown) into less toxic urea?',
+    opts:['Kidneys','Pancreas','Liver','Small intestine'],
+    ans:2, fb:'The LIVER converts ammonia (NH₃) — produced by deamination of amino acids — into urea via the urea cycle. Urea is much less toxic than ammonia and is water-soluble. It is then transported in blood to the KIDNEYS, which excrete it in urine. The kidneys excrete urea but cannot make it.' },
+  { q:'A patient\'s blood glucose falls below 4 mmol/L after a long fast. What is the correct sequence of events to restore normal blood glucose?',
+    opts:['Insulin secreted by beta cells → liver stores glucose as glycogen → blood glucose rises','Glucagon secreted by alpha cells → liver breaks down glycogen and releases glucose → blood glucose rises','Insulin secreted → cells take up less glucose → blood glucose rises','ADH secreted by pituitary → kidneys retain glucose → blood glucose rises'],
+    ans:1, fb:'Low blood glucose → pancreatic ALPHA cells detect the drop → secrete GLUCAGON → glucagon travels to the LIVER → liver converts glycogen to glucose (glycogenolysis) and makes new glucose (gluconeogenesis) → releases glucose into blood → blood glucose rises back to normal. Negative feedback: rising glucose inhibits further glucagon secretion.' },
+  { q:'In the stimulus-response model for homeostasis, what is the role of the "control centre"?',
+    opts:['It detects the change in the internal environment','It carries out the corrective response','It processes the incoming signal and coordinates the response by sending instructions to effectors','It provides the original stimulus that disrupts the set point'],
+    ans:2, fb:'The control centre (e.g. hypothalamus for temperature and water balance, pancreatic islets for blood glucose) receives signals from receptors, compares them to the set point, and sends instructions to effectors to make corrective changes. It is the "brain" of the feedback loop — not the detector (receptor) or the responder (effector).' },
+  { q:'When body temperature rises above 37°C, which TWO responses help to lower it back to normal?',
+    opts:['Shivering and vasoconstriction','Sweating and vasodilation of skin blood vessels','Sweating and vasoconstriction','Shivering and vasodilation'],
+    ans:1, fb:'When too hot: (1) Sweat glands produce sweat → evaporation of sweat from skin removes heat. (2) Skin blood vessels DILATE (vasodilation) → more blood flows near the skin surface → more heat is lost by radiation. The opposite responses (shivering + vasoconstriction) warm the body when cold.' },
+  { q:'The hormone ADH (antidiuretic hormone) acts on the kidneys. What is its effect when blood osmolarity is HIGH (dehydrated)?',
+    opts:['More ADH is released, making kidney tubules less permeable to water, producing large dilute urine','More ADH is released, making kidney tubules more permeable to water, reabsorbing more water and producing small concentrated urine','Less ADH is released, making kidney tubules more permeable to water','ADH is not involved in water balance regulation'],
+    ans:1, fb:'High blood osmolarity (dehydrated) → hypothalamus detects this → posterior pituitary releases MORE ADH → ADH increases permeability of kidney collecting ducts and distal tubules to water (by inserting aquaporin channels) → more water reabsorbed into blood → blood osmolarity falls → small volume of concentrated (dark) urine is produced.' },
+  { q:'Type 1 Diabetes is caused by the autoimmune destruction of which cells?',
+    opts:['Alpha cells of the pancreas (producing glucagon)','Beta cells of the pancreas (producing insulin)','Hepatocytes of the liver','Osmoreceptors in the hypothalamus'],
+    ans:1, fb:'Type 1 Diabetes = the immune system attacks and destroys the BETA cells in the islets of Langerhans in the pancreas. Beta cells produce INSULIN. Without insulin, cells cannot take up glucose despite high blood glucose levels. Treatment is lifelong insulin injections. Type 2 Diabetes is different — cells become resistant to insulin, but beta cells still exist (at least initially).' },
+  { q:'Which of the following CORRECTLY describes negative feedback in homeostasis?',
+    opts:['The response amplifies the original stimulus, pushing the variable further away from the set point','The response opposes and corrects the original change, returning the variable toward the set point','The response is always triggered by hormones rather than the nervous system','Negative feedback only operates for blood glucose regulation, not temperature or water balance'],
+    ans:1, fb:'Negative feedback = the response OPPOSES the original stimulus, correcting it and returning the variable to the set point. This is the mechanism for ALL homeostatic regulation: temperature, blood glucose, water balance, blood pressure, etc. Positive feedback (rare in homeostasis) amplifies the change — examples: blood clotting, childbirth contractions.' },
+  { q:'A student adds pure water to plant cells suspended in a salt solution. Using osmosis, predict what happens to the plant cells.',
+    opts:['Water moves out of the cells by osmosis; cells become flaccid','Water moves into the cells by osmosis; cells become turgid (swollen)','No net water movement occurs because the cell membrane blocks osmosis','Glucose moves out of the cells into the salt solution'],
+    ans:1, fb:'Pure water has a higher water potential than salt solution. When plant cells are in pure water (or very dilute solution), water moves INTO the cells by osmosis — the cells become turgid (swollen with water, pressing against the cell wall). This creates turgor pressure, which is what keeps non-woody plants upright. If cells were in concentrated salt solution, water would move OUT and cells would become flaccid (plasmolysed).' },
+  { q:'Where are embryonic stem cells found, and at what stage of development?',
+    opts:['In the umbilical cord blood at birth','In the inner cell mass (ICM) of the blastocyst (~day 5–6 after fertilisation)','In the bone marrow of the adult embryo after week 8','In the yolk sac during the first trimester'],
+    ans:1, fb:'Embryonic stem cells are derived from the INNER CELL MASS (ICM) of the BLASTOCYST — a hollow ball of cells that forms approximately 5–6 days after fertilisation. The ICM is a cluster of pluripotent cells inside the blastocyst that would normally give rise to the embryo proper. Harvesting these cells for research/therapy destroys the blastocyst, which is the source of ethical debate.' },
+  { q:'The liver\'s hepatocytes are rich in smooth endoplasmic reticulum (smooth ER). This is MOST consistent with which liver function?',
+    opts:['Production of bile pigments from haemoglobin','Glycogen storage in granules in the cytoplasm','Detoxification of alcohol, drugs and hormones','Synthesis of plasma proteins like albumin'],
+    ans:2, fb:'Smooth ER (no ribosomes) is the site of DETOXIFICATION in liver cells — it contains enzyme systems (cytochrome P450 enzymes) that chemically modify alcohol, drugs, hormones, and other toxins into less harmful forms. Rough ER (with ribosomes) is for protein synthesis. Glycogen granules are stored in the cytoplasm directly. Liver cells need abundant smooth ER because of their high detoxification workload.' },
+  { q:'Which hormone causes guard cells to CLOSE stomata during drought conditions?',
+    opts:['Insulin','Auxin (IAA)','Abscisic acid (ABA)','ADH (antidiuretic hormone)'],
+    ans:2, fb:'ABSCISIC ACID (ABA) is the plant stress hormone released in response to water deficit/drought. ABA causes guard cells to lose potassium ions → water leaves by osmosis → guard cells become flaccid → stomata close → transpiration stops → water is conserved. ABA is sometimes called the "stress hormone" of plants. ADH is the water-conservation hormone in animals (kidneys), not plants.' },
+];
+
+let qScore=0, qAnswered=0;
+function buildQuiz(){
+  const c=document.getElementById('quiz-container');
+  if(!c) return;
+  c.innerHTML=''; qScore=0; qAnswered=0;
+  document.getElementById('score-panel').style.display='none';
+  quizData.forEach((item,idx)=>{
+    const card=document.createElement('div'); card.className='quiz-card';
+    card.innerHTML=`<div class="quiz-q">Q${idx+1}. ${item.q}</div><div class="quiz-options">${item.opts.map((o,i)=>`<button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}</div><div class="quiz-feedback" id="qfb-${idx}"></div>`;
+    c.appendChild(card);
+  });
+}
+function checkAnswer(btn,qIdx,optIdx){
+  const card=btn.closest('.quiz-card');
+  const buttons=card.querySelectorAll('.quiz-opt');
+  const fb=document.getElementById('qfb-'+qIdx);
+  const correct=quizData[qIdx].ans;
+  buttons.forEach(b=>b.disabled=true);
+  if(optIdx===correct){ btn.classList.add('correct'); fb.textContent='✅ '+quizData[qIdx].fb; fb.className='quiz-feedback show correct-fb'; qScore++; }
+  else { btn.classList.add('wrong'); buttons[correct].classList.add('correct'); fb.textContent='❌ '+quizData[qIdx].fb; fb.className='quiz-feedback show wrong-fb'; }
+  qAnswered++;
+  if(qAnswered===quizData.length){
+    const panel=document.getElementById('score-panel'); panel.style.display='block';
+    document.getElementById('score-display').textContent=qScore+'/'+quizData.length;
+    const pct=qScore/quizData.length;
+    document.getElementById('score-msg').textContent=pct>=.9?'🌟 Excellent work, Lakshanya — very well reviewed!':pct>=.75?'👍 Great effort! Go back over the questions you missed.':pct>=.6?'📚 Good start — revisit the sections you found tricky and retake.':'💪 Keep going! Work through the lesson again, then retake the quiz.';
+    panel.scrollIntoView({behavior:'smooth'});
+  }
+}
+function retakeQuiz(){ buildQuiz(); }
+
+// ══ SUMMARY ══
+function getTA(id){ const el=document.getElementById(id); return el?el.value.trim():''; }
+function setS(id,txt){ const el=document.getElementById(id); if(!el)return; el.textContent=txt||'Not answered'; el.classList.toggle('empty',!txt); }
+function buildSummary(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  document.getElementById('summaryName').textContent=name;
+  document.getElementById('summaryDate').textContent=new Date().toLocaleDateString('en-AU',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const sc=document.getElementById('score-display');
+  setS('sum-quiz', sc?sc.textContent+' correct':'Quiz not yet completed');
+  setS('sum-wonder',  getTA('ta-wonder'));
+  setS('sum-cell',    getTA('ta-cell-reflect'));
+  setS('sum-stem',    getTA('ta-stem'));
+  setS('sum-plant',   getTA('ta-plant'));
+  setS('sum-animal',  getTA('ta-animal'));
+  setS('sum-liver',   getTA('ta-liver'));
+  setS('sum-homeo',   getTA('ta-homeo'));
+  setS('sum-glucose', getTA('ta-glucose'));
+  setS('sum-water',   getTA('ta-water'));
+}
+function buildPlainText(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  const date=new Date().toLocaleDateString('en-AU',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const sc=document.getElementById('score-display');
+  return [
+    'VCE BIOLOGY 2022 — UNIT 1: HOW DO ORGANISMS REGULATE THEIR FUNCTIONS?',
+    'Personalised Review for Lakshanya',
+    '='.repeat(66),
+    'Student: '+name, 'Date: '+date, '',
+    '── QUIZ SCORE ──', sc?sc.textContent:'Not completed', '',
+    '── OPENING PREDICTION ──', getTA('ta-wonder')||'Not answered', '',
+    '── CELL STRUCTURE — SA:V REFLECTION ──', getTA('ta-cell-reflect')||'Not answered', '',
+    '── STEM CELLS — ETHICAL REASONING ──', getTA('ta-stem')||'Not answered', '',
+    '── PLANT SYSTEMS — WHY PLANTS WILT ──', getTA('ta-plant')||'Not answered', '',
+    '── ANIMAL SYSTEMS — pH ALONG THE GUT ──', getTA('ta-animal')||'Not answered', '',
+    '── THE LIVER — DISEASE CONSEQUENCES ──', getTA('ta-liver')||'Not answered', '',
+    '── HOMEOSTASIS — MARATHON RUNNER ──', getTA('ta-homeo')||'Not answered', '',
+    '── BLOOD GLUCOSE — HORMONES AFTER EXERCISE ──', getTA('ta-glucose')||'Not answered', '',
+    '── WATER BALANCE — DIABETES INSIPIDUS ──', getTA('ta-water')||'Not answered', '',
+    '='.repeat(66),
+    '© 2026 Farvour Explorations — farvourexplorations.com',
+    'Submitted via VCE Biology Unit 1 Personalised Review Interactive Lesson'
+  ].join('\n');
+}
+function copyResults(){
+  buildSummary();
+  navigator.clipboard.writeText(buildPlainText()).then(()=>{
+    const el=document.getElementById('copyConfirm'); el.textContent='✓ Copied! Paste into Google Classroom or your assignment.';
+    setTimeout(()=>el.textContent='',4000);
+  }).catch(()=>{ document.getElementById('copyConfirm').textContent='⚠️ Could not copy automatically.'; });
+}
+function emailResults(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  window.location.href='mailto:?subject='+encodeURIComponent('VCE Bio Unit 1 Review — '+name)+'&body='+encodeURIComponent(buildPlainText());
+}
+
+// ══ INIT ══
+buildQuiz();
+</script>
+</body>
+</html>
