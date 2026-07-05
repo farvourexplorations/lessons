@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Characteristics and Classification of Living Organisms — IGCSE Biology</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ocean:      #1a3d2b;
+    --ocean-mid:  #2d6a4f;
+    --ocean-lt:   #40916c;
+    --coral:      #e8603c;
+    --coral-pale: #fdf0ec;
+    --mint:       #3aaf85;
+    --mint-pale:  #e8f8f2;
+    --gold:       #c9962a;
+    --gold-pale:  #fef9e7;
+    --lavender:   #7c6fcd;
+    --lav-pale:   #f0eefb;
+    --paper:      #fffef9;
+    --ink:        #1a2332;
+    --muted:      #7a8899;
+    --border:     #e0e4ea;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: linear-gradient(160deg,#0d2318 0%,#1a3d2b 45%,#2d6a4f 100%);
+    min-height:100vh; font-family:'Nunito',sans-serif; color:var(--ink); overflow-x:hidden;
+  }
+  body::before {
+    content:''; position:fixed; inset:0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%,rgba(144,238,144,.4) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 22% 38%,rgba(255,255,255,.25) 0%,transparent 100%),
+      radial-gradient(2px   2px   at 41% 6%, rgba(144,238,144,.32) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 60% 24%,rgba(255,255,255,.2)  0%,transparent 100%),
+      radial-gradient(1.5px 1.5px at 77% 9%, rgba(144,238,144,.38) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 90% 33%,rgba(255,255,255,.25) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 33% 55%,rgba(144,238,144,.28) 0%,transparent 100%),
+      radial-gradient(2px   2px   at 70% 48%,rgba(255,255,255,.15) 0%,transparent 100%);
+    pointer-events:none; z-index:0;
+  }
+  /* HERO */
+  .hero { position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 2rem;color:white; }
+  .hero-badge { display:inline-block;background:var(--gold);color:var(--ocean);font-family:'Fredoka One',cursive;font-size:.85rem;letter-spacing:.05em;padding:.35rem 1.2rem;border-radius:20px;margin-bottom:1.2rem;box-shadow:0 2px 12px rgba(201,150,42,.45); }
+  .hero h1 { font-family:'Fredoka One',cursive;font-size:clamp(2rem,6vw,3.6rem);line-height:1.1;margin-bottom:.8rem;text-shadow:0 2px 20px rgba(0,0,0,.35); }
+  .hero h1 .accent { color:var(--gold); }
+  .hero p.intro { font-size:1.05rem;line-height:1.7;opacity:.88;max-width:580px;margin:0 auto 2rem; }
+  .name-bar { background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);border-radius:12px;padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;max-width:420px;margin:0 auto 1rem; }
+  .name-bar label { font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;font-family:'DM Mono',monospace; }
+  .name-bar input { flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.4rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:white;outline:none; }
+  .name-bar input::placeholder { color:rgba(255,255,255,.4);font-weight:400; }
+  .progress-wrap { display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem; }
+  .prog-step { background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);border-radius:20px;padding:.35rem .9rem;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace;display:inline-block; }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.35); }
+  .prog-step.active { background:var(--gold);color:var(--ocean);border-color:var(--gold);box-shadow:0 2px 12px rgba(201,150,42,.45); }
+  /* SHEET */
+  .sheet { position:relative;z-index:1;background:var(--paper);border-radius:24px 24px 0 0;margin-top:1.5rem;padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.3); }
+  .section { padding:3rem 2rem 0;max-width:820px;margin:0 auto;display:none; }
+  .section.active { display:block; }
+  .section-eyebrow { display:flex;align-items:center;gap:.6rem;margin-bottom:1rem; }
+  .eyebrow-num { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1rem;color:white;flex-shrink:0; }
+  .num-coral  { background:var(--coral); }
+  .num-mint   { background:var(--mint); }
+  .num-gold   { background:var(--gold);color:var(--ocean); }
+  .num-lav    { background:var(--lavender); }
+  .num-ocean  { background:var(--ocean-mid); }
+  .eyebrow-label { font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace; }
+  .section h2 { font-family:'Fredoka One',cursive;font-size:clamp(1.6rem,3.5vw,2.2rem);color:var(--ocean);margin-bottom:.6rem;line-height:1.2; }
+  .section .lead { font-size:1rem;line-height:1.75;color:#3a4a5a;margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+  /* WONDER BOXES */
+  .wonder-box { background:linear-gradient(135deg,var(--ocean) 0%,var(--ocean-mid) 100%);color:white;border-radius:16px;padding:1.8rem 2rem;margin-bottom:1.8rem;position:relative;overflow:hidden; }
+  .wonder-box::after { content:'🤔';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3; }
+  .wonder-box p { font-size:1rem;line-height:1.7;font-style:italic;opacity:.95;max-width:85%; }
+  .wonder-box strong { color:var(--gold);font-style:normal; }
+  .wonder-box.gold-box { background:linear-gradient(135deg,#8a6a1a 0%,#b8860b 100%); }
+  .wonder-box.gold-box::after { content:'🧬'; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,#1b7a58 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'🔑'; }
+  .wonder-box.coral-box { background:linear-gradient(135deg,#a03020 0%,#c8502a 100%); }
+  .wonder-box.coral-box::after { content:'🐾'; }
+  .wonder-box.lav-box { background:linear-gradient(135deg,#4a3f96 0%,#7c6fcd 100%); }
+  .wonder-box.lav-box::after { content:'🗝️'; }
+  /* PREDICT / REFLECT */
+  .predict-box { background:var(--gold-pale);border:2px dashed var(--gold);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem; }
+  .predict-box textarea,.reflect-box textarea { width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:64px;background:white;color:var(--ink);outline:none;transition:border-color .2s; }
+  .predict-box textarea:focus { border-color:var(--gold); }
+  .reflect-box { background:var(--mint-pale);border:2px dashed var(--mint);border-radius:14px;padding:1.4rem 1.6rem;margin-top:1.5rem; }
+  .reflect-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#1b7a58;margin-bottom:.8rem; }
+  .reflect-box textarea:focus { border-color:var(--mint); }
+  /* DEMO ZONE */
+  .demo-zone { background:white;border:2px solid var(--border);border-radius:16px;padding:1.8rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07); }
+  .demo-zone h3 { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--ocean);margin-bottom:.3rem; }
+  .demo-zone .hint { font-size:.78rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:1.3rem; }
+  /* CHIPS */
+  .chip-row { display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem; }
+  .chip { padding:.45rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;border:2px solid transparent; }
+  .chip.coral  { background:var(--coral-pale);color:var(--coral);border-color:#f8c5b8; }
+  .chip.mint   { background:var(--mint-pale);color:var(--mint);border-color:#b8ebd8; }
+  .chip.gold   { background:var(--gold-pale);color:#8a6a1a;border-color:#f8e0a0; }
+  .chip.lav    { background:var(--lav-pale);color:var(--lavender);border-color:#d0caef; }
+  .chip.ocean  { background:#d4eadd;color:var(--ocean-mid);border-color:#a8ccee; }
+  .chip:hover  { transform:scale(1.05); }
+  .concept-reveal { background:var(--paper);border-left:4px solid var(--coral);border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;margin-top:.5rem;display:none;animation:fadeIn .3s ease; }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border   { border-color:var(--mint); }
+  .concept-reveal.gold-border   { border-color:var(--gold); }
+  .concept-reveal.lav-border    { border-color:var(--lavender); }
+  .concept-reveal.ocean-border  { border-color:var(--ocean-mid); }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+  /* CARDS */
+  .card-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0 1rem; }
+  .info-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.1rem;text-align:center;cursor:pointer;transition:all .2s; }
+  .info-card:hover,.info-card.active { border-color:var(--ocean-mid);transform:translateY(-2px);box-shadow:0 4px 14px rgba(45,106,143,.2); }
+  .info-card.active { background:#d4eadd; }
+  .info-card .ic-icon  { font-size:2rem;margin-bottom:.4rem; }
+  .info-card .ic-title { font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--ocean);margin-bottom:.2rem; }
+  .info-card .ic-sub   { font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em; }
+  .info-panel { background:#d4eadd;border-left:4px solid var(--ocean-mid);border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;display:none;animation:fadeIn .3s ease;margin-bottom:1rem; }
+  .info-panel.show { display:block; }
+  .info-panel h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ocean);margin-bottom:.5rem; }
+  .info-panel p  { font-size:.88rem;line-height:1.7;color:#1a2a3a; }
+  .info-panel .eg { background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;font-size:.82rem;font-family:'DM Mono',monospace;border:1.5px solid rgba(45,106,143,.2); }
+  /* ACCORDION */
+  .accord-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1rem 1.2rem;margin-bottom:.8rem;cursor:pointer;transition:all .2s; }
+  .accord-card:hover { border-color:var(--ocean-mid); }
+  .accord-card.open { border-color:var(--mint);background:var(--mint-pale); }
+  .accord-title { font-family:'Fredoka One',cursive;font-size:1rem;color:var(--ocean);display:flex;align-items:center;justify-content:space-between; }
+  .accord-arrow { transition:transform .2s; }
+  .accord-card.open .accord-arrow { transform:rotate(180deg); }
+  .accord-body { font-size:.85rem;line-height:1.7;color:var(--ink);margin-top:.6rem;display:none; }
+  .accord-card.open .accord-body { display:block; }
+  .accord-eg { font-family:'DM Mono',monospace;font-size:.78rem;color:var(--muted);margin-top:.4rem;font-style:italic; }
+  /* QUIZ */
+  .quiz-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .quiz-q { font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:1rem;line-height:1.5; }
+  .quiz-options { display:flex;flex-direction:column;gap:.5rem; }
+  .quiz-opt { padding:.6rem 1rem;border-radius:8px;border:2px solid var(--border);background:white;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:600;text-align:left;transition:all .15s;color:var(--ink); }
+  .quiz-opt:hover:not(:disabled) { border-color:var(--ocean-mid);background:#f0f7f3; }
+  .quiz-opt.correct { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .quiz-opt.wrong   { background:var(--coral-pale);border-color:var(--coral);color:#a83020; }
+  .quiz-opt:disabled { cursor:default; }
+  .quiz-feedback { margin-top:.8rem;font-size:.85rem;line-height:1.6;padding:.7rem 1rem;border-radius:8px;display:none;animation:fadeIn .3s ease; }
+  .quiz-feedback.show { display:block; }
+  .quiz-feedback.correct-fb { background:var(--mint-pale);color:#1b7a58;border-left:3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background:var(--coral-pale);color:#a83020;border-left:3px solid var(--coral); }
+  /* MATCHING */
+  .match-grid { display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1rem 0; }
+  .match-item { padding:.75rem 1rem;border-radius:10px;border:2px solid var(--border);cursor:pointer;font-size:.85rem;font-weight:700;transition:all .2s;background:white;text-align:center;color:var(--ink); }
+  .match-item:hover   { border-color:var(--ocean-mid);background:#f0f7f3; }
+  .match-item.selected{ border-color:var(--lavender);background:var(--lav-pale);color:var(--lavender); }
+  .match-item.matched { border-color:var(--mint);background:var(--mint-pale);color:#1b7a58;cursor:default; }
+  .match-item.wrong   { border-color:var(--coral);background:var(--coral-pale);color:var(--coral);animation:shake .3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  /* KEY DEMO */
+  .key-panel { background:#f5f7fa;border-radius:12px;padding:1.2rem 1.4rem;margin-top:.8rem;min-height:70px; }
+  .key-question { font-family:'Fredoka One',cursive;font-size:1rem;color:var(--ocean);margin-bottom:.9rem;line-height:1.4; }
+  .key-note { font-size:.8rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.6rem; }
+  .key-result { margin-top:.6rem;padding:.9rem 1.1rem;border-radius:10px;background:var(--mint-pale);border-left:4px solid var(--mint);font-size:.88rem;line-height:1.6;color:#1b7a58;display:none; }
+  .key-result.show { display:block; }
+  /* VOCAB TABLE */
+  .vocab-table { width:100%;border-collapse:collapse;margin:1rem 0 1.5rem; }
+  .vocab-table th { background:var(--ocean);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;padding:.7rem 1rem;text-align:left; }
+  .vocab-table td { padding:.65rem 1rem;font-size:.85rem;line-height:1.5;border-bottom:1px solid var(--border); }
+  .vocab-table tr:nth-child(even) td { background:#f5f7fa; }
+  .vocab-table tr:hover td { background:#d4eadd;transition:background .15s; }
+  .vocab-table td:first-child { font-weight:800;color:var(--ocean-mid); }
+  /* PAST PAPER QUESTIONS */
+  .pp-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .pp-label { font-family:'DM Mono',monospace;font-size:.68rem;color:var(--ocean-mid);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem; }
+  .pp-q { font-size:.95rem;line-height:1.6;color:var(--ink);margin-bottom:.8rem;font-weight:700; }
+  .pp-q em { font-weight:400;color:#3a4a5a; }
+  .pp-textarea { width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:72px;background:white;color:var(--ink);outline:none;transition:border-color .2s; }
+  .pp-textarea:focus { border-color:var(--ocean-mid); }
+  .pp-marks { font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);margin-top:.4rem; }
+  .pp-answer { background:#d4eadd;border-left:4px solid var(--ocean-mid);border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.85rem;line-height:1.7;margin-top:.8rem;display:none;animation:fadeIn .3s ease; }
+  .pp-answer.show { display:block; }
+  .pp-answer strong { color:var(--ocean); }
+  .pp-answer ul { margin:.4rem 0 0 1rem; }
+  .pp-answer li { margin-bottom:.3rem; }
+  /* SCORE */
+  .score-panel { background:linear-gradient(135deg,var(--ocean) 0%,var(--ocean-mid) 100%);color:white;border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem; }
+  .score-panel .score-num { font-family:'Fredoka One',cursive;font-size:3.5rem;line-height:1;color:var(--gold); }
+  .score-panel p { opacity:.88;margin-top:.5rem;font-size:1rem; }
+  .score-panel h3 { font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:.3rem; }
+  /* NAV */
+  .nav-row { display:flex;justify-content:space-between;align-items:center;padding:2.5rem 2rem 0;max-width:820px;margin:0 auto; }
+  .btn-next { background:var(--ocean);color:white;border:none;border-radius:50px;padding:.9rem 2rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;display:flex;align-items:center;gap:.6rem;transition:all .2s;box-shadow:0 4px 16px rgba(26,61,43,.35); }
+  .btn-next:hover { background:var(--ocean-mid);transform:translateY(-2px); }
+  .btn-prev { background:transparent;color:var(--muted);border:2px solid var(--border);border-radius:50px;padding:.9rem 1.6rem;font-family:'Fredoka One',cursive;font-size:.95rem;cursor:pointer;transition:all .2s; }
+  .btn-prev:hover { border-color:var(--muted);color:var(--ink); }
+  .btn-prev:disabled,.btn-next:disabled { opacity:.3;cursor:not-allowed;transform:none; }
+  /* SUMMARY */
+  .summary-section { background:white;border-radius:16px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--ocean);margin-bottom:.8rem; }
+  .summary-answer { background:#f5f7fa;border-radius:8px;padding:.7rem 1rem;font-size:.85rem;line-height:1.6;color:var(--ink);margin-bottom:.5rem;font-style:italic;border-left:3px solid var(--lavender);min-height:2rem; }
+  .summary-answer.empty { color:var(--muted);font-style:normal;border-left-color:var(--border); }
+  .sum-label { font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.6rem;text-transform:uppercase;letter-spacing:.06em; }
+  /* SHARE */
+  .share-buttons { display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center; }
+  .share-btn { border:none;border-radius:12px;padding:.85rem 1.6rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem; }
+  .share-btn:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background:var(--mint);color:white; }
+  .share-btn.email { background:var(--lavender);color:white; }
+  .share-btn.print { background:var(--ocean);color:white; }
+  .copy-confirm { text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--mint);min-height:1.2rem;margin-top:.6rem; }
+  .btn { border:none;border-radius:10px;padding:.65rem 1.3rem;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;transition:all .15s; }
+  .btn:hover { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  .btn-mint  { background:var(--mint);color:white; }
+  .btn-ocean { background:var(--ocean);color:white; }
+  .btn-ghost { background:#f0f2f5;color:var(--muted); }
+  .divider { height:1px;background:var(--border);margin:2rem 0; }
+  @media(max-width:560px) {
+    .hero{padding:2.5rem 1.2rem 1.5rem} .section{padding:2rem 1.2rem 0} .nav-row{padding:2rem 1.2rem 0} .match-grid{grid-template-columns:1fr}
+  }
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm{display:none!important}
+    .sheet{box-shadow:none;border-radius:0} .section{display:none!important} #sec-7{display:block!important}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">🔬 IGCSE Biology · Topic 1 · CIE 0610</div>
+  <h1>Characteristics and <span class="accent">Classification</span> of Living Organisms</h1>
+  <p class="intro">What makes something alive, how scientists name and group living things, and how the five kingdoms and major animal/plant groups are told apart. Covers syllabus sections 1.1, 1.2 and 1.3.</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <a class="prog-step active" onclick="goTo(0)">🌱 Wonder</a>
+    <a class="prog-step"        onclick="goTo(1)">🧬 MRS GREN</a>
+    <a class="prog-step"        onclick="goTo(2)">🔑 Classification</a>
+    <a class="prog-step"        onclick="goTo(3)">🐾 Kingdoms & Groups</a>
+    <a class="prog-step"        onclick="goTo(4)">🗝️ Key Practice</a>
+    <a class="prog-step"        onclick="goTo(5)">📝 Past Papers</a>
+    <a class="prog-step"        onclick="goTo(6)">❓ Quiz</a>
+    <a class="prog-step"        onclick="goTo(7)">📤 Submit</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+<!-- ══ SEC 0: WONDER ══ -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">Phase 1 · Wonder</span></div>
+  <h2>🌱 What Makes Something "Alive"?</h2>
+  <p class="lead">A candle flame flickers, gives off heat, and grows taller as it burns. A crystal in a cave grows bigger every year. A robot vacuum moves around a room and changes direction when it hits a wall. <strong>None of these are alive</strong> — but why not? Biologists needed a strict checklist to decide.</p>
+  <div class="wonder-box">
+    <p>Look at the three examples above. Each one does something that sounds like a "characteristic of life" — moving, growing, responding. Yet none of them are living organisms. <strong>What do you think is missing? What would you need to check before you could say something is truly alive?</strong></p>
+  </div>
+  <div class="predict-box">
+    <h4>✏️ Your Thinking — Before We Begin</h4>
+    <textarea id="ta-wonder" placeholder="Why aren't the candle flame, the crystal, and the robot vacuum considered 'alive', even though they move, grow, or respond? What do you think a scientist would need to see before calling something a living organism?"></textarea>
+  </div>
+  <div class="wonder-box gold-box">
+    <p>Biologists use a checklist of <strong>seven characteristics</strong> — remembered by the acronym <strong>MRS GREN</strong> — and something is only classed as a living organism if it can, at some point, carry out ALL SEVEN. We'll also see how once something IS alive, we can name it and sort it into groups using classification systems.</p>
+  </div>
+  <div class="nav-row"><button class="btn-prev" disabled>← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 1: MRS GREN ══ -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">2</div><span class="eyebrow-label">Phase 2 · 1.1 Characteristics of Living Organisms</span></div>
+  <h2>🧬 MRS GREN — The Seven Characteristics of Life</h2>
+  <p class="lead">IGCSE examiners want the <strong>exact wording</strong> of each definition, not just a rough idea. Tap each letter below to reveal the precise syllabus definition, then check the exam traps underneath.</p>
+
+  <div class="wonder-box mint-box">
+    <p><strong>MRS GREN</strong> = <strong>M</strong>ovement, <strong>R</strong>espiration, <strong>S</strong>ensitivity, <strong>G</strong>rowth, <strong>R</strong>eproduction, <strong>E</strong>xcretion, <strong>N</strong>utrition. An organism must be capable of all seven to be classed as a living thing.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🔑 Tap Each Letter for the Exact Definition</h3>
+  <div class="chip-row">
+    <span class="chip coral"  onclick="revealChip('move')">M — Movement</span>
+    <span class="chip ocean"  onclick="revealChip('resp')">R — Respiration</span>
+    <span class="chip mint"   onclick="revealChip('sens')">S — Sensitivity</span>
+    <span class="chip gold"   onclick="revealChip('growth')">G — Growth</span>
+    <span class="chip lav"    onclick="revealChip('repro')">R — Reproduction</span>
+    <span class="chip coral"  onclick="revealChip('excr')">E — Excretion</span>
+    <span class="chip ocean"  onclick="revealChip('nutr')">N — Nutrition</span>
+  </div>
+  <div id="chip-move"   class="concept-reveal"><strong>Movement</strong> — An action by an organism, <strong>or part of an organism</strong>, causing a change of position or place. Exam note: this does NOT have to be the whole organism relocating — a plant turning its leaves towards light still counts as movement.</div>
+  <div id="chip-resp"   class="concept-reveal ocean-border"><strong>Respiration</strong> — The chemical reactions in cells that break down nutrient molecules and release energy for metabolism. Exam trap: respiration is NOT the same as breathing (ventilation) or gas exchange — it is a set of chemical reactions happening inside cells.</div>
+  <div id="chip-sens"   class="concept-reveal mint-border"><strong>Sensitivity</strong> — The ability to detect and respond to changes in the internal or external environment. Both parts matter: DETECTING a stimulus and RESPONDING to it.</div>
+  <div id="chip-growth" class="concept-reveal gold-border"><strong>Growth</strong> — A permanent increase in size and dry mass. Exam trap: it must be DRY mass, not wet mass — an organism's wet mass can rise and fall daily just from drinking water, but that isn't true growth.</div>
+  <div id="chip-repro"  class="concept-reveal lav-border"><strong>Reproduction</strong> — The processes that make more of the same kind of organism. Can be sexual (two parents, offspring vary) or asexual (one parent, genetically identical offspring).</div>
+  <div id="chip-excr"   class="concept-reveal"><strong>Excretion</strong> — The removal of the waste products of metabolism (chemical reactions inside cells) and substances in excess of requirements. Exam trap: this is DIFFERENT from egestion (removing undigested food/faeces) — undigested food was never part of the body's cells, so getting rid of it is not excretion.</div>
+  <div id="chip-nutr"   class="concept-reveal ocean-border"><strong>Nutrition</strong> — The taking in of materials for energy, growth and development. Includes taking in nutrients (animals, by feeding) or making them internally (plants, by photosynthesis).</div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">📋 Summary Table</h3>
+  <table class="vocab-table">
+    <tr><th>Letter</th><th>Characteristic</th><th>Common Exam Trap</th></tr>
+    <tr><td>M</td><td>Movement</td><td>Can be just PART of the organism moving, not the whole thing</td></tr>
+    <tr><td>R</td><td>Respiration</td><td>Not the same as breathing or gas exchange</td></tr>
+    <tr><td>S</td><td>Sensitivity</td><td>Must include BOTH detecting and responding</td></tr>
+    <tr><td>G</td><td>Growth</td><td>Must be DRY mass, permanent, not just wet mass changes</td></tr>
+    <tr><td>R</td><td>Reproduction</td><td>"more of the same kind" — offspring of the same species</td></tr>
+    <tr><td>E</td><td>Excretion</td><td>Not the same as egestion (removing undigested food)</td></tr>
+    <tr><td>N</td><td>Nutrition</td><td>Includes both feeding (animals) and photosynthesis (plants)</td></tr>
+  </table>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — MRS GREN in Action</h4>
+    <textarea id="ta-mrsgren" placeholder="Choose one living organism (e.g. a dog, a sunflower, or yourself). Briefly explain how it shows ALL SEVEN characteristics — Movement, Respiration, Sensitivity, Growth, Reproduction, Excretion, and Nutrition."></textarea>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 2: CLASSIFICATION SYSTEMS ══ -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">3</div><span class="eyebrow-label">Phase 3 · 1.2 Concept and Uses of Classification Systems</span></div>
+  <h2>🔑 Naming and Grouping Living Things</h2>
+  <p class="lead">Once we know something is alive, scientists need a shared system to <strong>name</strong> it and to <strong>sort</strong> it into groups with similar organisms. This is classification.</p>
+
+  <div class="wonder-box mint-box">
+    <p><strong>Classification</strong> is the process of organising living organisms into groups based on the features they share. This makes it easier to study, identify, and communicate about them.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🧠 Key Terms — Tap Each</h3>
+  <div class="chip-row">
+    <span class="chip ocean" onclick="revealChip('species')">Species</span>
+    <span class="chip coral" onclick="revealChip('binomial')">Binomial System</span>
+    <span class="chip mint"  onclick="revealChip('dichkey')">Dichotomous Key</span>
+    <span class="chip gold"  onclick="revealChip('evo')">Evolutionary Relationships</span>
+    <span class="chip lav"   onclick="revealChip('dna')">DNA Base Sequences</span>
+  </div>
+  <div id="chip-species"  class="concept-reveal ocean-border"><strong>Species</strong> — A group of organisms that can reproduce to produce fertile offspring. Exam trap: a horse and a donkey CAN mate and produce a mule, but the mule is infertile — so horses and donkeys are classed as different species.</div>
+  <div id="chip-binomial" class="concept-reveal"><strong>Binomial System</strong> — An internationally agreed system in which the scientific name of an organism is made up of two parts, showing the genus and the species, e.g. <em>Homo sapiens</em>. Rules: the GENUS starts with a capital letter, the SPECIES is all lowercase, and both parts are italicised (or underlined separately if handwritten).</div>
+  <div id="chip-dichkey"  class="concept-reveal mint-border"><strong>Dichotomous Key</strong> — A series of questions or statements, each with two possible answers (usually yes/no), used to identify an organism based on observable features. Each question splits the remaining organisms into two smaller groups until only one organism is left.</div>
+  <div id="chip-evo"      class="concept-reveal gold-border">Supplement — Classification systems aim to <strong>reflect evolutionary relationships</strong>: organisms are grouped so that the classification shows how closely related they are through shared ancestry, not just superficial similarity.</div>
+  <div id="chip-dna"      class="concept-reveal lav-border">Supplement — <strong>Sequences of bases in DNA</strong> are used as a means of classification. Groups of organisms that share a more recent common ancestor (more closely related) have DNA base sequences that are MORE similar than those that share only a distant common ancestor.</div>
+
+  <div class="divider"></div>
+
+  <div class="demo-zone">
+    <h3>🗝️ Try a Dichotomous Key</h3>
+    <div class="hint">Pick a mystery organism, then work through the key questions to identify its arthropod group.</div>
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn btn-ocean" onclick="startKey('fly')">🪰 Organism A</button>
+      <button class="btn btn-mint"  onclick="startKey('spider')">🕷️ Organism B</button>
+      <button class="btn btn-ghost" onclick="startKey('woodlouse')">🦐 Organism C</button>
+      <button class="btn btn-ghost" onclick="startKey('centipede')">🐛 Organism D</button>
+    </div>
+    <div class="key-panel">
+      <div class="key-question" id="keyQuestion">Select a mystery organism above to begin the key.</div>
+      <div id="keyOptions" style="display:flex;gap:.6rem;flex-wrap:wrap;"></div>
+      <div class="key-note" id="keyNote"></div>
+    </div>
+    <div class="key-result" id="keyResult"></div>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 3: KINGDOMS & GROUPS ══ -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow"><div class="eyebrow-num num-gold">4</div><span class="eyebrow-label">Phase 4 · 1.3 Features of Organisms</span></div>
+  <h2>🐾 Kingdoms and Major Groups</h2>
+  <p class="lead">All living organisms can be placed into one of <strong>five kingdoms</strong>, and within the animal and plant kingdoms there are further groups defined by shared features.</p>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">👑 The Five Kingdoms — Tap Each</h3>
+  <div class="card-grid">
+    <div class="info-card" onclick="showPanel('animal')"><div class="ic-icon">🐘</div><div class="ic-title">Animal</div><div class="ic-sub">ingests food</div></div>
+    <div class="info-card" onclick="showPanel('plant')"><div class="ic-icon">🌿</div><div class="ic-title">Plant</div><div class="ic-sub">photosynthesises</div></div>
+    <div class="info-card" onclick="showPanel('fungus')"><div class="ic-icon">🍄</div><div class="ic-title">Fungus</div><div class="ic-sub">saprotrophic</div></div>
+    <div class="info-card" onclick="showPanel('prokaryote')"><div class="ic-icon">🦠</div><div class="ic-title">Prokaryote</div><div class="ic-sub">no nucleus</div></div>
+    <div class="info-card" onclick="showPanel('protoctist')"><div class="ic-icon">🔬</div><div class="ic-title">Protoctist</div><div class="ic-sub">simple, has nucleus</div></div>
+  </div>
+  <div id="panel-animal" class="info-panel"><h4>🐘 Animal Kingdom</h4><p>Multicellular organisms with no cell wall and no chlorophyll. They gain nutrition by ingesting and digesting food (heterotrophic nutrition), and most can move the whole body and have nervous coordination.</p><div class="eg">📌 Examples: mammals, birds, reptiles, amphibians, fish, insects, spiders.</div></div>
+  <div id="panel-plant" class="info-panel"><h4>🌿 Plant Kingdom</h4><p>Multicellular organisms with a cell wall made of cellulose. They contain chlorophyll and make their own food by photosynthesis (autotrophic nutrition).</p><div class="eg">📌 Examples: ferns and flowering plants (dicotyledons and monocotyledons).</div></div>
+  <div id="panel-fungus" class="info-panel"><h4>🍄 Fungus Kingdom</h4><p>Organisms with a cell wall made of chitin (not cellulose). They cannot photosynthesise. Most feed saprotrophically — they release enzymes onto their food to digest it externally, then absorb the soluble products (extracellular digestion and absorption). The body is often a network of thread-like hyphae called a mycelium.</p><div class="eg">📌 Examples: mushrooms, moulds, yeast.</div></div>
+  <div id="panel-prokaryote" class="info-panel"><h4>🦠 Prokaryote Kingdom</h4><p>Unicellular organisms with no nucleus — their DNA is a single circular strand lying free in the cytoplasm. They have no membrane-bound organelles (no mitochondria, no chloroplasts) and very small ribosomes.</p><div class="eg">📌 Examples: bacteria.</div></div>
+  <div id="panel-protoctist" class="info-panel"><h4>🔬 Protoctist Kingdom</h4><p>Simple organisms, mostly single-celled, but — unlike prokaryotes — they DO have a nucleus. A very varied group that doesn't fit neatly into the other kingdoms.</p><div class="eg">📌 Examples: Amoeba, Chlorella, Plasmodium (the malaria parasite).</div></div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🦴 Vertebrate Groups (Animal Kingdom)</h3>
+  <table class="vocab-table">
+    <tr><th>Group</th><th>Body Covering</th><th>Temperature</th><th>Reproduction</th></tr>
+    <tr><td>Mammals</td><td>Hair or fur</td><td>Endothermic (warm-blooded)</td><td>Mostly give birth to live young; fed milk from mammary glands</td></tr>
+    <tr><td>Birds</td><td>Feathers</td><td>Endothermic (warm-blooded)</td><td>Lay hard-shelled eggs on land</td></tr>
+    <tr><td>Reptiles</td><td>Dry, scaly skin</td><td>Ectothermic (cold-blooded)</td><td>Lay soft, leathery-shelled eggs on land</td></tr>
+    <tr><td>Amphibians</td><td>Moist, permeable skin</td><td>Ectothermic (cold-blooded)</td><td>Lay soft eggs (no shell), usually in water</td></tr>
+    <tr><td>Fish</td><td>Scales covered in mucus</td><td>Ectothermic (cold-blooded)</td><td>Lay eggs (no shell) in water</td></tr>
+  </table>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🕷️ Arthropod Groups (Animal Kingdom)</h3>
+  <table class="vocab-table">
+    <tr><th>Group</th><th>Legs</th><th>Body Parts</th><th>Other Features</th></tr>
+    <tr><td>Insects</td><td>3 pairs (6 legs)</td><td>3 (head, thorax, abdomen)</td><td>1 pair of antennae, often winged</td></tr>
+    <tr><td>Arachnids</td><td>4 pairs (8 legs)</td><td>2 (cephalothorax, abdomen)</td><td>No antennae</td></tr>
+    <tr><td>Crustaceans</td><td>More than 4 pairs</td><td>Varies</td><td>2 pairs of antennae, mostly aquatic</td></tr>
+    <tr><td>Myriapods</td><td>Many pairs (1–2 per segment)</td><td>Long, segmented body</td><td>1 pair of antennae</td></tr>
+  </table>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🌿 Plant Kingdom Groups — Supplement</h3>
+  <table class="vocab-table">
+    <tr><th>Group</th><th>Reproduces By</th><th>Key Features</th></tr>
+    <tr><td>Ferns</td><td>Spores (no flowers/seeds)</td><td>True roots, stems and leaves (fronds); found in damp habitats</td></tr>
+    <tr><td>Flowering plants — Dicotyledons</td><td>Seeds, formed in flowers</td><td>Net-veined leaves; 2 seed leaves (cotyledons); flower parts usually in 4s or 5s</td></tr>
+    <tr><td>Flowering plants — Monocotyledons</td><td>Seeds, formed in flowers</td><td>Parallel-veined leaves; 1 seed leaf (cotyledon); flower parts usually in 3s</td></tr>
+  </table>
+
+  <div class="wonder-box coral-box">
+    <p>Supplement — <strong>Viruses</strong> are not placed into any of the five kingdoms because they are <strong>non-cellular</strong>: they are not made of cells. A virus consists of genetic material (DNA or RNA) surrounded by a protein coat, and can only reproduce inside a living host cell using the host's own machinery. Examples: influenza, HIV, tobacco mosaic virus.</p>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 4: KEY PRACTICE ══ -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">5</div><span class="eyebrow-label">Phase 5 · Classification Practice</span></div>
+  <h2>🗝️ Match the Kingdoms & Build a Key</h2>
+  <p class="lead">Practise identifying kingdoms by their key feature, then have a go at constructing your own dichotomous key.</p>
+
+  <div class="demo-zone">
+    <h3>🧩 Match Each Kingdom to Its Key Feature</h3>
+    <div class="hint">Tap a kingdom, then tap its matching feature. Matched pairs turn green.</div>
+    <div class="match-grid" id="kingdomMatch">
+      <div class="match-item" data-pair="fungus" onclick="selectMatch(this)">🍄 Fungus</div>
+      <div class="match-item" data-pair="plant" onclick="selectMatch(this)">Cell wall of cellulose; makes food by photosynthesis</div>
+      <div class="match-item" data-pair="protoctist" onclick="selectMatch(this)">🔬 Protoctist</div>
+      <div class="match-item" data-pair="animal" onclick="selectMatch(this)">No cell wall; gains energy by ingesting and digesting food</div>
+      <div class="match-item" data-pair="plant" onclick="selectMatch(this)">🌿 Plant</div>
+      <div class="match-item" data-pair="prokaryote" onclick="selectMatch(this)">No nucleus; DNA is a single circular strand free in the cytoplasm</div>
+      <div class="match-item" data-pair="prokaryote" onclick="selectMatch(this)">🦠 Prokaryote</div>
+      <div class="match-item" data-pair="fungus" onclick="selectMatch(this)">Cell wall of chitin; feeds by saprotrophic nutrition</div>
+      <div class="match-item" data-pair="animal" onclick="selectMatch(this)">🐘 Animal</div>
+      <div class="match-item" data-pair="protoctist" onclick="selectMatch(this)">Simple organism with a nucleus; mostly single-celled</div>
+    </div>
+    <div id="matchComplete" style="display:none;background:var(--mint-pale);border-left:4px solid var(--mint);border-radius:0 10px 10px 0;padding:.9rem 1.1rem;font-size:.88rem;color:#1b7a58;margin-top:.6rem;">🎉 All matched! You've paired every kingdom with its key identifying feature.</div>
+  </div>
+
+  <div class="predict-box">
+    <h4>🧪 Construct Your Own Key</h4>
+    <textarea id="ta-key" placeholder="Four organisms: a shark, a frog, a snake, and a whale. Write a series of yes/no questions (a dichotomous key) that could be used to identify each one. Think about features such as body covering, egg type, and where they live."></textarea>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 5: PAST PAPERS ══ -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow"><div class="eyebrow-num num-gold">6</div><span class="eyebrow-label">Phase 6 · Past Paper Questions</span></div>
+  <h2>📝 IGCSE Past Paper Questions</h2>
+  <p class="lead">These questions follow the style and content of CIE IGCSE Biology past papers (0610). Write your answers, then click <strong>Check All Answers</strong> to reveal the mark-scheme level answers.</p>
+
+  <!-- Q1 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Species · 2 marks</div>
+    <div class="pp-q">Define the term <em>'species'</em>. <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp1" placeholder="Write your definition here..."></textarea>
+    <div class="pp-marks">Tip: Two separate marking points — what the organisms form, and what they can produce together.</div>
+    <div class="pp-answer" id="ans1">
+      <strong>Mark Scheme Answer (2 marks):</strong>
+      <ul>
+        <li>A group of organisms <strong>[1]</strong></li>
+        <li>That can reproduce to produce fertile offspring <strong>[1]</strong></li>
+      </ul>
+      <em>Note: "fertile" is essential — organisms that can mate but only produce infertile offspring (e.g. horse × donkey = mule) are different species.</em>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Binomial System · 2 marks</div>
+    <div class="pp-q">State two rules for writing a binomial name correctly, using the example <em>Panthera leo</em> (the lion). <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp2" placeholder="Write your rules here..."></textarea>
+    <div class="pp-marks">Tip: Think about capitalisation and formatting.</div>
+    <div class="pp-answer" id="ans2">
+      <strong>Mark Scheme Answer (2 marks):</strong>
+      <ul>
+        <li>The genus name (Panthera) starts with a capital letter, and the species name (leo) is all lowercase <strong>[1]</strong></li>
+        <li>Both parts are italicised, or underlined separately if handwritten <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Kingdoms · 2 marks</div>
+    <div class="pp-q">A mushroom does not photosynthesise. It has a cell wall made of chitin and feeds by absorbing nutrients from dead organic matter. <em>State which kingdom the mushroom belongs to and give ONE feature that supports your answer.</em> <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp3" placeholder="State the kingdom and supporting feature..."></textarea>
+    <div class="pp-marks">Tip: Which kingdom has a chitin cell wall?</div>
+    <div class="pp-answer" id="ans3">
+      <strong>Mark Scheme Answer (2 marks):</strong>
+      <ul>
+        <li>Fungus (kingdom) <strong>[1]</strong></li>
+        <li>Supporting feature: cell wall made of chitin, OR feeds by saprotrophic nutrition (extracellular digestion and absorption) <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Excretion vs Egestion · 2 marks</div>
+    <div class="pp-q">Explain the difference between <em>excretion</em> and <em>egestion</em>. <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp4" placeholder="Write your explanation here..."></textarea>
+    <div class="pp-marks">Tip: One term relates to metabolism inside cells; the other relates to undigested food.</div>
+    <div class="pp-answer" id="ans4">
+      <strong>Mark Scheme Answer (2 marks):</strong>
+      <ul>
+        <li>Excretion is the removal of waste products of metabolism (or substances in excess of requirements) made inside the body's own cells <strong>[1]</strong></li>
+        <li>Egestion is the removal of undigested food (faeces) that was never absorbed into the body's cells <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Dichotomous Keys · 2 marks</div>
+    <div class="pp-q">Four organisms, W, X, Y and Z, are being classified. W and X have a backbone; Y and Z do not. <em>Write a suitable first question for a dichotomous key that would separate these two groups.</em> <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp5" placeholder="Write your key question here..."></textarea>
+    <div class="pp-marks">Tip: The question must have exactly two possible answers and must split the four organisms into two groups.</div>
+    <div class="pp-answer" id="ans5">
+      <strong>Mark Scheme Answer (2 marks):</strong>
+      <ul>
+        <li>A question based on an observable feature with two answers, e.g. "Does the organism have a backbone?" <strong>[1]</strong></li>
+        <li>Yes → W, X   /   No → Y, Z (the question must correctly divide the group into two) <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Arthropod Groups · 2 marks</div>
+    <div class="pp-q"><em>State two features that distinguish insects from arachnids.</em> <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp6" placeholder="Difference 1: ...&#10;Difference 2: ..."></textarea>
+    <div class="pp-marks">Tip: Compare leg number and number of body parts.</div>
+    <div class="pp-answer" id="ans6">
+      <strong>Mark Scheme Answer (2 marks — any 2 of):</strong>
+      <ul>
+        <li>Insects have 6 legs (3 pairs); arachnids have 8 legs (4 pairs) <strong>[1]</strong></li>
+        <li>Insect body is in 3 parts (head, thorax, abdomen); arachnid body is in 2 parts (cephalothorax, abdomen) <strong>[1]</strong></li>
+        <li>Insects usually have antennae and may have wings; arachnids have neither <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — DNA Classification · 2 marks</div>
+    <div class="pp-q"><em>Explain why classification systems based on DNA base sequences are considered more reliable than classification based only on physical (observable) features.</em> <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp7" placeholder="Write your explanation here..."></textarea>
+    <div class="pp-marks">Tip: Think about what DNA similarity actually shows about ancestry.</div>
+    <div class="pp-answer" id="ans7">
+      <strong>Mark Scheme Answer (2 marks):</strong>
+      <ul>
+        <li>DNA base sequences directly reflect evolutionary relationships / how closely related organisms are <strong>[1]</strong></li>
+        <li>Organisms with a more recent common ancestor have more similar DNA base sequences than those with only a distant common ancestor, whereas physical features can appear similar without close relation <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:.8rem;justify-content:center;margin-top:1rem;flex-wrap:wrap;">
+    <button class="btn btn-mint" onclick="showAllAnswers()">✅ Check All Answers</button>
+    <button class="btn btn-ghost" onclick="hideAllAnswers()">🙈 Hide Answers</button>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 6: QUIZ ══ -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">7</div><span class="eyebrow-label">Phase 7 · Knowledge Check</span></div>
+  <h2>❓ Topic 1 Quiz</h2>
+  <p class="lead">12 questions in the style of IGCSE Paper 1. Choose the best answer — you'll get instant feedback with explanations.</p>
+  <div id="quiz-container"></div>
+  <div id="score-panel" class="score-panel" style="display:none;">
+    <h3>Quiz Complete! 🎉</h3>
+    <div class="score-num" id="score-display">0/12</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-ghost" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 7: SUBMIT ══ -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">8</div><span class="eyebrow-label">Your Completed Work</span></div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Summary of all your work. Copy, email, or print to submit to your teacher.</p>
+
+  <div class="summary-section" style="background:var(--ocean);color:white;border-color:var(--ocean);">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">STUDENT</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">LESSON</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;">IGCSE Biology · Topic 1 · Characteristics & Classification 🌱</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6;" id="summaryDate"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section"><h3>❓ Quiz Score</h3><div class="summary-answer" id="sum-quiz"></div></div>
+  <div class="summary-section"><h3>🌱 Opening Prediction</h3><div class="summary-answer" id="sum-wonder"></div></div>
+  <div class="summary-section"><h3>🧬 MRS GREN Reflection</h3><div class="summary-answer" id="sum-mrsgren"></div></div>
+  <div class="summary-section"><h3>🗝️ Dichotomous Key Construction</h3><div class="summary-answer" id="sum-key"></div></div>
+  <div class="summary-section">
+    <h3>📝 Past Paper Responses</h3>
+    <div class="sum-label">Q1 — Define Species</div><div class="summary-answer" id="sum-pp1"></div>
+    <div class="sum-label">Q2 — Binomial System Rules</div><div class="summary-answer" id="sum-pp2"></div>
+    <div class="sum-label">Q3 — Classifying a Mushroom</div><div class="summary-answer" id="sum-pp3"></div>
+    <div class="sum-label">Q4 — Excretion vs Egestion</div><div class="summary-answer" id="sum-pp4"></div>
+    <div class="sum-label">Q5 — Dichotomous Key Question</div><div class="summary-answer" id="sum-pp5"></div>
+    <div class="sum-label">Q6 — Insects vs Arachnids</div><div class="summary-answer" id="sum-pp6"></div>
+    <div class="sum-label">Q7 — DNA Classification</div><div class="summary-answer" id="sum-pp7"></div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem;">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2;">
+      <strong>📋 Copy My Results</strong> — Copies all answers to clipboard. Paste into Google Classroom and submit.<br>
+      <strong>📧 Email to Teacher</strong> — Opens email app pre-filled. Add your teacher's address and send.<br>
+      <strong>🖨️ Print / Save PDF</strong> — Mac: Save as PDF. Windows: Microsoft Print to PDF. Upload to assignment.
+    </p>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" disabled>✓ Complete!</button></div>
+</div>
+
+</div><!-- /sheet -->
+
+<!-- COPYRIGHT -->
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+
+<script>
+// ══ NAVIGATION ══
+let currentSection = 0;
+const totalSections = 8;
+function goTo(n) {
+  document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===n));
+  document.querySelectorAll('.prog-step').forEach((p,i) => {
+    p.classList.remove('active','done');
+    if(i===n) p.classList.add('active');
+    else if(i<n) p.classList.add('done');
+  });
+  currentSection = n;
+  if(n===totalSections-1) buildSummary();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function navigate(dir) { goTo(Math.max(0,Math.min(currentSection+dir,totalSections-1))); }
+
+// ══ VOCAB CHIPS ══
+function revealChip(id) {
+  const all = document.querySelectorAll('.concept-reveal');
+  const t = document.getElementById('chip-'+id);
+  const isOpen = t && t.classList.contains('show');
+  all.forEach(c=>c.classList.remove('show'));
+  if(!isOpen && t) t.classList.add('show');
+}
+
+// ══ PANELS ══
+function showPanel(id) {
+  const allP = document.querySelectorAll('.info-panel');
+  const allC = document.querySelectorAll('.info-card');
+  const t = document.getElementById('panel-'+id);
+  const isOpen = t && t.classList.contains('show');
+  allP.forEach(p=>p.classList.remove('show'));
+  allC.forEach(c=>c.classList.remove('active'));
+  if(!isOpen && t){ t.classList.add('show'); event.currentTarget.classList.add('active'); }
+}
+
+// ══ ACCORDION (reserved for future use) ══
+function toggleAccord(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.accord-card').forEach(c=>c.classList.remove('open'));
+  if(!isOpen) el.classList.add('open');
+}
+
+// ══ MATCHING GAME ══
+let selectedMatch = null;
+function selectMatch(el) {
+  if (el.classList.contains('matched')) return;
+  if (!selectedMatch) {
+    el.classList.add('selected');
+    selectedMatch = el;
+    return;
+  }
+  if (selectedMatch === el) {
+    el.classList.remove('selected');
+    selectedMatch = null;
+    return;
+  }
+  if (selectedMatch.dataset.pair === el.dataset.pair) {
+    selectedMatch.classList.remove('selected');
+    selectedMatch.classList.add('matched');
+    el.classList.add('matched');
+    selectedMatch = null;
+    checkMatchComplete();
+  } else {
+    el.classList.add('wrong');
+    selectedMatch.classList.add('wrong');
+    const prev = selectedMatch;
+    setTimeout(()=>{
+      el.classList.remove('wrong');
+      prev.classList.remove('wrong','selected');
+    },500);
+    selectedMatch = null;
+  }
+}
+function checkMatchComplete() {
+  const total = document.querySelectorAll('#kingdomMatch .match-item').length;
+  const matched = document.querySelectorAll('#kingdomMatch .match-item.matched').length;
+  if (matched === total) document.getElementById('matchComplete').style.display = 'block';
+}
+
+// ══ DICHOTOMOUS KEY DEMO ══
+const keyPaths = {
+  fly: {
+    icon: '🪰', name: 'Organism A',
+    steps: [
+      {q:'STEP 1 — Does the organism have more than 6 legs?', correct:'No', note:'Organism A has exactly 6 legs.'},
+      {result:true, group:'Insect', reason:'🪰 <strong>Organism A is an INSECT.</strong> It has exactly 6 legs (3 pairs) and a body divided into 3 parts (head, thorax, abdomen) — features unique to insects.'}
+    ]
+  },
+  spider: {
+    icon: '🕷️', name: 'Organism B',
+    steps: [
+      {q:'STEP 1 — Does the organism have more than 6 legs?', correct:'Yes', note:'Organism B has 8 legs.'},
+      {q:'STEP 2 — Does it have exactly 8 legs (4 pairs)?', correct:'Yes', note:'8 legs, body in 2 parts, no antennae.'},
+      {result:true, group:'Arachnid', reason:'🕷️ <strong>Organism B is an ARACHNID.</strong> It has 8 legs and a body divided into only 2 parts (cephalothorax and abdomen), with no antennae.'}
+    ]
+  },
+  woodlouse: {
+    icon: '🦐', name: 'Organism C',
+    steps: [
+      {q:'STEP 1 — Does the organism have more than 6 legs?', correct:'Yes', note:'Organism C has 14 legs.'},
+      {q:'STEP 2 — Does it have exactly 8 legs (4 pairs)?', correct:'No', note:'It has more than 8 legs.'},
+      {q:'STEP 3 — Does it have two pairs of antennae?', correct:'Yes', note:'Two pairs of antennae are present.'},
+      {result:true, group:'Crustacean', reason:'🦐 <strong>Organism C is a CRUSTACEAN.</strong> It has more than 8 legs and two pairs of antennae — typical of crustaceans such as woodlice and crabs.'}
+    ]
+  },
+  centipede: {
+    icon: '🐛', name: 'Organism D',
+    steps: [
+      {q:'STEP 1 — Does the organism have more than 6 legs?', correct:'Yes', note:'Organism D has many legs.'},
+      {q:'STEP 2 — Does it have exactly 8 legs (4 pairs)?', correct:'No', note:'It has far more than 8 legs.'},
+      {q:'STEP 3 — Does it have two pairs of antennae?', correct:'No', note:'Only one pair of antennae is present.'},
+      {result:true, group:'Myriapod', reason:'🐛 <strong>Organism D is a MYRIAPOD.</strong> It has a long, segmented body with one or two pairs of legs per segment and only one pair of antennae — like a centipede or millipede.'}
+    ]
+  }
+};
+let currentKey = null, currentKeyStep = 0;
+function startKey(id) {
+  currentKey = keyPaths[id];
+  currentKeyStep = 0;
+  document.getElementById('keyResult').classList.remove('show');
+  renderKeyStep();
+}
+function renderKeyStep() {
+  const step = currentKey.steps[currentKeyStep];
+  const qEl = document.getElementById('keyQuestion');
+  const optEl = document.getElementById('keyOptions');
+  const noteEl = document.getElementById('keyNote');
+  noteEl.textContent = '';
+  if (step.result) {
+    qEl.textContent = currentKey.icon + ' ' + currentKey.name + ' — identification complete!';
+    optEl.innerHTML = '<button class="btn btn-ghost" onclick="startKey(Object.keys(keyPaths).find(k=>keyPaths[k]===currentKey))">↺ Try This Organism Again</button>';
+    const resEl = document.getElementById('keyResult');
+    resEl.innerHTML = step.reason;
+    resEl.classList.add('show');
+    return;
+  }
+  qEl.textContent = currentKey.icon + ' ' + currentKey.name + ' — ' + step.q;
+  optEl.innerHTML = "<button class='btn btn-mint' onclick=\"answerKey('Yes')\">Yes</button><button class='btn btn-ocean' onclick=\"answerKey('No')\">No</button>";
+}
+function answerKey(userAns) {
+  const step = currentKey.steps[currentKeyStep];
+  const noteEl = document.getElementById('keyNote');
+  if (userAns === step.correct) {
+    noteEl.innerHTML = '✅ Correct — ' + step.note;
+  } else {
+    noteEl.innerHTML = '❌ Actually, the answer is "' + step.correct + '" — ' + step.note;
+  }
+  const optEl = document.getElementById('keyOptions');
+  optEl.innerHTML = '<button class="btn btn-ocean" onclick="advanceKey()">Continue →</button>';
+}
+function advanceKey() {
+  currentKeyStep++;
+  renderKeyStep();
+}
+
+// ══ PAST PAPER ANSWERS ══
+function showAllAnswers() {
+  for(let i=1;i<=7;i++) {
+    const el = document.getElementById('ans'+i);
+    if(el) el.classList.add('show');
+  }
+}
+function hideAllAnswers() {
+  for(let i=1;i<=7;i++) {
+    const el = document.getElementById('ans'+i);
+    if(el) el.classList.remove('show');
+  }
+}
+
+// ══ QUIZ ══
+const quizData = [
+  { q:'Which of the following best matches the biological definition of movement?',
+    opts:['Movement is always the whole organism relocating from one place to another','An action by an organism, or part of an organism, causing a change of position or place','The permanent change in the position of a single cell only','A response that only occurs in animals with muscles'],
+    ans:1, fb:'The IGCSE definition covers movement of the WHOLE organism OR just PART of an organism (e.g. a plant turning its leaves towards light) — as long as position or place changes.' },
+  { q:'Which statement correctly defines respiration?',
+    opts:['The exchange of gases between an organism and its environment','Breathing in oxygen and breathing out carbon dioxide','The chemical reactions in cells that break down nutrient molecules and release energy for metabolism','The process of gaseous exchange in the lungs'],
+    ans:2, fb:'Respiration is a set of CHEMICAL REACTIONS inside cells — it is not the same as breathing (ventilation) or gas exchange. These three terms are commonly confused in exams.' },
+  { q:'A woodlouse moves away from bright light into a dark crevice. Which characteristic of life is being tested here?',
+    opts:['Movement only','Sensitivity','Nutrition','Excretion'],
+    ans:1, fb:'This is SENSITIVITY — the ability to DETECT (the light) and RESPOND (by moving away) to a change in the environment. Sensitivity always requires both detecting and responding.' },
+  { q:'Which of these is an example of excretion, rather than egestion?',
+    opts:['Removing undigested food as faeces','Removing carbon dioxide produced by respiration','Removing food particles stuck between teeth','Coughing up phlegm containing inhaled dust'],
+    ans:1, fb:"Excretion is the removal of waste products OF METABOLISM (like CO2 from respiration) or substances in excess of requirements. Undigested food was never part of the body's cells, so removing it is EGESTION — a classic examiner trap." },
+  { q:'Which statement correctly defines reproduction?',
+    opts:['The process of growth in size of an organism','The processes that make more of the same kind of organism','The taking in of nutrients to build new cells','The detection of and response to stimuli'],
+    ans:1, fb:'Reproduction is defined as the processes that make more of the same kind of organism — this can happen sexually or asexually.' },
+  { q:'Two organisms can mate and produce offspring, but the offspring are infertile (as with a horse and a donkey producing a mule). How are the two parent organisms classified?',
+    opts:['The same species, because they can reproduce together','Different species, because their offspring cannot reproduce to give fertile offspring','Members of the same genus and species','It is impossible to classify them'],
+    ans:1, fb:'A species is defined as a group that can reproduce to give FERTILE offspring. Since mules are infertile, horses and donkeys are classified as different species despite being able to interbreed.' },
+  { q:'Which of these binomial names is written using the correct IGCSE convention?',
+    opts:['homo Sapiens','Homo sapiens','HOMO SAPIENS','sapiens Homo'],
+    ans:1, fb:'In binomial nomenclature, the GENUS name starts with a capital letter and the SPECIES name is all lowercase. Both parts should be italicised (or underlined separately if handwritten). "Homo sapiens" is correct.' },
+  { q:'What is the main purpose of a dichotomous key?',
+    opts:['To show the evolutionary history of a group of organisms','To identify an organism by working through a series of questions, each with two possible answers, based on observable features','To measure the DNA similarity between two species','To classify organisms into the five kingdoms only'],
+    ans:1, fb:'A dichotomous key is a practical identification tool: a series of either/or questions about observable features that narrows down the identity of an unknown organism step by step.' },
+  { q:'Modern classification increasingly uses DNA base sequences because...',
+    opts:['DNA sequences never change between generations','organisms sharing a more recent common ancestor have more similar base sequences than those sharing only a distant ancestor','all organisms have identical DNA sequences','DNA analysis is simpler than looking at physical features'],
+    ans:1, fb:'Classification systems aim to reflect evolutionary relationships. Organisms that share a more recent common ancestor (are more closely related) have DNA base sequences that are MORE similar than those sharing only a distant ancestor.' },
+  { q:'A single-celled organism has no nucleus, and its DNA lies free in the cytoplasm as a single circular strand. Which kingdom does it belong to?',
+    opts:['Protoctist','Prokaryote','Fungus','Plant'],
+    ans:1, fb:'The defining feature of the Prokaryote kingdom is the ABSENCE of a nucleus, with DNA lying free as a circular strand in the cytoplasm — this describes bacteria.' },
+  { q:'An organism has 8 legs, a body divided into two parts, and no antennae. To which arthropod group does it belong?',
+    opts:['Insect','Myriapod','Crustacean','Arachnid'],
+    ans:3, fb:'8 legs, a 2-part body, and no antennae are the defining features of ARACHNIDS (e.g. spiders, scorpions, ticks).' },
+  { q:'A plant has parallel-veined leaves, only one seed leaf (cotyledon), and flower parts arranged in 3s. Which group does it belong to?',
+    opts:['Fern','Dicotyledon','Monocotyledon','Fungus'],
+    ans:2, fb:'Parallel veins, a single cotyledon, and flower parts in multiples of 3 are the defining features of MONOCOTYLEDONS (e.g. grasses and lilies), as opposed to dicotyledons which have net-veined leaves, 2 cotyledons, and flower parts in 4s or 5s.' },
+];
+
+let quizScore=0, quizAnswered=0;
+function buildQuiz(){
+  const c=document.getElementById('quiz-container'); c.innerHTML=''; quizScore=0; quizAnswered=0;
+  document.getElementById('score-panel').style.display='none';
+  quizData.forEach((item,idx)=>{
+    const card=document.createElement('div'); card.className='quiz-card';
+    card.innerHTML=`<div class="quiz-q">Q${idx+1}. ${item.q}</div><div class="quiz-options">${item.opts.map((o,i)=>`<button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}</div><div class="quiz-feedback" id="qfb-${idx}"></div>`;
+    c.appendChild(card);
+  });
+}
+function checkAnswer(btn,qIdx,optIdx){
+  const card=btn.closest('.quiz-card');
+  const buttons=card.querySelectorAll('.quiz-opt');
+  const fb=document.getElementById('qfb-'+qIdx);
+  const correct=quizData[qIdx].ans;
+  buttons.forEach(b=>b.disabled=true);
+  if(optIdx===correct){ btn.classList.add('correct'); fb.textContent='✅ '+quizData[qIdx].fb; fb.className='quiz-feedback show correct-fb'; quizScore++; }
+  else { btn.classList.add('wrong'); buttons[correct].classList.add('correct'); fb.textContent='❌ '+quizData[qIdx].fb; fb.className='quiz-feedback show wrong-fb'; }
+  quizAnswered++;
+  if(quizAnswered===quizData.length){
+    const panel=document.getElementById('score-panel'); panel.style.display='block';
+    document.getElementById('score-display').textContent=quizScore+'/'+quizData.length;
+    const pct=quizScore/quizData.length;
+    document.getElementById('score-msg').textContent=pct>=.9?'🌟 Excellent — IGCSE exam ready on this topic!':pct>=.75?'👍 Good work! Review the questions you missed.':pct>=.6?'📚 Solid start — revisit the earlier phases and retake.':'💪 Go back through the lesson phases, then retake.';
+    panel.scrollIntoView({behavior:'smooth'});
+  }
+}
+function retakeQuiz(){ buildQuiz(); }
+buildQuiz();
+
+// ══ SUMMARY ══
+function getTA(id){ const el=document.getElementById(id); return el?el.value.trim():''; }
+function fillSummary(id,text){ const el=document.getElementById(id); if(!el)return; el.textContent=text||'Not answered'; el.classList.toggle('empty',!text); }
+function buildSummary(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  document.getElementById('summaryName').textContent=name;
+  document.getElementById('summaryDate').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const scoreEl=document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl?scoreEl.textContent+' correct':'Quiz not yet completed');
+  fillSummary('sum-wonder',   getTA('ta-wonder'));
+  fillSummary('sum-mrsgren',  getTA('ta-mrsgren'));
+  fillSummary('sum-key',      getTA('ta-key'));
+  for(let i=1;i<=7;i++) fillSummary('sum-pp'+i, getTA('pp'+i));
+}
+function buildPlainText(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  const date=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const scoreEl=document.getElementById('score-display');
+  const ppAnswers = [1,2,3,4,5,6,7].map(i=>`Q${i}: ${getTA('pp'+i)||'Not answered'}`).join(String.fromCharCode(10));
+  return [
+    'IGCSE BIOLOGY · TOPIC 1 · CHARACTERISTICS AND CLASSIFICATION OF LIVING ORGANISMS — STUDENT SUBMISSION',
+    '==============================================================================',
+    'Student: '+name, 'Date: '+date,'',
+    '── QUIZ SCORE ──', scoreEl?scoreEl.textContent:'Not completed','',
+    '── OPENING PREDICTION ──', getTA('ta-wonder')||'Not answered','',
+    '── MRS GREN REFLECTION ──', getTA('ta-mrsgren')||'Not answered','',
+    '── DICHOTOMOUS KEY CONSTRUCTION ──', getTA('ta-key')||'Not answered','',
+    '── PAST PAPER RESPONSES ──', ppAnswers,'',
+    '==============================================================================',
+    '© 2026 Farvour Explorations · farvourexplorations.com',
+    'Submitted via Characteristics and Classification of Living Organisms · IGCSE Biology Interactive Lesson'
+  ].join(String.fromCharCode(10));
+}
+function copyResults(){
+  buildSummary();
+  navigator.clipboard.writeText(buildPlainText()).then(()=>{
+    const el=document.getElementById('copyConfirm'); el.textContent='✓ Copied! Paste into Google Classroom or your assignment.';
+    setTimeout(()=>el.textContent='',4000);
+  }).catch(()=>{ document.getElementById('copyConfirm').textContent='⚠️ Could not copy — try selecting the text manually.'; });
+}
+function emailResults(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  window.location.href='mailto:?subject='+encodeURIComponent('IGCSE Bio Topic 1 — '+name)+'&body='+encodeURIComponent(buildPlainText());
+}
+</script>
+</body>
+</html>
