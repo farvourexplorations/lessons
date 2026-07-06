@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Helicopters & Hovering Heroes — Farvour Explorations PYP 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#1a6fb0;--sky-mid:#3a9bd9;--sun:#ffb627;--sun-pale:#fff6e3;--bird:#ff7a5c;--bird-pale:#ffece7;--leaf:#3aaf85;--leaf-pale:#e8f8f2;--cloud:#8ecae6;--cloud-pale:#eaf6fb;--kite:#7c6fcd;--kite-pale:#f0eefb;--paper:#fffef9;--ink:#1a2332;--muted:#6b7a8c;--border:#e0e4ea}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:linear-gradient(160deg,#0d4a7a 0%,#1a6fb0 40%,#3a9bd9 75%,#8ecae6 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--ink);overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(40px 24px at 10% 15%,rgba(255,255,255,.5) 50%,transparent 52%),radial-gradient(50px 28px at 85% 10%,rgba(255,255,255,.4) 50%,transparent 52%),radial-gradient(36px 20px at 70% 22%,rgba(255,255,255,.35) 50%,transparent 52%),radial-gradient(45px 25px at 25% 30%,rgba(255,255,255,.3) 50%,transparent 52%);pointer-events:none;z-index:0;opacity:.7}
+.hero{position:relative;z-index:1;text-align:center;padding:2.6rem 1.5rem 2rem;color:white}
+.hero-badge{display:inline-block;background:var(--sun);color:#7a4a00;font-family:'Baloo 2',cursive;font-weight:700;font-size:.85rem;padding:.4rem 1.3rem;border-radius:24px;margin-bottom:1rem;box-shadow:0 3px 14px rgba(255,182,39,.5)}
+.hero h1{font-family:'Baloo 2',cursive;font-weight:800;font-size:clamp(2rem,7vw,3.6rem);line-height:1.1;margin-bottom:.7rem;text-shadow:0 2px 18px rgba(0,0,0,.3)}
+.hero h1 .accent{color:var(--sun)}
+.hero p.intro{font-size:1.05rem;line-height:1.6;opacity:.92;max-width:520px;margin:0 auto 1.6rem;font-weight:600}
+.name-bar{background:rgba(255,255,255,.16);border:2px solid rgba(255,255,255,.3);border-radius:14px;padding:.6rem 1rem;display:flex;align-items:center;gap:.7rem;max-width:380px;margin:0 auto 1.1rem}
+.name-bar label{font-size:.85rem;font-weight:800;color:white;white-space:nowrap}
+.name-bar input{flex:1;background:rgba(255,255,255,.22);border:none;border-radius:9px;padding:.5rem .8rem;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;color:white;outline:none}
+.name-bar input::placeholder{color:rgba(255,255,255,.5);font-weight:600}
+.progress-wrap{display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap}
+.prog-step{background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.22);border-radius:22px;padding:.45rem 1rem;font-size:.85rem;font-weight:800;color:rgba(255,255,255,.8);cursor:pointer;transition:all .2s;font-family:'Baloo 2',cursive}
+.prog-step:hover,.prog-step.done{background:rgba(255,255,255,.26);color:white;border-color:rgba(255,255,255,.4)}
+.prog-step.active{background:var(--sun);color:#7a4a00;border-color:var(--sun);box-shadow:0 3px 14px rgba(255,182,39,.5)}
+.sheet{position:relative;z-index:1;background:var(--paper);border-radius:28px 28px 0 0;margin-top:1.4rem;padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.22)}
+.section{padding:2.6rem 1.6rem 0;max-width:780px;margin:0 auto;display:none}
+.section.active{display:block}
+.eyebrow{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem}
+.enum{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Baloo 2',cursive;font-weight:800;font-size:1.15rem;color:white;flex-shrink:0}
+.e1{background:var(--bird)}.e2{background:var(--cloud)}.e3{background:var(--sun);color:#7a4a00}.e4{background:var(--kite)}.e5{background:var(--leaf)}
+.elabel{font-size:.85rem;font-weight:800;letter-spacing:.02em;text-transform:uppercase;color:var(--muted)}
+h2{font-family:'Baloo 2',cursive;font-weight:800;font-size:clamp(1.7rem,4vw,2.3rem);color:var(--sky);margin-bottom:.6rem;line-height:1.15}
+.lead{font-size:1.08rem;line-height:1.7;color:#3a4a5a;margin-bottom:1.6rem;font-weight:600}
+.lead strong{color:var(--bird)}
+.wonder-box{background:linear-gradient(135deg,var(--sky) 0%,var(--sky-mid) 100%);color:white;border-radius:18px;padding:1.6rem 1.8rem;margin-bottom:1.6rem;overflow:hidden;position:relative}
+.wonder-box::after{content:'🚁';position:absolute;right:1.3rem;top:50%;transform:translateY(-50%);font-size:2.8rem;opacity:.3}
+.wonder-box p{font-size:1.05rem;line-height:1.65;font-weight:700;max-width:85%}
+.wonder-box strong{color:var(--sun)}
+.demo-zone{background:white;border:3px solid var(--border);border-radius:18px;padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 3px 12px rgba(0,0,0,.06)}
+.demo-zone h3{font-family:'Baloo 2',cursive;font-weight:700;font-size:1.25rem;color:var(--sky);margin-bottom:.3rem}
+.hint{font-size:.85rem;color:var(--muted);margin-bottom:1rem;font-weight:600}
+.chip-row{display:flex;flex-wrap:wrap;gap:.7rem;margin-bottom:1.4rem;justify-content:center}
+.vchip{padding:.7rem 1.3rem;border-radius:24px;font-size:1.02rem;font-weight:800;cursor:pointer;transition:all .2s;border:3px solid transparent;font-family:'Baloo 2',cursive;display:flex;align-items:center;gap:.5rem}
+.vchip .ve{font-size:1.3rem}
+.c1{background:var(--bird-pale);color:#c84a30;border-color:#ffc9b8}
+.c2{background:var(--cloud-pale);color:#0d6a9a;border-color:#a8d8ee}
+.c3{background:var(--sun-pale);color:#8a6a1a;border-color:#ffe0a0}
+.c4{background:var(--kite-pale);color:#5a4ab0;border-color:#cac0ef}
+.c5{background:var(--leaf-pale);color:#1b7a58;border-color:#a8e0c8}
+.vchip:hover{transform:scale(1.06)}
+.vchip.said{box-shadow:0 0 0 3px rgba(0,0,0,.08) inset}
+/* T-CHART */
+.tchart-wrap{display:flex;gap:0;border:3px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:1.4rem}
+.tcol{flex:1;display:flex;flex-direction:column}
+.tcol-header{padding:.9rem 1rem;text-align:center;font-family:'Baloo 2',cursive;font-weight:800;font-size:1.1rem}
+.tcol.heli .tcol-header{background:var(--bird);color:white}
+.tcol.plane .tcol-header{background:var(--sky);color:white}
+.tcol-body{flex:1;padding:.8rem;background:white;display:flex;flex-direction:column;gap:.5rem;min-height:220px}
+.tcol.heli .tcol-body{background:var(--bird-pale)}
+.tcol.plane .tcol-body{background:var(--cloud-pale)}
+.tcenter{width:3px;background:var(--border);flex-shrink:0}
+.fact-chip{border-radius:14px;padding:.6rem 1rem;font-family:'Baloo 2',cursive;font-weight:700;font-size:.9rem;cursor:pointer;transition:all .2s;text-align:center;border:3px solid transparent}
+.fact-chip.unplaced{background:white;border-color:var(--border);color:var(--ink)}
+.fact-chip.unplaced:hover{border-color:var(--sky-mid);transform:translateY(-2px)}
+.fact-chip.in-heli{background:var(--bird-pale);border-color:var(--bird);color:#c84a30}
+.fact-chip.in-plane{background:var(--cloud-pale);border-color:var(--cloud);color:#0d6a9a}
+.fact-chip.wrong-flash{animation:wrongflash .4s}
+@keyframes wrongflash{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.tcol-btn-row{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center;margin-top:.4rem}
+.tbtn{font-family:'Baloo 2',cursive;font-weight:700;font-size:.72rem;padding:.3rem .6rem;border:none;border-radius:8px;cursor:pointer}
+.tbtn.hbtn{background:var(--bird);color:white}
+.tbtn.pbtn{background:var(--sky);color:white}
+.both-badge{background:var(--leaf);color:white;font-size:.7rem;font-family:'Baloo 2',cursive;font-weight:800;padding:.15rem .5rem;border-radius:8px;display:inline-block;margin-left:.3rem}
+.pool-label{font-family:'Baloo 2',cursive;font-weight:700;font-size:.95rem;color:var(--muted);text-align:center;margin-bottom:.5rem}
+/* sentence frame */
+.sent-frame{background:var(--sun-pale);border:3px solid var(--sun);border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.2rem}
+.sent-frame .sf-title{font-family:'Baloo 2',cursive;font-weight:700;color:#8a6a1a;margin-bottom:.6rem;font-size:1rem}
+.sent-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem;flex-wrap:wrap}
+.sent-row label{font-family:'Baloo 2',cursive;font-weight:700;font-size:.9rem;color:var(--sky)}
+.sent-row input{flex:1;min-width:140px;padding:.5rem .8rem;border-radius:8px;border:2px solid var(--border);font-family:'Nunito';font-size:.95rem;font-weight:600}
+.chant-box{background:linear-gradient(135deg,#1b7a58 0%,#3aaf85 100%);color:white;border-radius:18px;padding:1.6rem 1.8rem;text-align:center;margin-bottom:1.5rem}
+.chant-box h4{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.2rem;margin-bottom:.6rem}
+.chant-box p{font-size:1.15rem;line-height:1.7;font-weight:700}
+.nav-row{display:flex;justify-content:space-between;align-items:center;padding:2.2rem 1.6rem 0;max-width:780px;margin:0 auto;gap:1rem}
+.btn-next{background:var(--sky);color:white;border:none;border-radius:50px;padding:.95rem 2rem;font-family:'Baloo 2',cursive;font-weight:700;font-size:1.05rem;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(26,111,176,.35)}
+.btn-next:hover{background:var(--sky-mid);transform:translateY(-2px)}
+.btn-prev{background:transparent;color:var(--muted);border:3px solid var(--border);border-radius:50px;padding:.9rem 1.6rem;font-family:'Baloo 2',cursive;font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s}
+.btn-prev:hover{border-color:var(--muted);color:var(--ink)}
+.btn-prev:disabled,.btn-next:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.sum-section{background:white;border-radius:18px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:3px solid var(--border)}
+.sum-section h3{font-family:'Baloo 2',cursive;font-weight:700;font-size:1.1rem;color:var(--sky);margin-bottom:.7rem}
+.sum-ans{background:#f5f7fa;border-radius:10px;padding:.7rem 1rem;font-size:.95rem;line-height:1.5;color:var(--ink);margin-bottom:.4rem;border-left:4px solid var(--kite);min-height:1.8rem;font-weight:600}
+.sum-ans.empty{color:var(--muted);font-weight:400;border-left-color:var(--border)}
+.share-buttons{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.4rem;justify-content:center}
+.share-btn{border:none;border-radius:14px;padding:.9rem 1.6rem;font-family:'Baloo 2',cursive;font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s}
+.share-btn:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.sbcopy{background:var(--leaf);color:white}.sbemail{background:var(--kite);color:white}.sbprint{background:var(--sky);color:white}
+.copy-confirm{text-align:center;font-size:.9rem;color:var(--leaf);min-height:1.2rem;margin-top:.6rem;font-weight:700}
+.star-row{display:flex;justify-content:center;gap:.5rem;margin:1rem 0}
+.star-row span{font-size:1.8rem;cursor:pointer;opacity:.35;transition:transform .15s}
+.star-row span.lit{opacity:1;transform:scale(1.15)}
+@media(max-width:560px){.tchart-wrap{flex-direction:column}.tcenter{width:100%;height:3px}.hero{padding:2rem 1rem 1.4rem}.section{padding:2rem 1.1rem 0}.nav-row{padding:1.8rem 1.1rem 0}}
+@media print{.hero,.nav-row,.share-buttons,.copy-confirm{display:none!important}.sheet{box-shadow:none;border-radius:0}.section{display:none!important}#sec-4{display:block!important}}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge">🚁 Farvour Explorations · PYP 1 · Week 2 Day 1</div>
+  <h1>Helicopters &amp; <span class="accent">Hovering Heroes</span></h1>
+  <p class="intro">Today we compare helicopters and airplanes! How are they the same? How are they different? Let's find out! ✈️🚁</p>
+  <div class="name-bar"><label>😊 MY NAME:</label><input type="text" id="studentName" placeholder="Type your name..."></div>
+  <div class="progress-wrap">
+    <a class="prog-step active" onclick="goTo(0)">👋 Hello</a>
+    <a class="prog-step" onclick="goTo(1)">🔍 Look &amp; Learn</a>
+    <a class="prog-step" onclick="goTo(2)">📊 T-Chart!</a>
+    <a class="prog-step" onclick="goTo(3)">✏️ My Sentences</a>
+    <a class="prog-step" onclick="goTo(4)">🌟 All Done!</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+<!-- SEC 0 -->
+<div class="section active" id="sec-0">
+  <div class="eyebrow"><div class="enum e1">1</div><span class="elabel">Let's Begin</span></div>
+  <h2>👋 Hello, Sky Explorers!</h2>
+  <p class="lead">Last week we built paper airplanes. This week we look at <strong>two</strong> flying machines — can you spot the difference?</p>
+  <div class="wonder-box">
+    <p>✨ A helicopter can <strong>hover</strong> — it stays still in the sky! An airplane must keep moving. How are they the same? How are they different?</p>
+  </div>
+  <div class="demo-zone">
+    <h3>🙋 Warm-Up: Be a Helicopter or a Plane!</h3>
+    <p class="hint">Stand up! When teacher says Helicopter — spin your arms like a rotor. Airplane — stretch arms out straight and zoom!</p>
+    <div class="chip-row">
+      <span class="vchip c1" onclick="sayChip(this)"><span class="ve">🚁</span>Helicopter</span>
+      <span class="vchip c2" onclick="sayChip(this)"><span class="ve">✈️</span>Airplane</span>
+    </div>
+  </div>
+  <div class="nav-row"><button class="btn-prev" disabled>&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 1: VOCAB -->
+<div class="section" id="sec-1">
+  <div class="eyebrow"><div class="enum e2">2</div><span class="elabel">Look &amp; Learn</span></div>
+  <h2>🔍 New Words Today</h2>
+  <p class="lead">Tap each word. Say it out loud with your teacher!</p>
+  <div class="chip-row">
+    <span class="vchip c1" onclick="sayChip(this)"><span class="ve">🌀</span>Rotor</span>
+    <span class="vchip c2" onclick="sayChip(this)"><span class="ve">🔄</span>Spin</span>
+    <span class="vchip c3" onclick="sayChip(this)"><span class="ve">🧘</span>Hover</span>
+    <span class="vchip c4" onclick="sayChip(this)"><span class="ve">🛬</span>Land</span>
+    <span class="vchip c5" onclick="sayChip(this)"><span class="ve">🛫</span>Take Off</span>
+    <span class="vchip c1" onclick="sayChip(this)"><span class="ve">🟰</span>Same</span>
+    <span class="vchip c2" onclick="sayChip(this)"><span class="ve">🔀</span>Different</span>
+    <span class="vchip c3" onclick="sayChip(this)"><span class="ve">🤝</span>Both</span>
+  </div>
+  <div class="demo-zone">
+    <h3>🚁 vs ✈️ — First Look</h3>
+    <p class="hint">Both have engines. Both can fly. But they look very different!</p>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:.5rem">
+      <div style="background:var(--bird-pale);border:3px solid var(--bird);border-radius:14px;padding:1rem;text-align:center;min-width:130px">
+        <div style="font-size:3rem">🚁</div>
+        <div style="font-family:'Baloo 2',cursive;font-weight:700;color:#c84a30;font-size:1rem">Helicopter</div>
+        <div style="font-size:.85rem;color:#c84a30;font-weight:600;margin-top:.3rem">Has a rotor on top · Can hover · Lands anywhere</div>
+      </div>
+      <div style="background:var(--cloud-pale);border:3px solid var(--cloud);border-radius:14px;padding:1rem;text-align:center;min-width:130px">
+        <div style="font-size:3rem">✈️</div>
+        <div style="font-family:'Baloo 2',cursive;font-weight:700;color:#0d6a9a;font-size:1rem">Airplane</div>
+        <div style="font-size:.85rem;color:#0d6a9a;font-weight:600;margin-top:.3rem">Has wings · Needs runway · Goes very fast</div>
+      </div>
+    </div>
+  </div>
+  <p style="text-align:center;font-size:.95rem;color:var(--muted);font-weight:700">Words tapped: <span id="chipCount">0</span> / 10</p>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 2: T-CHART GAME -->
+<div class="section" id="sec-2">
+  <div class="eyebrow"><div class="enum e3">3</div><span class="elabel">T-Chart Activity</span></div>
+  <h2>📊 Build the T-Chart!</h2>
+  <p class="lead">Tap a fact card, then tap the button to put it in the right column. Some facts go in <strong>both</strong>!</p>
+
+  <div class="pool-label">Fact cards to sort 👇</div>
+  <div class="chip-row" id="factPool">
+    <div class="fact-chip unplaced" data-heli="y" data-plane="n" onclick="factTap(this)">🌀 Has a rotor on top</div>
+    <div class="fact-chip unplaced" data-heli="n" data-plane="y" onclick="factTap(this)">🛣️ Needs a long runway</div>
+    <div class="fact-chip unplaced" data-heli="y" data-plane="n" onclick="factTap(this)">🧘 Can hover in the sky</div>
+    <div class="fact-chip unplaced" data-heli="n" data-plane="y" onclick="factTap(this)">⚡ Flies very fast</div>
+    <div class="fact-chip unplaced" data-heli="y" data-plane="y" onclick="factTap(this)">✅ Has an engine</div>
+    <div class="fact-chip unplaced" data-heli="y" data-plane="y" onclick="factTap(this)">✅ Can fly in the sky</div>
+    <div class="fact-chip unplaced" data-heli="y" data-plane="n" onclick="factTap(this)">⛰️ Can land on a hill</div>
+    <div class="fact-chip unplaced" data-heli="n" data-plane="y" onclick="factTap(this)">🪽 Has big flat wings</div>
+  </div>
+
+  <div id="selectedFact" style="display:none;text-align:center;font-family:'Baloo 2',cursive;font-weight:700;color:var(--kite);font-size:.95rem;margin-bottom:.7rem">Selected: <span id="selectedLabel"></span></div>
+  <div id="placeButtons" style="display:none;justify-content:center;gap:.8rem;flex-wrap:wrap;margin-bottom:.8rem">
+    <button style="background:var(--bird);color:white;border:none;border-radius:12px;padding:.6rem 1.2rem;font-family:'Baloo 2',cursive;font-weight:700;font-size:.9rem;cursor:pointer" onclick="placeSelected('heli')">🚁 Put in Helicopter</button>
+    <button style="background:var(--sky);color:white;border:none;border-radius:12px;padding:.6rem 1.2rem;font-family:'Baloo 2',cursive;font-weight:700;font-size:.9rem;cursor:pointer" onclick="placeSelected('plane')">✈️ Put in Airplane</button>
+  </div>
+
+  <div class="tchart-wrap">
+    <div class="tcol heli"><div class="tcol-header">🚁 Helicopter</div><div class="tcol-body" id="heliCol"></div></div>
+    <div class="tcenter"></div>
+    <div class="tcol plane"><div class="tcol-header">✈️ Airplane</div><div class="tcol-body" id="planeCol"></div></div>
+  </div>
+  <p style="text-align:center;font-size:1rem;color:var(--sky);font-weight:800" id="tchartFeedback">Tap a fact card to start sorting! 🌟</p>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 3: SENTENCES -->
+<div class="section" id="sec-3">
+  <div class="eyebrow"><div class="enum e4">4</div><span class="elabel">Show What You Know</span></div>
+  <h2>✏️ Tell Me What You Found!</h2>
+  <p class="lead">Finish these sentences about your T-chart. Say them out loud first!</p>
+  <div class="sent-frame">
+    <div class="sf-title">📝 My Sentences</div>
+    <div class="sent-row"><label>🚁 A helicopter can</label><input type="text" id="s-heli" placeholder="e.g. hover in one place"></div>
+    <div class="sent-row"><label>✈️ An airplane can</label><input type="text" id="s-plane" placeholder="e.g. fly very fast"></div>
+    <div class="sent-row"><label>🤝 Both can</label><input type="text" id="s-both" placeholder="e.g. fly in the sky"></div>
+  </div>
+  <div class="chant-box">
+    <h4>🎵 Same or Different Chant</h4>
+    <p>"Helicopter spins, airplane zooms —<br>Both can fly above our rooms!"</p>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 4: SUMMARY -->
+<div class="section" id="sec-4">
+  <div class="eyebrow"><div class="enum e5">5</div><span class="elabel">All Done!</span></div>
+  <h2>🌟 Great Comparing, <span id="finalName">Friend</span>!</h2>
+  <p class="lead">You learned to compare two flying machines! Rate how much fun you had:</p>
+  <div class="star-row" id="starRow">
+    <span onclick="setStars(1)">⭐</span><span onclick="setStars(2)">⭐</span><span onclick="setStars(3)">⭐</span><span onclick="setStars(4)">⭐</span><span onclick="setStars(5)">⭐</span>
+  </div>
+  <div class="sum-section">
+    <h3>📋 My Work Today</h3>
+    <div id="sum-name" class="sum-ans empty">Not answered</div>
+    <div id="sum-tchart" class="sum-ans empty">Not answered</div>
+    <div id="sum-sentences" class="sum-ans empty">Not answered</div>
+    <div id="sum-stars" class="sum-ans empty">Not answered</div>
+  </div>
+  <div class="chant-box" style="background:linear-gradient(135deg,#1a6fb0 0%,#3a9bd9 100%)">
+    <h4>🎵 One More Time!</h4>
+    <p>"Helicopter spins, airplane zooms —<br>Both can fly above our rooms!"</p>
+  </div>
+  <div class="share-buttons">
+    <button class="share-btn sbcopy" onclick="copyResults()">📋 Copy My Work</button>
+    <button class="share-btn sbemail" onclick="emailResults()">✉️ Email to Teacher</button>
+    <button class="share-btn sbprint" onclick="window.print()">🖨️ Print</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" disabled>All Done! 🎉</button></div>
+</div>
+
+</div>
+<script>
+(function(){
+'use strict';
+var cur=0,TOTAL=5;
+function goTo(n){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('sec-'+n).classList.add('active');
+  document.querySelectorAll('.prog-step').forEach(function(p,i){p.classList.remove('active','done');if(i===n)p.classList.add('active');else if(i<n)p.classList.add('done');});
+  cur=n; window.scrollTo({top:0,behavior:'smooth'}); if(n===4)buildSummary();
+}
+function navigate(d){goTo(Math.max(0,Math.min(TOTAL-1,cur+d)));}
+window.goTo=goTo; window.navigate=navigate;
+
+var chipsSaid=0;
+function sayChip(el){if(!el.classList.contains('said')){el.classList.add('said');chipsSaid++;document.getElementById('chipCount').textContent=chipsSaid;}}
+window.sayChip=sayChip;
+
+// T-CHART
+var heliCount=0,planeCount=0,selectedEl=null;
+function factTap(el){
+  if(el.classList.contains('in-heli')||el.classList.contains('in-plane'))return;
+  if(selectedEl)selectedEl.classList.remove('selected-fact');
+  selectedEl=el;
+  el.classList.add('selected-fact');
+  document.getElementById('selectedFact').style.display='block';
+  document.getElementById('selectedLabel').textContent=el.textContent.trim();
+  document.getElementById('placeButtons').style.display='flex';
+}
+window.factTap=factTap;
+
+function placeSelected(side){
+  if(!selectedEl)return;
+  var isHeli=selectedEl.dataset.heli==='y', isPlane=selectedEl.dataset.plane==='y';
+  var correct=(side==='heli'&&isHeli)||(side==='plane'&&isPlane);
+  var feedback=document.getElementById('tchartFeedback');
+  if(correct){
+    var chip=document.createElement('div');
+    chip.style.cssText='background:white;border-radius:10px;padding:.4rem .7rem;font-family:Baloo 2,cursive;font-weight:700;font-size:.85rem;margin-bottom:.3rem';
+    var isBoth=isHeli&&isPlane;
+    chip.textContent=selectedEl.textContent.trim()+(isBoth?' ✅ both':'');
+    if(side==='heli'){document.getElementById('heliCol').appendChild(chip);heliCount++;}
+    else{document.getElementById('planeCol').appendChild(chip);planeCount++;}
+    selectedEl.classList.add(side==='heli'?'in-heli':'in-plane');
+    selectedEl.classList.remove('selected-fact');
+    selectedEl=null;
+    document.getElementById('selectedFact').style.display='none';
+    document.getElementById('placeButtons').style.display='none';
+    var total=heliCount+planeCount;
+    feedback.textContent=total>=8?'Amazing! T-chart complete! 🎉':'Well placed! ('+total+'/8) Keep going! 🌟';
+  } else {
+    selectedEl.classList.add('wrong-flash');
+    setTimeout(function(){if(selectedEl)selectedEl.classList.remove('wrong-flash');},400);
+    feedback.textContent='Hmm, try the other column! 🤔';
+  }
+}
+window.placeSelected=placeSelected;
+
+var starsGiven=0;
+function setStars(n){starsGiven=n;document.querySelectorAll('#starRow span').forEach(function(s,i){s.classList.toggle('lit',i<n);});}
+window.setStars=setStars;
+
+function getV(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+function setS(id,text){var el=document.getElementById(id);if(!el)return;el.textContent=text||'Not answered';el.classList.toggle('empty',!text);}
+function buildSummary(){
+  var name=document.getElementById('studentName').value.trim()||'Friend';
+  document.getElementById('finalName').textContent=name;
+  setS('sum-name','Name: '+name);
+  setS('sum-tchart','T-chart: '+heliCount+' helicopter facts, '+planeCount+' airplane facts placed');
+  var s=[];
+  if(getV('s-heli'))s.push('A helicopter can '+getV('s-heli')+'.');
+  if(getV('s-plane'))s.push('An airplane can '+getV('s-plane')+'.');
+  if(getV('s-both'))s.push('Both can '+getV('s-both')+'.');
+  setS('sum-sentences',s.join(' '));
+  setS('sum-stars',starsGiven?'Fun rating: '+'⭐'.repeat(starsGiven):'');
+}
+window.buildSummary=buildSummary;
+
+function buildPlainText(){
+  var name=document.getElementById('studentName').value.trim()||'Friend';
+  var date=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  return ['FARVOUR EXPLORATIONS - PYP 1 SUMMER CAMP - WEEK 2 DAY 1: HELICOPTERS & HOVERING HEROES',
+    '='.repeat(65),'Student: '+name,'Date: '+date,'',
+    '-- VOCABULARY WORDS TAPPED --',chipsSaid+' of 10 words practiced','',
+    '-- T-CHART --',heliCount+' helicopter facts, '+planeCount+' airplane facts placed','',
+    '-- MY SENTENCES --',
+    'A helicopter can '+(getV('s-heli')||'___')+'.',
+    'An airplane can '+(getV('s-plane')||'___')+'.',
+    'Both can '+(getV('s-both')||'___')+'.','',
+    '-- FUN RATING --',starsGiven?'⭐'.repeat(starsGiven)+' ('+starsGiven+'/5)':'Not answered','',
+    '='.repeat(65),'(c) 2026 Farvour Explorations','Camp Week 2, Day 1 - English Lesson'].join('\n');
+}
+function copyResults(){buildSummary();navigator.clipboard.writeText(buildPlainText()).then(function(){var el=document.getElementById('copyConfirm');el.textContent='Copied!';setTimeout(function(){el.textContent='';},4000);});}
+function emailResults(){var name=document.getElementById('studentName').value.trim()||'Friend';window.location.href='mailto:?subject='+encodeURIComponent('PYP 1 Camp W2D1 - '+name)+'&body='+encodeURIComponent(buildPlainText());}
+window.copyResults=copyResults; window.emailResults=emailResults;
+})();
+</script>
+</body>
+</html>
