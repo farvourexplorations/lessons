@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rocket Science — Farvour Explorations PYP 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--space:#0d0d2b;--purple:#6c3fc5;--purple-mid:#8b5cf6;--purple-pale:#f0eefb;--gold:#ffb627;--gold-pale:#fff6e3;--fire:#ff7a5c;--fire-pale:#ffece7;--leaf:#3aaf85;--leaf-pale:#e8f8f2;--star:#8ecae6;--star-pale:#eaf6fb;--rocket:#7c6fcd;--paper:#fefcff;--ink:#1a1a3a;--muted:#6b7a9c;--border:#e0ddf0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:linear-gradient(160deg,#0d0d2b 0%,#1a1060 35%,#2d1b8a 65%,#6c3fc5 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--ink);overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(2px 2px at 15% 20%,white 50%,transparent 52%),radial-gradient(2px 2px at 75% 8%,white 50%,transparent 52%),radial-gradient(1.5px 1.5px at 45% 15%,rgba(255,255,255,.8) 50%,transparent 52%),radial-gradient(2px 2px at 88% 30%,white 50%,transparent 52%),radial-gradient(1.5px 1.5px at 25% 40%,rgba(255,255,255,.7) 50%,transparent 52%),radial-gradient(2px 2px at 60% 5%,white 50%,transparent 52%),radial-gradient(1.5px 1.5px at 92% 18%,rgba(255,255,255,.8) 50%,transparent 52%),radial-gradient(2px 2px at 5% 35%,white 50%,transparent 52%);pointer-events:none;z-index:0}
+.hero{position:relative;z-index:1;text-align:center;padding:2.6rem 1.5rem 2rem;color:white}
+.hero-badge{display:inline-block;background:var(--gold);color:#7a4a00;font-family:'Baloo 2',cursive;font-weight:700;font-size:.85rem;padding:.4rem 1.3rem;border-radius:24px;margin-bottom:1rem;box-shadow:0 3px 14px rgba(255,182,39,.5)}
+.hero h1{font-family:'Baloo 2',cursive;font-weight:800;font-size:clamp(2rem,7vw,3.6rem);line-height:1.1;margin-bottom:.7rem;text-shadow:0 2px 24px rgba(108,63,197,.8)}
+.hero h1 .accent{color:var(--gold)}
+.hero p.intro{font-size:1.05rem;line-height:1.6;opacity:.92;max-width:520px;margin:0 auto 1.6rem;font-weight:600}
+.name-bar{background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.25);border-radius:14px;padding:.6rem 1rem;display:flex;align-items:center;gap:.7rem;max-width:380px;margin:0 auto 1.1rem}
+.name-bar label{font-size:.85rem;font-weight:800;color:white;white-space:nowrap}
+.name-bar input{flex:1;background:rgba(255,255,255,.18);border:none;border-radius:9px;padding:.5rem .8rem;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;color:white;outline:none}
+.name-bar input::placeholder{color:rgba(255,255,255,.45);font-weight:600}
+.progress-wrap{display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap}
+.prog-step{background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.2);border-radius:22px;padding:.45rem 1rem;font-size:.85rem;font-weight:800;color:rgba(255,255,255,.75);cursor:pointer;transition:all .2s;font-family:'Baloo 2',cursive}
+.prog-step.done{background:rgba(255,255,255,.22);color:white;border-color:rgba(255,255,255,.35)}
+.prog-step.active{background:var(--gold);color:#7a4a00;border-color:var(--gold);box-shadow:0 3px 14px rgba(255,182,39,.5)}
+.sheet{position:relative;z-index:1;background:var(--paper);border-radius:28px 28px 0 0;margin-top:1.4rem;padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(108,63,197,.4)}
+.section{padding:2.6rem 1.6rem 0;max-width:780px;margin:0 auto;display:none}
+.section.active{display:block}
+.eyebrow{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem}
+.enum{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Baloo 2',cursive;font-weight:800;font-size:1.15rem;color:white;flex-shrink:0}
+.e1{background:var(--fire)}.e2{background:var(--rocket)}.e3{background:var(--gold);color:#7a4a00}.e4{background:var(--leaf)}.e5{background:var(--purple)}
+.elabel{font-size:.85rem;font-weight:800;letter-spacing:.02em;text-transform:uppercase;color:var(--muted)}
+h2{font-family:'Baloo 2',cursive;font-weight:800;font-size:clamp(1.7rem,4vw,2.3rem);color:var(--purple);margin-bottom:.6rem;line-height:1.15}
+.lead{font-size:1.08rem;line-height:1.7;color:#2a2a4a;margin-bottom:1.6rem;font-weight:600}
+.lead strong{color:var(--fire)}
+.wonder-box{background:linear-gradient(135deg,#1a1060 0%,#6c3fc5 100%);color:white;border-radius:18px;padding:1.6rem 1.8rem;margin-bottom:1.6rem;position:relative;overflow:hidden}
+.wonder-box::after{content:'🎈';position:absolute;right:1.3rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3}
+.wonder-box p{font-size:1.05rem;line-height:1.65;font-weight:700;max-width:85%}
+.wonder-box strong{color:var(--gold)}
+.demo-zone{background:white;border:3px solid var(--border);border-radius:18px;padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 3px 12px rgba(108,63,197,.1)}
+.demo-zone h3{font-family:'Baloo 2',cursive;font-weight:700;font-size:1.25rem;color:var(--purple);margin-bottom:.3rem}
+.hint{font-size:.85rem;color:var(--muted);margin-bottom:1rem;font-weight:600}
+.chip-row{display:flex;flex-wrap:wrap;gap:.7rem;margin-bottom:1.2rem;justify-content:center}
+.vchip{padding:.7rem 1.3rem;border-radius:24px;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;border:3px solid transparent;font-family:'Baloo 2',cursive;display:flex;align-items:center;gap:.5rem}
+.vchip .ve{font-size:1.3rem}
+.c1{background:var(--fire-pale);color:#c84a30;border-color:#ffc9b8}
+.c2{background:var(--purple-pale);color:#5a3ab0;border-color:#cac0ef}
+.c3{background:var(--gold-pale);color:#8a6a1a;border-color:#ffe0a0}
+.c4{background:var(--leaf-pale);color:#1b7a58;border-color:#a8e0c8}
+.c5{background:var(--star-pale);color:#0d6a9a;border-color:#a8d8ee}
+.vchip:hover{transform:scale(1.06)}
+.vchip.said{box-shadow:0 0 0 3px rgba(0,0,0,.08)inset}
+/* BALLOON DEMO */
+.balloon-demo{display:flex;align-items:center;gap:1.2rem;justify-content:center;margin:1.2rem 0;flex-wrap:wrap}
+.balloon-btn{border:none;border-radius:20px;padding:1rem 1.6rem;font-family:'Baloo 2',cursive;font-weight:800;font-size:1rem;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:.4rem}
+.balloon-btn .bi{font-size:2.4rem}
+.bb-blow{background:var(--purple-pale);color:#5a3ab0;border:3px solid var(--rocket)}
+.bb-blow:hover{transform:scale(1.05)}
+.bb-release{background:var(--fire-pale);color:#c84a30;border:3px solid var(--fire)}
+.bb-release:hover{transform:scale(1.05)}
+.bb-result{background:var(--leaf-pale);color:#1b7a58;border:3px solid var(--leaf)}
+.balloon-result{text-align:center;font-family:'Baloo 2',cursive;font-weight:800;font-size:1.1rem;color:var(--purple);min-height:1.8rem;margin-top:.5rem}
+/* CE CARDS */
+.ce-row{display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem;flex-wrap:wrap;justify-content:center}
+.ce-card{border-radius:16px;padding:1rem;text-align:center;width:150px;border:3px solid transparent}
+.ce-card.cause{border-color:var(--fire);background:var(--fire-pale)}
+.ce-card.effect{border-color:var(--leaf);background:var(--leaf-pale)}
+.ce-card .ce-icon{font-size:2.4rem;display:block;margin-bottom:.3rem}
+.ce-card .ce-tag{font-family:'Baloo 2',cursive;font-weight:800;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:.2rem}
+.ce-card.cause .ce-tag{color:#c84a30}
+.ce-card.effect .ce-tag{color:#1b7a58}
+.ce-card .ce-label{font-family:'Baloo 2',cursive;font-weight:700;font-size:.92rem}
+.ce-card.cause .ce-label{color:#c84a30}
+.ce-card.effect .ce-label{color:#1b7a58}
+.ce-arrow{font-size:2rem;color:var(--gold);font-weight:800}
+/* CE FILL CHART */
+.fillchart{display:flex;flex-direction:column;gap:.9rem;margin-bottom:1.2rem}
+.fillrow{display:flex;align-items:center;gap:.6rem;background:var(--purple-pale);border-radius:14px;padding:.8rem 1rem;flex-wrap:wrap}
+.fillrow .fr-icon{font-size:1.4rem}
+.fillrow input{flex:1;min-width:100px;padding:.5rem .8rem;border-radius:8px;border:2px solid var(--border);font-family:'Nunito';font-size:.95rem;font-weight:600}
+.fillrow .fr-arrow{font-size:1.3rem;color:var(--gold)}
+.fillrow .fr-so{font-family:'Baloo 2',cursive;font-weight:700;color:var(--purple);white-space:nowrap;font-size:.9rem}
+.chant-box{background:linear-gradient(135deg,#1a1060 0%,#6c3fc5 100%);color:white;border-radius:18px;padding:1.5rem 1.8rem;text-align:center;margin-bottom:1.5rem}
+.chant-box h4{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.2rem;margin-bottom:.5rem}
+.chant-box p{font-size:1.1rem;line-height:1.7;font-weight:700}
+/* SHARE-OUT */
+.shareout-box{background:var(--gold-pale);border:3px solid var(--gold);border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.2rem}
+.shareout-box h4{font-family:'Baloo 2',cursive;font-weight:700;color:#8a6a1a;margin-bottom:.6rem}
+.shareout-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap}
+.shareout-row label{font-family:'Baloo 2',cursive;font-weight:700;font-size:.9rem;color:var(--purple);white-space:nowrap}
+.shareout-row input{flex:1;min-width:120px;padding:.5rem .8rem;border-radius:8px;border:2px solid var(--border);font-family:'Nunito';font-size:.95rem;font-weight:600}
+.nav-row{display:flex;justify-content:space-between;align-items:center;padding:2.2rem 1.6rem 0;max-width:780px;margin:0 auto;gap:1rem}
+.btn-next{background:var(--purple);color:white;border:none;border-radius:50px;padding:.95rem 2rem;font-family:'Baloo 2',cursive;font-weight:700;font-size:1.05rem;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(108,63,197,.4)}
+.btn-next:hover{background:var(--purple-mid);transform:translateY(-2px)}
+.btn-prev{background:transparent;color:var(--muted);border:3px solid var(--border);border-radius:50px;padding:.9rem 1.6rem;font-family:'Baloo 2',cursive;font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s}
+.btn-prev:hover{border-color:var(--muted);color:var(--ink)}
+.btn-prev:disabled,.btn-next:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.sum-section{background:white;border-radius:18px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:3px solid var(--border)}
+.sum-section h3{font-family:'Baloo 2',cursive;font-weight:700;font-size:1.1rem;color:var(--purple);margin-bottom:.7rem}
+.sum-ans{background:#f5f4fb;border-radius:10px;padding:.7rem 1rem;font-size:.95rem;line-height:1.5;color:var(--ink);margin-bottom:.4rem;border-left:4px solid var(--rocket);min-height:1.8rem;font-weight:600}
+.sum-ans.empty{color:var(--muted);font-weight:400;border-left-color:var(--border)}
+.share-buttons{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.4rem;justify-content:center}
+.share-btn{border:none;border-radius:14px;padding:.9rem 1.6rem;font-family:'Baloo 2',cursive;font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s}
+.share-btn:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.sbcopy{background:var(--leaf);color:white}.sbemail{background:var(--rocket);color:white}.sbprint{background:var(--purple);color:white}
+.copy-confirm{text-align:center;font-size:.9rem;color:var(--leaf);min-height:1.2rem;margin-top:.6rem;font-weight:700}
+.star-row{display:flex;justify-content:center;gap:.5rem;margin:1rem 0}
+.star-row span{font-size:1.8rem;cursor:pointer;opacity:.35;transition:transform .15s}
+.star-row span.lit{opacity:1;transform:scale(1.15)}
+@media(max-width:560px){.hero{padding:2rem 1rem 1.4rem}.section{padding:2rem 1.1rem 0}.nav-row{padding:1.8rem 1.1rem 0}}
+@media print{.hero,.nav-row,.share-buttons,.copy-confirm{display:none!important}.sheet{box-shadow:none;border-radius:0}.section{display:none!important}#sec-4{display:block!important}}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge">🔥 Farvour Explorations · PYP 1 · Week 3 Day 2</div>
+  <h1>Rocket Science — <span class="accent">Powering to Launch!</span></h1>
+  <p class="intro">Why does a rocket move? Today we use a balloon to discover the power of PUSH! We learn cause and effect in space! 🎈🚀</p>
+  <div class="name-bar"><label>😊 MY NAME:</label><input type="text" id="studentName" placeholder="Type your name..."></div>
+  <div class="progress-wrap">
+    <a class="prog-step active" onclick="goTo(0)">👋 Hello</a>
+    <a class="prog-step" onclick="goTo(1)">🎈 Balloon Demo</a>
+    <a class="prog-step" onclick="goTo(2)">🔗 Cause &amp; Effect</a>
+    <a class="prog-step" onclick="goTo(3)">✏️ My Chart</a>
+    <a class="prog-step" onclick="goTo(4)">🌟 All Done!</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+<!-- SEC 0 -->
+<div class="section active" id="sec-0">
+  <div class="eyebrow"><div class="enum e1">1</div><span class="elabel">Let's Begin</span></div>
+  <h2>👋 Hello, Rocket Scientists!</h2>
+  <p class="lead">Yesterday we launched our rocket. But <strong>why</strong> does it move? Today we find out using something surprising — a balloon!</p>
+  <div class="wonder-box">
+    <p>✨ When air pushes out of a balloon, the balloon moves the <strong>other way</strong>! Rockets work the same way — fuel burns and pushes the rocket UP!</p>
+  </div>
+  <div class="demo-zone">
+    <h3>🙋 Warm-Up: Push and Move!</h3>
+    <p class="hint">Stand up. Push both hands forward — your body moves back! That's how rockets work!</p>
+    <div class="chip-row">
+      <span class="vchip c1" onclick="sayChip(this)"><span class="ve">👉</span>Push!</span>
+      <span class="vchip c2" onclick="sayChip(this)"><span class="ve">⬆️</span>Up!</span>
+      <span class="vchip c3" onclick="sayChip(this)"><span class="ve">💨</span>Air!</span>
+      <span class="vchip c4" onclick="sayChip(this)"><span class="ve">⚡</span>Force!</span>
+    </div>
+  </div>
+  <div class="nav-row"><button class="btn-prev" disabled>&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 1: BALLOON DEMO + VOCAB -->
+<div class="section" id="sec-1">
+  <div class="eyebrow"><div class="enum e2">2</div><span class="elabel">The Balloon Demo</span></div>
+  <h2>🎈 Watch the Balloon!</h2>
+  <p class="lead">Teacher blows up a balloon and lets it go. Tap the steps to see what happens!</p>
+  <div class="demo-zone">
+    <h3>🎬 Step by Step</h3>
+    <p class="hint">Tap each button in order. Say what happens out loud!</p>
+    <div class="balloon-demo">
+      <button class="balloon-btn bb-blow" onclick="balloonStep(1)"><span class="bi">🎈</span>1. Blow it up!</button>
+      <button class="balloon-btn bb-release" onclick="balloonStep(2)"><span class="bi">💨</span>2. Let it go!</button>
+      <button class="balloon-btn bb-result" onclick="balloonStep(3)"><span class="bi">🚀</span>3. What happened?</button>
+    </div>
+    <div class="balloon-result" id="balloonResult">Tap Step 1 to begin!</div>
+  </div>
+  <div class="demo-zone">
+    <h3>🔤 Power Words</h3>
+    <p class="hint">Tap each word. These help us explain WHY things happen.</p>
+    <div class="chip-row">
+      <span class="vchip c1" onclick="sayChip(this)"><span class="ve">👉</span>Push</span>
+      <span class="vchip c2" onclick="sayChip(this)"><span class="ve">⚡</span>Force</span>
+      <span class="vchip c3" onclick="sayChip(this)"><span class="ve">⛽</span>Fuel</span>
+      <span class="vchip c4" onclick="sayChip(this)"><span class="ve">🔥</span>Burn</span>
+      <span class="vchip c5" onclick="sayChip(this)"><span class="ve">🏃</span>Move</span>
+      <span class="vchip c1" onclick="sayChip(this)"><span class="ve">🔗</span>Because</span>
+      <span class="vchip c2" onclick="sayChip(this)"><span class="ve">➡️</span>So</span>
+      <span class="vchip c3" onclick="sayChip(this)"><span class="ve">⬆️</span>Up</span>
+      <span class="vchip c4" onclick="sayChip(this)"><span class="ve">💨</span>Speed</span>
+      <span class="vchip c5" onclick="sayChip(this)"><span class="ve">⚡</span>Power</span>
+    </div>
+  </div>
+  <p style="text-align:center;font-size:.95rem;color:var(--muted);font-weight:700">Words tapped: <span id="chipCount">0</span> / 14</p>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 2: CE EXAMPLES -->
+<div class="section" id="sec-2">
+  <div class="eyebrow"><div class="enum e3">3</div><span class="elabel">Cause &amp; Effect in Space</span></div>
+  <h2>🔗 Cause → Effect in Rockets!</h2>
+  <p class="lead">Remember cause and effect from Week 1? Let's use it in space! The <strong>cause</strong> makes the <strong>effect</strong> happen.</p>
+  <div class="ce-row">
+    <div class="ce-card cause"><span class="ce-tag">Cause</span><span class="ce-icon">⛽</span><span class="ce-label">Fuel burns</span></div>
+    <div class="ce-arrow">→</div>
+    <div class="ce-card effect"><span class="ce-tag">Effect</span><span class="ce-icon">🚀</span><span class="ce-label">Rocket moves up!</span></div>
+  </div>
+  <div class="ce-row">
+    <div class="ce-card cause"><span class="ce-tag">Cause</span><span class="ce-icon">🎈</span><span class="ce-label">Air pushes out</span></div>
+    <div class="ce-arrow">→</div>
+    <div class="ce-card effect"><span class="ce-tag">Effect</span><span class="ce-icon">💨</span><span class="ce-label">Balloon shoots away!</span></div>
+  </div>
+  <div class="ce-row">
+    <div class="ce-card cause"><span class="ce-tag">Cause</span><span class="ce-icon">🔥</span><span class="ce-icon" style="font-size:1.2rem">+</span><span class="ce-icon">⚡</span><span class="ce-label">More power!</span></div>
+    <div class="ce-arrow">→</div>
+    <div class="ce-card effect"><span class="ce-tag">Effect</span><span class="ce-icon">⚡</span><span class="ce-label">Goes faster!</span></div>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 3: MY CHART -->
+<div class="section" id="sec-3">
+  <div class="eyebrow"><div class="enum e4">4</div><span class="elabel">Show What You Know</span></div>
+  <h2>✏️ Build Your Own Cause &amp; Effect!</h2>
+  <p class="lead">Finish the cause and effect sentences. Say it first: <strong>"When ___, then ___!"</strong></p>
+  <div class="fillchart">
+    <div class="fillrow">
+      <span class="fr-icon">⛽</span>
+      <input type="text" id="ce1a" placeholder="Fuel burns...">
+      <span class="fr-arrow">→</span>
+      <span class="fr-so">so the</span>
+      <input type="text" id="ce1b" placeholder="rocket goes up">
+    </div>
+    <div class="fillrow">
+      <span class="fr-icon">🎈</span>
+      <input type="text" id="ce2a" placeholder="Air pushes out...">
+      <span class="fr-arrow">→</span>
+      <span class="fr-so">so the</span>
+      <input type="text" id="ce2b" placeholder="balloon flies away">
+    </div>
+    <div class="fillrow">
+      <span class="fr-icon">🚀</span>
+      <input type="text" id="ce3a" placeholder="The rocket is heavy...">
+      <span class="fr-arrow">→</span>
+      <span class="fr-so">so it needs</span>
+      <input type="text" id="ce3b" placeholder="lots of fuel">
+    </div>
+  </div>
+  <div class="shareout-box">
+    <h4>🗣️ Share Out! Say it to the Class</h4>
+    <div class="shareout-row"><label>When</label><input type="text" id="so1" placeholder="e.g. fuel burns"></div>
+    <div class="shareout-row"><label>then</label><input type="text" id="so2" placeholder="e.g. the rocket moves up!"></div>
+  </div>
+  <div class="chant-box">
+    <h4>🎵 Rocket Power Chant</h4>
+    <p>"Fuel burns hot, rocket goes fast —<br>Push it hard and make it BLAST! 🚀🔥"</p>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 4: SUMMARY -->
+<div class="section" id="sec-4">
+  <div class="eyebrow"><div class="enum e5">5</div><span class="elabel">All Done!</span></div>
+  <h2>🌟 Rocket Scientist, <span id="finalName">Friend</span>!</h2>
+  <p class="lead">You discovered why rockets fly using cause and effect! Rate how much fun you had:</p>
+  <div class="star-row" id="starRow">
+    <span onclick="setStars(1)">⭐</span><span onclick="setStars(2)">⭐</span><span onclick="setStars(3)">⭐</span><span onclick="setStars(4)">⭐</span><span onclick="setStars(5)">⭐</span>
+  </div>
+  <div class="sum-section">
+    <h3>📋 My Work Today</h3>
+    <div id="sum-name" class="sum-ans empty">Not answered</div>
+    <div id="sum-chart" class="sum-ans empty">Not answered</div>
+    <div id="sum-shareout" class="sum-ans empty">Not answered</div>
+    <div id="sum-stars" class="sum-ans empty">Not answered</div>
+  </div>
+  <div class="chant-box">
+    <h4>🎵 One More Time!</h4>
+    <p>"Fuel burns hot, rocket goes fast —<br>Push it hard and make it BLAST! 🚀🔥"</p>
+  </div>
+  <div class="share-buttons">
+    <button class="share-btn sbcopy" onclick="copyResults()">📋 Copy My Work</button>
+    <button class="share-btn sbemail" onclick="emailResults()">✉️ Email to Teacher</button>
+    <button class="share-btn sbprint" onclick="window.print()">🖨️ Print</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" disabled>All Done! 🎉</button></div>
+</div>
+
+</div>
+<script>
+(function(){
+'use strict';
+var cur=0,TOTAL=5;
+function goTo(n){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('sec-'+n).classList.add('active');
+  document.querySelectorAll('.prog-step').forEach(function(p,i){p.classList.remove('active','done');if(i===n)p.classList.add('active');else if(i<n)p.classList.add('done');});
+  cur=n;window.scrollTo({top:0,behavior:'smooth'});if(n===4)buildSummary();
+}
+function navigate(d){goTo(Math.max(0,Math.min(TOTAL-1,cur+d)));}
+window.goTo=goTo;window.navigate=navigate;
+
+var chipsSaid=0;
+function sayChip(el){if(!el.classList.contains('said')){el.classList.add('said');chipsSaid++;document.getElementById('chipCount').textContent=chipsSaid;}}
+window.sayChip=sayChip;
+
+var balloonStep_n=0;
+var balloonMsgs=['Tap Step 1 to begin!','🎈 The balloon is full of air — it is round and big!','💨 WHOOOOSH! The air rushes out and the balloon FLIES!','🚀 YES! The air pushing OUT makes the balloon move! That is how rockets work — the fuel pushes DOWN so the rocket goes UP!'];
+function balloonStep(n){
+  if(n>balloonStep_n+1 && balloonStep_n<3){document.getElementById('balloonResult').textContent='Do step '+(balloonStep_n+1)+' first!';return;}
+  balloonStep_n=Math.max(balloonStep_n,n);
+  document.getElementById('balloonResult').textContent=balloonMsgs[n];
+}
+window.balloonStep=balloonStep;
+
+var starsGiven=0;
+function setStars(n){starsGiven=n;document.querySelectorAll('#starRow span').forEach(function(s,i){s.classList.toggle('lit',i<n);});}
+window.setStars=setStars;
+
+function getV(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+function setS(id,text){var el=document.getElementById(id);if(!el)return;el.textContent=text||'Not answered';el.classList.toggle('empty',!text);}
+function buildSummary(){
+  var name=document.getElementById('studentName').value.trim()||'Friend';
+  document.getElementById('finalName').textContent=name;
+  setS('sum-name','Name: '+name);
+  var rows=[];
+  if(getV('ce1a')&&getV('ce1b'))rows.push(getV('ce1a')+' → so the '+getV('ce1b'));
+  if(getV('ce2a')&&getV('ce2b'))rows.push(getV('ce2a')+' → so the '+getV('ce2b'));
+  if(getV('ce3a')&&getV('ce3b'))rows.push(getV('ce3a')+' → so it needs '+getV('ce3b'));
+  setS('sum-chart',rows.join(' | '));
+  var so=getV('so1')&&getV('so2')?'When '+getV('so1')+', then '+getV('so2')+'!':'';
+  setS('sum-shareout',so);
+  setS('sum-stars',starsGiven?'Fun rating: '+'⭐'.repeat(starsGiven):'');
+}
+window.buildSummary=buildSummary;
+
+function buildPlainText(){
+  var name=document.getElementById('studentName').value.trim()||'Friend';
+  var date=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  return['FARVOUR EXPLORATIONS - PYP 1 SUMMER CAMP - WEEK 3 DAY 2: ROCKET SCIENCE',
+    '='.repeat(65),'Student: '+name,'Date: '+date,'',
+    '-- VOCABULARY TAPPED --',chipsSaid+' of 14 words practiced','',
+    '-- MY CAUSE & EFFECT CHART --',
+    (getV('ce1a')||'___')+' → so the '+(getV('ce1b')||'___'),
+    (getV('ce2a')||'___')+' → so the '+(getV('ce2b')||'___'),
+    (getV('ce3a')||'___')+' → so it needs '+(getV('ce3b')||'___'),'',
+    '-- MY SHARE OUT --',
+    'When '+(getV('so1')||'___')+', then '+(getV('so2')||'___')+'!','',
+    '-- FUN RATING --',starsGiven?'⭐'.repeat(starsGiven)+' ('+starsGiven+'/5)':'Not answered','',
+    '='.repeat(65),'(c) 2026 Farvour Explorations','Camp Week 3, Day 2 - English Lesson'].join('\n');
+}
+function copyResults(){buildSummary();navigator.clipboard.writeText(buildPlainText()).then(function(){var el=document.getElementById('copyConfirm');el.textContent='Copied!';setTimeout(function(){el.textContent='';},4000);});}
+function emailResults(){var name=document.getElementById('studentName').value.trim()||'Friend';window.location.href='mailto:?subject='+encodeURIComponent('PYP 1 Camp W3D2 - '+name)+'&body='+encodeURIComponent(buildPlainText());}
+window.copyResults=copyResults;window.emailResults=emailResults;
+})();
+</script>
+</body>
+</html>
