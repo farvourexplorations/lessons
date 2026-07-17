@@ -1,0 +1,2047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ratios & Proportional Relationships 🍕</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #1e3a5f;
+    --sky-mid: #2d5282;
+    --sun: #f6c343;
+    --sun-pale: #fef9e7;
+    --coral: #e8603c;
+    --coral-pale: #fdf0ec;
+    --mint: #3aaf85;
+    --mint-pale: #e8f8f2;
+    --lavender: #7c6fcd;
+    --lavender-pale: #f0eefb;
+    --paper: #fffef9;
+    --ink: #1a2332;
+    --muted: #7a8899;
+    --border: rgba(0,0,0,0.08);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: linear-gradient(160deg, #0f2540 0%, #1e3a5f 40%, #2d5282 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 45% 8%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(2px 2px at 65% 22%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 5%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 92% 35%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 35% 28%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 72% 12%, rgba(255,255,255,0.5) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 3.5rem 2rem 2rem;
+    color: white;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--sun);
+    color: var(--sky);
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    padding: 0.35rem 1.2rem;
+    border-radius: 20px;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 12px rgba(246,195,67,0.4);
+  }
+  .hero h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    line-height: 1.1;
+    margin-bottom: 0.8rem;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+  .hero h1 .accent { color: var(--sun); }
+  .hero p.intro {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    opacity: 0.88;
+    max-width: 560px;
+    margin: 0 auto 2rem;
+  }
+
+  /* ── NAME BAR ── */
+  .name-bar {
+    background: rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    border-radius: 12px;
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    max-width: 420px;
+    margin: 0 auto 1rem;
+  }
+  .name-bar label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.8);
+    white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+  }
+  .name-bar input {
+    flex: 1;
+    background: rgba(255,255,255,0.15);
+    border: none;
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: white;
+    outline: none;
+  }
+  .name-bar input::placeholder { color: rgba(255,255,255,0.45); font-weight: 400; }
+
+  /* ── PROGRESS PILLS ── */
+  .progress-wrap {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+  }
+  .prog-step {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(255,255,255,0.12);
+    border: 1.5px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .prog-step:hover, .prog-step.done {
+    background: rgba(255,255,255,0.22);
+    color: white;
+    border-color: rgba(255,255,255,0.4);
+  }
+  .prog-step.active {
+    background: var(--sun);
+    color: var(--sky);
+    border-color: var(--sun);
+    box-shadow: 0 2px 12px rgba(246,195,67,0.4);
+  }
+
+  /* ── SHEET ── */
+  .sheet {
+    position: relative; z-index: 1;
+    background: var(--paper);
+    border-radius: 24px 24px 0 0;
+    margin-top: 1.5rem;
+    padding: 0 0 6rem;
+    min-height: 80vh;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.25);
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    padding: 3rem 2rem 0;
+    max-width: 820px;
+    margin: 0 auto;
+    display: none;
+  }
+  .section.active { display: block; }
+
+  .section-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+  .eyebrow-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: white;
+    flex-shrink: 0;
+  }
+  .num-coral { background: var(--coral); }
+  .num-mint  { background: var(--mint); }
+  .num-sun   { background: var(--sun); color: var(--sky); }
+  .num-lav   { background: var(--lavender); }
+  .num-sky   { background: var(--sky-mid); }
+
+  .eyebrow-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .section h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    color: var(--sky);
+    margin-bottom: 0.6rem;
+    line-height: 1.2;
+  }
+  .section .lead {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: #3a4a5a;
+    margin-bottom: 1.8rem;
+  }
+  .section .lead strong { color: var(--coral); }
+
+  /* ── WONDER BOX ── */
+  .wonder-box {
+    background: linear-gradient(135deg, var(--sky) 0%, var(--sky-mid) 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 1.8rem 2rem;
+    margin-bottom: 1.8rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .wonder-box::after {
+    content: '🤔';
+    position: absolute;
+    right: 1.5rem; top: 50%;
+    transform: translateY(-50%);
+    font-size: 3rem;
+    opacity: 0.3;
+  }
+  .wonder-box p {
+    font-size: 1rem;
+    line-height: 1.7;
+    font-style: italic;
+    opacity: 0.95;
+    max-width: 85%;
+  }
+  .wonder-box strong { color: var(--sun); font-style: normal; }
+  .wonder-box.mint-box { background: linear-gradient(135deg, var(--mint) 0%, #2d9970 100%); }
+  .wonder-box.mint-box::after { content: '🍕'; }
+  .wonder-box.coral-box { background: linear-gradient(135deg, var(--coral) 0%, #c44a28 100%); }
+  .wonder-box.coral-box::after { content: '💡'; }
+
+  /* ── CONCEPT CHIPS ── */
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+  }
+  .chip {
+    padding: 0.45rem 1rem;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+  }
+  .chip.coral  { background: var(--coral-pale);    color: var(--coral);    border-color: #f8c5b8; }
+  .chip.mint   { background: var(--mint-pale);     color: var(--mint);     border-color: #b8ebd8; }
+  .chip.sun    { background: var(--sun-pale);      color: #b8860b;         border-color: #f8e0a0; }
+  .chip.lav    { background: var(--lavender-pale); color: var(--lavender); border-color: #d0caef; }
+  .chip.sky    { background: #e8f0f8;              color: var(--sky-mid);  border-color: #c0d4ea; }
+  .chip:hover  { transform: scale(1.05); }
+
+  .concept-reveal {
+    background: var(--paper);
+    border-left: 4px solid var(--coral);
+    border-radius: 0 10px 10px 0;
+    padding: 1rem 1.2rem;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    margin-top: 0.5rem;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .concept-reveal.show { display: block; }
+  .concept-reveal.mint-border  { border-color: var(--mint); }
+  .concept-reveal.sun-border   { border-color: var(--sun); }
+  .concept-reveal.lav-border   { border-color: var(--lavender); }
+  .concept-reveal.sky-border   { border-color: var(--sky-mid); }
+
+  @keyframes fadeIn {
+    from { opacity:0; transform:translateY(-6px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* ── PREDICT / REFLECT BOXES ── */
+  .predict-box {
+    background: var(--sun-pale);
+    border: 2px dashed var(--sun);
+    border-radius: 14px;
+    padding: 1.4rem 1.6rem;
+    margin-bottom: 1.5rem;
+  }
+  .predict-box h4 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: #b8860b;
+    margin-bottom: 0.8rem;
+  }
+  .predict-box textarea {
+    width: 100%;
+    border: 1.5px solid rgba(0,0,0,0.12);
+    border-radius: 8px;
+    padding: 0.7rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    resize: vertical;
+    min-height: 64px;
+    background: white;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .predict-box textarea:focus { border-color: var(--sun); }
+
+  /* ── DEMO ZONE ── */
+  .demo-zone {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .demo-zone h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    color: var(--sky);
+    margin-bottom: 0.3rem;
+  }
+  .demo-zone .hint {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 1.3rem;
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    border: none;
+    border-radius: 10px;
+    padding: 0.65rem 1.3rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
+  .btn:active { transform: translateY(0); }
+  .btn-coral  { background: var(--coral);    color: white; }
+  .btn-mint   { background: var(--mint);     color: white; }
+  .btn-sun    { background: var(--sun);      color: var(--sky); }
+  .btn-lav    { background: var(--lavender); color: white; }
+  .btn-ghost  { background: #f0f2f5;         color: var(--muted); }
+  .btn-sky    { background: var(--sky);      color: white; }
+
+  .action-row {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 0.8rem;
+  }
+
+  /* ── INPUT GROUPS ── */
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .input-group label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .input-group input {
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 0.5rem 0.8rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    width: 90px;
+    outline: none;
+    transition: border-color 0.2s;
+    font-weight: 700;
+    color: var(--sky);
+    background: white;
+  }
+  .input-group input:focus { border-color: var(--coral); }
+
+  /* ── RATIO BUILDER ── */
+  .ratio-visual {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    min-height: 48px;
+    padding: 0.8rem;
+    background: #f5f7fa;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    align-items: center;
+  }
+  .ratio-dot {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    transition: all 0.2s;
+    animation: popIn 0.2s ease;
+  }
+  @keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  .ratio-result {
+    background: var(--mint-pale);
+    border: 2px solid #b8ebd8;
+    border-radius: 10px;
+    padding: 0.8rem 1.2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    color: var(--mint);
+    min-height: 2rem;
+    font-weight: 600;
+  }
+
+  /* ── EQUIVALENT RATIO TABLE ── */
+  .ratio-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.88rem;
+  }
+  .ratio-table th {
+    background: var(--sky);
+    color: white;
+    padding: 0.6rem 1rem;
+    text-align: center;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+  }
+  .ratio-table td {
+    padding: 0.55rem 1rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s;
+  }
+  .ratio-table tr:nth-child(even) td { background: #f5f7fa; }
+  .ratio-table td.highlight { background: var(--sun-pale); color: var(--coral); font-weight: 700; }
+  .ratio-table input.table-input {
+    width: 60px;
+    border: 2px solid var(--lavender);
+    border-radius: 6px;
+    padding: 0.3rem;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.88rem;
+    outline: none;
+    color: var(--lavender);
+    font-weight: 700;
+  }
+  .ratio-table input.table-input.correct { border-color: var(--mint); color: var(--mint); background: var(--mint-pale); }
+  .ratio-table input.table-input.wrong   { border-color: var(--coral); color: var(--coral); background: var(--coral-pale); }
+
+  /* ── TAPE DIAGRAM ── */
+  .tape-wrap {
+    margin: 1rem 0;
+  }
+  .tape-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+  }
+  .tape-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    min-width: 60px;
+  }
+  .tape-bar {
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.9rem;
+    color: white;
+    transition: width 0.4s ease;
+    min-width: 20px;
+    padding: 0 0.5rem;
+  }
+
+  /* ── UNIT RATE CALCULATOR ── */
+  .rate-display {
+    background: var(--lavender-pale);
+    border: 2px solid rgba(124,111,205,0.3);
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+    margin-top: 1rem;
+  }
+  .rate-display .big-rate {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    color: var(--sky);
+    margin-bottom: 0.3rem;
+  }
+  .rate-display .rate-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--lavender);
+  }
+
+  /* ── PERCENT VISUAL ── */
+  .percent-bar-wrap {
+    margin: 1rem 0;
+    background: #f5f7fa;
+    border-radius: 10px;
+    padding: 1rem;
+  }
+  .percent-bar-track {
+    height: 36px;
+    background: #e0e4ea;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 0.5rem;
+  }
+  .percent-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--coral), var(--sun));
+    border-radius: 8px;
+    transition: width 0.4s ease;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 0.6rem;
+  }
+  .percent-bar-fill span {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.9rem;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .percent-markers {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  /* ── COORDINATE PLOT ── */
+  canvas#ratioCanvas {
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    display: block;
+    cursor: crosshair;
+  }
+
+  /* ── REAL WORLD CARDS ── */
+  .world-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .world-card {
+    border-radius: 14px;
+    padding: 1.4rem;
+  }
+  .world-card.coral-bg { background: var(--coral-pale); }
+  .world-card.mint-bg  { background: var(--mint-pale); }
+  .world-card.lav-bg   { background: var(--lavender-pale); }
+  .world-card.sun-bg   { background: var(--sun-pale); }
+  .world-card .wc-icon { font-size: 2rem; margin-bottom: 0.6rem; }
+  .world-card h4 { font-family: 'Fredoka One', cursive; font-size: 1rem; margin-bottom: 0.4rem; color: var(--sky); }
+  .world-card p  { font-size: 0.82rem; line-height: 1.6; color: #3a4a5a; }
+
+  /* ── UNIT CONVERTER ── */
+  .converter-zone {
+    background: linear-gradient(135deg, var(--lavender-pale) 0%, var(--mint-pale) 100%);
+    border: 2px solid rgba(124,111,205,0.2);
+    border-radius: 16px;
+    padding: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .converter-zone h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.15rem;
+    color: var(--lavender);
+    margin-bottom: 0.6rem;
+  }
+  .converter-zone p { font-size: 0.88rem; line-height: 1.65; color: #3a4a5a; margin-bottom: 1rem; }
+  .conv-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.8rem;
+  }
+  .conv-input {
+    border: 2px solid var(--lavender);
+    border-radius: 8px;
+    padding: 0.6rem 0.9rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    width: 110px;
+    outline: none;
+    color: var(--sky);
+    background: white;
+    transition: border-color 0.2s;
+  }
+  .conv-input:focus { border-color: var(--coral); }
+  .conv-result {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem;
+    color: var(--mint);
+    min-width: 120px;
+  }
+  .conv-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  select.conv-select {
+    border: 2px solid var(--lavender);
+    border-radius: 8px;
+    padding: 0.5rem 0.8rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--sky);
+    background: white;
+    outline: none;
+    cursor: pointer;
+  }
+
+  /* ── REFLECTION ── */
+  .reflection-card {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 1.4rem;
+    margin-bottom: 1rem;
+  }
+  .reflection-card .q {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: var(--sky);
+    margin-bottom: 0.7rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+  }
+  .reflection-card .q .qnum {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .reflection-card textarea {
+    width: 100%;
+    border: 1.5px solid rgba(0,0,0,0.1);
+    border-radius: 8px;
+    padding: 0.7rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    resize: vertical;
+    min-height: 72px;
+    background: #fafbfc;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .reflection-card textarea:focus { border-color: var(--lavender); }
+
+  /* ── CONGRATS ── */
+  .congrats {
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+  .congrats .trophy { font-size: 4rem; margin-bottom: 1rem; animation: bounce 0.8s ease infinite alternate; }
+  @keyframes bounce { from { transform:translateY(0); } to { transform:translateY(-10px); } }
+  .congrats h2 { font-family: 'Fredoka One', cursive; font-size: 2rem; color: var(--sky); margin-bottom: 0.8rem; }
+  .congrats p  { font-size: 0.95rem; line-height: 1.7; color: #3a4a5a; max-width: 500px; margin: 0 auto 1.5rem; }
+  .summary-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; }
+  .summary-chip {
+    padding: 0.5rem 1.1rem;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    background: var(--sun-pale);
+    color: #b8860b;
+    border: 1.5px solid #f8e0a0;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 1.5rem 0;
+  }
+
+  /* ── NAV ── */
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2.5rem 2rem 0;
+    max-width: 820px;
+    margin: 0 auto;
+  }
+  .btn-next {
+    background: var(--sky);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 0.9rem 2rem;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(30,58,95,0.25);
+  }
+  .btn-next:hover { background: var(--sky-mid); transform: translateY(-2px); }
+  .btn-prev {
+    background: transparent;
+    color: var(--muted);
+    border: 2px solid var(--border);
+    border-radius: 50px;
+    padding: 0.9rem 1.6rem;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-prev:hover { border-color: var(--muted); color: var(--ink); }
+  .btn-prev:disabled, .btn-next:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+  /* ── SUMMARY PAGE ── */
+  .summary-section {
+    background: white;
+    border-radius: 16px;
+    padding: 1.8rem;
+    margin-bottom: 1.2rem;
+    border: 2px solid var(--border);
+  }
+  .summary-section h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.05rem;
+    color: var(--sky);
+    margin-bottom: 0.8rem;
+  }
+  .summary-answer {
+    background: #f5f7fa;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+    font-style: italic;
+    border-left: 3px solid var(--lavender);
+    min-height: 2rem;
+  }
+  .summary-answer.empty { color: var(--muted); font-style: normal; border-left-color: var(--border); }
+  .sum-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+    margin-top: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .share-buttons {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+    justify-content: center;
+  }
+  .share-btn {
+    border: none;
+    border-radius: 12px;
+    padding: 0.85rem 1.6rem;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .share-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+  .share-btn.copy  { background: var(--mint);     color: white; }
+  .share-btn.email { background: var(--lavender); color: white; }
+  .share-btn.print { background: var(--sky);      color: white; }
+  .copy-confirm {
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--mint);
+    min-height: 1.2rem;
+    margin-top: 0.6rem;
+  }
+
+  @media (max-width: 560px) {
+    .hero { padding: 2.5rem 1.2rem 1.5rem; }
+    .section { padding: 2rem 1.2rem 0; }
+    .nav-row { padding: 2rem 1.2rem 0; }
+  }
+
+  @media print {
+    .hero, .nav-row, .share-buttons, .copy-confirm { display: none !important; }
+    .sheet { box-shadow: none; border-radius: 0; }
+    .section { display: none !important; }
+    #sec-6 { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">✨ Grade 6 · Ratios & Proportional Relationships</div>
+  <h1>Everything is a<br><span class="accent">Ratio</span> 🍕</h1>
+  <p class="intro">Pizza slices, map scales, recipe ingredients, speed limits — ratios are hiding in everything. Today you're going to <em>see</em> them, <em>build</em> them, and <em>use</em> them.</p>
+
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+
+  <div class="progress-wrap">
+    <a class="prog-step active" id="pill-0" onclick="goTo(0)"><span>🍕</span> Wonder</a>
+    <a class="prog-step" id="pill-1" onclick="goTo(1)"><span>📚</span> Discover</a>
+    <a class="prog-step" id="pill-2" onclick="goTo(2)"><span>⚖️</span> Ratios</a>
+    <a class="prog-step" id="pill-3" onclick="goTo(3)"><span>💲</span> Unit Rate</a>
+    <a class="prog-step" id="pill-4" onclick="goTo(4)"><span>💯</span> Percents</a>
+    <a class="prog-step" id="pill-5" onclick="goTo(5)"><span>🌍</span> Real Life</a>
+    <a class="prog-step" id="pill-6" onclick="goTo(6)"><span>💭</span> Reflect</a>
+    <a class="prog-step" id="pill-7" onclick="goTo(7)"><span>📤</span> Submit</a>
+  </div>
+</div>
+
+<!-- SHEET -->
+<div class="sheet">
+
+  <!-- ══ SECTION 0: WONDER ══ -->
+  <div class="section active" id="sec-0">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-coral">1</div>
+      <span class="eyebrow-label">The Big Question</span>
+    </div>
+    <h2>What do pizza and maps have in common?</h2>
+    <p class="lead">A recipe says use 2 cups of flour for every 3 cups of sugar. A map says 1 cm = 50 km. A car travels 60 miles <strong>per</strong> hour. What do all of these have in common? They're all <strong>ratios</strong> — and today you'll learn to use them like a mathematician.</p>
+
+    <div class="wonder-box">
+      <p>A ratio is a way of <strong>comparing two quantities</strong>. It doesn't just say how much of something there is — it says how much of one thing there is <em>relative</em> to another. That tiny shift in thinking is one of the most useful tools in all of mathematics.</p>
+    </div>
+
+    <p style="font-size:0.9rem; font-weight:700; color:var(--sky); margin-bottom:0.8rem;">🧠 Quick warm-up — which of these is a ratio?</p>
+
+    <div style="background:white; border:2px solid var(--border); border-radius:14px; padding:1.5rem; margin-bottom:1.5rem;" id="warmupZone">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:0.8rem;">
+        <div class="warmup-card" onclick="checkWarmup(this, true)"
+          style="background:#f5f7fa; border:2px solid var(--border); border-radius:10px; padding:1rem; text-align:center; cursor:pointer; transition:all 0.2s;">
+          <div style="font-size:1.4rem; margin-bottom:0.4rem;">🍕</div>
+          <div style="font-weight:700; font-size:0.88rem;">3 slices to every 2 people</div>
+        </div>
+        <div class="warmup-card" onclick="checkWarmup(this, false)"
+          style="background:#f5f7fa; border:2px solid var(--border); border-radius:10px; padding:1rem; text-align:center; cursor:pointer; transition:all 0.2s;">
+          <div style="font-size:1.4rem; margin-bottom:0.4rem;">🌡️</div>
+          <div style="font-weight:700; font-size:0.88rem;">Temperature is 22°C</div>
+        </div>
+        <div class="warmup-card" onclick="checkWarmup(this, true)"
+          style="background:#f5f7fa; border:2px solid var(--border); border-radius:10px; padding:1rem; text-align:center; cursor:pointer; transition:all 0.2s;">
+          <div style="font-size:1.4rem; margin-bottom:0.4rem;">🚗</div>
+          <div style="font-weight:700; font-size:0.88rem;">60 miles per hour</div>
+        </div>
+        <div class="warmup-card" onclick="checkWarmup(this, false)"
+          style="background:#f5f7fa; border:2px solid var(--border); border-radius:10px; padding:1rem; text-align:center; cursor:pointer; transition:all 0.2s;">
+          <div style="font-size:1.4rem; margin-bottom:0.4rem;">📏</div>
+          <div style="font-weight:700; font-size:0.88rem;">The ruler is 30cm long</div>
+        </div>
+        <div class="warmup-card" onclick="checkWarmup(this, true)"
+          style="background:#f5f7fa; border:2px solid var(--border); border-radius:10px; padding:1rem; text-align:center; cursor:pointer; transition:all 0.2s;">
+          <div style="font-size:1.4rem; margin-bottom:0.4rem;">🗺️</div>
+          <div style="font-weight:700; font-size:0.88rem;">1 cm = 50 km on a map</div>
+        </div>
+        <div class="warmup-card" onclick="checkWarmup(this, false)"
+          style="background:#f5f7fa; border:2px solid var(--border); border-radius:10px; padding:1rem; text-align:center; cursor:pointer; transition:all 0.2s;">
+          <div style="font-size:1.4rem; margin-bottom:0.4rem;">🎒</div>
+          <div style="font-weight:700; font-size:0.88rem;">The bag weighs 5kg</div>
+        </div>
+      </div>
+      <div id="warmupFeedback" style="margin-top:1rem; font-family:'DM Mono',monospace; font-size:0.82rem; min-height:1.2rem;"></div>
+    </div>
+
+    <div class="wonder-box mint-box">
+      <p>Ratios can be written three ways: as a <strong>fraction</strong> (3/2), with a <strong>colon</strong> (3:2), or in <strong>words</strong> (3 to 2). They all mean the same thing — and today you'll use all three.</p>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 1: DISCOVER ══ -->
+  <div class="section" id="sec-1">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-lav">2</div>
+      <span class="eyebrow-label">Discover the Vocabulary</span>
+    </div>
+    <h2>📚 Words mathematicians use</h2>
+    <p class="lead">Click each word to reveal what it means. Then think of your own real-world example before reading ours.</p>
+
+    <div class="chip-row">
+      <span class="chip coral" onclick="revealTerm('ratio')">⚖️ Ratio</span>
+      <span class="chip lav"   onclick="revealTerm('equivalent')">🔁 Equivalent Ratios</span>
+      <span class="chip sun"   onclick="revealTerm('unitrate')">💲 Unit Rate</span>
+      <span class="chip mint"  onclick="revealTerm('proportion')">📐 Proportion</span>
+      <span class="chip sky"   onclick="revealTerm('percent')">💯 Percent</span>
+    </div>
+
+    <div class="concept-reveal" id="cr-ratio">
+      <strong>Ratio</strong> — a comparison of two quantities using division.<br>
+      Written as: <code>a:b</code> or <code>a/b</code> or "a to b"<br><br>
+      <em>Example: In a class of 12 boys and 8 girls, the ratio of boys to girls is 12:8, which simplifies to 3:2.</em><br><br>
+      <em>Your turn: Write a ratio you can see right now in your classroom.</em>
+    </div>
+    <div class="concept-reveal lav-border" id="cr-equivalent">
+      <strong>Equivalent Ratios</strong> — ratios that represent the same relationship, just scaled up or down.<br><br>
+      <em>Example: 1:2, 2:4, 3:6, and 10:20 are all equivalent — they all say "one for every two."</em><br><br>
+      <em>Your turn: Write three equivalent ratios to 2:5.</em>
+    </div>
+    <div class="concept-reveal sun-border" id="cr-unitrate">
+      <strong>Unit Rate</strong> — a ratio where the second quantity is 1. It tells you "how much per one."<br><br>
+      <em>Example: $3 per apple. 60 miles per hour. 12 words per minute. The "per 1" makes it a unit rate.</em><br><br>
+      <em>Your turn: If you earn $45 for 9 hours of work, what is your unit rate (per hour)?</em>
+    </div>
+    <div class="concept-reveal mint-border" id="cr-proportion">
+      <strong>Proportion</strong> — a statement that two ratios are equal.<br>
+      Written as: <code>a/b = c/d</code><br><br>
+      <em>Example: 3/4 = 6/8 is a proportion — both ratios represent the same relationship.</em><br><br>
+      <em>Your turn: Is 2/3 = 8/12 a proportion? How do you know?</em>
+    </div>
+    <div class="concept-reveal sky-border" id="cr-percent">
+      <strong>Percent</strong> — a ratio that always compares to 100. "Per cent" means "per hundred."<br><br>
+      <em>Example: 30% means 30 out of every 100. It's just a special ratio: 30/100.</em><br><br>
+      <em>Your turn: What percent is the same as the ratio 3:4? (Hint: how many out of 100?)</em>
+    </div>
+
+    <div class="divider"></div>
+
+    <p style="font-size:0.88rem; font-weight:700; color:var(--sky); margin-bottom:0.8rem;">🔍 Three ways to write the same ratio — which do you prefer?</p>
+
+    <div style="background:white; border:2px solid var(--border); border-radius:14px; padding:1.5rem; margin-bottom:1.5rem;">
+      <p style="font-size:0.88rem; color:#3a4a5a; margin-bottom:1rem;">A bag has <strong>4 red</strong> marbles and <strong>6 blue</strong> marbles. The ratio of red to blue is:</p>
+      <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+        <div style="background:var(--coral-pale); border:2px solid #f8c5b8; border-radius:10px; padding:0.8rem 1.2rem; text-align:center;">
+          <div style="font-family:'Fredoka One',cursive; font-size:1.4rem; color:var(--coral);">4 to 6</div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-top:0.2rem;">words</div>
+        </div>
+        <div style="background:var(--lavender-pale); border:2px solid #d0caef; border-radius:10px; padding:0.8rem 1.2rem; text-align:center;">
+          <div style="font-family:'Fredoka One',cursive; font-size:1.4rem; color:var(--lavender);">4 : 6</div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-top:0.2rem;">colon</div>
+        </div>
+        <div style="background:var(--mint-pale); border:2px solid #b8ebd8; border-radius:10px; padding:0.8rem 1.2rem; text-align:center;">
+          <div style="font-family:'Fredoka One',cursive; font-size:1.4rem; color:var(--mint);">4/6 = 2/3</div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-top:0.2rem;">fraction (simplified)</div>
+        </div>
+      </div>
+      <p style="font-size:0.82rem; color:var(--muted); margin-top:0.8rem; font-family:'DM Mono',monospace;">All three are correct — and all say the same thing: for every 2 red marbles, there are 3 blue.</p>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 2: RATIO BUILDER ══ -->
+  <div class="section" id="sec-2">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-coral">3</div>
+      <span class="eyebrow-label">Investigation 1</span>
+    </div>
+    <h2>⚖️ Ratio Builder & Equivalent Table</h2>
+    <p class="lead">Build a ratio visually, then explore how <strong>equivalent ratios</strong> form a pattern. Can you predict what comes next in the table? <strong>Predict before you check!</strong></p>
+
+    <div class="predict-box">
+      <h4>📝 Before you start — write your prediction:</h4>
+      <textarea id="ratio-prediction" placeholder="If the ratio of red to blue is 2:3, then for 6 red there will be ___ blue. For 10 red there will be ___ blue. I think equivalent ratios work by..."></textarea>
+    </div>
+
+    <div class="demo-zone">
+      <h3>🔴🔵 Visual Ratio Builder</h3>
+      <div class="hint">SET THE RATIO BELOW · WATCH THE VISUAL UPDATE · SEE THE MATHS LIVE</div>
+
+      <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end; margin-bottom:1.2rem;">
+        <div class="input-group">
+          <label>🔴 Red</label>
+          <input type="number" id="ratioA" min="1" max="12" value="2" oninput="updateRatioBuilder()">
+        </div>
+        <div style="font-family:'Fredoka One',cursive; font-size:1.8rem; color:var(--muted); padding-bottom:0.3rem;">:</div>
+        <div class="input-group">
+          <label>🔵 Blue</label>
+          <input type="number" id="ratioB" min="1" max="12" value="3" oninput="updateRatioBuilder()">
+        </div>
+        <div style="flex:1; min-width:200px;">
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.3rem;">RATIO WRITTEN AS</div>
+          <div id="ratioWritten" style="font-family:'Fredoka One',cursive; font-size:1.1rem; color:var(--sky);"></div>
+        </div>
+      </div>
+
+      <div class="ratio-visual" id="ratioVisual">
+        <!-- dots rendered by JS -->
+      </div>
+
+      <div class="ratio-result" id="ratioResult"></div>
+    </div>
+
+    <div class="demo-zone">
+      <h3>📋 Equivalent Ratio Table</h3>
+      <div class="hint">FILL IN THE MISSING VALUES · PRESS CHECK TO SEE IF YOU'RE RIGHT</div>
+
+      <p style="font-size:0.88rem; color:#3a4a5a; margin-bottom:1rem;" id="tablePrompt">Complete the table of equivalent ratios for <strong>2 : 3</strong>:</p>
+
+      <table class="ratio-table" id="ratioTable">
+        <thead>
+          <tr>
+            <th>Red (×n)</th>
+            <th>Blue (×n)</th>
+            <th>Multiplier</th>
+            <th>Simplified</th>
+          </tr>
+        </thead>
+        <tbody id="ratioTableBody">
+          <!-- filled by JS -->
+        </tbody>
+      </table>
+
+      <div class="action-row" style="margin-top:0.8rem;">
+        <button class="btn btn-coral" onclick="checkTable()">✓ Check my answers</button>
+        <button class="btn btn-ghost" onclick="resetTable()">↺ Reset table</button>
+      </div>
+      <div id="tableFeedback" style="margin-top:0.6rem; font-family:'DM Mono',monospace; font-size:0.8rem; min-height:1.2rem; color:var(--mint);"></div>
+    </div>
+
+    <div class="demo-zone">
+      <h3>📊 Tape Diagram</h3>
+      <div class="hint">A VISUAL WAY TO SEE RATIOS — BARS SHOW THE RELATIVE SIZES</div>
+
+      <div class="tape-wrap" id="tapeDiagram">
+        <!-- rendered by JS -->
+      </div>
+      <p id="tapeNote" style="font-size:0.82rem; color:var(--muted); font-family:'DM Mono',monospace; margin-top:0.5rem;"></p>
+    </div>
+
+    <div class="predict-box" style="border-color:var(--mint); background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After exploring — what did you notice?</h4>
+      <textarea id="ratio-reflection" placeholder="I noticed that equivalent ratios always... The tape diagram helped me see... The pattern in the table is..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 3: UNIT RATE ══ -->
+  <div class="section" id="sec-3">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-mint">4</div>
+      <span class="eyebrow-label">Investigation 2</span>
+    </div>
+    <h2>💲 Unit Rate Lab</h2>
+    <p class="lead">A unit rate tells you <strong>how much per one</strong>. It's the most useful form of a ratio for comparing things — like which store has the better deal. <strong>Make your prediction first!</strong></p>
+
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="rate-prediction" placeholder="If I travel 150 miles in 3 hours, my unit rate (speed) is ___ miles per hour. If apples cost $4.50 for 9 apples, one apple costs $___. I find this by..."></textarea>
+    </div>
+
+    <div class="demo-zone">
+      <h3>💰 Best Buy Calculator</h3>
+      <div class="hint">ENTER TWO DEALS · FIND THE UNIT RATE · DISCOVER WHICH IS CHEAPER</div>
+
+      <p style="font-size:0.88rem; color:#3a4a5a; margin-bottom:1.2rem;">Two shops are selling the same juice. Which is the better deal?</p>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+        <!-- Store A -->
+        <div style="background:var(--coral-pale); border:2px solid #f8c5b8; border-radius:12px; padding:1.2rem;">
+          <div style="font-family:'Fredoka One',cursive; font-size:1rem; color:var(--coral); margin-bottom:0.8rem;">🏪 Store A</div>
+          <div style="display:flex; gap:0.6rem; align-items:flex-end; flex-wrap:wrap;">
+            <div class="input-group">
+              <label>Total price ($)</label>
+              <input type="number" id="priceA" min="0.01" step="0.01" value="3.60" oninput="calcBestBuy()" style="border-color:#f8c5b8;">
+            </div>
+            <div class="input-group">
+              <label>Quantity</label>
+              <input type="number" id="qtyA" min="1" value="6" oninput="calcBestBuy()" style="border-color:#f8c5b8;">
+            </div>
+          </div>
+          <div id="rateA" style="margin-top:0.8rem; font-family:'DM Mono',monospace; font-size:0.82rem; color:var(--coral);"></div>
+        </div>
+        <!-- Store B -->
+        <div style="background:var(--mint-pale); border:2px solid #b8ebd8; border-radius:12px; padding:1.2rem;">
+          <div style="font-family:'Fredoka One',cursive; font-size:1rem; color:var(--mint); margin-bottom:0.8rem;">🏬 Store B</div>
+          <div style="display:flex; gap:0.6rem; align-items:flex-end; flex-wrap:wrap;">
+            <div class="input-group">
+              <label>Total price ($)</label>
+              <input type="number" id="priceB" min="0.01" step="0.01" value="5.00" oninput="calcBestBuy()" style="border-color:#b8ebd8;">
+            </div>
+            <div class="input-group">
+              <label>Quantity</label>
+              <input type="number" id="qtyB" min="1" value="9" oninput="calcBestBuy()" style="border-color:#b8ebd8;">
+            </div>
+          </div>
+          <div id="rateB" style="margin-top:0.8rem; font-family:'DM Mono',monospace; font-size:0.82rem; color:var(--mint);"></div>
+        </div>
+      </div>
+
+      <div id="bestBuyResult" class="rate-display" style="display:none;">
+        <div class="rate-label" style="margin-bottom:0.4rem;">WINNER</div>
+        <div class="big-rate" id="bestBuyWinner"></div>
+        <div class="rate-label" id="bestBuyExplain"></div>
+      </div>
+    </div>
+
+    <div class="demo-zone">
+      <h3>🚀 Speed / Distance / Time</h3>
+      <div class="hint">ENTER ANY TWO VALUES · THE THIRD CALCULATES AUTOMATICALLY</div>
+
+      <p style="font-size:0.88rem; color:#3a4a5a; margin-bottom:1.2rem;">Unit rate in action: <strong>Speed = Distance ÷ Time</strong></p>
+
+      <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end; margin-bottom:1rem;">
+        <div class="input-group">
+          <label>Distance (miles)</label>
+          <input type="number" id="dist" min="0" value="150" oninput="calcSpeed()">
+        </div>
+        <div class="input-group">
+          <label>Time (hours)</label>
+          <input type="number" id="time" min="0.1" step="0.5" value="3" oninput="calcSpeed()">
+        </div>
+      </div>
+
+      <div class="rate-display">
+        <div class="rate-label">UNIT RATE (SPEED)</div>
+        <div class="big-rate" id="speedResult">—</div>
+        <div class="rate-label" id="speedExplain"></div>
+      </div>
+    </div>
+
+    <div class="predict-box" style="border-color:var(--lavender); background:var(--lavender-pale);">
+      <h4 style="color:var(--lavender);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="rate-reflection" placeholder="To find a unit rate I need to... The best buy calculator showed me... I was surprised that..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 4: PERCENTS ══ -->
+  <div class="section" id="sec-4">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-sun">5</div>
+      <span class="eyebrow-label">Investigation 3</span>
+    </div>
+    <h2>💯 Percents as Ratios</h2>
+    <p class="lead">Percent just means "out of 100." It's a ratio in disguise — and once you see it that way, calculating with percents becomes <strong>much easier</strong>.</p>
+
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="percent-prediction" placeholder="30% of 200 is ___. I think this because 30% means 30 out of 100, so... If a $80 jacket is 25% off, the discount is $___..."></textarea>
+    </div>
+
+    <div class="demo-zone">
+      <h3>🎯 Percent Visual Calculator</h3>
+      <div class="hint">DRAG THE SLIDER OR TYPE A PERCENT · SEE IT ON THE BAR · CALCULATE THE PART</div>
+
+      <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end; margin-bottom:1.2rem;">
+        <div class="input-group">
+          <label>Whole amount</label>
+          <input type="number" id="wholeAmt" min="1" value="200" oninput="updatePercent()">
+        </div>
+        <div class="input-group" style="flex:1; min-width:150px;">
+          <label>Percent (%)</label>
+          <input type="range" id="pctSlider" min="0" max="100" value="30"
+            oninput="document.getElementById('pctInput').value=this.value; updatePercent();"
+            style="width:100%; accent-color:var(--coral); margin-top:0.5rem;">
+        </div>
+        <div class="input-group">
+          <label>Or type %</label>
+          <input type="number" id="pctInput" min="0" max="100" value="30" oninput="document.getElementById('pctSlider').value=this.value; updatePercent();">
+        </div>
+      </div>
+
+      <div class="percent-bar-wrap">
+        <div class="percent-bar-track">
+          <div class="percent-bar-fill" id="pctBarFill" style="width:30%;">
+            <span id="pctBarLabel">30%</span>
+          </div>
+        </div>
+        <div class="percent-markers">
+          <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:1rem;">
+        <div style="background:var(--coral-pale); border:2px solid #f8c5b8; border-radius:10px; padding:0.8rem 1.2rem; flex:1; min-width:140px;">
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.3rem;">THE PART</div>
+          <div style="font-family:'Fredoka One',cursive; font-size:1.5rem; color:var(--coral);" id="partResult">60</div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--muted);" id="partFormula">30% × 200 = 60</div>
+        </div>
+        <div style="background:var(--mint-pale); border:2px solid #b8ebd8; border-radius:10px; padding:0.8rem 1.2rem; flex:1; min-width:140px;">
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.3rem;">AS A RATIO</div>
+          <div style="font-family:'Fredoka One',cursive; font-size:1.5rem; color:var(--mint);" id="ratioResult2">30/100</div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--muted);" id="ratioFormula">= 3/10</div>
+        </div>
+        <div style="background:var(--lavender-pale); border:2px solid #d0caef; border-radius:10px; padding:0.8rem 1.2rem; flex:1; min-width:140px;">
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.3rem;">AS A DECIMAL</div>
+          <div style="font-family:'Fredoka One',cursive; font-size:1.5rem; color:var(--lavender);" id="decimalResult">0.30</div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--muted);">÷ 100</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-zone">
+      <h3>🏷️ Real-Life Percent Problems</h3>
+      <div class="hint">ADJUST THE NUMBERS · FORMULA SHOWN STEP BY STEP</div>
+
+      <div style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-bottom:1rem;">
+        <button class="btn btn-coral" onclick="setScenario('discount')">🛍️ Discount</button>
+        <button class="btn btn-mint" onclick="setScenario('tax')">🧾 Sales Tax</button>
+        <button class="btn btn-lav" onclick="setScenario('tip')">🍽️ Restaurant Tip</button>
+        <button class="btn btn-sun" onclick="setScenario('test')">📝 Test Score</button>
+      </div>
+
+      <div id="scenarioZone" style="background:#f5f7fa; border-radius:12px; padding:1.2rem;">
+        <!-- filled by JS -->
+      </div>
+    </div>
+
+    <div class="predict-box" style="border-color:var(--mint); background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 What did you discover about percents?</h4>
+      <textarea id="percent-reflection" placeholder="A percent is really just a ratio because... To find 30% of a number I can... The connection between fractions, decimals and percents is..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 5: REAL LIFE ══ -->
+  <div class="section" id="sec-5">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-sky">6</div>
+      <span class="eyebrow-label">Real-World Connections</span>
+    </div>
+    <h2>Ratios are everywhere 🌍</h2>
+    <p class="lead">You've been using ratios your whole life without realising it. Scales on maps, ingredients in recipes, the score of a game — everything you compare is a ratio.</p>
+
+    <div class="world-grid">
+      <div class="world-card coral-bg">
+        <div class="wc-icon">🍳</div>
+        <h4>Cooking & Recipes</h4>
+        <p>Every recipe is a ratio. 2 cups flour : 1 cup butter. Scaling a recipe up or down means finding equivalent ratios — exactly what you just practised.</p>
+      </div>
+      <div class="world-card mint-bg">
+        <div class="wc-icon">🗺️</div>
+        <h4>Maps & Scale</h4>
+        <p>A map scale of 1:50,000 means 1cm on paper = 50,000cm in real life. Every map, blueprint, and model uses this ratio thinking.</p>
+      </div>
+      <div class="world-card lav-bg">
+        <div class="wc-icon">📈</div>
+        <h4>Finance & Shopping</h4>
+        <p>Interest rates, discounts, tax, tips — all percentages, all ratios. Understanding this gives you real power over money decisions.</p>
+      </div>
+      <div class="world-card sun-bg">
+        <div class="wc-icon">⚽</div>
+        <h4>Sport Statistics</h4>
+        <p>Batting averages, goals per game, win ratios — sport is obsessed with ratios. Every sports analyst is a ratio expert.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Unit Converter -->
+    <div class="converter-zone">
+      <h3>🔄 Unit Conversion Lab</h3>
+      <p>Converting units is just ratio reasoning — you multiply or divide by a conversion ratio. Choose a conversion type and explore!</p>
+
+      <div class="conv-row">
+        <select class="conv-select" id="convType" onchange="updateConverter()">
+          <option value="km_mi">Kilometres → Miles</option>
+          <option value="mi_km">Miles → Kilometres</option>
+          <option value="kg_lb">Kilograms → Pounds</option>
+          <option value="lb_kg">Pounds → Kilograms</option>
+          <option value="cm_in">Centimetres → Inches</option>
+          <option value="l_gal">Litres → Gallons</option>
+        </select>
+      </div>
+
+      <div class="conv-row">
+        <input type="number" class="conv-input" id="convInput" value="10" min="0" oninput="updateConverter()">
+        <span class="conv-label" id="convFromLabel">km</span>
+        <span style="font-size:1.5rem; color:var(--muted);">→</span>
+        <div class="conv-result" id="convResult">6.21 miles</div>
+      </div>
+
+      <div id="convRatioNote" style="font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--lavender); margin-top:0.5rem;"></div>
+    </div>
+
+    <!-- Coordinate Plot -->
+    <div class="demo-zone">
+      <h3>📈 Plot Your Ratio on a Graph</h3>
+      <div class="hint">SEE HOW EQUIVALENT RATIOS FORM A STRAIGHT LINE THROUGH THE ORIGIN</div>
+
+      <div style="display:flex; gap:1.5rem; flex-wrap:wrap; align-items:flex-start;">
+        <canvas id="ratioCanvas" width="280" height="280"></canvas>
+        <div style="flex:1; min-width:180px;">
+          <p style="font-size:0.85rem; line-height:1.65; color:#3a4a5a; margin-bottom:0.8rem;">
+            Every equivalent ratio pair is a point on this graph. Notice how they always form a <strong>straight line</strong> through the origin? That's what makes them proportional!
+          </p>
+          <div style="display:flex; gap:0.6rem; align-items:flex-end; flex-wrap:wrap; margin-bottom:0.8rem;">
+            <div class="input-group">
+              <label>Ratio A</label>
+              <input type="number" id="plotA" min="1" max="10" value="2" oninput="drawRatioPlot()">
+            </div>
+            <div style="font-family:'Fredoka One',cursive; font-size:1.5rem; color:var(--muted); padding-bottom:0.3rem;">:</div>
+            <div class="input-group">
+              <label>Ratio B</label>
+              <input type="number" id="plotB" min="1" max="10" value="3" oninput="drawRatioPlot()">
+            </div>
+          </div>
+          <div id="plotNote" style="font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--coral); min-height:2rem; line-height:1.6;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 6: REFLECT ══ -->
+  <div class="section" id="sec-6">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-coral">7</div>
+      <span class="eyebrow-label">Synthesis & Wonder</span>
+    </div>
+    <h2>💭 Let's think it through</h2>
+    <p class="lead">Ratios aren't just a maths topic — they're a <em>way of seeing relationships</em> between things. These questions have no single right answer. Take your time.</p>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q1 /</span> What surprised you most about ratios today?</div>
+      <textarea placeholder="I was surprised when... I didn't expect... The connection I hadn't noticed before was..."></textarea>
+    </div>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q2 /</span> Why do equivalent ratios always form a straight line on a graph? What does that line tell you?</div>
+      <textarea placeholder="I think the line is straight because... Every point on the line represents... If the ratio was different, the line would..."></textarea>
+    </div>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q3 /</span> If something costs $7.50 for 5 items or $11.20 for 8 items — which is the better deal, and how would you explain your working to a friend?</div>
+      <textarea placeholder="To solve this I would... Store A has a unit price of... Store B has a unit price of... So the better deal is..."></textarea>
+    </div>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q4 /</span> Where have you used ratio thinking in real life without realising it?</div>
+      <textarea placeholder="I think I've used ratios when... Without knowing it, I was comparing... Now that I understand ratios I can see..."></textarea>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="congrats">
+      <div class="trophy">🎉</div>
+      <h2>You're thinking like a mathematician!</h2>
+      <p>Today you explored one of the most useful ideas in all of mathematics — the power of ratios. From recipes to maps to unit prices to percents, you now have a tool for understanding relationships between quantities.</p>
+      <div class="summary-chips">
+        <span class="summary-chip">Ratio = comparison of two quantities</span>
+        <span class="summary-chip">3 ways to write: a:b, a/b, a to b</span>
+        <span class="summary-chip">Unit rate = per 1</span>
+        <span class="summary-chip">Equivalent ratios → straight line graph</span>
+        <span class="summary-chip">Percent = ratio out of 100</span>
+        <span class="summary-chip">6.RP.A.1 · 6.RP.A.2 · 6.RP.A.3</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 7: SUBMIT ══ -->
+  <div class="section" id="sec-7">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-mint">8</div>
+      <span class="eyebrow-label">Your Completed Work</span>
+    </div>
+    <h2>📤 Ready to Share</h2>
+    <p class="lead">Here's everything you worked on today. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> directly to your teacher.</p>
+
+    <!-- STUDENT INFO HEADER -->
+    <div class="summary-section" style="background:var(--sky); color:white; border-color:var(--sky);">
+      <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; align-items:center;">
+        <div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; opacity:0.6; margin-bottom:0.3rem;">STUDENT</div>
+          <div style="font-family:'Fredoka One',cursive; font-size:1.4rem;" id="summaryName">—</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; opacity:0.6; margin-bottom:0.3rem;">LESSON</div>
+          <div style="font-family:'Fredoka One',cursive; font-size:1rem;">Ratios & Proportional Relationships 🍕</div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.72rem; opacity:0.6;" id="summaryDate"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-section">
+      <h3>⚖️ Section 3 — Ratio Builder</h3>
+      <div class="sum-label">Prediction</div>
+      <div class="summary-answer" id="sum-ratio-pred"></div>
+      <div class="sum-label">Reflection</div>
+      <div class="summary-answer" id="sum-ratio-ref"></div>
+    </div>
+
+    <div class="summary-section">
+      <h3>💲 Section 4 — Unit Rate Lab</h3>
+      <div class="sum-label">Prediction</div>
+      <div class="summary-answer" id="sum-rate-pred"></div>
+      <div class="sum-label">Reflection</div>
+      <div class="summary-answer" id="sum-rate-ref"></div>
+    </div>
+
+    <div class="summary-section">
+      <h3>💯 Section 5 — Percents</h3>
+      <div class="sum-label">Prediction</div>
+      <div class="summary-answer" id="sum-pct-pred"></div>
+      <div class="sum-label">Reflection</div>
+      <div class="summary-answer" id="sum-pct-ref"></div>
+    </div>
+
+    <div class="summary-section">
+      <h3>💭 Section 7 — Reflections</h3>
+      <div class="sum-label">Q1 — What surprised you most?</div>
+      <div class="summary-answer" id="sum-q1"></div>
+      <div class="sum-label">Q2 — Equivalent ratios and graphs</div>
+      <div class="summary-answer" id="sum-q2"></div>
+      <div class="sum-label">Q3 — Which is the better deal?</div>
+      <div class="summary-answer" id="sum-q3"></div>
+      <div class="sum-label">Q4 — Real life ratio thinking</div>
+      <div class="summary-answer" id="sum-q4"></div>
+    </div>
+
+    <div class="share-buttons">
+      <button class="share-btn copy" onclick="copyResults()">📋 Copy My Results</button>
+      <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+      <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+    <div class="copy-confirm" id="copyConfirm"></div>
+
+    <div style="margin-top:1.5rem; background:var(--sun-pale); border:2px dashed var(--sun); border-radius:12px; padding:1.2rem 1.4rem;">
+      <p style="font-family:'Fredoka One',cursive; font-size:1rem; color:#b8860b; margin-bottom:0.8rem;">📋 How to submit your work:</p>
+      <p style="font-size:0.82rem; color:#b8860b; font-family:'DM Mono',monospace; line-height:2;">
+        <strong>📋 Copy My Results</strong> — Copies all your answers to your clipboard. Then open Google Classroom, click your assignment, paste into the comment or document box, and submit.<br>
+        <strong>📧 Email to Teacher</strong> — Opens your email app with your answers already typed in the body. Just add your teacher's address and hit send.<br>
+        <strong>🖨️ Print / Save PDF</strong> — Opens your browser's print window. To save as a PDF on a Mac, click the dropdown at the bottom left and choose "Save as PDF". On Windows, choose "Microsoft Print to PDF". Then upload the PDF to your assignment.
+      </p>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div class="nav-row">
+    <button class="btn-prev" id="prevBtn" onclick="navigate(-1)" disabled>← Back</button>
+    <button class="btn-next" id="nextBtn" onclick="navigate(1)">Next <span>→</span></button>
+  </div>
+
+</div><!-- /sheet -->
+
+<script>
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+let currentSection = 0;
+const totalSections = 8;
+
+function goTo(n) {
+  document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===n));
+  document.querySelectorAll('.prog-step').forEach((p,i) => {
+    p.classList.toggle('active', i===n);
+    if (i < n) p.classList.add('done');
+    else p.classList.remove('done');
+  });
+  currentSection = n;
+  document.getElementById('prevBtn').disabled = n === 0;
+  if (n === totalSections - 1) {
+    document.getElementById('nextBtn').textContent = '✓ Complete!';
+    document.getElementById('nextBtn').disabled = true;
+    buildSummary();
+  } else {
+    document.getElementById('nextBtn').innerHTML = 'Next <span>→</span>';
+    document.getElementById('nextBtn').disabled = false;
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (n === 5) { drawRatioPlot(); updateConverter(); }
+}
+function navigate(dir) { goTo(Math.min(Math.max(currentSection + dir, 0), totalSections-1)); }
+
+// ══════════════════════════════════════
+// SECTION 0 — WARMUP
+// ══════════════════════════════════════
+let warmupScore = 0;
+let warmupAnswered = 0;
+
+function checkWarmup(el, isRatio) {
+  if (el.dataset.answered) return;
+  el.dataset.answered = 'true';
+  warmupAnswered++;
+  if (isRatio) {
+    el.style.background = 'var(--mint-pale)';
+    el.style.borderColor = 'var(--mint)';
+    el.innerHTML += '<div style="font-family:\'DM Mono\',monospace;font-size:0.7rem;color:var(--mint);margin-top:0.4rem;">✓ Yes — this is a ratio!</div>';
+    warmupScore++;
+  } else {
+    el.style.background = 'var(--coral-pale)';
+    el.style.borderColor = 'var(--coral)';
+    el.innerHTML += '<div style="font-family:\'DM Mono\',monospace;font-size:0.7rem;color:var(--coral);margin-top:0.4rem;">✗ Not a ratio — just a single value.</div>';
+  }
+  if (warmupAnswered === 6) {
+    document.getElementById('warmupFeedback').style.color = warmupScore >= 5 ? 'var(--mint)' : 'var(--coral)';
+    document.getElementById('warmupFeedback').textContent =
+      warmupScore === 6 ? '🎉 Perfect! You already have great ratio instincts!' :
+      warmupScore >= 4 ? `✓ ${warmupScore}/6 correct — good start! Ratios always compare two quantities.` :
+      `${warmupScore}/6 — ratios always compare two quantities to each other. Single values are not ratios.`;
+  }
+}
+
+// ══════════════════════════════════════
+// SECTION 1 — VOCABULARY
+// ══════════════════════════════════════
+const termMap = { ratio:'cr-ratio', equivalent:'cr-equivalent', unitrate:'cr-unitrate', proportion:'cr-proportion', percent:'cr-percent' };
+let openTerm = null;
+function revealTerm(key) {
+  if (openTerm) document.getElementById(termMap[openTerm]).classList.remove('show');
+  if (openTerm === key) { openTerm = null; return; }
+  document.getElementById(termMap[key]).classList.add('show');
+  openTerm = key;
+}
+
+// ══════════════════════════════════════
+// SECTION 2 — RATIO BUILDER
+// ══════════════════════════════════════
+function updateRatioBuilder() {
+  const a = parseInt(document.getElementById('ratioA').value) || 1;
+  const b = parseInt(document.getElementById('ratioB').value) || 1;
+  const g = gcd(a, b);
+
+  // dots visual
+  const vis = document.getElementById('ratioVisual');
+  const redDots = Array.from({length: Math.min(a,12)}, () =>
+    `<div class="ratio-dot" style="background:#e74c3c; box-shadow:inset -2px -2px 4px rgba(0,0,0,0.15);">🔴</div>`).join('');
+  const blueDots = Array.from({length: Math.min(b,12)}, () =>
+    `<div class="ratio-dot" style="background:#2980b9; box-shadow:inset -2px -2px 4px rgba(0,0,0,0.15);">🔵</div>`).join('');
+  vis.innerHTML = redDots +
+    `<div style="width:2px; background:var(--border); height:32px; flex-shrink:0; margin:0 4px;"></div>` +
+    blueDots;
+
+  // written forms
+  document.getElementById('ratioWritten').innerHTML =
+    `<span style="color:var(--coral);">${a}</span> : <span style="color:#2980b9;">${b}</span>
+     <span style="font-family:'Nunito',sans-serif; font-size:0.78rem; color:var(--muted); margin-left:0.5rem;">
+       = ${a/g}/${b/g} (simplified)
+     </span>`;
+
+  document.getElementById('ratioResult').textContent =
+    `For every ${a/g} red marble${a/g!==1?'s':''}, there are ${b/g} blue marble${b/g!==1?'s':''}. Ratio = ${a}:${b} = ${a/g}:${b/g}`;
+
+  // update table prompt and rebuild table
+  document.getElementById('tablePrompt').innerHTML =
+    `Complete the table of equivalent ratios for <strong>${a/g} : ${b/g}</strong>:`;
+  buildRatioTable(a/g, b/g);
+
+  // tape diagram
+  drawTapeDiagram(a/g, b/g);
+}
+
+function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+
+// ── RATIO TABLE ──
+let tableAnswers = [];
+function buildRatioTable(a, b) {
+  const body = document.getElementById('ratioTableBody');
+  tableAnswers = [];
+  const rows = [
+    { n:1, aVal:a, bVal:b, editable:false },
+    { n:2, aVal:a*2, bVal:b*2, editable:true, editA:false, editB:true },
+    { n:3, aVal:a*3, bVal:b*3, editable:true, editA:true, editB:false },
+    { n:4, aVal:a*4, bVal:b*4, editable:true, editA:true, editB:true },
+    { n:5, aVal:a*5, bVal:b*5, editable:true, editA:false, editB:true },
+  ];
+  body.innerHTML = rows.map((r, i) => {
+    const aCell = r.editA
+      ? `<input class="table-input" id="ta${i}" type="number" placeholder="?">`
+      : `<span style="color:var(--sky); font-weight:700;">${r.aVal}</span>`;
+    const bCell = r.editB
+      ? `<input class="table-input" id="tb${i}" type="number" placeholder="?">`
+      : `<span style="color:var(--sky); font-weight:700;">${r.bVal}</span>`;
+    return `<tr>
+      <td>${aCell}</td>
+      <td>${bCell}</td>
+      <td style="color:var(--muted);">×${r.n}</td>
+      <td style="color:var(--muted); font-size:0.8rem;">${a}:${b}</td>
+    </tr>`;
+  }).join('');
+  tableAnswers = rows;
+  document.getElementById('tableFeedback').textContent = '';
+}
+
+function checkTable() {
+  const a = parseInt(document.getElementById('ratioA').value) || 1;
+  const b = parseInt(document.getElementById('ratioB').value) || 1;
+  const g = gcd(a, b);
+  const sa = a/g, sb = b/g;
+  let correct = 0, total = 0;
+
+  [[1,2],[0,3],[0,4],[1,4]].forEach(([ai, ri]) => {
+    const n = ri + 1;
+    const inp = document.getElementById(`t${ai===0?'a':'b'}${ri}`);
+    if (!inp) return;
+    total++;
+    const expected = ai===0 ? sa*n : sb*n;
+    const val = parseInt(inp.value);
+    if (val === expected) {
+      inp.classList.add('correct'); inp.classList.remove('wrong'); correct++;
+    } else {
+      inp.classList.add('wrong'); inp.classList.remove('correct');
+      inp.placeholder = expected;
+    }
+  });
+
+  const fb = document.getElementById('tableFeedback');
+  fb.style.color = correct === total ? 'var(--mint)' : 'var(--coral)';
+  fb.textContent = correct === total
+    ? `🎉 All correct! You can find equivalent ratios by multiplying both numbers by the same value.`
+    : `${correct}/${total} correct — remember: multiply BOTH parts by the same number to keep the ratio equivalent.`;
+}
+
+function resetTable() {
+  document.querySelectorAll('.table-input').forEach(inp => {
+    inp.value = ''; inp.classList.remove('correct','wrong'); inp.placeholder = '?';
+  });
+  document.getElementById('tableFeedback').textContent = '';
+}
+
+// ── TAPE DIAGRAM ──
+function drawTapeDiagram(a, b) {
+  const wrap = document.getElementById('tapeDiagram');
+  const maxW = 400;
+  const total = a + b;
+  const unit = maxW / total;
+  const redW = Math.round(a * unit);
+  const blueW = Math.round(b * unit);
+
+  wrap.innerHTML = `
+    <div class="tape-row">
+      <span class="tape-label">Red (${a})</span>
+      <div class="tape-bar" style="width:${redW}px; background:var(--coral);">${a}</div>
+    </div>
+    <div class="tape-row">
+      <span class="tape-label">Blue (${b})</span>
+      <div class="tape-bar" style="width:${blueW}px; background:#2980b9;">${b}</div>
+    </div>
+    <div class="tape-row">
+      <span class="tape-label">Total (${total})</span>
+      <div class="tape-bar" style="width:${maxW}px; background:var(--lavender);">${total}</div>
+    </div>
+  `;
+  document.getElementById('tapeNote').textContent =
+    `Red is ${Math.round(a/total*100)}% of the total · Blue is ${Math.round(b/total*100)}% of the total`;
+}
+
+// init
+updateRatioBuilder();
+
+// ══════════════════════════════════════
+// SECTION 3 — UNIT RATE
+// ══════════════════════════════════════
+function calcBestBuy() {
+  const pA = parseFloat(document.getElementById('priceA').value) || 0;
+  const qA = parseFloat(document.getElementById('qtyA').value) || 1;
+  const pB = parseFloat(document.getElementById('priceB').value) || 0;
+  const qB = parseFloat(document.getElementById('qtyB').value) || 1;
+
+  const uA = pA / qA;
+  const uB = pB / qB;
+
+  document.getElementById('rateA').textContent = `Unit price: $${uA.toFixed(2)} each`;
+  document.getElementById('rateB').textContent = `Unit price: $${uB.toFixed(2)} each`;
+
+  const res = document.getElementById('bestBuyResult');
+  res.style.display = 'block';
+  const winner = document.getElementById('bestBuyWinner');
+  const explain = document.getElementById('bestBuyExplain');
+
+  if (uA < uB) {
+    winner.textContent = '🏪 Store A wins!';
+    winner.style.color = 'var(--coral)';
+    explain.textContent = `$${uA.toFixed(2)}/item vs $${uB.toFixed(2)}/item — Store A saves $${(uB-uA).toFixed(2)} per item`;
+  } else if (uB < uA) {
+    winner.textContent = '🏬 Store B wins!';
+    winner.style.color = 'var(--mint)';
+    explain.textContent = `$${uB.toFixed(2)}/item vs $${uA.toFixed(2)}/item — Store B saves $${(uA-uB).toFixed(2)} per item`;
+  } else {
+    winner.textContent = '🤝 Equal deal!';
+    winner.style.color = 'var(--lavender)';
+    explain.textContent = `Both cost $${uA.toFixed(2)} per item — same unit rate!`;
+  }
+}
+calcBestBuy();
+
+function calcSpeed() {
+  const d = parseFloat(document.getElementById('dist').value) || 0;
+  const t = parseFloat(document.getElementById('time').value) || 1;
+  const s = d / t;
+  document.getElementById('speedResult').textContent = `${s.toFixed(1)} mph`;
+  document.getElementById('speedExplain').textContent =
+    `${d} miles ÷ ${t} hours = ${s.toFixed(1)} miles per hour`;
+}
+calcSpeed();
+
+// ══════════════════════════════════════
+// SECTION 4 — PERCENTS
+// ══════════════════════════════════════
+function updatePercent() {
+  const whole = parseFloat(document.getElementById('wholeAmt').value) || 0;
+  const pct = parseFloat(document.getElementById('pctInput').value) || 0;
+  const part = (pct / 100) * whole;
+  const g = gcd(pct, 100);
+
+  document.getElementById('pctBarFill').style.width = Math.min(pct, 100) + '%';
+  document.getElementById('pctBarLabel').textContent = pct + '%';
+  document.getElementById('partResult').textContent = part.toFixed(part % 1 === 0 ? 0 : 2);
+  document.getElementById('partFormula').textContent = `${pct}% × ${whole} = ${part.toFixed(2)}`;
+  document.getElementById('ratioResult2').textContent = `${pct}/100`;
+  document.getElementById('ratioFormula').textContent = g > 1 ? `= ${pct/g}/${100/g} (simplified)` : '(already simplified)';
+  document.getElementById('decimalResult').textContent = (pct/100).toFixed(2);
+}
+updatePercent();
+
+const scenarios = {
+  discount: {
+    label: '🛍️ Discount',
+    desc: 'A jacket costs $80. There is a 25% discount. How much do you save?',
+    inputs: [{id:'scPrice', label:'Original price ($)', val:80}, {id:'scPct', label:'Discount %', val:25}],
+    calc: () => {
+      const price = parseFloat(document.getElementById('scPrice').value)||0;
+      const pct = parseFloat(document.getElementById('scPct').value)||0;
+      const saving = (pct/100)*price;
+      const final = price - saving;
+      return `Discount = ${pct}% × $${price} = $${saving.toFixed(2)}\nFinal price = $${price} − $${saving.toFixed(2)} = $${final.toFixed(2)}`;
+    }
+  },
+  tax: {
+    label: '🧾 Sales Tax',
+    desc: 'A meal costs $45. Sales tax is 8%. What is the total bill?',
+    inputs: [{id:'scPrice', label:'Meal cost ($)', val:45}, {id:'scPct', label:'Tax %', val:8}],
+    calc: () => {
+      const price = parseFloat(document.getElementById('scPrice').value)||0;
+      const pct = parseFloat(document.getElementById('scPct').value)||0;
+      const tax = (pct/100)*price;
+      const total = price + tax;
+      return `Tax = ${pct}% × $${price} = $${tax.toFixed(2)}\nTotal = $${price} + $${tax.toFixed(2)} = $${total.toFixed(2)}`;
+    }
+  },
+  tip: {
+    label: '🍽️ Restaurant Tip',
+    desc: 'The bill is $60. You want to leave a 20% tip. How much is the tip?',
+    inputs: [{id:'scPrice', label:'Bill total ($)', val:60}, {id:'scPct', label:'Tip %', val:20}],
+    calc: () => {
+      const price = parseFloat(document.getElementById('scPrice').value)||0;
+      const pct = parseFloat(document.getElementById('scPct').value)||0;
+      const tip = (pct/100)*price;
+      const total = price + tip;
+      return `Tip = ${pct}% × $${price} = $${tip.toFixed(2)}\nTotal to pay = $${price} + $${tip.toFixed(2)} = $${total.toFixed(2)}`;
+    }
+  },
+  test: {
+    label: '📝 Test Score',
+    desc: 'You got 18 out of 24 questions right. What is your percentage score?',
+    inputs: [{id:'scScore', label:'Questions right', val:18}, {id:'scTotal', label:'Total questions', val:24}],
+    calc: () => {
+      const score = parseFloat(document.getElementById('scScore').value)||0;
+      const total = parseFloat(document.getElementById('scTotal').value)||1;
+      const pct = (score/total)*100;
+      return `Percentage = (${score} ÷ ${total}) × 100 = ${pct.toFixed(1)}%\nAs a ratio: ${score}:${total} = ${pct.toFixed(1)}:100`;
+    }
+  }
+};
+
+let activeScenario = 'discount';
+function setScenario(key) {
+  activeScenario = key;
+  const s = scenarios[key];
+  const inputsHTML = s.inputs.map(inp => `
+    <div class="input-group">
+      <label>${inp.label}</label>
+      <input type="number" id="${inp.id}" value="${inp.val}" oninput="runScenario()" style="border-color:var(--lavender);">
+    </div>`).join('');
+
+  document.getElementById('scenarioZone').innerHTML = `
+    <p style="font-size:0.88rem; color:#3a4a5a; margin-bottom:1rem;"><strong>${s.label}</strong><br>${s.desc}</p>
+    <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">${inputsHTML}</div>
+    <div id="scenarioResult" style="font-family:'DM Mono',monospace; font-size:0.88rem; background:white; border-radius:8px; padding:1rem; white-space:pre-line; color:var(--sky); line-height:1.8; min-height:2rem;"></div>
+  `;
+  runScenario();
+}
+
+function runScenario() {
+  try {
+    const result = scenarios[activeScenario].calc();
+    document.getElementById('scenarioResult').textContent = result;
+  } catch(e) {}
+}
+setScenario('discount');
+
+// ══════════════════════════════════════
+// SECTION 5 — REAL LIFE
+// ══════════════════════════════════════
+const converters = {
+  km_mi:  { from:'km', to:'miles',  rate:0.621371,  note:'1 km = 0.621 miles (ratio 1:0.621)' },
+  mi_km:  { from:'miles', to:'km',  rate:1.60934,   note:'1 mile = 1.609 km (ratio 1:1.609)' },
+  kg_lb:  { from:'kg', to:'lbs',    rate:2.20462,   note:'1 kg = 2.205 lbs (ratio 1:2.205)' },
+  lb_kg:  { from:'lbs', to:'kg',    rate:0.453592,  note:'1 lb = 0.454 kg (ratio 1:0.454)' },
+  cm_in:  { from:'cm', to:'inches', rate:0.393701,  note:'1 cm = 0.394 inches (ratio 1:0.394)' },
+  l_gal:  { from:'litres', to:'gallons', rate:0.264172, note:'1 litre = 0.264 gallons (ratio 1:0.264)' },
+};
+
+function updateConverter() {
+  const type = document.getElementById('convType').value;
+  const cv = converters[type];
+  const val = parseFloat(document.getElementById('convInput').value) || 0;
+  const result = (val * cv.rate).toFixed(3);
+  document.getElementById('convFromLabel').textContent = cv.from;
+  document.getElementById('convResult').textContent = `${result} ${cv.to}`;
+  document.getElementById('convRatioNote').textContent = `Conversion ratio: ${cv.note}`;
+}
+updateConverter();
+
+// ── RATIO COORDINATE PLOT ──
+function drawRatioPlot() {
+  const cvs = document.getElementById('ratioCanvas');
+  if (!cvs) return;
+  const ctx = cvs.getContext('2d');
+  const size = 280, pad = 36, inner = size - pad * 2;
+  const a = parseInt(document.getElementById('plotA').value) || 1;
+  const b = parseInt(document.getElementById('plotB').value) || 1;
+
+  ctx.clearRect(0,0,size,size);
+
+  // background
+  ctx.fillStyle = '#fafbfc';
+  ctx.fillRect(0,0,size,size);
+
+  // grid lines
+  ctx.strokeStyle = '#e8eef4';
+  ctx.lineWidth = 1;
+  for (let i=0; i<=10; i++) {
+    const x = pad + (i/10)*inner;
+    const y = pad + (i/10)*inner;
+    ctx.beginPath(); ctx.moveTo(x,pad); ctx.lineTo(x,pad+inner); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(pad+inner,y); ctx.stroke();
+  }
+
+  // axes
+  ctx.strokeStyle = '#b8c4cc'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(pad,pad); ctx.lineTo(pad,pad+inner); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad,pad+inner); ctx.lineTo(pad+inner,pad+inner); ctx.stroke();
+
+  // axis labels
+  ctx.fillStyle = 'var(--muted)';
+  ctx.font = '9px DM Mono, monospace';
+  ctx.textAlign = 'center';
+  for (let i=0; i<=10; i++) {
+    const x = pad + (i/10)*inner;
+    const y = pad + inner - (i/10)*inner;
+    ctx.fillText(i, x, pad+inner+12);
+    if (i>0) { ctx.textAlign='right'; ctx.fillText(i, pad-4, y+3); ctx.textAlign='center'; }
+  }
+
+  // axis titles
+  ctx.fillStyle = 'var(--sky)';
+  ctx.font = 'bold 10px Nunito, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Red', pad+inner/2, size-4);
+  ctx.save(); ctx.translate(10, pad+inner/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('Blue', 0, 0); ctx.restore();
+
+  // ratio line and points
+  const maxMult = Math.floor(10 / Math.max(a,b));
+  ctx.strokeStyle = 'rgba(232,96,60,0.3)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([5,4]);
+  ctx.beginPath();
+  ctx.moveTo(pad, pad+inner);
+  const endX = pad + (Math.min(a*maxMult,10)/10)*inner;
+  const endY = pad + inner - (Math.min(b*maxMult,10)/10)*inner;
+  ctx.lineTo(endX, endY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // plot points
+  for (let n=1; n<=maxMult; n++) {
+    const px = pad + (a*n/10)*inner;
+    const py = pad + inner - (b*n/10)*inner;
+    ctx.beginPath();
+    ctx.arc(px, py, 5, 0, 2*Math.PI);
+    ctx.fillStyle = n===1 ? 'var(--coral)' : 'var(--lavender)';
+    ctx.fill();
+    ctx.strokeStyle = 'white'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = 'var(--sky)';
+    ctx.font = 'bold 9px Nunito, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`(${a*n},${b*n})`, px+7, py-4);
+  }
+
+  document.getElementById('plotNote').textContent =
+    `Ratio ${a}:${b} — all ${maxMult} equivalent ratio pairs form a straight line! `
+    + `The steepness (slope) = ${b}/${a} = ${(b/a).toFixed(2)}`;
+}
+
+window.addEventListener('load', () => {
+  updateRatioBuilder();
+  drawRatioPlot();
+  updateConverter();
+});
+
+// ══════════════════════════════════════
+// SUMMARY & SUBMIT
+// ══════════════════════════════════════
+function fill(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = text && text.trim();
+  el.textContent = val || 'Not answered';
+  el.classList.toggle('empty', !val);
+}
+
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  fill('sum-ratio-pred', document.getElementById('ratio-prediction').value);
+  fill('sum-ratio-ref',  document.getElementById('ratio-reflection').value);
+  fill('sum-rate-pred',  document.getElementById('rate-prediction').value);
+  fill('sum-rate-ref',   document.getElementById('rate-reflection').value);
+  fill('sum-pct-pred',   document.getElementById('percent-prediction').value);
+  fill('sum-pct-ref',    document.getElementById('percent-reflection').value);
+
+  const refTAs = document.querySelectorAll('#sec-6 .reflection-card textarea');
+  ['sum-q1','sum-q2','sum-q3','sum-q4'].forEach((id,i) => {
+    fill(id, refTAs[i] ? refTAs[i].value : '');
+  });
+}
+
+function buildPlainText() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const date = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const refTAs = document.querySelectorAll('#sec-6 .reflection-card textarea');
+  const qs = ['Not answered','Not answered','Not answered','Not answered'];
+  refTAs.forEach((ta,i) => { if(ta.value.trim()) qs[i] = ta.value.trim(); });
+
+  return `
+RATIOS & PROPORTIONAL RELATIONSHIPS 🍕 — STUDENT SUBMISSION
+============================================================
+Student: ${name}
+Date: ${date}
+Lesson: Grade 6 · Ratios & Proportional Relationships
+Standards: 6.RP.A.1 · 6.RP.A.2 · 6.RP.A.3
+
+── SECTION 3: RATIO BUILDER ──
+Prediction:
+${document.getElementById('ratio-prediction').value.trim() || 'Not answered'}
+
+Reflection:
+${document.getElementById('ratio-reflection').value.trim() || 'Not answered'}
+
+── SECTION 4: UNIT RATE LAB ──
+Prediction:
+${document.getElementById('rate-prediction').value.trim() || 'Not answered'}
+
+Reflection:
+${document.getElementById('rate-reflection').value.trim() || 'Not answered'}
+
+── SECTION 5: PERCENTS ──
+Prediction:
+${document.getElementById('percent-prediction').value.trim() || 'Not answered'}
+
+Reflection:
+${document.getElementById('percent-reflection').value.trim() || 'Not answered'}
+
+── SECTION 7: REFLECTIONS ──
+Q1 — What surprised you most?
+${qs[0]}
+
+Q2 — Equivalent ratios and graphs
+${qs[1]}
+
+Q3 — Which is the better deal?
+${qs[2]}
+
+Q4 — Real life ratio thinking
+${qs[3]}
+
+============================================================
+Submitted via Ratios Workshop · Interactive Digital Lesson
+`.trim();
+}
+
+function copyResults() {
+  buildSummary();
+  const text = buildPlainText();
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Now paste into Google Classroom or your assignment.';
+    setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => {
+    document.getElementById('copyConfirm').textContent = '⚠️ Could not copy automatically — try selecting the text above manually.';
+  });
+}
+
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const subject = encodeURIComponent(`Ratios & Proportional Relationships — ${name}`);
+  const body = encodeURIComponent(buildPlainText());
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+</script>
+
+<!-- ══ COPYRIGHT FOOTER ══ -->
+<div style="position:relative; z-index:1; text-align:center; padding:1.5rem 2rem 2rem; color:rgba(255,255,255,0.45); font-family:'DM Mono',monospace; font-size:0.7rem; line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.<br>
+</div>
+</body>
+</html>
