@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cell Structure and Organisation — IGCSE Biology</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ocean:      #1a3d2b;
+    --ocean-mid:  #2d6a4f;
+    --ocean-lt:   #40916c;
+    --coral:      #e8603c;
+    --coral-pale: #fdf0ec;
+    --mint:       #3aaf85;
+    --mint-pale:  #e8f8f2;
+    --gold:       #c9962a;
+    --gold-pale:  #fef9e7;
+    --lavender:   #7c6fcd;
+    --lav-pale:   #f0eefb;
+    --paper:      #fffef9;
+    --ink:        #1a2332;
+    --muted:      #7a8899;
+    --border:     #e0e4ea;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: linear-gradient(160deg,#0d2318 0%,#1a3d2b 45%,#2d6a4f 100%);
+    min-height:100vh; font-family:'Nunito',sans-serif; color:var(--ink); overflow-x:hidden;
+  }
+  body::before {
+    content:''; position:fixed; inset:0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%,rgba(144,238,144,.4) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 22% 38%,rgba(255,255,255,.25) 0%,transparent 100%),
+      radial-gradient(2px   2px   at 41% 6%, rgba(144,238,144,.32) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 60% 24%,rgba(255,255,255,.2)  0%,transparent 100%),
+      radial-gradient(1.5px 1.5px at 77% 9%, rgba(144,238,144,.38) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 90% 33%,rgba(255,255,255,.25) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 33% 55%,rgba(144,238,144,.28) 0%,transparent 100%),
+      radial-gradient(2px   2px   at 70% 48%,rgba(255,255,255,.15) 0%,transparent 100%);
+    pointer-events:none; z-index:0;
+  }
+  /* HERO */
+  .hero { position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 2rem;color:white; }
+  .hero-badge { display:inline-block;background:var(--gold);color:var(--ocean);font-family:'Fredoka One',cursive;font-size:.85rem;letter-spacing:.05em;padding:.35rem 1.2rem;border-radius:20px;margin-bottom:1.2rem;box-shadow:0 2px 12px rgba(201,150,42,.45); }
+  .hero h1 { font-family:'Fredoka One',cursive;font-size:clamp(2rem,6vw,3.6rem);line-height:1.1;margin-bottom:.8rem;text-shadow:0 2px 20px rgba(0,0,0,.35); }
+  .hero h1 .accent { color:var(--gold); }
+  .hero p.intro { font-size:1.05rem;line-height:1.7;opacity:.88;max-width:580px;margin:0 auto 2rem; }
+  .name-bar { background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);border-radius:12px;padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;max-width:420px;margin:0 auto 1rem; }
+  .name-bar label { font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;font-family:'DM Mono',monospace; }
+  .name-bar input { flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.4rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:white;outline:none; }
+  .name-bar input::placeholder { color:rgba(255,255,255,.4);font-weight:400; }
+  .progress-wrap { display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem; }
+  .prog-step { background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);border-radius:20px;padding:.35rem .9rem;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace;display:inline-block; }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.35); }
+  .prog-step.active { background:var(--gold);color:var(--ocean);border-color:var(--gold);box-shadow:0 2px 12px rgba(201,150,42,.45); }
+  /* SHEET */
+  .sheet { position:relative;z-index:1;background:var(--paper);border-radius:24px 24px 0 0;margin-top:1.5rem;padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.3); }
+  .section { padding:3rem 2rem 0;max-width:820px;margin:0 auto;display:none; }
+  .section.active { display:block; }
+  .section-eyebrow { display:flex;align-items:center;gap:.6rem;margin-bottom:1rem; }
+  .eyebrow-num { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1rem;color:white;flex-shrink:0; }
+  .num-coral  { background:var(--coral); }
+  .num-mint   { background:var(--mint); }
+  .num-gold   { background:var(--gold);color:var(--ocean); }
+  .num-lav    { background:var(--lavender); }
+  .num-ocean  { background:var(--ocean-mid); }
+  .eyebrow-label { font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace; }
+  .section h2 { font-family:'Fredoka One',cursive;font-size:clamp(1.6rem,3.5vw,2.2rem);color:var(--ocean);margin-bottom:.6rem;line-height:1.2; }
+  .section .lead { font-size:1rem;line-height:1.75;color:#3a4a5a;margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+  /* WONDER BOXES */
+  .wonder-box { background:linear-gradient(135deg,var(--ocean) 0%,var(--ocean-mid) 100%);color:white;border-radius:16px;padding:1.8rem 2rem;margin-bottom:1.8rem;position:relative;overflow:hidden; }
+  .wonder-box::after { content:'🤔';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3; }
+  .wonder-box p { font-size:1rem;line-height:1.7;font-style:italic;opacity:.95;max-width:85%; }
+  .wonder-box strong { color:var(--gold);font-style:normal; }
+  .wonder-box.gold-box { background:linear-gradient(135deg,#8a6a1a 0%,#b8860b 100%); }
+  .wonder-box.gold-box::after { content:'🔬'; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,#1b7a58 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'🧫'; }
+  .wonder-box.coral-box { background:linear-gradient(135deg,#a03020 0%,#c8502a 100%); }
+  .wonder-box.coral-box::after { content:'🦠'; }
+  .wonder-box.lav-box { background:linear-gradient(135deg,#4a3f96 0%,#7c6fcd 100%); }
+  .wonder-box.lav-box::after { content:'📏'; }
+  /* PREDICT / REFLECT */
+  .predict-box { background:var(--gold-pale);border:2px dashed var(--gold);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem; }
+  .predict-box textarea,.reflect-box textarea { width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:64px;background:white;color:var(--ink);outline:none;transition:border-color .2s; }
+  .predict-box textarea:focus { border-color:var(--gold); }
+  .reflect-box { background:var(--mint-pale);border:2px dashed var(--mint);border-radius:14px;padding:1.4rem 1.6rem;margin-top:1.5rem; }
+  .reflect-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#1b7a58;margin-bottom:.8rem; }
+  .reflect-box textarea:focus { border-color:var(--mint); }
+  /* DEMO ZONE */
+  .demo-zone { background:white;border:2px solid var(--border);border-radius:16px;padding:1.8rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07); }
+  .demo-zone h3 { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--ocean);margin-bottom:.3rem; }
+  .demo-zone .hint { font-size:.78rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:1.3rem; }
+  /* CHIPS */
+  .chip-row { display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem; }
+  .chip { padding:.45rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;border:2px solid transparent; }
+  .chip.coral  { background:var(--coral-pale);color:var(--coral);border-color:#f8c5b8; }
+  .chip.mint   { background:var(--mint-pale);color:var(--mint);border-color:#b8ebd8; }
+  .chip.gold   { background:var(--gold-pale);color:#8a6a1a;border-color:#f8e0a0; }
+  .chip.lav    { background:var(--lav-pale);color:var(--lavender);border-color:#d0caef; }
+  .chip.ocean  { background:#d4eadd;color:var(--ocean-mid);border-color:#a8ccee; }
+  .chip:hover  { transform:scale(1.05); }
+  .concept-reveal { background:var(--paper);border-left:4px solid var(--coral);border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;margin-top:.5rem;display:none;animation:fadeIn .3s ease; }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border   { border-color:var(--mint); }
+  .concept-reveal.gold-border   { border-color:var(--gold); }
+  .concept-reveal.lav-border    { border-color:var(--lavender); }
+  .concept-reveal.ocean-border  { border-color:var(--ocean-mid); }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+  /* CARDS */
+  .card-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0 1rem; }
+  .info-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.1rem;text-align:center;cursor:pointer;transition:all .2s; }
+  .info-card:hover,.info-card.active { border-color:var(--ocean-mid);transform:translateY(-2px);box-shadow:0 4px 14px rgba(45,106,143,.2); }
+  .info-card.active { background:#d4eadd; }
+  .info-card .ic-icon  { font-size:2rem;margin-bottom:.4rem; }
+  .info-card .ic-title { font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--ocean);margin-bottom:.2rem; }
+  .info-card .ic-sub   { font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em; }
+  .info-panel { background:#d4eadd;border-left:4px solid var(--ocean-mid);border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;display:none;animation:fadeIn .3s ease;margin-bottom:1rem; }
+  .info-panel.show { display:block; }
+  .info-panel h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ocean);margin-bottom:.5rem; }
+  .info-panel p  { font-size:.88rem;line-height:1.7;color:#1a2a3a; }
+  .info-panel .eg { background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;font-size:.82rem;font-family:'DM Mono',monospace;border:1.5px solid rgba(45,106,143,.2); }
+  /* ACCORDION */
+  .accord-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1rem 1.2rem;margin-bottom:.8rem;cursor:pointer;transition:all .2s; }
+  .accord-card:hover { border-color:var(--ocean-mid); }
+  .accord-card.open { border-color:var(--mint);background:var(--mint-pale); }
+  .accord-title { font-family:'Fredoka One',cursive;font-size:1rem;color:var(--ocean);display:flex;align-items:center;justify-content:space-between; }
+  .accord-arrow { transition:transform .2s; }
+  .accord-card.open .accord-arrow { transform:rotate(180deg); }
+  .accord-body { font-size:.85rem;line-height:1.7;color:var(--ink);margin-top:.6rem;display:none; }
+  .accord-card.open .accord-body { display:block; }
+  .accord-eg { font-family:'DM Mono',monospace;font-size:.78rem;color:var(--muted);margin-top:.4rem;font-style:italic; }
+  /* QUIZ */
+  .quiz-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .quiz-q { font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:1rem;line-height:1.5; }
+  .quiz-options { display:flex;flex-direction:column;gap:.5rem; }
+  .quiz-opt { padding:.6rem 1rem;border-radius:8px;border:2px solid var(--border);background:white;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:600;text-align:left;transition:all .15s;color:var(--ink); }
+  .quiz-opt:hover:not(:disabled) { border-color:var(--ocean-mid);background:#f0f7f3; }
+  .quiz-opt.correct { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .quiz-opt.wrong   { background:var(--coral-pale);border-color:var(--coral);color:#a83020; }
+  .quiz-opt:disabled { cursor:default; }
+  .quiz-feedback { margin-top:.8rem;font-size:.85rem;line-height:1.6;padding:.7rem 1rem;border-radius:8px;display:none;animation:fadeIn .3s ease; }
+  .quiz-feedback.show { display:block; }
+  .quiz-feedback.correct-fb { background:var(--mint-pale);color:#1b7a58;border-left:3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background:var(--coral-pale);color:#a83020;border-left:3px solid var(--coral); }
+  /* MAG CALC */
+  .mag-input-group { display:flex; flex-direction:column; gap:.3rem; font-size:.82rem; font-weight:700; color:var(--ink); }
+  .mag-input-group input, .mag-input-group select { border:1.5px solid var(--border); border-radius:8px; padding:.5rem .7rem; font-family:'Nunito',sans-serif; font-size:.9rem; width:150px; outline:none; }
+  .mag-input-group input:focus, .mag-input-group select:focus { border-color:var(--ocean-mid); }
+  .mag-result { margin-top:.6rem;padding:.9rem 1.1rem;border-radius:10px;background:#f5f7fa;border-left:4px solid var(--ocean-mid);font-size:.9rem;line-height:1.6;color:var(--ink); }
+  /* VOCAB TABLE */
+  .vocab-table { width:100%;border-collapse:collapse;margin:1rem 0 1.5rem; }
+  .vocab-table th { background:var(--ocean);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;padding:.7rem 1rem;text-align:left; }
+  .vocab-table td { padding:.65rem 1rem;font-size:.85rem;line-height:1.5;border-bottom:1px solid var(--border); }
+  .vocab-table tr:nth-child(even) td { background:#f5f7fa; }
+  .vocab-table tr:hover td { background:#d4eadd;transition:background .15s; }
+  .vocab-table td:first-child { font-weight:800;color:var(--ocean-mid); }
+  /* PAST PAPER QUESTIONS */
+  .pp-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .pp-label { font-family:'DM Mono',monospace;font-size:.68rem;color:var(--ocean-mid);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem; }
+  .pp-q { font-size:.95rem;line-height:1.6;color:var(--ink);margin-bottom:.8rem;font-weight:700; }
+  .pp-q em { font-weight:400;color:#3a4a5a; }
+  .pp-textarea { width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:72px;background:white;color:var(--ink);outline:none;transition:border-color .2s; }
+  .pp-textarea:focus { border-color:var(--ocean-mid); }
+  .pp-marks { font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);margin-top:.4rem; }
+  .pp-answer { background:#d4eadd;border-left:4px solid var(--ocean-mid);border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.85rem;line-height:1.7;margin-top:.8rem;display:none;animation:fadeIn .3s ease; }
+  .pp-answer.show { display:block; }
+  .pp-answer strong { color:var(--ocean); }
+  .pp-answer ul { margin:.4rem 0 0 1rem; }
+  .pp-answer li { margin-bottom:.3rem; }
+  /* SCORE */
+  .score-panel { background:linear-gradient(135deg,var(--ocean) 0%,var(--ocean-mid) 100%);color:white;border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem; }
+  .score-panel .score-num { font-family:'Fredoka One',cursive;font-size:3.5rem;line-height:1;color:var(--gold); }
+  .score-panel p { opacity:.88;margin-top:.5rem;font-size:1rem; }
+  .score-panel h3 { font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:.3rem; }
+  /* NAV */
+  .nav-row { display:flex;justify-content:space-between;align-items:center;padding:2.5rem 2rem 0;max-width:820px;margin:0 auto; }
+  .btn-next { background:var(--ocean);color:white;border:none;border-radius:50px;padding:.9rem 2rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;display:flex;align-items:center;gap:.6rem;transition:all .2s;box-shadow:0 4px 16px rgba(26,61,43,.35); }
+  .btn-next:hover { background:var(--ocean-mid);transform:translateY(-2px); }
+  .btn-prev { background:transparent;color:var(--muted);border:2px solid var(--border);border-radius:50px;padding:.9rem 1.6rem;font-family:'Fredoka One',cursive;font-size:.95rem;cursor:pointer;transition:all .2s; }
+  .btn-prev:hover { border-color:var(--muted);color:var(--ink); }
+  .btn-prev:disabled,.btn-next:disabled { opacity:.3;cursor:not-allowed;transform:none; }
+  /* SUMMARY */
+  .summary-section { background:white;border-radius:16px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--ocean);margin-bottom:.8rem; }
+  .summary-answer { background:#f5f7fa;border-radius:8px;padding:.7rem 1rem;font-size:.85rem;line-height:1.6;color:var(--ink);margin-bottom:.5rem;font-style:italic;border-left:3px solid var(--lavender);min-height:2rem; }
+  .summary-answer.empty { color:var(--muted);font-style:normal;border-left-color:var(--border); }
+  .sum-label { font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.6rem;text-transform:uppercase;letter-spacing:.06em; }
+  /* SHARE */
+  .share-buttons { display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center; }
+  .share-btn { border:none;border-radius:12px;padding:.85rem 1.6rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem; }
+  .share-btn:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background:var(--mint);color:white; }
+  .share-btn.email { background:var(--lavender);color:white; }
+  .share-btn.print { background:var(--ocean);color:white; }
+  .copy-confirm { text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--mint);min-height:1.2rem;margin-top:.6rem; }
+  .btn { border:none;border-radius:10px;padding:.65rem 1.3rem;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;transition:all .15s; }
+  .btn:hover { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  .btn-mint  { background:var(--mint);color:white; }
+  .btn-ocean { background:var(--ocean);color:white; }
+  .btn-ghost { background:#f0f2f5;color:var(--muted); }
+  .divider { height:1px;background:var(--border);margin:2rem 0; }
+  @media(max-width:560px) {
+    .hero{padding:2.5rem 1.2rem 1.5rem} .section{padding:2rem 1.2rem 0} .nav-row{padding:2rem 1.2rem 0}
+  }
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm{display:none!important}
+    .sheet{box-shadow:none;border-radius:0} .section{display:none!important} #sec-7{display:block!important}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">🔬 IGCSE Biology · Topic 2 · CIE 0610</div>
+  <h1>Cell Structure and <span class="accent">Organisation</span></h1>
+  <p class="intro">Every living thing is built from cells. Compare plant, animal and bacterial cells, meet six specialised cells with jobs to do, and learn how to calculate magnification from images. Covers syllabus sections 2.1 and 2.2.</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <a class="prog-step active" onclick="goTo(0)">🧫 Wonder</a>
+    <a class="prog-step"        onclick="goTo(1)">🌿 Plant & Animal Cells</a>
+    <a class="prog-step"        onclick="goTo(2)">🦠 Bacterial Cells</a>
+    <a class="prog-step"        onclick="goTo(3)">🧬 Specialised Cells</a>
+    <a class="prog-step"        onclick="goTo(4)">📏 Size & Magnification</a>
+    <a class="prog-step"        onclick="goTo(5)">📝 Past Papers</a>
+    <a class="prog-step"        onclick="goTo(6)">❓ Quiz</a>
+    <a class="prog-step"        onclick="goTo(7)">📤 Submit</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+<!-- ══ SEC 0: WONDER ══ -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">Phase 1 · Wonder</span></div>
+  <h2>🧫 What's Inside a Living Cell?</h2>
+  <p class="lead">Every organism you met in Topic 1 — animal, plant, fungus, prokaryote, protoctist — is built from <strong>cells</strong>. But not all cells look the same, and not all cells contain the same parts.</p>
+  <div class="wonder-box">
+    <p>An onion cell and a cheek cell (from the inside of your mouth) look strikingly different under a microscope — one has a thick outer wall and a large empty-looking space in the middle; the other doesn't. Both are definitely cells. <strong>What do you think could explain the differences? What job might each extra structure be doing?</strong></p>
+  </div>
+  <div class="predict-box">
+    <h4>✏️ Your Thinking — Before We Begin</h4>
+    <textarea id="ta-wonder" placeholder="Why might a plant cell (like an onion cell) look different from an animal cell (like a cheek cell) under a microscope? What structures do you already know that one might have but not the other?"></textarea>
+  </div>
+  <div class="wonder-box gold-box">
+    <p>Plant, animal and bacterial cells all share some basic structures — but each also has its own special features suited to the job it does. By the end of this lesson you'll be able to compare all three, meet six specialised cells, and calculate how much bigger a microscope image is than the real thing.</p>
+  </div>
+  <div class="nav-row"><button class="btn-prev" disabled>← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 1: PLANT & ANIMAL CELLS ══ -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">2</div><span class="eyebrow-label">Phase 2 · 2.1 Cell Structure — Plant & Animal Cells</span></div>
+  <h2>🌿 Plant Cells vs Animal Cells</h2>
+  <p class="lead">Tap each structure to see whether it's found in plant cells, animal cells, or both — and exactly what job it does.</p>
+
+  <div class="card-grid">
+    <div class="info-card" onclick="showPanel('wall')"><div class="ic-icon">🧱</div><div class="ic-title">Cell Wall</div><div class="ic-sub">plant only</div></div>
+    <div class="info-card" onclick="showPanel('membrane')"><div class="ic-icon">🫧</div><div class="ic-title">Cell Membrane</div><div class="ic-sub">both</div></div>
+    <div class="info-card" onclick="showPanel('nucleus')"><div class="ic-icon">🔵</div><div class="ic-title">Nucleus</div><div class="ic-sub">both</div></div>
+    <div class="info-card" onclick="showPanel('cytoplasm')"><div class="ic-icon">💧</div><div class="ic-title">Cytoplasm</div><div class="ic-sub">both</div></div>
+    <div class="info-card" onclick="showPanel('chloroplast')"><div class="ic-icon">🌱</div><div class="ic-title">Chloroplasts</div><div class="ic-sub">plant only</div></div>
+    <div class="info-card" onclick="showPanel('ribosome')"><div class="ic-icon">⚫</div><div class="ic-title">Ribosomes</div><div class="ic-sub">both</div></div>
+    <div class="info-card" onclick="showPanel('mito')"><div class="ic-icon">🔋</div><div class="ic-title">Mitochondria</div><div class="ic-sub">both</div></div>
+    <div class="info-card" onclick="showPanel('vacuole')"><div class="ic-icon">⭕</div><div class="ic-title">Vacuole</div><div class="ic-sub">large one: plant</div></div>
+  </div>
+  <div id="panel-wall" class="info-panel"><h4>🧱 Cell Wall</h4><p>Found in PLANT cells only (not animal cells). A rigid layer surrounding the cell membrane, made of cellulose. It supports and gives shape to the cell, and prevents the cell from bursting when it takes in too much water.</p><div class="eg">📌 Exam tip: "cell wall = plant only" is one of the most tested facts on this topic.</div></div>
+  <div id="panel-membrane" class="info-panel"><h4>🫧 Cell Membrane</h4><p>Found in BOTH plant and animal cells (and bacteria). A thin, partially permeable layer surrounding the cytoplasm that controls which substances can enter and leave the cell.</p></div>
+  <div id="panel-nucleus" class="info-panel"><h4>🔵 Nucleus</h4><p>Found in BOTH plant and animal cells. Contains the cell's genetic material (DNA, organised into chromosomes) and controls the cell's activities.</p></div>
+  <div id="panel-cytoplasm" class="info-panel"><h4>💧 Cytoplasm</h4><p>Found in BOTH plant and animal cells. A jelly-like substance filling the cell, where most of the chemical reactions of metabolism take place and where organelles are suspended.</p></div>
+  <div id="panel-chloroplast" class="info-panel"><h4>🌱 Chloroplasts</h4><p>Found in PLANT cells only, mainly in green parts such as leaves (not in root cells, which don't photosynthesise). Contain chlorophyll and are the site of photosynthesis.</p></div>
+  <div id="panel-ribosome" class="info-panel"><h4>⚫ Ribosomes</h4><p>Found in BOTH plant and animal cells (and bacteria — though bacterial ribosomes are smaller). The site of protein synthesis.</p></div>
+  <div id="panel-mito" class="info-panel"><h4>🔋 Mitochondria</h4><p>Found in BOTH plant and animal cells. The site of (aerobic) respiration, releasing energy for the cell's activities. Cells with high energy demands (e.g. muscle cells) contain many mitochondria.</p></div>
+  <div id="panel-vacuole" class="info-panel"><h4>⭕ Vacuole</h4><p>PLANT cells typically have one large, permanent vacuole filled with cell sap, which stores water and solutes and helps keep the cell turgid (firm). Animal cells do not have this large permanent vacuole.</p></div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">📋 Comparison Table</h3>
+  <table class="vocab-table">
+    <tr><th>Structure</th><th>Animal Cell</th><th>Plant Cell</th></tr>
+    <tr><td>Cell wall</td><td>Absent</td><td>Present (cellulose)</td></tr>
+    <tr><td>Cell membrane</td><td>Present</td><td>Present</td></tr>
+    <tr><td>Nucleus</td><td>Present</td><td>Present</td></tr>
+    <tr><td>Cytoplasm</td><td>Present</td><td>Present</td></tr>
+    <tr><td>Chloroplasts</td><td>Absent</td><td>Present (in green parts)</td></tr>
+    <tr><td>Ribosomes</td><td>Present</td><td>Present</td></tr>
+    <tr><td>Mitochondria</td><td>Present</td><td>Present</td></tr>
+    <tr><td>Large permanent vacuole</td><td>Absent</td><td>Present (contains cell sap)</td></tr>
+  </table>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Comparing Cells</h4>
+    <textarea id="ta-cellcompare" placeholder="An onion cell and a cheek cell are both viewed under the same microscope. State TWO structures you would expect to see in the onion cell but NOT the cheek cell, and explain the function of each."></textarea>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 2: BACTERIAL CELLS ══ -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">3</div><span class="eyebrow-label">Phase 3 · 2.1 Cell Structure — Bacterial Cells</span></div>
+  <h2>🦠 Bacterial Cells</h2>
+  <p class="lead">Bacteria are prokaryotes — their cells are built quite differently from plant and animal cells (which are eukaryotes).</p>
+
+  <div class="wonder-box mint-box">
+    <p>A bacterial cell has: a <strong>cell wall</strong>, a <strong>cell membrane</strong>, <strong>cytoplasm</strong>, <strong>ribosomes</strong>, a single strand of <strong>circular DNA</strong> (not organised into a nucleus), and often one or more small circular loops of extra DNA called <strong>plasmids</strong>.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🧠 Key Terms — Tap Each</h3>
+  <div class="chip-row">
+    <span class="chip ocean" onclick="revealChip('circdna')">Circular DNA</span>
+    <span class="chip coral" onclick="revealChip('plasmid')">Plasmid</span>
+    <span class="chip mint"  onclick="revealChip('nonucleus')">No Nucleus</span>
+  </div>
+  <div id="chip-circdna"  class="concept-reveal ocean-border"><strong>Circular DNA</strong> — In a bacterial cell, the main genetic material is a single circular strand of DNA lying free in the cytoplasm — it is NOT enclosed in a nucleus.</div>
+  <div id="chip-plasmid"  class="concept-reveal"><strong>Plasmid</strong> — A small, separate loop of DNA, additional to the main circular DNA, found in the cytoplasm of many bacterial cells. Plasmids often carry genes that give bacteria useful extra traits, such as antibiotic resistance.</div>
+  <div id="chip-nonucleus" class="concept-reveal mint-border"><strong>No Nucleus</strong> — Unlike plant and animal cells, bacterial cells have no nucleus, no mitochondria, and no chloroplasts. This is the key difference between prokaryotic cells (bacteria) and eukaryotic cells (plants, animals).</div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">📋 Three-Way Comparison</h3>
+  <table class="vocab-table">
+    <tr><th>Structure</th><th>Animal</th><th>Plant</th><th>Bacterium</th></tr>
+    <tr><td>Cell wall</td><td>✗</td><td>✓ (cellulose)</td><td>✓ (not cellulose)</td></tr>
+    <tr><td>Cell membrane</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    <tr><td>Cytoplasm</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    <tr><td>Nucleus</td><td>✓</td><td>✓</td><td>✗</td></tr>
+    <tr><td>Circular DNA (free in cytoplasm)</td><td>✗</td><td>✗</td><td>✓</td></tr>
+    <tr><td>Plasmids</td><td>✗</td><td>✗</td><td>✓ (often)</td></tr>
+    <tr><td>Chloroplasts</td><td>✗</td><td>✓ (in green parts)</td><td>✗</td></tr>
+    <tr><td>Mitochondria</td><td>✓</td><td>✓</td><td>✗</td></tr>
+    <tr><td>Ribosomes</td><td>✓</td><td>✓</td><td>✓ (smaller)</td></tr>
+    <tr><td>Large permanent vacuole</td><td>✗</td><td>✓</td><td>✗</td></tr>
+  </table>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 3: SPECIALISED CELLS & LEVELS OF ORGANISATION ══ -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow"><div class="eyebrow-num num-gold">4</div><span class="eyebrow-label">Phase 4 · 2.1 Specialised Cells & Levels of Organisation</span></div>
+  <h2>🧬 Specialised Cells and How They're Organised</h2>
+  <p class="lead">Multicellular organisms don't just have identical cells everywhere — many cells are specialised, with a particular structure suited to a particular job.</p>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🔍 Six Specialised Cells — Tap Each</h3>
+  <div class="card-grid">
+    <div class="info-card" onclick="showPanel('ciliated')"><div class="ic-icon">🌬️</div><div class="ic-title">Ciliated Cell</div><div class="ic-sub">trachea/bronchi</div></div>
+    <div class="info-card" onclick="showPanel('roothair')"><div class="ic-icon">🌱</div><div class="ic-title">Root Hair Cell</div><div class="ic-sub">absorption</div></div>
+    <div class="info-card" onclick="showPanel('palisade')"><div class="ic-icon">🍃</div><div class="ic-title">Palisade Cell</div><div class="ic-sub">photosynthesis</div></div>
+    <div class="info-card" onclick="showPanel('neurone')"><div class="ic-icon">⚡</div><div class="ic-title">Neurone</div><div class="ic-sub">impulses</div></div>
+    <div class="info-card" onclick="showPanel('rbc')"><div class="ic-icon">🩸</div><div class="ic-title">Red Blood Cell</div><div class="ic-sub">oxygen transport</div></div>
+    <div class="info-card" onclick="showPanel('gamete')"><div class="ic-icon">🧬</div><div class="ic-title">Sperm & Egg</div><div class="ic-sub">reproduction</div></div>
+  </div>
+  <div id="panel-ciliated" class="info-panel"><h4>🌬️ Ciliated Cell</h4><p>Found lining the trachea and bronchi. Covered in tiny hair-like cilia that beat rhythmically to sweep mucus (which traps dust, bacteria and debris) up and away from the lungs.</p><div class="eg">📌 Function: movement of mucus in the trachea and bronchi.</div></div>
+  <div id="panel-roothair" class="info-panel"><h4>🌱 Root Hair Cell</h4><p>Found on the surface of plant roots. Has a long, thin extension that greatly increases surface area, allowing efficient absorption of water and mineral ions from the soil.</p><div class="eg">📌 Function: absorption.</div></div>
+  <div id="panel-palisade" class="info-panel"><h4>🍃 Palisade Mesophyll Cell</h4><p>Found packed near the upper surface of a leaf. Contains many chloroplasts, positioned to capture as much light as possible.</p><div class="eg">📌 Function: photosynthesis.</div></div>
+  <div id="panel-neurone" class="info-panel"><h4>⚡ Neurone</h4><p>A nerve cell with a long, thin fibre (axon) that can carry an electrical impulse over long distances in the body, connecting to other neurones or effectors.</p><div class="eg">📌 Function: conduction of electrical impulses.</div></div>
+  <div id="panel-rbc" class="info-panel"><h4>🩸 Red Blood Cell</h4><p>A small, flexible, disc-shaped cell packed with haemoglobin. It has no nucleus, leaving more space to carry oxygen.</p><div class="eg">📌 Function: transport of oxygen.</div></div>
+  <div id="panel-gamete" class="info-panel"><h4>🧬 Sperm and Egg Cells (Gametes)</h4><p>Sperm cells are small with a long tail for swimming towards the egg. Egg cells are large, with food reserves to support early development, and only one is released at a time (in humans).</p><div class="eg">📌 Function: reproduction.</div></div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🏗️ Levels of Organisation</h3>
+  <p class="lead" style="margin-bottom:1rem;">New cells are produced by division of existing cells. As an organism develops, cells are organised into increasingly larger structures.</p>
+  <div class="chip-row">
+    <span class="chip ocean" onclick="revealChip('cell')">Cell</span>
+    <span class="chip mint"  onclick="revealChip('tissue')">Tissue</span>
+    <span class="chip gold"  onclick="revealChip('organ')">Organ</span>
+    <span class="chip coral" onclick="revealChip('organsys')">Organ System</span>
+    <span class="chip lav"   onclick="revealChip('organism')">Organism</span>
+  </div>
+  <div id="chip-cell"     class="concept-reveal ocean-border"><strong>Cell</strong> — The basic structural and functional unit of all living organisms.</div>
+  <div id="chip-tissue"   class="concept-reveal mint-border"><strong>Tissue</strong> — A group of cells with similar structures, working together to perform a shared function. Example: muscle tissue.</div>
+  <div id="chip-organ"    class="concept-reveal gold-border"><strong>Organ</strong> — A structure made of a group of different tissues, working together to perform specific functions. Example: the heart (made of muscle tissue, nervous tissue, and more).</div>
+  <div id="chip-organsys" class="concept-reveal"><strong>Organ System</strong> — A group of organs with related functions, working together to perform body functions. Example: the circulatory system (heart, blood vessels, blood).</div>
+  <div id="chip-organism" class="concept-reveal lav-border"><strong>Organism</strong> — An individual living thing, made up of one or more organ systems (or, in unicellular organisms, a single cell that carries out all life processes).</div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Build a Chain of Organisation</h4>
+    <textarea id="ta-levels" placeholder="Choose ONE specialised cell from this lesson (e.g. palisade mesophyll cell or red blood cell). Write out its full chain of organisation: Cell → Tissue → Organ → Organ system → Organism, naming a real example at each level."></textarea>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 4: SIZE & MAGNIFICATION ══ -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">5</div><span class="eyebrow-label">Phase 5 · 2.2 Size of Specimens</span></div>
+  <h2>📏 Magnification Calculations</h2>
+  <p class="lead">Cells are far too small to see with the naked eye, so microscope images are magnified. IGCSE requires you to calculate magnification, image size, or actual size — and to convert between millimetres and micrometres.</p>
+
+  <div class="wonder-box lav-box">
+    <p><strong>Formula (learn this):</strong> magnification = image size ÷ actual size. Rearranged: actual size = image size ÷ magnification, and image size = actual size × magnification.</p>
+  </div>
+
+  <div class="wonder-box coral-box">
+    <p><strong>Unit conversion:</strong> 1 millimetre (mm) = 1000 micrometres (μm). To convert mm → μm, multiply by 1000. To convert μm → mm, divide by 1000.</p>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🔬 Magnification Calculator</h3>
+    <div class="hint">Choose what you want to find, enter the other two values in millimetres, then calculate.</div>
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.2rem;">
+      <button class="btn btn-ocean" onclick="setMagMode('mag')">Find Magnification</button>
+      <button class="btn btn-mint"  onclick="setMagMode('actual')">Find Actual Size</button>
+      <button class="btn btn-ghost" onclick="setMagMode('image')">Find Image Size</button>
+    </div>
+    <div id="magInputs" style="display:flex;gap:1.2rem;flex-wrap:wrap;margin-bottom:1rem;">
+      <p style="font-size:.85rem;color:var(--muted);">Select a mode above to begin.</p>
+    </div>
+    <button class="btn btn-ocean" onclick="calcMag()">Calculate</button>
+    <div class="mag-result" id="magResult">Waiting for input...</div>
+  </div>
+
+  <div class="demo-zone">
+    <h3>📐 mm ⇄ μm Converter</h3>
+    <div class="hint">1 millimetre (mm) = 1000 micrometres (μm)</div>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;">
+      <div class="mag-input-group">Value<input type="number" id="convValue" step="any" placeholder="e.g. 0.05"></div>
+      <div class="mag-input-group">Direction
+        <select id="convDir">
+          <option value="mm-um">mm → μm</option>
+          <option value="um-mm">μm → mm</option>
+        </select>
+      </div>
+      <button class="btn btn-mint" onclick="convertUnits()">Convert</button>
+    </div>
+    <div class="mag-result" id="convResult">Waiting for input...</div>
+  </div>
+
+  <div class="predict-box">
+    <h4>🧪 Practice Problem</h4>
+    <textarea id="ta-magprac" placeholder="A photograph of a red blood cell has a width of 10.5 mm. The actual diameter of the red blood cell is 0.007 mm. Calculate the magnification of the photograph, showing your working clearly."></textarea>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 5: PAST PAPERS ══ -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow"><div class="eyebrow-num num-gold">6</div><span class="eyebrow-label">Phase 6 · Past Paper Questions</span></div>
+  <h2>📝 IGCSE Past Paper Questions</h2>
+  <p class="lead">These questions follow the style and content of CIE IGCSE Biology past papers (0610). Write your answers, then click <strong>Check All Answers</strong> to reveal the mark-scheme level answers.</p>
+
+  <!-- Q1 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Plant vs Animal Cells · 2 marks</div>
+    <div class="pp-q">State TWO structures found in a plant cell but not in an animal cell. <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp1" placeholder="Write your answer here..."></textarea>
+    <div class="pp-marks">Tip: Think about support, photosynthesis, and water storage.</div>
+    <div class="pp-answer" id="ans1">
+      <strong>Mark Scheme Answer (2 marks — any 2 of):</strong>
+      <ul>
+        <li>Cell wall (made of cellulose) <strong>[1]</strong></li>
+        <li>Chloroplasts <strong>[1]</strong></li>
+        <li>Large, permanent (sap-filled) vacuole <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Mitochondria · 2 marks</div>
+    <div class="pp-q">State the function of mitochondria, and explain why a muscle cell would contain many mitochondria. <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp2" placeholder="Write your answer here..."></textarea>
+    <div class="pp-marks">Tip: Link the structure to the energy needs of the cell.</div>
+    <div class="pp-answer" id="ans2">
+      <strong>Mark Scheme Answer (2 marks):</strong>
+      <ul>
+        <li>Mitochondria are the site of (aerobic) respiration, releasing energy <strong>[1]</strong></li>
+        <li>Muscle cells need a lot of energy for contraction, so contain many mitochondria to provide this energy <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Bacterial Cells · 2 marks</div>
+    <div class="pp-q">Give TWO differences in structure between a bacterial cell and a plant cell. <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp3" placeholder="Write your answer here..."></textarea>
+    <div class="pp-marks">Tip: Think about the nucleus and extra loops of DNA.</div>
+    <div class="pp-answer" id="ans3">
+      <strong>Mark Scheme Answer (2 marks — any 2 of):</strong>
+      <ul>
+        <li>Bacterial cell has no nucleus (DNA is a single circular strand free in the cytoplasm); plant cell has a nucleus <strong>[1]</strong></li>
+        <li>Bacterial cell may contain plasmids; plant cells do not <strong>[1]</strong></li>
+        <li>Bacterial cell has no chloroplasts or mitochondria; plant cell has both <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Root Hair Cells · 2 marks</div>
+    <div class="pp-q">A root hair cell has a long, thin extension. Explain how this feature adapts the cell to its function. <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp4" placeholder="Write your answer here..."></textarea>
+    <div class="pp-marks">Tip: Think about surface area.</div>
+    <div class="pp-answer" id="ans4">
+      <strong>Mark Scheme Answer (2 marks):</strong>
+      <ul>
+        <li>The long, thin extension increases the surface area of the cell <strong>[1]</strong></li>
+        <li>This increases the rate of absorption of water and mineral ions from the soil <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Levels of Organisation · 2 marks</div>
+    <div class="pp-q">Define the term <em>'tissue'</em>, and give a named example, stating where it is found in the human body. <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp5" placeholder="Write your answer here..."></textarea>
+    <div class="pp-marks">Tip: The definition needs both "group of cells" and "shared function".</div>
+    <div class="pp-answer" id="ans5">
+      <strong>Mark Scheme Answer (2 marks):</strong>
+      <ul>
+        <li>A tissue is a group of cells with similar structures, working together to perform a shared function <strong>[1]</strong></li>
+        <li>Named example with location, e.g. muscle tissue found in the heart, or ciliated epithelial tissue lining the trachea <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Magnification · 2 marks</div>
+    <div class="pp-q">An image of a cell measures 45 mm across. The actual diameter of the cell is 0.03 mm. Calculate the magnification of the image. Show your working. <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp6" placeholder="Show your working and final answer..."></textarea>
+    <div class="pp-marks">Tip: magnification = image size ÷ actual size.</div>
+    <div class="pp-answer" id="ans6">
+      <strong>Mark Scheme Answer (2 marks):</strong>
+      <ul>
+        <li>magnification = image size ÷ actual size = 45 ÷ 0.03 <strong>[1]</strong></li>
+        <li>= ×1500 <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Unit Conversion · 2 marks</div>
+    <div class="pp-q">An organelle has an actual diameter of 2 μm. Convert this measurement to millimetres, and name one organelle that could plausibly be this size. <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp7" placeholder="Show your conversion and name an organelle..."></textarea>
+    <div class="pp-marks">Tip: 1000 μm = 1 mm.</div>
+    <div class="pp-answer" id="ans7">
+      <strong>Mark Scheme Answer (2 marks):</strong>
+      <ul>
+        <li>2 μm = 0.002 mm <strong>[1]</strong></li>
+        <li>Named organelle of plausible micrometre-scale size, e.g. mitochondrion or ribosome <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:.8rem;justify-content:center;margin-top:1rem;flex-wrap:wrap;">
+    <button class="btn btn-mint" onclick="showAllAnswers()">✅ Check All Answers</button>
+    <button class="btn btn-ghost" onclick="hideAllAnswers()">🙈 Hide Answers</button>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 6: QUIZ ══ -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">7</div><span class="eyebrow-label">Phase 7 · Knowledge Check</span></div>
+  <h2>❓ Topic 2 Quiz</h2>
+  <p class="lead">12 questions in the style of IGCSE Paper 1. Choose the best answer — you'll get instant feedback with explanations.</p>
+  <div id="quiz-container"></div>
+  <div id="score-panel" class="score-panel" style="display:none;">
+    <h3>Quiz Complete! 🎉</h3>
+    <div class="score-num" id="score-display">0/12</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-ghost" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 7: SUBMIT ══ -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">8</div><span class="eyebrow-label">Your Completed Work</span></div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Summary of all your work. Copy, email, or print to submit to your teacher.</p>
+
+  <div class="summary-section" style="background:var(--ocean);color:white;border-color:var(--ocean);">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">STUDENT</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">LESSON</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;">IGCSE Biology · Topic 2 · Cell Structure & Organisation 🧫</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6;" id="summaryDate"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section"><h3>❓ Quiz Score</h3><div class="summary-answer" id="sum-quiz"></div></div>
+  <div class="summary-section"><h3>🧫 Opening Prediction</h3><div class="summary-answer" id="sum-wonder"></div></div>
+  <div class="summary-section"><h3>🌿 Comparing Cells Reflection</h3><div class="summary-answer" id="sum-cellcompare"></div></div>
+  <div class="summary-section"><h3>🏗️ Chain of Organisation</h3><div class="summary-answer" id="sum-levels"></div></div>
+  <div class="summary-section"><h3>📏 Magnification Practice Problem</h3><div class="summary-answer" id="sum-magprac"></div></div>
+  <div class="summary-section">
+    <h3>📝 Past Paper Responses</h3>
+    <div class="sum-label">Q1 — Plant vs Animal Cell Structures</div><div class="summary-answer" id="sum-pp1"></div>
+    <div class="sum-label">Q2 — Mitochondria in Muscle Cells</div><div class="summary-answer" id="sum-pp2"></div>
+    <div class="sum-label">Q3 — Bacterial vs Plant Cells</div><div class="summary-answer" id="sum-pp3"></div>
+    <div class="sum-label">Q4 — Root Hair Cell Adaptation</div><div class="summary-answer" id="sum-pp4"></div>
+    <div class="sum-label">Q5 — Define Tissue</div><div class="summary-answer" id="sum-pp5"></div>
+    <div class="sum-label">Q6 — Magnification Calculation</div><div class="summary-answer" id="sum-pp6"></div>
+    <div class="sum-label">Q7 — Unit Conversion</div><div class="summary-answer" id="sum-pp7"></div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem;">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2;">
+      <strong>📋 Copy My Results</strong> — Copies all answers to clipboard. Paste into Google Classroom and submit.<br>
+      <strong>📧 Email to Teacher</strong> — Opens email app pre-filled. Add your teacher's address and send.<br>
+      <strong>🖨️ Print / Save PDF</strong> — Mac: Save as PDF. Windows: Microsoft Print to PDF. Upload to assignment.
+    </p>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" disabled>✓ Complete!</button></div>
+</div>
+
+</div><!-- /sheet -->
+
+<!-- COPYRIGHT -->
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+
+<script>
+// ══ NAVIGATION ══
+let currentSection = 0;
+const totalSections = 8;
+function goTo(n) {
+  document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===n));
+  document.querySelectorAll('.prog-step').forEach((p,i) => {
+    p.classList.remove('active','done');
+    if(i===n) p.classList.add('active');
+    else if(i<n) p.classList.add('done');
+  });
+  currentSection = n;
+  if(n===totalSections-1) buildSummary();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function navigate(dir) { goTo(Math.max(0,Math.min(currentSection+dir,totalSections-1))); }
+
+// ══ VOCAB CHIPS ══
+function revealChip(id) {
+  const all = document.querySelectorAll('.concept-reveal');
+  const t = document.getElementById('chip-'+id);
+  const isOpen = t && t.classList.contains('show');
+  all.forEach(c=>c.classList.remove('show'));
+  if(!isOpen && t) t.classList.add('show');
+}
+
+// ══ PANELS ══
+function showPanel(id) {
+  const allP = document.querySelectorAll('.info-panel');
+  const allC = document.querySelectorAll('.info-card');
+  const t = document.getElementById('panel-'+id);
+  const isOpen = t && t.classList.contains('show');
+  allP.forEach(p=>p.classList.remove('show'));
+  allC.forEach(c=>c.classList.remove('active'));
+  if(!isOpen && t){ t.classList.add('show'); event.currentTarget.classList.add('active'); }
+}
+
+// ══ ACCORDION (reserved for future use) ══
+function toggleAccord(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.accord-card').forEach(c=>c.classList.remove('open'));
+  if(!isOpen) el.classList.add('open');
+}
+
+// ══ MAGNIFICATION CALCULATOR ══
+let magMode = null;
+function setMagMode(mode) {
+  magMode = mode;
+  const c = document.getElementById('magInputs');
+  if (mode === 'mag') {
+    c.innerHTML = '<div class="mag-input-group">Image size (mm)<input type="number" id="magIn1" step="any"></div><div class="mag-input-group">Actual size (mm)<input type="number" id="magIn2" step="any"></div>';
+  } else if (mode === 'actual') {
+    c.innerHTML = '<div class="mag-input-group">Image size (mm)<input type="number" id="magIn1" step="any"></div><div class="mag-input-group">Magnification (×)<input type="number" id="magIn2" step="any"></div>';
+  } else {
+    c.innerHTML = '<div class="mag-input-group">Actual size (mm)<input type="number" id="magIn1" step="any"></div><div class="mag-input-group">Magnification (×)<input type="number" id="magIn2" step="any"></div>';
+  }
+  document.getElementById('magResult').textContent = 'Enter values then click Calculate.';
+}
+function calcMag() {
+  const in1 = document.getElementById('magIn1');
+  const in2 = document.getElementById('magIn2');
+  const r = document.getElementById('magResult');
+  if (!in1 || !in2) { r.textContent = 'Please choose a mode first.'; return; }
+  const v1 = parseFloat(in1.value);
+  const v2 = parseFloat(in2.value);
+  if (isNaN(v1) || isNaN(v2) || v2 === 0) { r.textContent = 'Please enter two valid, non-zero numbers.'; return; }
+  if (magMode === 'mag') {
+    const mag = v1 / v2;
+    r.innerHTML = 'magnification = image size ÷ actual size = ' + v1 + ' ÷ ' + v2 + ' = <strong>×' + mag.toFixed(1) + '</strong>';
+  } else if (magMode === 'actual') {
+    const actual = v1 / v2;
+    r.innerHTML = 'actual size = image size ÷ magnification = ' + v1 + ' ÷ ' + v2 + ' = <strong>' + actual.toFixed(5) + ' mm</strong>';
+  } else {
+    const image = v1 * v2;
+    r.innerHTML = 'image size = actual size × magnification = ' + v1 + ' × ' + v2 + ' = <strong>' + image.toFixed(3) + ' mm</strong>';
+  }
+}
+function convertUnits() {
+  const val = parseFloat(document.getElementById('convValue').value);
+  const dir = document.getElementById('convDir').value;
+  const r = document.getElementById('convResult');
+  if (isNaN(val)) { r.textContent = 'Please enter a value.'; return; }
+  if (dir === 'mm-um') {
+    r.innerHTML = val + ' mm × 1000 = <strong>' + (val*1000) + ' μm</strong>';
+  } else {
+    r.innerHTML = val + ' μm ÷ 1000 = <strong>' + (val/1000) + ' mm</strong>';
+  }
+}
+
+// ══ PAST PAPER ANSWERS ══
+function showAllAnswers() {
+  for(let i=1;i<=7;i++) {
+    const el = document.getElementById('ans'+i);
+    if(el) el.classList.add('show');
+  }
+}
+function hideAllAnswers() {
+  for(let i=1;i<=7;i++) {
+    const el = document.getElementById('ans'+i);
+    if(el) el.classList.remove('show');
+  }
+}
+
+// ══ QUIZ ══
+const quizData = [
+  { q:'Which structure is found in a plant cell but NOT in an animal cell?',
+    opts:['Nucleus','Mitochondria','Cell wall','Cytoplasm'],
+    ans:2, fb:'The cell wall (made of cellulose) is found only in plant cells. Nucleus, mitochondria and cytoplasm are found in BOTH plant and animal cells.' },
+  { q:'What is the function of ribosomes?',
+    opts:['Site of protein synthesis','Site of respiration','Site of photosynthesis','Control what enters and leaves the cell'],
+    ans:0, fb:'Ribosomes are the site of protein synthesis. Respiration happens in mitochondria, photosynthesis in chloroplasts, and the cell membrane controls what enters/leaves the cell.' },
+  { q:'Which structure controls what substances enter and leave the cell?',
+    opts:['Nucleus','Cell membrane','Cytoplasm','Cell wall'],
+    ans:1, fb:'The cell membrane is partially permeable and controls the movement of substances into and out of the cell.' },
+  { q:'A bacterial cell is different from a plant or animal cell because it lacks a...',
+    opts:['Cell wall','Cytoplasm','Ribosomes','Nucleus'],
+    ans:3, fb:'Bacterial cells (prokaryotes) have no nucleus — their DNA is a single circular strand free in the cytoplasm. They DO have a cell wall, cytoplasm and ribosomes.' },
+  { q:'Which additional structure may be found in bacterial cells, separate from the main circular DNA, and often carries genes such as antibiotic resistance?',
+    opts:['Nucleus','Plasmid','Chloroplast','Vacuole'],
+    ans:1, fb:'A plasmid is a small, separate loop of DNA found in many bacterial cells, in addition to the main circular DNA strand.' },
+  { q:'Which specialised cell has no nucleus, leaving extra space to carry oxygen?',
+    opts:['Neurone','Red blood cell','Root hair cell','Ciliated cell'],
+    ans:1, fb:'Red blood cells have no nucleus, which leaves more space for haemoglobin to transport oxygen around the body.' },
+  { q:'Ciliated cells found in the trachea and bronchi are adapted for...',
+    opts:['Photosynthesis','Movement of mucus','Absorption of water','Conduction of electrical impulses'],
+    ans:1, fb:'Ciliated cells have hair-like cilia that beat to sweep mucus (which traps dust and bacteria) up and away from the lungs.' },
+  { q:'Which of the following shows the levels of organisation in the correct order, from smallest to largest?',
+    opts:['Cell → Tissue → Organ → Organ system → Organism','Tissue → Cell → Organ → Organism → Organ system','Cell → Organ → Tissue → Organism → Organ system','Organism → Organ system → Organ → Tissue → Cell'],
+    ans:0, fb:'The correct order, smallest to largest, is: Cell → Tissue → Organ → Organ system → Organism. Option D is the same sequence written backwards.' },
+  { q:'Which is the correct formula for magnification?',
+    opts:['magnification = actual size ÷ image size','magnification = image size ÷ actual size','magnification = image size × actual size','magnification = actual size × image size'],
+    ans:1, fb:'magnification = image size ÷ actual size. Mixing up which value goes on top is a very common exam error.' },
+  { q:'An image of a cell is 20 mm wide. The magnification used is ×200. What is the actual size of the cell?',
+    opts:['0.1 mm','2 mm','200 mm','20 mm'],
+    ans:0, fb:'Rearranging the formula: actual size = image size ÷ magnification = 20 ÷ 200 = 0.1 mm.' },
+  { q:'Convert 0.05 mm into micrometres (μm).',
+    opts:['5 μm','50 μm','500 μm','0.00005 μm'],
+    ans:1, fb:'1 mm = 1000 μm, so 0.05 mm × 1000 = 50 μm.' },
+  { q:'Which statement about vacuoles is correct?',
+    opts:['All plant and animal cells contain a large permanent vacuole','Plant cells typically contain a large permanent vacuole containing cell sap; animal cells do not have this','Vacuoles are the site of respiration','Vacuoles control what enters and leaves the cell'],
+    ans:1, fb:"A large, permanent, sap-filled vacuole is a feature of plant cells. Animal cells do not have this large permanent vacuole. Vacuoles are not the site of respiration (that's mitochondria) and do not control membrane transport (that's the cell membrane)." },
+];
+
+let quizScore=0, quizAnswered=0;
+function buildQuiz(){
+  const c=document.getElementById('quiz-container'); c.innerHTML=''; quizScore=0; quizAnswered=0;
+  document.getElementById('score-panel').style.display='none';
+  quizData.forEach((item,idx)=>{
+    const card=document.createElement('div'); card.className='quiz-card';
+    card.innerHTML=`<div class="quiz-q">Q${idx+1}. ${item.q}</div><div class="quiz-options">${item.opts.map((o,i)=>`<button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}</div><div class="quiz-feedback" id="qfb-${idx}"></div>`;
+    c.appendChild(card);
+  });
+}
+function checkAnswer(btn,qIdx,optIdx){
+  const card=btn.closest('.quiz-card');
+  const buttons=card.querySelectorAll('.quiz-opt');
+  const fb=document.getElementById('qfb-'+qIdx);
+  const correct=quizData[qIdx].ans;
+  buttons.forEach(b=>b.disabled=true);
+  if(optIdx===correct){ btn.classList.add('correct'); fb.textContent='✅ '+quizData[qIdx].fb; fb.className='quiz-feedback show correct-fb'; quizScore++; }
+  else { btn.classList.add('wrong'); buttons[correct].classList.add('correct'); fb.textContent='❌ '+quizData[qIdx].fb; fb.className='quiz-feedback show wrong-fb'; }
+  quizAnswered++;
+  if(quizAnswered===quizData.length){
+    const panel=document.getElementById('score-panel'); panel.style.display='block';
+    document.getElementById('score-display').textContent=quizScore+'/'+quizData.length;
+    const pct=quizScore/quizData.length;
+    document.getElementById('score-msg').textContent=pct>=.9?'🌟 Excellent — IGCSE exam ready on this topic!':pct>=.75?'👍 Good work! Review the questions you missed.':pct>=.6?'📚 Solid start — revisit the earlier phases and retake.':'💪 Go back through the lesson phases, then retake.';
+    panel.scrollIntoView({behavior:'smooth'});
+  }
+}
+function retakeQuiz(){ buildQuiz(); }
+buildQuiz();
+
+// ══ SUMMARY ══
+function getTA(id){ const el=document.getElementById(id); return el?el.value.trim():''; }
+function fillSummary(id,text){ const el=document.getElementById(id); if(!el)return; el.textContent=text||'Not answered'; el.classList.toggle('empty',!text); }
+function buildSummary(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  document.getElementById('summaryName').textContent=name;
+  document.getElementById('summaryDate').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const scoreEl=document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl?scoreEl.textContent+' correct':'Quiz not yet completed');
+  fillSummary('sum-wonder',      getTA('ta-wonder'));
+  fillSummary('sum-cellcompare', getTA('ta-cellcompare'));
+  fillSummary('sum-levels',      getTA('ta-levels'));
+  fillSummary('sum-magprac',     getTA('ta-magprac'));
+  for(let i=1;i<=7;i++) fillSummary('sum-pp'+i, getTA('pp'+i));
+}
+function buildPlainText(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  const date=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const scoreEl=document.getElementById('score-display');
+  const nl = String.fromCharCode(10);
+  const ppAnswers = [1,2,3,4,5,6,7].map(i=>'Q'+i+': '+(getTA('pp'+i)||'Not answered')).join(nl);
+  return [
+    'IGCSE BIOLOGY · TOPIC 2 · CELL STRUCTURE AND ORGANISATION — STUDENT SUBMISSION',
+    '==============================================================================',
+    'Student: '+name, 'Date: '+date,'',
+    '── QUIZ SCORE ──', scoreEl?scoreEl.textContent:'Not completed','',
+    '── OPENING PREDICTION ──', getTA('ta-wonder')||'Not answered','',
+    '── COMPARING CELLS REFLECTION ──', getTA('ta-cellcompare')||'Not answered','',
+    '── CHAIN OF ORGANISATION ──', getTA('ta-levels')||'Not answered','',
+    '── MAGNIFICATION PRACTICE PROBLEM ──', getTA('ta-magprac')||'Not answered','',
+    '── PAST PAPER RESPONSES ──', ppAnswers,'',
+    '==============================================================================',
+    '© 2026 Farvour Explorations · farvourexplorations.com',
+    'Submitted via Cell Structure and Organisation · IGCSE Biology Interactive Lesson'
+  ].join(nl);
+}
+function copyResults(){
+  buildSummary();
+  navigator.clipboard.writeText(buildPlainText()).then(()=>{
+    const el=document.getElementById('copyConfirm'); el.textContent='✓ Copied! Paste into Google Classroom or your assignment.';
+    setTimeout(()=>el.textContent='',4000);
+  }).catch(()=>{ document.getElementById('copyConfirm').textContent='⚠️ Could not copy — try selecting the text manually.'; });
+}
+function emailResults(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  window.location.href='mailto:?subject='+encodeURIComponent('IGCSE Bio Topic 2 — '+name)+'&body='+encodeURIComponent(buildPlainText());
+}
+</script>
+</body>
+</html>
