@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cell Structure Explorer 🔬 (Chapter 4, Part 2)</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:    #1a3d2b;
+    --forest-mid:#2d6a4f;
+    --forest-lt: #40916c;
+    --coral:     #e8603c;
+    --coral-pale:#fdf0ec;
+    --mint:      #3aaf85;
+    --mint-pale: #e8f8f2;
+    --gold:      #c9962a;
+    --gold-pale: #fef9e7;
+    --lavender:  #7c6fcd;
+    --lav-pale:  #f0eefb;
+    --paper:     #fffef9;
+    --ink:       #1a2332;
+    --muted:     #7a8899;
+    --border:    #e0e4ea;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: linear-gradient(160deg, #0d2318 0%, #1a3d2b 45%, #2d6a4f 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%, rgba(144,238,144,.45) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 22%  38%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 41%  6%,  rgba(144,238,144,.35) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 60%  24%, rgba(255,255,255,.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 77%  9%,  rgba(144,238,144,.4)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 90%  33%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 33%  55%, rgba(144,238,144,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 70%  48%, rgba(255,255,255,.2)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 55%  70%, rgba(144,238,144,.25) 0%, transparent 100%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ─── HERO ─── */
+  .hero { position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 2rem;color:white; }
+  .hero-badge {
+    display:inline-block;background:var(--gold);color:var(--forest);
+    font-family:'Fredoka One',cursive;font-size:.85rem;letter-spacing:.05em;
+    padding:.35rem 1.2rem;border-radius:20px;margin-bottom:1.2rem;
+    box-shadow:0 2px 12px rgba(201,150,42,.45);
+  }
+  .hero h1 { font-family:'Fredoka One',cursive;font-size:clamp(2.2rem,6vw,4rem);line-height:1.1;margin-bottom:.8rem;text-shadow:0 2px 20px rgba(0,0,0,.35); }
+  .hero h1 .accent { color:var(--gold); }
+  .hero p.intro { font-size:1.05rem;line-height:1.7;opacity:.88;max-width:580px;margin:0 auto 2rem; }
+
+  /* ─── PROGRESS PILLS ─── */
+  .progress-wrap { display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem; }
+  .prog-step {
+    display:flex;align-items:center;gap:.4rem;
+    background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);
+    border-radius:20px;padding:.35rem .9rem;font-size:.78rem;font-weight:700;
+    color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace;
+  }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.35); }
+  .prog-step.active { background:var(--gold);color:var(--forest);border-color:var(--gold);box-shadow:0 2px 12px rgba(201,150,42,.45); }
+
+  /* ─── SHEET ─── */
+  .sheet {
+    position:relative;z-index:1;background:var(--paper);
+    border-radius:24px 24px 0 0;margin-top:1.5rem;
+    padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.3);
+  }
+
+  /* ─── SECTIONS ─── */
+  .section { padding:3rem 2rem 0;max-width:820px;margin:0 auto;display:none; }
+  .section.active { display:block; }
+
+  .section-eyebrow { display:flex;align-items:center;gap:.6rem;margin-bottom:1rem; }
+  .eyebrow-num {
+    width:32px;height:32px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fredoka One',cursive;font-size:1rem;color:white;flex-shrink:0;
+  }
+  .num-coral  { background:var(--coral); }
+  .num-mint   { background:var(--mint); }
+  .num-gold   { background:var(--gold);color:var(--forest); }
+  .num-lav    { background:var(--lavender); }
+  .num-forest { background:var(--forest-mid); }
+
+  .eyebrow-label { font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace; }
+
+  .section h2 { font-family:'Fredoka One',cursive;font-size:clamp(1.6rem,3.5vw,2.2rem);color:var(--forest);margin-bottom:.6rem;line-height:1.2; }
+  .section .lead { font-size:1rem;line-height:1.75;color:#3a4a5a;margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+
+  /* ─── WONDER / INFO BOXES ─── */
+  .wonder-box {
+    background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);
+    color:white;border-radius:16px;padding:1.8rem 2rem;margin-bottom:1.8rem;
+    position:relative;overflow:hidden;
+  }
+  .wonder-box::after { content:'🤔';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3; }
+  .wonder-box p { font-size:1rem;line-height:1.7;font-style:italic;opacity:.95;max-width:85%; }
+  .wonder-box strong { color:var(--gold);font-style:normal; }
+  .wonder-box.gold-box { background:linear-gradient(135deg,#8a6a1a 0%,#b8860b 100%); }
+  .wonder-box.gold-box::after { content:'⚡'; }
+  .wonder-box.lav-box  { background:linear-gradient(135deg,#4a3a8a 0%,#6a5acd 100%); }
+  .wonder-box.lav-box::after { content:'🔋'; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,#1b7a58 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'🍬'; }
+
+  /* ─── PREDICT BOX ─── */
+  .predict-box { background:var(--gold-pale);border:2px dashed var(--gold);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem; }
+  .predict-box textarea,.reflect-box textarea {
+    width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;
+    font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:64px;
+    background:white;color:var(--ink);outline:none;transition:border-color .2s;
+  }
+  .predict-box textarea:focus { border-color:var(--gold); }
+  .reflect-box { background:var(--mint-pale);border:2px dashed var(--mint);border-radius:14px;padding:1.4rem 1.6rem;margin-top:1.5rem; }
+  .reflect-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#1b7a58;margin-bottom:.8rem; }
+  .reflect-box textarea:focus { border-color:var(--mint); }
+
+  /* ─── DEMO ZONE ─── */
+  .demo-zone {
+    background:white;border:2px solid var(--border);border-radius:16px;
+    padding:1.8rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07);
+  }
+  .demo-zone h3 { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.3rem; }
+  .demo-zone .hint { font-size:.78rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:1.3rem; }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    border:none;border-radius:10px;padding:.65rem 1.3rem;font-family:'Nunito',sans-serif;
+    font-size:.88rem;font-weight:800;cursor:pointer;transition:all .15s;letter-spacing:.02em;
+  }
+  .btn:hover  { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  .btn:active { transform:translateY(0); }
+  .btn:disabled { opacity:.4;cursor:default;transform:none;box-shadow:none; }
+  .btn-coral  { background:var(--coral);    color:white; }
+  .btn-mint   { background:var(--mint);     color:white; }
+  .btn-gold   { background:var(--gold);     color:var(--forest); }
+  .btn-lav    { background:var(--lavender); color:white; }
+  .btn-ghost  { background:#f0f2f5;         color:var(--muted); }
+  .btn-forest { background:var(--forest);   color:white; }
+  .action-row { display:flex;gap:.8rem;flex-wrap:wrap;align-items:center;margin-bottom:.8rem; }
+
+  /* ─── NAV ROW ─── */
+  .nav-row { display:flex;justify-content:space-between;align-items:center;padding:2.5rem 2rem 0;max-width:820px;margin:0 auto; }
+
+  /* ─── CONCEPT CHIPS ─── */
+  .chip-row { display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem; }
+  .chip {
+    padding:.45rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;
+    cursor:pointer;transition:all .2s;border:2px solid transparent;
+  }
+  .chip.coral  { background:var(--coral-pale); color:var(--coral);     border-color:#f8c5b8; }
+  .chip.mint   { background:var(--mint-pale);  color:var(--mint);      border-color:#b8ebd8; }
+  .chip.gold   { background:var(--gold-pale);  color:#8a6a1a;          border-color:#f8e0a0; }
+  .chip.lav    { background:var(--lav-pale);   color:var(--lavender);  border-color:#d0caef; }
+  .chip.forest { background:#d4eadd;           color:var(--forest-mid);border-color:#a8d5b8; }
+  .chip:hover  { transform:scale(1.05); }
+
+  .concept-reveal {
+    background:var(--paper);border-left:4px solid var(--coral);
+    border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;
+    margin-top:.5rem;margin-bottom:.3rem;display:none;animation:fadeIn .3s ease;
+  }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border   { border-color:var(--mint); }
+  .concept-reveal.gold-border   { border-color:var(--gold); }
+  .concept-reveal.lav-border    { border-color:var(--lavender); }
+  .concept-reveal.forest-border { border-color:var(--forest-mid); }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ─── EVIDENCE CARDS ─── */
+  .evidence-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin-bottom:1.5rem; }
+  .ev-card {
+    background:white;border:2px solid var(--border);border-radius:14px;
+    padding:1.2rem;cursor:pointer;transition:all .2s;text-align:center;
+  }
+  .ev-card:hover,.ev-card.active { border-color:var(--forest-mid);box-shadow:0 4px 16px rgba(45,106,79,.2);transform:translateY(-2px); }
+  .ev-card.active { background:#d4eadd; }
+  .ev-card .ev-icon { font-size:2.4rem;margin-bottom:.5rem; }
+  .ev-card .ev-title { font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--forest);margin-bottom:.3rem; }
+  .ev-card .ev-sub   { font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace; }
+  .ev-panel {
+    background:#d4eadd;border-left:4px solid var(--forest-mid);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1rem;
+  }
+  .ev-panel.show { display:block; }
+  .ev-panel h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.5rem; }
+  .ev-panel p  { font-size:.88rem;line-height:1.7;color:#2a3a2a; }
+  .ev-panel .example-box {
+    background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;
+    font-size:.82rem;font-family:'DM Mono',monospace;color:var(--ink);
+    border:1.5px solid rgba(45,106,79,.2);
+  }
+
+  /* ─── STEP CARDS ─── */
+  .sel-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0 1.5rem; }
+  .sel-card {
+    background:white;border:2px solid var(--border);border-radius:14px;
+    padding:1rem;text-align:center;cursor:pointer;transition:all .2s;
+  }
+  .sel-card:hover,.sel-card.active { border-color:var(--coral);box-shadow:0 3px 12px rgba(232,96,60,.18);transform:translateY(-2px); }
+  .sel-card.active { background:var(--coral-pale); }
+  .sel-card .sel-icon { font-size:2rem;margin-bottom:.4rem; }
+  .sel-card .sel-name { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--forest);margin-bottom:.2rem; }
+  .sel-card .sel-key  { font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em; }
+  .sel-detail {
+    background:var(--coral-pale);border-left:4px solid var(--coral);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1.5rem;
+  }
+  .sel-detail.show { display:block; }
+  .sel-detail h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.4rem; }
+  .sel-detail p  { font-size:.88rem;line-height:1.7; }
+  .sel-detail .examples { margin-top:.6rem;font-style:italic;color:var(--muted);font-size:.82rem; }
+
+  /* ─── MATCHING GAME ─── */
+  .match-grid { display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1rem 0; }
+  .match-item {
+    padding:.75rem 1rem;border-radius:10px;border:2px solid var(--border);
+    cursor:pointer;font-size:.84rem;font-weight:700;transition:all .2s;
+    background:white;text-align:center;color:var(--ink);line-height:1.4;
+  }
+  .match-item:hover    { border-color:var(--forest-mid);background:#f0f7f3; }
+  .match-item.selected { border-color:var(--lavender);background:var(--lav-pale);color:var(--lavender); }
+  .match-item.matched  { border-color:var(--mint);background:var(--mint-pale);color:#1b7a58;cursor:default; }
+  .match-item.wrong    { border-color:var(--coral);background:var(--coral-pale);color:var(--coral);animation:shake .3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+  /* ─── ATP SIMULATOR ─── */
+  .atp-display {
+    display:flex;align-items:center;justify-content:center;gap:1.5rem;
+    flex-wrap:wrap;margin:1.2rem 0;
+  }
+  .atp-molecule {
+    text-align:center;padding:1rem 1.4rem;border-radius:14px;
+    font-family:'DM Mono',monospace;font-size:.85rem;font-weight:700;
+    border:2px solid;transition:all .4s;min-width:120px;
+  }
+  .atp-molecule .mol-label { font-family:'Fredoka One',cursive;font-size:1.3rem;margin-bottom:.3rem; }
+  .atp-molecule .mol-desc  { font-size:.7rem;color:var(--muted);margin-top:.3rem;font-weight:400; }
+  .mol-atp  { background:var(--gold-pale);border-color:var(--gold);color:#8a6a1a; }
+  .mol-adp  { background:#f5f7fa;border-color:var(--border);color:var(--muted); }
+  .mol-pi   { background:var(--lav-pale);border-color:var(--lavender);color:var(--lavender); }
+  .mol-nadh { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .mol-nad  { background:#f5f7fa;border-color:var(--border);color:var(--muted); }
+  .arrow-label { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest-mid);text-align:center; }
+  .energy-badge {
+    display:inline-block;padding:.25rem .8rem;border-radius:20px;font-size:.72rem;
+    font-weight:800;font-family:'DM Mono',monospace;letter-spacing:.05em;margin-top:.4rem;
+  }
+  .release  { background:#ffeaa7;color:#8a6a1a; }
+  .absorb   { background:var(--lav-pale);color:var(--lavender); }
+
+  /* ─── GLYCOLYSIS TRACKER ─── */
+  .glyc-track {
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:.8rem;margin:1rem 0;
+  }
+  .glyc-box {
+    background:white;border:2px solid var(--border);border-radius:12px;
+    padding:.9rem 1rem;text-align:center;transition:all .3s;
+  }
+  .glyc-box .g-label { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--forest);margin-bottom:.3rem; }
+  .glyc-box .g-val   { font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:700;color:var(--ink); }
+  .glyc-box .g-unit  { font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace; }
+  .glyc-box.active   { border-color:var(--gold);background:var(--gold-pale); }
+  .glyc-box.done     { border-color:var(--mint);background:var(--mint-pale); }
+
+  /* ─── REDOX ANIMATOR ─── */
+  .redox-row { display:flex;gap:1rem;flex-wrap:wrap;margin:1rem 0; }
+  .redox-box {
+    flex:1;min-width:200px;border-radius:14px;padding:1.1rem 1.2rem;
+    border:2px solid var(--border);text-align:center;transition:all .4s;
+  }
+  .redox-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;margin-bottom:.4rem; }
+  .redox-box p  { font-family:'DM Mono',monospace;font-size:.78rem;line-height:1.6; }
+  .redox-oxidized  { background:var(--coral-pale);border-color:var(--coral); }
+  .redox-oxidized h4 { color:var(--coral); }
+  .redox-reduced   { background:var(--mint-pale);border-color:var(--mint); }
+  .redox-reduced h4 { color:#1b7a58; }
+
+  /* ─── QUIZ ─── */
+  .quiz-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .quiz-q { font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:1rem;line-height:1.5; }
+  .quiz-options { display:flex;flex-direction:column;gap:.5rem; }
+  .quiz-opt {
+    padding:.6rem 1rem;border-radius:8px;border:2px solid var(--border);
+    background:white;cursor:pointer;font-family:'Nunito',sans-serif;
+    font-size:.88rem;font-weight:600;text-align:left;transition:all .15s;color:var(--ink);
+  }
+  .quiz-opt:hover:not(:disabled) { border-color:var(--forest-mid);background:#f0f7f3; }
+  .quiz-opt.correct  { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .quiz-opt.wrong    { background:var(--coral-pale);border-color:var(--coral);color:#a83020; }
+  .quiz-opt:disabled { cursor:default; }
+  .quiz-feedback { margin-top:.8rem;font-size:.85rem;line-height:1.6;padding:.7rem 1rem;border-radius:8px;display:none;animation:fadeIn .3s ease; }
+  .quiz-feedback.show { display:block; }
+  .quiz-feedback.correct-fb { background:var(--mint-pale);color:#1b7a58;border-left:3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background:var(--coral-pale);color:#a83020;border-left:3px solid var(--coral); }
+
+  /* ─── SCORE ─── */
+  .score-panel { background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);color:white;border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem; }
+  .score-panel .score-num { font-family:'Fredoka One',cursive;font-size:3.5rem;line-height:1;color:var(--gold); }
+  .score-panel p { opacity:.88;margin-top:.5rem;font-size:1rem; }
+  .score-panel h3 { font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:.3rem; }
+
+  /* ─── CONGRATS ─── */
+  .congrats-panel { background:linear-gradient(135deg,var(--forest) 0%,#1b7a58 100%);color:white;border-radius:20px;padding:2.5rem 2rem;text-align:center;margin-top:2rem; }
+  .congrats-panel h2 { font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:.6rem; }
+  .congrats-panel p  { opacity:.9;line-height:1.7;max-width:480px;margin:0 auto .8rem; }
+  .summary-chips { display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:1rem; }
+  .summary-chip {
+    background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);
+    border-radius:20px;padding:.3rem .9rem;font-size:.78rem;font-weight:700;
+    font-family:'DM Mono',monospace;letter-spacing:.04em;
+  }
+
+  /* ─── VOCAB TABLE ─── */
+  .vocab-table { width:100%;border-collapse:collapse;margin:1rem 0 1.5rem; }
+  .vocab-table th { background:var(--forest);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;padding:.7rem 1rem;text-align:left; }
+  .vocab-table td { padding:.65rem 1rem;font-size:.85rem;line-height:1.5;border-bottom:1px solid var(--border); }
+  .vocab-table tr:nth-child(even) td { background:#f5f7fa; }
+  .vocab-table tr:hover td { background:#d4eadd;transition:background .15s; }
+  .vocab-table td:first-child { font-weight:800;color:var(--forest-mid); }
+
+  /* ─── FILL IN THE BLANK ─── */
+  .blank-input {
+    border:none;border-bottom:2.5px solid var(--forest-mid);background:transparent;
+    font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;color:var(--forest);
+    width:180px;text-align:center;outline:none;padding:0 4px;transition:border-color .2s;
+  }
+  .blank-input:focus { border-color:var(--coral); }
+  .blank-input.ok { border-color:var(--mint);color:var(--mint); }
+  .blank-input.err{ border-color:var(--coral);color:var(--coral); }
+  .fill-q { font-size:.95rem;line-height:2;color:var(--ink);margin-bottom:.8rem; }
+  .divider { height:1px;background:var(--border);margin:2rem 0; }
+
+  /* ─── NAME BAR ─── */
+  .name-bar {
+    background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);
+    border-radius:12px;padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;
+    max-width:420px;margin:0 auto 1rem;
+  }
+  .name-bar label { font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;font-family:'DM Mono',monospace; }
+  .name-bar input {
+    flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;
+    padding:.4rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:white;outline:none;
+  }
+  .name-bar input::placeholder { color:rgba(255,255,255,.4);font-weight:400; }
+
+  /* ─── SUMMARY / SUBMIT ─── */
+  .summary-section { background:white;border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--forest);margin-bottom:.8rem; }
+  .summary-answer {
+    background:#f5f7fa;border-radius:8px;padding:.7rem 1rem;font-size:.85rem;
+    line-height:1.6;color:var(--ink);margin-bottom:.5rem;font-style:italic;
+    border-left:3px solid var(--lavender);min-height:2rem;
+  }
+  .summary-answer.empty { color:var(--muted);font-style:normal;border-left-color:var(--border); }
+  .share-buttons { display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center; }
+  .share-btn {
+    border:none;border-radius:12px;padding:.85rem 1.6rem;font-family:'Fredoka One',cursive;
+    font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem;
+  }
+  .share-btn:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background:var(--mint);color:white; }
+  .share-btn.email { background:var(--lavender);color:white; }
+  .share-btn.print { background:var(--forest);color:white; }
+  .copy-confirm { text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--mint);min-height:1.2rem;margin-top:.6rem; }
+
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm,.prog-step,.name-bar { display:none !important; }
+    .sheet { box-shadow:none;border-radius:0; }
+    .section { display:none !important; }
+    #sec-7 { display:block !important; }
+  }
+  /* ─── FATTY ACID COMPARISON ─── */
+  .fat-compare { display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1rem 0; }
+  .fat-card {
+    border-radius:14px;padding:1.2rem;text-align:center;border:2px solid var(--border);
+    cursor:pointer;transition:all .25s;background:white;
+  }
+  .fat-card:hover,.fat-card.active { transform:translateY(-3px);box-shadow:0 4px 16px rgba(0,0,0,.12); }
+  .fat-card.active.saturated   { border-color:var(--gold); background:var(--gold-pale); }
+  .fat-card.active.unsaturated { border-color:var(--mint); background:var(--mint-pale); }
+  .fat-card.active.trans       { border-color:var(--coral); background:var(--coral-pale); }
+  .fat-chain {
+    font-family:'DM Mono',monospace;font-size:1.3rem;letter-spacing:2px;
+    margin:.8rem 0;color:var(--ink);
+  }
+  .fat-card .fat-name { font-family:'Fredoka One',cursive;font-size:1rem;color:var(--forest);margin-bottom:.3rem; }
+  .fat-card .fat-state { font-size:.75rem;font-family:'DM Mono',monospace;color:var(--muted); }
+
+  /* ─── PROTEIN STRUCTURE LEVELS ─── */
+  .protein-level-track {
+    display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0;justify-content:center;
+  }
+  .protein-level-step {
+    flex:1;min-width:130px;text-align:center;padding:1rem .8rem;border-radius:12px;
+    border:2px solid var(--border);background:white;cursor:pointer;transition:all .25s;
+  }
+  .protein-level-step:hover,.protein-level-step.active { border-color:var(--lavender);box-shadow:0 4px 14px rgba(124,111,205,.2);transform:translateY(-2px); }
+  .protein-level-step.active { background:var(--lav-pale); }
+  .protein-level-step .pl-icon { font-size:1.8rem;margin-bottom:.3rem; }
+  .protein-level-step .pl-name { font-family:'Fredoka One',cursive;font-size:.85rem;color:var(--forest); }
+  .protein-level-detail {
+    background:var(--lav-pale);border-left:4px solid var(--lavender);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1rem;
+  }
+  .protein-level-detail.show { display:block; }
+  .protein-level-detail h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.5rem; }
+  .protein-level-detail p  { font-size:.88rem;line-height:1.7;color:#2a2a3a; }
+
+  /* ─── AMINO ACID CLASSIFIER ─── */
+  .aa-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.6rem;margin:1rem 0; }
+  .aa-tile {
+    border-radius:10px;padding:.7rem .5rem;text-align:center;cursor:pointer;
+    border:2px solid var(--border);background:white;transition:all .2s;
+  }
+  .aa-tile:hover { transform:scale(1.04); }
+  .aa-tile .aa-letter { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest); }
+  .aa-tile .aa-full { font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.2rem; }
+  .aa-tile.cat-nonpolar  { border-color:#a8d5b8; }
+  .aa-tile.cat-polar     { border-color:var(--mint); }
+  .aa-tile.cat-positive  { border-color:var(--coral); }
+  /* ─── NUCLEOTIDE BUILDER ─── */
+  .nuc-parts { display:flex;justify-content:center;gap:1.2rem;flex-wrap:wrap;margin:1.2rem 0; }
+  .nuc-part {
+    text-align:center;padding:1rem 1.3rem;border-radius:14px;
+    border:2px solid var(--border);background:white;min-width:130px;
+    transition:all .3s;
+  }
+  .nuc-part .np-icon { font-size:1.8rem;margin-bottom:.4rem; }
+  .nuc-part .np-name { font-family:'Fredoka One',cursive;font-size:.92rem;color:var(--forest); }
+  .nuc-part .np-sub  { font-size:.68rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.3rem; }
+  .nuc-part.sugar     { border-color:var(--mint); background:var(--mint-pale); }
+  .nuc-part.phosphate { border-color:var(--gold); background:var(--gold-pale); }
+  .nuc-part.base      { border-color:var(--coral); background:var(--coral-pale); }
+
+  /* ─── BASE PAIRING TABLE / SELECTOR ─── */
+  .base-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.7rem;margin:1rem 0; }
+  .base-tile {
+    border-radius:12px;padding:1rem .6rem;text-align:center;cursor:pointer;
+    border:2px solid var(--border);background:white;transition:all .2s;
+  }
+  .base-tile:hover,.base-tile.active { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.12); }
+  .base-tile .bt-letter { font-family:'Fredoka One',cursive;font-size:1.5rem; }
+  .base-tile .bt-name   { font-size:.68rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.3rem; }
+  .base-tile.purine     { border-color:var(--lavender); }
+  .base-tile.purine.active { background:var(--lav-pale); }
+  .base-tile.pyrimidine { border-color:var(--coral); }
+  .base-tile.pyrimidine.active { background:var(--coral-pale); }
+
+  /* ─── DOUBLE HELIX STRAND BUILDER ─── */
+  .helix-row { display:flex; flex-wrap:nowrap; gap:3px; overflow-x:auto; padding:.6rem 0; margin:.6rem 0; }
+  .helix-base {
+    min-width:34px;height:38px;display:flex;align-items:center;justify-content:center;
+    font-family:'DM Mono',monospace;font-weight:700;font-size:.92rem;
+    border-radius:6px;border:2px solid var(--border);flex-shrink:0;transition:all .3s;
+  }
+  .helix-base.hA { background:var(--coral-pale); color:var(--coral); border-color:#f8c5b8; }
+  .helix-base.hT { background:var(--lav-pale);   color:var(--lavender); border-color:#d0caef; }
+  .helix-base.hU { background:#eafaf3;           color:#1b7a58; border-color:#b8ebd8; }
+  .helix-base.hC { background:var(--gold-pale);  color:#8a6a1a; border-color:#f8e0a0; }
+  .helix-base.hG { background:#d4eadd;           color:var(--forest-mid); border-color:#a8d5b8; }
+  .helix-base.empty { background:#f5f7fa; color:var(--border); border-style:dashed; }
+
+  /* ─── SA:V CALCULATOR ─── */
+  .sav-display {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem; margin: 1rem 0;
+  }
+  .sav-box {
+    border-radius: 14px; padding: 1.2rem; text-align: center;
+    border: 2px solid var(--border); background: white; transition: all .3s;
+  }
+  .sav-box .sav-title { font-family:'Fredoka One',cursive; font-size:.95rem; color:var(--forest); margin-bottom:.5rem; }
+  .sav-box .sav-num   { font-family:'DM Mono',monospace; font-size:1.6rem; font-weight:700; }
+  .sav-box .sav-unit  { font-size:.68rem; color:var(--muted); font-family:'DM Mono',monospace; margin-top:.2rem; }
+  .sav-box.highlight-good { border-color:var(--mint); background:var(--mint-pale); }
+  .sav-box.highlight-good .sav-num { color:var(--mint); }
+  .sav-box.highlight-bad  { border-color:var(--coral); background:var(--coral-pale); }
+  .sav-box.highlight-bad  .sav-num { color:var(--coral); }
+
+  .sav-slider-row { display:flex; align-items:center; gap:1rem; margin:.8rem 0; flex-wrap:wrap; }
+  .sav-slider-row label { font-family:'DM Mono',monospace; font-size:.82rem; color:var(--muted); min-width:140px; }
+  .sav-slider-row input[type=range] { flex:1; min-width:120px; accent-color:var(--forest-mid); }
+  .sav-slider-row .sav-readout { font-family:'DM Mono',monospace; font-weight:700; color:var(--forest); min-width:50px; text-align:right; }
+
+  /* ─── PROKARYOTE STRUCTURE DIAGRAM ─── */
+  .prok-part {
+    display: inline-block; padding:.5rem 1rem; border-radius:20px;
+    font-family:'Fredoka One',cursive; font-size:.88rem; cursor:pointer;
+    border:2px solid var(--border); background:white; transition:all .2s; margin:.3rem;
+  }
+  .prok-part:hover,.prok-part.active { transform:scale(1.06); }
+  .prok-part.p-membrane   { border-color:var(--coral); color:var(--coral); }
+  .prok-part.p-membrane.active { background:var(--coral-pale); }
+  .prok-part.p-wall       { border-color:var(--gold); color:#8a6a1a; }
+  .prok-part.p-wall.active { background:var(--gold-pale); }
+  .prok-part.p-nucleoid   { border-color:var(--lavender); color:var(--lavender); }
+  .prok-part.p-nucleoid.active { background:var(--lav-pale); }
+  .prok-part.p-ribosome   { border-color:var(--mint); color:var(--mint); }
+  .prok-part.p-ribosome.active { background:var(--mint-pale); }
+  .prok-part.p-flagella   { border-color:var(--forest-mid); color:var(--forest-mid); }
+  .prok-part.p-flagella.active { background:#d4eadd; }
+  .prok-part.p-capsule    { border-color:#888; color:#555; }
+  .prok-part.p-capsule.active { background:#f0f0f0; }
+  .prok-part.p-pili       { border-color:var(--forest-lt); color:var(--forest-lt); }
+  .prok-part.p-pili.active { background:#e0f5e8; }
+</style>
+</head>
+<body><!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-badge">🔬 AP Biology · Chapter 4 (Part 2 of 2)</div>
+  <h1>Cell Structure <span class="accent">Explorer</span></h1>
+  <p class="intro">Master organelles, the endomembrane system, the cytoskeleton, and cell connections — covering OpenStax AP Biology Chapter 4, sections 4.3 through 4.6.</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <span class="prog-step active" onclick="goTo(0)">① Wonder</span>
+    <span class="prog-step"       onclick="goTo(1)">② Eukaryotic Organelles</span>
+    <span class="prog-step"       onclick="goTo(2)">③ Endomembrane System</span>
+    <span class="prog-step"       onclick="goTo(3)">④ Protein Pathway Lab</span>
+    <span class="prog-step"       onclick="goTo(4)">⑤ Cytoskeleton &amp; Connections</span>
+    <span class="prog-step"       onclick="goTo(5)">⑥ Quiz</span>
+    <span class="prog-step"       onclick="goTo(6)">⑦ Reflect</span>
+    <span class="prog-step"       onclick="goTo(7)">📤 Submit</span>
+  </div>
+</div>
+
+<!-- ═══ SHEET ═══ -->
+<div class="sheet">
+
+<!-- ═══ SECTION 0: WONDER ═══ -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-coral">1</div>
+    <span class="eyebrow-label">Phase 1 · Wonder</span>
+  </div>
+  <h2>🏭 The Cell as a City</h2>
+  <p class="lead">
+    A human cell contains about <strong>2 meters of DNA</strong>, manufactures thousands of different proteins daily, detoxifies poisons, generates ATP, ships molecules to precise destinations, and communicates with neighbouring cells — all simultaneously, in a space smaller than a grain of sand.
+  </p>
+
+  <div class="wonder-box">
+    <p>A cell is like an entire city compressed into one microscopic unit. It has a city hall (nucleus), power plants (mitochondria), a postal system (Golgi apparatus and vesicles), recycling centres (lysosomes), roads (cytoskeleton), and walls (cell wall in plants). <strong>How does a cell manage to keep all of these systems organised and working together without getting confused — especially when some organelles need to "talk" to each other to complete a task?</strong></p>
+  </div>
+
+  <div class="predict-box">
+    <h4>✏️ Your Prediction (before we dig in)</h4>
+    <textarea placeholder="Predict: if a cell needs to manufacture and secrete a protein hormone (like insulin), which organelles do you think would be involved, and in what order? Sketch the journey a protein might take from its creation to being exported from the cell."></textarea>
+  </div>
+
+  <div class="wonder-box gold-box">
+    <p>The answer lies in the <strong>endomembrane system</strong> — a team of organelles (rough ER, Golgi apparatus, vesicles, lysosomes) that work together as an integrated protein processing and shipping network. Combined with the <strong>cytoskeleton</strong> for structural support and the <strong>cell junctions</strong> that let cells communicate with neighbours, eukaryotic cells are extraordinarily coordinated molecular machines.</p>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" disabled>← Back</button>
+    <button class="btn btn-coral" onclick="goTo(1)">Next: Eukaryotic Organelles →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 1: 4.3 EUKARYOTIC ORGANELLES ═══ -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-lav">2</div>
+    <span class="eyebrow-label">Phase 2 · 4.3 Eukaryotic Cells — Organelles</span>
+  </div>
+  <h2>📖 Organelles — Tap to Reveal</h2>
+  <p class="lead">Tap each organelle to reveal its structure, function, and AP exam significance. The textbook specifically notes: <em>"This is a rare case where you should create a list of organelles and their functions."</em> Know every one of these cold.</p>
+
+  <div class="chip-row">
+    <span class="chip coral"  onclick="reveal('nucleus')">Nucleus</span>
+    <span class="chip forest" onclick="reveal('ribosome2')">Ribosomes</span>
+    <span class="chip mint"   onclick="reveal('mito')">Mitochondria</span>
+    <span class="chip gold"   onclick="reveal('chloro')">Chloroplasts</span>
+    <span class="chip lav"    onclick="reveal('perox')">Peroxisomes</span>
+    <span class="chip coral"  onclick="reveal('vacuole')">Vacuoles &amp; Vesicles</span>
+    <span class="chip forest" onclick="reveal('lyso')">Lysosomes</span>
+    <span class="chip mint"   onclick="reveal('centrosome')">Centrosome &amp; Centrioles</span>
+    <span class="chip gold"   onclick="reveal('cellwall2')">Plant Cell Wall</span>
+    <span class="chip lav"    onclick="reveal('endosym')">Endosymbiotic Theory</span>
+  </div>
+
+  <div id="rev-nucleus"     class="concept-reveal coral">
+    <strong>Nucleus</strong> — The cell's control centre, housing the DNA. Bounded by the <em>nuclear envelope</em> (a double phospholipid bilayer with nuclear pores). Inside: <em>nucleoplasm</em> (semi-solid fluid), <em>chromatin</em> (DNA + histone proteins), and the <em>nucleolus</em> (where ribosome subunits are assembled from rRNA and proteins). Nuclear pores control import/export of molecules. The nuclear envelope is continuous with the rough ER.
+  </div>
+  <div id="rev-ribosome2"   class="concept-reveal forest-border">
+    <strong>Ribosomes (80S in eukaryotes)</strong> — Found either free in the cytoplasm (make cytosolic proteins) or bound to the rough ER (make membrane/secreted proteins). Made of rRNA + protein in two subunits (large and small). Ribosomes in mitochondria and chloroplasts are 70S — like prokaryotic ribosomes, supporting endosymbiotic theory. Abundant in cells that synthesize lots of protein (e.g. pancreatic cells making digestive enzymes).
+  </div>
+  <div id="rev-mito"        class="concept-reveal mint-border">
+    <strong>Mitochondria</strong> — Oval-shaped, double-membrane organelles — the "powerhouses" of the cell, producing most of the cell's ATP via cellular respiration. Inner membrane folded into <em>cristae</em> (increases surface area for ATP synthesis); interior = <em>mitochondrial matrix</em>. Have their own DNA and 70S ribosomes (evidence for endosymbiotic theory). Most abundant in high-energy cells like muscle cells.
+  </div>
+  <div id="rev-chloro"      class="concept-reveal gold-border">
+    <strong>Chloroplasts</strong> — Plant-only organelles that carry out photosynthesis. Double membrane; inner space contains stacked membrane sacs called <em>thylakoids</em> (stacks = <em>grana</em>), surrounded by <em>stroma</em> fluid. Contain chlorophyll (green pigment that captures light). Have their own DNA and 70S ribosomes — evidence for endosymbiotic theory (evolved from ingested cyanobacteria).
+  </div>
+  <div id="rev-perox"       class="concept-reveal lav-border">
+    <strong>Peroxisomes</strong> — Small, round, single-membrane organelles. Oxidise fatty acids and amino acids; detoxify poisons (including alcohol in liver cells). Many oxidation reactions produce toxic H₂O₂ — peroxisomes contain the enzyme catalase, which safely converts H₂O₂ → H₂O + O₂, preventing cell damage. In plants: <em>glyoxysomes</em> are specialised peroxisomes that convert stored fats into sugars.
+  </div>
+  <div id="rev-vacuole"     class="concept-reveal coral">
+    <strong>Vacuoles &amp; Vesicles</strong> — Membrane-bound sacs for storage and transport. <em>Vesicles</em> (small) can fuse with other membranes and shuttle cargo around the cell. <em>Vacuoles</em> (larger) do not fuse with other membranes. Plant cells have a huge <em>central vacuole</em> (up to 90% of cell volume) that stores pigments, salts, nutrients, waste products, and maintains turgor pressure (keeps the plant rigid). Loss of water from the central vacuole = wilting.
+  </div>
+  <div id="rev-lyso"        class="concept-reveal forest-border">
+    <strong>Lysosomes (animal cells only)</strong> — The cell's "garbage disposal." Membrane-bound sacs containing ~50 hydrolytic (digestive) enzymes that function best at low pH (~4.5, kept acidic by proton pumps). Break down macromolecules (proteins, lipids, carbs, nucleic acids), recycle worn-out organelles (autophagy), and destroy pathogens (in immune cells like macrophages via phagocytosis). Plant cells use their central vacuole for these digestive functions instead.
+  </div>
+  <div id="rev-centrosome"  class="concept-reveal mint-border">
+    <strong>Centrosome &amp; Centrioles (animal cells)</strong> — The centrosome is the microtubule-organising centre (MTOC) located near the nucleus. Contains two <em>centrioles</em> oriented at right angles to each other — each centriole is a cylinder of 9 triplets of microtubules. Replicates before cell division and helps organise the mitotic spindle. Plant cells lack centrioles but can still divide (the centrioles are NOT the spindle itself).
+  </div>
+  <div id="rev-cellwall2"   class="concept-reveal gold-border">
+    <strong>Plant Cell Wall (cellulose)</strong> — A rigid layer external to the plasma membrane made primarily of <em>cellulose</em> (β-glucose polymer). Provides structural support, shape, and protection. Plant cells also have <em>plasmodesmata</em> — channels through the cell wall that connect adjacent plant cells, allowing communication and transport. Distinct from the peptidoglycan walls of bacteria.
+  </div>
+  <div id="rev-endosym"     class="concept-reveal lav-border">
+    <strong>Endosymbiotic Theory</strong> — Explains the origin of mitochondria and chloroplasts. Ancient host cells engulfed aerobic bacteria (which became mitochondria) and cyanobacteria (which became chloroplasts) without digesting them. Evidence: both organelles have their own circular DNA, their own 70S ribosomes, their own double membranes, and they reproduce by binary fission independently of cell division.
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 Animal vs. Plant Cell — Key Differences</h3>
+  <table class="vocab-table">
+    <tr><th>Structure</th><th>Animal Cell</th><th>Plant Cell</th></tr>
+    <tr><td>Cell wall</td><td>✗ Absent</td><td>✓ Cellulose cell wall</td></tr>
+    <tr><td>Chloroplasts</td><td>✗ Absent</td><td>✓ Present (photosynthesis)</td></tr>
+    <tr><td>Central vacuole</td><td>✗ Absent (small vesicles only)</td><td>✓ Large central vacuole</td></tr>
+    <tr><td>Lysosomes</td><td>✓ Present</td><td>✗ Mostly absent (vacuole does this job)</td></tr>
+    <tr><td>Centrosome/Centrioles</td><td>✓ Present</td><td>✗ MTOC present but no centrioles</td></tr>
+    <tr><td>Plasmodesmata</td><td>✗ Absent</td><td>✓ Present (cell communication)</td></tr>
+  </table>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.4rem;">🎯 Quick Match — Organelle Functions</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Tap a term, then tap its matching definition.</p>
+  <div class="match-grid" id="matchGrid">
+    <div class="match-item" data-pair="a" data-side="term" onclick="matchClick(this)">Nucleolus</div>
+    <div class="match-item" data-pair="b" data-side="def"  onclick="matchClick(this)">Detoxifies H₂O₂; oxidises fatty acids</div>
+    <div class="match-item" data-pair="c" data-side="term" onclick="matchClick(this)">Cristae</div>
+    <div class="match-item" data-pair="d" data-side="def"  onclick="matchClick(this)">Cell's "garbage disposal" — found in animal cells</div>
+    <div class="match-item" data-pair="a" data-side="def"  onclick="matchClick(this)">Site of ribosome subunit assembly inside the nucleus</div>
+    <div class="match-item" data-pair="e" data-side="term" onclick="matchClick(this)">Central Vacuole</div>
+    <div class="match-item" data-pair="b" data-side="term" onclick="matchClick(this)">Peroxisome</div>
+    <div class="match-item" data-pair="c" data-side="def"  onclick="matchClick(this)">Folds of the inner mitochondrial membrane</div>
+    <div class="match-item" data-pair="d" data-side="term" onclick="matchClick(this)">Lysosome</div>
+    <div class="match-item" data-pair="e" data-side="def"  onclick="matchClick(this)">Large plant organelle storing pigments, salts, maintaining turgor</div>
+  </div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-ghost" onclick="resetMatch()">↺ Reset Match</button>
+    <span id="match-score" style="margin-left:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted);"></span>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(0)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(2)">Next: Endomembrane System →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 2: 4.4 ENDOMEMBRANE SYSTEM ═══ -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-gold">3</div>
+    <span class="eyebrow-label">Phase 3 · 4.4 The Endomembrane System &amp; Proteins</span>
+  </div>
+  <h2>📦 The Endomembrane System — Tap to Explore</h2>
+  <p class="lead">The endomembrane system is a team of interacting organelles that modify, package, and ship proteins and lipids. Tap each component to learn its role and how it connects to the others.</p>
+
+  <div class="evidence-grid">
+    <div class="ev-card" onclick="showEvidence('rer')">
+      <div class="ev-icon">🏭</div>
+      <div class="ev-title">Rough ER</div>
+      <div class="ev-sub">protein synthesis &amp; modification</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('ser')">
+      <div class="ev-icon">⚗️</div>
+      <div class="ev-title">Smooth ER</div>
+      <div class="ev-sub">lipids, detox, calcium</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('golgi')">
+      <div class="ev-icon">📮</div>
+      <div class="ev-title">Golgi Apparatus</div>
+      <div class="ev-sub">sort, tag, package, ship</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('lyso2')">
+      <div class="ev-icon">🗑️</div>
+      <div class="ev-title">Lysosomes</div>
+      <div class="ev-sub">digestion &amp; recycling</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('vesicles2')">
+      <div class="ev-icon">🚢</div>
+      <div class="ev-title">Transport Vesicles</div>
+      <div class="ev-sub">cargo shuttles</div>
+    </div>
+  </div>
+
+  <div id="ev-rer"      class="ev-panel">
+    <h4>🏭 Rough Endoplasmic Reticulum (RER)</h4>
+    <p>A network of interconnected membrane sacs studded with ribosomes on their cytoplasmic surface (giving the "rough" appearance under EM). The ribosomes synthesise proteins directly into the lumen (interior) of the RER, where they undergo <strong>structural modifications</strong> such as folding and addition of carbohydrate side chains. The RER also synthesises phospholipids for cellular membranes. Cells that secrete large amounts of protein (like pancreatic cells making digestive enzymes, or liver cells making blood proteins) have abundant RER.</p>
+    <div class="example-box">📌 Route: Ribosome synthesises protein → protein folds inside RER lumen → transport vesicle buds off RER → vesicle travels to cis face of Golgi.</div>
+  </div>
+  <div id="ev-ser"      class="ev-panel">
+    <h4>⚗️ Smooth Endoplasmic Reticulum (SER)</h4>
+    <p>Continuous with the RER but lacks ribosomes. Functions: (1) synthesise carbohydrates, phospholipids, cholesterol, and <strong>steroid hormones</strong>; (2) <strong>detoxify</strong> medications and poisons (liver cells); (3) <strong>store calcium ions</strong> — especially important in muscle cells, where the specialised sarcoplasmic reticulum stores Ca²⁺ needed to trigger muscle contraction. Liver cells that detoxify drugs have extensive SER.</p>
+    <div class="example-box">📌 A person who regularly takes medication will have liver cells with MORE SER — the SER proliferates in response to increased detoxification demand.</div>
+  </div>
+  <div id="ev-golgi"    class="ev-panel">
+    <h4>📮 The Golgi Apparatus</h4>
+    <p>A stack of flattened membrane sacs (cisternae) that functions as the cell's postal sorting centre. Receives transport vesicles from the RER at its <strong>cis face</strong>; processes, tags (adds phosphate groups or other small molecules), and packages lipids and proteins; then ships them from its <strong>trans face</strong> in secretory vesicles. Destinations: plasma membrane (secretion), lysosomes, or other organelles. In plant cells, also synthesises polysaccharides for the cell wall.</p>
+    <div class="example-box">📌 Cells with high secretory activity (salivary gland cells secreting digestive enzymes, immune cells secreting antibodies) have an abundance of Golgi apparatus.</div>
+  </div>
+  <div id="ev-lyso2"    class="ev-panel">
+    <h4>🗑️ Lysosomes — Part of the Endomembrane System</h4>
+    <p>Lysosomes bud off from the <em>trans</em> face of the Golgi, pre-loaded with hydrolytic enzymes. They maintain a low pH (~4.5) by pumping in H⁺ ions. Functions: (1) digest ingested macromolecules; (2) recycle worn-out organelles (<em>autophagy</em>); (3) destroy pathogens engulfed by immune cells via phagocytosis. In macrophages, a pathogen-containing vesicle fuses with a lysosome → enzymes destroy the pathogen.</p>
+    <div class="example-box">📌 Tay-Sachs disease is caused by a missing lysosomal enzyme — lipids accumulate in neurons and cannot be broken down, causing progressive neurodegeneration.</div>
+  </div>
+  <div id="ev-vesicles2" class="ev-panel">
+    <h4>🚢 Transport Vesicles</h4>
+    <p>Small membrane-bound sacs that bud off from one organelle and fuse with another, carrying cargo (proteins, lipids) between compartments. The membrane of the vesicle is oriented so that the side that was inside the originating organelle faces the outside environment after fusing with the plasma membrane. Vesicles can fuse with: the plasma membrane (exocytosis/secretion), other organelles, or the <em>cis</em> face of the Golgi.</p>
+    <div class="example-box">📌 Secretory pathway: RER → transport vesicle → Golgi (cis face) → modification → Golgi (trans face) → secretory vesicle → plasma membrane → released outside cell.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 RER vs. SER — Quick Comparison</h3>
+  <table class="vocab-table">
+    <tr><th>Feature</th><th>Rough ER (RER)</th><th>Smooth ER (SER)</th></tr>
+    <tr><td>Ribosomes?</td><td>Yes — attached on cytoplasmic surface</td><td>No ribosomes</td></tr>
+    <tr><td>Main function</td><td>Protein synthesis &amp; modification</td><td>Lipid synthesis, detox, Ca²⁺ storage</td></tr>
+    <tr><td>Products</td><td>Membrane proteins, secreted proteins, phospholipids</td><td>Steroids, lipids, carbohydrates</td></tr>
+    <tr><td>Abundant in…</td><td>Secretory cells (pancreas, liver, B cells)</td><td>Liver (detox), muscle (sarcoplasmic reticulum)</td></tr>
+  </table>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(3)">Next: Protein Pathway Lab →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 3: PROTEIN PATHWAY LAB ═══ -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">4</div>
+    <span class="eyebrow-label">Phase 4 · Protein Pathway Lab</span>
+  </div>
+  <h2>🚀 Trace a Secreted Protein Through the Cell</h2>
+  <p class="lead">Step through the secretory pathway — the route a protein takes from synthesis to being exported from the cell. This is one of the most commonly tested endomembrane concepts on the AP exam.</p>
+
+  <div class="predict-box">
+    <h4>✏️ Before the lab — your prediction</h4>
+    <textarea id="protein-predict" placeholder="A pancreatic cell needs to secrete digestive enzymes into the small intestine. List the organelles you predict the protein will pass through in order, from synthesis to secretion. What do you think happens to the protein at each stop?"></textarea>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🔬 Secretory Pathway Step-Through</h3>
+    <div class="hint" id="pathway-hint">Click "Begin" to trace the protein's journey from DNA to secretion</div>
+
+    <div class="glyc-track" id="pathwayTrack" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr));"></div>
+
+    <div id="pathway-status" style="background:var(--lav-pale);border:2px solid var(--lavender);border-radius:10px;padding:.9rem 1.2rem;margin:1rem 0;font-size:.88rem;line-height:1.7;font-family:'DM Mono',monospace;min-height:60px;color:var(--lavender);">
+      🎬 Ready to trace the protein — click Begin to start.
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-lav"   id="btn-path-start" onclick="pathStep(0)">▶ Begin — Nucleus</button>
+      <button class="btn btn-coral" id="btn-path-next"  onclick="pathNextStep()" disabled>⏩ Next Step</button>
+      <button class="btn btn-ghost" onclick="pathReset()">↺ Reset</button>
+    </div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — The Secretory Pathway</h4>
+    <textarea placeholder="In your own words, trace the complete path of a secreted protein from the nucleus to the outside of the cell. What does each organelle do to the protein? Why do cells that secrete lots of protein have more RER and Golgi? Connect to the textbook's 'form follows function' principle."></textarea>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(4)">Next: Cytoskeleton &amp; Connections →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 4: 4.5 CYTOSKELETON + 4.6 CONNECTIONS ═══ -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-lav">5</div>
+    <span class="eyebrow-label">Phase 5 · 4.5 Cytoskeleton &amp; 4.6 Cell Connections</span>
+  </div>
+  <h2>🏗️ The Cell's Scaffold &amp; Communication Network</h2>
+  <p class="lead">The cytoskeleton acts as both a skeleton (giving shape) and muscles (enabling movement). Cell junctions connect cells into tissues. Tap each card to explore both systems.</p>
+
+  <!-- Cytoskeleton cards -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.8rem;">🔩 The Three Cytoskeleton Fibres — Tap to Compare</h3>
+  <div class="sel-grid" style="grid-template-columns:repeat(3,1fr);">
+    <div class="sel-card" onclick="showSel('micro')">
+      <div class="sel-icon">〰️</div>
+      <div class="sel-name">Microfilaments</div>
+      <div class="sel-key">7 nm · actin</div>
+    </div>
+    <div class="sel-card" onclick="showSel('inter')">
+      <div class="sel-icon">🔗</div>
+      <div class="sel-name">Intermediate Filaments</div>
+      <div class="sel-key">8–10 nm · keratin etc.</div>
+    </div>
+    <div class="sel-card" onclick="showSel('micro2')">
+      <div class="sel-icon">🧵</div>
+      <div class="sel-name">Microtubules</div>
+      <div class="sel-key">25 nm · tubulin</div>
+    </div>
+  </div>
+
+  <div id="sel-micro"  class="sel-detail">
+    <h4>〰️ Microfilaments (Actin Filaments) — narrowest, 7 nm</h4>
+    <p>Made of two intertwined strands of the globular protein <strong>actin</strong>. Actin is powered by ATP to assemble filamentous form. Functions: cellular movement (via myosin motor proteins), cell division (form contractile ring during cytokinesis), cytoplasmic streaming in plant cells, muscle contraction (actin + myosin). Concentrated just below the plasma membrane, helping define cell shape.</p>
+    <p class="examples">📌 AP tip: microfilaments + myosin = muscle contraction and cell division. Narrowest of the three types.</p>
+  </div>
+  <div id="sel-inter"  class="sel-detail">
+    <h4>🔗 Intermediate Filaments — 8–10 nm</h4>
+    <p>Made of various fibrous proteins depending on cell type — examples include <strong>keratin</strong> (epithelial cells, hair, nails), vimentin (connective tissue), and neurofilaments (neurons). Most stable and permanent of the three types — do NOT rapidly assemble/disassemble. Functions: resist mechanical stress, anchor the nucleus in place, maintain cell shape under tension. Desmosomes (cell junctions) connect to intermediate filaments.</p>
+    <p class="examples">📌 AP tip: intermediate filaments = structural stability and anchoring. No motor activity.</p>
+  </div>
+  <div id="sel-micro2" class="sel-detail">
+    <h4>🧵 Microtubules — widest, 25 nm</h4>
+    <p>Hollow tubes made of α- and β-tubulin protein dimers, with a characteristic <strong>9+2 arrangement</strong> in cilia and flagella (9 pairs of fused microtubule doublets surrounding 2 central microtubules). Functions: maintain cell shape, form the mitotic spindle (separating chromosomes during division), serve as tracks for motor proteins (kinesin, dynein) to move vesicles and organelles, form cilia and flagella. Radiate outward from the centrosome (MTOC).</p>
+    <p class="examples">📌 AP tip: microtubules = cell division (spindle), vesicle transport, cilia/flagella structure. Widest, most dynamic.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 Three Cytoskeleton Fibres — Side by Side</h3>
+  <table class="vocab-table">
+    <tr><th>Type</th><th>Diameter</th><th>Protein</th><th>Key Functions</th></tr>
+    <tr><td>Microfilaments</td><td>~7 nm (narrowest)</td><td>Actin</td><td>Movement, cell division contractile ring, muscle contraction</td></tr>
+    <tr><td>Intermediate Filaments</td><td>8–10 nm</td><td>Keratin, vimentin, etc.</td><td>Mechanical stability, nucleus anchoring, resist tension</td></tr>
+    <tr><td>Microtubules</td><td>~25 nm (widest)</td><td>α- &amp; β-tubulin</td><td>Mitotic spindle, vesicle transport tracks, cilia &amp; flagella</td></tr>
+  </table>
+
+  <div class="divider"></div>
+
+  <!-- 4.6 Cell Connections -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.8rem;">🔌 4.6 Connections Between Cells — Tap to Explore</h3>
+  <p style="font-size:.88rem;color:var(--muted);margin-bottom:1rem;">Cells in multicellular organisms must communicate and hold together. These three junction types are how animal cells do it — plus the plant cell equivalent.</p>
+
+  <div class="evidence-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
+    <div class="ev-card" onclick="showEvidence('tight')">
+      <div class="ev-icon">🔒</div>
+      <div class="ev-title">Tight Junctions</div>
+      <div class="ev-sub">animal cells</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('desmo')">
+      <div class="ev-icon">🧲</div>
+      <div class="ev-title">Desmosomes</div>
+      <div class="ev-sub">animal cells</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('gap')">
+      <div class="ev-icon">📡</div>
+      <div class="ev-title">Gap Junctions</div>
+      <div class="ev-sub">animal cells</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('plasmo')">
+      <div class="ev-icon">🌿</div>
+      <div class="ev-title">Plasmodesmata</div>
+      <div class="ev-sub">plant cells only</div>
+    </div>
+  </div>
+
+  <div id="ev-tight"  class="ev-panel">
+    <h4>🔒 Tight Junctions</h4>
+    <p>Formed when membrane proteins of adjacent animal cells interlock in a zipper-like fashion, completely sealing the space between cells. Function: create a leak-proof barrier — nothing can pass between cells, only through them (transcellularly). Critical in intestinal lining (prevents undigested food from leaking into bloodstream), bladder, and blood-brain barrier. Cells cannot change neighbours in tissues with tight junctions.</p>
+    <div class="example-box">📌 Think of tight junctions as the weatherstripping around a door — nothing leaks through the seal.</div>
+  </div>
+  <div id="ev-desmo"  class="ev-panel">
+    <h4>🧲 Desmosomes (Anchor Junctions)</h4>
+    <p>Rivet-like protein structures that mechanically hold adjacent animal cells together without sealing the space between them. Formed by <em>cadherin</em> proteins in the plasma membrane that link to <em>intermediate filaments</em> (specifically keratin) in the cytoplasm. Found in tissues that must withstand mechanical stress — skin, cardiac muscle, uterine tissue. Allow cells to stay anchored to each other while permitting some flexibility.</p>
+    <div class="example-box">📌 Think of desmosomes as the rivets on a pair of jeans — they hold things together tightly but leave gaps between the rivets.</div>
+  </div>
+  <div id="ev-gap"    class="ev-panel">
+    <h4>📡 Gap Junctions (Communicating Junctions)</h4>
+    <p>Channels made of connexin proteins that span both plasma membranes of adjacent animal cells, creating a direct cytoplasmic connection. Allow ions, small molecules, and signals to pass directly between cells without crossing the plasma membrane. Essential for coordinating cardiac muscle contractions (the electrical signal that makes your heart beat passes cell-to-cell through gap junctions), and for embryonic development.</p>
+    <div class="example-box">📌 Think of gap junctions as phone lines between cells — direct, rapid communication. Your heartbeat depends on them.</div>
+  </div>
+  <div id="ev-plasmo" class="ev-panel">
+    <h4>🌿 Plasmodesmata (Plant Cell Equivalent)</h4>
+    <p>Channels that pass through the cellulose cell walls of adjacent plant cells, lined with plasma membrane and containing a thin strand of ER called the <em>desmotubule</em>. Allow water, small solutes, and signalling molecules to move between plant cells. Function similarly to gap junctions in animals but are unique in structure to plants. Essential for coordinating plant development and responses to environmental signals.</p>
+    <div class="example-box">📌 Plasmodesmata = plant equivalent of gap junctions. Through cell walls, not just membranes.</div>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(3)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(5)">Next: Quiz →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 5: QUIZ ═══ -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-forest">6</div>
+    <span class="eyebrow-label">Phase 6 · Real Test Practice</span>
+  </div>
+  <h2>📝 AP-Style Quiz — Chapter 4, Sections 4.3–4.6</h2>
+  <p class="lead">These questions cover OpenStax AP Biology Chapter 4, Sections 4.3–4.6 in AP exam style. Answer each — instant feedback with full explanations.</p>
+  <div id="quiz-container"></div>
+  <div id="score-panel" class="score-panel" style="display:none;">
+    <h3>Quiz Complete! 🎉</h3>
+    <div class="score-num" id="score-display">0/20</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-gold" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button>
+  </div>
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(4)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(6)">Next: Reflect →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 6: REFLECT ═══ -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">7</div>
+    <span class="eyebrow-label">Phase 7 · Reflect</span>
+  </div>
+  <h2>💭 Reflection &amp; Review</h2>
+  <p class="lead">Solidify your understanding. Answer all four questions in your own words.</p>
+
+  <div class="quiz-card">
+    <div class="quiz-q">1. Compare and contrast mitochondria and chloroplasts — structure, function, and location in the cell. What evidence supports the endosymbiotic theory for each organelle?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">2. Describe the complete secretory pathway a protein takes from synthesis to being secreted from the cell. What specific event happens to the protein at each organelle stop? Why do secretory cells like pancreatic cells have an abundance of RER and Golgi?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">3. Describe all three cytoskeleton fibre types — their diameter, protein composition, and function. Which is involved in cell division? Which provides the most mechanical stability? Which forms the structure of cilia and flagella?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">4. Compare the three types of animal cell junctions (tight junctions, desmosomes, gap junctions) and plasmodesmata. For each, name the proteins involved, the tissue types where they're found, and their specific function.</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.8rem;">✏️ Fill-in-the-Blank Review</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1.2rem;">Type the answer and press Enter or click Check All.</p>
+  <div id="fill-container"></div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-mint" onclick="checkAllFills()">✓ Check All Answers</button>
+    <button class="btn btn-ghost" onclick="resetFills()" style="margin-left:.6rem;">↺ Reset</button>
+  </div>
+
+  <div class="congrats-panel" style="margin-top:2rem;">
+    <h2>🔬 Chapter 4 Complete!</h2>
+    <p>You've mastered all of OpenStax AP Biology Chapter 4 — Cell Theory &amp; Microscopy (4.1), Prokaryotes (4.2), Eukaryotic Organelles (4.3), the Endomembrane System (4.4), the Cytoskeleton (4.5), and Cell Connections (4.6). You now have the full structural vocabulary for everything that comes next — membranes, metabolism, and beyond!</p>
+    <p style="font-size:.85rem;opacity:.75;">AP Bio tip: the secretory pathway (nucleus → RER → Golgi → vesicle → plasma membrane) is a perennial FRQ favourite. Be able to describe each step and the role of each organelle.</p>
+    <div class="summary-chips">
+      <span class="summary-chip">Nucleus &amp; Nucleolus ✓</span>
+      <span class="summary-chip">Mitochondria ✓</span>
+      <span class="summary-chip">Chloroplasts ✓</span>
+      <span class="summary-chip">Rough ER ✓</span>
+      <span class="summary-chip">Smooth ER ✓</span>
+      <span class="summary-chip">Golgi Apparatus ✓</span>
+      <span class="summary-chip">Lysosomes ✓</span>
+      <span class="summary-chip">Microfilaments ✓</span>
+      <span class="summary-chip">Microtubules ✓</span>
+      <span class="summary-chip">Cell Junctions ✓</span>
+    </div>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(5)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(7)">Next: Submit →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 7: SUBMIT ═══ -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">8</div>
+    <span class="eyebrow-label">Your Completed Work</span>
+  </div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Here's a summary of everything you worked on. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> to your teacher.</p>
+
+  <div class="summary-section" style="background:var(--forest);color:white;border-color:var(--forest);">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">STUDENT</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">LESSON</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;">Cell Structure Explorer 🔬 (Ch. 4 Part 2)</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6;" id="summaryDate"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section"><h3>📝 Quiz Score</h3><div class="summary-answer" id="sum-quiz"></div></div>
+  <div class="summary-section"><h3>🤔 Opening Prediction</h3><div class="summary-answer" id="sum-pred"></div></div>
+  <div class="summary-section"><h3>🚀 Protein Pathway Lab Prediction</h3><div class="summary-answer" id="sum-protein-pred"></div></div>
+  <div class="summary-section">
+    <h3>💭 Reflection Questions</h3>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;">Q1 — Mitochondria vs. Chloroplasts</div>
+    <div class="summary-answer" id="sum-r1"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q2 — The Secretory Pathway</div>
+    <div class="summary-answer" id="sum-r2"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q3 — Cytoskeleton Fibre Types</div>
+    <div class="summary-answer" id="sum-r3"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q4 — Cell Junctions</div>
+    <div class="summary-answer" id="sum-r4"></div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.6rem;">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2;">
+      <strong>📋 Copy My Results</strong> — Copies all answers. Paste into Google Classroom.<br>
+      <strong>📧 Email to Teacher</strong> — Opens your email app with answers pre-filled.<br>
+      <strong>🖨️ Print / Save PDF</strong> — Mac: bottom-left → Save as PDF. Windows: Microsoft Print to PDF.
+    </p>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(6)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(0)">↺ Start Over</button>
+  </div>
+</div>
+
+</div><!-- /sheet -->
+
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.<br>
+  Content informed by OpenStax Biology for AP Courses (CC BY-NC-SA 4.0)
+</div>
+<script>
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+const steps    = document.querySelectorAll('.prog-step');
+const sections = document.querySelectorAll('.section');
+
+function goTo(n) {
+  sections.forEach((s, i) => s.classList.toggle('active', i === n));
+  steps.forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    if (i === n) s.classList.add('active');
+    if (i < n)  s.classList.add('done');
+  });
+  if (n === 7) buildSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════════════
+// CONCEPT REVEALS (Section 1)
+// ═══════════════════════════════════════════════
+const revIds = ['nucleus','ribosome2','mito','chloro','perox','vacuole','lyso','centrosome','cellwall2','endosym'];
+function reveal(key) {
+  revIds.forEach(id => {
+    const el = document.getElementById('rev-' + id);
+    if (el) el.classList.remove('show');
+  });
+  const t = document.getElementById('rev-' + key);
+  if (t) t.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// MATCHING GAME (Section 1)
+// ═══════════════════════════════════════════════
+let matchSelected = null;
+let matchScore = 0;
+
+function matchClick(el) {
+  if (el.classList.contains('matched')) return;
+  if (!matchSelected) {
+    el.classList.add('selected');
+    matchSelected = el;
+  } else if (matchSelected === el) {
+    el.classList.remove('selected');
+    matchSelected = null;
+  } else {
+    const pA = matchSelected.dataset.pair, pB = el.dataset.pair;
+    const sA = matchSelected.dataset.side, sB = el.dataset.side;
+    if (pA === pB && sA !== sB) {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('matched');
+      el.classList.add('matched');
+      matchScore++;
+      document.getElementById('match-score').textContent = matchScore + '/5 matched';
+      matchSelected = null;
+    } else {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('wrong');
+      el.classList.add('wrong');
+      const a = matchSelected, b = el;
+      setTimeout(() => { a.classList.remove('wrong'); b.classList.remove('wrong'); }, 650);
+      matchSelected = null;
+    }
+  }
+}
+function resetMatch() {
+  matchSelected = null; matchScore = 0;
+  document.querySelectorAll('.match-item').forEach(el => el.classList.remove('selected','matched','wrong'));
+  document.getElementById('match-score').textContent = '';
+}
+
+// ═══════════════════════════════════════════════
+// EVIDENCE CARDS (Sections 2 & 4)
+// ═══════════════════════════════════════════════
+function showEvidence(type) {
+  document.querySelectorAll('.ev-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.ev-panel').forEach(p => p.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const panel = document.getElementById('ev-' + type);
+  if (panel) panel.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// CYTOSKELETON STEP CARDS (Section 4)
+// ═══════════════════════════════════════════════
+function showSel(type) {
+  document.querySelectorAll('.sel-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.sel-detail').forEach(d => d.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const det = document.getElementById('sel-' + type);
+  if (det) det.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// PROTEIN SECRETORY PATHWAY LAB (Section 3)
+// ═══════════════════════════════════════════════
+const pathwaySteps = [
+  {
+    label: '🧬 Nucleus',
+    sub: 'genetic blueprint',
+    status: '🧬 <strong>Step 1 — Nucleus:</strong> The gene encoding the secreted protein is transcribed into mRNA. The mRNA exits through nuclear pores into the cytoplasm and binds to a ribosome on the rough ER.',
+    color: 'lav'
+  },
+  {
+    label: '🏭 Rough ER',
+    sub: 'synthesis & folding',
+    status: '🏭 <strong>Step 2 — Rough ER:</strong> Ribosomes on the RER surface synthesise the protein directly into the ER lumen. Inside the RER, the protein folds into its correct 3D shape and may receive initial carbohydrate modifications.',
+    color: 'coral'
+  },
+  {
+    label: '🚢 Vesicle',
+    sub: 'RER → Golgi',
+    status: '🚢 <strong>Step 3 — Transport Vesicle:</strong> A membrane vesicle buds off from the RER, enclosing the protein. It travels through the cytoplasm and fuses with the <em>cis</em> (receiving) face of the Golgi apparatus.',
+    color: 'gold'
+  },
+  {
+    label: '📮 Golgi',
+    sub: 'sort, tag & package',
+    status: '📮 <strong>Step 4 — Golgi Apparatus:</strong> The protein moves through the Golgi cisternae from cis to trans face. The Golgi modifies it further (adds or removes sugars, adds phosphate tags), then sorts and packages it into a secretory vesicle at the trans face.',
+    color: 'mint'
+  },
+  {
+    label: '🚢 Vesicle',
+    sub: 'Golgi → membrane',
+    status: '🚢 <strong>Step 5 — Secretory Vesicle:</strong> The secretory vesicle buds off from the trans face of the Golgi. It travels to the plasma membrane guided by the cytoskeleton (microtubule tracks + motor proteins).',
+    color: 'gold'
+  },
+  {
+    label: '🏠 Plasma Membrane',
+    sub: 'exocytosis',
+    status: '🏠 <strong>Step 6 — Exocytosis:</strong> The vesicle fuses with the plasma membrane. The protein is released to the outside of the cell. The vesicle membrane becomes part of the plasma membrane. 🎉 Protein secretion complete!',
+    color: 'forest'
+  }
+];
+
+const colorMap = {
+  lav:   { bg: 'var(--lav-pale)',    border: 'var(--lavender)',   text: 'var(--lavender)' },
+  coral: { bg: 'var(--coral-pale)',  border: 'var(--coral)',      text: 'var(--coral)' },
+  gold:  { bg: 'var(--gold-pale)',   border: 'var(--gold)',       text: '#8a6a1a' },
+  mint:  { bg: 'var(--mint-pale)',   border: 'var(--mint)',       text: 'var(--mint)' },
+  forest:{ bg: '#d4eadd',           border: 'var(--forest-mid)', text: 'var(--forest-mid)' }
+};
+
+let pathPos = -1;
+
+function buildPathwayTrack() {
+  const track = document.getElementById('pathwayTrack');
+  track.innerHTML = pathwaySteps.map((s, i) => {
+    const done = i < pathPos;
+    const active = i === pathPos;
+    const c = colorMap[s.color];
+    const style = (done || active)
+      ? `background:${c.bg};border-color:${c.border};`
+      : 'background:white;border-color:var(--border);';
+    return `
+      <div class="sav-box" style="${style}">
+        <div class="sav-title" style="color:${(done||active) ? c.text : 'var(--muted)'};">${s.label}</div>
+        <div class="sav-unit">${s.sub}</div>
+        ${done ? '<div style="font-size:1.2rem;margin-top:.3rem;">✅</div>' : ''}
+        ${active ? '<div style="font-size:1.2rem;margin-top:.3rem;">▶</div>' : ''}
+      </div>`;
+  }).join('');
+}
+
+function pathStep(n) {
+  pathPos = n;
+  buildPathwayTrack();
+  const status = document.getElementById('pathway-status');
+  status.innerHTML = pathwaySteps[n].status;
+  const c = colorMap[pathwaySteps[n].color];
+  status.style.background    = c.bg;
+  status.style.borderColor   = c.border;
+  status.style.color         = c.text;
+  document.getElementById('btn-path-start').disabled = true;
+  document.getElementById('btn-path-next').disabled  = (n >= pathwaySteps.length - 1);
+  document.getElementById('pathway-hint').textContent = `Step ${n+1} of ${pathwaySteps.length} — click Next Step to continue`;
+}
+
+function pathNextStep() {
+  if (pathPos < pathwaySteps.length - 1) pathStep(pathPos + 1);
+}
+
+function pathReset() {
+  pathPos = -1;
+  buildPathwayTrack();
+  const status = document.getElementById('pathway-status');
+  status.innerHTML = '🎬 Ready to trace the protein — click Begin to start.';
+  status.style.background  = 'var(--lav-pale)';
+  status.style.borderColor = 'var(--lavender)';
+  status.style.color       = 'var(--lavender)';
+  document.getElementById('btn-path-start').disabled = false;
+  document.getElementById('btn-path-next').disabled  = true;
+  document.getElementById('pathway-hint').textContent = 'Click "Begin" to trace the protein\'s journey from DNA to secretion';
+}
+
+buildPathwayTrack();
+
+// ═══════════════════════════════════════════════
+// QUIZ DATA — 4.3 to 4.6
+// ═══════════════════════════════════════════════
+const quizData = [
+  {
+    q: "Which structure in the nucleus is responsible for assembling ribosomal subunits from rRNA and proteins?",
+    opts: ["Nuclear pore","Nuclear envelope","Nucleolus","Chromatin"],
+    ans: 2,
+    fb: "The nucleolus is a dense region inside the nucleus where ribosomal RNA (rRNA) is transcribed and ribosomal subunits are assembled. Ribosomal subunits are then exported through nuclear pores to the cytoplasm."
+  },
+  {
+    q: "A student observes a cell with an unusually large number of ribosomes associated with the endoplasmic reticulum. This cell is MOST LIKELY:",
+    opts: ["A red blood cell carrying oxygen","A muscle cell storing calcium","A pancreatic cell secreting large amounts of digestive enzymes","A fat cell storing triglycerides"],
+    ans: 2,
+    fb: "Cells that secrete large quantities of protein (like pancreatic cells making digestive enzymes, or plasma B cells making antibodies) have abundant rough ER. The ribosomes on the RER synthesise proteins directly into the ER lumen for processing and secretion."
+  },
+  {
+    q: "Which of the following is evidence supporting the endosymbiotic theory for the origin of mitochondria?",
+    opts: ["Mitochondria are found only in plant cells","Mitochondria lack their own DNA and depend entirely on the nucleus","Mitochondria have their own circular DNA and 70S ribosomes similar to bacteria","Mitochondria are surrounded by a single membrane"],
+    ans: 2,
+    fb: "Mitochondria have their own circular DNA, 70S ribosomes (like bacteria, not eukaryotic 80S), a double membrane, and reproduce by binary fission independently of the cell cycle — all strong evidence that they evolved from ancient engulfed aerobic bacteria."
+  },
+  {
+    q: "How do mitochondria and chloroplasts differ in their primary function?",
+    opts: ["Both perform photosynthesis but in different cell types","Mitochondria produce ATP via cellular respiration; chloroplasts convert light energy to chemical energy (glucose) via photosynthesis","Mitochondria store genetic information; chloroplasts synthesise proteins","They are functionally identical"],
+    ans: 1,
+    fb: "Mitochondria are the 'powerhouses' — they generate ATP by breaking down glucose (cellular respiration). Chloroplasts are the 'solar panels' — they convert light energy into chemical energy stored in glucose (photosynthesis). Both have their own DNA and 70S ribosomes."
+  },
+  {
+    q: "What is the function of the inner mitochondrial membrane's cristae?",
+    opts: ["Stores genetic information (mtDNA)","Increases surface area for the proteins involved in ATP synthesis","Directly synthesises glucose","Controls entry of materials into the mitochondrial matrix"],
+    ans: 1,
+    fb: "Cristae are folds of the inner mitochondrial membrane that greatly increase the surface area available for the electron transport chain proteins and ATP synthase. More cristae = more space for ATP synthesis = more energy production."
+  },
+  {
+    q: "Which organelle detoxifies harmful compounds such as alcohol and drugs in liver cells, and also stores calcium in muscle cells?",
+    opts: ["Rough endoplasmic reticulum","Lysosome","Smooth endoplasmic reticulum","Peroxisome"],
+    ans: 2,
+    fb: "The smooth ER (SER) has no ribosomes and performs multiple roles: synthesising lipids and steroid hormones, detoxifying drugs/alcohol in liver cells, and storing Ca²⁺ ions (in the specialised sarcoplasmic reticulum of muscle cells that triggers contraction)."
+  },
+  {
+    q: "What is the correct order of the secretory pathway for a protein that will be exported from the cell?",
+    opts: ["Golgi → RER → vesicle → plasma membrane","RER → lysosome → Golgi → plasma membrane","Nucleus (mRNA) → RER → vesicle → Golgi → vesicle → plasma membrane","Nucleus → SER → Golgi → nucleus"],
+    ans: 2,
+    fb: "The secretory pathway: Gene transcribed in nucleus → mRNA translated by ribosomes on RER → protein enters RER lumen for folding/modification → transport vesicle buds to Golgi cis face → Golgi modifies, sorts, and packages → secretory vesicle from trans face → exocytosis at plasma membrane."
+  },
+  {
+    q: "The Golgi apparatus is sometimes called the 'post office' of the cell. This analogy refers to its role in:",
+    opts: ["Generating ATP for cellular work","Synthesising ribosomes for protein production","Receiving, modifying, sorting, and shipping proteins and lipids to their correct destinations","Storing calcium ions for muscle contraction"],
+    ans: 2,
+    fb: "Like a post office, the Golgi receives 'packages' (proteins/lipids from the RER), processes and labels them (adds tags like phosphate groups), sorts them by destination, and dispatches them in vesicles to the plasma membrane, lysosomes, or other organelles."
+  },
+  {
+    q: "Lysosomes maintain their internal pH at approximately 4.5 (acidic). What is the significance of this low pH?",
+    opts: ["It keeps the lysosomal membrane intact","The hydrolytic enzymes inside are most active at low pH — protecting the rest of the cell if enzymes leak out","It prevents ribosomes from entering the lysosome","It allows lysosomes to synthesise new proteins"],
+    ans: 1,
+    fb: "Lysosomal enzymes are optimised to work at ~pH 4.5. If a lysosome ruptures and releases enzymes into the cytoplasm (pH ~7.2), the enzymes are much less active and won't significantly damage the cell. This is a safety mechanism called the 'suicide bag' safeguard."
+  },
+  {
+    q: "Tay-Sachs disease is caused by the absence of a specific lysosomal enzyme, causing lipids to accumulate in neurons. This is an example of what type of problem?",
+    opts: ["A defect in mitochondrial respiration","A lysosomal storage disease in which a substrate cannot be digested and accumulates to toxic levels","A cytoskeletal defect preventing cell division","A problem with the Golgi apparatus failing to package proteins"],
+    ans: 1,
+    fb: "Tay-Sachs is a lysosomal storage disease — without the enzyme hexosaminidase A, gangliosides (lipids) accumulate in neuronal lysosomes, eventually destroying the neurons. It's a direct consequence of lysosomal enzyme deficiency."
+  },
+  {
+    q: "Which organelle is unique to plant cells and performs the digestive functions that lysosomes perform in animal cells?",
+    opts: ["Chloroplast","Peroxisome","Central vacuole","Rough ER"],
+    ans: 2,
+    fb: "Plant cells have few or no lysosomes; instead, their large central vacuole contains digestive enzymes and performs autophagy and digestion of cellular debris. The central vacuole also stores pigments, salts, toxins, and maintains turgor pressure."
+  },
+  {
+    q: "What is the role of peroxisomes, and what enzyme do they contain to prevent self-damage?",
+    opts: ["They synthesise lipids and contain DNA polymerase","They oxidise fatty acids and detoxify H₂O₂ using the enzyme catalase","They package proteins for secretion and contain proteases","They store starch and contain amylase"],
+    ans: 1,
+    fb: "Peroxisomes oxidise fatty acids and amino acids, and detoxify compounds like H₂O₂ (hydrogen peroxide) — a toxic by-product of their own reactions. The enzyme catalase converts H₂O₂ into harmless H₂O + O₂, protecting the cell."
+  },
+  {
+    q: "Which cytoskeletal fibre is composed of actin and is primarily responsible for muscle contraction and cell division?",
+    opts: ["Microtubules","Intermediate filaments","Microfilaments (actin filaments)","All three equally"],
+    ans: 2,
+    fb: "Microfilaments are made of actin (the thinnest filaments, ~7 nm). Together with myosin motor proteins, they drive muscle contraction. They also form the contractile ring that pinches a cell in two during cytokinesis (the division of the cytoplasm)."
+  },
+  {
+    q: "Microtubules in cilia and flagella are arranged in which characteristic pattern?",
+    opts: ["6+1 arrangement (6 outer doublets surrounding 1 central pair)","9+2 arrangement (9 outer doublets surrounding 2 central microtubules)","A random lattice with no fixed arrangement","Two parallel bundles running side by side"],
+    ans: 1,
+    fb: "Cilia and eukaryotic flagella contain the characteristic 9+2 arrangement — 9 pairs of fused microtubule doublets arranged in a ring, surrounding a central pair of single microtubules. Motor proteins (dynein) cause the doublets to slide past each other, producing the beating motion."
+  },
+  {
+    q: "Which type of cell junction prevents material from passing BETWEEN adjacent cells, forcing everything to pass THROUGH cells?",
+    opts: ["Gap junctions","Desmosomes","Tight junctions","Plasmodesmata"],
+    ans: 2,
+    fb: "Tight junctions form a waterproof seal between adjacent cells by fusing their plasma membranes with interlocking proteins. This forces all materials to pass through the cells themselves (transcellular) rather than between them (paracellular). Critical in the intestinal lining and blood-brain barrier."
+  },
+  {
+    q: "A patient has a genetic defect in connexin proteins. Which cell junction will be affected, and what symptom might result?",
+    opts: ["Tight junctions — leaky intestinal barrier","Desmosomes — skin blistering under mechanical stress","Gap junctions — disrupted electrical signalling between cardiac muscle cells (arrhythmia)","Plasmodesmata — impaired plant growth"],
+    ans: 2,
+    fb: "Connexins are the proteins that form gap junction channels. Gap junctions allow electrical signals (ions) to pass directly between cardiac muscle cells, coordinating heart contractions. A connexin defect would impair this electrical coupling, potentially causing arrhythmia (irregular heartbeat)."
+  },
+  {
+    q: "Desmosomes are found in tissues that must withstand mechanical stress. Which proteins anchor desmosomes to the cytoskeleton?",
+    opts: ["Connexins, linked to microtubules","Cadherins, linked to intermediate filaments (keratin)","Claudins, linked to microfilaments","Tubulins, linked to the nuclear envelope"],
+    ans: 1,
+    fb: "Desmosomes are formed by cadherin proteins in the plasma membrane that link — through adapter proteins — to intermediate filaments (specifically keratin) in the cytoplasm. This creates a strong mechanical coupling between adjacent cells, ideal for skin, cardiac muscle, and other tissues under tension."
+  },
+  {
+    q: "Plasmodesmata in plant cells are functionally analogous to which animal cell junction?",
+    opts: ["Tight junctions","Desmosomes","Gap junctions","All three animal junctions together"],
+    ans: 2,
+    fb: "Plasmodesmata are channels through plant cell walls (lined with plasma membrane, containing an ER strand called the desmotubule) that allow direct cytoplasmic communication between adjacent plant cells — functionally analogous to animal gap junctions, which also allow direct cell-to-cell communication."
+  },
+  {
+    q: "Which of the following structures is found in ANIMAL cells but NOT in plant cells?",
+    opts: ["Endoplasmic reticulum","Mitochondria","Lysosome","Golgi apparatus"],
+    ans: 2,
+    fb: "Lysosomes are found in animal cells but are largely absent from plant cells. Plant cells use their central vacuole to perform the digestive and recycling functions that lysosomes carry out in animal cells. ER, mitochondria, and Golgi are present in both cell types."
+  },
+  {
+    q: "The centrosome is the cell's microtubule-organising centre (MTOC). What important event depends on centrosome replication?",
+    opts: ["Protein secretion via the Golgi","Formation of the mitotic spindle during cell division","Synthesis of intermediate filaments","ATP production in the inner mitochondrial membrane"],
+    ans: 1,
+    fb: "The centrosome replicates before cell division. Each daughter centrosome then migrates to opposite poles of the cell and nucleates the formation of spindle microtubules that capture and segregate chromosomes during mitosis. Plant cells lack centrioles but still form a functional spindle using other MTOCs."
+  },
+];
+
+let quizScore = 0;
+let quizAnswered = 0;
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  quizScore = 0; quizAnswered = 0;
+  document.getElementById('score-panel').style.display = 'none';
+
+  quizData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `
+      <div class="quiz-q">${idx+1}. ${item.q}</div>
+      <div class="quiz-options">
+        ${item.opts.map((opt, i) => `
+          <button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">
+            ${String.fromCharCode(65+i)}. ${opt}
+          </button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="qfb-${idx}"></div>`;
+    container.appendChild(card);
+  });
+}
+
+function checkAnswer(btn, qIdx, optIdx) {
+  const card    = btn.closest('.quiz-card');
+  const buttons = card.querySelectorAll('.quiz-opt');
+  const fb      = document.getElementById('qfb-' + qIdx);
+  const correct = quizData[qIdx].ans;
+  buttons.forEach(b => b.disabled = true);
+  if (optIdx === correct) {
+    btn.classList.add('correct');
+    fb.textContent = '✅ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show correct-fb';
+    quizScore++;
+  } else {
+    btn.classList.add('wrong');
+    buttons[correct].classList.add('correct');
+    fb.textContent = '❌ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show wrong-fb';
+  }
+  quizAnswered++;
+  if (quizAnswered === quizData.length) showScore();
+}
+
+function showScore() {
+  const panel = document.getElementById('score-panel');
+  panel.style.display = 'block';
+  document.getElementById('score-display').textContent = quizScore + '/' + quizData.length;
+  const pct = quizScore / quizData.length;
+  let msg;
+  if (pct >= .9) msg = '🌟 Outstanding! You have mastered eukaryotic cell structure. AP exam ready!';
+  else if (pct >= .75) msg = '👍 Great work! Review the questions you missed and you\'ll be in great shape.';
+  else if (pct >= .6) msg = '📚 Good start — revisit Phases 2–4, then retake.';
+  else msg = '💪 Keep going! Go back through the Organelles, Endomembrane, and Connections phases, then retake.';
+  document.getElementById('score-msg').textContent = msg;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function retakeQuiz() { buildQuiz(); }
+
+// ═══════════════════════════════════════════════
+// FILL-IN-THE-BLANK
+// ═══════════════════════════════════════════════
+const fills = [
+  { q: "The region inside the nucleus where ribosomal subunits are assembled is the ___.", ans: "nucleolus" },
+  { q: "Folds of the inner mitochondrial membrane that increase surface area for ATP synthesis are called ___.", ans: "cristae" },
+  { q: "Organelles found only in plant cells that perform photosynthesis are called ___.", ans: "chloroplasts" },
+  { q: "The ER studded with ribosomes that synthesises and modifies proteins is the ___ ER.", ans: "rough" },
+  { q: "The Golgi receives vesicles from the RER at its ___ face, and ships vesicles from its trans face.", ans: "cis" },
+  { q: "The cell's digestive organelles, found in animal cells, are called ___.", ans: "lysosomes" },
+  { q: "The thinnest cytoskeletal fibres, made of actin, are called ___.", ans: "microfilaments" },
+  { q: "The widest cytoskeletal fibres, made of tubulin dimers, are called ___.", ans: "microtubules" },
+  { q: "Animal cell junctions that allow direct cytoplasmic communication via connexin channels are called ___ junctions.", ans: "gap" },
+  { q: "The plant cell equivalent of gap junctions, passing through cell walls, are called ___.", ans: "plasmodesmata" },
+];
+
+function buildFills() {
+  const container = document.getElementById('fill-container');
+  container.innerHTML = '';
+  fills.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-card';
+    div.innerHTML = `<div class="fill-q">${item.q.replace('___',
+      `<input class="blank-input" id="fill-${idx}" type="text" placeholder="?"
+       onkeydown="if(event.key==='Enter')checkFill(${idx})">`)}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function checkFill(idx) {
+  const input = document.getElementById('fill-' + idx);
+  const val   = input.value.trim().toLowerCase();
+  const correct = fills[idx].ans.toLowerCase();
+  if (val === correct || val.includes(correct) || correct.includes(val)) {
+    input.classList.remove('err'); input.classList.add('ok');
+    input.value = fills[idx].ans;
+  } else {
+    input.classList.remove('ok'); input.classList.add('err');
+  }
+}
+function checkAllFills() { fills.forEach((_, idx) => checkFill(idx)); }
+function resetFills() {
+  fills.forEach((_, idx) => {
+    const input = document.getElementById('fill-' + idx);
+    if (input) { input.value = ''; input.classList.remove('ok','err'); }
+  });
+}
+
+// ═══════════════════════════════════════════════
+// SUMMARY / SUBMIT
+// ═══════════════════════════════════════════════
+function fillSummary(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = text && text.trim();
+  el.textContent = val || 'Not answered';
+  el.classList.toggle('empty', !val);
+}
+
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent =
+    new Date().toLocaleDateString('en-GB', {
+      weekday:'long', year:'numeric', month:'long', day:'numeric'
+    });
+  const scoreEl = document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl ? scoreEl.textContent + ' correct' : 'Quiz not yet completed');
+
+  const predTA    = document.querySelector('#sec-0 textarea');
+  fillSummary('sum-pred', predTA ? predTA.value : '');
+
+  const proteinTA = document.getElementById('protein-predict');
+  fillSummary('sum-protein-pred', proteinTA ? proteinTA.value : '');
+
+  const refCards  = document.querySelectorAll('#sec-6 .quiz-card textarea');
+  ['sum-r1','sum-r2','sum-r3','sum-r4'].forEach((id, i) => {
+    fillSummary(id, refCards[i] ? refCards[i].value : '');
+  });
+}
+
+function buildPlainText() {
+  const name    = document.getElementById('studentName').value.trim() || 'Student';
+  const date    = new Date().toLocaleDateString('en-GB', {
+    weekday:'long', year:'numeric', month:'long', day:'numeric'
+  });
+  const scoreEl  = document.getElementById('score-display');
+  const score    = scoreEl ? scoreEl.textContent : 'not completed';
+  const predTA   = document.querySelector('#sec-0 textarea');
+  const proteinTA= document.getElementById('protein-predict');
+  const refCards = document.querySelectorAll('#sec-6 .quiz-card textarea');
+  const refs = ['','','',''];
+  refCards.forEach((ta, i) => { refs[i] = ta.value.trim() || 'Not answered'; });
+
+  return [
+    'CELL STRUCTURE EXPLORER 🔬 (CH. 4 PART 2) — STUDENT SUBMISSION',
+    '======================================================',
+    'Student: ' + name,
+    'Date: ' + date,
+    'Lesson: AP Biology · OpenStax Chapter 4 (4.3–4.6) · Cell Structure Explorer Part 2',
+    '',
+    '── QUIZ SCORE ──', score,
+    '',
+    '── OPENING PREDICTION ──',
+    predTA ? (predTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── PROTEIN PATHWAY LAB PREDICTION ──',
+    proteinTA ? (proteinTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── REFLECTIONS ──',
+    'Q1 — Mitochondria vs. Chloroplasts:', refs[0],
+    'Q2 — The Secretory Pathway:', refs[1],
+    'Q3 — Cytoskeleton Fibres:', refs[2],
+    'Q4 — Cell Junctions:', refs[3],
+    '',
+    '======================================================',
+    '© 2026 Farvour Explorations · farvourexplorations.com',
+    'Submitted via Cell Structure Explorer Part 2 · Interactive Digital Lesson · AP Biology'
+  ].join('\n');
+}
+
+function copyResults() {
+  buildSummary();
+  navigator.clipboard.writeText(buildPlainText()).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Now paste into Google Classroom or your assignment.';
+    setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => {
+    document.getElementById('copyConfirm').textContent =
+      '⚠️ Could not copy automatically — try selecting the text manually.';
+  });
+}
+
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  window.location.href = 'mailto:?subject=' +
+    encodeURIComponent('Cell Structure Explorer Part 2 — ' + name) +
+    '&body=' + encodeURIComponent(buildPlainText());
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+buildQuiz();
+buildFills();
+</script>
+</body>
+</html>
