@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marta's Science Project Builder — Explory & ISEF</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--forest:#1a3d2b;--forest-mid:#2d6a4f;--coral:#e8603c;--coral-pale:#fdf0ec;--mint:#3aaf85;--mint-pale:#e8f8f2;--gold:#c9962a;--gold-pale:#fef9e7;--lavender:#7c6fcd;--lav-pale:#f0eefb;--navy:#0d2f5c;--navy-mid:#1a4a9c;--paper:#fffef9;--ink:#1a2332;--muted:#7a8899;--border:#e0e4ea}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:linear-gradient(160deg,#0a1a2e 0%,#0d2f5c 50%,#1a4a9c 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--ink);overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(1.5px 1.5px at 5% 10%,rgba(255,215,0,.5) 0%,transparent 100%),radial-gradient(1px 1px at 18% 30%,rgba(255,255,255,.3) 0%,transparent 100%),radial-gradient(2px 2px at 35% 5%,rgba(255,215,0,.4) 0%,transparent 100%),radial-gradient(1px 1px at 55% 20%,rgba(255,255,255,.25) 0%,transparent 100%),radial-gradient(1.5px 1.5px at 72% 8%,rgba(255,215,0,.45) 0%,transparent 100%),radial-gradient(1px 1px at 88% 25%,rgba(255,255,255,.3) 0%,transparent 100%),radial-gradient(2px 2px at 92% 60%,rgba(255,215,0,.35) 0%,transparent 100%),radial-gradient(1px 1px at 15% 70%,rgba(255,255,255,.2) 0%,transparent 100%),radial-gradient(1.5px 1.5px at 48% 80%,rgba(255,215,0,.4) 0%,transparent 100%),radial-gradient(1px 1px at 78% 75%,rgba(255,255,255,.25) 0%,transparent 100%);pointer-events:none;z-index:0}
+.hero{position:relative;z-index:1;text-align:center;padding:3rem 2rem 2rem;color:white}
+.hero-flag{display:flex;justify-content:center;gap:.6rem;margin-bottom:1rem;flex-wrap:wrap}
+.flag-badge{display:inline-flex;align-items:center;gap:.4rem;font-family:'Fredoka One',cursive;font-size:.8rem;padding:.3rem 1rem;border-radius:20px}
+.flag-poland{background:#dc143c;color:white}
+.flag-isef{background:var(--gold);color:var(--navy)}
+.flag-science{background:var(--mint);color:white}
+.hero h1{font-family:'Fredoka One',cursive;font-size:clamp(2rem,6vw,3.4rem);line-height:1.1;margin-bottom:.7rem;text-shadow:0 2px 20px rgba(0,0,0,.4)}
+.hero h1 .accent{color:#f0c040}
+.hero p.intro{font-size:1rem;line-height:1.7;opacity:.9;max-width:560px;margin:0 auto 1.8rem}
+.name-bar{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);border-radius:12px;padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;max-width:380px;margin:0 auto 1rem}
+.name-bar label{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;font-family:'DM Mono',monospace}
+.name-bar input{flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.4rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:white;outline:none}
+.name-bar input::placeholder{color:rgba(255,255,255,.4);font-weight:400}
+.progress-wrap{display:flex;justify-content:center;gap:.4rem;flex-wrap:wrap;margin-bottom:.5rem}
+.prog-step{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);border-radius:20px;padding:.32rem .85rem;font-size:.72rem;font-weight:700;color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace}
+.prog-step:hover,.prog-step.done{background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.35)}
+.prog-step.active{background:#f0c040;color:var(--navy);border-color:#f0c040;box-shadow:0 2px 12px rgba(240,192,64,.45)}
+.sheet{position:relative;z-index:1;background:var(--paper);border-radius:24px 24px 0 0;margin-top:1.5rem;padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.3)}
+.section{padding:3rem 2rem 0;max-width:820px;margin:0 auto;display:none}
+.section.active{display:block}
+.section-eyebrow{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem}
+.eyebrow-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1rem;color:white;flex-shrink:0}
+.num-coral{background:var(--coral)}.num-mint{background:var(--mint)}.num-gold{background:var(--gold);color:var(--navy)}.num-lav{background:var(--lavender)}.num-navy{background:var(--navy-mid)}
+.eyebrow-label{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace}
+.section h2{font-family:'Fredoka One',cursive;font-size:clamp(1.5rem,3.5vw,2.1rem);color:var(--forest);margin-bottom:.6rem;line-height:1.2}
+.section .lead{font-size:1rem;line-height:1.75;color:#3a4a5a;margin-bottom:1.8rem}
+.section .lead strong{color:var(--coral)}
+.wonder-box{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);color:white;border-radius:16px;padding:1.6rem 2rem;margin-bottom:1.6rem;position:relative;overflow:hidden}
+.wonder-box p{font-size:.96rem;line-height:1.7;opacity:.95;max-width:90%}
+.wonder-box strong{color:#f0c040;font-style:normal}
+.wonder-box.gold-box{background:linear-gradient(135deg,#7a5a10 0%,#a8780a 100%)}
+.wonder-box.mint-box{background:linear-gradient(135deg,#1b7a58 0%,#2d9970 100%)}
+.wonder-box.coral-box{background:linear-gradient(135deg,#8a2010 0%,#c04020 100%)}
+.wonder-box.lav-box{background:linear-gradient(135deg,#3a2a7a 0%,#5a4aad 100%)}
+.predict-box{background:var(--gold-pale);border:2px dashed var(--gold);border-radius:14px;padding:1.3rem 1.5rem;margin-bottom:1.4rem}
+.predict-box h4{font-family:'Fredoka One',cursive;font-size:1rem;color:#7a5a10;margin-bottom:.7rem}
+.predict-box textarea,.reflect-box textarea{width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:72px;background:white;color:var(--ink);outline:none;transition:border-color .2s}
+.predict-box textarea:focus{border-color:var(--gold)}
+.reflect-box{background:var(--mint-pale);border:2px dashed var(--mint);border-radius:14px;padding:1.3rem 1.5rem;margin-top:1.4rem}
+.reflect-box h4{font-family:'Fredoka One',cursive;font-size:1rem;color:#1b7a58;margin-bottom:.7rem}
+.chip-row{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.4rem}
+.chip{padding:.4rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;border:2px solid transparent}
+.chip.coral{background:var(--coral-pale);color:var(--coral);border-color:#f8c5b8}
+.chip.mint{background:var(--mint-pale);color:var(--mint);border-color:#b8ebd8}
+.chip.gold{background:var(--gold-pale);color:#7a5a10;border-color:#f8e0a0}
+.chip.lav{background:var(--lav-pale);color:var(--lavender);border-color:#d0caef}
+.chip.navy{background:#dde8f8;color:var(--navy-mid);border-color:#b0c8f0}
+.chip:hover{transform:scale(1.05)}
+.concept-reveal{background:var(--paper);border-left:4px solid var(--coral);border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;margin-top:.5rem;display:none;animation:fadeIn .3s ease}
+.concept-reveal.show{display:block}
+.concept-reveal.mint-border{border-color:var(--mint)}.concept-reveal.gold-border{border-color:var(--gold)}.concept-reveal.lav-border{border-color:var(--lavender)}.concept-reveal.navy-border{border-color:var(--navy-mid)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.8rem;margin:1rem 0}
+.topic-card{background:white;border:2px solid var(--border);border-radius:14px;padding:1.1rem;text-align:center;cursor:pointer;transition:all .2s}
+.topic-card:hover,.topic-card.active{border-color:var(--navy-mid);transform:translateY(-2px);box-shadow:0 4px 14px rgba(26,74,156,.18)}
+.topic-card.active{background:#dde8f8}
+.topic-card .ic-icon{font-size:2.2rem;margin-bottom:.4rem}
+.topic-card .ic-title{font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--navy);margin-bottom:.2rem}
+.topic-card .ic-sub{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.info-panel{background:#dde8f8;border-left:4px solid var(--navy-mid);border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;display:none;animation:fadeIn .3s ease;margin-bottom:1rem}
+.info-panel.show{display:block}
+.info-panel h4{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--navy);margin-bottom:.5rem}
+.info-panel p{font-size:.88rem;line-height:1.7;color:#1a2a4a}
+.info-panel .eg{background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;font-size:.82rem;font-family:'DM Mono',monospace;border:1.5px solid rgba(26,74,156,.2)}
+.info-panel .idea-list{list-style:none;margin:.6rem 0 0;display:flex;flex-direction:column;gap:.4rem}
+.info-panel .idea-list li{background:white;border-radius:8px;padding:.5rem .9rem;font-size:.84rem;border-left:3px solid var(--gold)}
+.divider{height:1px;background:var(--border);margin:2rem 0}
+.nav-row{display:flex;justify-content:space-between;align-items:center;padding:2.5rem 2rem 0;max-width:820px;margin:0 auto}
+.btn-next{background:var(--navy);color:white;border:none;border-radius:50px;padding:.9rem 2rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;display:flex;align-items:center;gap:.6rem;transition:all .2s;box-shadow:0 4px 16px rgba(13,47,92,.4)}
+.btn-next:hover{background:var(--navy-mid);transform:translateY(-2px)}
+.btn-prev{background:transparent;color:var(--muted);border:2px solid var(--border);border-radius:50px;padding:.9rem 1.6rem;font-family:'Fredoka One',cursive;font-size:.95rem;cursor:pointer;transition:all .2s}
+.btn-prev:hover{border-color:var(--muted);color:var(--ink)}
+.btn-prev:disabled,.btn-next:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.btn{border:none;border-radius:10px;padding:.65rem 1.2rem;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;transition:all .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15)}
+.btn-mint{background:var(--mint);color:white}.btn-ghost{background:#f0f2f5;color:var(--muted)}.btn-navy{background:var(--navy);color:white}.btn-gold{background:var(--gold);color:var(--navy)}
+.action-row{display:flex;gap:.6rem;flex-wrap:wrap;margin:.8rem 0}
+/* ── TOPIC SELECTOR ── */
+.topic-area{background:white;border:2px solid var(--border);border-radius:16px;padding:1.4rem;margin:1rem 0;cursor:pointer;transition:all .2s}
+.topic-area:hover{border-color:var(--navy-mid);transform:translateY(-2px);box-shadow:0 4px 16px rgba(26,74,156,.15)}
+.topic-area.selected{border-color:var(--gold);background:var(--gold-pale)}
+.topic-area-header{display:flex;align-items:center;gap:.8rem;margin-bottom:.6rem}
+.topic-area-icon{font-size:2rem}
+.topic-area-title{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--navy)}
+.topic-area-body{font-size:.85rem;line-height:1.65;color:#3a4a5a}
+.topic-area-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
+.topic-tag{background:var(--navy-pale,#dde8f8);color:var(--navy-mid);font-family:'DM Mono',monospace;font-size:.65rem;font-weight:700;padding:.2rem .6rem;border-radius:10px}
+/* ── PROJECT TYPE ── */
+.proj-type{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.8rem;margin:1rem 0}
+.proj-card{background:white;border:2px solid var(--border);border-radius:14px;padding:1.2rem;cursor:pointer;transition:all .2s;text-align:left}
+.proj-card:hover,.proj-card.selected{border-color:var(--navy-mid);background:#dde8f8;transform:translateY(-2px);box-shadow:0 4px 14px rgba(26,74,156,.18)}
+.proj-card h5{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--navy);margin-bottom:.4rem;display:flex;align-items:center;gap:.4rem}
+.proj-card p{font-size:.82rem;line-height:1.55;color:#3a4a5a}
+.proj-card .pros{margin-top:.5rem;font-size:.76rem;font-family:'DM Mono',monospace;color:var(--mint)}
+/* ── STRUCTURE STEPS ── */
+.struct-step{display:flex;gap:1rem;margin-bottom:1.2rem;align-items:flex-start}
+.struct-num{width:36px;height:36px;border-radius:50%;background:var(--navy);color:white;font-family:'Fredoka One',cursive;font-size:1.1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.1rem}
+.struct-content{flex:1;background:white;border:2px solid var(--border);border-radius:12px;padding:1rem 1.2rem}
+.struct-content h5{font-family:'Fredoka One',cursive;font-size:.98rem;color:var(--navy);margin-bottom:.4rem}
+.struct-content p{font-size:.84rem;line-height:1.65;color:#3a4a5a}
+.struct-content .word-count{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);margin-top:.4rem}
+.struct-content textarea{width:100%;border:1.5px solid rgba(0,0,0,.1);border-radius:8px;padding:.6rem;font-family:'Nunito',sans-serif;font-size:.85rem;resize:vertical;min-height:56px;background:#fafafa;color:var(--ink);outline:none;margin-top:.6rem;transition:border-color .2s}
+.struct-content textarea:focus{border-color:var(--navy-mid)}
+/* ── ISEF CRITERIA ── */
+.criteria-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.8rem;margin:1rem 0}
+.criteria-card{background:white;border:2px solid var(--border);border-radius:12px;padding:1rem;transition:all .2s;cursor:pointer}
+.criteria-card:hover{border-color:var(--gold);box-shadow:0 3px 12px rgba(201,150,42,.2)}
+.criteria-card h5{font-family:'Fredoka One',cursive;font-size:.92rem;color:var(--navy);margin-bottom:.3rem;display:flex;align-items:center;gap:.35rem}
+.criteria-card p{font-size:.8rem;line-height:1.55;color:#3a4a5a}
+.criteria-card .weight{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--gold);margin-top:.3rem;font-weight:700}
+/* ── SUMMARY ── */
+.summary-section{background:white;border-radius:16px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:2px solid var(--border)}
+.summary-section h3{font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--navy);margin-bottom:.8rem}
+.summary-answer{background:#f5f7fa;border-radius:8px;padding:.65rem 1rem;font-size:.83rem;line-height:1.6;color:var(--ink);margin-bottom:.4rem;font-style:italic;border-left:3px solid var(--lavender);min-height:1.8rem}
+.summary-answer.empty{color:var(--muted);font-style:normal;border-left-color:var(--border)}
+.sum-label{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);margin-bottom:.3rem;margin-top:.5rem;text-transform:uppercase;letter-spacing:.06em}
+.share-buttons{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center}
+.share-btn{border:none;border-radius:12px;padding:.85rem 1.6rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem}
+.share-btn:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.share-btn.copy{background:var(--mint);color:white}.share-btn.email{background:var(--lavender);color:white}.share-btn.print{background:var(--navy);color:white}
+.copy-confirm{text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--mint);min-height:1.2rem;margin-top:.6rem}
+.competition-banner{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);color:white;border-radius:16px;padding:1.4rem 1.8rem;margin-bottom:1.5rem;border-left:5px solid #f0c040;position:relative;overflow:hidden}
+.competition-banner::after{content:'\1F3C6';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:2.8rem;opacity:.2}
+.competition-banner h4{font-family:'Fredoka One',cursive;font-size:1rem;color:#f0c040;margin-bottom:.4rem}
+.competition-banner p{font-size:.86rem;line-height:1.65;opacity:.92;max-width:92%}
+.mentor-tip{background:var(--lav-pale);border:2px solid var(--lavender);border-radius:14px;padding:1rem 1.3rem;margin:.8rem 0;font-size:.85rem;line-height:1.65}
+.mentor-tip strong{color:var(--lavender)}
+.mentor-tip::before{content:'\1F9D1\200D\1F3EB ';font-size:1.1rem}
+@media(max-width:560px){.hero{padding:2.5rem 1.2rem 1.5rem}.section{padding:2rem 1.2rem 0}.nav-row{padding:2rem 1.2rem 0}.proj-type{grid-template-columns:1fr}}
+@media print{.hero,.nav-row,.share-buttons,.copy-confirm{display:none!important}.sheet{box-shadow:none;border-radius:0}.section{display:none!important}#sec-7{display:block!important}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-flag">
+    <span class="flag-badge flag-poland">&#127477;&#127473; Explory Poland</span>
+    <span class="flag-badge flag-isef">&#127482;&#127480; ISEF Pathway</span>
+    <span class="flag-badge flag-science">&#128300; Science Fair Builder</span>
+  </div>
+  <h1>Marta's <span class="accent">Research Project</span> Builder</h1>
+  <p class="intro">Find your perfect topic, design your experiment, and build a competition-ready science fair project step by step. Made for <strong style="color:#f0c040">Explory &#8594; ISEF</strong>.</p>
+  <div class="name-bar"><label>&#128100; YOUR NAME:</label><input type="text" id="studentName" placeholder="Marta" value="Marta"></div>
+  <div class="progress-wrap">
+    <a class="prog-step active" onclick="goTo(0)">&#127775; Start</a>
+    <a class="prog-step" onclick="goTo(1)">&#128270; Topics</a>
+    <a class="prog-step" onclick="goTo(2)">&#129514; Project Type</a>
+    <a class="prog-step" onclick="goTo(3)">&#128300; Structure</a>
+    <a class="prog-step" onclick="goTo(4)">&#127759; Explory &amp; ISEF</a>
+    <a class="prog-step" onclick="goTo(5)">&#128221; My Project Plan</a>
+    <a class="prog-step" onclick="goTo(6)">&#128196; Abstract</a>
+    <a class="prog-step" onclick="goTo(7)">&#128229; Save &amp; Share</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+<!-- SEC 0: WELCOME -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow"><div class="eyebrow-num num-gold">&#9733;</div><span class="eyebrow-label">Welcome &mdash; Your Science Journey</span></div>
+  <h2>&#127775; Welcome, Marta!</h2>
+  <p class="lead">This interactive will guide you through every stage of building a science competition project &mdash; from finding a topic you love, to designing your experiment, to writing your abstract for <strong>Explory in Poland</strong> and preparing for the <strong>ISEF pathway</strong>.</p>
+
+  <div class="competition-banner">
+    <h4>&#127881; About Explory &amp; ISEF</h4>
+    <p><strong>Explory</strong> is an international science competition held in Poland, open to students aged 12&#8211;20. It showcases original student research across all scientific fields. Top projects from Explory can qualify for the <strong>Intel ISEF</strong> (International Science and Engineering Fair) &mdash; the world's largest pre-college science competition, held annually in the USA. ISEF winners receive scholarships, prizes, and recognition from Nobel laureates.</p>
+  </div>
+
+  <div class="wonder-box">
+    <p>&#10024; The best science fair projects come from <strong>genuine curiosity</strong>. They are not about impressing judges with complexity &mdash; they are about asking a clear question, designing a fair test, collecting real data, and interpreting what it means honestly. A simple, well-designed study on tongue-rolling in your school could beat a complicated experiment done sloppily.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--navy);margin:.5rem 0 .8rem">&#128203; What You Will Build in This Session</h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.7rem;margin:1rem 0">
+    <div style="background:white;border:2px solid var(--border);border-radius:12px;padding:1rem;text-align:center">
+      <div style="font-size:1.8rem;margin-bottom:.4rem">&#128270;</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--navy);margin-bottom:.2rem">Your Topic</div>
+      <div style="font-size:.75rem;color:var(--muted)">Find a research area you're passionate about</div>
+    </div>
+    <div style="background:white;border:2px solid var(--border);border-radius:12px;padding:1rem;text-align:center">
+      <div style="font-size:1.8rem;margin-bottom:.4rem">&#129514;</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--navy);margin-bottom:.2rem">Project Type</div>
+      <div style="font-size:.75rem;color:var(--muted)">Experiment, survey, analysis, or review</div>
+    </div>
+    <div style="background:white;border:2px solid var(--border);border-radius:12px;padding:1rem;text-align:center">
+      <div style="font-size:1.8rem;margin-bottom:.4rem">&#128300;</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--navy);margin-bottom:.2rem">Full Structure</div>
+      <div style="font-size:.75rem;color:var(--muted)">Question, hypothesis, method, analysis</div>
+    </div>
+    <div style="background:white;border:2px solid var(--border);border-radius:12px;padding:1rem;text-align:center">
+      <div style="font-size:1.8rem;margin-bottom:.4rem">&#128196;</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--navy);margin-bottom:.2rem">Abstract Draft</div>
+      <div style="font-size:.75rem;color:var(--muted)">250-word competition-ready abstract</div>
+    </div>
+  </div>
+
+  <div class="predict-box">
+    <h4>&#128161; Before We Start &mdash; What Sparks Your Curiosity?</h4>
+    <p style="font-size:.84rem;color:#7a5a10;margin-bottom:.6rem">Write freely &mdash; no wrong answers. What topics do you find yourself looking up on your own? What problems do you wish science could solve? What do you notice around you that makes you ask "why?"</p>
+    <textarea id="ta-spark" placeholder="I'm curious about... I always wonder why... I wish scientists could figure out... I notice that..."></textarea>
+  </div>
+
+  <div class="mentor-tip"><strong>Tutor tip:</strong> The most common mistake is picking a topic that sounds impressive but doesn't interest you. Science fair projects take months. You need to still care about your question at 11pm when the data isn't cooperating. Start with what you love.</div>
+
+  <div class="nav-row"><button class="btn-prev" disabled>&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Find My Topic &#8594;</button></div>
+</div>
+
+<!-- SEC 1: TOPIC EXPLORER -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">2</div><span class="eyebrow-label">Step 1 &mdash; Explore Topic Areas</span></div>
+  <h2>&#128270; What Should My Project Be About?</h2>
+  <p class="lead">Good science competition projects come from many fields. The most important thing is that you can <strong>collect real data yourself</strong>. Tap each topic area to see what kinds of projects are possible and what makes them work at Explory and ISEF level.</p>
+
+  <div class="wonder-box mint-box">
+    <p>&#128300; <strong>The golden rule for topic selection:</strong> Ask yourself three questions. (1) Can I collect data on this myself, in my school or community? (2) Has someone else already studied this exact question? (3) Would the answer actually tell us something new or interesting? If yes, yes (literature exists to learn from), and yes &mdash; you have a great topic.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--navy);margin:.5rem 0 .8rem">&#127775; Topic Areas &mdash; Tap Each to Explore</h3>
+
+  <div id="topicGrid" style="display:flex;flex-direction:column;gap:.8rem;margin:1rem 0"></div>
+  <div id="topic-detail-panel" class="info-panel" style="display:none"></div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--navy);margin:.5rem 0 .8rem">&#9889; What Makes a Strong Topic?</h3>
+  <div class="chip-row">
+    <span class="chip coral" onclick="revealChip('testable')">Testable</span>
+    <span class="chip mint" onclick="revealChip('original')">Original</span>
+    <span class="chip gold" onclick="revealChip('feasible')">Feasible</span>
+    <span class="chip lav" onclick="revealChip('relevant')">Relevant</span>
+    <span class="chip navy" onclick="revealChip('ethical')">Ethical</span>
+  </div>
+  <div id="chip-testable" class="concept-reveal coral"><strong>Testable:</strong> A good research question can be answered by collecting data. "Is climate change bad?" is not testable as stated. "Does increased CO&#8322; concentration affect the growth rate of duckweed?" is testable. Every question must have a measurable dependent variable and at least one controllable independent variable.</div>
+  <div id="chip-original" class="concept-reveal mint-border"><strong>Original:</strong> Your project doesn't have to discover something completely new, but it should add something &mdash; a new population, a new condition, a new comparison, a new time period. Search Google Scholar and PubMed to see what has been done. If the exact question has been answered, refine it. Judges at ISEF specifically look for originality.</div>
+  <div id="chip-feasible" class="concept-reveal gold-border"><strong>Feasible:</strong> Can you actually do this in a school setting within your time frame (usually 3&#8211;6 months)? You need access to participants/organisms, safe materials, and equipment you can realistically use. A project studying deep-sea fish or requiring a particle accelerator is not feasible. Tongue-rolling surveys, plant growth experiments, and psychological studies are.</div>
+  <div id="chip-relevant" class="concept-reveal lav-border"><strong>Relevant:</strong> Why does your question matter? Who would benefit from knowing the answer? The best projects connect to a real-world problem or question &mdash; health, environment, behaviour, technology. You should be able to say in one sentence why your research is important.</div>
+  <div id="chip-ethical" class="concept-reveal navy-border"><strong>Ethical:</strong> Any research involving human subjects requires informed consent. Research involving animals requires welfare consideration. You must not collect sensitive personal data without proper permissions. ISEF has strict rules on human subjects research (IRB approval required). Survey-based genetics studies are generally low-risk if anonymised.</div>
+
+  <div class="predict-box">
+    <h4>&#128270; My Top 2&#8211;3 Topic Ideas</h4>
+    <p style="font-size:.84rem;color:#7a5a10;margin-bottom:.5rem">After exploring the areas above, write down 2&#8211;3 topic ideas that genuinely interest you. Don't filter yourself yet &mdash; quantity first.</p>
+    <textarea id="ta-topics" placeholder="Idea 1: ...&#10;Idea 2: ...&#10;Idea 3: ...&#10;&#10;Which one excites me most and why: ..."></textarea>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+
+<!-- SEC 2: PROJECT TYPE -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">3</div><span class="eyebrow-label">Step 2 &mdash; Choose Your Project Type</span></div>
+  <h2>&#129514; What Kind of Project Will It Be?</h2>
+  <p class="lead">Science fair projects come in several types. Choosing the right type for your topic makes the difference between a project that's manageable and one that collapses under its own complexity. Each type has strengths &mdash; the best choice depends on your topic and what you can realistically do.</p>
+
+  <div class="proj-type" id="projTypeGrid"></div>
+  <div id="proj-detail" style="display:none;background:#dde8f8;border-left:4px solid var(--navy-mid);border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;margin:.5rem 0;font-size:.87rem;line-height:1.7;color:#1a2a4a;animation:fadeIn .3s ease"></div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--navy);margin:.5rem 0 .8rem">&#127919; What Type Fits Genetics Projects?</h3>
+  <div class="wonder-box lav-box">
+    <p>Genetics-based projects are almost always <strong>Survey / Observational studies</strong> at school level (phenotype surveys, inheritance pattern studies in families, allele frequency estimation in populations). They can also be <strong>Lab experiments</strong> if you use model organisms like fruit flies (Drosophila) or fast plants. Survey-based genetics projects are ideal for ISEF because they generate real population data and can be done safely with appropriate ethics consent.</p>
+  </div>
+
+  <div class="mentor-tip"><strong>Tutor tip:</strong> Judges at ISEF and Explory actually prefer a simple, well-executed project over a complicated one done poorly. A survey of 150 people with clean data analysis beats a complex lab experiment with errors and missing controls.</div>
+
+  <div class="predict-box">
+    <h4>&#129514; My Project Type Choice</h4>
+    <textarea id="ta-projtype" placeholder="I will do a [type] project because...&#10;&#10;My topic is: ...&#10;The type fits because: ...&#10;&#10;Any concerns or challenges with this type: ..."></textarea>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 3: RESEARCH STRUCTURE -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">4</div><span class="eyebrow-label">Step 3 &mdash; Build Your Research Structure</span></div>
+  <h2>&#128300; The Science Project Structure</h2>
+  <p class="lead">Every strong science project follows the same fundamental structure. Work through each section below, filling in your own ideas as you go. This becomes the backbone of your research report and competition presentation.</p>
+
+  <div class="competition-banner">
+    <h4>&#128221; ISEF &amp; Explory Report Sections</h4>
+    <p>Both competitions require a written report with these sections (in order): Abstract, Introduction/Background, Research Question, Hypothesis, Materials &amp; Methods, Results, Discussion, Conclusion, References, Acknowledgements. You will build each section here.</p>
+  </div>
+
+  <div class="struct-step">
+    <div class="struct-num">1</div>
+    <div class="struct-content">
+      <h5>&#128270; Research Question</h5>
+      <p>A single, clear, testable question. Format: <em>"How does [independent variable] affect [dependent variable] in [organism/population/system]?"</em> It must be specific enough that someone could design an experiment to answer it. Avoid "what is" or "which is better" &mdash; these don't specify a measurable relationship.</p>
+      <div class="word-count">Aim: 1&#8211;2 sentences &mdash; precise and specific</div>
+      <textarea id="ta-rq" placeholder="How does [IV] affect [DV] in [who/what]?"></textarea>
+    </div>
+  </div>
+
+  <div class="struct-step">
+    <div class="struct-num">2</div>
+    <div class="struct-content">
+      <h5>&#128218; Background / Introduction</h5>
+      <p>Summarise what is already known about your topic from published sources. This shows judges you understand the scientific context. It should explain: (a) the key biology/science of your topic, (b) why this question is worth studying, (c) what previous researchers have found, and (d) the gap in knowledge your project addresses.</p>
+      <div class="word-count">Aim: 300&#8211;500 words in final report &mdash; draft the key points here</div>
+      <textarea id="ta-bg" placeholder="Key facts about my topic:&#10;1. ...&#10;2. ...&#10;3. ...&#10;&#10;What previous research has shown:&#10;&#10;Gap my study addresses:&#10;"></textarea>
+    </div>
+  </div>
+
+  <div class="struct-step">
+    <div class="struct-num">3</div>
+    <div class="struct-content">
+      <h5>&#128161; Hypothesis</h5>
+      <p>A specific, falsifiable prediction. Format: <em>"If [IV], then [DV] will [increase/decrease/show pattern], because [scientific reason]."</em> The "because" is crucial &mdash; it shows your prediction is based on scientific understanding, not guesswork. Your hypothesis must be answerable by your planned experiment or survey.</p>
+      <div class="word-count">Aim: 1&#8211;3 sentences</div>
+      <textarea id="ta-hyp" placeholder="If [IV] then [DV] will [change], because [mechanism]..."></textarea>
+    </div>
+  </div>
+
+  <div class="struct-step">
+    <div class="struct-num">4</div>
+    <div class="struct-content">
+      <h5>&#9881;&#65039; Variables</h5>
+      <p>Clearly identify your <strong>independent variable</strong> (what you change or compare), <strong>dependent variable</strong> (what you measure), and at least 3 <strong>controlled variables</strong> (what you keep constant). For a genetics survey: IV might be year group or sex; DV might be frequency of a trait; CVs might be survey method, criteria for trait classification, etc.</p>
+      <div class="word-count">List format</div>
+      <textarea id="ta-vars" placeholder="Independent Variable (IV): ...&#10;Unit of measurement: ...&#10;&#10;Dependent Variable (DV): ...&#10;How measured: ...&#10;&#10;Controlled Variables (CV):&#10;1. ...&#10;2. ...&#10;3. ...&#10;4. ..."></textarea>
+    </div>
+  </div>
+
+  <div class="struct-step">
+    <div class="struct-num">5</div>
+    <div class="struct-content">
+      <h5>&#128203; Materials &amp; Methods</h5>
+      <p>A numbered, step-by-step procedure detailed enough that another scientist could exactly replicate your study. Include: participant/sample description, sampling method, all materials, data collection procedure, any controls, and how you handled ethics (consent forms, anonymisation). This is where most students lose marks &mdash; be <em>specific</em>.</p>
+      <div class="word-count">Aim: numbered steps, each a single clear action</div>
+      <textarea id="ta-method" style="min-height:110px" placeholder="Materials needed:&#10;- ...&#10;&#10;Procedure:&#10;1. Obtain written informed consent from all participants.&#10;2. ...&#10;3. ...&#10;&#10;Ethics considerations:&#10;- Data will be anonymised by...&#10;- Consent will be obtained by..."></textarea>
+    </div>
+  </div>
+
+  <div class="struct-step">
+    <div class="struct-num">6</div>
+    <div class="struct-content">
+      <h5>&#128202; Data &amp; Analysis Plan</h5>
+      <p>Before collecting data, plan exactly how you will record and analyse it. What will your data table look like? How many participants/samples? What statistical test will you use and why? For genetics surveys: chi-squared test (observed vs expected Mendelian ratios) or descriptive statistics (frequency tables, bar charts, percentages).</p>
+      <div class="word-count">Plan your data table structure and analysis method</div>
+      <textarea id="ta-data" placeholder="Sample size: ...&#10;&#10;Data table columns: ...&#10;&#10;Statistical test: ...&#10;Null hypothesis (H0): ...&#10;Significance level: p = 0.05&#10;&#10;Expected outcome if H0 is true: ..."></textarea>
+    </div>
+  </div>
+
+  <div class="struct-step">
+    <div class="struct-num">7</div>
+    <div class="struct-content">
+      <h5>&#128172; Discussion Plan</h5>
+      <p>This is where most marks are won or lost. Plan what you will discuss after you collect results. Even before you have data, you can anticipate: What would it mean if results support your hypothesis? What if they don't? What are the limitations of your study? How do your expected results connect to existing literature? What would you do differently next time?</p>
+      <div class="word-count">Bullet-point plan</div>
+      <textarea id="ta-discuss" placeholder="If results SUPPORT hypothesis: this means...&#10;If results DO NOT support hypothesis: this could mean...&#10;&#10;Expected limitations:&#10;1. Sample size may be...&#10;2. Self-reported data could...&#10;3. ...&#10;&#10;How results connect to known biology:&#10;Future directions:"></textarea>
+    </div>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+
+<!-- SEC 4: EXPLORY & ISEF GUIDE -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow"><div class="eyebrow-num num-navy">5</div><span class="eyebrow-label">Step 4 &mdash; Explory &amp; ISEF Criteria</span></div>
+  <h2>&#127759; How Judges Score Your Project</h2>
+  <p class="lead">Knowing <strong>exactly how judges evaluate projects</strong> is one of the most powerful advantages you can have. Work backwards from the scoring rubric: make sure every part of your project directly addresses the judging criteria.</p>
+
+  <div class="competition-banner">
+    <h4>&#128300; Explory Competition Overview</h4>
+    <p>Explory is held annually in Lodz, Poland. Students submit a project report and present their work to an international jury. Projects are judged on scientific quality, originality, presentation, and impact. There are categories by scientific field and age group. Top projects from Explory gain direct ISEF qualification or affiliated fair status. The competition is conducted in English.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--navy);margin:.5rem 0 .8rem">&#127942; ISEF Judging Criteria &mdash; Tap Each</h3>
+  <div class="criteria-grid">
+    <div class="criteria-card" onclick="this.querySelector('p').style.display=this.querySelector('p').style.display==='none'?'block':'none'">
+      <h5>&#128300; Scientific Thought</h5>
+      <p style="display:none;margin-top:.4rem;font-size:.8rem;line-height:1.55;color:#3a4a5a">Does the student understand the scientific method? Is the question well-defined? Does the hypothesis follow logically from background research? Is the experimental design controlled and fair? Can the student explain how the data answers the research question? This is usually the highest-weighted criterion.</p>
+      <div class="weight">HIGHEST WEIGHT ~30%</div>
+    </div>
+    <div class="criteria-card" onclick="this.querySelector('p').style.display=this.querySelector('p').style.display==='none'?'block':'none'">
+      <h5>&#127775; Creative Ability</h5>
+      <p style="display:none;margin-top:.4rem;font-size:.8rem;line-height:1.55;color:#3a4a5a">Is the research question original? Did the student design their own study (not just replicate a kit experiment)? Does the approach show ingenuity? Did they come up with creative solutions to methodological challenges? Originality does NOT mean unprecedented &mdash; a new angle on a known question counts.</p>
+      <div class="weight">HIGH WEIGHT ~25%</div>
+    </div>
+    <div class="criteria-card" onclick="this.querySelector('p').style.display=this.querySelector('p').style.display==='none'?'block':'none'">
+      <h5>&#128202; Thoroughness</h5>
+      <p style="display:none;margin-top:.4rem;font-size:.8rem;line-height:1.55;color:#3a4a5a">Was the study completed fully? Is the data collection adequate (sufficient sample size, appropriate number of trials)? Does the discussion address limitations honestly? Are references cited properly? Did the student acknowledge what they don't know? Judges respect intellectual honesty about limitations far more than pretending a project is perfect.</p>
+      <div class="weight">HIGH WEIGHT ~20%</div>
+    </div>
+    <div class="criteria-card" onclick="this.querySelector('p').style.display=this.querySelector('p').style.display==='none'?'block':'none'">
+      <h5>&#128203; Skill</h5>
+      <p style="display:none;margin-top:.4rem;font-size:.8rem;line-height:1.55;color:#3a4a5a">Does the student demonstrate competence in the techniques they used? Are data collection methods appropriate? Is statistical analysis correctly applied? Did they make good use of available resources? This does not mean expensive equipment &mdash; a student who correctly applies chi-squared to survey data demonstrates appropriate skill.</p>
+      <div class="weight">MEDIUM WEIGHT ~15%</div>
+    </div>
+    <div class="criteria-card" onclick="this.querySelector('p').style.display=this.querySelector('p').style.display==='none'?'block':'none'">
+      <h5>&#127757; Clarity &amp; Presentation</h5>
+      <p style="display:none;margin-top:.4rem;font-size:.8rem;line-height:1.55;color:#3a4a5a">Is the project clearly communicated in the report and poster/presentation? Does the student explain their work to judges in a clear, confident, engaging way? Can they answer questions beyond their own results (background science, implications)? Good presentation amplifies excellent science; bad presentation hides it.</p>
+      <div class="weight">MEDIUM WEIGHT ~10%</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--navy);margin:.5rem 0 .8rem">&#128336; Project Timeline &mdash; Tap Each Phase</h3>
+  <div class="chip-row">
+    <span class="chip navy" onclick="revealChip('phase1')">Phase 1: Topic &amp; Question (Weeks 1&#8211;2)</span>
+    <span class="chip coral" onclick="revealChip('phase2')">Phase 2: Background Research (Weeks 3&#8211;4)</span>
+    <span class="chip gold" onclick="revealChip('phase3')">Phase 3: Data Collection (Weeks 5&#8211;10)</span>
+    <span class="chip mint" onclick="revealChip('phase4')">Phase 4: Analysis &amp; Report (Weeks 11&#8211;14)</span>
+    <span class="chip lav" onclick="revealChip('phase5')">Phase 5: Presentation Prep (Weeks 15&#8211;16)</span>
+  </div>
+  <div id="chip-phase1" class="concept-reveal navy-border"><strong>Weeks 1&#8211;2 (Topic &amp; Question):</strong> Choose your topic area, narrow to a specific research question, identify what type of project you will do. Review 5&#8211;10 relevant papers on Google Scholar. Write a first draft of your introduction and hypothesis. Get ethics approval if needed (consent forms for human participants). Submit your research question to your teacher for feedback before proceeding.</div>
+  <div id="chip-phase2" class="concept-reveal coral"><strong>Weeks 3&#8211;4 (Background Research):</strong> Deep literature review &mdash; aim for 8&#8211;15 credible sources (peer-reviewed papers, textbooks, reputable science websites). Write your full introduction section. Finalise your hypothesis and variables. Design your data collection tools (survey form, data table). Have your methodology reviewed before you begin collecting data.</div>
+  <div id="chip-phase3" class="concept-reveal gold-border"><strong>Weeks 5&#8211;10 (Data Collection):</strong> Execute your methodology exactly as planned. Record all raw data carefully and honestly. If something goes wrong, document it &mdash; don't hide errors. Collect more data than you think you need (aim for 50&#8211;150+ participants for survey studies). Keep a research journal noting any deviations from your plan.</div>
+  <div id="chip-phase4" class="concept-reveal mint-border"><strong>Weeks 11&#8211;14 (Analysis &amp; Report):</strong> Clean and organise your data. Perform statistical analysis. Create clear graphs/tables. Write results section (present data objectively &mdash; no interpretation yet). Write discussion (interpret, connect to literature, address limitations). Write conclusion. Write abstract (last). Compile references. Get teacher feedback.</div>
+  <div id="chip-phase5" class="concept-reveal lav-border"><strong>Weeks 15&#8211;16 (Presentation Prep):</strong> Prepare your poster or presentation slides. Practise your 3&#8211;5 minute oral summary. Practise answering questions from a "judge" (your teacher or parent). Common judge questions: "What would you do differently?", "What was your biggest challenge?", "What are the limitations?", "What are the next steps?" Knowing your work deeply matters more than memorising a script.</div>
+
+  <div class="predict-box">
+    <h4>&#128336; My Personal Timeline</h4>
+    <p style="font-size:.84rem;color:#7a5a10;margin-bottom:.5rem">Based on when Explory submissions are due, map out your key dates.</p>
+    <textarea id="ta-timeline" placeholder="Explory submission deadline: ...&#10;&#10;My target dates:&#10;Topic finalised by: ...&#10;Background research done by: ...&#10;Data collection complete by: ...&#10;First report draft by: ...&#10;Final report submitted by: ...&#10;Presentation practised by: ..."></textarea>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 5: MY PROJECT PLAN -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow"><div class="eyebrow-num num-gold">6</div><span class="eyebrow-label">Step 5 &mdash; My Full Project Plan</span></div>
+  <h2>&#128221; Putting It All Together</h2>
+  <p class="lead">Use this section to consolidate your project into a single, shareable plan. Fill in all sections &mdash; this becomes your reference document and the basis of your report.</p>
+
+  <div style="display:flex;flex-direction:column;gap:1rem">
+    <div style="background:white;border:2px solid var(--border);border-radius:14px;padding:1.2rem">
+      <div style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--navy-mid);font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.08em">Project Title</div>
+      <input type="text" id="ta-title" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.6rem .8rem;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;color:var(--ink);outline:none;background:white" placeholder="e.g. 'Allele Frequency of PTC Taste Sensitivity Across Age Groups in Bangkok International Schools'">
+    </div>
+    <div style="background:white;border:2px solid var(--border);border-radius:14px;padding:1.2rem">
+      <div style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--navy-mid);font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.08em">Scientific Category (for submission)</div>
+      <select id="ta-category" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.6rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;color:var(--ink);background:white;outline:none">
+        <option value="">Select a category...</option>
+        <option>Animal Sciences</option>
+        <option>Behavioural and Social Sciences</option>
+        <option>Biochemistry</option>
+        <option>Biomedical and Health Sciences</option>
+        <option>Cell and Molecular Biology</option>
+        <option>Chemistry</option>
+        <option>Computational Biology and Bioinformatics</option>
+        <option>Earth and Environmental Sciences</option>
+        <option>Embedded Systems</option>
+        <option>Energy: Chemical</option>
+        <option>Engineering Mechanics</option>
+        <option>Environmental Engineering</option>
+        <option>Genetics and Genomics</option>
+        <option>Materials Science</option>
+        <option>Mathematics</option>
+        <option>Microbiology</option>
+        <option>Physics and Astronomy</option>
+        <option>Plant Sciences</option>
+        <option>Robotics and Intelligent Machines</option>
+        <option>Systems Software</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--navy);margin:.5rem 0 .8rem">&#9989; Project Checklist</h3>
+  <div id="checklist" style="display:flex;flex-direction:column;gap:.5rem;margin:1rem 0"></div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--navy);margin:.5rem 0 .8rem">&#128172; Judge Questions &mdash; Practise Your Answers</h3>
+  <div class="wonder-box gold-box">
+    <p>Judges at ISEF and Explory always ask these questions. Practise your answers now, before you collect data, so you understand your own project deeply. Judges are impressed by students who can say "I don't know, but my next step would be..." rather than bluffing.</p>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:.8rem;margin:1rem 0">
+    <div style="background:white;border:2px solid var(--border);border-radius:12px;padding:1rem 1.2rem">
+      <div style="font-weight:700;font-size:.9rem;color:var(--navy);margin-bottom:.5rem">&#10067; "Can you explain your project in 30 seconds?"</div>
+      <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.6rem;font-family:'Nunito',sans-serif;font-size:.85rem;resize:vertical;min-height:56px;outline:none;color:var(--ink)" id="ta-elevator" placeholder="My project investigates... I asked... I tested... I found/expect to find..."></textarea>
+    </div>
+    <div style="background:white;border:2px solid var(--border);border-radius:12px;padding:1rem 1.2rem">
+      <div style="font-weight:700;font-size:.9rem;color:var(--navy);margin-bottom:.5rem">&#10067; "What would you do differently if you did this again?"</div>
+      <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.6rem;font-family:'Nunito',sans-serif;font-size:.85rem;resize:vertical;min-height:56px;outline:none;color:var(--ink)" id="ta-differently" placeholder="I would improve... by... because..."></textarea>
+    </div>
+    <div style="background:white;border:2px solid var(--border);border-radius:12px;padding:1rem 1.2rem">
+      <div style="font-weight:700;font-size:.9rem;color:var(--navy);margin-bottom:.5rem">&#10067; "What are the limitations of your study?"</div>
+      <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.6rem;font-family:'Nunito',sans-serif;font-size:.85rem;resize:vertical;min-height:56px;outline:none;color:var(--ink)" id="ta-limits" placeholder="Limitations include: sample size, self-reporting bias, ..."></textarea>
+    </div>
+    <div style="background:white;border:2px solid var(--border);border-radius:12px;padding:1rem 1.2rem">
+      <div style="font-weight:700;font-size:.9rem;color:var(--navy);margin-bottom:.5rem">&#10067; "What are the real-world applications of your findings?"</div>
+      <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.6rem;font-family:'Nunito',sans-serif;font-size:.85rem;resize:vertical;min-height:56px;outline:none;color:var(--ink)" id="ta-applications" placeholder="If my results show X, this could be useful for... because..."></textarea>
+    </div>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+
+<!-- SEC 6: ABSTRACT BUILDER -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">7</div><span class="eyebrow-label">Step 6 &mdash; Write Your Abstract</span></div>
+  <h2>&#128196; The Abstract</h2>
+  <p class="lead">The abstract is the most important 250 words you will write. It is the first (and sometimes only) thing judges, reviewers, and the public read. A perfect abstract covers <strong>five things</strong>: what you studied, why it matters, what you did, what you found, and what it means.</p>
+
+  <div class="wonder-box coral-box">
+    <p>&#9888;&#65039; <strong>ISEF Abstract Rules:</strong> Maximum 250 words. Must include: purpose, procedure, data, and conclusions. Cannot include acknowledgements, names of schools, or references. Should be written in past tense (for completed projects) or future tense (for proposals). Must be written by the student, not the mentor or teacher. A copied or AI-generated abstract is disqualification grounds.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--navy);margin:.5rem 0 .8rem">&#128196; Build Your Abstract Sentence by Sentence</h3>
+  <div style="display:flex;flex-direction:column;gap:.8rem;margin:1rem 0">
+    <div style="background:white;border:2px solid var(--border);border-radius:12px;padding:1rem 1.2rem">
+      <div style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--navy-mid);font-weight:700;margin-bottom:.4rem;text-transform:uppercase">Sentence 1&#8211;2: Purpose / Background (~40 words)</div>
+      <div style="font-size:.8rem;color:var(--muted);margin-bottom:.5rem">Why does this topic matter? State the biological/scientific context in 1&#8211;2 sentences. Do not start with "This study..." &mdash; start with the scientific context.</div>
+      <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.6rem;font-family:'Nunito',sans-serif;font-size:.85rem;resize:vertical;min-height:56px;outline:none;color:var(--ink)" id="abs1" placeholder="e.g. 'Phenotypic variation in human populations provides a window into allele frequency distributions across genetic loci. The ability to taste phenylthiocarbamide (PTC) is controlled by a dominant allele of the TAS2R38 gene and shows significant variation across human populations...'"></textarea>
+    </div>
+    <div style="background:white;border:2px solid var(--border);border-radius:12px;padding:1rem 1.2rem">
+      <div style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--navy-mid);font-weight:700;margin-bottom:.4rem;text-transform:uppercase">Sentence 3: Research Question (~15 words)</div>
+      <div style="font-size:.8rem;color:var(--muted);margin-bottom:.5rem">State your research question clearly.</div>
+      <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.6rem;font-family:'Nunito',sans-serif;font-size:.85rem;resize:vertical;min-height:48px;outline:none;color:var(--ink)" id="abs2" placeholder="This study investigated whether [RQ]..."></textarea>
+    </div>
+    <div style="background:white;border:2px solid var(--border);border-radius:12px;padding:1rem 1.2rem">
+      <div style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--navy-mid);font-weight:700;margin-bottom:.4rem;text-transform:uppercase">Sentences 4&#8211;6: Methods (~60 words)</div>
+      <div style="font-size:.8rem;color:var(--muted);margin-bottom:.5rem">Who/what was studied? How many? What did you do? What did you measure? What statistical test did you use?</div>
+      <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.6rem;font-family:'Nunito',sans-serif;font-size:.85rem;resize:vertical;min-height:72px;outline:none;color:var(--ink)" id="abs3" placeholder="A total of [N] participants were surveyed using [method]. Data were collected by [how]. Results were analysed using [statistical test]. Ethical approval was obtained and all data were anonymised..."></textarea>
+    </div>
+    <div style="background:white;border:2px solid var(--border);border-radius:12px;padding:1rem 1.2rem">
+      <div style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--navy-mid);font-weight:700;margin-bottom:.4rem;text-transform:uppercase">Sentences 7&#8211;8: Results (~50 words)</div>
+      <div style="font-size:.8rem;color:var(--muted);margin-bottom:.5rem">What did you find? State key numbers/ratios. For a proposal, state your expected findings.</div>
+      <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.6rem;font-family:'Nunito',sans-serif;font-size:.85rem;resize:vertical;min-height:56px;outline:none;color:var(--ink)" id="abs4" placeholder="Results showed that [X%] of participants exhibited [trait]. Chi-squared analysis (chi2 = X, df = X, p [>/<] 0.05) indicated that [findings]..."></textarea>
+    </div>
+    <div style="background:white;border:2px solid var(--border);border-radius:12px;padding:1rem 1.2rem">
+      <div style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--navy-mid);font-weight:700;margin-bottom:.4rem;text-transform:uppercase">Sentences 9&#8211;10: Conclusion &amp; Implications (~40 words)</div>
+      <div style="font-size:.8rem;color:var(--muted);margin-bottom:.5rem">What do your results mean? How do they connect to broader biology? What might future research do?</div>
+      <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.6rem;font-family:'Nunito',sans-serif;font-size:.85rem;resize:vertical;min-height:56px;outline:none;color:var(--ink)" id="abs5" placeholder="These findings suggest that... This supports/contradicts... Future studies should..."></textarea>
+    </div>
+  </div>
+
+  <div class="action-row">
+    <button class="btn btn-navy" onclick="buildAbstract()">&#128196; Compile My Abstract</button>
+    <button class="btn btn-ghost" onclick="document.getElementById('abstract-preview').style.display='none'">Hide Preview</button>
+  </div>
+  <div id="abstract-preview" style="display:none;background:#f5f7fa;border:2px solid var(--navy-mid);border-radius:14px;padding:1.4rem;margin-top:.8rem">
+    <div style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--navy-mid);font-weight:700;margin-bottom:.6rem;text-transform:uppercase">YOUR ABSTRACT DRAFT</div>
+    <div id="abstract-text" style="font-size:.9rem;line-height:1.8;color:var(--ink);white-space:pre-wrap"></div>
+    <div id="word-count-display" style="margin-top:.8rem;font-family:'DM Mono',monospace;font-size:.75rem;color:var(--muted)"></div>
+  </div>
+
+  <div class="mentor-tip" style="margin-top:1.2rem"><strong>Tutor tip:</strong> Read your abstract out loud when you're done. If you stumble or have to re-read any sentence, it needs to be rewritten. Every sentence should be clear on the first read. Avoid passive voice where possible. "I measured" is clearer than "measurements were taken."</div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 7: SAVE & SHARE -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">8</div><span class="eyebrow-label">Step 7 &mdash; Save &amp; Share</span></div>
+  <h2>&#128229; Your Complete Project Plan</h2>
+  <p class="lead">Here is everything you've built today. Copy and paste this into a document, email it to your tutor, or print it for your records. This is your starting point for the full research process.</p>
+
+  <div class="summary-section">
+    <h3>&#128100; Student: <span id="summaryName">Marta</span> &nbsp;|&nbsp; <span id="summaryDate"></span></h3>
+
+    <div class="sum-label">What Sparks My Curiosity</div><div class="summary-answer" id="sum-spark"></div>
+    <div class="sum-label">My Topic Ideas</div><div class="summary-answer" id="sum-topics"></div>
+    <div class="sum-label">Project Type Choice</div><div class="summary-answer" id="sum-projtype"></div>
+    <div class="sum-label">Project Title</div><div class="summary-answer" id="sum-title"></div>
+    <div class="sum-label">Scientific Category</div><div class="summary-answer" id="sum-category"></div>
+    <div class="sum-label">Research Question</div><div class="summary-answer" id="sum-rq"></div>
+    <div class="sum-label">Background Notes</div><div class="summary-answer" id="sum-bg"></div>
+    <div class="sum-label">Hypothesis</div><div class="summary-answer" id="sum-hyp"></div>
+    <div class="sum-label">Variables</div><div class="summary-answer" id="sum-vars"></div>
+    <div class="sum-label">Materials &amp; Methods</div><div class="summary-answer" id="sum-method"></div>
+    <div class="sum-label">Data &amp; Analysis Plan</div><div class="summary-answer" id="sum-data"></div>
+    <div class="sum-label">Discussion Plan</div><div class="summary-answer" id="sum-discuss"></div>
+    <div class="sum-label">Timeline</div><div class="summary-answer" id="sum-timeline"></div>
+    <div class="sum-label">Elevator Pitch (30 sec)</div><div class="summary-answer" id="sum-elevator"></div>
+    <div class="sum-label">Limitations</div><div class="summary-answer" id="sum-limits"></div>
+    <div class="sum-label">Real-world Applications</div><div class="summary-answer" id="sum-applications"></div>
+    <div class="sum-label">Abstract Draft</div><div class="summary-answer" id="sum-abstract"></div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy" onclick="copyResults()">&#128203; Copy Full Plan</button>
+    <button class="share-btn email" onclick="emailResults()">&#128231; Email to Tutor</button>
+    <button class="share-btn print" onclick="window.print()">&#128424;&#65039; Print</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div class="mentor-tip" style="margin-top:1.5rem"><strong>Next Steps:</strong> Share this plan with your teacher at DLTS. For the next tutoring session, come with at least 5 published sources (Google Scholar or PubMed) related to your chosen topic. Try to find one paper that studied a similar question &mdash; it will help refine your methodology and give you something to compare your results against.</div>
+
+  <p style="text-align:center;font-size:.72rem;color:var(--muted);margin-top:2rem;font-family:'DM Mono',monospace;">&copy; 2026 Farvour Explorations &middot; Science Competition Coaching &middot; farvourexplorations.com</p>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" disabled>&#10003; Complete!</button></div>
+</div>
+
+</div><!-- end .sheet -->
+
+
+<script>
+(function(){
+'use strict';
+
+// NAVIGATION
+var TOTAL=8, cur=0;
+function goTo(n){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('sec-'+n).classList.add('active');
+  document.querySelectorAll('.prog-step').forEach(function(p,i){
+    p.classList.remove('active','done');
+    if(i===n) p.classList.add('active');
+    else if(i<n) p.classList.add('done');
+  });
+  cur=n; window.scrollTo({top:0,behavior:'smooth'});
+  if(n===7) buildSummary();
+}
+function navigate(dir){goTo(Math.max(0,Math.min(TOTAL-1,cur+dir)));}
+window.goTo=goTo; window.navigate=navigate;
+
+// CHIP REVEALS
+function revealChip(id){
+  var el=document.getElementById('chip-'+id); if(!el) return;
+  var was=el.classList.contains('show');
+  el.closest('.section').querySelectorAll('.concept-reveal').forEach(function(c){c.classList.remove('show');});
+  if(!was) el.classList.add('show');
+}
+window.revealChip=revealChip;
+
+// TOPIC AREAS DATA
+var TOPICS = [
+  {
+    icon:'🧬', title:'Genetics & Heredity',
+    tags:['Inheritance','Population genetics','Phenotypic variation','Blood groups','Taste genetics'],
+    body:'Study how traits are passed from parents to offspring, or how allele frequencies vary across populations. Perfect for school-level research because data can be collected through anonymous surveys of students and staff.',
+    ideas:[
+      'Frequency of PTC taste sensitivity across different year groups',
+      'Comparison of tongue-rolling ability between siblings vs non-siblings',
+      'ABO blood group distribution in a multi-ethnic school population',
+      'Inheritance of attached vs free earlobes: does it follow Mendelian ratios?',
+      'Correlation between handedness and tongue-rolling ability',
+      'Allele frequency estimation using Hardy-Weinberg equilibrium in your school'
+    ],
+    why:'Genetics projects are ideal: surveys are low-cost, data is categorical (dominant/recessive), Mendelian ratios give clear expected values for chi-squared analysis, and results can be compared to published population genetics data.'
+  },
+  {
+    icon:'🧠', title:'Behavioural & Cognitive Science',
+    tags:['Psychology','Learning','Memory','Perception','Decision-making'],
+    body:'Investigate how humans think, learn, remember, or make decisions. Behavioural studies use surveys, timed tests, or observation. They are highly accessible and often produce genuinely interesting results.',
+    ideas:[
+      'Does background music type (classical vs pop vs silence) affect reading comprehension?',
+      'Is there a correlation between sleep duration and working memory performance?',
+      'Does colour affect the perceived taste of food or drink?',
+      'Stroop effect: do bilinguals take longer to resolve colour-word conflicts?',
+      'Does phone screen time correlate with self-reported anxiety in teenagers?',
+      'Is the frequency illusion (Baader-Meinhof) experimentally demonstrable?'
+    ],
+    why:'Behavioural science projects are highly scoreable at ISEF because they are accessible, original, and directly relevant to teenage life. Ethics review is relatively simple for non-harmful surveys.'
+  },
+  {
+    icon:'🌱', title:'Plant Biology & Environmental Science',
+    tags:['Plant growth','Pollution','Soil science','Photosynthesis','Climate'],
+    body:'Plants are ideal experimental organisms: fast-growing, inexpensive, ethically simple, and highly controllable. Environmental projects connect to global issues that judges find compelling.',
+    ideas:[
+      'Effect of salt concentration on the germination rate of mung beans',
+      'Does caffeine (from coffee grounds) inhibit or stimulate plant root growth?',
+      'Comparison of soil pH across different zones in a school garden',
+      'Effect of UV exposure duration on Elodea photosynthesis rate (oxygen bubble count)',
+      'Does plastic microparticle concentration affect Daphnia (water flea) reproduction rate?',
+      'Allelopathy: does aqueous extract of one plant species inhibit germination of another?'
+    ],
+    why:'Plant experiments can be done in a school lab or at home, results are measurable and quantitative, and they connect to environmental themes that score well in the thoroughness and relevance criteria.'
+  },
+  {
+    icon:'🦠', title:'Microbiology & Biochemistry',
+    tags:['Bacteria','Antibiotics','Enzymes','pH','Fermentation'],
+    body:'Investigate how microorganisms grow and respond to chemical conditions, or how enzymes function under different variables. Requires basic lab access but materials are inexpensive.',
+    ideas:[
+      'Which natural extract (garlic, ginger, turmeric) shows greatest inhibition zone against E. coli?',
+      'Effect of pH on the activity of amylase enzyme using starch hydrolysis rate',
+      'Does hand sanitiser concentration affect bactericidal effectiveness?',
+      'Fermentation rate of yeast at different sugar concentrations (CO2 production)',
+      'Vitamin C content estimation in fresh vs stored vs heated orange juice',
+      'Does green tea extract show antimicrobial activity against common bacteria?'
+    ],
+    why:'Microbiology projects demonstrate strong lab skills and generate quantitative data. They need appropriate safety controls (BSL-1 organisms only for school) but are highly respected at ISEF.'
+  },
+  {
+    icon:'💧', title:'Health & Sports Science',
+    tags:['Exercise physiology','Nutrition','Public health','Sleep','Wellbeing'],
+    body:'Survey-based or observational projects on human health are accessible, ethically manageable, and directly relevant to everyday life. Judges respond well to projects with clear public health implications.',
+    ideas:[
+      'Correlation between daily water intake and self-reported concentration levels in students',
+      'Does stretching duration before exercise affect performance in a standing jump test?',
+      'Relationship between screen time and reported sleep quality in IB students',
+      'Does a sugar-sweetened vs unsweetened breakfast affect short-term memory performance?',
+      'Comparing resting heart rate recovery after equal exercise in regular vs non-exercisers',
+      'Self-reported stress levels and academic performance: is there a threshold effect?'
+    ],
+    why:'Health science surveys are low-cost, produce large datasets quickly, and connect to student wellbeing topics that resonate with non-specialist judges. Need careful ethics consent but are otherwise very accessible.'
+  },
+  {
+    icon:'🔬', title:'Cell & Molecular Biology',
+    tags:['DNA extraction','Microscopy','Cell division','Staining','PCR'],
+    body:'More technically demanding but highly impressive to judges. Requires lab access and some specialist materials. Best suited to students with access to school lab equipment and a motivated supervising teacher.',
+    ideas:[
+      'Extraction and visualisation of DNA from different fruit types: yield comparison',
+      'Comparison of mitotic index in rapidly dividing plant root tips under different treatments',
+      'Effect of temperature on membrane permeability using beetroot discs and colorimetry',
+      'Staining and identification of different cell types in onion root tip vs leaf epidermis',
+      'Qualitative comparison of catalase activity in different plant tissues using hydrogen peroxide',
+      'Does UV exposure affect yeast cell viability (growth zone comparison)?'
+    ],
+    why:'Cell biology projects demonstrate the most impressive lab skills and connect directly to molecular genetics. Mitotic index studies connect directly to your IB Genetics unit and are well-understood by biology judges.'
+  }
+];
+
+function buildTopics(){
+  var grid=document.getElementById('topicGrid'); if(!grid) return;
+  TOPICS.forEach(function(t, i){
+    var div=document.createElement('div'); div.className='topic-area'; div.dataset.idx=i;
+    div.innerHTML='<div class="topic-area-header"><div class="topic-area-icon">'+t.icon+'</div><div class="topic-area-title">'+t.title+'</div></div>'
+      +'<div class="topic-area-body">'+t.body+'</div>'
+      +'<div class="topic-area-tags">'+t.tags.map(function(tg){return '<span class="topic-tag">'+tg+'</span>';}).join('')+'</div>';
+    div.onclick=function(){showTopicDetail(i, div);};
+    grid.appendChild(div);
+  });
+}
+function showTopicDetail(i, el){
+  var t=TOPICS[i];
+  document.querySelectorAll('.topic-area').forEach(function(a){a.classList.remove('selected');});
+  el.classList.add('selected');
+  var panel=document.getElementById('topic-detail-panel');
+  panel.innerHTML='<h4>'+t.icon+' '+t.title+' &mdash; Project Ideas</h4>'
+    +'<p style="margin-bottom:.6rem">'+t.why+'</p>'
+    +'<p style="font-family:\'DM Mono\',monospace;font-size:.7rem;color:#1a4a9c;font-weight:700;margin-bottom:.4rem;text-transform:uppercase">Possible Research Questions:</p>'
+    +'<ul class="idea-list">'+t.ideas.map(function(idea){return '<li>'+idea+'</li>';}).join('')+'</ul>';
+  panel.style.display='block';
+  panel.classList.add('show');
+  setTimeout(function(){panel.scrollIntoView({behavior:'smooth',block:'nearest'});},100);
+}
+buildTopics();
+
+// PROJECT TYPES
+var PROJ_TYPES=[
+  {icon:'🧪', title:'Lab Experiment',
+   desc:'You control an independent variable and measure the effect on a dependent variable under controlled lab conditions. Classic scientific method.',
+   pros:'Strong on scientific thought criterion. Clear IV/DV relationship. Quantitative data. Good for biology, chemistry, environmental science.',
+   detail:'Best for: plant biology, microbiology, cell biology, chemistry. Requirements: school lab access, appropriate safety measures, repeated trials (minimum 3). Typical sample: 3-5 conditions, 5-10 replicates each. Statistical analysis: mean, standard deviation, t-test or ANOVA.'},
+  {icon:'📊', title:'Survey / Observational Study',
+   desc:'You collect data from a population (people, organisms, sites) without manipulating variables. You look for patterns, correlations, or test frequency distributions.',
+   pros:'Perfect for genetics phenotype surveys, health studies, behavioural research. No lab required. Can survey large numbers quickly. Chi-squared analysis for Mendelian ratios.',
+   detail:'Best for: genetics (allele frequencies, phenotype distributions), health science, psychology, environmental surveys. Requirements: large enough sample (50-200+ for statistical power), informed consent, ethics considerations, anonymous data handling. Statistical analysis: chi-squared, correlation coefficients, frequency tables.'},
+  {icon:'🖥️', title:'Computational / Data Analysis',
+   desc:'You analyse existing datasets (public health data, genomic databases, climate records) to find patterns, build models, or test hypotheses.',
+   pros:'Access to large real-world datasets. No physical lab needed. Strong appeal at ISEF for computational biology and bioinformatics category. Good for students comfortable with spreadsheets or basic coding.',
+   detail:'Best for: bioinformatics, epidemiology, environmental science, astronomy. Resources: NCBI GenBank, WHO datasets, NASA public data, Our World in Data. Tools: Excel, Python, R (basic). No ethics issues with anonymised public data. Statistical analysis: regression, clustering, correlation.'},
+  {icon:'🌿', title:'Field Study',
+   desc:'You collect data from a natural environment: a school garden, local park, beach, or urban area. Observational in situ without lab control.',
+   pros:'High relevance score. Real-world data. Can be combined with lab work (collect samples, analyse in lab). Good for ecology, environmental science, biodiversity.',
+   detail:'Best for: ecology, environmental science, conservation. Requires: field access, identification skills, consistent methodology across sites. Limitations: less control over variables than lab experiment; weather and site access can be challenges. Statistical analysis: diversity indices, chi-squared, correlation.'},
+  {icon:'🔬', title:'Engineering / Design Project',
+   desc:'You design, build, and test a device, system, or process intended to solve a problem. Engineering projects must include a clear test phase with data.',
+   pros:'Very high creativity score at ISEF. Strong real-world impact narrative. Combines science and engineering. Can be done at home or school.',
+   detail:'Best for: robotics, materials science, renewable energy, biomedical engineering. Must include: a problem statement, design specifications, prototype, testing data comparing your design to a baseline. Pure design without data does not qualify for ISEF. Statistical analysis: comparison of your design performance vs control/baseline.'},
+  {icon:'📚', title:'Literature Review / Meta-Analysis',
+   desc:'You systematically review and synthesise existing published research to draw new conclusions or identify gaps. More suited to older students.',
+   pros:'No data collection required. Demonstrates deep scientific literacy. Strong in thoroughness criterion. Usually HL/university level at ISEF.',
+   detail:'Note: Pure literature reviews generally do NOT qualify as ISEF projects unless they include original quantitative synthesis (meta-analysis). For Explory, a well-executed systematic review with statistical pooling of prior results can qualify. Not recommended as a first project.'}
+];
+
+function buildProjTypes(){
+  var grid=document.getElementById('projTypeGrid'); if(!grid) return;
+  PROJ_TYPES.forEach(function(pt, i){
+    var div=document.createElement('div'); div.className='proj-card'; div.dataset.i=i;
+    div.innerHTML='<h5>'+pt.icon+' '+pt.title+'</h5><p>'+pt.desc+'</p><div class="pros">'+pt.pros+'</div>';
+    div.onclick=function(){
+      document.querySelectorAll('.proj-card').forEach(function(c){c.classList.remove('selected');});
+      div.classList.add('selected');
+      var det=document.getElementById('proj-detail');
+      det.innerHTML='<strong style="color:var(--navy)">'+pt.icon+' '+pt.title+' &mdash; Full Details</strong><br><br>'+pt.detail;
+      det.style.display='block';
+      setTimeout(function(){det.scrollIntoView({behavior:'smooth',block:'nearest'});},100);
+    };
+    grid.appendChild(div);
+  });
+}
+buildProjTypes();
+
+// CHECKLIST
+var CHECKLIST_ITEMS=[
+  'Research question is specific, testable, and measurable',
+  'Background research from at least 5 credible sources completed',
+  'Hypothesis is falsifiable and includes a scientific "because"',
+  'All three variable types (IV, DV, CV) clearly defined',
+  'Sample size is adequate (50+ for surveys, 3+ replicates for experiments)',
+  'Ethics considerations addressed (consent forms ready if needed)',
+  'Data collection table designed before starting',
+  'Statistical test chosen and justified (chi-squared, t-test, etc.)',
+  'Null hypothesis stated clearly',
+  'Project timeline mapped to competition submission deadline',
+  'Mentor/teacher has reviewed methodology before data collection',
+  'At least 3 judge questions practised and answered'
+];
+function buildChecklist(){
+  var el=document.getElementById('checklist'); if(!el) return;
+  CHECKLIST_ITEMS.forEach(function(item, i){
+    var div=document.createElement('div');
+    div.style.cssText='display:flex;align-items:center;gap:.8rem;background:white;border:1.5px solid var(--border);border-radius:10px;padding:.65rem 1rem;cursor:pointer;transition:all .2s;font-size:.86rem';
+    var cb=document.createElement('input'); cb.type='checkbox'; cb.id='chk'+i;
+    cb.style.cssText='width:18px;height:18px;accent-color:var(--navy);cursor:pointer;flex-shrink:0';
+    cb.onchange=function(){div.style.background=this.checked?'#d4eadd':'white'; div.style.borderColor=this.checked?'var(--mint)':'var(--border)';};
+    var lbl=document.createElement('label'); lbl.htmlFor='chk'+i; lbl.textContent=item; lbl.style.cursor='pointer';
+    div.onclick=function(){cb.checked=!cb.checked;cb.onchange.call(cb);};
+    div.appendChild(cb); div.appendChild(lbl); el.appendChild(div);
+  });
+}
+buildChecklist();
+
+// ABSTRACT BUILDER
+function buildAbstract(){
+  var parts=[
+    document.getElementById('abs1').value.trim(),
+    document.getElementById('abs2').value.trim(),
+    document.getElementById('abs3').value.trim(),
+    document.getElementById('abs4').value.trim(),
+    document.getElementById('abs5').value.trim()
+  ].filter(Boolean);
+  var text=parts.join(' ');
+  var words=text.split(/\s+/).filter(Boolean).length;
+  document.getElementById('abstract-text').textContent=text||'(No content entered yet)';
+  document.getElementById('word-count-display').textContent='Word count: '+words+'/250'+(words>250?' \u26A0\uFE0F OVER LIMIT \u2014 please trim':'  \u2705 Within limit');
+  document.getElementById('abstract-preview').style.display='block';
+  document.getElementById('abstract-preview').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+window.buildAbstract=buildAbstract;
+
+// SUMMARY
+function getV(id){var el=document.getElementById(id);return el?(el.value||el.textContent||'').trim():'';}
+function setS(id,text){var el=document.getElementById(id);if(!el)return;el.textContent=text||'Not yet completed';el.classList.toggle('empty',!text);}
+function buildSummary(){
+  var name=document.getElementById('studentName').value.trim()||'Marta';
+  document.getElementById('summaryName').textContent=name;
+  document.getElementById('summaryDate').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  setS('sum-spark',getV('ta-spark'));
+  setS('sum-topics',getV('ta-topics'));
+  setS('sum-projtype',getV('ta-projtype'));
+  setS('sum-title',getV('ta-title'));
+  setS('sum-category',document.getElementById('ta-category').value);
+  setS('sum-rq',getV('ta-rq'));
+  setS('sum-bg',getV('ta-bg'));
+  setS('sum-hyp',getV('ta-hyp'));
+  setS('sum-vars',getV('ta-vars'));
+  setS('sum-method',getV('ta-method'));
+  setS('sum-data',getV('ta-data'));
+  setS('sum-discuss',getV('ta-discuss'));
+  setS('sum-timeline',getV('ta-timeline'));
+  setS('sum-elevator',getV('ta-elevator'));
+  setS('sum-limits',getV('ta-limits'));
+  setS('sum-applications',getV('ta-applications'));
+  var absParts=[getV('abs1'),getV('abs2'),getV('abs3'),getV('abs4'),getV('abs5')].filter(Boolean).join(' ');
+  setS('sum-abstract',absParts);
+}
+window.buildSummary=buildSummary;
+
+function buildPlainText(){
+  var name=document.getElementById('studentName').value.trim()||'Marta';
+  var date=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  var absParts=[getV('abs1'),getV('abs2'),getV('abs3'),getV('abs4'),getV('abs5')].filter(Boolean).join(' ');
+  var lines=[
+    'SCIENCE COMPETITION PROJECT BUILDER \u2014 EXPLORY & ISEF PATHWAY',
+    '='.repeat(68),'Student: '+name,'Date: '+date,'',
+    '== MY CURIOSITY ==','','What sparks my curiosity: '+(getV('ta-spark')||'Not answered'),'',
+    '== TOPIC EXPLORATION ==','','My top topic ideas: '+(getV('ta-topics')||'Not answered'),'',
+    '== PROJECT TYPE ==','','My project type choice: '+(getV('ta-projtype')||'Not answered'),'',
+    '== PROJECT DETAILS ==','',
+    'Title: '+(getV('ta-title')||'Not yet named'),
+    'Category: '+(document.getElementById('ta-category').value||'Not selected'),'',
+    '== RESEARCH STRUCTURE ==','',
+    'Research Question: '+(getV('ta-rq')||'Not answered'),'',
+    'Background notes: '+(getV('ta-bg')||'Not answered'),'',
+    'Hypothesis: '+(getV('ta-hyp')||'Not answered'),'',
+    'Variables: '+(getV('ta-vars')||'Not answered'),'',
+    'Materials & Methods: '+(getV('ta-method')||'Not answered'),'',
+    'Data & Analysis Plan: '+(getV('ta-data')||'Not answered'),'',
+    'Discussion Plan: '+(getV('ta-discuss')||'Not answered'),'',
+    '== COMPETITION TIMELINE ==','','Timeline: '+(getV('ta-timeline')||'Not answered'),'',
+    '== JUDGE QUESTIONS ==','',
+    'Elevator pitch: '+(getV('ta-elevator')||'Not answered'),
+    'What I\'d do differently: '+(getV('ta-differently')||'Not answered'),
+    'Limitations: '+(getV('ta-limits')||'Not answered'),
+    'Real-world applications: '+(getV('ta-applications')||'Not answered'),'',
+    '== ABSTRACT DRAFT ==','',absParts||'Not yet written','',
+    '='.repeat(68),
+    '(c) 2026 Farvour Explorations \u2014 Science Competition Coaching \u2014 farvourexplorations.com',
+    'Built with the Marta Science Project Builder interactive'
+  ];
+  return lines.join('\n');
+}
+
+function copyResults(){
+  buildSummary();
+  navigator.clipboard.writeText(buildPlainText()).then(function(){
+    var el=document.getElementById('copyConfirm');
+    el.textContent='Copied! Paste into a Google Doc, email, or your research journal.';
+    setTimeout(function(){el.textContent='';},4000);
+  }).catch(function(){document.getElementById('copyConfirm').textContent='Could not copy automatically \u2014 try selecting text manually.';});
+}
+function emailResults(){
+  var name=document.getElementById('studentName').value.trim()||'Marta';
+  window.location.href='mailto:?subject='+encodeURIComponent('Science Project Plan \u2014 '+name)+'&body='+encodeURIComponent(buildPlainText());
+}
+window.copyResults=copyResults; window.emailResults=emailResults;
+
+})();
+</script>
+</body>
+</html>
