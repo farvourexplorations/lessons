@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Statistics & Probability 📊</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #1e3a5f; --sky-mid: #2d5282;
+    --sun: #f6c343; --sun-pale: #fef9e7;
+    --coral: #e8603c; --coral-pale: #fdf0ec;
+    --mint: #3aaf85; --mint-pale: #e8f8f2;
+    --lavender: #7c6fcd; --lavender-pale: #f0eefb;
+    --paper: #fffef9; --ink: #1a2332;
+    --muted: #7a8899; --border: rgba(0,0,0,0.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:linear-gradient(160deg,#0f2540 0%,#1e3a5f 40%,#2d5282 100%); min-height:100vh; font-family:'Nunito',sans-serif; color:var(--ink); overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image: radial-gradient(1px 1px at 10% 15%,rgba(255,255,255,0.6) 0%,transparent 100%), radial-gradient(1.5px 1.5px at 25% 40%,rgba(255,255,255,0.4) 0%,transparent 100%), radial-gradient(1px 1px at 45% 8%,rgba(255,255,255,0.5) 0%,transparent 100%), radial-gradient(2px 2px at 65% 22%,rgba(255,255,255,0.3) 0%,transparent 100%), radial-gradient(1px 1px at 80% 5%,rgba(255,255,255,0.6) 0%,transparent 100%), radial-gradient(1.5px 1.5px at 92% 35%,rgba(255,255,255,0.4) 0%,transparent 100%); pointer-events:none; z-index:0; }
+
+  /* ── HERO ── */
+  .hero { position:relative; z-index:1; text-align:center; padding:3.5rem 2rem 2rem; color:white; }
+  .hero-badge { display:inline-block; background:var(--sun); color:var(--sky); font-family:'Fredoka One',cursive; font-size:0.85rem; letter-spacing:0.05em; padding:0.35rem 1.2rem; border-radius:20px; margin-bottom:1.2rem; box-shadow:0 2px 12px rgba(246,195,67,0.4); }
+  .hero h1 { font-family:'Fredoka One',cursive; font-size:clamp(2.4rem,6vw,4rem); line-height:1.1; margin-bottom:0.8rem; text-shadow:0 2px 20px rgba(0,0,0,0.3); }
+  .hero h1 .accent { color:var(--sun); }
+  .hero p.intro { font-size:1.05rem; line-height:1.7; opacity:0.88; max-width:560px; margin:0 auto 2rem; }
+  .name-bar { background:rgba(255,255,255,0.1); border:1.5px solid rgba(255,255,255,0.25); border-radius:12px; padding:0.6rem 1rem; display:flex; align-items:center; gap:0.8rem; max-width:420px; margin:0 auto 1rem; }
+  .name-bar label { font-size:0.78rem; font-weight:700; color:rgba(255,255,255,0.8); white-space:nowrap; font-family:'DM Mono',monospace; }
+  .name-bar input { flex:1; background:rgba(255,255,255,0.15); border:none; border-radius:8px; padding:0.4rem 0.8rem; font-family:'Nunito',sans-serif; font-size:0.9rem; font-weight:700; color:white; outline:none; }
+  .name-bar input::placeholder { color:rgba(255,255,255,0.45); font-weight:400; }
+  .progress-wrap { display:flex; justify-content:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.5rem; }
+  .prog-step { display:flex; align-items:center; gap:0.4rem; background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.2); border-radius:20px; padding:0.35rem 0.9rem; font-size:0.78rem; font-weight:700; color:rgba(255,255,255,0.7); cursor:pointer; transition:all 0.2s; }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,0.22); color:white; border-color:rgba(255,255,255,0.4); }
+  .prog-step.active { background:var(--sun); color:var(--sky); border-color:var(--sun); box-shadow:0 2px 12px rgba(246,195,67,0.4); }
+
+  /* ── SHEET ── */
+  .sheet { position:relative; z-index:1; background:var(--paper); border-radius:24px 24px 0 0; margin-top:1.5rem; padding:0 0 6rem; min-height:80vh; box-shadow:0 -8px 40px rgba(0,0,0,0.25); }
+  .section { padding:3rem 2rem 0; max-width:820px; margin:0 auto; display:none; }
+  .section.active { display:block; }
+  .section-eyebrow { display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem; }
+  .eyebrow-num { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Fredoka One',cursive; font-size:1rem; color:white; flex-shrink:0; }
+  .num-coral{background:var(--coral);} .num-mint{background:var(--mint);} .num-sun{background:var(--sun);color:var(--sky);} .num-lav{background:var(--lavender);} .num-sky{background:var(--sky-mid);}
+  .eyebrow-label { font-size:0.72rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); font-family:'DM Mono',monospace; }
+  .section h2 { font-family:'Fredoka One',cursive; font-size:clamp(1.6rem,3.5vw,2.2rem); color:var(--sky); margin-bottom:0.6rem; line-height:1.2; }
+  .section .lead { font-size:1rem; line-height:1.75; color:#3a4a5a; margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+
+  /* ── WONDER BOX ── */
+  .wonder-box { background:linear-gradient(135deg,var(--sky) 0%,var(--sky-mid) 100%); color:white; border-radius:16px; padding:1.8rem 2rem; margin-bottom:1.8rem; position:relative; overflow:hidden; }
+  .wonder-box::after { content:'🤔'; position:absolute; right:1.5rem; top:50%; transform:translateY(-50%); font-size:3rem; opacity:0.3; }
+  .wonder-box p { font-size:1rem; line-height:1.7; font-style:italic; opacity:0.95; max-width:85%; }
+  .wonder-box strong { color:var(--sun); font-style:normal; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,var(--mint) 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'📊'; }
+
+  /* ── CHIPS ── */
+  .chip-row { display:flex; flex-wrap:wrap; gap:0.6rem; margin-bottom:1.5rem; }
+  .chip { padding:0.45rem 1rem; border-radius:20px; font-size:0.82rem; font-weight:700; cursor:pointer; transition:all 0.2s; border:2px solid transparent; }
+  .chip.coral{background:var(--coral-pale);color:var(--coral);border-color:#f8c5b8;} .chip.mint{background:var(--mint-pale);color:var(--mint);border-color:#b8ebd8;} .chip.sun{background:var(--sun-pale);color:#b8860b;border-color:#f8e0a0;} .chip.lav{background:var(--lavender-pale);color:var(--lavender);border-color:#d0caef;} .chip.sky{background:#e8f0f8;color:var(--sky-mid);border-color:#c0d4ea;}
+  .chip:hover { transform:scale(1.05); }
+  .concept-reveal { background:var(--paper); border-left:4px solid var(--coral); border-radius:0 10px 10px 0; padding:1rem 1.2rem; font-size:0.88rem; line-height:1.7; margin-top:0.5rem; display:none; animation:fadeIn 0.3s ease; }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border{border-color:var(--mint);} .concept-reveal.sun-border{border-color:var(--sun);} .concept-reveal.lav-border{border-color:var(--lavender);} .concept-reveal.sky-border{border-color:var(--sky-mid);}
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);} }
+
+  /* ── PREDICT BOX ── */
+  .predict-box { background:var(--sun-pale); border:2px dashed var(--sun); border-radius:14px; padding:1.4rem 1.6rem; margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive; font-size:1rem; color:#b8860b; margin-bottom:0.8rem; }
+  .predict-box textarea { width:100%; border:1.5px solid rgba(0,0,0,0.12); border-radius:8px; padding:0.7rem; font-family:'Nunito',sans-serif; font-size:0.88rem; resize:vertical; min-height:64px; background:white; color:var(--ink); outline:none; transition:border-color 0.2s; }
+  .predict-box textarea:focus { border-color:var(--sun); }
+
+  /* ── DEMO ZONE ── */
+  .demo-zone { background:white; border:2px solid var(--border); border-radius:16px; padding:1.8rem; margin-bottom:1.5rem; }
+  .demo-zone h3 { font-family:'Fredoka One',cursive; font-size:1.2rem; color:var(--sky); margin-bottom:0.3rem; }
+  .demo-zone .hint { font-size:0.78rem; color:var(--muted); font-family:'DM Mono',monospace; margin-bottom:1.3rem; }
+
+  /* ── BUTTONS ── */
+  .btn { border:none; border-radius:10px; padding:0.65rem 1.3rem; font-family:'Nunito',sans-serif; font-size:0.88rem; font-weight:800; cursor:pointer; transition:all 0.15s; }
+  .btn:hover { transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,0.15); }
+  .btn:active { transform:translateY(0); }
+  .btn-coral{background:var(--coral);color:white;} .btn-mint{background:var(--mint);color:white;} .btn-sun{background:var(--sun);color:var(--sky);} .btn-lav{background:var(--lavender);color:white;} .btn-ghost{background:#f0f2f5;color:var(--muted);} .btn-sky{background:var(--sky);color:white;}
+  .action-row { display:flex; gap:0.8rem; flex-wrap:wrap; align-items:center; margin-bottom:0.8rem; }
+
+  /* ── INPUT GROUP ── */
+  .input-group { display:flex; flex-direction:column; gap:0.3rem; }
+  .input-group label { font-size:0.78rem; font-weight:700; color:var(--muted); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.05em; }
+  .input-group input[type=number] { border:2px solid var(--border); border-radius:8px; padding:0.5rem 0.8rem; font-family:'Nunito',sans-serif; font-size:1rem; width:100px; outline:none; transition:border-color 0.2s; font-weight:700; color:var(--sky); background:white; }
+  .input-group input[type=number]:focus { border-color:var(--coral); }
+
+  /* ── STAT RESULT PANEL ── */
+  .stat-panel { background:var(--lavender-pale); border:2px solid rgba(124,111,205,0.3); border-radius:12px; padding:1.2rem 1.4rem; margin-top:1rem; }
+  .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:0.6rem; margin-top:0.6rem; }
+  .stat-card { background:white; border-radius:10px; padding:0.8rem; text-align:center; }
+  .stat-card .stat-val { font-family:'Fredoka One',cursive; font-size:1.5rem; color:var(--sky); }
+  .stat-card .stat-lbl { font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--muted); margin-top:0.2rem; }
+  .stat-card.coral-card .stat-val { color:var(--coral); }
+  .stat-card.mint-card  .stat-val { color:var(--mint); }
+  .stat-card.sun-card   .stat-val { color:#b8860b; }
+  .stat-card.lav-card   .stat-val { color:var(--lavender); }
+
+  /* ── CANVASES ── */
+  canvas.chart-canvas { border-radius:10px; border:2px solid var(--border); display:block; background:white; width:100%; }
+
+  /* ── DATA INPUT AREA ── */
+  .data-input-wrap { margin-bottom:1rem; }
+  .data-input-wrap label { font-size:0.78rem; font-weight:700; color:var(--muted); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:0.4rem; }
+  .data-input-wrap input[type=text] { width:100%; border:2px solid var(--lavender); border-radius:8px; padding:0.6rem 0.9rem; font-family:'DM Mono',monospace; font-size:0.95rem; font-weight:700; color:var(--sky); outline:none; transition:border-color 0.2s; background:white; }
+  .data-input-wrap input[type=text]:focus { border-color:var(--coral); }
+
+  /* ── DATASET BUTTONS ── */
+  .dataset-btn { background:var(--sky); color:white; border:none; border-radius:8px; padding:0.4rem 0.8rem; font-family:'Nunito',sans-serif; font-size:0.78rem; font-weight:700; cursor:pointer; transition:all 0.15s; margin:0.2rem; }
+  .dataset-btn:hover { background:var(--sky-mid); }
+
+  /* ── WORLD CARDS ── */
+  .world-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+  .world-card { border-radius:14px; padding:1.4rem; }
+  .world-card.coral-bg{background:var(--coral-pale);} .world-card.mint-bg{background:var(--mint-pale);} .world-card.lav-bg{background:var(--lavender-pale);} .world-card.sun-bg{background:var(--sun-pale);}
+  .world-card .wc-icon { font-size:2rem; margin-bottom:0.6rem; }
+  .world-card h4 { font-family:'Fredoka One',cursive; font-size:1rem; margin-bottom:0.4rem; color:var(--sky); }
+  .world-card p  { font-size:0.82rem; line-height:1.6; color:#3a4a5a; }
+
+  /* ── REFLECTION ── */
+  .reflection-card { background:white; border:2px solid var(--border); border-radius:14px; padding:1.4rem; margin-bottom:1rem; }
+  .reflection-card .q { font-family:'Fredoka One',cursive; font-size:1rem; color:var(--sky); margin-bottom:0.7rem; display:flex; gap:0.5rem; align-items:baseline; }
+  .reflection-card .q .qnum { font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--muted); flex-shrink:0; }
+  .reflection-card textarea { width:100%; border:1.5px solid rgba(0,0,0,0.1); border-radius:8px; padding:0.7rem; font-family:'Nunito',sans-serif; font-size:0.88rem; resize:vertical; min-height:72px; background:#fafbfc; color:var(--ink); outline:none; transition:border-color 0.2s; }
+  .reflection-card textarea:focus { border-color:var(--lavender); }
+
+  /* ── CONGRATS ── */
+  .congrats { text-align:center; padding:2rem 1rem; }
+  .congrats .trophy { font-size:4rem; margin-bottom:1rem; animation:bounce 0.8s ease infinite alternate; }
+  @keyframes bounce { from{transform:translateY(0);}to{transform:translateY(-10px);} }
+  .congrats h2 { font-family:'Fredoka One',cursive; font-size:2rem; color:var(--sky); margin-bottom:0.8rem; }
+  .congrats p  { font-size:0.95rem; line-height:1.7; color:#3a4a5a; max-width:500px; margin:0 auto 1.5rem; }
+  .summary-chips { display:flex; flex-wrap:wrap; gap:0.6rem; justify-content:center; }
+  .summary-chip { padding:0.5rem 1.1rem; border-radius:20px; font-size:0.82rem; font-weight:700; background:var(--sun-pale); color:#b8860b; border:1.5px solid #f8e0a0; }
+  .divider { height:1px; background:linear-gradient(90deg,transparent,var(--border),transparent); margin:1.5rem 0; }
+
+  /* ── NAV ── */
+  .nav-row { display:flex; justify-content:space-between; align-items:center; padding:2.5rem 2rem 0; max-width:820px; margin:0 auto; }
+  .btn-next { background:var(--sky); color:white; border:none; border-radius:50px; padding:0.9rem 2rem; font-family:'Fredoka One',cursive; font-size:1rem; cursor:pointer; display:flex; align-items:center; gap:0.6rem; transition:all 0.2s; box-shadow:0 4px 16px rgba(30,58,95,0.25); }
+  .btn-next:hover { background:var(--sky-mid); transform:translateY(-2px); }
+  .btn-prev { background:transparent; color:var(--muted); border:2px solid var(--border); border-radius:50px; padding:0.9rem 1.6rem; font-family:'Fredoka One',cursive; font-size:0.95rem; cursor:pointer; transition:all 0.2s; }
+  .btn-prev:hover { border-color:var(--muted); color:var(--ink); }
+  .btn-prev:disabled,.btn-next:disabled { opacity:0.3; cursor:not-allowed; transform:none; }
+
+  /* ── SUMMARY ── */
+  .summary-section { background:white; border-radius:16px; padding:1.8rem; margin-bottom:1.2rem; border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive; font-size:1.05rem; color:var(--sky); margin-bottom:0.8rem; }
+  .summary-answer { background:#f5f7fa; border-radius:8px; padding:0.7rem 1rem; font-size:0.85rem; line-height:1.6; color:var(--ink); margin-bottom:0.5rem; font-style:italic; border-left:3px solid var(--lavender); min-height:2rem; }
+  .summary-answer.empty { color:var(--muted); font-style:normal; border-left-color:var(--border); }
+  .sum-label { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.4rem; margin-top:0.6rem; text-transform:uppercase; letter-spacing:0.06em; }
+  .share-buttons { display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:1.5rem; justify-content:center; }
+  .share-btn { border:none; border-radius:12px; padding:0.85rem 1.6rem; font-family:'Fredoka One',cursive; font-size:1rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:0.5rem; }
+  .share-btn:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.15); }
+  .share-btn.copy{background:var(--mint);color:white;} .share-btn.email{background:var(--lavender);color:white;} .share-btn.print{background:var(--sky);color:white;}
+  .copy-confirm { text-align:center; font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--mint); min-height:1.2rem; margin-top:0.6rem; }
+
+  @media (max-width:560px) { .hero{padding:2.5rem 1.2rem 1.5rem;} .section{padding:2rem 1.2rem 0;} .nav-row{padding:2rem 1.2rem 0;} }
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm{display:none !important;}
+    .sheet{box-shadow:none;border-radius:0;}
+    .section{display:none !important;}
+    #sec-7{display:block !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">✨ Grade 6 · Statistics & Probability</div>
+  <h1>The Science of<br><span class="accent">Making Sense of Data</span> 📊</h1>
+  <p class="intro">Numbers alone don't tell a story. But when you collect data, display it, and find patterns in it — that's when numbers start to speak. Today you'll learn to listen.</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <a class="prog-step active" id="pill-0" onclick="goTo(0)">❓ Wonder</a>
+    <a class="prog-step" id="pill-1" onclick="goTo(1)">📚 Discover</a>
+    <a class="prog-step" id="pill-2" onclick="goTo(2)">❓ Stat Questions</a>
+    <a class="prog-step" id="pill-3" onclick="goTo(3)">📈 Center & Spread</a>
+    <a class="prog-step" id="pill-4" onclick="goTo(4)">📊 Displays</a>
+    <a class="prog-step" id="pill-5" onclick="goTo(5)">🌍 Real Life</a>
+    <a class="prog-step" id="pill-6" onclick="goTo(6)">💭 Reflect</a>
+    <a class="prog-step" id="pill-7" onclick="goTo(7)">📤 Submit</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+  <!-- ══ SECTION 0: WONDER ══ -->
+  <div class="section active" id="sec-0">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">The Big Question</span></div>
+    <h2>What can numbers tell us that words can't?</h2>
+    <p class="lead">Imagine you want to know whether students in your school get enough sleep. You could ask one person — but that's just one story. Statistics lets you ask <strong>everyone</strong>, find the pattern, and say something true about the whole group.</p>
+    <div class="wonder-box">
+      <p>Here's a dataset of hours of sleep 10 students got last night: <strong>7, 6, 8, 5, 9, 7, 6, 8, 7, 5</strong>. What can you say about this group? Is it typical? Spread out? What's the most common value? By the end of today, you'll be able to answer all of those questions — precisely.</p>
+    </div>
+
+    <p style="font-size:0.9rem;font-weight:700;color:var(--sky);margin-bottom:0.8rem;">🧠 Warm-up — statistical question or not?</p>
+    <div style="background:white;border:2px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;">
+      <div id="warmupGrid" style="display:flex;flex-direction:column;gap:0.6rem;"></div>
+      <div id="warmupFb" style="margin-top:1rem;font-family:'DM Mono',monospace;font-size:0.82rem;min-height:1.2rem;color:var(--mint);"></div>
+    </div>
+
+    <div class="wonder-box mint-box">
+      <p>Statistics is the <strong>science of learning from data</strong>. Every poll you see, every medical study you hear about, every sports statistic — all produced by people who knew exactly what you're about to learn today.</p>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 1: DISCOVER ══ -->
+  <div class="section" id="sec-1">
+    <div class="section-eyebrow"><div class="eyebrow-num num-lav">2</div><span class="eyebrow-label">Discover the Vocabulary</span></div>
+    <h2>📚 Words statisticians use</h2>
+    <p class="lead">Click each word to reveal its meaning. These are the precise terms you'll use all the way through middle and high school statistics.</p>
+    <div class="chip-row">
+      <span class="chip coral" onclick="revealTerm('mean')">📐 Mean</span>
+      <span class="chip lav"   onclick="revealTerm('median')">⬛ Median</span>
+      <span class="chip sun"   onclick="revealTerm('mode')">🔁 Mode</span>
+      <span class="chip mint"  onclick="revealTerm('iqr')">📏 IQR</span>
+      <span class="chip sky"   onclick="revealTerm('mad')">📉 MAD</span>
+    </div>
+    <div class="concept-reveal" id="cr-mean">
+      <strong>Mean</strong> — the average. Add all values and divide by how many there are.<br><br>
+      <em>Data: 3, 7, 5, 8, 2 → Sum = 25 → Mean = 25 ÷ 5 = 5</em><br><br>
+      <em>Your turn: find the mean of 10, 4, 8, 6, 7.</em>
+    </div>
+    <div class="concept-reveal lav-border" id="cr-median">
+      <strong>Median</strong> — the middle value when data is sorted in order.<br><br>
+      <em>Sorted: 2, 3, 5, 7, 8 → Median = 5. For even counts, average the two middle values.</em><br><br>
+      <em>Your turn: find the median of 4, 9, 2, 7, 1, 6.</em>
+    </div>
+    <div class="concept-reveal sun-border" id="cr-mode">
+      <strong>Mode</strong> — the value that appears most often. A dataset can have no mode, one mode, or multiple modes.<br><br>
+      <em>Data: 3, 7, 3, 9, 3, 7 → Mode = 3 (appears 3 times)</em><br><br>
+      <em>Your turn: what is the mode of 5, 2, 8, 2, 9, 5, 2?</em>
+    </div>
+    <div class="concept-reveal mint-border" id="cr-iqr">
+      <strong>Interquartile Range (IQR)</strong> — the range of the middle 50% of the data. IQR = Q3 − Q1.<br><br>
+      <em>It measures spread while ignoring extreme outliers. A small IQR means the data clusters tightly; a large IQR means it's spread out.</em><br><br>
+      <em>Your turn: data sorted: 2, 4, 5, 7, 9, 11, 13. Q1 = 4, Q3 = 11. IQR = ?</em>
+    </div>
+    <div class="concept-reveal sky-border" id="cr-mad">
+      <strong>Mean Absolute Deviation (MAD)</strong> — the average distance each data point is from the mean.<br><br>
+      <em>Step 1: find the mean. Step 2: find each value's distance from the mean. Step 3: average those distances.</em><br><br>
+      <em>Your turn: data: 2, 4, 6, 8. Mean = 5. Distances: 3, 1, 1, 3. MAD = (3+1+1+3)÷4 = 2.</em>
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="background:var(--lavender-pale);border:2px solid rgba(124,111,205,0.3);border-radius:14px;padding:1.4rem;margin-bottom:1.5rem;">
+      <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:var(--lavender);margin-bottom:0.8rem;">🔑 Center vs Spread — what's the difference?</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;">
+        <div style="background:white;border-radius:10px;padding:1rem;">
+          <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:var(--coral);margin-bottom:0.4rem;">Measures of Center</div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.78rem;color:#3a4a5a;line-height:1.8;">Mean — the balance point<br>Median — the middle value<br>Mode — most frequent value<br><br><em>Summarize with ONE number</em></div>
+        </div>
+        <div style="background:white;border-radius:10px;padding:1rem;">
+          <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:var(--mint);margin-bottom:0.4rem;">Measures of Spread</div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.78rem;color:#3a4a5a;line-height:1.8;">Range — max − min<br>IQR — Q3 − Q1<br>MAD — avg distance from mean<br><br><em>Describe how varied the data is</em></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 2: STATISTICAL QUESTIONS ══ -->
+  <div class="section" id="sec-2">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">3</div><span class="eyebrow-label">Investigation 1 · 6.SP.A.1</span></div>
+    <h2>❓ What Makes a Question Statistical?</h2>
+    <p class="lead">A statistical question <em>anticipates variability</em> — it expects different answers from different people or things. <strong>"How tall are you?"</strong> has one answer. <strong>"How tall are students in this school?"</strong> expects many different answers. That difference is everything.</p>
+
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="sq-prediction" placeholder="'What is 2 + 2?' is / isn't a statistical question because... 'How many hours of TV do students watch per week?' is / isn't statistical because... A statistical question always expects ___ answers..."></textarea>
+    </div>
+
+    <div class="demo-zone">
+      <h3>🔍 Statistical Question Sorter</h3>
+      <div class="hint">CLICK EACH QUESTION — IS IT STATISTICAL OR NOT? EXPLAIN YOUR REASONING</div>
+      <div id="sqSorter" style="display:flex;flex-direction:column;gap:0.7rem;"></div>
+      <div id="sqFb" style="margin-top:0.8rem;font-family:'DM Mono',monospace;font-size:0.82rem;min-height:1.2rem;color:var(--mint);"></div>
+    </div>
+
+    <div class="demo-zone">
+      <h3>✍️ Write Your Own Statistical Question</h3>
+      <div class="hint">CHOOSE A TOPIC · WRITE A STATISTICAL QUESTION · CHECK THE KEY FEATURES</div>
+      <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:0.8rem;">
+        <button class="dataset-btn" onclick="setSQTopic('sports')">⚽ Sports</button>
+        <button class="dataset-btn" onclick="setSQTopic('school')">🏫 School</button>
+        <button class="dataset-btn" onclick="setSQTopic('food')">🍕 Food</button>
+        <button class="dataset-btn" onclick="setSQTopic('nature')">🌿 Nature</button>
+      </div>
+      <div id="sqTopicHint" style="background:var(--sun-pale);border:2px solid var(--sun);border-radius:10px;padding:0.8rem 1rem;font-size:0.88rem;color:#b8860b;margin-bottom:0.8rem;min-height:2rem;font-family:'DM Mono',monospace;"></div>
+      <div class="data-input-wrap">
+        <label>Your statistical question</label>
+        <input type="text" id="sqInput" placeholder="Type your question here...">
+      </div>
+      <div class="action-row" style="margin-top:0.8rem;">
+        <button class="btn btn-coral" onclick="checkSQ()">✓ Check my question</button>
+      </div>
+      <div id="sqCheckFb" style="margin-top:0.6rem;font-family:'DM Mono',monospace;font-size:0.82rem;min-height:1.2rem;color:var(--lavender);line-height:1.7;"></div>
+    </div>
+
+    <div class="predict-box" style="border-color:var(--mint);background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="sq-reflection" placeholder="A statistical question is different because it expects... The key word that tells you it's statistical is... A non-statistical question has ___ answer(s) while a statistical question has..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 3: CENTER & SPREAD ══ -->
+  <div class="section" id="sec-3">
+    <div class="section-eyebrow"><div class="eyebrow-num num-mint">4</div><span class="eyebrow-label">Investigation 2 · 6.SP.A.2, A.3 & B.5</span></div>
+    <h2>📈 Center, Spread & Distribution</h2>
+    <p class="lead">Every dataset has a <em>shape</em>, a <em>center</em>, and a <em>spread</em>. These three things together tell the whole story of the data. <strong>Predict before you calculate!</strong></p>
+
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="cs-prediction" placeholder="For the data 7, 6, 8, 5, 9, 7, 6, 8, 7, 5: the mean is ___. The median is ___. The IQR is ___. I think mean vs median would differ when..."></textarea>
+    </div>
+
+    <div class="demo-zone">
+      <h3>🔢 Live Statistics Calculator</h3>
+      <div class="hint">ENTER YOUR OWN DATA OR PICK A PRESET · EVERY STAT UPDATES INSTANTLY</div>
+
+      <div class="data-input-wrap">
+        <label>Your data (comma-separated numbers)</label>
+        <input type="text" id="dataInput" value="7, 6, 8, 5, 9, 7, 6, 8, 7, 5" oninput="calcStats()">
+      </div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem;">
+        <button class="dataset-btn" onclick="loadDataset('sleep')">😴 Sleep hours</button>
+        <button class="dataset-btn" onclick="loadDataset('scores')">📝 Test scores</button>
+        <button class="dataset-btn" onclick="loadDataset('heights')">📏 Heights (cm)</button>
+        <button class="dataset-btn" onclick="loadDataset('temps')">🌡️ Temperatures</button>
+        <button class="dataset-btn" onclick="loadDataset('outlier')">⚠️ With outlier</button>
+      </div>
+
+      <div class="stat-panel" id="statPanel">
+        <div style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.08em;">Sorted data: <span id="sortedData" style="color:var(--sky);"></span></div>
+        <div class="stat-grid">
+          <div class="stat-card coral-card"><div class="stat-val" id="statMean">—</div><div class="stat-lbl">Mean</div></div>
+          <div class="stat-card lav-card"><div class="stat-val" id="statMedian">—</div><div class="stat-lbl">Median</div></div>
+          <div class="stat-card sun-card"><div class="stat-val" id="statMode">—</div><div class="stat-lbl">Mode</div></div>
+          <div class="stat-card"><div class="stat-val" id="statRange" style="color:var(--sky);">—</div><div class="stat-lbl">Range</div></div>
+          <div class="stat-card mint-card"><div class="stat-val" id="statIQR">—</div><div class="stat-lbl">IQR</div></div>
+          <div class="stat-card"><div class="stat-val" id="statMAD" style="color:var(--sky-mid);">—</div><div class="stat-lbl">MAD</div></div>
+        </div>
+        <div id="statInsight" style="margin-top:0.8rem;font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--lavender);line-height:1.7;"></div>
+      </div>
+    </div>
+
+    <div class="demo-zone">
+      <h3>🎯 Mean vs Median — When Do They Differ?</h3>
+      <div class="hint">ADD AN OUTLIER AND WATCH WHAT HAPPENS TO MEAN AND MEDIAN</div>
+      <p style="font-size:0.88rem;color:#3a4a5a;margin-bottom:1rem;">The mean is sensitive to outliers (extreme values). The median is resistant. This matters a lot in real data.</p>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1rem;">
+        <div class="input-group">
+          <label>Add a value to the dataset</label>
+          <input type="number" id="outlierVal" value="100" style="border-color:var(--coral);">
+        </div>
+        <button class="btn btn-coral" onclick="addOutlier()">Add value ▶</button>
+        <button class="btn btn-ghost" onclick="resetOutlier()">↺ Reset</button>
+      </div>
+      <div id="outlierResult" style="font-family:'DM Mono',monospace;font-size:0.85rem;color:var(--sky);line-height:2;background:#f5f7fa;border-radius:10px;padding:1rem;min-height:3rem;"></div>
+    </div>
+
+    <div class="predict-box" style="border-color:var(--lavender);background:var(--lavender-pale);">
+      <h4 style="color:var(--lavender);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="cs-reflection" placeholder="The mean is affected by outliers because... The median is more resistant because... I would use median instead of mean when... The IQR tells me... MAD measures..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 4: DATA DISPLAYS ══ -->
+  <div class="section" id="sec-4">
+    <div class="section-eyebrow"><div class="eyebrow-num num-sun">5</div><span class="eyebrow-label">Investigation 3 · 6.SP.B.4</span></div>
+    <h2>📊 Displaying Data — Dot Plots, Histograms & Box Plots</h2>
+    <p class="lead">The same data can be displayed three different ways — and each display reveals something different. <strong>Predict before you plot!</strong></p>
+
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="disp-prediction" placeholder="A dot plot shows... A histogram is different from a dot plot because... A box plot shows the median and quartiles, which means it tells you about... I think the most useful display for comparing two groups would be..."></textarea>
+    </div>
+
+    <div class="demo-zone">
+      <h3>📍 Dot Plot</h3>
+      <div class="hint">EACH DOT = ONE DATA POINT · STACKED ABOVE THE NUMBER LINE · GREAT FOR SMALL DATASETS</div>
+      <div class="data-input-wrap" style="margin-bottom:0.8rem;">
+        <label>Data (comma-separated)</label>
+        <input type="text" id="dotData" value="7, 6, 8, 5, 9, 7, 6, 8, 7, 5" oninput="drawDotPlot()">
+      </div>
+      <canvas class="chart-canvas" id="dotCanvas" height="140"></canvas>
+      <div id="dotInsight" style="margin-top:0.6rem;font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--muted);line-height:1.6;"></div>
+    </div>
+
+    <div class="demo-zone">
+      <h3>📊 Histogram</h3>
+      <div class="hint">GROUPS DATA INTO INTERVALS (BINS) · SHOWS DISTRIBUTION SHAPE · GREAT FOR LARGER DATASETS</div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:0.8rem;">
+        <div class="data-input-wrap" style="flex:1;margin-bottom:0;">
+          <label>Data</label>
+          <input type="text" id="histData" value="72,85,91,68,74,88,95,62,79,83,70,88,76,91,65,84,78,92,71,87" oninput="drawHistogram()">
+        </div>
+        <div class="input-group">
+          <label>Bin size</label>
+          <input type="number" id="binSize" min="2" max="20" value="10" oninput="drawHistogram()" style="width:80px;">
+        </div>
+      </div>
+      <canvas class="chart-canvas" id="histCanvas" height="200"></canvas>
+      <div id="histInsight" style="margin-top:0.6rem;font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--muted);line-height:1.6;"></div>
+    </div>
+
+    <div class="demo-zone">
+      <h3>📦 Box Plot (Box-and-Whisker)</h3>
+      <div class="hint">SHOWS MIN, Q1, MEDIAN, Q3, MAX · REVEALS SPREAD AND SYMMETRY AT A GLANCE</div>
+      <div class="data-input-wrap" style="margin-bottom:0.8rem;">
+        <label>Data</label>
+        <input type="text" id="boxData" value="7, 6, 8, 5, 9, 7, 6, 8, 7, 5" oninput="drawBoxPlot()">
+      </div>
+      <canvas class="chart-canvas" id="boxCanvas" height="130"></canvas>
+      <div id="boxStats" style="margin-top:0.6rem;display:flex;flex-wrap:wrap;gap:0.5rem;"></div>
+      <div id="boxInsight" style="margin-top:0.6rem;font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--muted);line-height:1.6;"></div>
+    </div>
+
+    <div class="predict-box" style="border-color:var(--mint);background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="disp-reflection" placeholder="A dot plot is best when... A histogram is best when... A box plot is best when... The display that shows the median most clearly is... I was surprised that the same data could look so different in..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 5: REAL LIFE ══ -->
+  <div class="section" id="sec-5">
+    <div class="section-eyebrow"><div class="eyebrow-num num-sky">6</div><span class="eyebrow-label">Real-World Connections</span></div>
+    <h2>Statistics is everywhere 🌍</h2>
+    <p class="lead">Every decision made with data uses these tools. From the weather forecast to your favourite sports team's draft picks, statistics shapes the world you live in.</p>
+    <div class="world-grid">
+      <div class="world-card coral-bg"><div class="wc-icon">🏥</div><h4>Medicine</h4><p>Clinical trials collect data on thousands of patients, calculate means and medians, and display distributions to determine whether a drug actually works — or if the result was just chance.</p></div>
+      <div class="world-card mint-bg"><div class="wc-icon">⚽</div><h4>Sports Analytics</h4><p>Teams use MAD and IQR to evaluate consistency. A player with a low MAD in scoring is more reliable than one with a high mean but high variability.</p></div>
+      <div class="world-card lav-bg"><div class="wc-icon">🌦️</div><h4>Climate Science</h4><p>Climatologists use histograms and box plots to compare temperature distributions across decades. The shift in the median tells the story of climate change.</p></div>
+      <div class="world-card sun-bg"><div class="wc-icon">📱</div><h4>Tech & Social Media</h4><p>Every recommendation algorithm uses statistics. The mean time spent per video, the median engagement rate, the IQR of user behaviour — all drive what you see next.</p></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="demo-zone">
+      <h3>🎯 Real-World Data Challenges</h3>
+      <div class="hint">EACH PROBLEM USES REAL-WORLD DATA · CHOOSE THE RIGHT MEASURE · SOLVE IT</div>
+      <div id="realProblems" style="display:flex;flex-direction:column;gap:0.8rem;"></div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 6: REFLECT ══ -->
+  <div class="section" id="sec-6">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">7</div><span class="eyebrow-label">Synthesis & Wonder</span></div>
+    <h2>💭 Let's think it through</h2>
+    <p class="lead">Statistics isn't just calculation — it's interpretation. These questions ask you to reason about what the numbers actually mean.</p>
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q1 /</span> When would you use median instead of mean to describe a dataset? Give a real-world example.</div>
+      <textarea placeholder="I would use median when... For example, house prices in a city use median because... A single outlier (like a mansion) would make the mean..."></textarea>
+    </div>
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q2 /</span> Two classes both have a mean score of 75. Class A has MAD = 2, Class B has MAD = 15. What does this tell you about each class?</div>
+      <textarea placeholder="Class A's MAD of 2 means... Class B's MAD of 15 means... If I were a teacher, I would be more worried about Class ___ because... The mean alone didn't tell me..."></textarea>
+    </div>
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q3 /</span> Which display — dot plot, histogram, or box plot — would you choose to show the spread of ages at a school? Why?</div>
+      <textarea placeholder="I would choose ___ because... A dot plot would be too ___ for this data. A histogram would... A box plot would show... The key information I want to show is..."></textarea>
+    </div>
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q4 /</span> Write your own statistical question about something you're curious about. What data would you collect, and how would you display it?</div>
+      <textarea placeholder="My statistical question is: 'How many...?' I would collect data by... I would display it using a ___ because... I expect the distribution to look like..."></textarea>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="congrats">
+      <div class="trophy">🎉</div>
+      <h2>You're thinking like a data scientist!</h2>
+      <p>Today you covered all five Grade 6 Statistics & Probability standards — from recognising statistical questions to calculating MAD and drawing box plots. You now have the tools to make sense of any dataset you encounter.</p>
+      <div class="summary-chips">
+        <span class="summary-chip">Statistical questions expect variability</span>
+        <span class="summary-chip">Mean = sum ÷ count</span>
+        <span class="summary-chip">Median = middle value</span>
+        <span class="summary-chip">IQR = Q3 − Q1</span>
+        <span class="summary-chip">MAD = avg distance from mean</span>
+        <span class="summary-chip">Dot plot · Histogram · Box plot</span>
+        <span class="summary-chip">6.SP.A.1 · A.2 · A.3 · B.4 · B.5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 7: SUBMIT ══ -->
+  <div class="section" id="sec-7">
+    <div class="section-eyebrow"><div class="eyebrow-num num-mint">8</div><span class="eyebrow-label">Your Completed Work</span></div>
+    <h2>📤 Ready to Share</h2>
+    <p class="lead">Here's everything you worked on today. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> directly to your teacher.</p>
+
+    <div class="summary-section" style="background:var(--sky);color:white;border-color:var(--sky);">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;align-items:center;">
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.7rem;opacity:0.6;margin-bottom:0.3rem;">STUDENT</div>
+          <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'DM Mono',monospace;font-size:0.7rem;opacity:0.6;margin-bottom:0.3rem;">LESSON</div>
+          <div style="font-family:'Fredoka One',cursive;font-size:1rem;">Statistics & Probability 📊</div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.72rem;opacity:0.6;" id="summaryDate"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-section">
+      <h3>❓ Section 3 — Statistical Questions</h3>
+      <div class="sum-label">Prediction</div><div class="summary-answer" id="sum-sq-pred"></div>
+      <div class="sum-label">Reflection</div><div class="summary-answer" id="sum-sq-ref"></div>
+    </div>
+    <div class="summary-section">
+      <h3>📈 Section 4 — Center & Spread</h3>
+      <div class="sum-label">Prediction</div><div class="summary-answer" id="sum-cs-pred"></div>
+      <div class="sum-label">Reflection</div><div class="summary-answer" id="sum-cs-ref"></div>
+    </div>
+    <div class="summary-section">
+      <h3>📊 Section 5 — Data Displays</h3>
+      <div class="sum-label">Prediction</div><div class="summary-answer" id="sum-disp-pred"></div>
+      <div class="sum-label">Reflection</div><div class="summary-answer" id="sum-disp-ref"></div>
+    </div>
+    <div class="summary-section">
+      <h3>💭 Section 7 — Reflections</h3>
+      <div class="sum-label">Q1 — Median vs Mean</div><div class="summary-answer" id="sum-q1"></div>
+      <div class="sum-label">Q2 — MAD interpretation</div><div class="summary-answer" id="sum-q2"></div>
+      <div class="sum-label">Q3 — Choosing a display</div><div class="summary-answer" id="sum-q3"></div>
+      <div class="sum-label">Q4 — Your own statistical question</div><div class="summary-answer" id="sum-q4"></div>
+    </div>
+
+    <div class="share-buttons">
+      <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+      <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+      <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+    <div class="copy-confirm" id="copyConfirm"></div>
+
+    <div style="margin-top:1.5rem;background:var(--sun-pale);border:2px dashed var(--sun);border-radius:12px;padding:1.2rem 1.4rem;">
+      <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#b8860b;margin-bottom:0.8rem;">📋 How to submit your work:</p>
+      <p style="font-size:0.82rem;color:#b8860b;font-family:'DM Mono',monospace;line-height:2;">
+        <strong>📋 Copy My Results</strong> — Copies all your answers to your clipboard. Then open Google Classroom, click your assignment, paste into the comment or document box, and submit.<br>
+        <strong>📧 Email to Teacher</strong> — Opens your email app with your answers already typed. Just add your teacher's address and hit send.<br>
+        <strong>🖨️ Print / Save PDF</strong> — Mac: "Save as PDF" bottom left · Windows: "Microsoft Print to PDF".
+      </p>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" id="prevBtn" onclick="navigate(-1)" disabled>← Back</button>
+    <button class="btn-next" id="nextBtn" onclick="navigate(1)">Next <span>→</span></button>
+  </div>
+</div>
+
+<!-- COPYRIGHT -->
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+
+<script>
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+let currentSection = 0;
+const totalSections = 8;
+
+function goTo(n) {
+  document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===n));
+  document.querySelectorAll('.prog-step').forEach((p,i) => {
+    p.classList.toggle('active', i===n);
+    if (i < n) p.classList.add('done');
+    else p.classList.remove('done');
+  });
+  currentSection = n;
+  document.getElementById('prevBtn').disabled = n === 0;
+  if (n === totalSections - 1) {
+    document.getElementById('nextBtn').textContent = '✓ Complete!';
+    document.getElementById('nextBtn').disabled = true;
+    buildSummary();
+  } else {
+    document.getElementById('nextBtn').innerHTML = 'Next <span>→</span>';
+    document.getElementById('nextBtn').disabled = false;
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (n === 3) { calcStats(); resetOutlier(); }
+  if (n === 4) { drawDotPlot(); drawHistogram(); drawBoxPlot(); }
+  if (n === 5) { buildRealProblems(); }
+}
+function navigate(dir) { goTo(Math.min(Math.max(currentSection + dir, 0), totalSections-1)); }
+
+// ══════════════════════════════════════
+// SECTION 0 — WARMUP
+// ══════════════════════════════════════
+const warmupQs = [
+  { q:'"How many siblings do you have?" (asked to one student)', stat:false, exp:'Not statistical — it has exactly one answer for that one person. No variability expected.' },
+  { q:'"How many siblings do students in our class have?"', stat:true, exp:'Statistical! Different students will have different numbers of siblings — variability is expected.' },
+  { q:'"What is the capital of France?"', stat:false, exp:'Not statistical — Paris is always the answer. No variability.' },
+  { q:'"How many hours of sleep do 6th graders get on school nights?"', stat:true, exp:'Statistical! Different students sleep different amounts — the question anticipates a distribution of answers.' },
+  { q:'"What is 7 × 8?"', stat:false, exp:'Not statistical — 56 is always the answer. No variability.' },
+  { q:'"What are the typical heights of players on an NBA team?"', stat:true, exp:'Statistical! Players vary in height — the question expects a range of values.' },
+];
+
+let wDone=0, wCorrect=0;
+function buildWarmup() {
+  document.getElementById('warmupGrid').innerHTML = warmupQs.map((q,i) => `
+    <div style="display:flex;align-items:flex-start;gap:0.8rem;flex-wrap:wrap;background:#f5f7fa;border-radius:10px;padding:0.8rem 1rem;">
+      <div style="flex:1;min-width:200px;font-size:0.88rem;font-weight:600;color:#3a4a5a;padding-top:0.2rem;">${q.q}</div>
+      <div style="display:flex;gap:0.4rem;flex-shrink:0;">
+        <button onclick="answerWarmup(${i},true,this)" style="background:var(--mint-pale);border:2px solid #b8ebd8;border-radius:8px;padding:0.35rem 0.8rem;font-family:'Fredoka One',cursive;font-size:0.82rem;color:var(--mint);cursor:pointer;">Statistical ✓</button>
+        <button onclick="answerWarmup(${i},false,this)" style="background:var(--coral-pale);border:2px solid #f8c5b8;border-radius:8px;padding:0.35rem 0.8rem;font-family:'Fredoka One',cursive;font-size:0.82rem;color:var(--coral);cursor:pointer;">Not statistical ✗</button>
+      </div>
+      <div id="wfb-${i}" style="font-family:'DM Mono',monospace;font-size:0.72rem;width:100%;min-height:1rem;margin-top:0.2rem;"></div>
+    </div>`).join('');
+}
+
+function answerWarmup(i, answer, btn) {
+  if (document.getElementById(`wfb-${i}`).textContent) return;
+  wDone++;
+  const q = warmupQs[i];
+  const correct = answer === q.stat;
+  if (correct) wCorrect++;
+  const fb = document.getElementById(`wfb-${i}`);
+  fb.textContent = (correct?'✓ ':'✗ ') + q.exp;
+  fb.style.color = correct ? 'var(--mint)' : 'var(--coral)';
+  if (wDone === warmupQs.length) {
+    const el = document.getElementById('warmupFb');
+    el.style.color = wCorrect === warmupQs.length ? 'var(--mint)' : 'var(--coral)';
+    el.textContent = wCorrect === warmupQs.length
+      ? '🎉 Perfect! You already understand what makes a question statistical.'
+      : `${wCorrect}/${warmupQs.length} correct. Key idea: a statistical question anticipates VARIABILITY — different answers from different sources.`;
+  }
+}
+buildWarmup();
+
+// ══════════════════════════════════════
+// SECTION 1 — VOCABULARY
+// ══════════════════════════════════════
+const termMap = { mean:'cr-mean', median:'cr-median', mode:'cr-mode', iqr:'cr-iqr', mad:'cr-mad' };
+let openTerm = null;
+function revealTerm(key) {
+  if (openTerm) document.getElementById(termMap[openTerm]).classList.remove('show');
+  if (openTerm === key) { openTerm = null; return; }
+  document.getElementById(termMap[key]).classList.add('show');
+  openTerm = key;
+}
+
+// ══════════════════════════════════════
+// SECTION 2 — STATISTICAL QUESTIONS
+// ══════════════════════════════════════
+const sqQuestions = [
+  { q:'"How tall is Mount Everest?"', stat:false, exp:'Not statistical — one fixed answer: 8,849m.' },
+  { q:'"How much do backpacks weigh in our school?"', stat:true, exp:'Statistical — different students carry different weights. Variability expected!' },
+  { q:'"What temperature does water boil at?"', stat:false, exp:'Not statistical — 100°C (at sea level) is always the answer.' },
+  { q:'"How far do students travel to school each day?"', stat:true, exp:'Statistical — students live at different distances. Lots of variability!' },
+  { q:'"How many stars are in the Big Dipper?"', stat:false, exp:'Not statistical — 7 stars. One answer.' },
+  { q:'"How many books do students in this school read per month?"', stat:true, exp:'Statistical — reading habits vary widely between students.' },
+  { q:'"What is the speed of light?"', stat:false, exp:'Not statistical — a fixed constant: 299,792,458 m/s.' },
+  { q:'"How long does it take students to eat lunch?"', stat:true, exp:'Statistical — some eat quickly, some slowly. Variability!' },
+];
+
+let sqAnswered = 0, sqCorrect = 0;
+function buildSQSorter() {
+  const container = document.getElementById('sqSorter');
+  container.innerHTML = sqQuestions.map((q,i) => `
+    <div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;background:#f5f7fa;border-radius:10px;padding:0.7rem 1rem;">
+      <div style="flex:1;min-width:200px;font-size:0.88rem;font-weight:600;color:#3a4a5a;">${q.q}</div>
+      <div style="display:flex;gap:0.4rem;">
+        <button onclick="answerSQ(${i},true,this)" style="background:var(--mint-pale);border:2px solid #b8ebd8;border-radius:8px;padding:0.3rem 0.7rem;font-family:'Nunito',sans-serif;font-size:0.78rem;font-weight:700;color:var(--mint);cursor:pointer;">Statistical</button>
+        <button onclick="answerSQ(${i},false,this)" style="background:var(--coral-pale);border:2px solid #f8c5b8;border-radius:8px;padding:0.3rem 0.7rem;font-family:'Nunito',sans-serif;font-size:0.78rem;font-weight:700;color:var(--coral);cursor:pointer;">Not statistical</button>
+      </div>
+      <div id="sqfb-${i}" style="font-family:'DM Mono',monospace;font-size:0.72rem;width:100%;min-height:1rem;margin-top:0.2rem;"></div>
+    </div>`).join('');
+}
+
+function answerSQ(i, answer, btn) {
+  if (document.getElementById(`sqfb-${i}`).textContent) return;
+  sqAnswered++;
+  const q = sqQuestions[i];
+  const correct = answer === q.stat;
+  if (correct) sqCorrect++;
+  const fb = document.getElementById(`sqfb-${i}`);
+  fb.textContent = (correct?'✓ ':'✗ ') + q.exp;
+  fb.style.color = correct ? 'var(--mint)' : 'var(--coral)';
+  if (sqAnswered === sqQuestions.length) {
+    const el = document.getElementById('sqFb');
+    el.style.color = sqCorrect === sqQuestions.length ? 'var(--mint)' : 'var(--coral)';
+    el.textContent = sqCorrect === sqQuestions.length
+      ? '🎉 All correct! You can identify statistical questions perfectly.'
+      : `${sqCorrect}/${sqQuestions.length} correct. Remember: statistical questions expect DIFFERENT answers from different people or measurements.`;
+  }
+}
+buildSQSorter();
+
+const sqTopics = {
+  sports: { hint:'Try asking about something that varies between different players or games, like scores, heights, or times.', example:'e.g. "How many points do NBA players score per game?"' },
+  school: { hint:'Think about something that differs between students or classrooms, like grades, travel time, or study hours.', example:'e.g. "How many hours per week do 6th graders spend on homework?"' },
+  food:   { hint:'Consider variation in food — prices, calories, serving sizes, preferences.', example:'e.g. "How many calories are in different fast food meals?"' },
+  nature: { hint:'Think about measurements in nature that vary — rainfall, tree heights, animal weights.', example:'e.g. "How tall are oak trees in this park?"' },
+};
+
+function setSQTopic(topic) {
+  const t = sqTopics[topic];
+  document.getElementById('sqTopicHint').textContent = t.hint + '\n' + t.example;
+}
+
+function checkSQ() {
+  const input = document.getElementById('sqInput').value.trim();
+  const fb = document.getElementById('sqCheckFb');
+  if (!input) { fb.textContent = '⚠️ Type your question first!'; fb.style.color='var(--coral)'; return; }
+  const hasVariability = /how many|how much|how long|how far|how often|what are the typical|what is the average|how tall|how heavy|how fast/i.test(input);
+  const hasGroup = /students|players|people|class|school|team|animals|trees|cities|countries/i.test(input);
+  const isQuestion = input.includes('?') || /^(how|what|which|when|where|why)/i.test(input);
+  if (hasVariability && hasGroup) {
+    fb.style.color='var(--mint)';
+    fb.textContent='✓ Great statistical question! It expects variability (different answers) and asks about a group.\n\nKey words that make it statistical: ' + (hasVariability?'variability language (how many/much/long/tall...) ':'') + (hasGroup?'+ a group (students/players/people...)':'');
+  } else if (hasVariability) {
+    fb.style.color='var(--lavender)';
+    fb.textContent='Almost! You have variability language — now make sure you\'re asking about a GROUP of things, not just one individual.';
+  } else {
+    fb.style.color='var(--coral)';
+    fb.textContent='Not quite statistical yet. Add words that suggest variability (how many, how much, how long...) and make sure you\'re asking about a group of people or things.';
+  }
+}
+
+// ══════════════════════════════════════
+// SECTION 3 — CENTER & SPREAD
+// ══════════════════════════════════════
+const datasets = {
+  sleep:   { data:[7,6,8,5,9,7,6,8,7,5], label:'Hours of sleep' },
+  scores:  { data:[72,85,91,68,74,88,95,62,79,83], label:'Test scores' },
+  heights: { data:[152,158,163,149,171,155,160,168,154,162], label:'Heights (cm)' },
+  temps:   { data:[22,25,19,28,23,21,27,24,20,26], label:'Temperatures (°C)' },
+  outlier: { data:[5,6,7,7,6,8,7,5,6,100], label:'Data with outlier' },
+};
+
+function loadDataset(key) {
+  const d = datasets[key];
+  document.getElementById('dataInput').value = d.data.join(', ');
+  calcStats();
+}
+
+function parseData(str) {
+  return str.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
+}
+
+function calcStats() {
+  const data = parseData(document.getElementById('dataInput').value);
+  if (data.length === 0) return;
+
+  const sorted = [...data].sort((a,b) => a-b);
+  const n = data.length;
+  const mean = Math.round(data.reduce((a,b)=>a+b,0)/n*100)/100;
+  const median = n%2===0 ? (sorted[n/2-1]+sorted[n/2])/2 : sorted[Math.floor(n/2)];
+
+  // Mode
+  const freq = {};
+  data.forEach(v => freq[v]=(freq[v]||0)+1);
+  const maxFreq = Math.max(...Object.values(freq));
+  const modes = maxFreq > 1 ? Object.keys(freq).filter(k=>freq[k]===maxFreq).map(Number) : [];
+
+  // IQR
+  const q1idx = Math.floor(n/4);
+  const q3idx = Math.floor(3*n/4);
+  const q1 = n%4===0 ? (sorted[n/4-1]+sorted[n/4])/2 : sorted[q1idx];
+  const q3 = n%4===0 ? (sorted[3*n/4-1]+sorted[3*n/4])/2 : sorted[q3idx];
+  const iqr = Math.round((q3-q1)*100)/100;
+
+  // MAD
+  const mad = Math.round(data.reduce((a,b)=>a+Math.abs(b-mean),0)/n*100)/100;
+  const range = sorted[n-1]-sorted[0];
+
+  document.getElementById('sortedData').textContent = sorted.join(', ');
+  document.getElementById('statMean').textContent = mean;
+  document.getElementById('statMedian').textContent = median;
+  document.getElementById('statMode').textContent = modes.length ? modes.join(', ') : 'No mode';
+  document.getElementById('statRange').textContent = range;
+  document.getElementById('statIQR').textContent = iqr;
+  document.getElementById('statMAD').textContent = mad;
+
+  const diffMeanMedian = Math.abs(mean-median);
+  let insight = `n = ${n} values · Q1 = ${q1} · Q3 = ${q3}\n`;
+  if (diffMeanMedian > 2) insight += `⚠️ Mean (${mean}) and Median (${median}) differ by ${Math.round(diffMeanMedian*10)/10} — this suggests a skewed distribution or outlier.\n`;
+  else insight += `✓ Mean and Median are close — the distribution is roughly symmetric.\n`;
+  insight += `MAD = ${mad} means values are on average ${mad} units away from the mean.`;
+  document.getElementById('statInsight').textContent = insight;
+}
+calcStats();
+
+// ── OUTLIER DEMO ──
+let baseOutlierData = [5,6,7,7,6,8,7,5,6,7];
+function addOutlier() {
+  const val = parseFloat(document.getElementById('outlierVal').value);
+  const augmented = [...baseOutlierData, val];
+  const mean1 = Math.round(baseOutlierData.reduce((a,b)=>a+b,0)/baseOutlierData.length*100)/100;
+  const sorted1 = [...baseOutlierData].sort((a,b)=>a-b);
+  const n1 = baseOutlierData.length;
+  const med1 = n1%2===0?(sorted1[n1/2-1]+sorted1[n1/2])/2:sorted1[Math.floor(n1/2)];
+
+  const mean2 = Math.round(augmented.reduce((a,b)=>a+b,0)/augmented.length*100)/100;
+  const sorted2 = [...augmented].sort((a,b)=>a-b);
+  const n2 = augmented.length;
+  const med2 = n2%2===0?(sorted2[n2/2-1]+sorted2[n2/2])/2:sorted2[Math.floor(n2/2)];
+
+  document.getElementById('outlierResult').textContent =
+    `Original data: ${baseOutlierData.join(', ')}\n` +
+    `  Mean = ${mean1}  ·  Median = ${med1}\n\n` +
+    `After adding ${val}: ${augmented.join(', ')}\n` +
+    `  Mean = ${mean2}  ·  Median = ${med2}\n\n` +
+    `Mean changed by: ${Math.abs(Math.round((mean2-mean1)*100)/100)} ${mean2>mean1?'↑':'↓'}\n` +
+    `Median changed by: ${Math.abs(Math.round((med2-med1)*100)/100)} ${med2>med1?'↑':'↓'}\n\n` +
+    `→ ${Math.abs(mean2-mean1) > Math.abs(med2-med1) ? 'The MEAN was much more affected — it is NOT resistant to outliers.' : 'Both changed similarly with this value.'}`;
+}
+
+function resetOutlier() {
+  document.getElementById('outlierResult').textContent = '';
+  document.getElementById('outlierVal').value = 100;
+}
+
+// ══════════════════════════════════════
+// SECTION 4 — DATA DISPLAYS
+// ══════════════════════════════════════
+
+// ── DOT PLOT ──
+function drawDotPlot() {
+  const data = parseData(document.getElementById('dotData').value);
+  if (!data.length) return;
+  const cvs = document.getElementById('dotCanvas');
+  const W = cvs.offsetWidth || 700;
+  cvs.width = W;
+  const ctx = cvs.getContext('2d');
+  const H = 140, pad = 50;
+  ctx.clearRect(0,0,W,H); ctx.fillStyle='#fafbfc'; ctx.fillRect(0,0,W,H);
+
+  const min = Math.min(...data), max = Math.max(...data);
+  const range = max - min || 1;
+  const unitW = (W-pad*2)/range;
+
+  // count frequencies
+  const freq = {};
+  data.forEach(v => freq[v]=(freq[v]||0)+1);
+
+  // axis
+  ctx.strokeStyle='#b8c4cc'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(pad,H-30); ctx.lineTo(W-pad,H-30); ctx.stroke();
+
+  // dots
+  Object.entries(freq).forEach(([val,count]) => {
+    const x = pad + (parseFloat(val)-min)*unitW;
+    for (let i=0;i<count;i++) {
+      const y = H-30 - (i+1)*18;
+      ctx.beginPath(); ctx.arc(x, y, 7, 0, 2*Math.PI);
+      ctx.fillStyle='rgba(232,96,60,0.8)'; ctx.fill();
+      ctx.strokeStyle='white'; ctx.lineWidth=1.5; ctx.stroke();
+    }
+    // label
+    ctx.fillStyle='var(--sky)'; ctx.font='bold 10px DM Mono,monospace'; ctx.textAlign='center';
+    ctx.fillText(val, x, H-14);
+  });
+
+  // axis arrows
+  ctx.fillStyle='#b8c4cc';
+  ctx.beginPath(); ctx.moveTo(W-pad+8,H-30); ctx.lineTo(W-pad,H-35); ctx.lineTo(W-pad,H-25); ctx.closePath(); ctx.fill();
+
+  // insight
+  const sorted = [...data].sort((a,b)=>a-b);
+  const mean = Math.round(data.reduce((a,b)=>a+b,0)/data.length*10)/10;
+  document.getElementById('dotInsight').textContent =
+    `${data.length} data points · Range: ${min}–${max} · Mean ≈ ${mean} · Each dot = 1 data point`;
+}
+
+// ── HISTOGRAM ──
+function drawHistogram() {
+  const data = parseData(document.getElementById('histData').value);
+  const binSize = parseInt(document.getElementById('binSize').value) || 10;
+  if (!data.length) return;
+  const cvs = document.getElementById('histCanvas');
+  const W = cvs.offsetWidth || 700;
+  cvs.width = W;
+  const ctx = cvs.getContext('2d');
+  const H = 200, padL=50, padB=35, padT=20, padR=20;
+  ctx.clearRect(0,0,W,H); ctx.fillStyle='#fafbfc'; ctx.fillRect(0,0,W,H);
+
+  const min = Math.floor(Math.min(...data)/binSize)*binSize;
+  const max = Math.ceil(Math.max(...data)/binSize)*binSize;
+  const bins = [];
+  for (let b=min; b<max; b+=binSize) {
+    bins.push({ start:b, end:b+binSize, count:data.filter(v=>v>=b&&v<b+binSize).length });
+  }
+  const maxCount = Math.max(...bins.map(b=>b.count));
+  const bW = (W-padL-padR)/bins.length;
+  const scaleY = (H-padT-padB)/maxCount;
+
+  // grid
+  ctx.strokeStyle='#e8eef4'; ctx.lineWidth=1;
+  for (let i=0;i<=maxCount;i++) {
+    const y=H-padB-i*scaleY;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+    ctx.fillStyle='var(--muted)'; ctx.font='8px DM Mono,monospace'; ctx.textAlign='right';
+    ctx.fillText(i, padL-4, y+3);
+  }
+
+  // bars
+  bins.forEach((b,i) => {
+    const x=padL+i*bW, y=H-padB-b.count*scaleY, barH=b.count*scaleY;
+    ctx.fillStyle='rgba(58,175,133,0.7)'; ctx.fillRect(x+1,y,bW-2,barH);
+    ctx.strokeStyle='var(--mint)'; ctx.lineWidth=1.5; ctx.strokeRect(x+1,y,bW-2,barH);
+    ctx.fillStyle='var(--sky)'; ctx.font='8px DM Mono,monospace'; ctx.textAlign='center';
+    ctx.fillText(b.start, x+bW/2, H-padB+12);
+    if (b.count>0) { ctx.fillStyle='white'; ctx.font='bold 9px Nunito,monospace'; ctx.fillText(b.count, x+bW/2, y+14); }
+  });
+
+  // axes
+  ctx.strokeStyle='#b8c4cc'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,H-padB); ctx.lineTo(W-padR,H-padB); ctx.stroke();
+
+  document.getElementById('histInsight').textContent =
+    `${data.length} values · Bin size: ${binSize} · ${bins.length} bins · Each bar shows count in that range`;
+}
+
+// ── BOX PLOT ──
+function drawBoxPlot() {
+  const data = parseData(document.getElementById('boxData').value);
+  if (data.length < 4) return;
+  const cvs = document.getElementById('boxCanvas');
+  const W = cvs.offsetWidth || 700;
+  cvs.width = W;
+  const ctx = cvs.getContext('2d');
+  const H = 130, padL=60, padR=40, mid=65;
+  ctx.clearRect(0,0,W,H); ctx.fillStyle='#fafbfc'; ctx.fillRect(0,0,W,H);
+
+  const sorted = [...data].sort((a,b)=>a-b);
+  const n = sorted.length;
+  const minV=sorted[0], maxV=sorted[n-1];
+  const q1 = n%4===0?(sorted[n/4-1]+sorted[n/4])/2:sorted[Math.floor(n/4)];
+  const med = n%2===0?(sorted[n/2-1]+sorted[n/2])/2:sorted[Math.floor(n/2)];
+  const q3 = n%4===0?(sorted[3*n/4-1]+sorted[3*n/4])/2:sorted[Math.floor(3*n/4)];
+
+  const range = maxV-minV||1;
+  const toX = v => padL + (v-minV)/range*(W-padL-padR);
+
+  // axis
+  ctx.strokeStyle='#b8c4cc'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(padL,mid+25); ctx.lineTo(W-padR,mid+25); ctx.stroke();
+
+  // whiskers
+  ctx.strokeStyle='var(--sky)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(toX(minV),mid); ctx.lineTo(toX(q1),mid); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(toX(q3),mid); ctx.lineTo(toX(maxV),mid); ctx.stroke();
+  // whisker caps
+  [minV,maxV].forEach(v => {
+    ctx.beginPath(); ctx.moveTo(toX(v),mid-12); ctx.lineTo(toX(v),mid+12); ctx.stroke();
+  });
+
+  // box
+  ctx.fillStyle='rgba(58,175,133,0.2)';
+  ctx.fillRect(toX(q1),mid-18,toX(q3)-toX(q1),36);
+  ctx.strokeStyle='var(--mint)'; ctx.lineWidth=2;
+  ctx.strokeRect(toX(q1),mid-18,toX(q3)-toX(q1),36);
+
+  // median line
+  ctx.strokeStyle='var(--coral)'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(toX(med),mid-18); ctx.lineTo(toX(med),mid+18); ctx.stroke();
+
+  // tick labels
+  ctx.fillStyle='var(--sky)'; ctx.font='bold 9px DM Mono,monospace'; ctx.textAlign='center';
+  [minV,q1,med,q3,maxV].forEach(v => {
+    ctx.fillText(v, toX(v), mid+38);
+  });
+
+  // labels above
+  const lbls = [[minV,'Min'],[q1,'Q1'],[med,'Med'],[q3,'Q3'],[maxV,'Max']];
+  ctx.font='8px DM Mono,monospace'; ctx.fillStyle='var(--muted)';
+  lbls.forEach(([v,l]) => ctx.fillText(l, toX(v), mid-26));
+
+  // stat chips
+  const iqr = Math.round((q3-q1)*100)/100;
+  document.getElementById('boxStats').innerHTML = [
+    ['Min',minV,'var(--sky)'], ['Q1',q1,'var(--lavender)'], ['Median',med,'var(--coral)'],
+    ['Q3',q3,'var(--lavender)'], ['Max',maxV,'var(--sky)'], ['IQR',iqr,'var(--mint)']
+  ].map(([l,v,c]) =>
+    `<span style="background:#f5f7fa;border:1.5px solid var(--border);border-radius:8px;padding:0.3rem 0.7rem;font-family:'DM Mono',monospace;font-size:0.76rem;color:${c};font-weight:700;">${l}: ${v}</span>`
+  ).join('');
+  document.getElementById('boxInsight').textContent =
+    `IQR = ${iqr} — the middle 50% of data spans ${iqr} units. ${iqr < range/4 ? 'The data is fairly tightly clustered.' : 'The data is spread out.'}`;
+}
+
+// ══════════════════════════════════════
+// SECTION 5 — REAL LIFE
+// ══════════════════════════════════════
+const realProblemsData = [
+  { q:`A school surveyed 9 students about weekly screen time (hours): 8, 12, 6, 14, 9, 7, 11, 8, 10.\nFind the mean, median, and IQR. Which measure best describes the "typical" student?`,
+    work:`Sorted: 6,7,8,8,9,10,11,12,14\nMean = (6+7+8+8+9+10+11+12+14)÷9 = 85÷9 ≈ 9.4 hrs\nMedian = 9 hrs (5th value)\nQ1=7.5, Q3=11.5, IQR=4\nMedian is good here — the data is fairly symmetric.`, ans:'Mean ≈ 9.4, Median = 9, IQR = 4' },
+  { q:`A basketball player's points per game for 10 games: 18, 22, 15, 19, 25, 17, 21, 20, 16, 23.\nCalculate the MAD. What does it tell you about this player's consistency?`,
+    work:`Mean = 196÷10 = 19.6 pts\nDistances: |18-19.6|=1.6, |22-19.6|=2.4, |15-19.6|=4.6, |19-19.6|=0.6, |25-19.6|=5.4, |17-19.6|=2.6, |21-19.6|=1.4, |20-19.6|=0.4, |16-19.6|=3.6, |23-19.6|=3.4\nMAD = (1.6+2.4+4.6+0.6+5.4+2.6+1.4+0.4+3.6+3.4)÷10 = 26÷10 = 2.6\nThe player scores within about 2.6 pts of their average — fairly consistent!`, ans:'MAD = 2.6 points' },
+  { q:`Ages of people at a community centre: 12, 15, 14, 67, 13, 16, 14, 15, 12, 14.\nCompare the mean and median. Which better represents this group and why?`,
+    work:`Mean = 192÷10 = 19.2 yrs\nSorted: 12,12,13,14,14,14,15,15,16,67\nMedian = (14+14)÷2 = 14 yrs\n67 is an outlier that pulls the mean up to 19.2 — which doesn't represent any actual person well!\nMedian (14 yrs) better reflects the typical person here.`, ans:'Median = 14 yrs is better — the outlier (67) skews the mean.' },
+  { q:`A class of 6 students scored: 72, 85, 91, 68, 74, 88. Display these in a box plot. Find min, Q1, median, Q3, max.`,
+    work:`Sorted: 68, 72, 74, 85, 88, 91\nMin=68, Max=91\nQ1=(72+74)÷2=73, Q3=(85+88)÷2=86.5\nMedian=(74+85)÷2=79.5\nBox plot: whisker from 68 to 73, box from 73 to 86.5, median line at 79.5, whisker to 91`, ans:'Min=68, Q1=73, Median=79.5, Q3=86.5, Max=91' },
+];
+
+function buildRealProblems() {
+  const container = document.getElementById('realProblems');
+  container.innerHTML = realProblemsData.map((p,i) => `
+    <div style="background:#f5f7fa;border-radius:12px;padding:1.2rem;">
+      <p style="font-size:0.9rem;line-height:1.65;color:#3a4a5a;margin-bottom:0.8rem;white-space:pre-line;"><strong>Problem ${i+1}:</strong> ${p.q}</p>
+      <button onclick="revealRealProblem(${i})" id="rp-btn-${i}"
+        style="background:var(--lavender);color:white;border:none;border-radius:8px;padding:0.5rem 1.1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;cursor:pointer;">
+        Show solution
+      </button>
+      <div id="rp-ans-${i}" style="display:none;margin-top:0.8rem;font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--mint);line-height:1.8;white-space:pre-line;"></div>
+    </div>`).join('');
+}
+
+function revealRealProblem(i) {
+  const p = realProblemsData[i];
+  document.getElementById(`rp-ans-${i}`).style.display='block';
+  document.getElementById(`rp-ans-${i}`).textContent=`Working:\n${p.work}\n\n✓ Answer: ${p.ans}`;
+  document.getElementById(`rp-btn-${i}`).style.display='none';
+}
+
+// ══════════════════════════════════════
+// SUMMARY & SUBMIT
+// ══════════════════════════════════════
+function fill(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = text && text.trim();
+  el.textContent = val || 'Not answered';
+  el.classList.toggle('empty', !val);
+}
+
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  fill('sum-sq-pred',   document.getElementById('sq-prediction').value);
+  fill('sum-sq-ref',    document.getElementById('sq-reflection').value);
+  fill('sum-cs-pred',   document.getElementById('cs-prediction').value);
+  fill('sum-cs-ref',    document.getElementById('cs-reflection').value);
+  fill('sum-disp-pred', document.getElementById('disp-prediction').value);
+  fill('sum-disp-ref',  document.getElementById('disp-reflection').value);
+  const refTAs = document.querySelectorAll('#sec-6 .reflection-card textarea');
+  ['sum-q1','sum-q2','sum-q3','sum-q4'].forEach((id,i) => fill(id, refTAs[i]?.value||''));
+}
+
+function buildPlainText() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const date = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const refTAs = document.querySelectorAll('#sec-6 .reflection-card textarea');
+  const qs = ['Not answered','Not answered','Not answered','Not answered'];
+  refTAs.forEach((ta,i) => { if(ta.value.trim()) qs[i]=ta.value.trim(); });
+  return `
+STATISTICS & PROBABILITY 📊 — STUDENT SUBMISSION
+=================================================
+Student: ${name}
+Date: ${date}
+Lesson: Grade 6 · Statistics & Probability
+Standards: 6.SP.A.1 · 6.SP.A.2 · 6.SP.A.3 · 6.SP.B.4 · 6.SP.B.5
+
+── SECTION 3: STATISTICAL QUESTIONS ──
+Prediction:
+${document.getElementById('sq-prediction').value.trim()||'Not answered'}
+Reflection:
+${document.getElementById('sq-reflection').value.trim()||'Not answered'}
+
+── SECTION 4: CENTER & SPREAD ──
+Prediction:
+${document.getElementById('cs-prediction').value.trim()||'Not answered'}
+Reflection:
+${document.getElementById('cs-reflection').value.trim()||'Not answered'}
+
+── SECTION 5: DATA DISPLAYS ──
+Prediction:
+${document.getElementById('disp-prediction').value.trim()||'Not answered'}
+Reflection:
+${document.getElementById('disp-reflection').value.trim()||'Not answered'}
+
+── REFLECTIONS ──
+Q1 — Median vs Mean
+${qs[0]}
+Q2 — MAD interpretation
+${qs[1]}
+Q3 — Choosing a display
+${qs[2]}
+Q4 — Your own statistical question
+${qs[3]}
+
+=================================================
+© 2026 Farvour Explorations · farvourexplorations.com
+Submitted via Statistics & Probability Workshop · Interactive Digital Lesson
+`.trim();
+}
+
+function copyResults() {
+  buildSummary();
+  navigator.clipboard.writeText(buildPlainText()).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Now paste into Google Classroom or your assignment.';
+    setTimeout(() => el.textContent='', 4000);
+  }).catch(() => {
+    document.getElementById('copyConfirm').textContent = '⚠️ Could not copy — try selecting manually.';
+  });
+}
+
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const subject = encodeURIComponent(`Statistics & Probability — ${name}`);
+  const body = encodeURIComponent(buildPlainText());
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+
+// ── INIT ──
+window.addEventListener('load', () => {
+  calcStats();
+  resetOutlier();
+  drawDotPlot();
+  drawHistogram();
+  drawBoxPlot();
+  buildRealProblems();
+});
+</script>
+</body>
+</html>
