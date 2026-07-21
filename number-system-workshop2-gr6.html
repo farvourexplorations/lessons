@@ -1,0 +1,2174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Number System Workshop 2 🌡️</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #1e3a5f;
+    --sky-mid: #2d5282;
+    --sun: #f6c343;
+    --sun-pale: #fef9e7;
+    --coral: #e8603c;
+    --coral-pale: #fdf0ec;
+    --mint: #3aaf85;
+    --mint-pale: #e8f8f2;
+    --lavender: #7c6fcd;
+    --lavender-pale: #f0eefb;
+    --paper: #fffef9;
+    --ink: #1a2332;
+    --muted: #7a8899;
+    --border: rgba(0,0,0,0.08);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: linear-gradient(160deg, #0f2540 0%, #1e3a5f 40%, #2d5282 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 45% 8%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(2px 2px at 65% 22%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 5%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 92% 35%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 35% 28%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 72% 12%, rgba(255,255,255,0.5) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 3.5rem 2rem 2rem;
+    color: white;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--sun);
+    color: var(--sky);
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    padding: 0.35rem 1.2rem;
+    border-radius: 20px;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 12px rgba(246,195,67,0.4);
+  }
+  .hero h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    line-height: 1.1;
+    margin-bottom: 0.8rem;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+  .hero h1 .accent { color: var(--sun); }
+  .hero p.intro {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    opacity: 0.88;
+    max-width: 560px;
+    margin: 0 auto 2rem;
+  }
+
+  /* ── NAME BAR ── */
+  .name-bar {
+    background: rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    border-radius: 12px;
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    max-width: 420px;
+    margin: 0 auto 1rem;
+  }
+  .name-bar label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.8);
+    white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+  }
+  .name-bar input {
+    flex: 1;
+    background: rgba(255,255,255,0.15);
+    border: none;
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: white;
+    outline: none;
+  }
+  .name-bar input::placeholder { color: rgba(255,255,255,0.45); font-weight: 400; }
+
+  /* ── PROGRESS PILLS ── */
+  .progress-wrap {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+  }
+  .prog-step {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(255,255,255,0.12);
+    border: 1.5px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .prog-step:hover, .prog-step.done {
+    background: rgba(255,255,255,0.22);
+    color: white;
+    border-color: rgba(255,255,255,0.4);
+  }
+  .prog-step.active {
+    background: var(--sun);
+    color: var(--sky);
+    border-color: var(--sun);
+    box-shadow: 0 2px 12px rgba(246,195,67,0.4);
+  }
+
+  /* ── SHEET ── */
+  .sheet {
+    position: relative; z-index: 1;
+    background: var(--paper);
+    border-radius: 24px 24px 0 0;
+    margin-top: 1.5rem;
+    padding: 0 0 6rem;
+    min-height: 80vh;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.25);
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    padding: 3rem 2rem 0;
+    max-width: 820px;
+    margin: 0 auto;
+    display: none;
+  }
+  .section.active { display: block; }
+
+  .section-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+  .eyebrow-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: white;
+    flex-shrink: 0;
+  }
+  .num-coral { background: var(--coral); }
+  .num-mint  { background: var(--mint); }
+  .num-sun   { background: var(--sun); color: var(--sky); }
+  .num-lav   { background: var(--lavender); }
+  .num-sky   { background: var(--sky-mid); }
+
+  .eyebrow-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .section h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    color: var(--sky);
+    margin-bottom: 0.6rem;
+    line-height: 1.2;
+  }
+  .section .lead {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: #3a4a5a;
+    margin-bottom: 1.8rem;
+  }
+  .section .lead strong { color: var(--coral); }
+
+  /* ── WONDER BOX ── */
+  .wonder-box {
+    background: linear-gradient(135deg, var(--sky) 0%, var(--sky-mid) 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 1.8rem 2rem;
+    margin-bottom: 1.8rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .wonder-box::after {
+    content: '🤔';
+    position: absolute;
+    right: 1.5rem; top: 50%;
+    transform: translateY(-50%);
+    font-size: 3rem;
+    opacity: 0.3;
+  }
+  .wonder-box p {
+    font-size: 1rem;
+    line-height: 1.7;
+    font-style: italic;
+    opacity: 0.95;
+    max-width: 85%;
+  }
+  .wonder-box strong { color: var(--sun); font-style: normal; }
+  .wonder-box.mint-box { background: linear-gradient(135deg, var(--mint) 0%, #2d9970 100%); }
+  .wonder-box.mint-box::after { content: '🌡️'; }
+  .wonder-box.coral-box { background: linear-gradient(135deg, var(--coral) 0%, #c44a28 100%); }
+  .wonder-box.coral-box::after { content: '📍'; }
+
+  /* ── CONCEPT CHIPS ── */
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+  }
+  .chip {
+    padding: 0.45rem 1rem;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+  }
+  .chip.coral  { background: var(--coral-pale);    color: var(--coral);    border-color: #f8c5b8; }
+  .chip.mint   { background: var(--mint-pale);     color: var(--mint);     border-color: #b8ebd8; }
+  .chip.sun    { background: var(--sun-pale);      color: #b8860b;         border-color: #f8e0a0; }
+  .chip.lav    { background: var(--lavender-pale); color: var(--lavender); border-color: #d0caef; }
+  .chip.sky    { background: #e8f0f8;              color: var(--sky-mid);  border-color: #c0d4ea; }
+  .chip:hover  { transform: scale(1.05); }
+
+  .concept-reveal {
+    background: var(--paper);
+    border-left: 4px solid var(--coral);
+    border-radius: 0 10px 10px 0;
+    padding: 1rem 1.2rem;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    margin-top: 0.5rem;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .concept-reveal.show { display: block; }
+  .concept-reveal.mint-border  { border-color: var(--mint); }
+  .concept-reveal.sun-border   { border-color: var(--sun); }
+  .concept-reveal.lav-border   { border-color: var(--lavender); }
+  .concept-reveal.sky-border   { border-color: var(--sky-mid); }
+
+  @keyframes fadeIn {
+    from { opacity:0; transform:translateY(-6px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* ── PREDICT / REFLECT ── */
+  .predict-box {
+    background: var(--sun-pale);
+    border: 2px dashed var(--sun);
+    border-radius: 14px;
+    padding: 1.4rem 1.6rem;
+    margin-bottom: 1.5rem;
+  }
+  .predict-box h4 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: #b8860b;
+    margin-bottom: 0.8rem;
+  }
+  .predict-box textarea {
+    width: 100%;
+    border: 1.5px solid rgba(0,0,0,0.12);
+    border-radius: 8px;
+    padding: 0.7rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    resize: vertical;
+    min-height: 64px;
+    background: white;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .predict-box textarea:focus { border-color: var(--sun); }
+
+  /* ── DEMO ZONE ── */
+  .demo-zone {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .demo-zone h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    color: var(--sky);
+    margin-bottom: 0.3rem;
+  }
+  .demo-zone .hint {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 1.3rem;
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    border: none;
+    border-radius: 10px;
+    padding: 0.65rem 1.3rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
+  .btn:active { transform: translateY(0); }
+  .btn-coral  { background: var(--coral);    color: white; }
+  .btn-mint   { background: var(--mint);     color: white; }
+  .btn-sun    { background: var(--sun);      color: var(--sky); }
+  .btn-lav    { background: var(--lavender); color: white; }
+  .btn-ghost  { background: #f0f2f5;         color: var(--muted); }
+  .btn-sky    { background: var(--sky);      color: white; }
+
+  .action-row {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 0.8rem;
+  }
+
+  /* ── INPUT GROUPS ── */
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .input-group label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .input-group input[type=number] {
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 0.5rem 0.8rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    width: 100px;
+    outline: none;
+    transition: border-color 0.2s;
+    font-weight: 700;
+    color: var(--sky);
+    background: white;
+  }
+  .input-group input[type=number]:focus { border-color: var(--coral); }
+
+  /* ── NUMBER LINE ── */
+  canvas.numline-canvas {
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    display: block;
+    width: 100%;
+    max-width: 760px;
+  }
+
+  /* ── THERMOMETER ── */
+  .therm-wrap {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .thermometer {
+    width: 60px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .therm-tube {
+    width: 28px;
+    height: 260px;
+    background: #e8f0f8;
+    border-radius: 14px;
+    border: 2px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .therm-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, var(--coral), #e74c3c);
+    transition: height 0.4s ease;
+    border-radius: 0 0 12px 12px;
+  }
+  .therm-zero {
+    position: absolute;
+    left: -22px;
+    width: 72px;
+    height: 2px;
+    background: var(--sky);
+    opacity: 0.4;
+  }
+  .therm-labels {
+    position: absolute;
+    right: -28px;
+    top: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .therm-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    line-height: 1;
+  }
+  .therm-bulb {
+    width: 44px;
+    height: 44px;
+    background: #e74c3c;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    margin-top: -6px;
+  }
+  .therm-right { flex: 1; min-width: 200px; }
+  .therm-right p { font-size:0.85rem; line-height:1.65; color:#3a4a5a; margin-bottom:0.8rem; }
+
+  /* ── ABSOLUTE VALUE DISPLAY ── */
+  .abs-display {
+    background: var(--lavender-pale);
+    border: 2px solid rgba(124,111,205,0.3);
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+    margin-top: 1rem;
+    text-align: center;
+  }
+  .abs-big {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    color: var(--lavender);
+    margin-bottom: 0.3rem;
+  }
+  .abs-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  /* ── ORDERING ACTIVITY ── */
+  .order-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    min-height: 44px;
+    padding: 0.5rem;
+    background: #f5f7fa;
+    border-radius: 10px;
+    border: 2px dashed var(--border);
+  }
+  .order-chip {
+    background: white;
+    border: 2px solid var(--lavender);
+    border-radius: 8px;
+    padding: 0.35rem 0.8rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--lavender);
+    cursor: grab;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .order-chip:hover { transform: scale(1.08); box-shadow: 0 3px 10px rgba(124,111,205,0.25); }
+  .order-chip.negative { color: var(--coral); border-color: var(--coral); }
+  .order-chip.zero { color: var(--muted); border-color: var(--muted); }
+
+  /* ── COORDINATE PLANE ── */
+  canvas#coordPlane {
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    display: block;
+    cursor: crosshair;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+  }
+  .coord-panel {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .coord-right { flex: 1; min-width: 180px; }
+  .coord-right p { font-size:0.85rem; line-height:1.65; color:#3a4a5a; margin-bottom:0.8rem; }
+  .plotted-points {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.76rem;
+    color: var(--muted);
+    line-height: 2;
+    min-height: 2rem;
+    margin-bottom: 0.8rem;
+    max-height: 140px;
+    overflow-y: auto;
+  }
+  .quadrant-info {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--coral);
+    min-height: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+
+  /* ── REAL WORLD CARDS ── */
+  .world-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .world-card {
+    border-radius: 14px;
+    padding: 1.4rem;
+  }
+  .world-card.coral-bg { background: var(--coral-pale); }
+  .world-card.mint-bg  { background: var(--mint-pale); }
+  .world-card.lav-bg   { background: var(--lavender-pale); }
+  .world-card.sun-bg   { background: var(--sun-pale); }
+  .world-card .wc-icon { font-size: 2rem; margin-bottom: 0.6rem; }
+  .world-card h4 { font-family: 'Fredoka One', cursive; font-size: 1rem; margin-bottom: 0.4rem; color: var(--sky); }
+  .world-card p  { font-size: 0.82rem; line-height: 1.6; color: #3a4a5a; }
+
+  /* ── REFLECTION ── */
+  .reflection-card {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 1.4rem;
+    margin-bottom: 1rem;
+  }
+  .reflection-card .q {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: var(--sky);
+    margin-bottom: 0.7rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+  }
+  .reflection-card .q .qnum {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .reflection-card textarea {
+    width: 100%;
+    border: 1.5px solid rgba(0,0,0,0.1);
+    border-radius: 8px;
+    padding: 0.7rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    resize: vertical;
+    min-height: 72px;
+    background: #fafbfc;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .reflection-card textarea:focus { border-color: var(--lavender); }
+
+  /* ── CONGRATS ── */
+  .congrats {
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+  .congrats .trophy { font-size: 4rem; margin-bottom: 1rem; animation: bounce 0.8s ease infinite alternate; }
+  @keyframes bounce { from { transform:translateY(0); } to { transform:translateY(-10px); } }
+  .congrats h2 { font-family: 'Fredoka One', cursive; font-size: 2rem; color: var(--sky); margin-bottom: 0.8rem; }
+  .congrats p  { font-size: 0.95rem; line-height: 1.7; color: #3a4a5a; max-width: 500px; margin: 0 auto 1.5rem; }
+  .summary-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; }
+  .summary-chip {
+    padding: 0.5rem 1.1rem;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    background: var(--sun-pale);
+    color: #b8860b;
+    border: 1.5px solid #f8e0a0;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 1.5rem 0;
+  }
+
+  /* ── NAV ── */
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2.5rem 2rem 0;
+    max-width: 820px;
+    margin: 0 auto;
+  }
+  .btn-next {
+    background: var(--sky);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 0.9rem 2rem;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(30,58,95,0.25);
+  }
+  .btn-next:hover { background: var(--sky-mid); transform: translateY(-2px); }
+  .btn-prev {
+    background: transparent;
+    color: var(--muted);
+    border: 2px solid var(--border);
+    border-radius: 50px;
+    padding: 0.9rem 1.6rem;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-prev:hover { border-color: var(--muted); color: var(--ink); }
+  .btn-prev:disabled, .btn-next:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+  /* ── SUMMARY PAGE ── */
+  .summary-section {
+    background: white;
+    border-radius: 16px;
+    padding: 1.8rem;
+    margin-bottom: 1.2rem;
+    border: 2px solid var(--border);
+  }
+  .summary-section h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.05rem;
+    color: var(--sky);
+    margin-bottom: 0.8rem;
+  }
+  .summary-answer {
+    background: #f5f7fa;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+    font-style: italic;
+    border-left: 3px solid var(--lavender);
+    min-height: 2rem;
+  }
+  .summary-answer.empty { color: var(--muted); font-style: normal; border-left-color: var(--border); }
+  .sum-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+    margin-top: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .share-buttons {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+    justify-content: center;
+  }
+  .share-btn {
+    border: none;
+    border-radius: 12px;
+    padding: 0.85rem 1.6rem;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .share-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+  .share-btn.copy  { background: var(--mint);     color: white; }
+  .share-btn.email { background: var(--lavender); color: white; }
+  .share-btn.print { background: var(--sky);      color: white; }
+  .copy-confirm {
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--mint);
+    min-height: 1.2rem;
+    margin-top: 0.6rem;
+  }
+
+  @media (max-width: 560px) {
+    .hero { padding: 2.5rem 1.2rem 1.5rem; }
+    .section { padding: 2rem 1.2rem 0; }
+    .nav-row { padding: 2rem 1.2rem 0; }
+    .therm-wrap, .coord-panel { flex-direction: column; align-items: center; }
+  }
+
+  @media print {
+    .hero, .nav-row, .share-buttons, .copy-confirm { display: none !important; }
+    .sheet { box-shadow: none; border-radius: 0; }
+    .section { display: none !important; }
+    #sec-7 { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">✨ Grade 6 · The Number System · Workshop 2 of 2</div>
+  <h1>Below Zero &<br><span class="accent">The Full Plane</span> 🌡️</h1>
+  <p class="intro">What happens when numbers go below zero? Today you'll extend the number line in both directions, explore absolute value, and plot points anywhere on the coordinate plane — including the negative quadrants.</p>
+
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+
+  <div class="progress-wrap">
+    <a class="prog-step active" id="pill-0" onclick="goTo(0)">🌡️ Wonder</a>
+    <a class="prog-step" id="pill-1" onclick="goTo(1)">📚 Discover</a>
+    <a class="prog-step" id="pill-2" onclick="goTo(2)">📍 Negatives</a>
+    <a class="prog-step" id="pill-3" onclick="goTo(3)">📏 Number Line</a>
+    <a class="prog-step" id="pill-4" onclick="goTo(4)">🎯 Absolute Value</a>
+    <a class="prog-step" id="pill-5" onclick="goTo(5)">🗺️ Coordinate Plane</a>
+    <a class="prog-step" id="pill-6" onclick="goTo(6)">🌍 Real Life</a>
+    <a class="prog-step" id="pill-7" onclick="goTo(7)">💭 Reflect</a>
+    <a class="prog-step" id="pill-8" onclick="goTo(8)">📤 Submit</a>
+  </div>
+</div>
+
+<!-- SHEET -->
+<div class="sheet">
+
+  <!-- ══ SECTION 0: WONDER ══ -->
+  <div class="section active" id="sec-0">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-coral">1</div>
+      <span class="eyebrow-label">The Big Question</span>
+    </div>
+    <h2>What lives below zero?</h2>
+    <p class="lead">You've been counting since you were 3 years old — but always forward. Today we go backwards, past zero, into <strong>negative numbers</strong>. They're not just a maths trick — they describe the real world all around you.</p>
+
+    <div class="wonder-box">
+      <p>It's <strong>−8°C</strong> in Winnipeg. A submarine dives to <strong>−200 metres</strong>. Your bank account shows <strong>−$15</strong>. These negatives aren't errors — they're precise mathematical descriptions of real quantities. The number line doesn't stop at zero.</p>
+    </div>
+
+    <p style="font-size:0.9rem; font-weight:700; color:var(--sky); margin-bottom:0.8rem;">🧠 Quick warm-up — what do these negative numbers describe?</p>
+
+    <div style="background:white; border:2px solid var(--border); border-radius:14px; padding:1.5rem; margin-bottom:1.5rem;">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:0.8rem;" id="contextCards">
+        <!-- filled by JS -->
+      </div>
+      <div id="contextFeedback" style="margin-top:1rem; font-family:'DM Mono',monospace; font-size:0.8rem; color:var(--mint); min-height:1rem;"></div>
+    </div>
+
+    <div class="wonder-box mint-box">
+      <p>Negative numbers were controversial for centuries. Ancient mathematicians called them "absurd" and "fictitious." It wasn't until the 1600s that they were fully accepted. Even smart people resist ideas that challenge what they already know.</p>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 1: DISCOVER ══ -->
+  <div class="section" id="sec-1">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-lav">2</div>
+      <span class="eyebrow-label">Discover the Vocabulary</span>
+    </div>
+    <h2>📚 Words mathematicians use</h2>
+    <p class="lead">Click each word to reveal what it means. Think of your own real-world example before reading the one given.</p>
+
+    <div class="chip-row">
+      <span class="chip coral" onclick="revealTerm('negative')">➖ Negative Number</span>
+      <span class="chip lav"   onclick="revealTerm('rational')">🔢 Rational Number</span>
+      <span class="chip sun"   onclick="revealTerm('absolute')">📏 Absolute Value</span>
+      <span class="chip mint"  onclick="revealTerm('opposite')">↔️ Opposite</span>
+      <span class="chip sky"   onclick="revealTerm('quadrant')">🗺️ Quadrant</span>
+    </div>
+
+    <div class="concept-reveal" id="cr-negative">
+      <strong>Negative Number</strong> — any number less than zero, written with a minus sign.<br><br>
+      <em>−5, −0.3, and −½ are all negative. On the number line, they sit to the left of zero (or below it on a vertical line).</em><br><br>
+      <em>Your turn: name three real-world situations where a negative number is the most natural way to describe something.</em>
+    </div>
+    <div class="concept-reveal lav-border" id="cr-rational">
+      <strong>Rational Number</strong> — any number that can be written as a fraction p/q where p and q are integers and q ≠ 0.<br><br>
+      <em>3, −½, 0.75, and −4.2 are all rational. They include all integers, fractions, and terminating or repeating decimals.</em><br><br>
+      <em>Your turn: is −6 a rational number? What about 0? What about 0.333...?</em>
+    </div>
+    <div class="concept-reveal sun-border" id="cr-absolute">
+      <strong>Absolute Value</strong> — the distance from zero on the number line, always positive.<br><br>
+      <em>|−7| = 7 and |7| = 7. Both are 7 steps from zero. Distance is never negative!</em><br><br>
+      <em>Your turn: what is |−15|? What is |0|? Can absolute value ever be negative?</em>
+    </div>
+    <div class="concept-reveal mint-border" id="cr-opposite">
+      <strong>Opposite</strong> — two numbers that are the same distance from zero but on different sides.<br><br>
+      <em>5 and −5 are opposites. −¾ and ¾ are opposites. The opposite of 0 is 0.</em><br><br>
+      <em>Your turn: what is the opposite of −12? Of 0.5? What is the opposite of the opposite of −3?</em>
+    </div>
+    <div class="concept-reveal sky-border" id="cr-quadrant">
+      <strong>Quadrant</strong> — one of the four regions of the coordinate plane, created by the x and y axes crossing at the origin.<br><br>
+      <em>Quadrant I: (+,+) · Quadrant II: (−,+) · Quadrant III: (−,−) · Quadrant IV: (+,−)</em><br><br>
+      <em>Your turn: which quadrant is the point (−3, 5) in? What about (4, −2)?</em>
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="background:var(--lavender-pale); border:2px solid rgba(124,111,205,0.3); border-radius:14px; padding:1.4rem; margin-bottom:1.5rem;">
+      <p style="font-family:'Fredoka One',cursive; font-size:1rem; color:var(--lavender); margin-bottom:0.8rem;">🗺️ The Four Quadrants at a glance:</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; max-width:400px;">
+        <div style="background:rgba(58,175,133,0.15); border:1.5px solid #b8ebd8; border-radius:8px; padding:0.7rem; text-align:center;">
+          <div style="font-family:'Fredoka One',cursive; color:var(--mint);">Quadrant II</div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--muted);">(−, +)</div>
+        </div>
+        <div style="background:rgba(232,96,60,0.12); border:1.5px solid #f8c5b8; border-radius:8px; padding:0.7rem; text-align:center;">
+          <div style="font-family:'Fredoka One',cursive; color:var(--coral);">Quadrant I</div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--muted);">(+, +)</div>
+        </div>
+        <div style="background:rgba(246,195,67,0.15); border:1.5px solid #f8e0a0; border-radius:8px; padding:0.7rem; text-align:center;">
+          <div style="font-family:'Fredoka One',cursive; color:#b8860b;">Quadrant III</div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--muted);">(−, −)</div>
+        </div>
+        <div style="background:rgba(124,111,205,0.12); border:1.5px solid #d0caef; border-radius:8px; padding:0.7rem; text-align:center;">
+          <div style="font-family:'Fredoka One',cursive; color:var(--lavender);">Quadrant IV</div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--muted);">(+, −)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 2: NEGATIVE NUMBERS ══ -->
+  <div class="section" id="sec-2">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-coral">3</div>
+      <span class="eyebrow-label">Investigation 1 · 6.NS.C.5</span>
+    </div>
+    <h2>📍 Negative Numbers in Context</h2>
+    <p class="lead">Positive and negative numbers describe quantities with <em>direction</em>. A positive balance means money in the bank. A negative balance means you owe money. <strong>Context is everything.</strong></p>
+
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="neg-prediction" placeholder="I think −8°C means... A depth of −50m means the submarine is... If my bank account shows −$20 it means... The opposite of losing $15 is..."></textarea>
+    </div>
+
+    <div class="demo-zone">
+      <h3>🌡️ Temperature Thermometer</h3>
+      <div class="hint">DRAG THE SLIDER · WATCH THE THERMOMETER · DESCRIBE WHAT THE TEMPERATURE MEANS</div>
+
+      <div class="therm-wrap">
+        <div class="thermometer">
+          <div class="therm-tube" id="thermTube">
+            <div class="therm-fill" id="thermFill" style="height:50%;"></div>
+            <div class="therm-zero" id="thermZero"></div>
+            <div class="therm-labels">
+              <span class="therm-label">40°</span>
+              <span class="therm-label">20°</span>
+              <span class="therm-label">0°</span>
+              <span class="therm-label">−20°</span>
+              <span class="therm-label">−40°</span>
+            </div>
+          </div>
+          <div class="therm-bulb"></div>
+        </div>
+        <div class="therm-right">
+          <p>Move the slider to set the temperature. Notice how the thermometer goes <strong>below zero</strong> for negative values.</p>
+          <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
+            <span style="font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--muted);">−40°C</span>
+            <input type="range" id="thermSlider" min="-40" max="40" value="0"
+              oninput="updateTherm(this.value)"
+              style="flex:1; accent-color:var(--coral);">
+            <span style="font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--muted);">+40°C</span>
+          </div>
+          <div style="font-family:'Fredoka One',cursive; font-size:2.2rem; color:var(--coral); margin-bottom:0.4rem;" id="thermReading">0°C</div>
+          <div id="thermContext" style="font-size:0.88rem; line-height:1.65; color:#3a4a5a; min-height:2.5rem;"></div>
+
+          <div style="margin-top:1rem; background:#f5f7fa; border-radius:10px; padding:0.8rem 1rem;">
+            <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.5rem;">TEMPERATURE COMPARISON</div>
+            <div id="thermCompare" style="font-family:'DM Mono',monospace; font-size:0.82rem; color:var(--sky); line-height:1.8;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-zone">
+      <h3>💰 Bank Account Simulator</h3>
+      <div class="hint">DEPOSITS ARE POSITIVE · WITHDRAWALS ARE NEGATIVE · WATCH THE BALANCE</div>
+
+      <p style="font-size:0.88rem; color:#3a4a5a; margin-bottom:1rem;">Starting balance: <strong>$100</strong>. Add transactions and watch how deposits and withdrawals use positive and negative numbers.</p>
+
+      <div style="display:flex; gap:0.8rem; flex-wrap:wrap; align-items:flex-end; margin-bottom:1rem;">
+        <div class="input-group">
+          <label>Amount ($)</label>
+          <input type="number" id="txAmount" step="0.01" value="25" style="width:110px;">
+        </div>
+        <div class="input-group">
+          <label>Description</label>
+          <input type="text" id="txDesc" value="Lunch"
+            style="border:2px solid var(--border); border-radius:8px; padding:0.5rem 0.8rem;
+                   font-family:'Nunito',sans-serif; font-size:0.9rem; outline:none; width:140px; color:var(--sky);">
+        </div>
+        <button class="btn btn-mint" onclick="addTransaction(true)">+ Deposit</button>
+        <button class="btn btn-coral" onclick="addTransaction(false)">− Withdraw</button>
+      </div>
+
+      <div id="txList" style="font-family:'DM Mono',monospace; font-size:0.82rem; background:#f5f7fa; border-radius:10px; padding:0.8rem; min-height:60px; margin-bottom:0.8rem; line-height:2;"></div>
+
+      <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+        <div style="background:var(--mint-pale); border:2px solid #b8ebd8; border-radius:10px; padding:0.8rem 1.2rem; flex:1; text-align:center;">
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted);">BALANCE</div>
+          <div style="font-family:'Fredoka One',cursive; font-size:1.8rem;" id="bankBalance">$100.00</div>
+        </div>
+        <div style="background:#f5f7fa; border:2px solid var(--border); border-radius:10px; padding:0.8rem 1.2rem; flex:1; text-align:center;">
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted);">STATUS</div>
+          <div style="font-family:'Fredoka One',cursive; font-size:1rem;" id="bankStatus">In the black ✓</div>
+        </div>
+      </div>
+      <button class="btn btn-ghost" onclick="resetBank()" style="margin-top:0.8rem;">↺ Reset account</button>
+    </div>
+
+    <div class="predict-box" style="border-color:var(--mint); background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After exploring — what did you notice?</h4>
+      <textarea id="neg-reflection" placeholder="Negative numbers are useful for describing... The temperature thermometer showed me that zero is... In the bank account, a negative balance means... Positive and negative are opposites because..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 3: NUMBER LINE ══ -->
+  <div class="section" id="sec-3">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-mint">4</div>
+      <span class="eyebrow-label">Investigation 2 · 6.NS.C.6</span>
+    </div>
+    <h2>📏 Rational Numbers on the Number Line</h2>
+    <p class="lead">The number line extends infinitely in both directions. Every rational number — positive, negative, fraction, or decimal — has exactly one spot on it. <strong>Predict before you place!</strong></p>
+
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="nl-prediction" placeholder="I think −3.5 sits between ___ and ___ on the number line. The number −½ is (closer to / farther from) zero than −2. If I reflected −4 across zero I would get ___..."></textarea>
+    </div>
+
+    <div class="demo-zone">
+      <h3>📍 Interactive Number Line</h3>
+      <div class="hint">CLICK ON THE NUMBER LINE TO PLACE A POINT · TYPE A VALUE TO PLOT IT PRECISELY</div>
+
+      <canvas class="numline-canvas" id="numberLine" height="100"></canvas>
+
+      <div style="display:flex; gap:1rem; align-items:flex-end; flex-wrap:wrap; margin-top:1rem; margin-bottom:0.8rem;">
+        <div class="input-group">
+          <label>Plot this number</label>
+          <input type="number" id="nlInput" step="0.5" value="-3" style="width:110px;" oninput="plotNumberLine()">
+        </div>
+        <button class="btn btn-coral" onclick="plotNumberLine()">Plot it ▶</button>
+        <button class="btn btn-ghost" onclick="clearNumberLine()">Clear</button>
+      </div>
+
+      <div id="nlFeedback" style="font-family:'DM Mono',monospace; font-size:0.82rem; color:var(--lavender); min-height:1.5rem; line-height:1.7;"></div>
+    </div>
+
+    <div class="demo-zone">
+      <h3>🔢 Ordering Rational Numbers</h3>
+      <div class="hint">ARRANGE THESE NUMBERS FROM LEAST TO GREATEST · CLICK TO BUILD THE ORDER</div>
+
+      <p style="font-size:0.88rem; color:#3a4a5a; margin-bottom:0.8rem;">Arrange from <strong>least</strong> (left) to <strong>greatest</strong> (right):</p>
+
+      <div class="order-chips" id="orderSource" style="margin-bottom:0.5rem;">
+        <!-- filled by JS -->
+      </div>
+
+      <div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--muted); margin-bottom:0.3rem;">YOUR ORDER (click chips above to place them here) →</div>
+      <div class="order-chips" id="orderTarget" style="min-height:52px;">
+        <!-- chips placed here -->
+      </div>
+
+      <div class="action-row" style="margin-top:0.8rem;">
+        <button class="btn btn-coral" onclick="checkOrder()">✓ Check order</button>
+        <button class="btn btn-ghost" onclick="resetOrder()">↺ Shuffle again</button>
+      </div>
+      <div id="orderFeedback" style="margin-top:0.6rem; font-family:'DM Mono',monospace; font-size:0.82rem; min-height:1.2rem; color:var(--mint);"></div>
+    </div>
+
+    <div class="predict-box" style="border-color:var(--lavender); background:var(--lavender-pale);">
+      <h4 style="color:var(--lavender);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="nl-reflection" placeholder="On the number line, negative numbers are to the ___ of zero. The further a negative number is from zero, the ___ it is. I found it tricky to order ___ because..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 4: ABSOLUTE VALUE ══ -->
+  <div class="section" id="sec-4">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-sun">5</div>
+      <span class="eyebrow-label">Investigation 3 · 6.NS.C.7</span>
+    </div>
+    <h2>🎯 Absolute Value & Ordering</h2>
+    <p class="lead">Absolute value answers the question: <em>"how far from zero?"</em> It strips away the direction and gives you the pure distance. <strong>Predict before you calculate!</strong></p>
+
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="abs-prediction" placeholder="|−8| = ___. |5| = ___. Which is further from zero: −9 or 7? I think... −6 < −2 because on the number line... The statement '−10 > −3' is (true / false) because..."></textarea>
+    </div>
+
+    <div class="demo-zone">
+      <h3>📏 Absolute Value Calculator</h3>
+      <div class="hint">ENTER ANY RATIONAL NUMBER · SEE ITS DISTANCE FROM ZERO VISUALISED</div>
+
+      <div style="display:flex; gap:1rem; align-items:flex-end; flex-wrap:wrap; margin-bottom:1rem;">
+        <div class="input-group">
+          <label>Enter a number</label>
+          <input type="number" id="absInput" step="0.5" value="-7" oninput="calcAbsValue()">
+        </div>
+        <div style="flex:1; min-width:200px;">
+          <canvas class="numline-canvas" id="absLine" height="80"></canvas>
+        </div>
+      </div>
+
+      <div class="abs-display">
+        <div class="abs-big" id="absResult">|−7| = 7</div>
+        <div class="abs-note" id="absNote">−7 is 7 units from zero on the number line.</div>
+      </div>
+    </div>
+
+    <div class="demo-zone">
+      <h3>⚖️ Comparing & Ordering with Negatives</h3>
+      <div class="hint">USE &lt; · &gt; · = TO COMPARE · THE NUMBER LINE ALWAYS TELLS THE TRUTH</div>
+
+      <p style="font-size:0.88rem; color:#3a4a5a; margin-bottom:1rem;">Choose the correct symbol for each comparison. Remember: on the number line, numbers to the <strong>left are always less than</strong> numbers to the right.</p>
+
+      <div id="compareProblems" style="display:flex; flex-direction:column; gap:0.8rem;">
+        <!-- filled by JS -->
+      </div>
+
+      <div class="action-row" style="margin-top:1rem;">
+        <button class="btn btn-coral" onclick="checkComparisons()">✓ Check answers</button>
+        <button class="btn btn-ghost" onclick="newComparisons()">↺ New problems</button>
+      </div>
+      <div id="compareFeedback" style="margin-top:0.6rem; font-family:'DM Mono',monospace; font-size:0.82rem; min-height:1.2rem;"></div>
+    </div>
+
+    <div class="predict-box" style="border-color:var(--mint); background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="abs-reflection" placeholder="Absolute value tells me... The tricky thing about comparing negative numbers is... −10 is less than −3 even though 10 > 3 because... I can use absolute value to describe distance in real life when..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 5: COORDINATE PLANE ══ -->
+  <div class="section" id="sec-5">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-lav">6</div>
+      <span class="eyebrow-label">Investigation 4 · 6.NS.C.8</span>
+    </div>
+    <h2>🗺️ The Full Coordinate Plane</h2>
+    <p class="lead">You've plotted points in Quadrant I before. Now the axes extend in <em>all four directions</em> — and every point in the world has a home. <strong>Predict, then explore!</strong></p>
+
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="coord-prediction" placeholder="The point (−3, 4) is in Quadrant ___. To plot (−5, −2) I go left ___ and down ___. The distance between (3,0) and (−3,0) is ___. A point on the x-axis has y = ___..."></textarea>
+    </div>
+
+    <div class="demo-zone">
+      <h3>📍 Full Coordinate Plane Explorer</h3>
+      <div class="hint">CLICK THE GRID TO PLOT POINTS · SEE THE COORDINATES & QUADRANT INSTANTLY</div>
+
+      <div class="coord-panel">
+        <canvas id="coordPlane" width="300" height="300"></canvas>
+        <div class="coord-right">
+          <p>Click anywhere on the grid to place a point. Watch the coordinates and quadrant update instantly.</p>
+
+          <div style="display:flex; gap:0.6rem; align-items:flex-end; flex-wrap:wrap; margin-bottom:0.8rem;">
+            <div class="input-group">
+              <label>x</label>
+              <input type="number" id="plotX" step="1" min="-9" max="9" value="3" style="width:70px;" oninput="plotManual()">
+            </div>
+            <div class="input-group">
+              <label>y</label>
+              <input type="number" id="plotY" step="1" min="-9" max="9" value="4" style="width:70px;" oninput="plotManual()">
+            </div>
+            <button class="btn btn-lav" onclick="plotManual()">Plot ▶</button>
+          </div>
+
+          <div class="quadrant-info" id="quadrantInfo">Click the grid or type coordinates above</div>
+          <div class="plotted-points" id="plottedPoints">No points plotted yet.</div>
+
+          <div class="action-row">
+            <button class="btn btn-ghost" onclick="clearPlane()">Clear all</button>
+            <button class="btn btn-sun" onclick="plotChallenge()">⚡ Challenge points</button>
+          </div>
+          <div id="challengeInfo" style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--muted); margin-top:0.4rem; min-height:1rem;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-zone">
+      <h3>📐 Distance Between Points</h3>
+      <div class="hint">FIND THE DISTANCE BETWEEN TWO POINTS THAT SHARE AN AXIS VALUE</div>
+
+      <p style="font-size:0.88rem; color:#3a4a5a; margin-bottom:1rem;">When two points share the same x or y coordinate, you can find the distance using absolute value: <strong>|x₁ − x₂|</strong> or <strong>|y₁ − y₂|</strong></p>
+
+      <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end; margin-bottom:1rem;">
+        <div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.4rem;">POINT A</div>
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <span style="font-family:'DM Mono',monospace; font-size:0.88rem; color:var(--muted);">(</span>
+            <input type="number" id="ptAx" step="1" value="-3" oninput="calcDistance()"
+              style="border:2px solid var(--coral); border-radius:6px; padding:0.4rem 0.6rem; width:60px;
+                     font-family:'DM Mono',monospace; font-size:0.9rem; font-weight:700; color:var(--coral); outline:none; text-align:center;">
+            <span style="font-family:'DM Mono',monospace; color:var(--muted);">,</span>
+            <input type="number" id="ptAy" step="1" value="2" oninput="calcDistance()"
+              style="border:2px solid var(--coral); border-radius:6px; padding:0.4rem 0.6rem; width:60px;
+                     font-family:'DM Mono',monospace; font-size:0.9rem; font-weight:700; color:var(--coral); outline:none; text-align:center;">
+            <span style="font-family:'DM Mono',monospace; color:var(--muted);">)</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.4rem;">POINT B</div>
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <span style="font-family:'DM Mono',monospace; font-size:0.88rem; color:var(--muted);">(</span>
+            <input type="number" id="ptBx" step="1" value="4" oninput="calcDistance()"
+              style="border:2px solid var(--mint); border-radius:6px; padding:0.4rem 0.6rem; width:60px;
+                     font-family:'DM Mono',monospace; font-size:0.9rem; font-weight:700; color:var(--mint); outline:none; text-align:center;">
+            <span style="font-family:'DM Mono',monospace; color:var(--muted);">,</span>
+            <input type="number" id="ptBy" step="1" value="2" oninput="calcDistance()"
+              style="border:2px solid var(--mint); border-radius:6px; padding:0.4rem 0.6rem; width:60px;
+                     font-family:'DM Mono',monospace; font-size:0.9rem; font-weight:700; color:var(--mint); outline:none; text-align:center;">
+            <span style="font-family:'DM Mono',monospace; color:var(--muted);">)</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="distResult" style="background:var(--lavender-pale); border:2px solid rgba(124,111,205,0.3); border-radius:12px; padding:1.2rem 1.4rem;">
+        <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.3rem;">WORKING</div>
+        <div id="distWorking" style="font-family:'DM Mono',monospace; font-size:0.85rem; color:var(--sky); line-height:1.8;"></div>
+        <div style="font-family:'Fredoka One',cursive; font-size:1.5rem; color:var(--lavender); margin-top:0.4rem;" id="distAnswer"></div>
+      </div>
+    </div>
+
+    <div class="predict-box" style="border-color:var(--lavender); background:var(--lavender-pale);">
+      <h4 style="color:var(--lavender);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="coord-reflection" placeholder="The four quadrants are different because... A point with a negative x-coordinate is always to the ___ of the y-axis. To find distance between two points that share a y-value I... The most surprising thing was..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 6: REAL LIFE ══ -->
+  <div class="section" id="sec-6">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-sky">7</div>
+      <span class="eyebrow-label">Real-World Connections</span>
+    </div>
+    <h2>Negative numbers are everywhere 🌍</h2>
+    <p class="lead">Once you know how to think with negative numbers and coordinates, you see them in almost every field — from ocean science to game design to global finance.</p>
+
+    <div class="world-grid">
+      <div class="world-card coral-bg">
+        <div class="wc-icon">🌊</div>
+        <h4>Ocean Science</h4>
+        <p>Sea level is defined as 0m. Ocean depths are negative: the Mariana Trench is −11,034m. Altitude above sea level is positive: Mount Everest is +8,849m.</p>
+      </div>
+      <div class="world-card mint-bg">
+        <div class="wc-icon">🎮</div>
+        <h4>Game Design</h4>
+        <p>Every game map is a coordinate plane. Character positions, enemy locations, spawn points — all described as (x, y) pairs, often in all four quadrants.</p>
+      </div>
+      <div class="world-card lav-bg">
+        <div class="wc-icon">📈</div>
+        <h4>Finance</h4>
+        <p>Stock prices move positively (gains) and negatively (losses). A net worth can be negative. Every financial statement uses positive and negative numbers.</p>
+      </div>
+      <div class="world-card sun-bg">
+        <div class="wc-icon">🌐</div>
+        <h4>GPS & Navigation</h4>
+        <p>Latitude and longitude are a coordinate system. Negative latitude = South, negative longitude = West. Every GPS coordinate is a point in a global plane.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="demo-zone">
+      <h3>🌍 Real-World Context Challenges</h3>
+      <div class="hint">SOLVE EACH PROBLEM · CLICK TO REVEAL THE ANSWER AND EXPLANATION</div>
+      <div id="realChallenges" style="display:flex; flex-direction:column; gap:0.8rem;"></div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 7: REFLECT ══ -->
+  <div class="section" id="sec-7">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-coral">8</div>
+      <span class="eyebrow-label">Synthesis & Wonder</span>
+    </div>
+    <h2>💭 Let's think it through</h2>
+    <p class="lead">Negative numbers took mathematicians centuries to fully accept. These questions ask you to think about <em>why</em>, not just <em>how</em>. Take your time.</p>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q1 /</span> Why is −10 less than −3, even though 10 is greater than 3?</div>
+      <textarea placeholder="On the number line, −10 is further to the ___ than −3. This means... A helpful way to think about it is to imagine a temperature of −10°C compared to −3°C..."></textarea>
+    </div>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q2 /</span> What does absolute value actually measure, and why is it always positive?</div>
+      <textarea placeholder="Absolute value measures... It's always positive because distance is never... For example |−6| = 6 because... This is useful in real life when..."></textarea>
+    </div>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q3 /</span> You plot the points (−4, 3) and (−4, −5) on a coordinate plane. How far apart are they, and how did you calculate it?</div>
+      <textarea placeholder="Both points have the same x-coordinate of −4, so they lie on a... The y-coordinates are 3 and −5. The distance is |3 − (−5)| = |___| = ___. I knew to use absolute value because..."></textarea>
+    </div>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q4 /</span> If you could only keep one idea from Workshop 2, what would it be and why?</div>
+      <textarea placeholder="The most powerful idea I'm taking away is... I'd choose this because it helps me understand... I think I'll see this in the real world when..."></textarea>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="congrats">
+      <div class="trophy">🎉</div>
+      <h2>You've mastered the full number system!</h2>
+      <p>Between Workshop 1 and 2 you've covered all eight 6.NS standards — from dividing fractions to plotting points in every quadrant. The number system is complete. Next stop: expressions, equations, and algebra.</p>
+      <div class="summary-chips">
+        <span class="summary-chip">Negative numbers describe real quantities</span>
+        <span class="summary-chip">|−n| = n, always positive</span>
+        <span class="summary-chip">−10 &lt; −3 (further left = less)</span>
+        <span class="summary-chip">4 quadrants: I(+,+) II(−,+) III(−,−) IV(+,−)</span>
+        <span class="summary-chip">Distance = |x₁ − x₂| or |y₁ − y₂|</span>
+        <span class="summary-chip">6.NS.C.5 · 6.NS.C.6 · 6.NS.C.7 · 6.NS.C.8</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 8: SUBMIT ══ -->
+  <div class="section" id="sec-8">
+    <div class="section-eyebrow">
+      <div class="eyebrow-num num-mint">9</div>
+      <span class="eyebrow-label">Your Completed Work</span>
+    </div>
+    <h2>📤 Ready to Share</h2>
+    <p class="lead">Here's everything you worked on today. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> directly to your teacher.</p>
+
+    <div class="summary-section" style="background:var(--sky); color:white; border-color:var(--sky);">
+      <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; align-items:center;">
+        <div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; opacity:0.6; margin-bottom:0.3rem;">STUDENT</div>
+          <div style="font-family:'Fredoka One',cursive; font-size:1.4rem;" id="summaryName">—</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; opacity:0.6; margin-bottom:0.3rem;">LESSON</div>
+          <div style="font-family:'Fredoka One',cursive; font-size:1rem;">Number System Workshop 2 🌡️</div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.72rem; opacity:0.6;" id="summaryDate"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-section">
+      <h3>📍 Section 3 — Negative Numbers in Context</h3>
+      <div class="sum-label">Prediction</div><div class="summary-answer" id="sum-neg-pred"></div>
+      <div class="sum-label">Reflection</div><div class="summary-answer" id="sum-neg-ref"></div>
+    </div>
+    <div class="summary-section">
+      <h3>📏 Section 4 — Number Line</h3>
+      <div class="sum-label">Prediction</div><div class="summary-answer" id="sum-nl-pred"></div>
+      <div class="sum-label">Reflection</div><div class="summary-answer" id="sum-nl-ref"></div>
+    </div>
+    <div class="summary-section">
+      <h3>🎯 Section 5 — Absolute Value</h3>
+      <div class="sum-label">Prediction</div><div class="summary-answer" id="sum-abs-pred"></div>
+      <div class="sum-label">Reflection</div><div class="summary-answer" id="sum-abs-ref"></div>
+    </div>
+    <div class="summary-section">
+      <h3>🗺️ Section 6 — Coordinate Plane</h3>
+      <div class="sum-label">Prediction</div><div class="summary-answer" id="sum-coord-pred"></div>
+      <div class="sum-label">Reflection</div><div class="summary-answer" id="sum-coord-ref"></div>
+    </div>
+    <div class="summary-section">
+      <h3>💭 Section 8 — Reflections</h3>
+      <div class="sum-label">Q1 — Why −10 &lt; −3</div><div class="summary-answer" id="sum-q1"></div>
+      <div class="sum-label">Q2 — What absolute value measures</div><div class="summary-answer" id="sum-q2"></div>
+      <div class="sum-label">Q3 — Distance between (−4,3) and (−4,−5)</div><div class="summary-answer" id="sum-q3"></div>
+      <div class="sum-label">Q4 — Most important idea</div><div class="summary-answer" id="sum-q4"></div>
+    </div>
+
+    <div class="share-buttons">
+      <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+      <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+      <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+    <div class="copy-confirm" id="copyConfirm"></div>
+
+    <div style="margin-top:1.5rem; background:var(--sun-pale); border:2px dashed var(--sun); border-radius:12px; padding:1.2rem 1.4rem;">
+      <p style="font-family:'Fredoka One',cursive; font-size:1rem; color:#b8860b; margin-bottom:0.8rem;">📋 How to submit your work:</p>
+      <p style="font-size:0.82rem; color:#b8860b; font-family:'DM Mono',monospace; line-height:2;">
+        <strong>📋 Copy My Results</strong> — Copies all your answers to your clipboard. Then open Google Classroom, click your assignment, paste into the comment or document box, and submit.<br>
+        <strong>📧 Email to Teacher</strong> — Opens your email app with your answers already typed in the body. Just add your teacher's address and hit send.<br>
+        <strong>🖨️ Print / Save PDF</strong> — Opens your browser's print window. To save as a PDF on a Mac, click the dropdown at the bottom left and choose "Save as PDF". On Windows, choose "Microsoft Print to PDF". Then upload the PDF to your assignment.
+      </p>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div class="nav-row">
+    <button class="btn-prev" id="prevBtn" onclick="navigate(-1)" disabled>← Back</button>
+    <button class="btn-next" id="nextBtn" onclick="navigate(1)">Next <span>→</span></button>
+  </div>
+
+</div><!-- /sheet -->
+
+<!-- COPYRIGHT -->
+<div style="position:relative; z-index:1; text-align:center; padding:1.5rem 2rem 2rem; color:rgba(255,255,255,0.45); font-family:'DM Mono',monospace; font-size:0.7rem; line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+
+<script>
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+let currentSection = 0;
+const totalSections = 9;
+
+function goTo(n) {
+  document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===n));
+  document.querySelectorAll('.prog-step').forEach((p,i) => {
+    p.classList.toggle('active', i===n);
+    if (i < n) p.classList.add('done');
+    else p.classList.remove('done');
+  });
+  currentSection = n;
+  document.getElementById('prevBtn').disabled = n === 0;
+  if (n === totalSections - 1) {
+    document.getElementById('nextBtn').textContent = '✓ Complete!';
+    document.getElementById('nextBtn').disabled = true;
+    buildSummary();
+  } else {
+    document.getElementById('nextBtn').innerHTML = 'Next <span>→</span>';
+    document.getElementById('nextBtn').disabled = false;
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (n === 2) { updateTherm(0); }
+  if (n === 3) { drawNumberLine(); buildOrderActivity(); }
+  if (n === 4) { calcAbsValue(); buildComparisons(); drawAbsLine(); }
+  if (n === 5) { drawCoordPlane(); calcDistance(); }
+  if (n === 6) { buildRealChallenges(); }
+}
+function navigate(dir) { goTo(Math.min(Math.max(currentSection + dir, 0), totalSections-1)); }
+
+// ══════════════════════════════════════
+// SECTION 0 — CONTEXT CARDS WARMUP
+// ══════════════════════════════════════
+const contexts = [
+  { icon:'🌡️', value:'−15°C', description:'Temperature below freezing' },
+  { icon:'🏦', value:'−$50', description:'Overdrawn bank account' },
+  { icon:'🌊', value:'−200m', description:'Below sea level (depth)' },
+  { icon:'🏔️', value:'+3,000m', description:'Above sea level (altitude)' },
+  { icon:'⬆️', value:'+12 floors', description:'Floors above ground' },
+  { icon:'⬇️', value:'−3 floors', description:'Floors below ground (basement)' },
+];
+
+function buildContextCards() {
+  const grid = document.getElementById('contextCards');
+  grid.innerHTML = contexts.map((c, i) => `
+    <div onclick="revealContext(${i}, this)"
+      style="background:#f5f7fa; border:2px solid var(--border); border-radius:12px;
+             padding:1rem; text-align:center; cursor:pointer; transition:all 0.2s;">
+      <div style="font-size:1.6rem; margin-bottom:0.3rem;">${c.icon}</div>
+      <div style="font-family:'Fredoka One',cursive; font-size:1.1rem; color:var(--sky); margin-bottom:0.3rem;">${c.value}</div>
+      <div id="ctx-${i}" style="font-size:0.78rem; color:var(--muted); font-family:'DM Mono',monospace; min-height:1rem;"></div>
+    </div>`).join('');
+}
+
+let ctxRevealed = 0;
+function revealContext(i, el) {
+  const fb = document.getElementById(`ctx-${i}`);
+  if (fb.textContent) return;
+  fb.textContent = contexts[i].description;
+  fb.style.color = 'var(--mint)';
+  el.style.borderColor = 'var(--mint)';
+  ctxRevealed++;
+  if (ctxRevealed === contexts.length) {
+    document.getElementById('contextFeedback').textContent = '🎉 All revealed! Notice how negative means "opposite direction" in every case.';
+  }
+}
+buildContextCards();
+
+// ══════════════════════════════════════
+// SECTION 1 — VOCABULARY
+// ══════════════════════════════════════
+const termMap = { negative:'cr-negative', rational:'cr-rational', absolute:'cr-absolute', opposite:'cr-opposite', quadrant:'cr-quadrant' };
+let openTerm = null;
+function revealTerm(key) {
+  if (openTerm) document.getElementById(termMap[openTerm]).classList.remove('show');
+  if (openTerm === key) { openTerm = null; return; }
+  document.getElementById(termMap[key]).classList.add('show');
+  openTerm = key;
+}
+
+// ══════════════════════════════════════
+// SECTION 2 — THERMOMETER & BANK
+// ══════════════════════════════════════
+const thermContexts = [
+  { range:[-40,-20], text:'Extremely cold — dangerous conditions. Dress in layers, exposed skin can freeze in minutes.' },
+  { range:[-20,-1],  text:'Below freezing — expect snow and ice. Water freezes at 0°C.' },
+  { range:[0,0],     text:'Exactly 0°C — the freezing point of water. Ice and water coexist.' },
+  { range:[1,15],    text:'Cold but above freezing — coat weather in most places.' },
+  { range:[16,25],   text:'Comfortable temperature — typical pleasant day.' },
+  { range:[26,40],   text:'Hot! Stay hydrated. Some parts of the world experience this daily.' },
+];
+
+function updateTherm(val) {
+  val = parseInt(val);
+  document.getElementById('thermSlider').value = val;
+  document.getElementById('thermReading').textContent = (val >= 0 ? '+' : '') + val + '°C';
+  document.getElementById('thermReading').style.color = val < 0 ? '#2980b9' : val > 25 ? 'var(--coral)' : 'var(--mint)';
+
+  // fill height: 0°C at 50%, range is -40 to +40
+  const pct = ((val + 40) / 80) * 100;
+  document.getElementById('thermFill').style.height = pct + '%';
+  document.getElementById('thermFill').style.background = val < 0
+    ? 'linear-gradient(180deg, #2980b9, #1a5276)'
+    : 'linear-gradient(180deg, var(--coral), #e74c3c)';
+
+  // zero line position (50% from bottom)
+  document.getElementById('thermZero').style.bottom = '50%';
+
+  // context text
+  const ctx = thermContexts.find(c => val >= c.range[0] && val <= c.range[1]);
+  document.getElementById('thermContext').textContent = ctx ? ctx.text : '';
+
+  // comparison
+  const cities = [
+    { name: 'Winnipeg in January', temp: -20 },
+    { name: 'London in Winter', temp: 5 },
+    { name: 'Sydney in Summer', temp: 30 },
+    { name: 'Sahara Desert', temp: 40 },
+  ];
+  const comparisons = cities.map(c => {
+    const diff = val - c.temp;
+    return `${c.name} (${c.temp > 0 ? '+' : ''}${c.temp}°C): you are ${Math.abs(diff)}° ${diff > 0 ? 'warmer' : diff < 0 ? 'colder' : 'the same'}`;
+  }).join('\n');
+  document.getElementById('thermCompare').textContent = comparisons;
+}
+updateTherm(0);
+
+// ── BANK ACCOUNT ──
+let bankBalance = 100;
+let transactions = [];
+
+function addTransaction(isDeposit) {
+  const amount = parseFloat(document.getElementById('txAmount').value) || 0;
+  const desc = document.getElementById('txDesc').value || 'Transaction';
+  const signed = isDeposit ? amount : -amount;
+  bankBalance = Math.round((bankBalance + signed) * 100) / 100;
+  transactions.push({ desc, amount: signed, balance: bankBalance });
+  renderBank();
+}
+
+function renderBank() {
+  const list = document.getElementById('txList');
+  list.innerHTML = transactions.map(t =>
+    `${t.amount >= 0 ? '▲' : '▼'} ${t.desc}: ${t.amount >= 0 ? '+' : ''}$${t.amount.toFixed(2)} → Balance: $${t.balance.toFixed(2)}`
+  ).join('\n') || 'No transactions yet.';
+
+  const balEl = document.getElementById('bankBalance');
+  balEl.textContent = (bankBalance >= 0 ? '$' : '−$') + Math.abs(bankBalance).toFixed(2);
+  balEl.style.color = bankBalance >= 0 ? 'var(--mint)' : 'var(--coral)';
+  document.getElementById('bankStatus').textContent = bankBalance > 0 ? 'In the black ✓' : bankBalance === 0 ? 'Exactly zero' : 'Overdrawn ⚠️';
+  document.getElementById('bankStatus').style.color = bankBalance >= 0 ? 'var(--mint)' : 'var(--coral)';
+}
+
+function resetBank() {
+  bankBalance = 100;
+  transactions = [];
+  renderBank();
+}
+renderBank();
+
+// ══════════════════════════════════════
+// SECTION 3 — NUMBER LINE
+// ══════════════════════════════════════
+let nlPoints = [];
+
+function drawNumberLine() {
+  const cvs = document.getElementById('numberLine');
+  if (!cvs) return;
+  const W = cvs.offsetWidth || 700;
+  cvs.width = W;
+  const ctx = cvs.getContext('2d');
+  const H = 100, mid = H / 2;
+  const pad = 40;
+  const range = 20; // -10 to +10
+  const unitW = (W - pad * 2) / range;
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#fafbfc';
+  ctx.fillRect(0, 0, W, H);
+
+  // axis line
+  ctx.strokeStyle = '#b8c4cc';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(pad, mid);
+  ctx.lineTo(W - pad, mid);
+  ctx.stroke();
+
+  // ticks and labels
+  for (let i = -10; i <= 10; i++) {
+    const x = pad + (i + 10) * unitW;
+    const major = i % 5 === 0;
+    ctx.strokeStyle = major ? 'var(--sky)' : '#b8c4cc';
+    ctx.lineWidth = major ? 1.5 : 1;
+    ctx.beginPath();
+    ctx.moveTo(x, mid - (major ? 10 : 6));
+    ctx.lineTo(x, mid + (major ? 10 : 6));
+    ctx.stroke();
+    if (major) {
+      ctx.fillStyle = i === 0 ? 'var(--sky)' : i < 0 ? 'var(--coral)' : 'var(--mint)';
+      ctx.font = `bold ${i === 0 ? 13 : 11}px DM Mono, monospace`;
+      ctx.textAlign = 'center';
+      ctx.fillText(i, x, mid + 22);
+    }
+  }
+
+  // zero label
+  ctx.fillStyle = 'var(--sky)';
+  ctx.font = 'bold 11px DM Mono, monospace';
+  ctx.textAlign = 'center';
+
+  // plot points
+  nlPoints.forEach((p, idx) => {
+    if (p < -10 || p > 10) return;
+    const x = pad + (p + 10) * unitW;
+    ctx.beginPath();
+    ctx.arc(x, mid, 8, 0, 2 * Math.PI);
+    ctx.fillStyle = p < 0 ? 'var(--coral)' : p > 0 ? 'var(--mint)' : 'var(--lavender)';
+    ctx.fill();
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 8px DM Mono, monospace';
+    ctx.fillText(p, x, mid + 3);
+
+    // label above
+    ctx.fillStyle = p < 0 ? 'var(--coral)' : p > 0 ? 'var(--mint)' : 'var(--lavender)';
+    ctx.font = 'bold 10px DM Mono, monospace';
+    ctx.fillText(p, x, mid - 16);
+  });
+
+  // arrows at ends
+  ctx.fillStyle = '#b8c4cc';
+  ctx.beginPath(); ctx.moveTo(W - pad + 8, mid); ctx.lineTo(W - pad, mid - 5); ctx.lineTo(W - pad, mid + 5); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(pad - 8, mid); ctx.lineTo(pad, mid - 5); ctx.lineTo(pad, mid + 5); ctx.closePath(); ctx.fill();
+}
+
+function plotNumberLine() {
+  const val = parseFloat(document.getElementById('nlInput').value);
+  if (isNaN(val)) return;
+  if (!nlPoints.includes(val)) nlPoints.push(val);
+  drawNumberLine();
+
+  const fb = document.getElementById('nlFeedback');
+  const abs = Math.abs(val);
+  const quadDesc = val < 0 ? 'left of zero (negative side)' : val > 0 ? 'right of zero (positive side)' : 'exactly at zero';
+  fb.textContent = `${val} is ${quadDesc}. |${val}| = ${abs} — it is ${abs} unit${abs !== 1 ? 's' : ''} from zero.`;
+  const opp = val === 0 ? 0 : -val;
+  fb.textContent += ` Its opposite is ${opp}.`;
+}
+
+function clearNumberLine() {
+  nlPoints = [];
+  drawNumberLine();
+  document.getElementById('nlFeedback').textContent = '';
+}
+
+// ── ORDERING ACTIVITY ──
+const orderSets = [
+  [-5, 2, -1, 0, -3, 4],
+  [-8, -2, 5, -6, 1, -4],
+  [3, -7, -0.5, 2.5, -3, 6],
+  [-1.5, 0.5, -4, 2, -0.5, 3.5],
+];
+let currentOrderSet = [];
+let placedOrder = [];
+
+function buildOrderActivity() {
+  const set = orderSets[Math.floor(Math.random() * orderSets.length)];
+  currentOrderSet = [...set].sort(() => Math.random() - 0.5);
+  placedOrder = [];
+  renderOrderChips();
+}
+
+function renderOrderChips() {
+  const src = document.getElementById('orderSource');
+  const tgt = document.getElementById('orderTarget');
+  src.innerHTML = currentOrderSet.map((n, i) =>
+    `<div class="order-chip ${n < 0 ? 'negative' : n === 0 ? 'zero' : ''}"
+      onclick="moveToTarget(${i})" data-val="${n}">${n}</div>`
+  ).join('');
+  tgt.innerHTML = placedOrder.map((n, i) =>
+    `<div class="order-chip ${n < 0 ? 'negative' : n === 0 ? 'zero' : ''}"
+      onclick="removeFromTarget(${i})" data-val="${n}">${n}</div>`
+  ).join('');
+  if (placedOrder.length === 0) tgt.innerHTML = '<span style="color:var(--muted);font-family:\'DM Mono\',monospace;font-size:0.78rem;">Click numbers above to place them here</span>';
+}
+
+function moveToTarget(i) {
+  const val = currentOrderSet[i];
+  currentOrderSet.splice(i, 1);
+  placedOrder.push(val);
+  document.getElementById('orderFeedback').textContent = '';
+  renderOrderChips();
+}
+
+function removeFromTarget(i) {
+  const val = placedOrder[i];
+  placedOrder.splice(i, 1);
+  currentOrderSet.push(val);
+  document.getElementById('orderFeedback').textContent = '';
+  renderOrderChips();
+}
+
+function checkOrder() {
+  const sorted = [...placedOrder].sort((a, b) => a - b);
+  const correct = JSON.stringify(placedOrder) === JSON.stringify(sorted);
+  const fb = document.getElementById('orderFeedback');
+  if (placedOrder.length < (placedOrder.length + currentOrderSet.length)) {
+    fb.style.color = 'var(--coral)';
+    fb.textContent = '⚠️ Place all numbers first!';
+    return;
+  }
+  fb.style.color = correct ? 'var(--mint)' : 'var(--coral)';
+  fb.textContent = correct
+    ? '🎉 Correct! ' + sorted.join(' < ')
+    : '✗ Not quite. Correct order: ' + sorted.join(' < ') + '. Remember: further left on the number line = less!';
+}
+
+function resetOrder() {
+  buildOrderActivity();
+  document.getElementById('orderFeedback').textContent = '';
+}
+
+// ══════════════════════════════════════
+// SECTION 4 — ABSOLUTE VALUE
+// ══════════════════════════════════════
+function drawAbsLine(val) {
+  val = val !== undefined ? val : parseFloat(document.getElementById('absInput').value) || 0;
+  const cvs = document.getElementById('absLine');
+  if (!cvs) return;
+  const W = cvs.offsetWidth || 400;
+  cvs.width = W;
+  const ctx = cvs.getContext('2d');
+  const H = 80, mid = 44, pad = 30;
+  const range = 20;
+  const unitW = (W - pad * 2) / range;
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#fafbfc';
+  ctx.fillRect(0, 0, W, H);
+
+  // axis
+  ctx.strokeStyle = '#b8c4cc'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(pad, mid); ctx.lineTo(W - pad, mid); ctx.stroke();
+
+  // ticks
+  for (let i = -10; i <= 10; i++) {
+    const x = pad + (i + 10) * unitW;
+    ctx.strokeStyle = i === 0 ? 'var(--sky)' : '#dde4ee';
+    ctx.lineWidth = i === 0 ? 2 : 1;
+    ctx.beginPath(); ctx.moveTo(x, mid - 7); ctx.lineTo(x, mid + 7); ctx.stroke();
+    if (i % 5 === 0 || i === 0) {
+      ctx.fillStyle = '#b8c4cc';
+      ctx.font = '9px DM Mono, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(i, x, mid + 18);
+    }
+  }
+
+  // clamp val
+  const v = Math.max(-10, Math.min(10, val));
+  const x0 = pad + 10 * unitW; // zero
+  const xv = pad + (v + 10) * unitW; // point
+
+  // distance arc
+  ctx.strokeStyle = 'rgba(124,111,205,0.5)';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(Math.min(x0, xv), mid);
+  ctx.lineTo(Math.max(x0, xv), mid);
+  ctx.stroke();
+
+  // point
+  ctx.beginPath(); ctx.arc(xv, mid, 7, 0, 2*Math.PI);
+  ctx.fillStyle = v < 0 ? 'var(--coral)' : v > 0 ? 'var(--mint)' : 'var(--lavender)';
+  ctx.fill();
+  ctx.strokeStyle = 'white'; ctx.lineWidth = 2; ctx.stroke();
+
+  // zero dot
+  ctx.beginPath(); ctx.arc(x0, mid, 5, 0, 2*Math.PI);
+  ctx.fillStyle = 'var(--sky)'; ctx.fill();
+
+  // abs value label
+  const absMid = (x0 + xv) / 2;
+  ctx.fillStyle = 'var(--lavender)';
+  ctx.font = 'bold 10px Nunito, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(`|${v}| = ${Math.abs(v)}`, absMid, mid - 14);
+}
+
+function calcAbsValue() {
+  const val = parseFloat(document.getElementById('absInput').value) || 0;
+  const abs = Math.abs(val);
+  document.getElementById('absResult').textContent = `|${val}| = ${abs}`;
+  document.getElementById('absNote').textContent = `${val} is ${abs} unit${abs !== 1 ? 's' : ''} from zero on the number line.`;
+  drawAbsLine(val);
+}
+
+// ── COMPARISONS ──
+let compareProblems = [];
+function generateCompareProblems() {
+  const pairs = [
+    [-5, -3], [-8, -2], [4, -6], [-1, 1], [-10, -10],
+    [-0.5, 0.5], [3, -3], [-7, -9], [0, -1], [-4, 4]
+  ];
+  compareProblems = pairs.sort(() => Math.random() - 0.5).slice(0, 5);
+}
+
+function buildComparisons() {
+  generateCompareProblems();
+  renderComparisons();
+}
+
+function renderComparisons() {
+  const container = document.getElementById('compareProblems');
+  container.innerHTML = compareProblems.map((pair, i) => `
+    <div style="display:flex; align-items:center; gap:1rem; background:#f5f7fa; border-radius:10px; padding:0.8rem 1rem; flex-wrap:wrap;">
+      <span style="font-family:'Fredoka One',cursive; font-size:1.2rem; color:var(--coral); min-width:50px;">${pair[0]}</span>
+      <div style="display:flex; gap:0.4rem;">
+        ${['<', '>', '='].map(sym =>
+          `<button onclick="selectComp(${i},'${sym}',this)"
+            style="background:white; border:2px solid var(--border); border-radius:6px; padding:0.35rem 0.7rem;
+                   font-family:'Fredoka One',cursive; font-size:1rem; cursor:pointer; transition:all 0.15s; color:var(--sky);"
+            data-sym="${sym}" data-i="${i}">${sym}</button>`
+        ).join('')}
+      </div>
+      <span style="font-family:'Fredoka One',cursive; font-size:1.2rem; color:var(--mint); min-width:50px;">${pair[1]}</span>
+      <span id="comp-fb-${i}" style="font-family:'DM Mono',monospace; font-size:0.75rem; min-width:20px;"></span>
+    </div>`).join('');
+}
+
+const selectedComps = {};
+function selectComp(i, sym, btn) {
+  // highlight selection
+  document.querySelectorAll(`[data-i="${i}"]`).forEach(b => b.style.background = 'white');
+  btn.style.background = 'var(--lavender-pale)';
+  btn.style.borderColor = 'var(--lavender)';
+  selectedComps[i] = sym;
+}
+
+function checkComparisons() {
+  let correct = 0, total = compareProblems.length;
+  compareProblems.forEach((pair, i) => {
+    const expected = pair[0] < pair[1] ? '<' : pair[0] > pair[1] ? '>' : '=';
+    const given = selectedComps[i];
+    const fb = document.getElementById(`comp-fb-${i}`);
+    if (!given) { fb.textContent = '?'; fb.style.color = 'var(--muted)'; return; }
+    if (given === expected) {
+      fb.textContent = '✓'; fb.style.color = 'var(--mint)'; correct++;
+    } else {
+      fb.textContent = `✗ (${expected})`; fb.style.color = 'var(--coral)';
+    }
+  });
+  const fb = document.getElementById('compareFeedback');
+  fb.style.color = correct === total ? 'var(--mint)' : 'var(--coral)';
+  fb.textContent = correct === total
+    ? '🎉 All correct! Remember: on the number line, left = less.'
+    : `${correct}/${total} correct. For negatives: the bigger the absolute value, the LESS the number (further left).`;
+}
+
+function newComparisons() {
+  Object.keys(selectedComps).forEach(k => delete selectedComps[k]);
+  document.getElementById('compareFeedback').textContent = '';
+  buildComparisons();
+}
+
+// ══════════════════════════════════════
+// SECTION 5 — COORDINATE PLANE
+// ══════════════════════════════════════
+let plottedPoints = [];
+let shapeClosed = false;
+
+const quadrantColors = {
+  'I':   'rgba(232,96,60,0.12)',
+  'II':  'rgba(58,175,133,0.12)',
+  'III': 'rgba(246,195,67,0.12)',
+  'IV':  'rgba(124,111,205,0.12)',
+};
+const quadrantBorders = { 'I':'var(--coral)', 'II':'var(--mint)', 'III':'var(--sun)', 'IV':'var(--lavender)' };
+
+function getQuadrant(x, y) {
+  if (x === 0 && y === 0) return 'Origin';
+  if (x === 0) return 'y-axis';
+  if (y === 0) return 'x-axis';
+  if (x > 0 && y > 0) return 'I';
+  if (x < 0 && y > 0) return 'II';
+  if (x < 0 && y < 0) return 'III';
+  return 'IV';
+}
+
+function drawCoordPlane() {
+  const cvs = document.getElementById('coordPlane');
+  if (!cvs) return;
+  const size = 300, cells = 10, cell = size / cells;
+  const ctx = cvs.getContext('2d');
+  ctx.clearRect(0, 0, size, size);
+
+  // quadrant backgrounds
+  const cx = size / 2, cy = size / 2;
+  ctx.fillStyle = 'rgba(232,96,60,0.07)';   ctx.fillRect(cx, 0, cx, cy);
+  ctx.fillStyle = 'rgba(58,175,133,0.07)';  ctx.fillRect(0, 0, cx, cy);
+  ctx.fillStyle = 'rgba(246,195,67,0.07)';  ctx.fillRect(0, cy, cx, cy);
+  ctx.fillStyle = 'rgba(124,111,205,0.07)'; ctx.fillRect(cx, cy, cx, cy);
+
+  // grid
+  ctx.strokeStyle = '#dde8f5'; ctx.lineWidth = 1;
+  for (let i = 0; i <= cells; i++) {
+    const x = i * cell, y = i * cell;
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, size); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(size, y); ctx.stroke();
+  }
+
+  // axes
+  ctx.strokeStyle = '#b8c4cc'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(size, cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, size); ctx.stroke();
+
+  // axis labels
+  ctx.fillStyle = 'var(--muted)'; ctx.font = '8px DM Mono, monospace'; ctx.textAlign = 'center';
+  for (let i = -4; i <= 5; i++) {
+    if (i === 0) continue;
+    const x = cx + i * cell;
+    const y = cy - i * cell;
+    ctx.fillText(i, x, cy + 11);
+    ctx.textAlign = 'right';
+    ctx.fillText(-i, cx - 4, i * cell + 3);
+    ctx.textAlign = 'center';
+  }
+
+  // quadrant labels
+  const qLabels = [
+    { label:'I', x: cx + cell * 2, y: cy - cell * 2 },
+    { label:'II', x: cx - cell * 2, y: cy - cell * 2 },
+    { label:'III', x: cx - cell * 2, y: cy + cell * 2 },
+    { label:'IV', x: cx + cell * 2, y: cy + cell * 2 },
+  ];
+  qLabels.forEach(q => {
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.font = 'bold 14px Fredoka One, cursive';
+    ctx.textAlign = 'center';
+    ctx.fillText(q.label, q.x, q.y);
+  });
+
+  // plotted points
+  plottedPoints.forEach((p, idx) => {
+    const px = cx + p.x * cell;
+    const py = cy - p.y * cell;
+    ctx.beginPath(); ctx.arc(px, py, 6, 0, 2 * Math.PI);
+    const colors = ['var(--coral)', 'var(--mint)', 'var(--lavender)', '#f39c12', '#2980b9'];
+    ctx.fillStyle = colors[idx % colors.length];
+    ctx.fill();
+    ctx.strokeStyle = 'white'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = 'var(--sky)'; ctx.font = 'bold 9px Nunito, sans-serif'; ctx.textAlign = 'left';
+    ctx.fillText(`(${p.x},${p.y})`, px + 8, py - 4);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const cvs = document.getElementById('coordPlane');
+  if (!cvs) return;
+  cvs.addEventListener('click', e => {
+    const rect = cvs.getBoundingClientRect();
+    const size = 300, cells = 10, cell = size / cells;
+    const mx = (e.clientX - rect.left) * (size / rect.width);
+    const my = (e.clientY - rect.top) * (size / rect.height);
+    const gx = Math.round((mx - size/2) / cell);
+    const gy = Math.round((size/2 - my) / cell);
+    addPlotPoint(gx, gy);
+  });
+});
+
+function addPlotPoint(x, y) {
+  if (x < -5 || x > 5 || y < -5 || y > 5) return;
+  plottedPoints.push({ x, y });
+  drawCoordPlane();
+  const q = getQuadrant(x, y);
+  const qDesc = {
+    'I': 'Quadrant I (+, +)', 'II': 'Quadrant II (−, +)',
+    'III': 'Quadrant III (−, −)', 'IV': 'Quadrant IV (+, −)',
+    'Origin': 'The Origin (0, 0)', 'x-axis': 'On the x-axis', 'y-axis': 'On the y-axis'
+  };
+  document.getElementById('quadrantInfo').textContent = `(${x}, ${y}) → ${qDesc[q] || q}`;
+  document.getElementById('plottedPoints').innerHTML =
+    plottedPoints.map(p => `(${p.x}, ${p.y}) — ${getQuadrant(p.x, p.y)}`).join('<br>');
+}
+
+function plotManual() {
+  const x = parseInt(document.getElementById('plotX').value) || 0;
+  const y = parseInt(document.getElementById('plotY').value) || 0;
+  addPlotPoint(x, y);
+}
+
+function clearPlane() {
+  plottedPoints = [];
+  drawCoordPlane();
+  document.getElementById('quadrantInfo').textContent = 'Click the grid or type coordinates above';
+  document.getElementById('plottedPoints').textContent = 'No points plotted yet.';
+  document.getElementById('challengeInfo').textContent = '';
+}
+
+function plotChallenge() {
+  clearPlane();
+  const pts = [[-3,4],[-3,-4],[3,-4],[3,4]];
+  pts.forEach(p => addPlotPoint(p[0], p[1]));
+  document.getElementById('challengeInfo').textContent =
+    'Challenge: these 4 points form a rectangle! What are its dimensions? (Hint: use |x₁−x₂| and |y₁−y₂|)';
+}
+
+// ── DISTANCE ──
+function calcDistance() {
+  const ax = parseInt(document.getElementById('ptAx').value) || 0;
+  const ay = parseInt(document.getElementById('ptAy').value) || 0;
+  const bx = parseInt(document.getElementById('ptBx').value) || 0;
+  const by = parseInt(document.getElementById('ptBy').value) || 0;
+
+  const sameX = ax === bx;
+  const sameY = ay === by;
+
+  const working = document.getElementById('distWorking');
+  const answer  = document.getElementById('distAnswer');
+
+  if (sameY) {
+    const d = Math.abs(ax - bx);
+    working.textContent = `Same y-coordinate (${ay}), so horizontal distance:\n|${ax} − ${bx}| = |${ax-bx}| = ${d} units`;
+    answer.textContent = `Distance = ${d} units`;
+  } else if (sameX) {
+    const d = Math.abs(ay - by);
+    working.textContent = `Same x-coordinate (${ax}), so vertical distance:\n|${ay} − ${by}| = |${ay-by}| = ${d} units`;
+    answer.textContent = `Distance = ${d} units`;
+  } else {
+    working.textContent = `Points don't share an x or y value.\nFor 6th grade, we focus on points that share one coordinate.\nTry adjusting so both x or both y values match.`;
+    answer.textContent = '';
+  }
+}
+calcDistance();
+
+// ══════════════════════════════════════
+// SECTION 6 — REAL LIFE CHALLENGES
+// ══════════════════════════════════════
+const realChallengeData = [
+  { q:'A submarine is at −180m. It rises 45m. What is its new depth?',
+    work:'−180 + 45 = −135m', ans:'−135 metres (still below sea level)' },
+  { q:'The temperature at 6am was −12°C. By noon it rose 18°C. What was the noon temperature?',
+    work:'−12 + 18 = 6°C', ans:'+6°C — above freezing by noon!' },
+  { q:'Plot the corners of a park: (−4,3), (2,3), (2,−1), (−4,−1). What is the width and height?',
+    work:'Width: |−4 − 2| = 6 units · Height: |3 − (−1)| = 4 units', ans:'Width = 6 units, Height = 4 units, Area = 24 sq units' },
+  { q:'A fish is at depth −8m. A bird is flying at +12m. How far apart are they vertically?',
+    work:'|12 − (−8)| = |12 + 8| = 20m', ans:'20 metres apart' },
+  { q:'Order these elevations from lowest to highest: +230m, −45m, +12m, −120m, 0m',
+    work:'−120, −45, 0, +12, +230', ans:'−120m, −45m, 0m, +12m, +230m' },
+];
+
+function buildRealChallenges() {
+  const container = document.getElementById('realChallenges');
+  container.innerHTML = realChallengeData.map((c, i) => `
+    <div style="background:#f5f7fa; border-radius:12px; padding:1.2rem;">
+      <p style="font-size:0.9rem; line-height:1.65; color:#3a4a5a; margin-bottom:0.8rem;"><strong>Problem ${i+1}:</strong> ${c.q}</p>
+      <button onclick="revealRealChallenge(${i})" id="rc-btn-${i}"
+        style="background:var(--lavender); color:white; border:none; border-radius:8px; padding:0.5rem 1.1rem;
+               font-family:'Nunito',sans-serif; font-weight:800; font-size:0.82rem; cursor:pointer;">
+        Show solution
+      </button>
+      <div id="rc-ans-${i}" style="display:none; margin-top:0.8rem; font-family:'DM Mono',monospace; font-size:0.82rem;
+           color:var(--mint); line-height:1.7; white-space:pre-line;"></div>
+    </div>`).join('');
+}
+
+function revealRealChallenge(i) {
+  const c = realChallengeData[i];
+  document.getElementById(`rc-ans-${i}`).style.display = 'block';
+  document.getElementById(`rc-ans-${i}`).textContent = `Working: ${c.work}\n✓ Answer: ${c.ans}`;
+  document.getElementById(`rc-btn-${i}`).style.display = 'none';
+}
+
+// ══════════════════════════════════════
+// SUMMARY & SUBMIT
+// ══════════════════════════════════════
+function fill(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = text && text.trim();
+  el.textContent = val || 'Not answered';
+  el.classList.toggle('empty', !val);
+}
+
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  fill('sum-neg-pred',   document.getElementById('neg-prediction').value);
+  fill('sum-neg-ref',    document.getElementById('neg-reflection').value);
+  fill('sum-nl-pred',    document.getElementById('nl-prediction').value);
+  fill('sum-nl-ref',     document.getElementById('nl-reflection').value);
+  fill('sum-abs-pred',   document.getElementById('abs-prediction').value);
+  fill('sum-abs-ref',    document.getElementById('abs-reflection').value);
+  fill('sum-coord-pred', document.getElementById('coord-prediction').value);
+  fill('sum-coord-ref',  document.getElementById('coord-reflection').value);
+
+  const refTAs = document.querySelectorAll('#sec-7 .reflection-card textarea');
+  ['sum-q1','sum-q2','sum-q3','sum-q4'].forEach((id,i) => {
+    fill(id, refTAs[i] ? refTAs[i].value : '');
+  });
+}
+
+function buildPlainText() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const date = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const refTAs = document.querySelectorAll('#sec-7 .reflection-card textarea');
+  const qs = ['Not answered','Not answered','Not answered','Not answered'];
+  refTAs.forEach((ta,i) => { if(ta.value.trim()) qs[i] = ta.value.trim(); });
+
+  return `
+NUMBER SYSTEM WORKSHOP 2 🌡️ — STUDENT SUBMISSION
+=================================================
+Student: ${name}
+Date: ${date}
+Lesson: Grade 6 · The Number System · Workshop 2 of 2
+Standards: 6.NS.C.5 · 6.NS.C.6 · 6.NS.C.7 · 6.NS.C.8
+
+── SECTION 3: NEGATIVE NUMBERS IN CONTEXT ──
+Prediction:
+${document.getElementById('neg-prediction').value.trim() || 'Not answered'}
+Reflection:
+${document.getElementById('neg-reflection').value.trim() || 'Not answered'}
+
+── SECTION 4: NUMBER LINE ──
+Prediction:
+${document.getElementById('nl-prediction').value.trim() || 'Not answered'}
+Reflection:
+${document.getElementById('nl-reflection').value.trim() || 'Not answered'}
+
+── SECTION 5: ABSOLUTE VALUE ──
+Prediction:
+${document.getElementById('abs-prediction').value.trim() || 'Not answered'}
+Reflection:
+${document.getElementById('abs-reflection').value.trim() || 'Not answered'}
+
+── SECTION 6: COORDINATE PLANE ──
+Prediction:
+${document.getElementById('coord-prediction').value.trim() || 'Not answered'}
+Reflection:
+${document.getElementById('coord-reflection').value.trim() || 'Not answered'}
+
+── REFLECTIONS ──
+Q1 — Why −10 < −3
+${qs[0]}
+Q2 — What absolute value measures
+${qs[1]}
+Q3 — Distance between (−4,3) and (−4,−5)
+${qs[2]}
+Q4 — Most important idea
+${qs[3]}
+
+=================================================
+© 2026 Farvour Explorations · farvourexplorations.com
+Submitted via Number System Workshop 2 · Interactive Digital Lesson
+`.trim();
+}
+
+function copyResults() {
+  buildSummary();
+  navigator.clipboard.writeText(buildPlainText()).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Now paste into Google Classroom or your assignment.';
+    setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => {
+    document.getElementById('copyConfirm').textContent = '⚠️ Could not copy — try selecting the text manually.';
+  });
+}
+
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const subject = encodeURIComponent(`Number System Workshop 2 — ${name}`);
+  const body = encodeURIComponent(buildPlainText());
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+window.addEventListener('load', () => {
+  updateTherm(0);
+  drawNumberLine();
+  buildOrderActivity();
+  calcAbsValue();
+  buildComparisons();
+  drawCoordPlane();
+  calcDistance();
+  buildRealChallenges();
+});
+</script>
+</body>
+</html>
