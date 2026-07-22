@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Space Engineers — Farvour Explorations PYP 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--space:#0d0d2b;--purple:#6c3fc5;--purple-mid:#8b5cf6;--purple-pale:#f0eefb;--gold:#ffb627;--gold-pale:#fff6e3;--fire:#ff7a5c;--fire-pale:#ffece7;--leaf:#3aaf85;--leaf-pale:#e8f8f2;--star:#8ecae6;--star-pale:#eaf6fb;--rocket:#7c6fcd;--paper:#fefcff;--ink:#1a1a3a;--muted:#6b7a9c;--border:#e0ddf0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:linear-gradient(160deg,#0d0d2b 0%,#1a1060 35%,#2d1b8a 65%,#6c3fc5 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--ink);overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(2px 2px at 8% 12%,white 50%,transparent 52%),radial-gradient(1.5px 1.5px at 78% 6%,white 50%,transparent 52%),radial-gradient(2px 2px at 45% 18%,rgba(255,255,255,.8) 50%,transparent 52%),radial-gradient(1.5px 1.5px at 92% 22%,white 50%,transparent 52%),radial-gradient(2px 2px at 22% 35%,rgba(255,255,255,.7) 50%,transparent 52%),radial-gradient(1.5px 1.5px at 62% 8%,white 50%,transparent 52%),radial-gradient(2px 2px at 38% 28%,rgba(255,255,255,.8) 50%,transparent 52%),radial-gradient(1.5px 1.5px at 3% 42%,white 50%,transparent 52%);pointer-events:none;z-index:0}
+.hero{position:relative;z-index:1;text-align:center;padding:2.6rem 1.5rem 2rem;color:white}
+.hero-badge{display:inline-block;background:var(--gold);color:#7a4a00;font-family:'Baloo 2',cursive;font-weight:700;font-size:.85rem;padding:.4rem 1.3rem;border-radius:24px;margin-bottom:1rem;box-shadow:0 3px 14px rgba(255,182,39,.5)}
+.hero h1{font-family:'Baloo 2',cursive;font-weight:800;font-size:clamp(2rem,7vw,3.6rem);line-height:1.1;margin-bottom:.7rem;text-shadow:0 2px 24px rgba(108,63,197,.8)}
+.hero h1 .accent{color:var(--gold)}
+.hero p.intro{font-size:1.05rem;line-height:1.6;opacity:.92;max-width:520px;margin:0 auto 1.6rem;font-weight:600}
+.name-bar{background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.25);border-radius:14px;padding:.6rem 1rem;display:flex;align-items:center;gap:.7rem;max-width:380px;margin:0 auto 1.1rem}
+.name-bar label{font-size:.85rem;font-weight:800;color:white;white-space:nowrap}
+.name-bar input{flex:1;background:rgba(255,255,255,.18);border:none;border-radius:9px;padding:.5rem .8rem;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;color:white;outline:none}
+.name-bar input::placeholder{color:rgba(255,255,255,.45);font-weight:600}
+.progress-wrap{display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap}
+.prog-step{background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.2);border-radius:22px;padding:.45rem 1rem;font-size:.85rem;font-weight:800;color:rgba(255,255,255,.75);cursor:pointer;transition:all .2s;font-family:'Baloo 2',cursive}
+.prog-step.done{background:rgba(255,255,255,.22);color:white;border-color:rgba(255,255,255,.35)}
+.prog-step.active{background:var(--gold);color:#7a4a00;border-color:var(--gold);box-shadow:0 3px 14px rgba(255,182,39,.5)}
+.sheet{position:relative;z-index:1;background:var(--paper);border-radius:28px 28px 0 0;margin-top:1.4rem;padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(108,63,197,.4)}
+.section{padding:2.6rem 1.6rem 0;max-width:780px;margin:0 auto;display:none}
+.section.active{display:block}
+.eyebrow{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem}
+.enum{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Baloo 2',cursive;font-weight:800;font-size:1.15rem;color:white;flex-shrink:0}
+.e1{background:var(--fire)}.e2{background:var(--rocket)}.e3{background:var(--gold);color:#7a4a00}.e4{background:var(--leaf)}.e5{background:var(--purple)}
+.elabel{font-size:.85rem;font-weight:800;letter-spacing:.02em;text-transform:uppercase;color:var(--muted)}
+h2{font-family:'Baloo 2',cursive;font-weight:800;font-size:clamp(1.7rem,4vw,2.3rem);color:var(--purple);margin-bottom:.6rem;line-height:1.15}
+.lead{font-size:1.08rem;line-height:1.7;color:#2a2a4a;margin-bottom:1.6rem;font-weight:600}
+.lead strong{color:var(--fire)}
+.wonder-box{background:linear-gradient(135deg,#1a1060 0%,#6c3fc5 100%);color:white;border-radius:18px;padding:1.6rem 1.8rem;margin-bottom:1.6rem;position:relative;overflow:hidden}
+.wonder-box::after{content:'🚀';position:absolute;right:1.3rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3}
+.wonder-box p{font-size:1.05rem;line-height:1.65;font-weight:700;max-width:85%}
+.wonder-box strong{color:var(--gold)}
+.demo-zone{background:white;border:3px solid var(--border);border-radius:18px;padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 3px 12px rgba(108,63,197,.1)}
+.demo-zone h3{font-family:'Baloo 2',cursive;font-weight:700;font-size:1.25rem;color:var(--purple);margin-bottom:.3rem}
+.hint{font-size:.85rem;color:var(--muted);margin-bottom:1rem;font-weight:600}
+.chip-row{display:flex;flex-wrap:wrap;gap:.7rem;margin-bottom:1.2rem;justify-content:center}
+.vchip{padding:.7rem 1.3rem;border-radius:24px;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;border:3px solid transparent;font-family:'Baloo 2',cursive;display:flex;align-items:center;gap:.5rem}
+.vchip .ve{font-size:1.3rem}
+.c1{background:var(--fire-pale);color:#c84a30;border-color:#ffc9b8}
+.c2{background:var(--purple-pale);color:#5a3ab0;border-color:#cac0ef}
+.c3{background:var(--gold-pale);color:#8a6a1a;border-color:#ffe0a0}
+.c4{background:var(--leaf-pale);color:#1b7a58;border-color:#a8e0c8}
+.c5{background:var(--star-pale);color:#0d6a9a;border-color:#a8d8ee}
+.vchip:hover{transform:scale(1.06)}
+.vchip.said{box-shadow:0 0 0 3px rgba(0,0,0,.08)inset}
+/* compare grid */
+.rl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.8rem;margin-bottom:1.2rem}
+.rl-card{border:3px solid var(--border);border-radius:16px;padding:.9rem;text-align:center;cursor:pointer;transition:all .2s;background:white}
+.rl-card:hover{transform:translateY(-2px)}
+.rl-card.tapped{border-color:var(--gold);background:var(--gold-pale)}
+.rl-card .rl-icon{font-size:2.2rem;display:block;margin-bottom:.3rem}
+.rl-card .rl-label{font-family:'Baloo 2',cursive;font-weight:700;font-size:.88rem;color:var(--purple)}
+.rl-card .rl-reveal{font-size:.75rem;color:var(--muted);display:none;margin-top:.3rem;font-weight:600}
+.rl-card.tapped .rl-reveal{display:block;color:#8a6a1a}
+/* PART PICKER build zone */
+.build-stage{border:3px dashed var(--purple-mid);border-radius:18px;background:var(--purple-pale);min-height:190px;position:relative;margin-bottom:1rem;padding:1rem;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:.6rem}
+.build-stage .placed-part{background:white;border-radius:12px;padding:.5rem .9rem;font-family:'Baloo 2',cursive;font-weight:700;font-size:.9rem;color:var(--purple);box-shadow:0 2px 8px rgba(0,0,0,.1);display:flex;align-items:center;gap:.4rem}
+.build-stage .placed-part .pi{font-size:1.3rem}
+.build-stage .empty-msg{color:var(--muted);font-weight:700;font-family:'Baloo 2',cursive}
+.part-pool{display:flex;flex-wrap:wrap;gap:.7rem;justify-content:center;margin-bottom:1rem}
+.part-card{background:white;border:3px solid var(--border);border-radius:14px;padding:.8rem .7rem;text-align:center;cursor:pointer;transition:all .2s;width:100px}
+.part-card:hover{transform:translateY(-2px);border-color:var(--purple-mid)}
+.part-card.used{opacity:.35;pointer-events:none}
+.part-card .pci{font-size:2rem;display:block;margin-bottom:.2rem}
+.part-card .pcl{font-family:'Baloo 2',cursive;font-weight:700;font-size:.78rem;color:var(--purple)}
+/* sentence builder */
+.frame-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.9rem}
+.frame-row label{font-family:'Baloo 2',cursive;font-weight:700;color:var(--purple);white-space:nowrap}
+.frame-row input{flex:1;min-width:140px;padding:.5rem .8rem;border-radius:8px;border:2px solid var(--border);font-family:'Nunito';font-size:.95rem;font-weight:600}
+.chant-box{background:linear-gradient(135deg,#1a1060 0%,#6c3fc5 100%);color:white;border-radius:18px;padding:1.5rem 1.8rem;text-align:center;margin-bottom:1.5rem}
+.chant-box h4{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.2rem;margin-bottom:.5rem}
+.chant-box p{font-size:1.1rem;line-height:1.7;font-weight:700}
+.nav-row{display:flex;justify-content:space-between;align-items:center;padding:2.2rem 1.6rem 0;max-width:780px;margin:0 auto;gap:1rem}
+.btn-next{background:var(--purple);color:white;border:none;border-radius:50px;padding:.95rem 2rem;font-family:'Baloo 2',cursive;font-weight:700;font-size:1.05rem;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(108,63,197,.4)}
+.btn-next:hover{background:var(--purple-mid);transform:translateY(-2px)}
+.btn-prev{background:transparent;color:var(--muted);border:3px solid var(--border);border-radius:50px;padding:.9rem 1.6rem;font-family:'Baloo 2',cursive;font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s}
+.btn-prev:hover{border-color:var(--muted);color:var(--ink)}
+.btn-prev:disabled,.btn-next:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.sum-section{background:white;border-radius:18px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:3px solid var(--border)}
+.sum-section h3{font-family:'Baloo 2',cursive;font-weight:700;font-size:1.1rem;color:var(--purple);margin-bottom:.7rem}
+.sum-ans{background:#f5f4fb;border-radius:10px;padding:.7rem 1rem;font-size:.95rem;line-height:1.5;color:var(--ink);margin-bottom:.4rem;border-left:4px solid var(--rocket);min-height:1.8rem;font-weight:600}
+.sum-ans.empty{color:var(--muted);font-weight:400;border-left-color:var(--border)}
+.share-buttons{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.4rem;justify-content:center}
+.share-btn{border:none;border-radius:14px;padding:.9rem 1.6rem;font-family:'Baloo 2',cursive;font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s}
+.share-btn:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.sbcopy{background:var(--leaf);color:white}.sbemail{background:var(--rocket);color:white}.sbprint{background:var(--purple);color:white}
+.copy-confirm{text-align:center;font-size:.9rem;color:var(--leaf);min-height:1.2rem;margin-top:.6rem;font-weight:700}
+.star-row{display:flex;justify-content:center;gap:.5rem;margin:1rem 0}
+.star-row span{font-size:1.8rem;cursor:pointer;opacity:.35;transition:transform .15s}
+.star-row span.lit{opacity:1;transform:scale(1.15)}
+.draw-note{background:var(--fire-pale);border:2px dashed #ffc9b8;border-radius:14px;padding:1rem 1.2rem;font-weight:700;color:#c84a30;font-size:.92rem;margin-bottom:1.2rem;text-align:center}
+@media(max-width:560px){.hero{padding:2rem 1rem 1.4rem}.section{padding:2rem 1.1rem 0}.nav-row{padding:1.8rem 1.1rem 0}}
+@media print{.hero,.nav-row,.share-buttons,.copy-confirm{display:none!important}.sheet{box-shadow:none;border-radius:0}.section{display:none!important}#sec-4{display:block!important}}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge">🚀 Farvour Explorations · PYP 1 · Week 4 Day 3</div>
+  <h1>Space <span class="accent">Engineers!</span></h1>
+  <p class="intro">Real engineers design spacecraft before they build them! Today YOU are the engineer — plan and describe your own spacecraft! 🛠️</p>
+  <div class="name-bar"><label>😊 MY NAME:</label><input type="text" id="studentName" placeholder="Type your name..."></div>
+  <div class="progress-wrap">
+    <a class="prog-step active" onclick="goTo(0)">👋 Hello</a>
+    <a class="prog-step" onclick="goTo(1)">🛰️ Spacecraft Parts</a>
+    <a class="prog-step" onclick="goTo(2)">🛠️ Build Yours</a>
+    <a class="prog-step" onclick="goTo(3)">✏️ Describe It</a>
+    <a class="prog-step" onclick="goTo(4)">🌟 All Done!</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+<!-- SEC 0 -->
+<div class="section active" id="sec-0">
+  <div class="eyebrow"><div class="enum e1">1</div><span class="elabel">Let's Begin</span></div>
+  <h2>👋 Hello, Space Engineers!</h2>
+  <p class="lead">Look at rockets, rovers, and space stations. They all look a little different — because an <strong>engineer</strong> designed each one for a special job!</p>
+  <div class="wonder-box">
+    <p>✨ Every spacecraft has parts that help it work — wings, wheels, doors, windows, and boosters! Today you get to design your very own!</p>
+  </div>
+  <div class="demo-zone">
+    <h3>🔭 What Do They All Have?</h3>
+    <p class="hint">Look at pictures of spacecraft with your teacher. What is the same? What is different? Say it out loud!</p>
+    <div class="chip-row">
+      <span class="vchip c2" onclick="sayChip(this)"><span class="ve">🛠️</span>Design</span>
+      <span class="vchip c5" onclick="sayChip(this)"><span class="ve">🏗️</span>Build</span>
+      <span class="vchip c3" onclick="sayChip(this)"><span class="ve">🚀</span>Rocket</span>
+    </div>
+  </div>
+  <div class="nav-row"><button class="btn-prev" disabled>&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 1: PARTS + VOCAB -->
+<div class="section" id="sec-1">
+  <div class="eyebrow"><div class="enum e2">2</div><span class="elabel">Spacecraft Parts</span></div>
+  <h2>🛰️ What's On a Spacecraft?</h2>
+  <p class="lead">Tap each card to learn what the part does!</p>
+  <div class="rl-grid">
+    <div class="rl-card" onclick="rlTap(this)"><span class="rl-icon">🛞</span><span class="rl-label">Wheel</span><span class="rl-reveal">Helps a rover move on the ground!</span></div>
+    <div class="rl-card" onclick="rlTap(this)"><span class="rl-icon">🪽</span><span class="rl-label">Wing</span><span class="rl-reveal">Helps a spaceplane glide and land!</span></div>
+    <div class="rl-card" onclick="rlTap(this)"><span class="rl-icon">🚪</span><span class="rl-label">Door</span><span class="rl-reveal">Lets astronauts get in and out!</span></div>
+    <div class="rl-card" onclick="rlTap(this)"><span class="rl-icon">🪟</span><span class="rl-label">Window</span><span class="rl-reveal">Lets astronauts see outside!</span></div>
+    <div class="rl-card" onclick="rlTap(this)"><span class="rl-icon">🔥</span><span class="rl-label">Rocket Booster</span><span class="rl-reveal">Pushes the spacecraft up fast!</span></div>
+    <div class="rl-card" onclick="rlTap(this)"><span class="rl-icon">📡</span><span class="rl-label">Antenna</span><span class="rl-reveal">Sends and receives signals!</span></div>
+  </div>
+  <div class="demo-zone">
+    <h3>🔤 Engineer Vocabulary</h3>
+    <p class="hint">Tap each word. Say it with your teacher.</p>
+    <div class="chip-row">
+      <span class="vchip c2" onclick="sayChip(this)"><span class="ve">🚀</span>Spacecraft</span>
+      <span class="vchip c5" onclick="sayChip(this)"><span class="ve">🛠️</span>Design</span>
+      <span class="vchip c1" onclick="sayChip(this)"><span class="ve">🏗️</span>Build</span>
+      <span class="vchip c3" onclick="sayChip(this)"><span class="ve">🪟</span>Window</span>
+      <span class="vchip c4" onclick="sayChip(this)"><span class="ve">🚪</span>Door</span>
+      <span class="vchip c2" onclick="sayChip(this)"><span class="ve">🪽</span>Wing</span>
+      <span class="vchip c5" onclick="sayChip(this)"><span class="ve">🛞</span>Wheel</span>
+      <span class="vchip c1" onclick="sayChip(this)"><span class="ve">⚡</span>Fast</span>
+      <span class="vchip c3" onclick="sayChip(this)"><span class="ve">📏</span>Big</span>
+    </div>
+  </div>
+  <p style="text-align:center;font-size:.95rem;color:var(--muted);font-weight:700">Words tapped: <span id="chipCount">0</span> / 12</p>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 2: BUILD YOUR SPACECRAFT -->
+<div class="section" id="sec-2">
+  <div class="eyebrow"><div class="enum e3">3</div><span class="elabel">Build Time</span></div>
+  <h2>🛠️ Build Your Own Spacecraft!</h2>
+  <p class="lead">Tap at least 3 parts below to add them to your spacecraft. Choose any parts you like — this is YOUR design!</p>
+  <div class="part-pool" id="partPool">
+    <div class="part-card" data-name="Wheel" data-icon="🛞" onclick="addPart(this)"><span class="pci">🛞</span><span class="pcl">Wheel</span></div>
+    <div class="part-card" data-name="Wing" data-icon="🪽" onclick="addPart(this)"><span class="pci">🪽</span><span class="pcl">Wing</span></div>
+    <div class="part-card" data-name="Door" data-icon="🚪" onclick="addPart(this)"><span class="pci">🚪</span><span class="pcl">Door</span></div>
+    <div class="part-card" data-name="Window" data-icon="🪟" onclick="addPart(this)"><span class="pci">🪟</span><span class="pcl">Window</span></div>
+    <div class="part-card" data-name="Rocket booster" data-icon="🔥" onclick="addPart(this)"><span class="pci">🔥</span><span class="pcl">Rocket Booster</span></div>
+    <div class="part-card" data-name="Fuel tank" data-icon="⛽" onclick="addPart(this)"><span class="pci">⛽</span><span class="pcl">Fuel Tank</span></div>
+    <div class="part-card" data-name="Antenna" data-icon="📡" onclick="addPart(this)"><span class="pci">📡</span><span class="pcl">Antenna</span></div>
+  </div>
+  <div class="build-stage" id="buildStage"><span class="empty-msg">🚀 Tap parts above to build your spacecraft!</span></div>
+  <div class="draw-note">🖍️ Now grab paper and crayons! Draw your spacecraft and label the parts you chose.</div>
+  <p style="text-align:center;font-size:1rem;color:var(--purple);font-weight:800" id="buildFeedback">Parts added: 0 (choose at least 3!)</p>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 3: DESCRIBE -->
+<div class="section" id="sec-3">
+  <div class="eyebrow"><div class="enum e4">4</div><span class="elabel">Describe It</span></div>
+  <h2>✏️ Tell Us About Your Spacecraft!</h2>
+  <p class="lead">Finish the sentences below, then say them out loud to the class!</p>
+  <div class="demo-zone">
+    <h3>📝 My Spacecraft</h3>
+    <p class="hint">Use the parts you built to fill in the blanks.</p>
+    <div class="frame-row"><label>My spacecraft has</label><input type="text" id="d1" placeholder="e.g. wings and a door"></div>
+    <div class="frame-row"><label>It can</label><input type="text" id="d2" placeholder="e.g. fly very fast"></div>
+    <div class="frame-row"><label style="color:#1b7a58">Bonus: It is</label><input type="text" id="d3" placeholder="e.g. big"></div>
+    <div class="frame-row"><label style="color:#1b7a58">because</label><input type="text" id="d4" placeholder="e.g. it carries 4 astronauts"></div>
+  </div>
+  <div class="chant-box">
+    <h4>🎵 Engineer Chant</h4>
+    <p>"Design it, build it, watch it fly —<br>My very own ship up in the sky! 🚀"</p>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 4: SUMMARY -->
+<div class="section" id="sec-4">
+  <div class="eyebrow"><div class="enum e5">5</div><span class="elabel">All Done!</span></div>
+  <h2>🌟 Space Engineer, <span id="finalName">Friend</span>!</h2>
+  <p class="lead">You designed a spacecraft and described it! Rate how much fun you had:</p>
+  <div class="star-row" id="starRow">
+    <span onclick="setStars(1)">⭐</span><span onclick="setStars(2)">⭐</span><span onclick="setStars(3)">⭐</span><span onclick="setStars(4)">⭐</span><span onclick="setStars(5)">⭐</span>
+  </div>
+  <div class="sum-section">
+    <h3>📋 My Work Today</h3>
+    <div id="sum-name" class="sum-ans empty">Not answered</div>
+    <div id="sum-parts" class="sum-ans empty">Not answered</div>
+    <div id="sum-desc" class="sum-ans empty">Not answered</div>
+    <div id="sum-stars" class="sum-ans empty">Not answered</div>
+  </div>
+  <div class="chant-box">
+    <h4>🎵 One More Time!</h4>
+    <p>"Design it, build it, watch it fly —<br>My very own ship up in the sky! 🚀"</p>
+  </div>
+  <div class="share-buttons">
+    <button class="share-btn sbcopy" onclick="copyResults()">📋 Copy My Work</button>
+    <button class="share-btn sbemail" onclick="emailResults()">✉️ Email to Teacher</button>
+    <button class="share-btn sbprint" onclick="window.print()">🖨️ Print</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" disabled>All Done! 🎉</button></div>
+</div>
+
+</div>
+<script>
+(function(){
+'use strict';
+var cur=0,TOTAL=5;
+function goTo(n){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('sec-'+n).classList.add('active');
+  document.querySelectorAll('.prog-step').forEach(function(p,i){p.classList.remove('active','done');if(i===n)p.classList.add('active');else if(i<n)p.classList.add('done');});
+  cur=n;window.scrollTo({top:0,behavior:'smooth'});if(n===4)buildSummary();
+}
+function navigate(d){goTo(Math.max(0,Math.min(TOTAL-1,cur+d)));}
+window.goTo=goTo;window.navigate=navigate;
+
+var chipsSaid=0;
+function sayChip(el){if(!el.classList.contains('said')){el.classList.add('said');chipsSaid++;document.getElementById('chipCount').textContent=chipsSaid;}}
+window.sayChip=sayChip;
+function rlTap(el){el.classList.toggle('tapped');}
+window.rlTap=rlTap;
+
+// BUILD YOUR SPACECRAFT
+var partsAdded=0;
+var addedNames=[];
+function addPart(card){
+  if(card.classList.contains('used'))return;
+  var name=card.dataset.name,icon=card.dataset.icon;
+  var stage=document.getElementById('buildStage');
+  var emptyMsg=stage.querySelector('.empty-msg');
+  if(emptyMsg)emptyMsg.remove();
+  var chip=document.createElement('div');
+  chip.className='placed-part';
+  chip.innerHTML='<span class="pi">'+icon+'</span>'+name;
+  stage.appendChild(chip);
+  card.classList.add('used');
+  partsAdded++;addedNames.push(name);
+  var fb=document.getElementById('buildFeedback');
+  fb.textContent='Parts added: '+partsAdded+(partsAdded<3?' (choose at least 3!)':' — great spacecraft! 🚀');
+}
+window.addPart=addPart;
+
+var starsGiven=0;
+function setStars(n){starsGiven=n;document.querySelectorAll('#starRow span').forEach(function(s,i){s.classList.toggle('lit',i<n);});}
+window.setStars=setStars;
+
+function getV(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+function setS(id,text){var el=document.getElementById(id);if(!el)return;el.textContent=text||'Not answered';el.classList.toggle('empty',!text);}
+function buildSummary(){
+  var name=document.getElementById('studentName').value.trim()||'Friend';
+  document.getElementById('finalName').textContent=name;
+  setS('sum-name','Name: '+name);
+  setS('sum-parts','Spacecraft parts chosen ('+partsAdded+'): '+(addedNames.length?addedNames.join(', '):'none yet'));
+  var d1=getV('d1'),d2=getV('d2'),d3=getV('d3'),d4=getV('d4');
+  var desc='';
+  if(d1)desc+='My spacecraft has '+d1+'. ';
+  if(d2)desc+='It can '+d2+'. ';
+  if(d3&&d4)desc+='It is '+d3+' because '+d4+'.';
+  setS('sum-desc',desc||'Not answered');
+  setS('sum-stars',starsGiven?'Fun rating: '+'⭐'.repeat(starsGiven):'');
+}
+window.buildSummary=buildSummary;
+
+function buildPlainText(){
+  var name=document.getElementById('studentName').value.trim()||'Friend';
+  var date=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  var d1=getV('d1'),d2=getV('d2'),d3=getV('d3'),d4=getV('d4');
+  return['FARVOUR EXPLORATIONS - PYP 1 SUMMER CAMP - WEEK 4 DAY 3: SPACE ENGINEERS',
+    '='.repeat(65),'Student: '+name,'Date: '+date,'',
+    '-- VOCABULARY TAPPED --',chipsSaid+' of 12 words practiced','',
+    '-- SPACECRAFT PARTS CHOSEN --',(addedNames.length?addedNames.join(', '):'None yet')+' ('+partsAdded+' parts)','',
+    '-- MY SPACECRAFT DESCRIPTION --',
+    'My spacecraft has '+(d1||'___')+'.',
+    'It can '+(d2||'___')+'.',
+    (d3&&d4)?('It is '+d3+' because '+d4+'.'):'Bonus sentence: not answered','',
+    '-- FUN RATING --',starsGiven?'⭐'.repeat(starsGiven)+' ('+starsGiven+'/5)':'Not answered','',
+    '='.repeat(65),'(c) 2026 Farvour Explorations','Camp Week 4, Day 3 - English Lesson'].join('\n');
+}
+function copyResults(){buildSummary();navigator.clipboard.writeText(buildPlainText()).then(function(){var el=document.getElementById('copyConfirm');el.textContent='Copied!';setTimeout(function(){el.textContent='';},4000);});}
+function emailResults(){var name=document.getElementById('studentName').value.trim()||'Friend';window.location.href='mailto:?subject='+encodeURIComponent('PYP 1 Camp W4D3 - '+name)+'&body='+encodeURIComponent(buildPlainText());}
+window.copyResults=copyResults;window.emailResults=emailResults;
+})();
+</script>
+</body>
+</html>
