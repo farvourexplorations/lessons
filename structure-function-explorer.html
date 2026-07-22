@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Structure &amp; Function Explorer 🩺</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --crimson:      #5c1418;
+    --crimson-mid:  #8b1e24;
+    --crimson-lt:   #b8323a;
+    --crimson-pale: #fbe0e0;
+    --crimson-brd:  #f0b8bc;
+    --coral:     #e8603c;
+    --coral-pale:#fdf0ec;
+    --mint:      #3aaf85;
+    --mint-pale: #e8f8f2;
+    --gold:      #c9962a;
+    --gold-pale: #fef9e7;
+    --lavender:  #7c6fcd;
+    --lav-pale:  #f0eefb;
+    --paper:     #fffef9;
+    --ink:       #1a2332;
+    --muted:     #7a8899;
+    --border:    #e0e4ea;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: linear-gradient(160deg, #260a0c 0%, #5c1418 45%, #8b1e24 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* Pulse-dot ambient background */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%, rgba(232,96,60,.5) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 22%  38%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 41%  6%,  rgba(232,96,60,.4) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 60%  24%, rgba(255,255,255,.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 77%  9%,  rgba(232,96,60,.45)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 90%  33%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 33%  55%, rgba(232,96,60,.35) 0%, transparent 100%),
+      radial-gradient(2px   2px   at 70%  48%, rgba(255,255,255,.2)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 55%  70%, rgba(232,96,60,.3) 0%, transparent 100%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 3.5rem 2rem 2rem;
+    color: white;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--crimson);
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.85rem;
+    letter-spacing: .05em;
+    padding: .35rem 1.2rem;
+    border-radius: 20px;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 12px rgba(201,150,42,.45);
+  }
+  .hero h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.2rem,6vw,4rem);
+    line-height: 1.1;
+    margin-bottom: .8rem;
+    text-shadow: 0 2px 20px rgba(0,0,0,.35);
+  }
+  .hero h1 .accent { color: var(--gold); }
+  .hero p.intro {
+    font-size: 1.05rem; line-height: 1.7;
+    opacity: .88; max-width: 600px;
+    margin: 0 auto 2rem;
+  }
+
+  /* ─── PROGRESS PILLS ─── */
+  .progress-wrap {
+    display: flex; justify-content: center;
+    gap: .5rem; flex-wrap: wrap; margin-bottom: .5rem;
+  }
+  .prog-step {
+    display: flex; align-items: center; gap: .4rem;
+    background: rgba(255,255,255,.1);
+    border: 1.5px solid rgba(255,255,255,.18);
+    border-radius: 20px; padding: .35rem .9rem;
+    font-size: .78rem; font-weight: 700;
+    color: rgba(255,255,255,.7);
+    cursor: pointer; transition: all .2s;
+    font-family: 'DM Mono', monospace;
+  }
+  .prog-step:hover, .prog-step.done {
+    background: rgba(255,255,255,.2); color: white;
+    border-color: rgba(255,255,255,.35);
+  }
+  .prog-step.active {
+    background: var(--gold); color: var(--crimson);
+    border-color: var(--gold);
+    box-shadow: 0 2px 12px rgba(201,150,42,.45);
+  }
+
+  /* ─── SHEET ─── */
+  .sheet {
+    position: relative; z-index: 1;
+    background: var(--paper);
+    border-radius: 24px 24px 0 0;
+    margin-top: 1.5rem;
+    padding: 0 0 6rem;
+    min-height: 80vh;
+    box-shadow: 0 -8px 40px rgba(0,0,0,.3);
+  }
+
+  /* ─── SECTIONS ─── */
+  .section {
+    padding: 3rem 2rem 0;
+    max-width: 820px;
+    margin: 0 auto;
+    display: none;
+  }
+  .section.active { display: block; }
+
+  .section-eyebrow {
+    display: flex; align-items: center;
+    gap: .6rem; margin-bottom: 1rem;
+  }
+  .eyebrow-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem; color: white; flex-shrink: 0;
+  }
+  .num-coral    { background: var(--coral); }
+  .num-mint     { background: var(--mint); }
+  .num-gold     { background: var(--gold); color: var(--crimson); }
+  .num-lav      { background: var(--lavender); }
+  .num-crimson  { background: var(--crimson-mid); }
+
+  .eyebrow-label {
+    font-size: .72rem; font-weight: 800;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--muted); font-family: 'DM Mono', monospace;
+  }
+
+  .section h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.6rem,3.5vw,2.2rem);
+    color: var(--crimson); margin-bottom: .6rem; line-height: 1.2;
+  }
+  .section .lead {
+    font-size: 1rem; line-height: 1.75; color: #3a4a5a;
+    margin-bottom: 1.8rem;
+  }
+  .section .lead strong { color: var(--coral); }
+
+  /* ─── WONDER BOX ─── */
+  .wonder-box {
+    background: linear-gradient(135deg, var(--crimson) 0%, var(--crimson-mid) 100%);
+    color: white; border-radius: 16px;
+    padding: 1.8rem 2rem; margin-bottom: 1.8rem;
+    position: relative; overflow: hidden;
+  }
+  .wonder-box::after {
+    content: '🤔';
+    position: absolute; right: 1.5rem; top: 50%;
+    transform: translateY(-50%);
+    font-size: 3rem; opacity: .3;
+  }
+  .wonder-box p { font-size: 1rem; line-height: 1.7; font-style: italic; opacity: .95; max-width: 85%; }
+  .wonder-box strong { color: var(--gold); font-style: normal; }
+  .wonder-box.mint-box { background: linear-gradient(135deg, #1b7a58 0%, #2d9970 100%); }
+  .wonder-box.mint-box::after { content: '🩺'; }
+  .wonder-box.gold-box { background: linear-gradient(135deg, #8a6a1a 0%, #b8860b 100%); }
+  .wonder-box.gold-box::after { content: '🧍'; }
+
+  /* ─── CONCEPT CHIPS ─── */
+  .chip-row { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1.5rem; }
+  .chip {
+    padding: .45rem 1rem; border-radius: 20px;
+    font-size: .82rem; font-weight: 700; cursor: pointer;
+    transition: all .2s; border: 2px solid transparent;
+  }
+  .chip.coral   { background: var(--coral-pale);  color: var(--coral);     border-color: #f8c5b8; }
+  .chip.mint    { background: var(--mint-pale);   color: var(--mint);      border-color: #b8ebd8; }
+  .chip.gold    { background: var(--gold-pale);   color: #8a6a1a;          border-color: #f8e0a0; }
+  .chip.lav     { background: var(--lav-pale);    color: var(--lavender);  border-color: #d0caef; }
+  .chip.crimson { background: var(--crimson-pale); color: var(--crimson-mid);border-color: var(--crimson-brd); }
+  .chip:hover  { transform: scale(1.05); }
+
+  .concept-reveal {
+    background: var(--paper); border-left: 4px solid var(--coral);
+    border-radius: 0 10px 10px 0;
+    padding: 1rem 1.2rem; font-size: .88rem; line-height: 1.7;
+    margin-top: .5rem; display: none;
+    animation: fadeIn .3s ease;
+  }
+  .concept-reveal.show { display: block; }
+  .concept-reveal.mint-border    { border-color: var(--mint); }
+  .concept-reveal.gold-border    { border-color: var(--gold); }
+  .concept-reveal.lav-border     { border-color: var(--lavender); }
+  .concept-reveal.crimson-border { border-color: var(--crimson-mid); }
+
+  @keyframes fadeIn {
+    from { opacity:0; transform:translateY(-6px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* ─── PREDICT / REFLECT BOXES ─── */
+  .predict-box {
+    background: var(--gold-pale); border: 2px dashed var(--gold);
+    border-radius: 14px; padding: 1.4rem 1.6rem; margin-bottom: 1.5rem;
+  }
+  .predict-box h4 {
+    font-family: 'Fredoka One', cursive; font-size: 1rem;
+    color: #8a6a1a; margin-bottom: .8rem;
+  }
+  .predict-box textarea, .reflect-box textarea {
+    width: 100%; border: 1.5px solid rgba(0,0,0,.12);
+    border-radius: 8px; padding: .7rem;
+    font-family: 'Nunito', sans-serif; font-size: .88rem;
+    resize: vertical; min-height: 64px;
+    background: white; color: var(--ink); outline: none;
+    transition: border-color .2s;
+  }
+  .predict-box textarea:focus { border-color: var(--gold); }
+
+  .reflect-box {
+    background: var(--mint-pale); border: 2px dashed var(--mint);
+    border-radius: 14px; padding: 1.4rem 1.6rem; margin-top: 1.5rem;
+  }
+  .reflect-box h4 {
+    font-family: 'Fredoka One', cursive; font-size: 1rem;
+    color: #1b7a58; margin-bottom: .8rem;
+  }
+  .reflect-box textarea:focus { border-color: var(--mint); }
+
+  /* ─── DEMO ZONE ─── */
+  .demo-zone {
+    background: white; border: 2px solid var(--border);
+    border-radius: 16px; padding: 1.8rem; margin-bottom: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,.07);
+  }
+  .demo-zone h3 {
+    font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+    color: var(--crimson); margin-bottom: .3rem;
+  }
+  .demo-zone .hint {
+    font-size: .78rem; color: var(--muted);
+    font-family: 'DM Mono', monospace; margin-bottom: 1.3rem;
+  }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    border: none; border-radius: 10px;
+    padding: .65rem 1.3rem; font-family: 'Nunito', sans-serif;
+    font-size: .88rem; font-weight: 800; cursor: pointer;
+    transition: all .15s; letter-spacing: .02em;
+  }
+  .btn:hover  { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,.15); }
+  .btn:active { transform: translateY(0); }
+  .btn-coral    { background: var(--coral);    color: white; }
+  .btn-mint     { background: var(--mint);     color: white; }
+  .btn-gold     { background: var(--gold);     color: var(--crimson); }
+  .btn-lav      { background: var(--lavender); color: white; }
+  .btn-ghost    { background: #f0f2f5;         color: var(--muted); }
+  .btn-crimson  { background: var(--crimson);  color: white; }
+  .btn:disabled { opacity: .45; cursor: default; transform:none !important; box-shadow:none !important; }
+
+  .action-row { display: flex; gap: .8rem; flex-wrap: wrap; align-items: center; margin-bottom: .8rem; }
+
+  /* ─── NAV ROW ─── */
+  .nav-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 2.5rem 2rem 0; max-width: 820px; margin: 0 auto;
+  }
+
+  /* ─── QUIZ CARD ─── */
+  .quiz-card {
+    background: white; border: 2px solid var(--border);
+    border-radius: 14px; padding: 1.4rem 1.6rem;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  }
+  .quiz-q {
+    font-weight: 700; font-size: .95rem;
+    color: var(--ink); margin-bottom: 1rem; line-height: 1.5;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: .5rem; }
+  .quiz-opt {
+    padding: .6rem 1rem; border-radius: 8px;
+    border: 2px solid var(--border);
+    background: white; cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: .88rem; font-weight: 600;
+    text-align: left; transition: all .15s;
+    color: var(--ink);
+  }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--crimson-mid); background: var(--crimson-pale); }
+  .quiz-opt.correct   { background: var(--mint-pale); border-color: var(--mint); color: #1b7a58; }
+  .quiz-opt.wrong     { background: var(--coral-pale); border-color: var(--coral); color: #a83020; }
+  .quiz-opt:disabled  { cursor: default; }
+  .quiz-feedback {
+    margin-top: .8rem; font-size: .85rem; line-height: 1.6;
+    padding: .7rem 1rem; border-radius: 8px; display: none;
+    animation: fadeIn .3s ease;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct-fb { background: var(--mint-pale); color: #1b7a58; border-left: 3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background: var(--coral-pale); color: #a83020; border-left: 3px solid var(--coral); }
+
+  /* ─── FEEDBACK-LOOP SIMULATOR ─── */
+  .sim-grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 4px; margin: 1rem 0;
+  }
+  .sim-base {
+    font-size: .82rem; text-align: center; cursor: default;
+    transition: all .3s; border-radius: 6px;
+    padding: .55rem 2px; font-family: 'DM Mono', monospace; font-weight: 700;
+    border: 2px solid var(--border); background: white;
+  }
+  .sim-base.hot    { color: var(--coral);    border-color: #f8c5b8; background: var(--coral-pale); }
+  .sim-base.cold   { color: var(--lavender); border-color: #d0caef; background: var(--lav-pale); }
+  .sim-base.mid    { color: #8a6a1a;         border-color: #f8e0a0; background: var(--gold-pale); }
+  .sim-base.normal { color: var(--mint);     border-color: #b8ebd8; background: var(--mint-pale); }
+  .sim-stat-row {
+    display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0;
+  }
+  .sim-stat {
+    background: #f5f7fa; border-radius: 10px;
+    padding: .6rem 1.1rem; flex: 1; min-width: 140px;
+    text-align: center;
+  }
+  .sim-stat .stat-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.3rem; color: var(--crimson); font-weight: 700;
+  }
+  .sim-stat .stat-lbl {
+    font-family: 'DM Mono', monospace;
+    font-size: .65rem; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .08em;
+  }
+
+  /* ─── EVIDENCE / PROCESS CARDS ─── */
+  .evidence-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 1rem; margin-bottom: 1.5rem;
+  }
+  .ev-card {
+    background: white; border: 2px solid var(--border);
+    border-radius: 14px; padding: 1.2rem; cursor: pointer;
+    transition: all .2s; text-align: center;
+  }
+  .ev-card:hover, .ev-card.active {
+    border-color: var(--crimson-mid);
+    box-shadow: 0 4px 16px rgba(139,30,36,.2);
+    transform: translateY(-2px);
+  }
+  .ev-card.active { background: var(--crimson-pale); }
+  .ev-card .ev-icon { font-size: 2.4rem; margin-bottom: .5rem; }
+  .ev-card .ev-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem; color: var(--crimson); margin-bottom: .3rem;
+  }
+  .ev-card .ev-sub { font-size: .75rem; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+  .ev-panel {
+    background: var(--crimson-pale); border-left: 4px solid var(--crimson-mid);
+    border-radius: 0 12px 12px 0; padding: 1.2rem 1.4rem;
+    display: none; animation: fadeIn .3s ease;
+  }
+  .ev-panel.show { display: block; }
+  .ev-panel h4 { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: var(--crimson); margin-bottom: .5rem; }
+  .ev-panel p  { font-size: .88rem; line-height: 1.7; color: var(--ink); }
+  .ev-panel .example-box {
+    background: white; border-radius: 8px; padding: .7rem 1rem;
+    margin-top: .8rem; font-size: .82rem;
+    font-family: 'DM Mono', monospace; color: var(--ink);
+    border: 1.5px solid rgba(139,30,36,.2);
+  }
+
+  /* ─── MATCHING GAME ─── */
+  .match-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; margin: 1rem 0;
+  }
+  .match-item {
+    padding: .75rem 1rem; border-radius: 10px;
+    border: 2px solid var(--border); cursor: pointer;
+    font-size: .85rem; font-weight: 700;
+    transition: all .2s; background: white;
+    text-align: center; color: var(--ink);
+  }
+  .match-item:hover   { border-color: var(--crimson-mid); background: var(--crimson-pale); }
+  .match-item.selected { border-color: var(--lavender); background: var(--lav-pale); color: var(--lavender); }
+  .match-item.matched  { border-color: var(--mint); background: var(--mint-pale); color: #1b7a58; cursor: default; }
+  .match-item.wrong    { border-color: var(--coral); background: var(--coral-pale); color: var(--coral); animation: shake .3s; }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  /* ─── PROCESS/STEP CARDS ─── */
+  .sel-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: .8rem; margin: 1rem 0 1.5rem;
+  }
+  .sel-card {
+    background: white; border: 2px solid var(--border);
+    border-radius: 14px; padding: 1rem; text-align: center;
+    cursor: pointer; transition: all .2s;
+  }
+  .sel-card:hover, .sel-card.active {
+    border-color: var(--coral);
+    box-shadow: 0 3px 12px rgba(232,96,60,.18);
+    transform: translateY(-2px);
+  }
+  .sel-card.active { background: var(--coral-pale); }
+  .sel-card .sel-icon { font-size: 2rem; margin-bottom: .4rem; }
+  .sel-card .sel-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: .92rem; color: var(--crimson); margin-bottom: .2rem;
+  }
+  .sel-card .sel-key {
+    font-family: 'DM Mono', monospace; font-size: .65rem;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .06em;
+  }
+  .sel-detail {
+    background: var(--coral-pale); border-left: 4px solid var(--coral);
+    border-radius: 0 12px 12px 0; padding: 1.2rem 1.4rem;
+    display: none; animation: fadeIn .3s ease; margin-bottom: 1.5rem;
+  }
+  .sel-detail.show { display: block; }
+  .sel-detail h4 { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: var(--crimson); margin-bottom: .4rem; }
+  .sel-detail p  { font-size: .88rem; line-height: 1.7; }
+  .sel-detail .examples { margin-top: .6rem; font-style: italic; color: var(--muted); font-size: .82rem; }
+
+  /* ─── SCORE PANEL ─── */
+  .score-panel {
+    background: linear-gradient(135deg, var(--crimson) 0%, var(--crimson-mid) 100%);
+    color: white; border-radius: 16px; padding: 2rem; text-align: center; margin-top: 1.5rem;
+  }
+  .score-panel .score-num {
+    font-family: 'Fredoka One', cursive; font-size: 3.5rem;
+    line-height: 1; color: var(--gold);
+  }
+  .score-panel p { opacity: .88; margin-top: .5rem; font-size: 1rem; }
+  .score-panel h3 {
+    font-family: 'Fredoka One', cursive; font-size: 1.5rem; margin-bottom: .3rem;
+  }
+
+  /* ─── CONGRATS ─── */
+  .congrats-panel {
+    background: linear-gradient(135deg, var(--crimson) 0%, var(--crimson-mid) 100%);
+    color: white; border-radius: 20px; padding: 2.5rem 2rem; text-align: center;
+    margin-top: 2rem;
+  }
+  .congrats-panel h2 { font-family: 'Fredoka One', cursive; font-size: 2rem; margin-bottom: .6rem; }
+  .congrats-panel p  { opacity: .9; line-height: 1.7; max-width: 480px; margin: 0 auto .8rem; }
+  .summary-chips { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin-top: 1rem; }
+  .summary-chip {
+    background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.3);
+    border-radius: 20px; padding: .3rem .9rem;
+    font-size: .78rem; font-weight: 700;
+    font-family: 'DM Mono', monospace; letter-spacing: .04em;
+  }
+
+  /* ─── VOCAB TABLE ─── */
+  .vocab-table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; }
+  .vocab-table th {
+    background: var(--crimson); color: white;
+    font-family: 'Fredoka One', cursive; font-size: .85rem;
+    padding: .7rem 1rem; text-align: left;
+  }
+  .vocab-table td {
+    padding: .65rem 1rem; font-size: .85rem; line-height: 1.5;
+    border-bottom: 1px solid var(--border);
+  }
+  .vocab-table tr:nth-child(even) td { background: #f5f7fa; }
+  .vocab-table tr:hover td { background: var(--crimson-pale); transition: background .15s; }
+  .vocab-table td:first-child { font-weight: 800; color: var(--crimson-mid); }
+
+  /* ─── FILL IN THE BLANK ─── */
+  .blank-input {
+    border: none; border-bottom: 2.5px solid var(--crimson-mid);
+    background: transparent; font-family: 'Nunito', sans-serif;
+    font-size: 1rem; font-weight: 700; color: var(--crimson);
+    width: 170px; text-align: center; outline: none;
+    padding: 0 4px; transition: border-color .2s;
+  }
+  .blank-input:focus  { border-color: var(--coral); }
+  .blank-input.ok     { border-color: var(--mint);   color: var(--mint); }
+  .blank-input.err    { border-color: var(--coral);  color: var(--coral); }
+  .fill-q {
+    font-size: 1rem; line-height: 2; color: var(--ink);
+    margin-bottom: 1rem;
+  }
+
+  /* divider */
+  .divider { height: 1px; background: var(--border); margin: 2rem 0; }
+
+  /* ─── NAME BAR ─── */
+  .name-bar {
+    background: rgba(255,255,255,.1);
+    border: 1.5px solid rgba(255,255,255,.25);
+    border-radius: 12px; padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    max-width: 420px; margin: 0 auto 1rem;
+  }
+  .name-bar label {
+    font-size: .78rem; font-weight: 700;
+    color: rgba(255,255,255,.8); white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+  }
+  .name-bar input {
+    flex: 1; background: rgba(255,255,255,.15);
+    border: none; border-radius: 8px;
+    padding: .4rem .8rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: .9rem; font-weight: 700; color: white; outline: none;
+  }
+  .name-bar input::placeholder { color: rgba(255,255,255,.4); font-weight: 400; }
+
+  /* ─── SUMMARY / SUBMIT ─── */
+  .summary-section {
+    background: white; border-radius: 14px;
+    padding: 1.4rem 1.6rem; margin-bottom: 1rem;
+    border: 2px solid var(--border);
+  }
+  .summary-section h3 {
+    font-family: 'Fredoka One', cursive; font-size: 1.05rem;
+    color: var(--crimson); margin-bottom: .8rem;
+  }
+  .summary-answer {
+    background: #f5f7fa; border-radius: 8px;
+    padding: .7rem 1rem; font-size: .85rem; line-height: 1.6;
+    color: var(--ink); margin-bottom: .5rem;
+    font-style: italic; border-left: 3px solid var(--lavender);
+    min-height: 2rem;
+  }
+  .summary-answer.empty { color: var(--muted); font-style: normal; border-left-color: var(--border); }
+
+  /* ─── SHARE BUTTONS ─── */
+  .share-buttons {
+    display: flex; gap: .8rem; flex-wrap: wrap;
+    margin-top: 1.5rem; justify-content: center;
+  }
+  .share-btn {
+    border: none; border-radius: 12px;
+    padding: .85rem 1.6rem;
+    font-family: 'Fredoka One', cursive; font-size: 1rem;
+    cursor: pointer; transition: all .2s;
+    display: flex; align-items: center; gap: .5rem;
+  }
+  .share-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background: var(--mint);     color: white; }
+  .share-btn.email { background: var(--lavender); color: white; }
+  .share-btn.print { background: var(--crimson);  color: white; }
+  .copy-confirm {
+    text-align: center; font-family: 'DM Mono', monospace;
+    font-size: .78rem; color: var(--mint);
+    min-height: 1.2rem; margin-top: .6rem; transition: all .3s;
+  }
+
+  /* ─── COPYRIGHT FOOTER ─── */
+  .site-footer {
+    position: relative; z-index: 1;
+    text-align: center; padding: 2rem 1rem 3rem;
+    color: rgba(255,255,255,.45);
+    font-family: 'DM Mono', monospace; font-size: .72rem;
+    line-height: 1.8;
+  }
+  .site-footer a { color: rgba(255,255,255,.55); text-decoration: none; }
+  .site-footer a:hover { color: rgba(255,255,255,.8); }
+
+  @media print {
+    .hero, .nav-row, .share-buttons, .copy-confirm, .prog-step, .name-bar { display: none !important; }
+    .sheet { box-shadow: none; border-radius: 0; }
+    .section { display: none !important; }
+    #sec-6 { display: block !important; }
+    .site-footer { display: none !important; }
+  }
+
+  @media (max-width: 600px) {
+    .sim-grid { grid-template-columns: repeat(5, 1fr); }
+  }
+</style>
+</head>
+<body>
+<!-- ═══════════ HERO ═══════════ -->
+<div class="hero">
+  <div class="hero-badge">🩺 BIO 201 A&amp;P I · Unit 1</div>
+  <h1>Structure &amp; Function <span class="accent">Explorer</span></h1>
+  <p class="intro">Before you can master any body system, you need the lens every anatomist and physiologist uses to see the human body: how structure shapes function, how the body is organized from atoms to organism, and how it keeps itself in balance.</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+
+  <div class="progress-wrap">
+    <span class="prog-step active" onclick="goTo(0)">① Wonder</span>
+    <span class="prog-step"       onclick="goTo(1)">② Foundations</span>
+    <span class="prog-step"       onclick="goTo(2)">③ Structure ↔ Function</span>
+    <span class="prog-step"       onclick="goTo(3)">④ Homeostasis</span>
+    <span class="prog-step"       onclick="goTo(4)">⑤ Quiz</span>
+    <span class="prog-step"       onclick="goTo(5)">⑥ Reflect</span>
+    <span class="prog-step"       onclick="goTo(6)">📤 Submit</span>
+  </div>
+</div>
+
+<!-- ═══════════ SHEET ═══════════ -->
+<div class="sheet">
+
+<!-- ── SECTION 0: WONDER ── -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-coral">1</div>
+    <span class="eyebrow-label">Phase 1 · Wonder</span>
+  </div>
+  <h2>🔬 Why Does Shape Matter?</h2>
+  <p class="lead">
+    Welcome to <strong>Anatomy &amp; Physiology I</strong>. Every unit this semester — bones, muscles, nerves, blood — builds on one core idea you'll use again and again. Let's find it for ourselves first.
+  </p>
+
+  <div class="wonder-box">
+    <p>A red blood cell is shaped like a flattened, dimpled disc — not a sphere, not a tube. That exact shape lets it squeeze through capillaries one-tenth its own diameter while still carrying huge amounts of oxygen. <strong>What is it about a structure's shape that determines what it's able to do?</strong></p>
+  </div>
+
+  <div class="predict-box">
+    <h4>✏️ Your Prediction (before we dig in)</h4>
+    <textarea placeholder="Write what you think determines whether a body structure works well for its job — and give one example from your own body..."></textarea>
+  </div>
+
+  <div class="wonder-box gold-box">
+    <p>Here's the idea: this is the <strong>structure-function relationship</strong> — anatomy (structure) and physiology (function) are two sides of the same coin. The shape, size, and organization of a structure directly determines what it can do. Learn to ask "why is it shaped this way?" and physiology stops being memorization and starts making sense.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--crimson);margin-bottom:.6rem;">🗝️ The Big Picture</h3>
+  <p style="font-size:.95rem;line-height:1.75;margin-bottom:1.8rem;">
+    <strong>Anatomy</strong> is the study of the body's <em>structure</em> — its shape, size, and how its parts are arranged. <strong>Physiology</strong> is the study of how those structures <em>function</em> — how they work, individually and together, to keep you alive. Neither one makes full sense without the other, which is exactly why this course studies them side by side, starting from the smallest building blocks and working up to the whole organism.
+  </p>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" disabled>← Back</button>
+    <button class="btn btn-coral" onclick="goTo(1)">Next: Foundations →</button>
+  </div>
+</div>
+
+<!-- ── SECTION 1: FOUNDATIONS ── -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-lav">2</div>
+    <span class="eyebrow-label">Phase 2 · Foundational Vocabulary</span>
+  </div>
+  <h2>📖 Core Vocabulary — Tap to Reveal</h2>
+  <p class="lead">Tap each term to see its definition. These are the building blocks for every unit this semester — know all of these cold.</p>
+
+  <div class="chip-row">
+    <span class="chip crimson" onclick="reveal('anatomy')">Anatomy</span>
+    <span class="chip mint" onclick="reveal('physiology')">Physiology</span>
+    <span class="chip gold" onclick="reveal('grossmicro')">Gross vs. Microscopic</span>
+    <span class="chip coral" onclick="reveal('structfunc')">Structure-Function Relationship</span>
+    <span class="chip lav" onclick="reveal('levels')">Levels of Organization</span>
+    <span class="chip crimson" onclick="reveal('position')">Anatomical Position</span>
+    <span class="chip mint" onclick="reveal('directional')">Directional Terms</span>
+    <span class="chip gold" onclick="reveal('planes')">Body Planes</span>
+  </div>
+
+  <div id="rev-anatomy"     class="concept-reveal crimson-border">
+    <strong>Anatomy</strong> — The study of the body's <em>structure</em>: the shape and arrangement of its parts, from the whole body down to individual cells. Anatomy asks "what does it look like, and where is it?"
+  </div>
+  <div id="rev-physiology"  class="concept-reveal mint-border">
+    <strong>Physiology</strong> — The study of how the body's structures <em>function</em>: the chemical and physical processes that let cells, tissues, organs, and systems do their jobs. Physiology asks "how does it work?"
+  </div>
+  <div id="rev-grossmicro"  class="concept-reveal gold-border">
+    <strong>Gross vs. Microscopic Anatomy</strong> — <em>Gross anatomy</em> studies structures large enough to see with the naked eye (organs, muscles, bones — approached regionally or system by system). <em>Microscopic anatomy</em> studies structures too small to see without a microscope, including <em>histology</em> (tissues) and <em>cytology</em> (cells).
+  </div>
+  <div id="rev-structfunc"  class="concept-reveal coral">
+    <strong>Structure-Function Relationship</strong> — The principle that a structure's form directly enables (and limits) what it can do. A flat, thin surface is built for diffusion; a long, branching cell is built for signaling; a hollow muscular tube is built for pumping. You'll use this lens in every unit of A&amp;P.
+  </div>
+  <div id="rev-levels"      class="concept-reveal lav-border">
+    <strong>Levels of Organization</strong> — The body is organized in a hierarchy, from simplest to most complex: <em>chemical → cellular → tissue → organ → organ system → organismal</em>. The chemical level starts with subatomic particles (protons, electrons, neutrons) that combine into atoms and then molecules — the building blocks of every structure above it. Each level is built from the level below it.
+  </div>
+  <div id="rev-position"    class="concept-reveal crimson-border">
+    <strong>Anatomical Position</strong> — The universal reference posture: standing upright, facing forward, arms at the sides, palms facing forward, feet flat and facing forward. Every directional term in anatomy assumes the body is in this position — regardless of how the person is actually oriented.
+  </div>
+  <div id="rev-directional" class="concept-reveal mint-border">
+    <strong>Directional Terms</strong> — Standardized pairs used to describe location relative to anatomical position: <em>superior/inferior</em> (above/below), <em>anterior/posterior</em> (front/back), <em>medial/lateral</em> (toward/away from the midline), <em>proximal/distal</em> (closer to/farther from the point of attachment — used on limbs), and <em>superficial/deep</em> (closer to/farther from the body surface).
+  </div>
+  <div id="rev-planes"      class="concept-reveal gold-border">
+    <strong>Body Planes</strong> — Imaginary flat surfaces used to section the body for study: a <em>sagittal plane</em> divides left and right, a <em>frontal (coronal) plane</em> divides anterior and posterior, and a <em>transverse (horizontal) plane</em> divides superior and inferior.
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--crimson);margin-bottom:1rem;">📋 The Levels of Organization — Step by Step</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:1rem;">Every body system you'll study this semester is built from these same six levels.</p>
+  <table class="vocab-table">
+    <tr><th>Level</th><th>What it is</th><th>Example</th></tr>
+    <tr><td>Chemical</td><td>Atoms and molecules that combine to form cell structures</td><td>Oxygen atom, water molecule, DNA</td></tr>
+    <tr><td>Cellular</td><td>The smallest unit of life; organelles carry out specific jobs inside the cell</td><td>Muscle cell, neuron, red blood cell</td></tr>
+    <tr><td>Tissue</td><td>A group of similar cells working together to perform a common function</td><td>Muscle tissue, nervous tissue, epithelial tissue</td></tr>
+    <tr><td>Organ</td><td>Two or more tissue types working together for a specific function</td><td>Heart, stomach, skin</td></tr>
+    <tr><td>Organ System</td><td>A group of organs working together toward a common purpose</td><td>Cardiovascular system, digestive system</td></tr>
+    <tr><td>Organismal</td><td>All the organ systems functioning together as one living being</td><td>The human body</td></tr>
+  </table>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--crimson);margin-bottom:.4rem;">🗂️ The Eleven Organ Systems</h3>
+  <p style="font-size:.9rem;color:var(--muted);margin-bottom:1rem;">Assigning an organ to just one system is often imprecise — most organs contribute to more than one. This is the standard map you'll build on all semester.</p>
+  <table class="vocab-table">
+    <tr><th>System</th><th>Example Organ</th><th>Major Function</th></tr>
+    <tr><td>Integumentary</td><td>Skin</td><td>Protective barrier against the outside world</td></tr>
+    <tr><td>Skeletal</td><td>Bones</td><td>Support and protection</td></tr>
+    <tr><td>Muscular</td><td>Skeletal muscle</td><td>Movement and heat production</td></tr>
+    <tr><td>Nervous</td><td>Brain</td><td>Rapid signaling and coordination</td></tr>
+    <tr><td>Endocrine</td><td>Thyroid gland</td><td>Hormone-based, longer-term regulation</td></tr>
+    <tr><td>Cardiovascular</td><td>Heart</td><td>Pumping blood throughout the body</td></tr>
+    <tr><td>Lymphatic</td><td>Lymph nodes</td><td>Immune defense and fluid balance</td></tr>
+    <tr><td>Respiratory</td><td>Lungs</td><td>Gas exchange (oxygen in, CO₂ out)</td></tr>
+    <tr><td>Digestive</td><td>Stomach</td><td>Breaking down food for absorption</td></tr>
+    <tr><td>Urinary</td><td>Kidneys</td><td>Filtering blood and eliminating waste</td></tr>
+    <tr><td>Reproductive</td><td>Ovaries/testes</td><td>Producing offspring</td></tr>
+  </table>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--crimson);margin-bottom:.8rem;">🧭 Try It Yourself — Apply a Directional Term</h3>
+  <div class="demo-zone">
+    <h3>Directional term practice</h3>
+    <div class="hint">The elbow is _____ to the wrist. (Hint: think about distance from where the arm attaches to the body.)</div>
+    <input type="text" class="blank-input" id="dir-input" placeholder="?" onkeydown="if(event.key==='Enter')checkDirPractice()">
+    <button class="btn btn-mint" onclick="checkDirPractice()" style="margin-left:.6rem;">Check</button>
+    <div id="dir-feedback" class="quiz-feedback" style="margin-top:1rem;"></div>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(0)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(2)">Next: Structure ↔ Function →</button>
+  </div>
+</div>
+
+<!-- ── SECTION 2: STRUCTURE-FUNCTION LAB ── -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">3</div>
+    <span class="eyebrow-label">Phase 3 · Structure ↔ Function Lab</span>
+  </div>
+  <h2>🧩 Form Follows Function — Explore the Evidence</h2>
+  <p class="lead">Tap each structure below to see exactly how its shape enables its job. This is the reasoning pattern you'll reuse in every future unit.</p>
+
+  <div class="evidence-grid">
+    <div class="ev-card" onclick="showEvidence('rbc')">
+      <div class="ev-icon">🩸</div>
+      <div class="ev-title">Red Blood Cell</div>
+      <div class="ev-sub">Gas Transport</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('neuron')">
+      <div class="ev-icon">🧠</div>
+      <div class="ev-title">Neuron</div>
+      <div class="ev-sub">Signal Transmission</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('villi')">
+      <div class="ev-icon">🌿</div>
+      <div class="ev-title">Intestinal Villi</div>
+      <div class="ev-sub">Nutrient Absorption</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('alveoli')">
+      <div class="ev-icon">🫁</div>
+      <div class="ev-title">Alveoli</div>
+      <div class="ev-sub">Gas Exchange</div>
+    </div>
+  </div>
+
+  <div id="ev-rbc" class="ev-panel">
+    <h4>🩸 Red Blood Cell — Biconcave Disc</h4>
+    <p>A red blood cell is shaped like a flattened, dimpled disc rather than a sphere. That biconcave shape increases its surface area relative to its volume, which speeds gas diffusion, and it also makes the cell flexible enough to bend and squeeze through capillaries far narrower than its resting diameter. Mature red blood cells even lose their nucleus and most organelles — freeing up interior space to pack in more oxygen-carrying hemoglobin.</p>
+    <div class="example-box">📌 Structure: flattened, dimpled, no nucleus → Function: maximum surface area, flexibility, and hemoglobin capacity for oxygen transport.</div>
+  </div>
+  <div id="ev-neuron" class="ev-panel">
+    <h4>🧠 Neuron — Long, Branching Cell</h4>
+    <p>A neuron's cell body sprouts many short, branching <em>dendrites</em> that increase surface area to receive signals from other cells, plus a single long <em>axon</em> — sometimes over a meter long — built to carry an electrical signal rapidly across distance. Many axons are wrapped in a fatty myelin sheath, which speeds conduction even further.</p>
+    <div class="example-box">📌 Structure: branching dendrites + long myelinated axon → Function: receive input from many sources and transmit signals quickly over long distances.</div>
+  </div>
+  <div id="ev-villi" class="ev-panel">
+    <h4>🌿 Intestinal Villi &amp; Microvilli</h4>
+    <p>The lining of the small intestine is folded into finger-like projections called <em>villi</em>, and each cell on a villus is covered in even smaller projections called <em>microvilli</em>. These folds-within-folds dramatically increase the absorptive surface area, and each villus contains its own capillary network and lacteal to carry absorbed nutrients straight into the bloodstream and lymph.</p>
+    <div class="example-box">📌 Structure: folded villi covered in microvilli → Function: massively increased surface area for absorbing digested nutrients.</div>
+  </div>
+  <div id="ev-alveoli" class="ev-panel">
+    <h4>🫁 Alveoli — Thin-Walled Air Sacs</h4>
+    <p>Alveoli are tiny, thin-walled sacs at the end of the airway tree, each wrapped in a dense network of capillaries. Their walls are only a single layer of flattened (squamous) cells thick, minimizing the distance gases must diffuse, and there are hundreds of millions of them — creating an enormous total surface area packed into a small space.</p>
+    <div class="example-box">📌 Structure: single-cell-thick walls, capillary-wrapped, enormous total surface area → Function: fast, efficient diffusion of oxygen and carbon dioxide.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--crimson);margin-bottom:.4rem;">🎯 Quick Match — Structure to Function</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Tap a structure on the left, then tap its matching function on the right.</p>
+
+  <div class="match-grid" id="matchGrid">
+    <div class="match-item" data-pair="a" data-side="term" onclick="matchClick(this)">Biconcave red blood cell</div>
+    <div class="match-item" data-pair="b" data-side="def"  onclick="matchClick(this)">Speeds electrical signal conduction over distance</div>
+    <div class="match-item" data-pair="c" data-side="term" onclick="matchClick(this)">Folded intestinal villi &amp; microvilli</div>
+    <div class="match-item" data-pair="d" data-side="def"  onclick="matchClick(this)">Provides support and physical protection</div>
+    <div class="match-item" data-pair="a" data-side="def"  onclick="matchClick(this)">Maximizes surface area and flexibility for gas transport</div>
+    <div class="match-item" data-pair="e" data-side="term" onclick="matchClick(this)">Thin-walled, capillary-wrapped alveoli</div>
+    <div class="match-item" data-pair="b" data-side="term" onclick="matchClick(this)">Long, myelinated neuron axon</div>
+    <div class="match-item" data-pair="c" data-side="def"  onclick="matchClick(this)">Dramatically increases surface area for nutrient absorption</div>
+    <div class="match-item" data-pair="d" data-side="term" onclick="matchClick(this)">Dense, mineralized bone matrix</div>
+    <div class="match-item" data-pair="e" data-side="def"  onclick="matchClick(this)">Minimizes diffusion distance for fast gas exchange</div>
+  </div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-ghost" onclick="resetMatch()">↺ Reset Match</button>
+    <span id="match-score" style="margin-left:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted);"></span>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(3)">Next: Homeostasis →</button>
+  </div>
+</div>
+
+<!-- ── SECTION 3: HOMEOSTASIS SIMULATOR ── -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-gold">4</div>
+    <span class="eyebrow-label">Phase 4 · Homeostasis</span>
+  </div>
+  <h2>⚖️ How the Body Keeps Its Balance</h2>
+  <p class="lead"><strong>Homeostasis</strong> is the body's ability to maintain a relatively stable internal environment despite changes in the outside world. It's maintained through <strong>feedback loops</strong> — and almost all of them are <em>negative feedback</em> loops, which counteract a change to restore balance.</p>
+
+  <div class="evidence-grid">
+    <div class="ev-card" onclick="showEvidence('stimulus')">
+      <div class="ev-icon">⚡</div>
+      <div class="ev-title">Stimulus</div>
+      <div class="ev-sub">The change</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('receptor')">
+      <div class="ev-icon">📡</div>
+      <div class="ev-title">Receptor</div>
+      <div class="ev-sub">Detects it</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('controlcenter')">
+      <div class="ev-icon">🧭</div>
+      <div class="ev-title">Control Center</div>
+      <div class="ev-sub">Compares to set point</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('effector')">
+      <div class="ev-icon">🦾</div>
+      <div class="ev-title">Effector</div>
+      <div class="ev-sub">Carries out the fix</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('response')">
+      <div class="ev-icon">✅</div>
+      <div class="ev-title">Response</div>
+      <div class="ev-sub">Restores balance</div>
+    </div>
+  </div>
+
+  <div id="ev-stimulus" class="ev-panel">
+    <h4>⚡ Stimulus</h4>
+    <p>The <strong>stimulus</strong> is the change in the internal environment that sets the feedback loop in motion — for example, a rise in body temperature during exercise, or a drop in body temperature in cold weather.</p>
+  </div>
+  <div id="ev-receptor" class="ev-panel">
+    <h4>📡 Receptor</h4>
+    <p>The <strong>receptor</strong> detects the stimulus and monitors the current value of the variable being regulated. Thermoreceptors in the skin and in the hypothalamus itself detect changes in temperature.</p>
+  </div>
+  <div id="ev-controlcenter" class="ev-panel">
+    <h4>🧭 Control Center</h4>
+    <p>The <strong>control center</strong> receives information from the receptor and compares it to the <em>set point</em> — the ideal target value (about 98.6°F / 37°C for body temperature). For thermoregulation, the control center is the <strong>hypothalamus</strong>. If the value has drifted from the set point, the control center signals an effector to respond.</p>
+  </div>
+  <div id="ev-effector" class="ev-panel">
+    <h4>🦾 Effector</h4>
+    <p>The <strong>effector</strong> is the muscle, organ, or gland that carries out the corrective action. For body temperature, effectors include sweat glands (to cool down) and skeletal muscles that shiver (to generate heat) along with blood vessels that dilate or constrict.</p>
+  </div>
+  <div id="ev-response" class="ev-panel">
+    <h4>✅ Response</h4>
+    <p>The <strong>response</strong> is the effector's action itself, which moves the variable back toward the set point. In <em>negative</em> feedback, the response counteracts (reverses) the original stimulus — once the set point is reached, the receptor stops signaling and the loop shuts off.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--crimson);margin:.5rem 0 .8rem;">↔️ Negative vs. Positive Feedback</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Tap each card to compare — almost all homeostatic loops are negative feedback.</p>
+
+  <div class="sel-grid">
+    <div class="sel-card" onclick="showSel('negative')">
+      <div class="sel-icon">🔄</div>
+      <div class="sel-name">Negative Feedback</div>
+      <div class="sel-key">reverses the change</div>
+    </div>
+    <div class="sel-card" onclick="showSel('positive')">
+      <div class="sel-icon">📈</div>
+      <div class="sel-name">Positive Feedback</div>
+      <div class="sel-key">amplifies the change</div>
+    </div>
+  </div>
+
+  <div id="sel-negative" class="sel-detail">
+    <h4>🔄 Negative Feedback</h4>
+    <p>The response counteracts, or reverses, the original stimulus — pushing the variable back toward its set point. This is how the body maintains stability most of the time.</p>
+    <p class="examples">📌 Examples: body temperature regulation (sweating/shivering), blood glucose regulation (insulin/glucagon), blood pressure regulation.</p>
+  </div>
+  <div id="sel-positive" class="sel-detail">
+    <h4>📈 Positive Feedback</h4>
+    <p>The response amplifies, or strengthens, the original stimulus rather than reversing it. Positive feedback loops are rarer and are usually shut off by an outside event rather than by reaching a set point.</p>
+    <p class="examples">📌 Examples: uterine contractions intensifying during childbirth (stopped by delivery), platelet aggregation during blood clotting (stopped once the clot seals the vessel).</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--crimson);margin-bottom:.4rem;">🌡️ Simulate a Negative Feedback Loop</h3>
+  <p class="lead" style="margin-bottom:1rem;">Choose a scenario, then step through how your body corrects its temperature back toward the set point of <strong>98.6°F</strong>.</p>
+
+  <div class="predict-box">
+    <h4>✏️ Before you simulate — your prediction</h4>
+    <textarea id="sim-predict" placeholder="If your body temperature rises during exercise, what steps will your body take to bring it back down? Use the terms stimulus, receptor, control center, and effector..."></textarea>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🌡️ Body Temperature Feedback Simulator</h3>
+    <div class="hint">Pick a scenario to trigger the stimulus, then step through the correction minute by minute.</div>
+
+    <div class="action-row">
+      <button class="btn btn-coral" onclick="chooseScenario('hot')">🥵 Exercising on a Hot Day</button>
+      <button class="btn btn-lav" onclick="chooseScenario('cold')">🥶 Shoveling Snow</button>
+    </div>
+
+    <div class="sim-stat-row">
+      <div class="sim-stat"><div class="stat-val" id="stat-temp">— °F</div><div class="stat-lbl">Body Temperature</div></div>
+      <div class="sim-stat"><div class="stat-val" id="stat-stage">Ready</div><div class="stat-lbl">Stage</div></div>
+    </div>
+
+    <h3 style="margin-top:1.2rem;">📊 Temperature Over Time</h3>
+    <div class="sim-grid" id="tempGrid"></div>
+
+    <div class="action-row" style="margin-top:1rem;">
+      <button class="btn btn-mint"  id="btn-step" onclick="stepSim()" disabled>⏩ Advance One Minute</button>
+      <button class="btn btn-gold"  id="btn-all"  onclick="finishSim()" disabled>⏭ Skip to Homeostasis</button>
+      <button class="btn btn-ghost" onclick="resetSim()">↺ Reset</button>
+    </div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — What did you observe?</h4>
+    <textarea placeholder="Did the temperature correct in one big jump, or gradually? Why does negative feedback work gradually rather than instantly? What were the receptor, control center, and effector in this scenario?"></textarea>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(4)">Next: Quiz →</button>
+  </div>
+</div>
+
+<!-- ── SECTION 4: QUIZ ── -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-crimson">5</div>
+    <span class="eyebrow-label">Phase 5 · Check Your Understanding</span>
+  </div>
+  <h2>📝 Foundations Quiz</h2>
+  <p class="lead">Covers everything from this lesson — anatomy &amp; physiology, levels of organization, structure-function examples, anatomical terminology, and homeostasis. You'll get immediate feedback.</p>
+
+  <div id="quiz-container"></div>
+
+  <div id="score-panel" class="score-panel" style="display:none;">
+    <h3>Quiz Complete! 🎉</h3>
+    <div class="score-num" id="score-display">0/15</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-gold" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(3)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(5)">Next: Reflect →</button>
+  </div>
+</div>
+
+<!-- ── SECTION 5: REFLECT ── -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">6</div>
+    <span class="eyebrow-label">Phase 6 · Reflect</span>
+  </div>
+  <h2>💭 Reflection &amp; Review</h2>
+  <p class="lead">Solidify your learning. Answer all four reflection questions in your own words — this is the most powerful study technique for A&amp;P.</p>
+
+  <div class="quiz-card">
+    <div class="quiz-q">1. In your own words, explain the structure-function relationship, and give one example from the body that was NOT covered in this lesson.</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer..."></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">2. Describe the levels of organization from chemical to organismal, using one specific example structure at each level.</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer..."></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">3. Explain the difference between negative and positive feedback, using one example of each.</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer..."></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">4. Walk through the steps of a homeostatic feedback loop (stimulus, receptor, control center, effector, response) using the body-temperature example.</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer..."></textarea>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--crimson);margin-bottom:.8rem;">✏️ Fill-in-the-Blank Review</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1.2rem;">Type the answer and press Enter or click Check.</p>
+
+  <div id="fill-container"></div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-mint" onclick="checkAllFills()">✓ Check All Answers</button>
+    <button class="btn btn-ghost" onclick="resetFills()" style="margin-left:.6rem;">↺ Reset</button>
+  </div>
+
+  <div class="congrats-panel" style="margin-top:2rem;">
+    <h2>🩺 Foundations Mastered!</h2>
+    <p>You've built the lens you'll use in every unit this semester: anatomy &amp; physiology, the levels of organization, the structure-function relationship, homeostasis, and anatomical terminology. Next stop: the chemistry and cells that everything else is built from.</p>
+    <div class="summary-chips">
+      <span class="summary-chip">Anatomy vs. Physiology ✓</span>
+      <span class="summary-chip">Levels of Organization ✓</span>
+      <span class="summary-chip">Structure ↔ Function ✓</span>
+      <span class="summary-chip">Anatomical Terminology ✓</span>
+      <span class="summary-chip">Homeostasis ✓</span>
+      <span class="summary-chip">Feedback Loops ✓</span>
+    </div>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(4)">← Back</button>
+    <button class="btn btn-crimson" onclick="goTo(0)">↺ Start Over</button>
+  </div>
+</div>
+
+<!-- ── SECTION 6: SUBMIT ── -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">7</div>
+    <span class="eyebrow-label">Your Completed Work</span>
+  </div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Here's a summary of everything you worked on. <strong>Copy it</strong> and paste into your course's LMS, or <strong>email it</strong> to your instructor.</p>
+
+  <div class="summary-section" style="background:var(--crimson);color:white;border-color:var(--crimson);">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">STUDENT</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">LESSON</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;">Structure &amp; Function Explorer 🩺</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6;" id="summaryDate"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section">
+    <h3>📝 Quiz Score</h3>
+    <div class="summary-answer" id="sum-quiz"></div>
+  </div>
+
+  <div class="summary-section">
+    <h3>🔬 Section 1 — Opening Prediction</h3>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;">YOUR PREDICTION (what makes a structure work well for its job)</div>
+    <div class="summary-answer" id="sum-pred"></div>
+  </div>
+
+  <div class="summary-section">
+    <h3>🌡️ Section 4 — Homeostasis Simulation Prediction</h3>
+    <div class="summary-answer" id="sum-sim-pred"></div>
+  </div>
+
+  <div class="summary-section">
+    <h3>💭 Section 6 — Reflection Questions</h3>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;">Q1 — Structure-Function Relationship</div>
+    <div class="summary-answer" id="sum-r1"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q2 — Levels of Organization</div>
+    <div class="summary-answer" id="sum-r2"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q3 — Negative vs. Positive Feedback</div>
+    <div class="summary-answer" id="sum-r3"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q4 — Homeostatic Feedback Loop</div>
+    <div class="summary-answer" id="sum-r4"></div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Instructor</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.6rem;">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2;">
+      <strong>📋 Copy My Results</strong> — Copies all answers to clipboard. Paste into your course's assignment submission.<br>
+      <strong>📧 Email to Instructor</strong> — Opens your email app with answers pre-filled. Add your instructor's address and send.<br>
+      <strong>🖨️ Print / Save PDF</strong> — Mac: bottom-left dropdown → Save as PDF. Windows: Microsoft Print to PDF. Upload to assignment.
+    </p>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(5)">← Back</button>
+    <button class="btn btn-crimson" onclick="goTo(0)">↺ Start Over</button>
+  </div>
+</div>
+
+</div><!-- /sheet -->
+
+<!-- COPYRIGHT -->
+<div style="position:relative; z-index:1; text-align:center; padding:1.5rem 2rem 2rem; color:rgba(255,255,255,0.45); font-family:'DM Mono',monospace; font-size:0.7rem; line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom / single-instructor use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+
+<script>
+// ─── NAVIGATION ───
+const steps = document.querySelectorAll('.prog-step');
+const sections = document.querySelectorAll('.section');
+let currentSection = 0;
+
+function goTo(n) {
+  sections.forEach((s,i) => s.classList.toggle('active', i === n));
+  steps.forEach((s,i) => {
+    s.classList.remove('active','done');
+    if (i === n) s.classList.add('active');
+    if (i < n)  s.classList.add('done');
+  });
+  currentSection = n;
+  if (n === 6) buildSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── CONCEPT REVEALS ───
+const revealMap = {
+  anatomy:'rev-anatomy', physiology:'rev-physiology', grossmicro:'rev-grossmicro',
+  structfunc:'rev-structfunc', levels:'rev-levels', position:'rev-position',
+  directional:'rev-directional', planes:'rev-planes'
+};
+function reveal(key) {
+  Object.values(revealMap).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('show');
+  });
+  const target = document.getElementById(revealMap[key]);
+  if (target) target.classList.add('show');
+}
+
+// ─── DIRECTIONAL TERM PRACTICE ───
+function checkDirPractice() {
+  const input = document.getElementById('dir-input');
+  const fb = document.getElementById('dir-feedback');
+  const val = input.value.trim().toLowerCase();
+  fb.classList.add('show');
+  if (val === 'proximal') {
+    fb.className = 'quiz-feedback show correct-fb';
+    fb.textContent = "✅ Correct! The elbow is proximal (closer to the point of attachment) to the wrist.";
+  } else {
+    fb.className = 'quiz-feedback show wrong-fb';
+    fb.textContent = "❌ Not quite. The correct answer is proximal — the elbow is closer to where the arm attaches to the trunk than the wrist is.";
+  }
+}
+
+// ─── EVIDENCE / PROCESS CARDS (shared by Structure-Function Lab & Homeostasis) ───
+function showEvidence(type) {
+  document.querySelectorAll('.ev-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.ev-panel').forEach(p => p.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const panel = document.getElementById('ev-' + type);
+  if (panel) panel.classList.add('show');
+}
+
+// ─── STEP CARDS (Negative vs Positive Feedback) ───
+function showSel(type) {
+  document.querySelectorAll('.sel-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.sel-detail').forEach(d => d.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const det = document.getElementById('sel-' + type);
+  if (det) det.classList.add('show');
+}
+
+// ─── MATCHING GAME ───
+let matchSelected = null;
+let matchScore = 0;
+
+function matchClick(el) {
+  if (el.classList.contains('matched')) return;
+  if (!matchSelected) {
+    el.classList.add('selected');
+    matchSelected = el;
+  } else if (matchSelected === el) {
+    el.classList.remove('selected');
+    matchSelected = null;
+  } else {
+    const pairA = matchSelected.dataset.pair;
+    const pairB = el.dataset.pair;
+    const sideA = matchSelected.dataset.side;
+    const sideB = el.dataset.side;
+    if (pairA === pairB && sideA !== sideB) {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('matched');
+      el.classList.add('matched');
+      matchScore++;
+      document.getElementById('match-score').textContent = matchScore + '/5 matched';
+      matchSelected = null;
+    } else {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('wrong');
+      el.classList.add('wrong');
+      const a = matchSelected, b = el;
+      setTimeout(() => { a.classList.remove('wrong'); b.classList.remove('wrong'); }, 600);
+      matchSelected = null;
+    }
+  }
+}
+
+function resetMatch() {
+  matchSelected = null; matchScore = 0;
+  document.querySelectorAll('.match-item').forEach(el => {
+    el.classList.remove('selected','matched','wrong');
+  });
+  document.getElementById('match-score').textContent = '';
+}
+
+// ─── HOMEOSTASIS FEEDBACK-LOOP SIMULATOR ───
+const scenarios = {
+  hot:  { label:'Exercising on a Hot Day', readings:[101.4,100.9,100.5,100.1,99.7,99.3,99.0,98.8,98.6] },
+  cold: { label:'Shoveling Snow',          readings:[95.2, 95.9, 96.6, 97.2, 97.7, 98.1, 98.4, 98.6, 98.6] }
+};
+let simScenario = null;
+let simStep = 0;
+let simStarted = false;
+
+function classFor(temp, type) {
+  if (Math.abs(temp - 98.6) <= 0.2) return 'normal';
+  if (type === 'hot')  return temp > 99.4 ? 'hot' : 'mid';
+  if (type === 'cold') return temp < 97.8 ? 'cold' : 'mid';
+  return 'mid';
+}
+
+function renderSim() {
+  const grid = document.getElementById('tempGrid');
+  let html = '';
+  if (!simScenario) {
+    for (let i = 0; i < 9; i++) {
+      html += `<div class="sim-base" style="background:#f5f7fa;border-color:var(--border);color:var(--muted);">·</div>`;
+    }
+    grid.innerHTML = html;
+    document.getElementById('stat-temp').textContent = '— °F';
+    document.getElementById('stat-stage').textContent = 'Ready';
+    return;
+  }
+  const readings = scenarios[simScenario].readings;
+  for (let i = 0; i < readings.length; i++) {
+    if (i <= simStep) {
+      const temp = readings[i];
+      const cls = classFor(temp, simScenario);
+      html += `<div class="sim-base ${cls}">${temp.toFixed(1)}°</div>`;
+    } else {
+      html += `<div class="sim-base" style="background:#f5f7fa;border-color:var(--border);color:var(--muted);">·</div>`;
+    }
+  }
+  grid.innerHTML = html;
+
+  const currentTemp = readings[simStep];
+  document.getElementById('stat-temp').textContent = currentTemp.toFixed(1) + ' °F';
+
+  let stage;
+  if (simStep === 0) stage = 'Stimulus Detected';
+  else if (simStep === 1) stage = 'Receptor Signaling';
+  else if (simStep === 2) stage = 'Control Center Comparing to Set Point';
+  else if (simStep === 3) stage = 'Effector Activated';
+  else if (simStep === readings.length - 1) stage = 'Homeostasis Restored ✓';
+  else stage = 'Correcting Toward Set Point';
+  document.getElementById('stat-stage').textContent = stage;
+
+  const atEnd = simStep >= readings.length - 1;
+  document.getElementById('btn-step').disabled = atEnd;
+  document.getElementById('btn-all').disabled = atEnd;
+}
+
+function chooseScenario(type) {
+  simScenario = type;
+  simStep = 0;
+  simStarted = true;
+  document.getElementById('btn-step').disabled = false;
+  document.getElementById('btn-all').disabled = false;
+  renderSim();
+}
+
+function stepSim() {
+  if (!simScenario) return;
+  const max = scenarios[simScenario].readings.length - 1;
+  if (simStep < max) simStep++;
+  renderSim();
+}
+
+function finishSim() {
+  if (!simScenario) return;
+  simStep = scenarios[simScenario].readings.length - 1;
+  renderSim();
+}
+
+function resetSim() {
+  simScenario = null;
+  simStep = 0;
+  simStarted = false;
+  document.getElementById('btn-step').disabled = true;
+  document.getElementById('btn-all').disabled = true;
+  renderSim();
+}
+
+renderSim();
+
+// ─── QUIZ DATA ───
+const quizData = [
+  {
+    q: "1 — Anatomy is the study of ___; physiology is the study of ___.",
+    opts: ["Function; structure", "Structure; function", "Cells; tissues", "Chemistry; biology"],
+    ans: 1,
+    fb: "Correct! Anatomy studies structure (form); physiology studies function (how it works)."
+  },
+  {
+    q: "2 — Which best describes the 'structure-function relationship'?",
+    opts: ["Structures and functions are unrelated and must be memorized separately", "A structure's shape and organization directly determine what it is able to do", "Only organs (not cells or tissues) follow this principle", "Function always determines structure, never the reverse"],
+    ans: 1,
+    fb: "Correct! Form enables function — a structure's shape, size, and arrangement determine what job it can do."
+  },
+  {
+    q: "3 — Which is the correct order of the levels of organization, from simplest to most complex?",
+    opts: ["Cellular → chemical → tissue → organ → system → organismal", "Chemical → cellular → tissue → organ → system → organismal", "Tissue → cellular → chemical → organ → system → organismal", "Organ → tissue → cellular → chemical → system → organismal"],
+    ans: 1,
+    fb: "Correct! Chemical → cellular → tissue → organ → organ system → organismal."
+  },
+  {
+    q: "4 — A group of similar cells working together to perform a common function is called a:",
+    opts: ["Organ", "Tissue", "Organ system", "Organelle"],
+    ans: 1,
+    fb: "Correct! That's the definition of a tissue — e.g. muscle tissue or nervous tissue."
+  },
+  {
+    q: "5 — The heart is an example of which level of organization?",
+    opts: ["Tissue", "Organ", "Organ system", "Cellular"],
+    ans: 1,
+    fb: "Correct! The heart is an organ — made of multiple tissue types (cardiac muscle, connective tissue, epithelial tissue) working together."
+  },
+  {
+    q: "6 — Which branch of anatomy studies structures too small to see without a microscope?",
+    opts: ["Gross anatomy", "Regional anatomy", "Microscopic anatomy", "Systemic anatomy"],
+    ans: 2,
+    fb: "Correct! Microscopic anatomy includes histology (tissues) and cytology (cells)."
+  },
+  {
+    q: "7 — Why is the red blood cell's biconcave disc shape functionally important?",
+    opts: ["It increases surface area for gas exchange and allows flexibility through capillaries", "It helps the cell divide more quickly", "It protects the cell from the immune system", "It allows the cell to store more DNA"],
+    ans: 0,
+    fb: "Correct! The shape maximizes surface area and flexibility, both crucial for oxygen transport through narrow capillaries."
+  },
+  {
+    q: "8 — Why do intestinal villi and microvilli matter physiologically?",
+    opts: ["They dramatically increase surface area for nutrient absorption", "They produce stomach acid", "They filter the blood", "They store bile for digestion"],
+    ans: 0,
+    fb: "Correct! Villi and microvilli fold the absorptive surface again and again, maximizing surface area for absorbing nutrients."
+  },
+  {
+    q: "9 — In the standard anatomical position, the body is:",
+    opts: ["Lying face-down with arms overhead", "Standing, facing forward, arms at the sides, palms facing forward", "Standing with arms crossed over the chest", "Seated with palms facing backward"],
+    ans: 1,
+    fb: "Correct! Anatomical position is the reference posture every directional term assumes."
+  },
+  {
+    q: "10 — Which directional term pair describes 'toward the midline' vs. 'away from the midline'?",
+    opts: ["Superior/inferior", "Proximal/distal", "Medial/lateral", "Superficial/deep"],
+    ans: 2,
+    fb: "Correct! Medial = toward the midline; lateral = away from the midline."
+  },
+  {
+    q: "11 — A sagittal plane divides the body into:",
+    opts: ["Anterior and posterior portions", "Superior and inferior portions", "Left and right portions", "Upper and lower halves only"],
+    ans: 2,
+    fb: "Correct! A sagittal plane divides the body into left and right portions."
+  },
+  {
+    q: "12 — Homeostasis is best defined as:",
+    opts: ["The body's tendency toward disease", "A perfectly fixed, unchanging internal state", "The body's ability to maintain a relatively stable internal environment despite external changes", "The process of cell division"],
+    ans: 2,
+    fb: "Correct! Homeostasis is dynamic balance, not a perfectly fixed state — the body constantly makes small corrections."
+  },
+  {
+    q: "13 — In a homeostatic feedback loop, which structure detects the stimulus?",
+    opts: ["Effector", "Receptor", "Control center", "Response"],
+    ans: 1,
+    fb: "Correct! The receptor detects the change and monitors the variable being regulated."
+  },
+  {
+    q: "14 — In body-temperature regulation, the hypothalamus acts as the:",
+    opts: ["Receptor", "Effector", "Control center", "Stimulus"],
+    ans: 2,
+    fb: "Correct! The hypothalamus compares the current temperature to the set point and signals effectors to respond."
+  },
+  {
+    q: "15 — Which is an example of positive feedback rather than negative feedback?",
+    opts: ["Blood glucose regulation by insulin", "Body temperature regulation by sweating", "Uterine contractions intensifying during childbirth", "Blood pressure regulation by vessel diameter changes"],
+    ans: 2,
+    fb: "Correct! Childbirth contractions amplify the original stimulus (rather than reversing it) until delivery occurs."
+  }
+];
+
+let quizScore = 0;
+let quizAnswered = 0;
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  quizScore = 0; quizAnswered = 0;
+  document.getElementById('score-panel').style.display = 'none';
+
+  quizData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `
+      <div class="quiz-q">${item.q}</div>
+      <div class="quiz-options">
+        ${item.opts.map((opt, i) => `
+          <button class="quiz-opt" data-idx="${idx}" data-opt="${i}" onclick="checkAnswer(this, ${idx}, ${i})">
+            ${String.fromCharCode(65+i)}. ${opt}
+          </button>
+        `).join('')}
+      </div>
+      <div class="quiz-feedback" id="qfb-${idx}"></div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function checkAnswer(btn, qIdx, optIdx) {
+  const card = btn.closest('.quiz-card');
+  const buttons = card.querySelectorAll('.quiz-opt');
+  const fb = document.getElementById('qfb-' + qIdx);
+  const correct = quizData[qIdx].ans;
+
+  buttons.forEach(b => b.disabled = true);
+
+  if (optIdx === correct) {
+    btn.classList.add('correct');
+    fb.textContent = '✅ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show correct-fb';
+    quizScore++;
+  } else {
+    btn.classList.add('wrong');
+    buttons[correct].classList.add('correct');
+    fb.textContent = '❌ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show wrong-fb';
+  }
+
+  quizAnswered++;
+  if (quizAnswered === quizData.length) showScore();
+}
+
+function showScore() {
+  const panel = document.getElementById('score-panel');
+  panel.style.display = 'block';
+  document.getElementById('score-display').textContent = quizScore + '/' + quizData.length;
+  const pct = quizScore / quizData.length;
+  let msg;
+  if (pct >= .9) msg = '🌟 Outstanding! You clearly understand the foundations of A&P — you\'re ready to build on this all semester.';
+  else if (pct >= .75) msg = '👍 Great work! Review the questions you missed and you\'ll be in great shape.';
+  else if (pct >= .6) msg = '📚 Good start. Revisit the Concepts and Homeostasis sections and try again — you\'ve got this.';
+  else msg = '💪 Keep going! Go back through the Foundations and Homeostasis phases, then retake.';
+  document.getElementById('score-msg').textContent = msg;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function retakeQuiz() { buildQuiz(); }
+
+buildQuiz();
+
+// ─── FILL IN THE BLANK ───
+const fills = [
+  { q: "Anatomy is the study of ___.", ans: "structure" },
+  { q: "Physiology is the study of ___.", ans: "function" },
+  { q: "The smallest level of organization, made of atoms and molecules, is the ___ level.", ans: "chemical" },
+  { q: "A(n) ___ is a group of two or more tissue types working together for a specific function.", ans: "organ" },
+  { q: "In anatomical position, the palms face ___.", ans: "forward" },
+  { q: "The plane that divides the body into anterior and posterior portions is the ___ plane.", ans: "frontal" },
+  { q: "The structure that compares the current condition to the set point in a feedback loop is the ___.", ans: "control center" },
+  { q: "Childbirth is a classic example of ___ feedback.", ans: "positive" },
+];
+
+function buildFills() {
+  const container = document.getElementById('fill-container');
+  container.innerHTML = '';
+  fills.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-card';
+    div.innerHTML = `
+      <div class="fill-q">${item.q.replace('___', `<input class="blank-input" id="fill-${idx}" type="text" placeholder="?" onkeydown="if(event.key==='Enter')checkFill(${idx})">`)}</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function checkFill(idx) {
+  const input = document.getElementById('fill-' + idx);
+  const val = input.value.trim().toLowerCase();
+  const correct = fills[idx].ans.toLowerCase();
+  if (val === correct || val.includes(correct) || correct.includes(val)) {
+    input.classList.remove('err'); input.classList.add('ok');
+    input.value = fills[idx].ans;
+  } else {
+    input.classList.remove('ok'); input.classList.add('err');
+  }
+}
+
+function checkAllFills() {
+  fills.forEach((_, idx) => checkFill(idx));
+}
+
+function resetFills() {
+  fills.forEach((_, idx) => {
+    const input = document.getElementById('fill-' + idx);
+    if (input) { input.value = ''; input.classList.remove('ok','err'); }
+  });
+}
+
+buildFills();
+
+// ─── SUMMARY / SUBMIT ───
+function fillSummary(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = text && text.trim();
+  el.textContent = val || 'Not answered';
+  el.classList.toggle('empty', !val);
+}
+
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  const scoreEl = document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl ? scoreEl.textContent + ' correct' : 'Quiz not yet completed');
+
+  const predTA = document.querySelector('#sec-0 textarea');
+  fillSummary('sum-pred', predTA ? predTA.value : '');
+
+  const simTA = document.getElementById('sim-predict');
+  fillSummary('sum-sim-pred', simTA ? simTA.value : '');
+
+  const refCards = document.querySelectorAll('#sec-5 .quiz-card textarea');
+  ['sum-r1','sum-r2','sum-r3','sum-r4'].forEach((id, i) => {
+    fillSummary(id, refCards[i] ? refCards[i].value : '');
+  });
+}
+
+function buildPlainText() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const date = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const scoreEl = document.getElementById('score-display');
+  const score = scoreEl ? scoreEl.textContent : 'not completed';
+  const predTA = document.querySelector('#sec-0 textarea');
+  const simTA  = document.getElementById('sim-predict');
+  const refCards = document.querySelectorAll('#sec-5 .quiz-card textarea');
+  const refs = ['','','',''];
+  refCards.forEach((ta, i) => { refs[i] = ta.value.trim() || 'Not answered'; });
+
+  return [
+    'STRUCTURE & FUNCTION EXPLORER 🩺 — STUDENT SUBMISSION',
+    '============================================',
+    'Student: ' + name,
+    'Date: ' + date,
+    'Lesson: BIO 201 Anatomy & Physiology I · Unit 1 · Structure & Function Explorer',
+    '',
+    '── QUIZ SCORE ──',
+    score,
+    '',
+    '── SECTION 1: OPENING PREDICTION ──',
+    predTA ? (predTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── SECTION 4: HOMEOSTASIS SIMULATION PREDICTION ──',
+    simTA ? (simTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── SECTION 6: REFLECTIONS ──',
+    'Q1 — Structure-Function Relationship:', refs[0],
+    'Q2 — Levels of Organization:', refs[1],
+    'Q3 — Negative vs. Positive Feedback:', refs[2],
+    'Q4 — Homeostatic Feedback Loop:', refs[3],
+    '',
+    '============================================',
+    '© 2026 Farvour Explorations · farvourexplorations.com\nSubmitted via Structure & Function Explorer · Interactive Digital Lesson · BIO 201 A&P I'
+  ].join('\n');
+}
+
+function copyResults() {
+  buildSummary();
+  const text = buildPlainText();
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Now paste into your course LMS or assignment.';
+    setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '⚠️ Could not copy automatically — try selecting the text above manually.';
+  });
+}
+
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const subject = encodeURIComponent('Structure & Function Explorer — ' + name);
+  const body = encodeURIComponent(buildPlainText());
+  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+}
+</script>
+</body>
+</html>
