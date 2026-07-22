@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Functions &amp; Requirements Explorer 🫁</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --crimson:      #5c1418;
+    --crimson-mid:  #8b1e24;
+    --crimson-lt:   #b8323a;
+    --crimson-pale: #fbe0e0;
+    --crimson-brd:  #f0b8bc;
+    --coral:     #e8603c;
+    --coral-pale:#fdf0ec;
+    --mint:      #3aaf85;
+    --mint-pale: #e8f8f2;
+    --gold:      #c9962a;
+    --gold-pale: #fef9e7;
+    --lavender:  #7c6fcd;
+    --lav-pale:  #f0eefb;
+    --paper:     #fffef9;
+    --ink:       #1a2332;
+    --muted:     #7a8899;
+    --border:    #e0e4ea;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: linear-gradient(160deg, #260a0c 0%, #5c1418 45%, #8b1e24 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%, rgba(232,96,60,.5) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 22%  38%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 41%  6%,  rgba(232,96,60,.4) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 60%  24%, rgba(255,255,255,.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 77%  9%,  rgba(232,96,60,.45)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 90%  33%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 33%  55%, rgba(232,96,60,.35) 0%, transparent 100%),
+      radial-gradient(2px   2px   at 70%  48%, rgba(255,255,255,.2)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 55%  70%, rgba(232,96,60,.3) 0%, transparent 100%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .hero { position: relative; z-index: 1; text-align: center; padding: 3.5rem 2rem 2rem; color: white; }
+  .hero-badge {
+    display: inline-block; background: var(--gold); color: var(--crimson);
+    font-family: 'Fredoka One', cursive; font-size: 0.85rem; letter-spacing: .05em;
+    padding: .35rem 1.2rem; border-radius: 20px; margin-bottom: 1.2rem;
+    box-shadow: 0 2px 12px rgba(201,150,42,.45);
+  }
+  .hero h1 {
+    font-family: 'Fredoka One', cursive; font-size: clamp(2.2rem,6vw,4rem);
+    line-height: 1.1; margin-bottom: .8rem; text-shadow: 0 2px 20px rgba(0,0,0,.35);
+  }
+  .hero h1 .accent { color: var(--gold); }
+  .hero p.intro { font-size: 1.05rem; line-height: 1.7; opacity: .88; max-width: 600px; margin: 0 auto 2rem; }
+
+  .progress-wrap { display: flex; justify-content: center; gap: .5rem; flex-wrap: wrap; margin-bottom: .5rem; }
+  .prog-step {
+    display: flex; align-items: center; gap: .4rem;
+    background: rgba(255,255,255,.1); border: 1.5px solid rgba(255,255,255,.18);
+    border-radius: 20px; padding: .35rem .9rem; font-size: .78rem; font-weight: 700;
+    color: rgba(255,255,255,.7); cursor: pointer; transition: all .2s; font-family: 'DM Mono', monospace;
+  }
+  .prog-step:hover, .prog-step.done { background: rgba(255,255,255,.2); color: white; border-color: rgba(255,255,255,.35); }
+  .prog-step.active { background: var(--gold); color: var(--crimson); border-color: var(--gold); box-shadow: 0 2px 12px rgba(201,150,42,.45); }
+
+  .sheet { position: relative; z-index: 1; background: var(--paper); border-radius: 24px 24px 0 0; margin-top: 1.5rem; padding: 0 0 6rem; min-height: 80vh; box-shadow: 0 -8px 40px rgba(0,0,0,.3); }
+  .section { padding: 3rem 2rem 0; max-width: 820px; margin: 0 auto; display: none; }
+  .section.active { display: block; }
+
+  .section-eyebrow { display: flex; align-items: center; gap: .6rem; margin-bottom: 1rem; }
+  .eyebrow-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Fredoka One', cursive; font-size: 1rem; color: white; flex-shrink: 0; }
+  .num-coral    { background: var(--coral); }
+  .num-mint     { background: var(--mint); }
+  .num-gold     { background: var(--gold); color: var(--crimson); }
+  .num-lav      { background: var(--lavender); }
+  .num-crimson  { background: var(--crimson-mid); }
+  .eyebrow-label { font-size: .72rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+  .section h2 { font-family: 'Fredoka One', cursive; font-size: clamp(1.6rem,3.5vw,2.2rem); color: var(--crimson); margin-bottom: .6rem; line-height: 1.2; }
+  .section .lead { font-size: 1rem; line-height: 1.75; color: #3a4a5a; margin-bottom: 1.8rem; }
+  .section .lead strong { color: var(--coral); }
+
+  .wonder-box { background: linear-gradient(135deg, var(--crimson) 0%, var(--crimson-mid) 100%); color: white; border-radius: 16px; padding: 1.8rem 2rem; margin-bottom: 1.8rem; position: relative; overflow: hidden; }
+  .wonder-box::after { content: '🤔'; position: absolute; right: 1.5rem; top: 50%; transform: translateY(-50%); font-size: 3rem; opacity: .3; }
+  .wonder-box p { font-size: 1rem; line-height: 1.7; font-style: italic; opacity: .95; max-width: 85%; }
+  .wonder-box strong { color: var(--gold); font-style: normal; }
+  .wonder-box.mint-box { background: linear-gradient(135deg, #1b7a58 0%, #2d9970 100%); }
+  .wonder-box.mint-box::after { content: '🫁'; }
+  .wonder-box.gold-box { background: linear-gradient(135deg, #8a6a1a 0%, #b8860b 100%); }
+  .wonder-box.gold-box::after { content: '⚡'; }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1.5rem; }
+  .chip { padding: .45rem 1rem; border-radius: 20px; font-size: .82rem; font-weight: 700; cursor: pointer; transition: all .2s; border: 2px solid transparent; }
+  .chip.coral   { background: var(--coral-pale);  color: var(--coral);     border-color: #f8c5b8; }
+  .chip.mint    { background: var(--mint-pale);   color: var(--mint);      border-color: #b8ebd8; }
+  .chip.gold    { background: var(--gold-pale);   color: #8a6a1a;          border-color: #f8e0a0; }
+  .chip.lav     { background: var(--lav-pale);    color: var(--lavender);  border-color: #d0caef; }
+  .chip.crimson { background: var(--crimson-pale); color: var(--crimson-mid);border-color: var(--crimson-brd); }
+  .chip:hover  { transform: scale(1.05); }
+
+  .concept-reveal { background: var(--paper); border-left: 4px solid var(--coral); border-radius: 0 10px 10px 0; padding: 1rem 1.2rem; font-size: .88rem; line-height: 1.7; margin-top: .5rem; display: none; animation: fadeIn .3s ease; }
+  .concept-reveal.show { display: block; }
+  .concept-reveal.mint-border    { border-color: var(--mint); }
+  .concept-reveal.gold-border    { border-color: var(--gold); }
+  .concept-reveal.lav-border     { border-color: var(--lavender); }
+  .concept-reveal.crimson-border { border-color: var(--crimson-mid); }
+
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+
+  .predict-box { background: var(--gold-pale); border: 2px dashed var(--gold); border-radius: 14px; padding: 1.4rem 1.6rem; margin-bottom: 1.5rem; }
+  .predict-box h4 { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #8a6a1a; margin-bottom: .8rem; }
+  .predict-box textarea, .reflect-box textarea {
+    width: 100%; border: 1.5px solid rgba(0,0,0,.12); border-radius: 8px; padding: .7rem;
+    font-family: 'Nunito', sans-serif; font-size: .88rem; resize: vertical; min-height: 64px;
+    background: white; color: var(--ink); outline: none; transition: border-color .2s;
+  }
+  .predict-box textarea:focus { border-color: var(--gold); }
+  .reflect-box { background: var(--mint-pale); border: 2px dashed var(--mint); border-radius: 14px; padding: 1.4rem 1.6rem; margin-top: 1.5rem; }
+  .reflect-box h4 { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #1b7a58; margin-bottom: .8rem; }
+  .reflect-box textarea:focus { border-color: var(--mint); }
+
+  .demo-zone { background: white; border: 2px solid var(--border); border-radius: 16px; padding: 1.8rem; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,.07); }
+  .demo-zone h3 { font-family: 'Fredoka One', cursive; font-size: 1.2rem; color: var(--crimson); margin-bottom: .3rem; }
+  .demo-zone .hint { font-size: .78rem; color: var(--muted); font-family: 'DM Mono', monospace; margin-bottom: 1.3rem; }
+
+  .btn { border: none; border-radius: 10px; padding: .65rem 1.3rem; font-family: 'Nunito', sans-serif; font-size: .88rem; font-weight: 800; cursor: pointer; transition: all .15s; letter-spacing: .02em; }
+  .btn:hover  { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,.15); }
+  .btn:active { transform: translateY(0); }
+  .btn-coral    { background: var(--coral);    color: white; }
+  .btn-mint     { background: var(--mint);     color: white; }
+  .btn-gold     { background: var(--gold);     color: var(--crimson); }
+  .btn-lav      { background: var(--lavender); color: white; }
+  .btn-ghost    { background: #f0f2f5;         color: var(--muted); }
+  .btn-crimson  { background: var(--crimson);  color: white; }
+  .btn:disabled { opacity: .45; cursor: default; transform:none !important; box-shadow:none !important; }
+  .action-row { display: flex; gap: .8rem; flex-wrap: wrap; align-items: center; margin-bottom: .8rem; }
+  .nav-row { display: flex; justify-content: space-between; align-items: center; padding: 2.5rem 2rem 0; max-width: 820px; margin: 0 auto; }
+
+  .quiz-card { background: white; border: 2px solid var(--border); border-radius: 14px; padding: 1.4rem 1.6rem; margin-bottom: 1.2rem; box-shadow: 0 2px 8px rgba(0,0,0,.05); }
+  .quiz-q { font-weight: 700; font-size: .95rem; color: var(--ink); margin-bottom: 1rem; line-height: 1.5; }
+  .quiz-options { display: flex; flex-direction: column; gap: .5rem; }
+  .quiz-opt { padding: .6rem 1rem; border-radius: 8px; border: 2px solid var(--border); background: white; cursor: pointer; font-family: 'Nunito', sans-serif; font-size: .88rem; font-weight: 600; text-align: left; transition: all .15s; color: var(--ink); }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--crimson-mid); background: var(--crimson-pale); }
+  .quiz-opt.correct   { background: var(--mint-pale); border-color: var(--mint); color: #1b7a58; }
+  .quiz-opt.wrong     { background: var(--coral-pale); border-color: var(--coral); color: #a83020; }
+  .quiz-opt:disabled  { cursor: default; }
+  .quiz-feedback { margin-top: .8rem; font-size: .85rem; line-height: 1.6; padding: .7rem 1rem; border-radius: 8px; display: none; animation: fadeIn .3s ease; }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct-fb { background: var(--mint-pale); color: #1b7a58; border-left: 3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background: var(--coral-pale); color: #a83020; border-left: 3px solid var(--coral); }
+
+  .sim-grid { display: grid; gap: 4px; margin: 1rem 0; }
+  .sim-base { font-size: .74rem; text-align: center; cursor: default; transition: all .3s; border-radius: 6px; padding: .5rem 2px; font-family: 'DM Mono', monospace; font-weight: 700; border: 2px solid var(--border); background: white; line-height: 1.3; }
+  .sim-base.hot    { color: var(--coral);    border-color: #f8c5b8; background: var(--coral-pale); }
+  .sim-base.cold   { color: var(--lavender); border-color: #d0caef; background: var(--lav-pale); }
+  .sim-base.mid    { color: #8a6a1a;         border-color: #f8e0a0; background: var(--gold-pale); }
+  .sim-base.normal { color: var(--mint);     border-color: #b8ebd8; background: var(--mint-pale); }
+  .sim-stat-row { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0; }
+  .sim-stat { background: #f5f7fa; border-radius: 10px; padding: .6rem 1.1rem; flex: 1; min-width: 140px; text-align: center; }
+  .sim-stat .stat-val { font-family: 'DM Mono', monospace; font-size: 1.1rem; color: var(--crimson); font-weight: 700; }
+  .sim-stat .stat-lbl { font-family: 'DM Mono', monospace; font-size: .65rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+
+  .evidence-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+  .ev-card { background: white; border: 2px solid var(--border); border-radius: 14px; padding: 1.2rem; cursor: pointer; transition: all .2s; text-align: center; }
+  .ev-card:hover, .ev-card.active { border-color: var(--crimson-mid); box-shadow: 0 4px 16px rgba(139,30,36,.2); transform: translateY(-2px); }
+  .ev-card.active { background: var(--crimson-pale); }
+  .ev-card .ev-icon { font-size: 2.4rem; margin-bottom: .5rem; }
+  .ev-card .ev-title { font-family: 'Fredoka One', cursive; font-size: 1rem; color: var(--crimson); margin-bottom: .3rem; }
+  .ev-card .ev-sub { font-size: .75rem; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .ev-panel { background: var(--crimson-pale); border-left: 4px solid var(--crimson-mid); border-radius: 0 12px 12px 0; padding: 1.2rem 1.4rem; display: none; animation: fadeIn .3s ease; }
+  .ev-panel.show { display: block; }
+  .ev-panel h4 { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: var(--crimson); margin-bottom: .5rem; }
+  .ev-panel p  { font-size: .88rem; line-height: 1.7; color: var(--ink); }
+  .ev-panel .example-box { background: white; border-radius: 8px; padding: .7rem 1rem; margin-top: .8rem; font-size: .82rem; font-family: 'DM Mono', monospace; color: var(--ink); border: 1.5px solid rgba(139,30,36,.2); }
+
+  .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; margin: 1rem 0; }
+  .match-item { padding: .75rem 1rem; border-radius: 10px; border: 2px solid var(--border); cursor: pointer; font-size: .85rem; font-weight: 700; transition: all .2s; background: white; text-align: center; color: var(--ink); }
+  .match-item:hover   { border-color: var(--crimson-mid); background: var(--crimson-pale); }
+  .match-item.selected { border-color: var(--lavender); background: var(--lav-pale); color: var(--lavender); }
+  .match-item.matched  { border-color: var(--mint); background: var(--mint-pale); color: #1b7a58; cursor: default; }
+  .match-item.wrong    { border-color: var(--coral); background: var(--coral-pale); color: var(--coral); animation: shake .3s; }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+
+  .sel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: .8rem; margin: 1rem 0 1.5rem; }
+  .sel-card { background: white; border: 2px solid var(--border); border-radius: 14px; padding: 1rem; text-align: center; cursor: pointer; transition: all .2s; }
+  .sel-card:hover, .sel-card.active { border-color: var(--coral); box-shadow: 0 3px 12px rgba(232,96,60,.18); transform: translateY(-2px); }
+  .sel-card.active { background: var(--coral-pale); }
+  .sel-card .sel-icon { font-size: 2rem; margin-bottom: .4rem; }
+  .sel-card .sel-name { font-family: 'Fredoka One', cursive; font-size: .92rem; color: var(--crimson); margin-bottom: .2rem; }
+  .sel-card .sel-key { font-family: 'DM Mono', monospace; font-size: .65rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .sel-detail { background: var(--coral-pale); border-left: 4px solid var(--coral); border-radius: 0 12px 12px 0; padding: 1.2rem 1.4rem; display: none; animation: fadeIn .3s ease; margin-bottom: 1.5rem; }
+  .sel-detail.show { display: block; }
+  .sel-detail h4 { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: var(--crimson); margin-bottom: .4rem; }
+  .sel-detail p  { font-size: .88rem; line-height: 1.7; }
+  .sel-detail .examples { margin-top: .6rem; font-style: italic; color: var(--muted); font-size: .82rem; }
+
+  .score-panel { background: linear-gradient(135deg, var(--crimson) 0%, var(--crimson-mid) 100%); color: white; border-radius: 16px; padding: 2rem; text-align: center; margin-top: 1.5rem; }
+  .score-panel .score-num { font-family: 'Fredoka One', cursive; font-size: 3.5rem; line-height: 1; color: var(--gold); }
+  .score-panel p { opacity: .88; margin-top: .5rem; font-size: 1rem; }
+  .score-panel h3 { font-family: 'Fredoka One', cursive; font-size: 1.5rem; margin-bottom: .3rem; }
+
+  .congrats-panel { background: linear-gradient(135deg, var(--crimson) 0%, var(--crimson-mid) 100%); color: white; border-radius: 20px; padding: 2.5rem 2rem; text-align: center; margin-top: 2rem; }
+  .congrats-panel h2 { font-family: 'Fredoka One', cursive; font-size: 2rem; margin-bottom: .6rem; }
+  .congrats-panel p  { opacity: .9; line-height: 1.7; max-width: 480px; margin: 0 auto .8rem; }
+  .summary-chips { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin-top: 1rem; }
+  .summary-chip { background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.3); border-radius: 20px; padding: .3rem .9rem; font-size: .78rem; font-weight: 700; font-family: 'DM Mono', monospace; letter-spacing: .04em; }
+
+  .vocab-table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; }
+  .vocab-table th { background: var(--crimson); color: white; font-family: 'Fredoka One', cursive; font-size: .85rem; padding: .7rem 1rem; text-align: left; }
+  .vocab-table td { padding: .65rem 1rem; font-size: .85rem; line-height: 1.5; border-bottom: 1px solid var(--border); }
+  .vocab-table tr:nth-child(even) td { background: #f5f7fa; }
+  .vocab-table tr:hover td { background: var(--crimson-pale); transition: background .15s; }
+  .vocab-table td:first-child { font-weight: 800; color: var(--crimson-mid); }
+
+  .blank-input { border: none; border-bottom: 2.5px solid var(--crimson-mid); background: transparent; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700; color: var(--crimson); width: 170px; text-align: center; outline: none; padding: 0 4px; transition: border-color .2s; }
+  .blank-input:focus  { border-color: var(--coral); }
+  .blank-input.ok     { border-color: var(--mint);   color: var(--mint); }
+  .blank-input.err    { border-color: var(--coral);  color: var(--coral); }
+  .fill-q { font-size: 1rem; line-height: 2; color: var(--ink); margin-bottom: 1rem; }
+
+  .divider { height: 1px; background: var(--border); margin: 2rem 0; }
+
+  .name-bar { background: rgba(255,255,255,.1); border: 1.5px solid rgba(255,255,255,.25); border-radius: 12px; padding: .6rem 1rem; display: flex; align-items: center; gap: .8rem; max-width: 420px; margin: 0 auto 1rem; }
+  .name-bar label { font-size: .78rem; font-weight: 700; color: rgba(255,255,255,.8); white-space: nowrap; font-family: 'DM Mono', monospace; }
+  .name-bar input { flex: 1; background: rgba(255,255,255,.15); border: none; border-radius: 8px; padding: .4rem .8rem; font-family: 'Nunito', sans-serif; font-size: .9rem; font-weight: 700; color: white; outline: none; }
+  .name-bar input::placeholder { color: rgba(255,255,255,.4); font-weight: 400; }
+
+  .summary-section { background: white; border-radius: 14px; padding: 1.4rem 1.6rem; margin-bottom: 1rem; border: 2px solid var(--border); }
+  .summary-section h3 { font-family: 'Fredoka One', cursive; font-size: 1.05rem; color: var(--crimson); margin-bottom: .8rem; }
+  .summary-answer { background: #f5f7fa; border-radius: 8px; padding: .7rem 1rem; font-size: .85rem; line-height: 1.6; color: var(--ink); margin-bottom: .5rem; font-style: italic; border-left: 3px solid var(--lavender); min-height: 2rem; }
+  .summary-answer.empty { color: var(--muted); font-style: normal; border-left-color: var(--border); }
+
+  .share-buttons { display: flex; gap: .8rem; flex-wrap: wrap; margin-top: 1.5rem; justify-content: center; }
+  .share-btn { border: none; border-radius: 12px; padding: .85rem 1.6rem; font-family: 'Fredoka One', cursive; font-size: 1rem; cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: .5rem; }
+  .share-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background: var(--mint);     color: white; }
+  .share-btn.email { background: var(--lavender); color: white; }
+  .share-btn.print { background: var(--crimson);  color: white; }
+  .copy-confirm { text-align: center; font-family: 'DM Mono', monospace; font-size: .78rem; color: var(--mint); min-height: 1.2rem; margin-top: .6rem; transition: all .3s; }
+
+  @media print {
+    .hero, .nav-row, .share-buttons, .copy-confirm, .prog-step, .name-bar { display: none !important; }
+    .sheet { box-shadow: none; border-radius: 0; }
+    .section { display: none !important; }
+    #sec-6 { display: block !important; }
+  }
+
+  @media (max-width: 600px) { .sim-grid { grid-template-columns: repeat(3, 1fr) !important; } }
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge">🫁 BIO 201 A&amp;P I · Unit 1</div>
+  <h1>Functions &amp; <span class="accent">Requirements</span> of Life</h1>
+  <p class="intro">What actually makes something "alive," and what does the human body absolutely need to stay that way? These two questions set up everything you'll study about every organ system this semester.</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <span class="prog-step active" onclick="goTo(0)">① Wonder</span>
+    <span class="prog-step"       onclick="goTo(1)">② Functions of Life</span>
+    <span class="prog-step"       onclick="goTo(2)">③ Requirements for Life</span>
+    <span class="prog-step"       onclick="goTo(3)">④ Survival Simulator</span>
+    <span class="prog-step"       onclick="goTo(4)">⑤ Quiz</span>
+    <span class="prog-step"       onclick="goTo(5)">⑥ Reflect</span>
+    <span class="prog-step"       onclick="goTo(6)">📤 Submit</span>
+  </div>
+</div>
+
+<div class="sheet">
+
+<!-- SECTION 0: WONDER -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">Phase 1 · Wonder</span></div>
+  <h2>⚡ What Actually Makes You "Alive"?</h2>
+  <p class="lead">A cancer cell, a bacterium, and you are all technically "alive" — but a rock, a virus, and a corpse are not. What's the dividing line?</p>
+
+  <div class="wonder-box">
+    <p>Cancer cells are sometimes described as "generic" cells that have lost their specialized identity and just keep dividing uncontrollably. <strong>If a cell can grow, use energy, and reproduce, but has lost its specialized identity and stopped responding normally to its surroundings — is it still doing everything "life" requires?</strong></p>
+  </div>
+
+  <div class="predict-box">
+    <h4>✏️ Your Prediction (before we dig in)</h4>
+    <textarea placeholder="Write down what YOU think are the essential, non-negotiable functions that separate a living human body from something non-living..."></textarea>
+  </div>
+
+  <div class="wonder-box gold-box">
+    <p>Physiologists boil it down to six defining functions: <strong>organization, metabolism, responsiveness, movement, development, and reproduction.</strong> Miss enough of these and you're not describing a living organism anymore. And keeping all six running requires the body to constantly meet a short list of non-negotiable <strong>requirements</strong> — oxygen, nutrients, a narrow temperature range, and the right atmospheric pressure.</p>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" disabled>← Back</button>
+    <button class="btn btn-coral" onclick="goTo(1)">Next: Functions of Life →</button>
+  </div>
+</div>
+
+<!-- SECTION 1: FUNCTIONS OF HUMAN LIFE -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">2</div><span class="eyebrow-label">Phase 2 · Functions of Human Life</span></div>
+  <h2>🧬 The Six Functions That Define Life</h2>
+  <p class="lead">Tap each function to see how it plays out in the human body.</p>
+
+  <div class="chip-row">
+    <span class="chip crimson" onclick="reveal('organization')">Organization</span>
+    <span class="chip mint" onclick="reveal('metabolism')">Metabolism</span>
+    <span class="chip gold" onclick="reveal('responsiveness')">Responsiveness</span>
+    <span class="chip coral" onclick="reveal('movement')">Movement</span>
+    <span class="chip lav" onclick="reveal('development')">Development, Growth &amp; Differentiation</span>
+    <span class="chip crimson" onclick="reveal('reproduction')">Reproduction</span>
+  </div>
+
+  <div id="rev-organization" class="concept-reveal crimson-border">
+    <strong>Organization</strong> — Trillions of cells are organized to maintain distinct internal compartments, separating body fluids from the outside world and from each other. Cell membranes separate a cell's interior from its exterior; blood vessels keep blood in a closed system; internal membranes separate organs like the lungs, heart, and kidneys from one another. The integumentary system (skin and its structures) is the body's largest organizational barrier against the outside world.
+  </div>
+  <div id="rev-metabolism" class="concept-reveal mint-border">
+    <strong>Metabolism</strong> — The sum of all chemical reactions that occur in the body. It has two directions: <em>anabolism</em> builds larger, complex molecules from smaller ones (uses energy), and <em>catabolism</em> breaks larger molecules down into simpler ones (releases energy). Together they keep the cell's ATP energy currency flowing.
+  </div>
+  <div id="rev-responsiveness" class="concept-reveal gold-border">
+    <strong>Responsiveness</strong> — The ability to adjust to changes in the internal or external environment. Moving toward food and water, moving away from danger, and sweating in response to rising internal temperature are all responsiveness in action.
+  </div>
+  <div id="rev-movement" class="concept-reveal coral">
+    <strong>Movement</strong> — Not just walking or waving — movement also includes blood cells moving through vessels, muscle cells contracting to maintain posture, glands secreting chemicals, and your diaphragm moving air in and out of your lungs.
+  </div>
+  <div id="rev-development" class="concept-reveal lav-border">
+    <strong>Development, Growth &amp; Differentiation</strong> — <em>Development</em> is all the changes a body goes through across a lifetime. <em>Differentiation</em> is unspecialized cells becoming specialized in structure and function. <em>Growth</em> is an increase in body size, achieved by increasing the number of cells, the amount of material around cells (like bone mineral), and — within narrow limits — the size of existing cells.
+  </div>
+  <div id="rev-reproduction" class="concept-reveal crimson-border">
+    <strong>Reproduction</strong> — The formation of a new organism from parent organisms, carried out in humans by the male and female reproductive systems. Since every complex organism eventually dies, reproduction is what keeps the line of organisms going.
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--crimson);margin-bottom:.8rem;">🔋 Metabolism, Zoomed In: Anabolism vs. Catabolism</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Every cell in your body constantly runs both processes at once to keep ATP flowing. Tap each to compare.</p>
+
+  <div class="sel-grid">
+    <div class="sel-card" onclick="showSel('anabolism')">
+      <div class="sel-icon">🧱</div>
+      <div class="sel-name">Anabolism</div>
+      <div class="sel-key">builds &amp; uses energy</div>
+    </div>
+    <div class="sel-card" onclick="showSel('catabolism')">
+      <div class="sel-icon">💥</div>
+      <div class="sel-name">Catabolism</div>
+      <div class="sel-key">breaks down &amp; releases energy</div>
+    </div>
+  </div>
+
+  <div id="sel-anabolism" class="sel-detail">
+    <h4>🧱 Anabolism</h4>
+    <p>The process by which smaller, simpler molecules are combined into larger, more complex substances. Anabolism <em>uses</em> energy — your body assembles the complex chemicals it needs by combining small molecules derived from the foods you eat, including the synthesis of ATP itself.</p>
+    <p class="examples">📌 Example: muscle cells assembling new proteins for growth and repair.</p>
+  </div>
+  <div id="sel-catabolism" class="sel-detail">
+    <h4>💥 Catabolism</h4>
+    <p>The process by which larger, more complex substances are broken down into smaller, simpler molecules. Catabolism <em>releases</em> energy — the complex molecules in food are broken down so the body can use their parts, and stored ATP is broken down to release a controlled amount of energy for cellular work.</p>
+    <p class="examples">📌 Example: breaking down glucose to power a muscle contraction.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--crimson);margin:1.5rem 0 .8rem;">📋 The Six Functions of Human Life</h3>
+  <table class="vocab-table">
+    <tr><th>Function</th><th>What it means</th></tr>
+    <tr><td>Organization</td><td>Cells maintain distinct, separated internal compartments</td></tr>
+    <tr><td>Metabolism</td><td>The sum of anabolic (building) and catabolic (breaking-down) chemical reactions</td></tr>
+    <tr><td>Responsiveness</td><td>Adjusting to changes in the internal or external environment</td></tr>
+    <tr><td>Movement</td><td>Motion at every scale — whole body, organs, individual cells</td></tr>
+    <tr><td>Development</td><td>Differentiation, growth, and repair across the lifespan</td></tr>
+    <tr><td>Reproduction</td><td>Formation of a new organism from parent organisms</td></tr>
+  </table>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(0)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(2)">Next: Requirements for Life →</button>
+  </div>
+</div>
+
+<!-- SECTION 2: REQUIREMENTS FOR HUMAN LIFE -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">3</div><span class="eyebrow-label">Phase 3 · Requirements for Human Life</span></div>
+  <h2>🌍 What the Body Absolutely Needs</h2>
+  <p class="lead">Beyond just "functioning," the human body needs a short list of things from its environment — and it can only survive without each one for a strictly limited time.</p>
+
+  <div class="evidence-grid">
+    <div class="ev-card" onclick="showEvidence('oxygen')"><div class="ev-icon">💨</div><div class="ev-title">Oxygen</div><div class="ev-sub">Minutes matter</div></div>
+    <div class="ev-card" onclick="showEvidence('nutrients')"><div class="ev-icon">🍎</div><div class="ev-title">Nutrients</div><div class="ev-sub">Water &amp; macro/micro</div></div>
+    <div class="ev-card" onclick="showEvidence('temperature')"><div class="ev-icon">🌡️</div><div class="ev-title">Narrow Temperature Range</div><div class="ev-sub">~37°C / 98.6°F</div></div>
+    <div class="ev-card" onclick="showEvidence('pressure')"><div class="ev-icon">🎈</div><div class="ev-title">Atmospheric Pressure</div><div class="ev-sub">Keeps gases dissolved</div></div>
+  </div>
+
+  <div id="ev-oxygen" class="ev-panel">
+    <h4>💨 Oxygen</h4>
+    <p>Atmospheric air is only about 20% oxygen, but it's essential to the chemical reactions that keep the body alive, including ATP production. Brain cells are especially sensitive to oxygen loss because of their constant, high demand for ATP.</p>
+    <div class="example-box">📌 Brain damage is likely within 5 minutes without oxygen; death is likely within 10 minutes.</div>
+  </div>
+  <div id="ev-nutrients" class="ev-panel">
+    <h4>🍎 Nutrients</h4>
+    <p>A nutrient is any substance essential to survival. <strong>Water</strong> is the most critical — it's the medium in which all chemical reactions of life take place and makes up roughly 70% of adult body mass. <strong>Macronutrients</strong> (carbohydrates, lipids, and proteins) supply energy and the building blocks of the body itself. <strong>Micronutrients</strong> (vitamins and minerals) participate in essential reactions like nerve impulses; some, like calcium, also contribute to body structure.</p>
+    <div class="example-box">📌 You can survive only days without water, but weeks without energy-yielding nutrients.</div>
+  </div>
+  <div id="ev-temperature" class="ev-panel">
+    <h4>🌡️ Narrow Range of Temperature</h4>
+    <p>The chemical reactions the body depends on can only occur within a narrow range around 37°C (98.6°F). When body temperature rises or drops too far, enzymes (proteins that facilitate reactions) lose their normal structure and stop functioning, halting metabolism. Short-term, the body compensates: sweating cools it down, shivering and increased fuel consumption warm it up.</p>
+    <div class="example-box">📌 Severe cold reduces blood flow to the extremities to protect the core — but can cause frostbite in fingers and toes.</div>
+  </div>
+  <div id="ev-pressure" class="ev-panel">
+    <h4>🎈 Narrow Range of Atmospheric Pressure</h4>
+    <p>Atmospheric pressure constantly presses on the body and keeps gases like nitrogen dissolved in body fluids. It's also required for breathing — taking in oxygen and releasing carbon dioxide. At high altitude, lower atmospheric pressure reduces gas exchange, causing shortness of breath, confusion, and headache (altitude sickness).</p>
+    <div class="example-box">📌 A sudden drop in pressure can cause dissolved nitrogen gas to form bubbles in the blood — this is decompression sickness ("the bends").</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--crimson);margin-bottom:.4rem;">🏥 Real-World Case Studies</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Two situations where these requirements get pushed to the edge — tap each to explore.</p>
+
+  <div class="sel-grid">
+    <div class="sel-card" onclick="showSel('dcs')"><div class="sel-icon">🤿</div><div class="sel-name">Decompression Sickness</div><div class="sel-key">pressure imbalance</div></div>
+    <div class="sel-card" onclick="showSel('hypothermia')"><div class="sel-icon">❄️</div><div class="sel-name">Controlled Hypothermia</div><div class="sel-key">temperature manipulation</div></div>
+  </div>
+
+  <div id="sel-dcs" class="sel-detail">
+    <h4>🤿 Decompression Sickness ("The Bends")</h4>
+    <p>When a diver surfaces too quickly, the rapid drop in pressure causes dissolved nitrogen gas in the blood to come out of solution and form bubbles — the same effect you see when you open a carbonated drink. Symptoms include joint pain, headache, and vision problems; severe untreated cases can be fatal. Treatment involves pure oxygen and a hyperbaric chamber, which repressurizes the body so pressure can be released more gradually.</p>
+  </div>
+  <div id="sel-hypothermia" class="sel-detail">
+    <h4>❄️ Controlled Hypothermia</h4>
+    <p>Sometimes clinicians deliberately override the body's temperature-regulation system. During open-heart surgery, controlled hypothermia cools the body to 25–32°C, reducing the metabolic needs of the brain, heart, and other organs and lowering the risk of damage while blood flow is interrupted. Some emergency physicians also use induced hypothermia after cardiac arrest to slow metabolism and reduce the heart's workload during recovery.</p>
+  </div>
+
+  <div class="reflect-box" style="margin-top:1.5rem;">
+    <h4>✅ Quick Reflection</h4>
+    <textarea placeholder="Of oxygen, water, food, temperature, and pressure — which does the body have the least tolerance for going without, and why do you think that is?"></textarea>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(3)">Next: Survival Simulator →</button>
+  </div>
+</div>
+
+<!-- SECTION 3: SURVIVAL SIMULATOR -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow"><div class="eyebrow-num num-gold">4</div><span class="eyebrow-label">Phase 4 · Simulate It</span></div>
+  <h2>⏳ What Happens When a Requirement Runs Out?</h2>
+  <p class="lead">In your last lesson, you saw the body <strong>correct</strong> a disturbance through negative feedback. Here, there's no correction available — pick a missing requirement and step through what happens as time runs out.</p>
+
+  <div class="predict-box">
+    <h4>✏️ Before you simulate — your prediction</h4>
+    <textarea id="sim-predict" placeholder="Which do you think the body can tolerate losing for the SHORTEST time: oxygen, water, food, stable temperature, or normal pressure? Put them in order from shortest to longest tolerance..."></textarea>
+  </div>
+
+  <div class="demo-zone">
+    <h3>⏳ Survival Countdown Simulator</h3>
+    <div class="hint">Pick a missing requirement, then step through the timeline.</div>
+
+    <div class="action-row">
+      <button class="btn btn-coral" onclick="chooseScenario('oxygen')">💨 No Oxygen</button>
+      <button class="btn btn-lav"   onclick="chooseScenario('water')">💧 No Water</button>
+      <button class="btn btn-gold" onclick="chooseScenario('food')">🍽️ No Food</button>
+      <button class="btn btn-mint" onclick="chooseScenario('cold')">🥶 Extreme Cold Exposure</button>
+      <button class="btn btn-crimson" onclick="chooseScenario('pressure')">🎈 Rapid Pressure Loss</button>
+    </div>
+
+    <div class="sim-stat-row">
+      <div class="sim-stat"><div class="stat-val" id="stat-temp">—</div><div class="stat-lbl">Time Elapsed</div></div>
+      <div class="sim-stat"><div class="stat-val" id="stat-stage">Ready</div><div class="stat-lbl">Condition</div></div>
+    </div>
+
+    <h3 style="margin-top:1.2rem;">📊 Timeline</h3>
+    <div class="sim-grid" id="tempGrid"></div>
+
+    <div class="action-row" style="margin-top:1rem;">
+      <button class="btn btn-mint"  id="btn-step" onclick="stepSim()" disabled>⏩ Advance</button>
+      <button class="btn btn-gold"  id="btn-all"  onclick="finishSim()" disabled>⏭ Skip to End</button>
+      <button class="btn btn-ghost" onclick="resetSim()">↺ Reset</button>
+    </div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — What did you observe?</h4>
+    <textarea placeholder="Which requirement ran out fastest? Why do you think the body has the least tolerance for losing that one specifically?"></textarea>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--crimson);margin-bottom:.4rem;">🎯 Quick Match — Requirement to Survival Window</h3>
+  <div class="match-grid" id="matchGrid">
+    <div class="match-item" data-pair="a" data-side="term" onclick="matchClick(this)">Oxygen</div>
+    <div class="match-item" data-pair="b" data-side="def"  onclick="matchClick(this)">Days without it</div>
+    <div class="match-item" data-pair="c" data-side="term" onclick="matchClick(this)">Food (energy-yielding nutrients)</div>
+    <div class="match-item" data-pair="d" data-side="def"  onclick="matchClick(this)">Can cause enzyme failure within hours of exposure</div>
+    <div class="match-item" data-pair="a" data-side="def"  onclick="matchClick(this)">Minutes without it — brain damage in ~5 min</div>
+    <div class="match-item" data-pair="e" data-side="term" onclick="matchClick(this)">Stable atmospheric pressure</div>
+    <div class="match-item" data-pair="b" data-side="term" onclick="matchClick(this)">Water</div>
+    <div class="match-item" data-pair="c" data-side="def"  onclick="matchClick(this)">Weeks without it</div>
+    <div class="match-item" data-pair="d" data-side="term" onclick="matchClick(this)">Extreme cold or heat</div>
+    <div class="match-item" data-pair="e" data-side="def"  onclick="matchClick(this)">Rapid loss can cause dissolved gases to form bubbles in blood</div>
+  </div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-ghost" onclick="resetMatch()">↺ Reset Match</button>
+    <span id="match-score" style="margin-left:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted);"></span>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(4)">Next: Quiz →</button>
+  </div>
+</div>
+
+<!-- SECTION 4: QUIZ -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow"><div class="eyebrow-num num-crimson">5</div><span class="eyebrow-label">Phase 5 · Check Your Understanding</span></div>
+  <h2>📝 Functions &amp; Requirements Quiz</h2>
+  <p class="lead">Covers the six functions of life, metabolism, and the four requirements for human life.</p>
+  <div id="quiz-container"></div>
+  <div id="score-panel" class="score-panel" style="display:none;">
+    <h3>Quiz Complete! 🎉</h3>
+    <div class="score-num" id="score-display">0/15</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-gold" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button>
+  </div>
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(3)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(5)">Next: Reflect →</button>
+  </div>
+</div>
+
+<!-- SECTION 5: REFLECT -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">6</div><span class="eyebrow-label">Phase 6 · Reflect</span></div>
+  <h2>💭 Reflection &amp; Review</h2>
+  <p class="lead">Answer all four in your own words.</p>
+
+  <div class="quiz-card">
+    <div class="quiz-q">1. Explain the difference between anabolism and catabolism, and how they relate to metabolism as a whole.</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer..."></textarea>
+  </div>
+  <div class="quiz-card">
+    <div class="quiz-q">2. Choose two of the six functions of life and explain how they show up in a specific body system.</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer..."></textarea>
+  </div>
+  <div class="quiz-card">
+    <div class="quiz-q">3. Why can the body survive weeks without food but only minutes without oxygen? Connect this to what cells actually need ATP for.</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer..."></textarea>
+  </div>
+  <div class="quiz-card">
+    <div class="quiz-q">4. Explain how decompression sickness happens, using the concept of atmospheric pressure and dissolved gases.</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer..."></textarea>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--crimson);margin-bottom:.8rem;">✏️ Fill-in-the-Blank Review</h3>
+  <div id="fill-container"></div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-mint" onclick="checkAllFills()">✓ Check All Answers</button>
+    <button class="btn btn-ghost" onclick="resetFills()" style="margin-left:.6rem;">↺ Reset</button>
+  </div>
+
+  <div class="congrats-panel" style="margin-top:2rem;">
+    <h2>🫁 Functions &amp; Requirements Mastered!</h2>
+    <p>You now know what defines a living human body and what it can't survive without. Next up: how the body maintains all of this moment to moment — homeostasis.</p>
+    <div class="summary-chips">
+      <span class="summary-chip">Six Functions of Life ✓</span>
+      <span class="summary-chip">Anabolism vs. Catabolism ✓</span>
+      <span class="summary-chip">Oxygen, Nutrients, Temperature, Pressure ✓</span>
+      <span class="summary-chip">Decompression Sickness ✓</span>
+    </div>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(4)">← Back</button>
+    <button class="btn btn-crimson" onclick="goTo(0)">↺ Start Over</button>
+  </div>
+</div>
+
+<!-- SECTION 6: SUBMIT -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">7</div><span class="eyebrow-label">Your Completed Work</span></div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Here's a summary of everything you worked on. <strong>Copy it</strong> and paste into your course's LMS, or <strong>email it</strong> to your instructor.</p>
+
+  <div class="summary-section" style="background:var(--crimson);color:white;border-color:var(--crimson);">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">STUDENT</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">LESSON</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;">Functions &amp; Requirements Explorer 🫁</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6;" id="summaryDate"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section"><h3>📝 Quiz Score</h3><div class="summary-answer" id="sum-quiz"></div></div>
+  <div class="summary-section">
+    <h3>⚡ Section 1 — Opening Prediction</h3>
+    <div class="summary-answer" id="sum-pred"></div>
+  </div>
+  <div class="summary-section">
+    <h3>⏳ Section 4 — Survival Simulation Prediction</h3>
+    <div class="summary-answer" id="sum-sim-pred"></div>
+  </div>
+  <div class="summary-section">
+    <h3>💭 Section 6 — Reflection Questions</h3>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;">Q1 — Anabolism vs. Catabolism</div>
+    <div class="summary-answer" id="sum-r1"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q2 — Functions of Life in a Body System</div>
+    <div class="summary-answer" id="sum-r2"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q3 — Oxygen vs. Food Survival Window</div>
+    <div class="summary-answer" id="sum-r3"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q4 — Decompression Sickness</div>
+    <div class="summary-answer" id="sum-r4"></div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Instructor</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.6rem;">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2;">
+      <strong>📋 Copy My Results</strong> — Copies all answers to clipboard. Paste into your course's assignment submission.<br>
+      <strong>📧 Email to Instructor</strong> — Opens your email app with answers pre-filled. Add your instructor's address and send.<br>
+      <strong>🖨️ Print / Save PDF</strong> — Mac: bottom-left dropdown → Save as PDF. Windows: Microsoft Print to PDF. Upload to assignment.
+    </p>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(5)">← Back</button>
+    <button class="btn btn-crimson" onclick="goTo(0)">↺ Start Over</button>
+  </div>
+</div>
+
+</div>
+
+<div style="position:relative; z-index:1; text-align:center; padding:1.5rem 2rem 2rem; color:rgba(255,255,255,0.45); font-family:'DM Mono',monospace; font-size:0.7rem; line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom / single-instructor use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+
+<script>
+const steps = document.querySelectorAll('.prog-step');
+const sections = document.querySelectorAll('.section');
+function goTo(n) {
+  sections.forEach((s,i) => s.classList.toggle('active', i === n));
+  steps.forEach((s,i) => { s.classList.remove('active','done'); if (i === n) s.classList.add('active'); if (i < n) s.classList.add('done'); });
+  if (n === 6) buildSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+const revealMap = { organization:'rev-organization', metabolism:'rev-metabolism', responsiveness:'rev-responsiveness', movement:'rev-movement', development:'rev-development', reproduction:'rev-reproduction' };
+function reveal(key) {
+  Object.values(revealMap).forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('show'); });
+  const target = document.getElementById(revealMap[key]);
+  if (target) target.classList.add('show');
+}
+
+function showEvidence(type) {
+  document.querySelectorAll('.ev-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.ev-panel').forEach(p => p.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const panel = document.getElementById('ev-' + type);
+  if (panel) panel.classList.add('show');
+}
+
+function showSel(type) {
+  document.querySelectorAll('.sel-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.sel-detail').forEach(d => d.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const det = document.getElementById('sel-' + type);
+  if (det) det.classList.add('show');
+}
+
+let matchSelected = null;
+let matchScore = 0;
+function matchClick(el) {
+  if (el.classList.contains('matched')) return;
+  if (!matchSelected) { el.classList.add('selected'); matchSelected = el; }
+  else if (matchSelected === el) { el.classList.remove('selected'); matchSelected = null; }
+  else {
+    const pairA = matchSelected.dataset.pair, pairB = el.dataset.pair;
+    const sideA = matchSelected.dataset.side, sideB = el.dataset.side;
+    if (pairA === pairB && sideA !== sideB) {
+      matchSelected.classList.remove('selected'); matchSelected.classList.add('matched'); el.classList.add('matched');
+      matchScore++; document.getElementById('match-score').textContent = matchScore + '/5 matched'; matchSelected = null;
+    } else {
+      matchSelected.classList.remove('selected'); matchSelected.classList.add('wrong'); el.classList.add('wrong');
+      const a = matchSelected, b = el;
+      setTimeout(() => { a.classList.remove('wrong'); b.classList.remove('wrong'); }, 600);
+      matchSelected = null;
+    }
+  }
+}
+function resetMatch() {
+  matchSelected = null; matchScore = 0;
+  document.querySelectorAll('.match-item').forEach(el => el.classList.remove('selected','matched','wrong'));
+  document.getElementById('match-score').textContent = '';
+}
+
+// ─── SURVIVAL COUNTDOWN SIMULATOR ───
+const scenarios = {
+  oxygen:   { steps: [
+      {t:'0 sec',  sev:'normal', d:'Breathing normally'},
+      {t:'30 sec', sev:'mid',    d:'O2 reserves consumed'},
+      {t:'1 min',  sev:'mid',    d:'Confusion begins'},
+      {t:'3 min',  sev:'hot',    d:'Loss of consciousness'},
+      {t:'5 min',  sev:'hot',    d:'Brain damage begins'},
+      {t:'10 min', sev:'hot',    d:'Death likely'} ] },
+  water:    { steps: [
+      {t:'Day 0', sev:'normal', d:'Normal hydration'},
+      {t:'Day 1', sev:'mid',    d:'Thirst, reduced urine output'},
+      {t:'Day 2', sev:'mid',    d:'Dizziness, dry mouth'},
+      {t:'Day 3', sev:'hot',    d:'Confusion, rapid heartbeat'},
+      {t:'Day 5', sev:'hot',    d:'Organ strain'},
+      {t:'Day 7+',sev:'hot',    d:'Survival unlikely'} ] },
+  food:     { steps: [
+      {t:'Wk 0', sev:'normal', d:'Normal energy levels'},
+      {t:'Wk 1', sev:'mid',    d:'Fat stores mobilized'},
+      {t:'Wk 2', sev:'mid',    d:'Muscle breakdown begins'},
+      {t:'Wk 3', sev:'hot',    d:'Significant weight loss'},
+      {t:'Wk 4', sev:'hot',    d:'Organ function declines'},
+      {t:'Wk 5+',sev:'hot',    d:'Survival becomes unlikely'} ] },
+  cold:     { steps: [
+      {t:'Start',    sev:'normal', d:'98.6°F maintained'},
+      {t:'Exposed',  sev:'cold',   d:'Shivering begins'},
+      {t:'Prolonged',sev:'cold',   d:'Shivering stops, confusion'},
+      {t:'Severe',   sev:'hot',    d:'Loss of consciousness'},
+      {t:'Critical', sev:'hot',    d:'Cardiac arrest risk'} ] },
+  pressure: { steps: [
+      {t:'Normal',  sev:'normal', d:'Gases dissolved normally in blood'},
+      {t:'Drop',    sev:'mid',    d:'Nitrogen begins forming bubbles'},
+      {t:'More drop',sev:'cold',  d:'Joint pain — "the bends"'},
+      {t:'Severe',  sev:'hot',    d:'Vision disturbances, severe pain'},
+      {t:'Untreated',sev:'hot',   d:'Risk of death without treatment'} ] }
+};
+let simScenario = null;
+let simStep = 0;
+
+function renderSim() {
+  const grid = document.getElementById('tempGrid');
+  if (!simScenario) {
+    grid.style.gridTemplateColumns = 'repeat(6, 1fr)';
+    grid.innerHTML = Array(6).fill('<div class="sim-base" style="background:#f5f7fa;border-color:var(--border);color:var(--muted);">·</div>').join('');
+    document.getElementById('stat-temp').textContent = '—';
+    document.getElementById('stat-stage').textContent = 'Ready';
+    return;
+  }
+  const stepsArr = scenarios[simScenario].steps;
+  grid.style.gridTemplateColumns = `repeat(${stepsArr.length}, 1fr)`;
+  let html = '';
+  for (let i = 0; i < stepsArr.length; i++) {
+    if (i <= simStep) html += `<div class="sim-base ${stepsArr[i].sev}">${stepsArr[i].t}</div>`;
+    else html += `<div class="sim-base" style="background:#f5f7fa;border-color:var(--border);color:var(--muted);">·</div>`;
+  }
+  grid.innerHTML = html;
+  document.getElementById('stat-temp').textContent = stepsArr[simStep].t;
+  document.getElementById('stat-stage').textContent = stepsArr[simStep].d;
+  const atEnd = simStep >= stepsArr.length - 1;
+  document.getElementById('btn-step').disabled = atEnd;
+  document.getElementById('btn-all').disabled = atEnd;
+}
+function chooseScenario(type) {
+  simScenario = type; simStep = 0;
+  document.getElementById('btn-step').disabled = false;
+  document.getElementById('btn-all').disabled = false;
+  renderSim();
+}
+function stepSim() { if (!simScenario) return; const max = scenarios[simScenario].steps.length - 1; if (simStep < max) simStep++; renderSim(); }
+function finishSim() { if (!simScenario) return; simStep = scenarios[simScenario].steps.length - 1; renderSim(); }
+function resetSim() { simScenario = null; simStep = 0; document.getElementById('btn-step').disabled = true; document.getElementById('btn-all').disabled = true; renderSim(); }
+renderSim();
+
+// ─── QUIZ ───
+const quizData = [
+  { q:"1 — Which of these is NOT one of the six functions that define human life?", opts:["Metabolism","Responsiveness","Photosynthesis","Reproduction"], ans:2, fb:"Correct! Photosynthesis is how plants capture energy — it's not one of the six functions of human life (organization, metabolism, responsiveness, movement, development, reproduction)." },
+  { q:"2 — Anabolism is best described as:", opts:["Breaking large molecules into smaller ones, releasing energy","Combining smaller molecules into larger ones, using energy","The process of cell division","The loss of cell differentiation"], ans:1, fb:"Correct! Anabolism builds complex molecules from simpler ones and uses energy." },
+  { q:"3 — Catabolism releases energy by:", opts:["Building new proteins", "Breaking larger, complex substances into smaller, simpler ones", "Forming new ATP molecules", "Increasing cell size"], ans:1, fb:"Correct! Catabolism breaks molecules down, releasing energy the cell can use." },
+  { q:"4 — Metabolism is best defined as:", opts:["Only the anabolic reactions in the body", "Only the catabolic reactions in the body", "The sum of all anabolic and catabolic reactions in the body", "The process of aging"], ans:2, fb:"Correct! Metabolism includes both anabolism and catabolism happening continuously." },
+  { q:"5 — Which function of life is demonstrated when blood vessels in the skin dilate and sweat glands activate as body temperature rises?", opts:["Reproduction","Responsiveness","Development","Organization"], ans:1, fb:"Correct! Responsiveness is adjusting to changes in the internal or external environment." },
+  { q:"6 — Which of these counts as an example of 'movement' as a function of life?", opts:["Only walking and running", "Only voluntary skeletal muscle contraction", "Blood cells moving through vessels, glands secreting chemicals, and muscles contracting", "Only the heartbeat"], ans:2, fb:"Correct! Movement happens at every scale, from whole-body motion down to individual cells." },
+  { q:"7 — Differentiation refers to:", opts:["An increase in body size", "Unspecialized cells becoming specialized in structure and function", "The formation of a new organism", "The breakdown of glucose for energy"], ans:1, fb:"Correct! Differentiation is part of development — cells becoming specialized." },
+  { q:"8 — Which nutrient is the single most critical for short-term human survival?", opts:["Carbohydrates","Water","Vitamins","Proteins"], ans:1, fb:"Correct! Water is the most critical nutrient — humans can only survive a few days without it." },
+  { q:"9 — Roughly how long can brain damage begin after complete oxygen loss?", opts:["10 seconds","5 minutes","1 hour","1 day"], ans:1, fb:"Correct! Brain damage is likely within about 5 minutes without oxygen." },
+  { q:"10 — Why does extreme body temperature (too high or too low) threaten survival?", opts:["It causes immediate cell death only", "Enzymes lose their normal structure and stop facilitating chemical reactions", "It has no real physiological effect", "It only affects skin cells"], ans:1, fb:"Correct! Enzymes are temperature-sensitive proteins — outside a narrow range, they stop working properly." },
+  { q:"11 — Atmospheric pressure is important for human survival because it:", opts:["Has no real physiological role", "Keeps gases like nitrogen dissolved in body fluids and enables breathing", "Only matters underwater", "Only affects body temperature"], ans:1, fb:"Correct! Pressure keeps gases dissolved in the blood and allows normal gas exchange during breathing." },
+  { q:"12 — Decompression sickness ('the bends') is caused by:", opts:["Lack of food", "A rapid drop in pressure causing dissolved nitrogen to form bubbles in the blood", "Extreme heat exposure", "A vitamin deficiency"], ans:1, fb:"Correct! Rapid pressure drops let dissolved nitrogen gas escape solution and form bubbles." },
+  { q:"13 — Micronutrients (vitamins and minerals) are needed in:", opts:["Large amounts, like water", "Small amounts, but are still essential to key chemical reactions", "No amount — they are optional", "Only large doses to prevent illness"], ans:1, fb:"Correct! Micronutrients are needed in small amounts but are still essential." },
+  { q:"14 — Controlled hypothermia is sometimes used clinically to:", opts:["Increase metabolic rate before surgery", "Reduce the metabolic needs of organs like the brain and heart during high-risk procedures", "Treat decompression sickness", "Speed up wound healing"], ans:1, fb:"Correct! Lowering body temperature reduces organs' metabolic demands, protecting them during surgery or after cardiac arrest." },
+  { q:"15 — Roughly how long can the human body survive without food (energy-yielding nutrients)?", opts:["A few minutes", "A few hours", "At least several weeks", "Indefinitely"], ans:2, fb:"Correct! The body can survive without energy-yielding nutrients for at least several weeks, much longer than without water or oxygen." }
+];
+let quizScore = 0, quizAnswered = 0;
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = ''; quizScore = 0; quizAnswered = 0;
+  document.getElementById('score-panel').style.display = 'none';
+  quizData.forEach((item, idx) => {
+    const card = document.createElement('div'); card.className = 'quiz-card';
+    card.innerHTML = `<div class="quiz-q">${item.q}</div><div class="quiz-options">${item.opts.map((opt,i)=>`<button class="quiz-opt" onclick="checkAnswer(this, ${idx}, ${i})">${String.fromCharCode(65+i)}. ${opt}</button>`).join('')}</div><div class="quiz-feedback" id="qfb-${idx}"></div>`;
+    container.appendChild(card);
+  });
+}
+function checkAnswer(btn, qIdx, optIdx) {
+  const card = btn.closest('.quiz-card');
+  const buttons = card.querySelectorAll('.quiz-opt');
+  const fb = document.getElementById('qfb-' + qIdx);
+  const correct = quizData[qIdx].ans;
+  buttons.forEach(b => b.disabled = true);
+  if (optIdx === correct) { btn.classList.add('correct'); fb.textContent = '✅ ' + quizData[qIdx].fb; fb.className = 'quiz-feedback show correct-fb'; quizScore++; }
+  else { btn.classList.add('wrong'); buttons[correct].classList.add('correct'); fb.textContent = '❌ ' + quizData[qIdx].fb; fb.className = 'quiz-feedback show wrong-fb'; }
+  quizAnswered++; if (quizAnswered === quizData.length) showScore();
+}
+function showScore() {
+  const panel = document.getElementById('score-panel'); panel.style.display = 'block';
+  document.getElementById('score-display').textContent = quizScore + '/' + quizData.length;
+  const pct = quizScore / quizData.length; let msg;
+  if (pct >= .9) msg = '🌟 Outstanding! You clearly understand what defines life and what it needs to keep going.';
+  else if (pct >= .75) msg = '👍 Great work! Review what you missed and you\'ll be in great shape.';
+  else if (pct >= .6) msg = '📚 Good start. Revisit the Functions and Requirements sections and try again.';
+  else msg = '💪 Keep going! Go back through this lesson, then retake the quiz.';
+  document.getElementById('score-msg').textContent = msg;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+function retakeQuiz() { buildQuiz(); }
+buildQuiz();
+
+// ─── FILL IN THE BLANK ───
+const fills = [
+  { q: "The sum of all anabolic and catabolic reactions in the body is called ___.", ans: "metabolism" },
+  { q: "___ is the process of building larger, complex molecules from smaller ones and requires energy.", ans: "anabolism" },
+  { q: "___ is the process of breaking larger molecules into smaller ones and releases energy.", ans: "catabolism" },
+  { q: "Unspecialized cells becoming specialized in structure and function is called ___.", ans: "differentiation" },
+  { q: "The most critical nutrient for short-term human survival is ___.", ans: "water" },
+  { q: "Brain damage is likely within about ___ minutes without oxygen.", ans: "5" },
+  { q: "A rapid drop in atmospheric pressure can cause dissolved nitrogen gas to form bubbles in the blood, a condition called ___.", ans: "decompression sickness" },
+  { q: "Vitamins and minerals, needed only in small amounts, are called ___.", ans: "micronutrients" },
+];
+function buildFills() {
+  const container = document.getElementById('fill-container'); container.innerHTML = '';
+  fills.forEach((item, idx) => {
+    const div = document.createElement('div'); div.className = 'quiz-card';
+    div.innerHTML = `<div class="fill-q">${item.q.replace('___', `<input class="blank-input" id="fill-${idx}" type="text" placeholder="?" onkeydown="if(event.key==='Enter')checkFill(${idx})">`)}</div>`;
+    container.appendChild(div);
+  });
+}
+function checkFill(idx) {
+  const input = document.getElementById('fill-' + idx);
+  const val = input.value.trim().toLowerCase();
+  const correct = fills[idx].ans.toLowerCase();
+  if (val === correct || val.includes(correct) || correct.includes(val)) { input.classList.remove('err'); input.classList.add('ok'); input.value = fills[idx].ans; }
+  else { input.classList.remove('ok'); input.classList.add('err'); }
+}
+function checkAllFills() { fills.forEach((_, idx) => checkFill(idx)); }
+function resetFills() { fills.forEach((_, idx) => { const input = document.getElementById('fill-' + idx); if (input) { input.value=''; input.classList.remove('ok','err'); } }); }
+buildFills();
+
+// ─── SUMMARY / SUBMIT ───
+function fillSummary(id, text) {
+  const el = document.getElementById(id); if (!el) return;
+  const val = text && text.trim();
+  el.textContent = val || 'Not answered'; el.classList.toggle('empty', !val);
+}
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const scoreEl = document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl ? scoreEl.textContent + ' correct' : 'Quiz not yet completed');
+  const predTA = document.querySelector('#sec-0 textarea');
+  fillSummary('sum-pred', predTA ? predTA.value : '');
+  const simTA = document.getElementById('sim-predict');
+  fillSummary('sum-sim-pred', simTA ? simTA.value : '');
+  const refCards = document.querySelectorAll('#sec-5 .quiz-card textarea');
+  ['sum-r1','sum-r2','sum-r3','sum-r4'].forEach((id, i) => fillSummary(id, refCards[i] ? refCards[i].value : ''));
+}
+function buildPlainText() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const date = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const scoreEl = document.getElementById('score-display');
+  const score = scoreEl ? scoreEl.textContent : 'not completed';
+  const predTA = document.querySelector('#sec-0 textarea');
+  const simTA  = document.getElementById('sim-predict');
+  const refCards = document.querySelectorAll('#sec-5 .quiz-card textarea');
+  const refs = ['','','',''];
+  refCards.forEach((ta, i) => { refs[i] = ta.value.trim() || 'Not answered'; });
+  return [
+    'FUNCTIONS & REQUIREMENTS EXPLORER 🫁 — STUDENT SUBMISSION',
+    '============================================',
+    'Student: ' + name, 'Date: ' + date,
+    'Lesson: BIO 201 Anatomy & Physiology I · Unit 1 · Functions & Requirements Explorer',
+    '', '── QUIZ SCORE ──', score,
+    '', '── SECTION 1: OPENING PREDICTION ──', predTA ? (predTA.value.trim() || 'Not answered') : 'Not answered',
+    '', '── SECTION 4: SURVIVAL SIMULATION PREDICTION ──', simTA ? (simTA.value.trim() || 'Not answered') : 'Not answered',
+    '', '── SECTION 6: REFLECTIONS ──',
+    'Q1 — Anabolism vs. Catabolism:', refs[0],
+    'Q2 — Functions of Life in a Body System:', refs[1],
+    'Q3 — Oxygen vs. Food Survival Window:', refs[2],
+    'Q4 — Decompression Sickness:', refs[3],
+    '', '============================================',
+    '© 2026 Farvour Explorations · farvourexplorations.com\nSubmitted via Functions & Requirements Explorer · Interactive Digital Lesson · BIO 201 A&P I'
+  ].join('\n');
+}
+function copyResults() {
+  buildSummary(); const text = buildPlainText();
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('copyConfirm'); el.textContent = '✓ Copied! Now paste into your course LMS or assignment.'; setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => { document.getElementById('copyConfirm').textContent = '⚠️ Could not copy automatically — try selecting the text above manually.'; });
+}
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const subject = encodeURIComponent('Functions & Requirements Explorer — ' + name);
+  const body = encodeURIComponent(buildPlainText());
+  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+}
+</script>
+</body>
+</html>
