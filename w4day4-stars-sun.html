@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stars, Sun & Space Weather — Farvour Explorations PYP 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--space:#0d0d2b;--purple:#6c3fc5;--purple-mid:#8b5cf6;--purple-pale:#f0eefb;--gold:#ffb627;--gold-pale:#fff6e3;--fire:#ff7a5c;--fire-pale:#ffece7;--leaf:#3aaf85;--leaf-pale:#e8f8f2;--star:#8ecae6;--star-pale:#eaf6fb;--rocket:#7c6fcd;--paper:#fefcff;--ink:#1a1a3a;--muted:#6b7a9c;--border:#e0ddf0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:linear-gradient(160deg,#0d0d2b 0%,#1a1060 35%,#2d1b8a 65%,#6c3fc5 100%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--ink);overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(2px 2px at 8% 12%,white 50%,transparent 52%),radial-gradient(1.5px 1.5px at 78% 6%,white 50%,transparent 52%),radial-gradient(2px 2px at 45% 18%,rgba(255,255,255,.8) 50%,transparent 52%),radial-gradient(1.5px 1.5px at 92% 22%,white 50%,transparent 52%),radial-gradient(2px 2px at 22% 35%,rgba(255,255,255,.7) 50%,transparent 52%),radial-gradient(1.5px 1.5px at 62% 8%,white 50%,transparent 52%),radial-gradient(2px 2px at 38% 28%,rgba(255,255,255,.8) 50%,transparent 52%),radial-gradient(1.5px 1.5px at 5% 42%,white 50%,transparent 52%),radial-gradient(1.5px 1.5px at 88% 38%,rgba(255,255,255,.7) 50%,transparent 52%),radial-gradient(2px 2px at 55% 32%,white 50%,transparent 52%);pointer-events:none;z-index:0}
+.hero{position:relative;z-index:1;text-align:center;padding:2.6rem 1.5rem 2rem;color:white}
+.hero-badge{display:inline-block;background:var(--gold);color:#7a4a00;font-family:'Baloo 2',cursive;font-weight:700;font-size:.85rem;padding:.4rem 1.3rem;border-radius:24px;margin-bottom:1rem;box-shadow:0 3px 14px rgba(255,182,39,.5)}
+.hero h1{font-family:'Baloo 2',cursive;font-weight:800;font-size:clamp(2rem,7vw,3.4rem);line-height:1.1;margin-bottom:.7rem;text-shadow:0 2px 24px rgba(108,63,197,.8)}
+.hero h1 .accent{color:var(--gold)}
+.hero p.intro{font-size:1.05rem;line-height:1.6;opacity:.92;max-width:520px;margin:0 auto 1.6rem;font-weight:600}
+.name-bar{background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.25);border-radius:14px;padding:.6rem 1rem;display:flex;align-items:center;gap:.7rem;max-width:380px;margin:0 auto 1.1rem}
+.name-bar label{font-size:.85rem;font-weight:800;color:white;white-space:nowrap}
+.name-bar input{flex:1;background:rgba(255,255,255,.18);border:none;border-radius:9px;padding:.5rem .8rem;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;color:white;outline:none}
+.name-bar input::placeholder{color:rgba(255,255,255,.45);font-weight:600}
+.progress-wrap{display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap}
+.prog-step{background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.2);border-radius:22px;padding:.45rem 1rem;font-size:.85rem;font-weight:800;color:rgba(255,255,255,.75);cursor:pointer;transition:all .2s;font-family:'Baloo 2',cursive}
+.prog-step.done{background:rgba(255,255,255,.22);color:white;border-color:rgba(255,255,255,.35)}
+.prog-step.active{background:var(--gold);color:#7a4a00;border-color:var(--gold);box-shadow:0 3px 14px rgba(255,182,39,.5)}
+.sheet{position:relative;z-index:1;background:var(--paper);border-radius:28px 28px 0 0;margin-top:1.4rem;padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(108,63,197,.4)}
+.section{padding:2.6rem 1.6rem 0;max-width:780px;margin:0 auto;display:none}
+.section.active{display:block}
+.eyebrow{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem}
+.enum{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Baloo 2',cursive;font-weight:800;font-size:1.15rem;color:white;flex-shrink:0}
+.e1{background:var(--fire)}.e2{background:var(--gold);color:#7a4a00}.e3{background:var(--rocket)}.e4{background:var(--leaf)}.e5{background:var(--purple)}
+.elabel{font-size:.85rem;font-weight:800;letter-spacing:.02em;text-transform:uppercase;color:var(--muted)}
+h2{font-family:'Baloo 2',cursive;font-weight:800;font-size:clamp(1.7rem,4vw,2.3rem);color:var(--purple);margin-bottom:.6rem;line-height:1.15}
+.lead{font-size:1.08rem;line-height:1.7;color:#2a2a4a;margin-bottom:1.6rem;font-weight:600}
+.lead strong{color:var(--fire)}
+.wonder-box{background:linear-gradient(135deg,#1a1060 0%,#6c3fc5 100%);color:white;border-radius:18px;padding:1.6rem 1.8rem;margin-bottom:1.6rem;position:relative;overflow:hidden}
+.wonder-box::after{content:'⭐';position:absolute;right:1.3rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3}
+.wonder-box p{font-size:1.05rem;line-height:1.65;font-weight:700;max-width:85%}
+.wonder-box strong{color:var(--gold)}
+.demo-zone{background:white;border:3px solid var(--border);border-radius:18px;padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 3px 12px rgba(108,63,197,.1)}
+.demo-zone h3{font-family:'Baloo 2',cursive;font-weight:700;font-size:1.25rem;color:var(--purple);margin-bottom:.3rem}
+.hint{font-size:.85rem;color:var(--muted);margin-bottom:1rem;font-weight:600}
+.chip-row{display:flex;flex-wrap:wrap;gap:.7rem;margin-bottom:1.2rem;justify-content:center}
+.vchip{padding:.7rem 1.3rem;border-radius:24px;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;border:3px solid transparent;font-family:'Baloo 2',cursive;display:flex;align-items:center;gap:.5rem}
+.vchip .ve{font-size:1.3rem}
+.c1{background:var(--fire-pale);color:#c84a30;border-color:#ffc9b8}
+.c2{background:var(--purple-pale);color:#5a3ab0;border-color:#cac0ef}
+.c3{background:var(--gold-pale);color:#8a6a1a;border-color:#ffe0a0}
+.c4{background:var(--leaf-pale);color:#1b7a58;border-color:#a8e0c8}
+.c5{background:var(--star-pale);color:#0d6a9a;border-color:#a8d8ee}
+.vchip:hover{transform:scale(1.06)}
+.vchip.said{box-shadow:0 0 0 3px rgba(0,0,0,.08)inset}
+/* SONG */
+.song-box{background:linear-gradient(135deg,#1a1060,#6c3fc5);color:white;border-radius:18px;padding:1.5rem;margin-bottom:1.4rem;text-align:center}
+.song-box h3{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.2rem;margin-bottom:.8rem}
+.song-line{font-size:1.1rem;line-height:1.8;font-weight:700;font-style:italic}
+.sing-btn{margin-top:.9rem;background:var(--gold);color:#7a4a00;border:none;border-radius:24px;padding:.6rem 1.6rem;font-family:'Baloo 2',cursive;font-weight:800;font-size:.95rem;cursor:pointer;transition:all .2s}
+.sing-btn:hover{transform:scale(1.05)}
+.sing-btn.sung{background:var(--leaf);color:white}
+/* OUTLINE */
+.outline-wrap{display:flex;gap:1.2rem;margin-bottom:1.2rem;flex-wrap:wrap}
+.outline-col{flex:1;min-width:240px;border:3px solid var(--border);border-radius:18px;overflow:hidden}
+.outline-head{padding:.9rem 1.1rem;font-family:'Baloo 2',cursive;font-weight:800;font-size:1.1rem;text-align:center;color:white}
+.oh-sun{background:linear-gradient(135deg,#f39c12,#e67e22)}
+.oh-star{background:linear-gradient(135deg,#1a1060,#6c3fc5)}
+.outline-body{padding:.9rem 1.1rem;background:white;display:flex;flex-direction:column;gap:.7rem}
+.outline-q{font-family:'Baloo 2',cursive;font-weight:700;font-size:.9rem;color:var(--purple);margin-bottom:.3rem}
+.outline-body textarea{width:100%;border:2px solid var(--border);border-radius:8px;padding:.45rem .7rem;font-family:'Nunito';font-size:.88rem;font-weight:600;resize:none;outline:none;min-height:44px;background:#fafafa}
+/* share out */
+.share-fact-box{background:var(--gold-pale);border:3px solid var(--gold);border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.2rem}
+.sf-title{font-family:'Baloo 2',cursive;font-weight:700;color:#8a6a1a;margin-bottom:.7rem;font-size:1rem}
+.sf-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap}
+.sf-row label{font-family:'Baloo 2',cursive;font-weight:700;font-size:.9rem;color:var(--purple);white-space:nowrap}
+.sf-row input{flex:1;min-width:120px;padding:.5rem .8rem;border-radius:8px;border:2px solid var(--border);font-family:'Nunito';font-size:.95rem;font-weight:600}
+/* CELEBRATION */
+.celebration-box{background:linear-gradient(135deg,#b8860b,#ffb627,#ffd700);color:#4a3000;border-radius:22px;padding:2rem 1.8rem;text-align:center;margin-bottom:1.5rem;position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(255,182,39,.5)}
+.celebration-box h3{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.6rem;margin-bottom:.5rem}
+.celebration-box p{font-size:1.05rem;line-height:1.65;font-weight:700}
+.confetti-row{font-size:1.6rem;margin-bottom:.6rem;letter-spacing:.3rem}
+.chant-box{background:linear-gradient(135deg,#1a1060 0%,#6c3fc5 100%);color:white;border-radius:18px;padding:1.5rem 1.8rem;text-align:center;margin-bottom:1.5rem}
+.chant-box h4{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.2rem;margin-bottom:.5rem}
+.chant-box p{font-size:1.1rem;line-height:1.7;font-weight:700}
+.nav-row{display:flex;justify-content:space-between;align-items:center;padding:2.2rem 1.6rem 0;max-width:780px;margin:0 auto;gap:1rem}
+.btn-next{background:var(--purple);color:white;border:none;border-radius:50px;padding:.95rem 2rem;font-family:'Baloo 2',cursive;font-weight:700;font-size:1.05rem;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(108,63,197,.4)}
+.btn-next:hover{background:var(--purple-mid);transform:translateY(-2px)}
+.btn-prev{background:transparent;color:var(--muted);border:3px solid var(--border);border-radius:50px;padding:.9rem 1.6rem;font-family:'Baloo 2',cursive;font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s}
+.btn-prev:hover{border-color:var(--muted);color:var(--ink)}
+.btn-prev:disabled,.btn-next:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.sum-section{background:white;border-radius:18px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:3px solid var(--border)}
+.sum-section h3{font-family:'Baloo 2',cursive;font-weight:700;font-size:1.1rem;color:var(--purple);margin-bottom:.7rem}
+.sum-ans{background:#f5f4fb;border-radius:10px;padding:.7rem 1rem;font-size:.95rem;line-height:1.5;color:var(--ink);margin-bottom:.4rem;border-left:4px solid var(--gold);min-height:1.8rem;font-weight:600}
+.sum-ans.empty{color:var(--muted);font-weight:400;border-left-color:var(--border)}
+.share-buttons{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.4rem;justify-content:center}
+.share-btn{border:none;border-radius:14px;padding:.9rem 1.6rem;font-family:'Baloo 2',cursive;font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s}
+.share-btn:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.sbcopy{background:var(--leaf);color:white}.sbemail{background:var(--rocket);color:white}.sbprint{background:var(--gold);color:#7a4a00}
+.copy-confirm{text-align:center;font-size:.9rem;color:var(--leaf);min-height:1.2rem;margin-top:.6rem;font-weight:700}
+.star-row{display:flex;justify-content:center;gap:.5rem;margin:1rem 0}
+.star-row span{font-size:1.8rem;cursor:pointer;opacity:.35;transition:transform .15s}
+.star-row span.lit{opacity:1;transform:scale(1.15)}
+@media(max-width:560px){.hero{padding:2rem 1rem 1.4rem}.section{padding:2rem 1.1rem 0}.nav-row{padding:1.8rem 1.1rem 0}.outline-wrap{flex-direction:column}}
+@media print{.hero,.nav-row,.share-buttons,.copy-confirm{display:none!important}.sheet{box-shadow:none;border-radius:0}.section{display:none!important}#sec-4{display:block!important}}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge">⭐ Farvour Explorations · PYP 1 · Week 4 Day 4 · FINAL LESSON!</div>
+  <h1>Stars, Sun &amp; <span class="accent">Space Weather!</span></h1>
+  <p class="intro">Our very last lesson of Space Odyssey Camp! We learn about our closest star — the Sun — and the twinkling stars at night! 🌟☀️</p>
+  <div class="name-bar"><label>😊 MY NAME:</label><input type="text" id="studentName" placeholder="Type your name..."></div>
+  <div class="progress-wrap">
+    <a class="prog-step active" onclick="goTo(0)">👋 Hello</a>
+    <a class="prog-step" onclick="goTo(1)">☀️ Sun &amp; Stars</a>
+    <a class="prog-step" onclick="goTo(2)">📋 My Outline</a>
+    <a class="prog-step" onclick="goTo(3)">🎉 Celebration!</a>
+    <a class="prog-step" onclick="goTo(4)">🌟 All Done!</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+<!-- SEC 0 -->
+<div class="section active" id="sec-0">
+  <div class="eyebrow"><div class="enum e1">1</div><span class="elabel">Final Lesson!</span></div>
+  <h2>👋 Hello, Star Gazers!</h2>
+  <p class="lead">This is our <strong>very last Space Odyssey lesson!</strong> We end with the most beautiful things in space — the Sun and the Stars. Let's find out their secrets!</p>
+  <div class="wonder-box">
+    <p>✨ Did you know the <strong>Sun is a star?</strong> It looks much bigger than other stars because it is the <strong>closest one</strong> to Earth! At night, those tiny dots of light are all suns — just very far away!</p>
+  </div>
+  <div class="demo-zone">
+    <h3>🎵 Warm-Up: Twinkle Twinkle!</h3>
+    <p class="hint">Sing together! Wiggle your fingers like twinkling stars as you sing!</p>
+    <div class="song-box">
+      <h3>⭐ Twinkle Twinkle Little Star</h3>
+      <div class="song-line">"Twinkle twinkle little star,<br>How I wonder what you are!<br>Up above the world so high,<br>Like a diamond in the sky!"</div>
+      <button class="sing-btn" id="singBtn" onclick="markSung()">🎵 We Sang It! ✓</button>
+    </div>
+    <div class="chip-row">
+      <span class="vchip c3" onclick="sayChip(this)"><span class="ve">⭐</span>Star</span>
+      <span class="vchip c3" onclick="sayChip(this)"><span class="ve">☀️</span>Sun</span>
+      <span class="vchip c1" onclick="sayChip(this)"><span class="ve">✨</span>Bright</span>
+      <span class="vchip c2" onclick="sayChip(this)"><span class="ve">💡</span>Shine</span>
+    </div>
+  </div>
+  <div class="nav-row"><button class="btn-prev" disabled>&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 1: SUN AND STARS + VOCAB -->
+<div class="section" id="sec-1">
+  <div class="eyebrow"><div class="enum e2">2</div><span class="elabel">Sun &amp; Stars</span></div>
+  <h2>☀️ The Sun and the Stars!</h2>
+  <p class="lead">Let's learn about both! Tap each word and learn a fact with your teacher.</p>
+
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.4rem">
+    <div style="background:#fff6e3;border:3px solid #ffb627;border-radius:16px;padding:1.1rem 1.3rem;flex:1;min-width:200px;max-width:280px">
+      <div style="font-size:3rem;text-align:center;margin-bottom:.5rem">☀️</div>
+      <div style="font-family:'Baloo 2',cursive;font-weight:800;color:#8a6a1a;font-size:1.05rem;text-align:center;margin-bottom:.5rem">The Sun</div>
+      <div style="font-size:.85rem;color:#6b5020;font-weight:600;line-height:1.6">🔴 It is a star!<br>🔥 Very, very hot<br>💡 Gives us light &amp; warmth<br>🌱 Plants need it to grow<br>📏 Closest star to Earth</div>
+    </div>
+    <div style="background:#0d0d2b;border:3px solid #8b5cf6;border-radius:16px;padding:1.1rem 1.3rem;flex:1;min-width:200px;max-width:280px">
+      <div style="font-size:3rem;text-align:center;margin-bottom:.5rem">⭐</div>
+      <div style="font-family:'Baloo 2',cursive;font-weight:800;color:#fde68a;font-size:1.05rem;text-align:center;margin-bottom:.5rem">The Stars</div>
+      <div style="font-size:.85rem;color:#c4b5fd;font-weight:600;line-height:1.6">✨ Very far away suns!<br>🌌 Billions in the sky<br>🌙 We see them at night<br>💎 They twinkle and shine<br>🧭 Help sailors find their way</div>
+    </div>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🔤 Sun &amp; Star Words</h3>
+    <p class="hint">Tap each word. Say it with your teacher!</p>
+    <div class="chip-row">
+      <span class="vchip c3" onclick="sayChip(this)"><span class="ve">⭐</span>Star</span>
+      <span class="vchip c3" onclick="sayChip(this)"><span class="ve">☀️</span>Sun</span>
+      <span class="vchip c1" onclick="sayChip(this)"><span class="ve">✨</span>Bright</span>
+      <span class="vchip c2" onclick="sayChip(this)"><span class="ve">💡</span>Shine</span>
+      <span class="vchip c1" onclick="sayChip(this)"><span class="ve">🔥</span>Hot</span>
+      <span class="vchip c5" onclick="sayChip(this)"><span class="ve">🌟</span>Light</span>
+      <span class="vchip c2" onclick="sayChip(this)"><span class="ve">🌙</span>Night</span>
+      <span class="vchip c3" onclick="sayChip(this)"><span class="ve">🌅</span>Day</span>
+      <span class="vchip c4" onclick="sayChip(this)"><span class="ve">🌌</span>Sky</span>
+      <span class="vchip c5" onclick="sayChip(this)"><span class="ve">💎</span>Twinkling</span>
+    </div>
+  </div>
+  <p style="text-align:center;font-size:.95rem;color:var(--muted);font-weight:700">Words tapped: <span id="chipCount">0</span> / 14</p>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 2: OUTLINE -->
+<div class="section" id="sec-2">
+  <div class="eyebrow"><div class="enum e3">3</div><span class="elabel">My Outline</span></div>
+  <h2>📋 Sun &amp; Stars Outline</h2>
+  <p class="lead">Fill in the outline! Use your new facts. Say each answer out loud before you write it.</p>
+  <div class="outline-wrap">
+    <div class="outline-col">
+      <div class="outline-head oh-sun">☀️ The Sun</div>
+      <div class="outline-body">
+        <div><div class="outline-q">What is it?</div><textarea id="sun1" placeholder="e.g. The sun is a star..."></textarea></div>
+        <div><div class="outline-q">What does it do?</div><textarea id="sun2" placeholder="e.g. It gives us light and heat..."></textarea></div>
+        <div><div class="outline-q">How does it help us?</div><textarea id="sun3" placeholder="e.g. Plants grow, we feel warm..."></textarea></div>
+      </div>
+    </div>
+    <div class="outline-col">
+      <div class="outline-head oh-star">⭐ The Stars</div>
+      <div class="outline-body">
+        <div><div class="outline-q">What are they?</div><textarea id="str1" placeholder="e.g. Stars are suns far away..."></textarea></div>
+        <div><div class="outline-q">What do they do?</div><textarea id="str2" placeholder="e.g. They twinkle and shine at night..."></textarea></div>
+        <div><div class="outline-q">How do they help us?</div><textarea id="str3" placeholder="e.g. Sailors use them to find their way..."></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="share-fact-box">
+    <div class="sf-title">🗣️ My Sharing Sentence</div>
+    <div class="sf-row"><label>The sun</label><input type="text" id="sf1" placeholder="e.g. gives us light and warmth every day!"></div>
+    <div class="sf-row"><label>Stars</label><input type="text" id="sf2" placeholder="e.g. are suns that are very far away!"></div>
+  </div>
+
+  <div class="chant-box">
+    <h4>🎵 Sun &amp; Stars Chant</h4>
+    <p>"The sun shines bright in the day so blue —<br>Stars twinkle at night — they're suns too! ⭐☀️"</p>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Next &#8594;</button></div>
+</div>
+
+<!-- SEC 3: CELEBRATION -->
+<div class="section" id="sec-3">
+  <div class="eyebrow"><div class="enum e4">4</div><span class="elabel">Camp Celebration!</span></div>
+  <h2>🎉 You Did It!</h2>
+  <p class="lead">You have finished the <strong>entire Space Odyssey English Camp!</strong> 4 weeks, 16 lessons — you are amazing!</p>
+
+  <div class="celebration-box">
+    <div class="confetti-row">🎉🚀⭐🌍🪐🎊</div>
+    <h3>🏆 Congratulations, Space Explorer!</h3>
+    <p>You learned about air, wind, flight, rockets, space, Mars, satellites, stars and so much more — all in English! You should be very proud! 🌟</p>
+  </div>
+
+  <div class="demo-zone">
+    <h3>💬 My Favourite Thing I Learned</h3>
+    <p class="hint">Think back over 4 weeks of camp. What was YOUR favourite lesson or activity?</p>
+    <div style="display:flex;flex-direction:column;gap:.7rem">
+      <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
+        <label style="font-family:'Baloo 2',cursive;font-weight:700;color:var(--purple);white-space:nowrap">My favourite lesson was</label>
+        <input type="text" id="fav-lesson" placeholder="e.g. the rocket launch / paper airplanes / Mars" style="flex:1;min-width:140px;padding:.5rem .8rem;border-radius:8px;border:2px solid var(--border);font-family:'Nunito';font-size:.95rem;font-weight:600">
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
+        <label style="font-family:'Baloo 2',cursive;font-weight:700;color:var(--purple);white-space:nowrap">I loved it because</label>
+        <input type="text" id="fav-why" placeholder="e.g. it was exciting / funny / I learned a lot" style="flex:1;min-width:140px;padding:.5rem .8rem;border-radius:8px;border:2px solid var(--border);font-family:'Nunito';font-size:.95rem;font-weight:600">
+      </div>
+    </div>
+  </div>
+
+  <div class="chant-box">
+    <h4>🎵 Camp Graduation Chant — One Last Time!</h4>
+    <p>"We learned English, we had fun —<br>Space explorers, we are done! 🚀⭐🎉"</p>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" onclick="navigate(1)">Final Summary ➡️</button></div>
+</div>
+
+<!-- SEC 4: SUMMARY -->
+<div class="section" id="sec-4">
+  <div class="eyebrow"><div class="enum e5">5</div><span class="elabel">Camp Complete!</span></div>
+  <h2>🌟🚀 Well Done, <span id="finalName">Friend</span>!</h2>
+  <p class="lead">You completed the whole camp! Rate how much fun you had across all 4 weeks:</p>
+  <div class="star-row" id="starRow">
+    <span onclick="setStars(1)">⭐</span><span onclick="setStars(2)">⭐</span><span onclick="setStars(3)">⭐</span><span onclick="setStars(4)">⭐</span><span onclick="setStars(5)">⭐</span>
+  </div>
+  <div class="sum-section">
+    <h3>📋 My Final Lesson Summary</h3>
+    <div id="sum-name" class="sum-ans empty">Not answered</div>
+    <div id="sum-outline" class="sum-ans empty">Not answered</div>
+    <div id="sum-fav" class="sum-ans empty">Not answered</div>
+    <div id="sum-stars" class="sum-ans empty">Not answered</div>
+  </div>
+  <div class="celebration-box">
+    <div class="confetti-row">🎊🌟🚀🪐☀️🎉</div>
+    <h3>🏆 SPACE ODYSSEY CAMP COMPLETE!</h3>
+    <p>Thank you for an amazing 4 weeks! Keep exploring, keep learning, keep reaching for the stars! ⭐</p>
+  </div>
+  <div class="share-buttons">
+    <button class="share-btn sbcopy" onclick="copyResults()">📋 Copy My Work</button>
+    <button class="share-btn sbemail" onclick="emailResults()">✉️ Email to Teacher</button>
+    <button class="share-btn sbprint" onclick="window.print()">🖨️ Print</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">&#8592; Back</button><button class="btn-next" disabled>🚀 To Infinity &amp; Beyond! 🌟</button></div>
+</div>
+
+</div>
+<script>
+(function(){
+'use strict';
+var cur=0,TOTAL=5;
+function goTo(n){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('sec-'+n).classList.add('active');
+  document.querySelectorAll('.prog-step').forEach(function(p,i){p.classList.remove('active','done');if(i===n)p.classList.add('active');else if(i<n)p.classList.add('done');});
+  cur=n;window.scrollTo({top:0,behavior:'smooth'});if(n===4)buildSummary();
+}
+function navigate(d){goTo(Math.max(0,Math.min(TOTAL-1,cur+d)));}
+window.goTo=goTo;window.navigate=navigate;
+
+var chipsSaid=0,hasSung=false;
+function sayChip(el){if(!el.classList.contains('said')){el.classList.add('said');chipsSaid++;document.getElementById('chipCount').textContent=chipsSaid;}}
+window.sayChip=sayChip;
+function markSung(){hasSung=true;var b=document.getElementById('singBtn');b.textContent='🎵 We Sang It! ✓';b.classList.add('sung');}
+window.markSung=markSung;
+
+var starsGiven=0;
+function setStars(n){starsGiven=n;document.querySelectorAll('#starRow span').forEach(function(s,i){s.classList.toggle('lit',i<n);});}
+window.setStars=setStars;
+
+function getV(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+function setS(id,text){var el=document.getElementById(id);if(!el)return;el.textContent=text||'Not answered';el.classList.toggle('empty',!text);}
+function buildSummary(){
+  var name=document.getElementById('studentName').value.trim()||'Friend';
+  document.getElementById('finalName').textContent=name;
+  setS('sum-name','Name: '+name);
+  var outline=[];
+  if(getV('sun1'))outline.push('Sun — What: '+getV('sun1'));
+  if(getV('sun2'))outline.push('Sun — Does: '+getV('sun2'));
+  if(getV('str1'))outline.push('Stars — What: '+getV('str1'));
+  if(getV('str2'))outline.push('Stars — Do: '+getV('str2'));
+  setS('sum-outline',outline.length?outline.join(' | '):'Outline not filled in yet');
+  var fav=getV('fav-lesson')&&getV('fav-why')?'Favourite lesson: '+getV('fav-lesson')+' because '+getV('fav-why')+'.':'';
+  setS('sum-fav',fav);
+  setS('sum-stars',starsGiven?'Camp fun rating: '+'⭐'.repeat(starsGiven):'');
+}
+window.buildSummary=buildSummary;
+function buildPlainText(){
+  var name=document.getElementById('studentName').value.trim()||'Friend';
+  var date=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  return['FARVOUR EXPLORATIONS - PYP 1 SUMMER CAMP - WEEK 4 DAY 4: STARS, SUN & SPACE WEATHER',
+    'FINAL LESSON OF CAMP!','='.repeat(65),'Student: '+name,'Date: '+date,'',
+    '-- SUN & STARS OUTLINE --',
+    'The Sun — What is it? '+(getV('sun1')||'___'),
+    'The Sun — What does it do? '+(getV('sun2')||'___'),
+    'The Sun — How does it help? '+(getV('sun3')||'___'),
+    'Stars — What are they? '+(getV('str1')||'___'),
+    'Stars — What do they do? '+(getV('str2')||'___'),
+    'Stars — How do they help? '+(getV('str3')||'___'),'',
+    '-- MY SHARING SENTENCE --',
+    'The sun '+(getV('sf1')||'___'),
+    'Stars '+(getV('sf2')||'___'),'',
+    '-- MY FAVOURITE CAMP LESSON --',
+    'Favourite lesson: '+(getV('fav-lesson')||'___'),
+    'I loved it because: '+(getV('fav-why')||'___'),'',
+    '-- CAMP FUN RATING --',starsGiven?'⭐'.repeat(starsGiven)+' ('+starsGiven+'/5)':'Not answered','',
+    '='.repeat(65),
+    '🚀 SPACE ODYSSEY CAMP COMPLETE! Well done, '+name+'! 🌟',
+    '(c) 2026 Farvour Explorations - Camp Week 4, Day 4'].join('\n');
+}
+function copyResults(){buildSummary();navigator.clipboard.writeText(buildPlainText()).then(function(){var el=document.getElementById('copyConfirm');el.textContent='Copied!';setTimeout(function(){el.textContent='';},4000);});}
+function emailResults(){var name=document.getElementById('studentName').value.trim()||'Friend';window.location.href='mailto:?subject='+encodeURIComponent('PYP 1 Camp W4D4 FINAL - '+name)+'&body='+encodeURIComponent(buildPlainText());}
+window.copyResults=copyResults;window.emailResults=emailResults;
+})();
+</script>
+</body>
+</html>
