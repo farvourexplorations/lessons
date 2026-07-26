@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plasma Membrane Explorer 🔬 (Chapter 5, Part 1)</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:    #1a3d2b;
+    --forest-mid:#2d6a4f;
+    --forest-lt: #40916c;
+    --coral:     #e8603c;
+    --coral-pale:#fdf0ec;
+    --mint:      #3aaf85;
+    --mint-pale: #e8f8f2;
+    --gold:      #c9962a;
+    --gold-pale: #fef9e7;
+    --lavender:  #7c6fcd;
+    --lav-pale:  #f0eefb;
+    --paper:     #fffef9;
+    --ink:       #1a2332;
+    --muted:     #7a8899;
+    --border:    #e0e4ea;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: linear-gradient(160deg, #0d2318 0%, #1a3d2b 45%, #2d6a4f 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%, rgba(144,238,144,.45) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 22%  38%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 41%  6%,  rgba(144,238,144,.35) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 60%  24%, rgba(255,255,255,.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 77%  9%,  rgba(144,238,144,.4)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 90%  33%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 33%  55%, rgba(144,238,144,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 70%  48%, rgba(255,255,255,.2)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 55%  70%, rgba(144,238,144,.25) 0%, transparent 100%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ─── HERO ─── */
+  .hero { position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 2rem;color:white; }
+  .hero-badge {
+    display:inline-block;background:var(--gold);color:var(--forest);
+    font-family:'Fredoka One',cursive;font-size:.85rem;letter-spacing:.05em;
+    padding:.35rem 1.2rem;border-radius:20px;margin-bottom:1.2rem;
+    box-shadow:0 2px 12px rgba(201,150,42,.45);
+  }
+  .hero h1 { font-family:'Fredoka One',cursive;font-size:clamp(2.2rem,6vw,4rem);line-height:1.1;margin-bottom:.8rem;text-shadow:0 2px 20px rgba(0,0,0,.35); }
+  .hero h1 .accent { color:var(--gold); }
+  .hero p.intro { font-size:1.05rem;line-height:1.7;opacity:.88;max-width:580px;margin:0 auto 2rem; }
+
+  /* ─── PROGRESS PILLS ─── */
+  .progress-wrap { display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem; }
+  .prog-step {
+    display:flex;align-items:center;gap:.4rem;
+    background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);
+    border-radius:20px;padding:.35rem .9rem;font-size:.78rem;font-weight:700;
+    color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace;
+  }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.35); }
+  .prog-step.active { background:var(--gold);color:var(--forest);border-color:var(--gold);box-shadow:0 2px 12px rgba(201,150,42,.45); }
+
+  /* ─── SHEET ─── */
+  .sheet {
+    position:relative;z-index:1;background:var(--paper);
+    border-radius:24px 24px 0 0;margin-top:1.5rem;
+    padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.3);
+  }
+
+  /* ─── SECTIONS ─── */
+  .section { padding:3rem 2rem 0;max-width:820px;margin:0 auto;display:none; }
+  .section.active { display:block; }
+
+  .section-eyebrow { display:flex;align-items:center;gap:.6rem;margin-bottom:1rem; }
+  .eyebrow-num {
+    width:32px;height:32px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fredoka One',cursive;font-size:1rem;color:white;flex-shrink:0;
+  }
+  .num-coral  { background:var(--coral); }
+  .num-mint   { background:var(--mint); }
+  .num-gold   { background:var(--gold);color:var(--forest); }
+  .num-lav    { background:var(--lavender); }
+  .num-forest { background:var(--forest-mid); }
+
+  .eyebrow-label { font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace; }
+
+  .section h2 { font-family:'Fredoka One',cursive;font-size:clamp(1.6rem,3.5vw,2.2rem);color:var(--forest);margin-bottom:.6rem;line-height:1.2; }
+  .section .lead { font-size:1rem;line-height:1.75;color:#3a4a5a;margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+
+  /* ─── WONDER / INFO BOXES ─── */
+  .wonder-box {
+    background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);
+    color:white;border-radius:16px;padding:1.8rem 2rem;margin-bottom:1.8rem;
+    position:relative;overflow:hidden;
+  }
+  .wonder-box::after { content:'🤔';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3; }
+  .wonder-box p { font-size:1rem;line-height:1.7;font-style:italic;opacity:.95;max-width:85%; }
+  .wonder-box strong { color:var(--gold);font-style:normal; }
+  .wonder-box.gold-box { background:linear-gradient(135deg,#8a6a1a 0%,#b8860b 100%); }
+  .wonder-box.gold-box::after { content:'⚡'; }
+  .wonder-box.lav-box  { background:linear-gradient(135deg,#4a3a8a 0%,#6a5acd 100%); }
+  .wonder-box.lav-box::after { content:'🔋'; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,#1b7a58 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'🍬'; }
+
+  /* ─── PREDICT BOX ─── */
+  .predict-box { background:var(--gold-pale);border:2px dashed var(--gold);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem; }
+  .predict-box textarea,.reflect-box textarea {
+    width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;
+    font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:64px;
+    background:white;color:var(--ink);outline:none;transition:border-color .2s;
+  }
+  .predict-box textarea:focus { border-color:var(--gold); }
+  .reflect-box { background:var(--mint-pale);border:2px dashed var(--mint);border-radius:14px;padding:1.4rem 1.6rem;margin-top:1.5rem; }
+  .reflect-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#1b7a58;margin-bottom:.8rem; }
+  .reflect-box textarea:focus { border-color:var(--mint); }
+
+  /* ─── DEMO ZONE ─── */
+  .demo-zone {
+    background:white;border:2px solid var(--border);border-radius:16px;
+    padding:1.8rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07);
+  }
+  .demo-zone h3 { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.3rem; }
+  .demo-zone .hint { font-size:.78rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:1.3rem; }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    border:none;border-radius:10px;padding:.65rem 1.3rem;font-family:'Nunito',sans-serif;
+    font-size:.88rem;font-weight:800;cursor:pointer;transition:all .15s;letter-spacing:.02em;
+  }
+  .btn:hover  { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  .btn:active { transform:translateY(0); }
+  .btn:disabled { opacity:.4;cursor:default;transform:none;box-shadow:none; }
+  .btn-coral  { background:var(--coral);    color:white; }
+  .btn-mint   { background:var(--mint);     color:white; }
+  .btn-gold   { background:var(--gold);     color:var(--forest); }
+  .btn-lav    { background:var(--lavender); color:white; }
+  .btn-ghost  { background:#f0f2f5;         color:var(--muted); }
+  .btn-forest { background:var(--forest);   color:white; }
+  .action-row { display:flex;gap:.8rem;flex-wrap:wrap;align-items:center;margin-bottom:.8rem; }
+
+  /* ─── NAV ROW ─── */
+  .nav-row { display:flex;justify-content:space-between;align-items:center;padding:2.5rem 2rem 0;max-width:820px;margin:0 auto; }
+
+  /* ─── CONCEPT CHIPS ─── */
+  .chip-row { display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem; }
+  .chip {
+    padding:.45rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;
+    cursor:pointer;transition:all .2s;border:2px solid transparent;
+  }
+  .chip.coral  { background:var(--coral-pale); color:var(--coral);     border-color:#f8c5b8; }
+  .chip.mint   { background:var(--mint-pale);  color:var(--mint);      border-color:#b8ebd8; }
+  .chip.gold   { background:var(--gold-pale);  color:#8a6a1a;          border-color:#f8e0a0; }
+  .chip.lav    { background:var(--lav-pale);   color:var(--lavender);  border-color:#d0caef; }
+  .chip.forest { background:#d4eadd;           color:var(--forest-mid);border-color:#a8d5b8; }
+  .chip:hover  { transform:scale(1.05); }
+
+  .concept-reveal {
+    background:var(--paper);border-left:4px solid var(--coral);
+    border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;
+    margin-top:.5rem;margin-bottom:.3rem;display:none;animation:fadeIn .3s ease;
+  }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border   { border-color:var(--mint); }
+  .concept-reveal.gold-border   { border-color:var(--gold); }
+  .concept-reveal.lav-border    { border-color:var(--lavender); }
+  .concept-reveal.forest-border { border-color:var(--forest-mid); }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ─── EVIDENCE CARDS ─── */
+  .evidence-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin-bottom:1.5rem; }
+  .ev-card {
+    background:white;border:2px solid var(--border);border-radius:14px;
+    padding:1.2rem;cursor:pointer;transition:all .2s;text-align:center;
+  }
+  .ev-card:hover,.ev-card.active { border-color:var(--forest-mid);box-shadow:0 4px 16px rgba(45,106,79,.2);transform:translateY(-2px); }
+  .ev-card.active { background:#d4eadd; }
+  .ev-card .ev-icon { font-size:2.4rem;margin-bottom:.5rem; }
+  .ev-card .ev-title { font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--forest);margin-bottom:.3rem; }
+  .ev-card .ev-sub   { font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace; }
+  .ev-panel {
+    background:#d4eadd;border-left:4px solid var(--forest-mid);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1rem;
+  }
+  .ev-panel.show { display:block; }
+  .ev-panel h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.5rem; }
+  .ev-panel p  { font-size:.88rem;line-height:1.7;color:#2a3a2a; }
+  .ev-panel .example-box {
+    background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;
+    font-size:.82rem;font-family:'DM Mono',monospace;color:var(--ink);
+    border:1.5px solid rgba(45,106,79,.2);
+  }
+
+  /* ─── STEP CARDS ─── */
+  .sel-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0 1.5rem; }
+  .sel-card {
+    background:white;border:2px solid var(--border);border-radius:14px;
+    padding:1rem;text-align:center;cursor:pointer;transition:all .2s;
+  }
+  .sel-card:hover,.sel-card.active { border-color:var(--coral);box-shadow:0 3px 12px rgba(232,96,60,.18);transform:translateY(-2px); }
+  .sel-card.active { background:var(--coral-pale); }
+  .sel-card .sel-icon { font-size:2rem;margin-bottom:.4rem; }
+  .sel-card .sel-name { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--forest);margin-bottom:.2rem; }
+  .sel-card .sel-key  { font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em; }
+  .sel-detail {
+    background:var(--coral-pale);border-left:4px solid var(--coral);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1.5rem;
+  }
+  .sel-detail.show { display:block; }
+  .sel-detail h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.4rem; }
+  .sel-detail p  { font-size:.88rem;line-height:1.7; }
+  .sel-detail .examples { margin-top:.6rem;font-style:italic;color:var(--muted);font-size:.82rem; }
+
+  /* ─── MATCHING GAME ─── */
+  .match-grid { display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1rem 0; }
+  .match-item {
+    padding:.75rem 1rem;border-radius:10px;border:2px solid var(--border);
+    cursor:pointer;font-size:.84rem;font-weight:700;transition:all .2s;
+    background:white;text-align:center;color:var(--ink);line-height:1.4;
+  }
+  .match-item:hover    { border-color:var(--forest-mid);background:#f0f7f3; }
+  .match-item.selected { border-color:var(--lavender);background:var(--lav-pale);color:var(--lavender); }
+  .match-item.matched  { border-color:var(--mint);background:var(--mint-pale);color:#1b7a58;cursor:default; }
+  .match-item.wrong    { border-color:var(--coral);background:var(--coral-pale);color:var(--coral);animation:shake .3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+  /* ─── ATP SIMULATOR ─── */
+  .atp-display {
+    display:flex;align-items:center;justify-content:center;gap:1.5rem;
+    flex-wrap:wrap;margin:1.2rem 0;
+  }
+  .atp-molecule {
+    text-align:center;padding:1rem 1.4rem;border-radius:14px;
+    font-family:'DM Mono',monospace;font-size:.85rem;font-weight:700;
+    border:2px solid;transition:all .4s;min-width:120px;
+  }
+  .atp-molecule .mol-label { font-family:'Fredoka One',cursive;font-size:1.3rem;margin-bottom:.3rem; }
+  .atp-molecule .mol-desc  { font-size:.7rem;color:var(--muted);margin-top:.3rem;font-weight:400; }
+  .mol-atp  { background:var(--gold-pale);border-color:var(--gold);color:#8a6a1a; }
+  .mol-adp  { background:#f5f7fa;border-color:var(--border);color:var(--muted); }
+  .mol-pi   { background:var(--lav-pale);border-color:var(--lavender);color:var(--lavender); }
+  .mol-nadh { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .mol-nad  { background:#f5f7fa;border-color:var(--border);color:var(--muted); }
+  .arrow-label { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest-mid);text-align:center; }
+  .energy-badge {
+    display:inline-block;padding:.25rem .8rem;border-radius:20px;font-size:.72rem;
+    font-weight:800;font-family:'DM Mono',monospace;letter-spacing:.05em;margin-top:.4rem;
+  }
+  .release  { background:#ffeaa7;color:#8a6a1a; }
+  .absorb   { background:var(--lav-pale);color:var(--lavender); }
+
+  /* ─── GLYCOLYSIS TRACKER ─── */
+  .glyc-track {
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:.8rem;margin:1rem 0;
+  }
+  .glyc-box {
+    background:white;border:2px solid var(--border);border-radius:12px;
+    padding:.9rem 1rem;text-align:center;transition:all .3s;
+  }
+  .glyc-box .g-label { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--forest);margin-bottom:.3rem; }
+  .glyc-box .g-val   { font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:700;color:var(--ink); }
+  .glyc-box .g-unit  { font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace; }
+  .glyc-box.active   { border-color:var(--gold);background:var(--gold-pale); }
+  .glyc-box.done     { border-color:var(--mint);background:var(--mint-pale); }
+
+  /* ─── REDOX ANIMATOR ─── */
+  .redox-row { display:flex;gap:1rem;flex-wrap:wrap;margin:1rem 0; }
+  .redox-box {
+    flex:1;min-width:200px;border-radius:14px;padding:1.1rem 1.2rem;
+    border:2px solid var(--border);text-align:center;transition:all .4s;
+  }
+  .redox-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;margin-bottom:.4rem; }
+  .redox-box p  { font-family:'DM Mono',monospace;font-size:.78rem;line-height:1.6; }
+  .redox-oxidized  { background:var(--coral-pale);border-color:var(--coral); }
+  .redox-oxidized h4 { color:var(--coral); }
+  .redox-reduced   { background:var(--mint-pale);border-color:var(--mint); }
+  .redox-reduced h4 { color:#1b7a58; }
+
+  /* ─── QUIZ ─── */
+  .quiz-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .quiz-q { font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:1rem;line-height:1.5; }
+  .quiz-options { display:flex;flex-direction:column;gap:.5rem; }
+  .quiz-opt {
+    padding:.6rem 1rem;border-radius:8px;border:2px solid var(--border);
+    background:white;cursor:pointer;font-family:'Nunito',sans-serif;
+    font-size:.88rem;font-weight:600;text-align:left;transition:all .15s;color:var(--ink);
+  }
+  .quiz-opt:hover:not(:disabled) { border-color:var(--forest-mid);background:#f0f7f3; }
+  .quiz-opt.correct  { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .quiz-opt.wrong    { background:var(--coral-pale);border-color:var(--coral);color:#a83020; }
+  .quiz-opt:disabled { cursor:default; }
+  .quiz-feedback { margin-top:.8rem;font-size:.85rem;line-height:1.6;padding:.7rem 1rem;border-radius:8px;display:none;animation:fadeIn .3s ease; }
+  .quiz-feedback.show { display:block; }
+  .quiz-feedback.correct-fb { background:var(--mint-pale);color:#1b7a58;border-left:3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background:var(--coral-pale);color:#a83020;border-left:3px solid var(--coral); }
+
+  /* ─── SCORE ─── */
+  .score-panel { background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);color:white;border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem; }
+  .score-panel .score-num { font-family:'Fredoka One',cursive;font-size:3.5rem;line-height:1;color:var(--gold); }
+  .score-panel p { opacity:.88;margin-top:.5rem;font-size:1rem; }
+  .score-panel h3 { font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:.3rem; }
+
+  /* ─── CONGRATS ─── */
+  .congrats-panel { background:linear-gradient(135deg,var(--forest) 0%,#1b7a58 100%);color:white;border-radius:20px;padding:2.5rem 2rem;text-align:center;margin-top:2rem; }
+  .congrats-panel h2 { font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:.6rem; }
+  .congrats-panel p  { opacity:.9;line-height:1.7;max-width:480px;margin:0 auto .8rem; }
+  .summary-chips { display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:1rem; }
+  .summary-chip {
+    background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);
+    border-radius:20px;padding:.3rem .9rem;font-size:.78rem;font-weight:700;
+    font-family:'DM Mono',monospace;letter-spacing:.04em;
+  }
+
+  /* ─── VOCAB TABLE ─── */
+  .vocab-table { width:100%;border-collapse:collapse;margin:1rem 0 1.5rem; }
+  .vocab-table th { background:var(--forest);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;padding:.7rem 1rem;text-align:left; }
+  .vocab-table td { padding:.65rem 1rem;font-size:.85rem;line-height:1.5;border-bottom:1px solid var(--border); }
+  .vocab-table tr:nth-child(even) td { background:#f5f7fa; }
+  .vocab-table tr:hover td { background:#d4eadd;transition:background .15s; }
+  .vocab-table td:first-child { font-weight:800;color:var(--forest-mid); }
+
+  /* ─── FILL IN THE BLANK ─── */
+  .blank-input {
+    border:none;border-bottom:2.5px solid var(--forest-mid);background:transparent;
+    font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;color:var(--forest);
+    width:180px;text-align:center;outline:none;padding:0 4px;transition:border-color .2s;
+  }
+  .blank-input:focus { border-color:var(--coral); }
+  .blank-input.ok { border-color:var(--mint);color:var(--mint); }
+  .blank-input.err{ border-color:var(--coral);color:var(--coral); }
+  .fill-q { font-size:.95rem;line-height:2;color:var(--ink);margin-bottom:.8rem; }
+  .divider { height:1px;background:var(--border);margin:2rem 0; }
+
+  /* ─── NAME BAR ─── */
+  .name-bar {
+    background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);
+    border-radius:12px;padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;
+    max-width:420px;margin:0 auto 1rem;
+  }
+  .name-bar label { font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;font-family:'DM Mono',monospace; }
+  .name-bar input {
+    flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;
+    padding:.4rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:white;outline:none;
+  }
+  .name-bar input::placeholder { color:rgba(255,255,255,.4);font-weight:400; }
+
+  /* ─── SUMMARY / SUBMIT ─── */
+  .summary-section { background:white;border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--forest);margin-bottom:.8rem; }
+  .summary-answer {
+    background:#f5f7fa;border-radius:8px;padding:.7rem 1rem;font-size:.85rem;
+    line-height:1.6;color:var(--ink);margin-bottom:.5rem;font-style:italic;
+    border-left:3px solid var(--lavender);min-height:2rem;
+  }
+  .summary-answer.empty { color:var(--muted);font-style:normal;border-left-color:var(--border); }
+  .share-buttons { display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center; }
+  .share-btn {
+    border:none;border-radius:12px;padding:.85rem 1.6rem;font-family:'Fredoka One',cursive;
+    font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem;
+  }
+  .share-btn:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background:var(--mint);color:white; }
+  .share-btn.email { background:var(--lavender);color:white; }
+  .share-btn.print { background:var(--forest);color:white; }
+  .copy-confirm { text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--mint);min-height:1.2rem;margin-top:.6rem; }
+
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm,.prog-step,.name-bar { display:none !important; }
+    .sheet { box-shadow:none;border-radius:0; }
+    .section { display:none !important; }
+    #sec-7 { display:block !important; }
+  }
+  /* ─── FATTY ACID COMPARISON ─── */
+  .fat-compare { display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1rem 0; }
+  .fat-card {
+    border-radius:14px;padding:1.2rem;text-align:center;border:2px solid var(--border);
+    cursor:pointer;transition:all .25s;background:white;
+  }
+  .fat-card:hover,.fat-card.active { transform:translateY(-3px);box-shadow:0 4px 16px rgba(0,0,0,.12); }
+  .fat-card.active.saturated   { border-color:var(--gold); background:var(--gold-pale); }
+  .fat-card.active.unsaturated { border-color:var(--mint); background:var(--mint-pale); }
+  .fat-card.active.trans       { border-color:var(--coral); background:var(--coral-pale); }
+  .fat-chain {
+    font-family:'DM Mono',monospace;font-size:1.3rem;letter-spacing:2px;
+    margin:.8rem 0;color:var(--ink);
+  }
+  .fat-card .fat-name { font-family:'Fredoka One',cursive;font-size:1rem;color:var(--forest);margin-bottom:.3rem; }
+  .fat-card .fat-state { font-size:.75rem;font-family:'DM Mono',monospace;color:var(--muted); }
+
+  /* ─── PROTEIN STRUCTURE LEVELS ─── */
+  .protein-level-track {
+    display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0;justify-content:center;
+  }
+  .protein-level-step {
+    flex:1;min-width:130px;text-align:center;padding:1rem .8rem;border-radius:12px;
+    border:2px solid var(--border);background:white;cursor:pointer;transition:all .25s;
+  }
+  .protein-level-step:hover,.protein-level-step.active { border-color:var(--lavender);box-shadow:0 4px 14px rgba(124,111,205,.2);transform:translateY(-2px); }
+  .protein-level-step.active { background:var(--lav-pale); }
+  .protein-level-step .pl-icon { font-size:1.8rem;margin-bottom:.3rem; }
+  .protein-level-step .pl-name { font-family:'Fredoka One',cursive;font-size:.85rem;color:var(--forest); }
+  .protein-level-detail {
+    background:var(--lav-pale);border-left:4px solid var(--lavender);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1rem;
+  }
+  .protein-level-detail.show { display:block; }
+  .protein-level-detail h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.5rem; }
+  .protein-level-detail p  { font-size:.88rem;line-height:1.7;color:#2a2a3a; }
+
+  /* ─── AMINO ACID CLASSIFIER ─── */
+  .aa-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.6rem;margin:1rem 0; }
+  .aa-tile {
+    border-radius:10px;padding:.7rem .5rem;text-align:center;cursor:pointer;
+    border:2px solid var(--border);background:white;transition:all .2s;
+  }
+  .aa-tile:hover { transform:scale(1.04); }
+  .aa-tile .aa-letter { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest); }
+  .aa-tile .aa-full { font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.2rem; }
+  .aa-tile.cat-nonpolar  { border-color:#a8d5b8; }
+  .aa-tile.cat-polar     { border-color:var(--mint); }
+  .aa-tile.cat-positive  { border-color:var(--coral); }
+  /* ─── NUCLEOTIDE BUILDER ─── */
+  .nuc-parts { display:flex;justify-content:center;gap:1.2rem;flex-wrap:wrap;margin:1.2rem 0; }
+  .nuc-part {
+    text-align:center;padding:1rem 1.3rem;border-radius:14px;
+    border:2px solid var(--border);background:white;min-width:130px;
+    transition:all .3s;
+  }
+  .nuc-part .np-icon { font-size:1.8rem;margin-bottom:.4rem; }
+  .nuc-part .np-name { font-family:'Fredoka One',cursive;font-size:.92rem;color:var(--forest); }
+  .nuc-part .np-sub  { font-size:.68rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.3rem; }
+  .nuc-part.sugar     { border-color:var(--mint); background:var(--mint-pale); }
+  .nuc-part.phosphate { border-color:var(--gold); background:var(--gold-pale); }
+  .nuc-part.base      { border-color:var(--coral); background:var(--coral-pale); }
+
+  /* ─── BASE PAIRING TABLE / SELECTOR ─── */
+  .base-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.7rem;margin:1rem 0; }
+  .base-tile {
+    border-radius:12px;padding:1rem .6rem;text-align:center;cursor:pointer;
+    border:2px solid var(--border);background:white;transition:all .2s;
+  }
+  .base-tile:hover,.base-tile.active { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.12); }
+  .base-tile .bt-letter { font-family:'Fredoka One',cursive;font-size:1.5rem; }
+  .base-tile .bt-name   { font-size:.68rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.3rem; }
+  .base-tile.purine     { border-color:var(--lavender); }
+  .base-tile.purine.active { background:var(--lav-pale); }
+  .base-tile.pyrimidine { border-color:var(--coral); }
+  .base-tile.pyrimidine.active { background:var(--coral-pale); }
+
+  /* ─── DOUBLE HELIX STRAND BUILDER ─── */
+  .helix-row { display:flex; flex-wrap:nowrap; gap:3px; overflow-x:auto; padding:.6rem 0; margin:.6rem 0; }
+  .helix-base {
+    min-width:34px;height:38px;display:flex;align-items:center;justify-content:center;
+    font-family:'DM Mono',monospace;font-weight:700;font-size:.92rem;
+    border-radius:6px;border:2px solid var(--border);flex-shrink:0;transition:all .3s;
+  }
+  .helix-base.hA { background:var(--coral-pale); color:var(--coral); border-color:#f8c5b8; }
+  .helix-base.hT { background:var(--lav-pale);   color:var(--lavender); border-color:#d0caef; }
+  .helix-base.hU { background:#eafaf3;           color:#1b7a58; border-color:#b8ebd8; }
+  .helix-base.hC { background:var(--gold-pale);  color:#8a6a1a; border-color:#f8e0a0; }
+  .helix-base.hG { background:#d4eadd;           color:var(--forest-mid); border-color:#a8d5b8; }
+  .helix-base.empty { background:#f5f7fa; color:var(--border); border-style:dashed; }
+
+  /* ─── SA:V CALCULATOR ─── */
+  .sav-display {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem; margin: 1rem 0;
+  }
+  .sav-box {
+    border-radius: 14px; padding: 1.2rem; text-align: center;
+    border: 2px solid var(--border); background: white; transition: all .3s;
+  }
+  .sav-box .sav-title { font-family:'Fredoka One',cursive; font-size:.95rem; color:var(--forest); margin-bottom:.5rem; }
+  .sav-box .sav-num   { font-family:'DM Mono',monospace; font-size:1.6rem; font-weight:700; }
+  .sav-box .sav-unit  { font-size:.68rem; color:var(--muted); font-family:'DM Mono',monospace; margin-top:.2rem; }
+  .sav-box.highlight-good { border-color:var(--mint); background:var(--mint-pale); }
+  .sav-box.highlight-good .sav-num { color:var(--mint); }
+  .sav-box.highlight-bad  { border-color:var(--coral); background:var(--coral-pale); }
+  .sav-box.highlight-bad  .sav-num { color:var(--coral); }
+
+  .sav-slider-row { display:flex; align-items:center; gap:1rem; margin:.8rem 0; flex-wrap:wrap; }
+  .sav-slider-row label { font-family:'DM Mono',monospace; font-size:.82rem; color:var(--muted); min-width:140px; }
+  .sav-slider-row input[type=range] { flex:1; min-width:120px; accent-color:var(--forest-mid); }
+  .sav-slider-row .sav-readout { font-family:'DM Mono',monospace; font-weight:700; color:var(--forest); min-width:50px; text-align:right; }
+
+  /* ─── PROKARYOTE STRUCTURE DIAGRAM ─── */
+  .prok-part {
+    display: inline-block; padding:.5rem 1rem; border-radius:20px;
+    font-family:'Fredoka One',cursive; font-size:.88rem; cursor:pointer;
+    border:2px solid var(--border); background:white; transition:all .2s; margin:.3rem;
+  }
+  .prok-part:hover,.prok-part.active { transform:scale(1.06); }
+  .prok-part.p-membrane   { border-color:var(--coral); color:var(--coral); }
+  .prok-part.p-membrane.active { background:var(--coral-pale); }
+  .prok-part.p-wall       { border-color:var(--gold); color:#8a6a1a; }
+  .prok-part.p-wall.active { background:var(--gold-pale); }
+  .prok-part.p-nucleoid   { border-color:var(--lavender); color:var(--lavender); }
+  .prok-part.p-nucleoid.active { background:var(--lav-pale); }
+  .prok-part.p-ribosome   { border-color:var(--mint); color:var(--mint); }
+  .prok-part.p-ribosome.active { background:var(--mint-pale); }
+  .prok-part.p-flagella   { border-color:var(--forest-mid); color:var(--forest-mid); }
+  .prok-part.p-flagella.active { background:#d4eadd; }
+  .prok-part.p-capsule    { border-color:#888; color:#555; }
+  .prok-part.p-capsule.active { background:#f0f0f0; }
+  .prok-part.p-pili       { border-color:var(--forest-lt); color:var(--forest-lt); }
+  .prok-part.p-pili.active { background:#e0f5e8; }
+</style>
+</head>
+<body><!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-badge">🔬 AP Biology · Chapter 5 (Part 1 of 2)</div>
+  <h1>Plasma Membrane <span class="accent">Explorer</span></h1>
+  <p class="intro">Master the fluid mosaic model and passive transport — covering OpenStax AP Biology Chapter 5, sections 5.1 (Components &amp; Structure) and 5.2 (Passive Transport).</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <span class="prog-step active" onclick="goTo(0)">① Wonder</span>
+    <span class="prog-step"       onclick="goTo(1)">② Fluid Mosaic Model</span>
+    <span class="prog-step"       onclick="goTo(2)">③ Membrane Fluidity Lab</span>
+    <span class="prog-step"       onclick="goTo(3)">④ Passive Transport</span>
+    <span class="prog-step"       onclick="goTo(4)">⑤ Osmosis Lab</span>
+    <span class="prog-step"       onclick="goTo(5)">⑥ Quiz</span>
+    <span class="prog-step"       onclick="goTo(6)">⑦ Reflect</span>
+    <span class="prog-step"       onclick="goTo(7)">📤 Submit</span>
+  </div>
+</div>
+
+<!-- ═══ SHEET ═══ -->
+<div class="sheet">
+
+<!-- ═══ SECTION 0: WONDER ═══ -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-coral">1</div>
+    <span class="eyebrow-label">Phase 1 · Wonder</span>
+  </div>
+  <h2>🚪 The World's Most Selective Doorman</h2>
+  <p class="lead">
+    Every second, your cells let some molecules in and keep others out — without a brain, a security guard, or a single conscious decision. The plasma membrane does it all, automatically, based purely on chemistry.
+  </p>
+
+  <div class="wonder-box">
+    <p>Oxygen diffuses freely into your cells. Glucose cannot get in without help. Sodium ions are actively pumped out against their concentration gradient. Large proteins can't cross at all without being engulfed. <strong>How can one thin, 5–10 nm membrane "decide" what crosses and what doesn't — without using any intelligence?</strong></p>
+  </div>
+
+  <div class="predict-box">
+    <h4>✏️ Your Prediction (before we dig in)</h4>
+    <textarea placeholder="Predict: what properties of a molecule do you think determine whether it can cross the plasma membrane freely? Think about size, charge, and polarity. Why might a water molecule pass through more easily than a sodium ion, even though water is larger?"></textarea>
+  </div>
+
+  <div class="wonder-box gold-box">
+    <p>The answer is <strong>selective permeability</strong> — a direct result of the membrane's molecular structure. The hydrophobic core of the phospholipid bilayer acts as a barrier to charged and polar molecules, while letting nonpolar molecules pass freely. Transport proteins provide carefully controlled passageways for everything else. The plasma membrane is not a wall — it's a highly dynamic, fluid mosaic of molecules, each performing a specific role.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.6rem;">🗝️ The Big Picture</h3>
+  <p style="font-size:.95rem;line-height:1.75;margin-bottom:1.8rem;">
+    In this interactive we cover <strong>5.1 Components and Structure</strong> — the fluid mosaic model, phospholipids, membrane proteins, cholesterol, glycoproteins, and what controls membrane fluidity — and <strong>5.2 Passive Transport</strong> — diffusion, facilitated diffusion (channels and carrier proteins), osmosis, and tonicity (hypo-, iso-, hypertonic).
+  </p>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" disabled>← Back</button>
+    <button class="btn btn-coral" onclick="goTo(1)">Next: Fluid Mosaic Model →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 1: 5.1 FLUID MOSAIC MODEL ═══ -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-lav">2</div>
+    <span class="eyebrow-label">Phase 2 · 5.1 Components &amp; Structure</span>
+  </div>
+  <h2>📖 The Fluid Mosaic Model — Core Vocabulary</h2>
+  <p class="lead">Tap each term to reveal its definition. Singer and Nicolson proposed the fluid mosaic model in 1972 — it remains the best explanation of membrane structure. Know every component.</p>
+
+  <div class="chip-row">
+    <span class="chip coral"  onclick="reveal('fmm')">Fluid Mosaic Model</span>
+    <span class="chip forest" onclick="reveal('phospho')">Phospholipid Bilayer</span>
+    <span class="chip mint"   onclick="reveal('integral')">Integral Proteins</span>
+    <span class="chip gold"   onclick="reveal('peripheral')">Peripheral Proteins</span>
+    <span class="chip lav"    onclick="reveal('glyco')">Glycoproteins &amp; Glycolipids</span>
+    <span class="chip coral"  onclick="reveal('glycocalyx')">Glycocalyx</span>
+    <span class="chip forest" onclick="reveal('cholesterol')">Cholesterol</span>
+    <span class="chip mint"   onclick="reveal('fluidity')">Membrane Fluidity</span>
+    <span class="chip gold"   onclick="reveal('selective')">Selective Permeability</span>
+  </div>
+
+  <div id="rev-fmm"         class="concept-reveal coral">
+    <strong>Fluid Mosaic Model (Singer &amp; Nicolson, 1972)</strong> — Describes the plasma membrane as a <em>fluid</em> (the phospholipid bilayer is not rigid — proteins and lipids drift laterally) <em>mosaic</em> (made of multiple different components: phospholipids, proteins, cholesterol, and carbohydrates). Membranes range from <strong>5–10 nm</strong> thick. The earlier "sandwich model" (Davson &amp; Danielli, 1935) was replaced because TEM revealed a double, not single, lipid layer.
+  </div>
+  <div id="rev-phospho"     class="concept-reveal forest-border">
+    <strong>Phospholipid Bilayer</strong> — The main structural fabric of the membrane. Each phospholipid has a <em>hydrophilic head</em> (glycerol + phosphate group — polar, faces water) and two <em>hydrophobic tails</em> (fatty acid chains — nonpolar, face inward). In water, phospholipids spontaneously arrange into a bilayer with tails hidden inside. They can also form <em>micelles</em> (spheres with tails inside) and <em>liposomes</em> (hollow spheres with a bilayer).
+  </div>
+  <div id="rev-integral"    class="concept-reveal mint-border">
+    <strong>Integral Proteins</strong> — Proteins embedded within the phospholipid bilayer. Often span the entire membrane (<em>transmembrane proteins</em>). Have hydrophobic membrane-spanning regions (often α-helices of 20–25 amino acids) that interact with the lipid tails. Also called <em>integrins</em>. Functions: transport molecules across the membrane (channels and carriers), receive signals (receptors), catalyse reactions (enzymes), and mediate cell adhesion.
+  </div>
+  <div id="rev-peripheral"  class="concept-reveal gold-border">
+    <strong>Peripheral Proteins</strong> — Found on the inner or outer surface of the membrane, attached to integral proteins or phospholipid heads — NOT embedded in the bilayer. Functions: serve as enzymes, provide structural attachments for the cytoskeleton (inner surface), or act as cell recognition sites (outer surface). Also called "cell-specific proteins" — they help the immune system identify self vs. non-self.
+  </div>
+  <div id="rev-glyco"       class="concept-reveal lav-border">
+    <strong>Glycoproteins &amp; Glycolipids</strong> — Carbohydrate chains (2–60 monosaccharides, straight or branched) attached to <em>proteins</em> (glycoproteins) or <em>lipids</em> (glycolipids) on the <strong>exterior surface only</strong>. Function: cell identity and recognition (like a barcode unique to each cell type), allow hormone/receptor binding, and determine blood type. HIV recognises glycoproteins (CD4) on T-helper cells to infect them.
+  </div>
+  <div id="rev-glycocalyx"  class="concept-reveal coral">
+    <strong>Glycocalyx ("Sugar Coating")</strong> — The collective name for all carbohydrate components (glycoproteins + glycolipids) on the exterior membrane surface. Highly hydrophilic — attracts water to the cell surface. Critical for: cell-cell recognition, immune self/non-self distinction, embryonic development, and cell-cell adhesion in tissue formation. Viruses like HIV and hepatitis exploit the glycocalyx to identify and infect specific target cells.
+  </div>
+  <div id="rev-cholesterol" class="concept-reveal forest-border">
+    <strong>Cholesterol</strong> — A lipid embedded between phospholipids in the bilayer of <em>animal cell membranes</em>. Acts as a <strong>fluidity buffer</strong>: at low temperatures it prevents phospholipids from packing too tightly (prevents freezing); at high temperatures it prevents them from becoming too fluid. Also organises clusters of transmembrane proteins into <em>lipid rafts</em>. Absent from most prokaryotic membranes.
+  </div>
+  <div id="rev-fluidity"    class="concept-reveal mint-border">
+    <strong>Membrane Fluidity</strong> — Three factors control fluidity: (1) <em>Unsaturated fatty acids</em> — double bonds create kinks that prevent tight packing → more fluid; (2) <em>Temperature</em> — higher = more fluid, lower = less fluid; (3) <em>Cholesterol</em> — buffers both extremes. Fish in cold environments increase their proportion of unsaturated fatty acids to maintain membrane fluidity. The membrane is not elastic (can burst if overstretched) but a fine needle can penetrate and self-seal.
+  </div>
+  <div id="rev-selective"   class="concept-reveal gold-border">
+    <strong>Selective Permeability</strong> — The membrane allows some substances to pass freely, requires transport proteins for others, and blocks others entirely. Rules: (1) Small, nonpolar molecules (O₂, CO₂, N₂, lipid-soluble vitamins A/D/E/K, steroid hormones) diffuse freely; (2) Water crosses via <em>aquaporins</em>; (3) Polar molecules and ions need transport proteins; (4) Large molecules (proteins, carbohydrates) cannot cross without bulk transport (endocytosis/exocytosis).
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 Membrane Components &amp; Functions (Table 5.1)</h3>
+  <table class="vocab-table">
+    <tr><th>Component</th><th>Location</th><th>Primary Function(s)</th></tr>
+    <tr><td>Phospholipid</td><td>Main bilayer fabric</td><td>Structural barrier; hydrophobic core blocks polar molecules</td></tr>
+    <tr><td>Cholesterol</td><td>Between phospholipids (both layers)</td><td>Buffers membrane fluidity against temperature changes</td></tr>
+    <tr><td>Integral proteins</td><td>Embedded within phospholipid layer(s)</td><td>Transport, receptors, enzymes, adhesion</td></tr>
+    <tr><td>Peripheral proteins</td><td>Inner or outer surface (not embedded)</td><td>Enzymes, cytoskeleton attachment, recognition</td></tr>
+    <tr><td>Glycoproteins / Glycolipids</td><td>Outer surface only</td><td>Cell recognition, immune identity, receptor binding</td></tr>
+  </table>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.4rem;">🎯 Quick Match — Membrane Components</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Tap a term, then tap its match.</p>
+  <div class="match-grid" id="matchGrid">
+    <div class="match-item" data-pair="a" data-side="term" onclick="matchClick(this)">Integral Protein</div>
+    <div class="match-item" data-pair="b" data-side="def"  onclick="matchClick(this)">Carbohydrate chains on the outer membrane surface</div>
+    <div class="match-item" data-pair="c" data-side="term" onclick="matchClick(this)">Cholesterol</div>
+    <div class="match-item" data-pair="d" data-side="def"  onclick="matchClick(this)">Protein on membrane surface — not embedded in bilayer</div>
+    <div class="match-item" data-pair="a" data-side="def"  onclick="matchClick(this)">Protein embedded within the phospholipid bilayer</div>
+    <div class="match-item" data-pair="e" data-side="term" onclick="matchClick(this)">Aquaporin</div>
+    <div class="match-item" data-pair="b" data-side="term" onclick="matchClick(this)">Glycocalyx</div>
+    <div class="match-item" data-pair="c" data-side="def"  onclick="matchClick(this)">Lipid that buffers membrane fluidity in animal cells</div>
+    <div class="match-item" data-pair="d" data-side="term" onclick="matchClick(this)">Peripheral Protein</div>
+    <div class="match-item" data-pair="e" data-side="def"  onclick="matchClick(this)">Channel protein specific for water transport</div>
+  </div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-ghost" onclick="resetMatch()">↺ Reset Match</button>
+    <span id="match-score" style="margin-left:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted);"></span>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(0)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(2)">Next: Membrane Fluidity Lab →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 2: MEMBRANE FLUIDITY LAB ═══ -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-gold">3</div>
+    <span class="eyebrow-label">Phase 3 · Membrane Fluidity Lab</span>
+  </div>
+  <h2>🌡️ What Controls Membrane Fluidity?</h2>
+  <p class="lead">Explore how three factors — fatty acid saturation, temperature, and cholesterol — affect how fluid or rigid a membrane is. This is a classic AP Biology concept and a frequent exam topic.</p>
+
+  <div class="predict-box">
+    <h4>✏️ Before the lab — your prediction</h4>
+    <textarea id="fluidity-predict" placeholder="Predict: a fish moves from warm tropical water to cold Arctic water. What change would you expect in the proportion of saturated vs. unsaturated fatty acids in its cell membranes? Why? What would happen to the membrane if it didn't adapt?"></textarea>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🔬 Membrane Fluidity — Tap a Factor to Explore</h3>
+    <div class="hint">Tap each factor to see how it affects membrane fluidity and why</div>
+
+    <div class="sel-grid" style="grid-template-columns:repeat(3,1fr);">
+      <div class="sel-card" onclick="showSel('satfat')">
+        <div class="sel-icon">🥓</div>
+        <div class="sel-name">Fatty Acid Saturation</div>
+        <div class="sel-key">saturated vs. unsaturated</div>
+      </div>
+      <div class="sel-card" onclick="showSel('temp')">
+        <div class="sel-icon">🌡️</div>
+        <div class="sel-name">Temperature</div>
+        <div class="sel-key">hot vs. cold</div>
+      </div>
+      <div class="sel-card" onclick="showSel('chol')">
+        <div class="sel-icon">🫧</div>
+        <div class="sel-name">Cholesterol</div>
+        <div class="sel-key">the buffer</div>
+      </div>
+    </div>
+
+    <div id="sel-satfat" class="sel-detail">
+      <h4>🥓 Fatty Acid Saturation — Straight vs. Kinked Tails</h4>
+      <p><strong>Saturated</strong> fatty acids: all single C–C bonds → straight, unbranched tails → pack tightly → <em>more rigid</em> membrane. <strong>Unsaturated</strong> fatty acids: one or more C=C double bonds → kinks in the tail (~30° bend per double bond) → tails can't pack tightly → <em>more fluid</em> membrane. Cold-climate fish have membranes rich in unsaturated fatty acids — this prevents their membranes from freezing and keeps them functional at low temperatures.</p>
+      <p class="examples">📌 AP exam connection: "A cold-water organism would be expected to have a higher proportion of unsaturated fatty acids in its membrane phospholipids."</p>
+    </div>
+    <div id="sel-temp" class="sel-detail">
+      <h4>🌡️ Temperature — Faster or Slower Movement</h4>
+      <p>Higher temperatures give phospholipid molecules more kinetic energy, making them move more rapidly → membrane becomes <em>more fluid</em>. Lower temperatures reduce kinetic energy → molecules slow and pack more closely → membrane becomes <em>less fluid</em> (more rigid). If a membrane's fatty acid composition doesn't adapt to cold, it can solidify like butter in a refrigerator — disrupting all membrane-dependent functions.</p>
+      <p class="examples">📌 Cholesterol moderates both extremes: at low temps it prevents solidifying; at high temps it prevents becoming too fluid.</p>
+    </div>
+    <div id="sel-chol" class="sel-detail">
+      <h4>🫧 Cholesterol — The Fluidity Buffer</h4>
+      <p>Cholesterol molecules nestle between phospholipids in the bilayer. At <strong>low temperatures</strong>: cholesterol disrupts the tight packing of saturated fatty acid tails, preventing the membrane from solidifying → <em>maintains fluidity</em>. At <strong>high temperatures</strong>: cholesterol helps restrain phospholipid movement, preventing the membrane from becoming excessively fluid and losing integrity → <em>limits fluidity increase</em>. This dual role extends the functional temperature range of animal cell membranes. Cholesterol is also involved in forming <em>lipid rafts</em> — microdomains that cluster specific proteins.</p>
+      <p class="examples">📌 Only animal cells contain cholesterol in their membranes. Bacteria and plant cells use other mechanisms to regulate membrane fluidity.</p>
+    </div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Adapting Membrane Fluidity</h4>
+    <textarea placeholder="Explain how a bacterium living in a hot spring would differ in membrane composition from one living in Arctic ice. What specific molecular change would increase fluidity? Decrease it? What role does cholesterol play that distinguishes animal cell membranes?"></textarea>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(3)">Next: Passive Transport →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 3: 5.2 PASSIVE TRANSPORT ═══ -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">4</div>
+    <span class="eyebrow-label">Phase 4 · 5.2 Passive Transport</span>
+  </div>
+  <h2>🌊 Passive Transport — Tap to Explore</h2>
+  <p class="lead">Passive transport moves substances <strong>down their concentration gradient</strong> — no ATP required. Tap each card to explore the three types and when each is used.</p>
+
+  <div class="evidence-grid">
+    <div class="ev-card" onclick="showEvidence('diffusion')">
+      <div class="ev-icon">💨</div>
+      <div class="ev-title">Simple Diffusion</div>
+      <div class="ev-sub">no protein needed</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('facilitated')">
+      <div class="ev-icon">🚪</div>
+      <div class="ev-title">Facilitated Diffusion</div>
+      <div class="ev-sub">channels &amp; carriers</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('osmosis')">
+      <div class="ev-icon">💧</div>
+      <div class="ev-title">Osmosis</div>
+      <div class="ev-sub">water movement</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('tonicity')">
+      <div class="ev-icon">🫧</div>
+      <div class="ev-title">Tonicity</div>
+      <div class="ev-sub">hypo / iso / hyper</div>
+    </div>
+    <div class="ev-card" onclick="showEvidence('factors')">
+      <div class="ev-icon">⚡</div>
+      <div class="ev-title">Factors Affecting Diffusion Rate</div>
+      <div class="ev-sub">gradient, temp, size…</div>
+    </div>
+  </div>
+
+  <div id="ev-diffusion"    class="ev-panel">
+    <h4>💨 Simple Diffusion</h4>
+    <p>Movement of a substance from an area of <strong>high concentration to low concentration</strong> across the membrane — no protein needed, no energy required. Works for: small, nonpolar molecules (O₂, CO₂, N₂) and lipid-soluble substances (fat-soluble vitamins A, D, E, K; steroid hormones; lipid-soluble drugs). Continues until <strong>dynamic equilibrium</strong> is reached (equal concentration on both sides — net movement = 0, but molecules continue to cross randomly). Concentration gradient = a form of <em>potential energy</em> that drives diffusion.</p>
+    <div class="example-box">📌 O₂ diffuses into cells; CO₂ diffuses out — both by simple diffusion. Neither requires a transport protein. Ions (Na⁺, K⁺, Cl⁻) and polar molecules (glucose, amino acids) CANNOT cross by simple diffusion.</div>
+  </div>
+  <div id="ev-facilitated" class="ev-panel">
+    <h4>🚪 Facilitated Diffusion — Channel Proteins &amp; Carrier Proteins</h4>
+    <p>Polar molecules, charged ions, and large molecules that cannot cross the hydrophobic bilayer use <strong>transport proteins</strong> — still moving <em>down</em> their concentration gradient (no ATP). Two types: (1) <strong>Channel proteins</strong> — provide a hydrophilic pore through the membrane; specific for one substance; can be <em>gated</em> (open/close in response to signals) or always open. <strong>Aquaporins</strong> are channel proteins specific for water. Channels transport up to tens of millions of molecules/sec. (2) <strong>Carrier proteins</strong> — bind a specific substance, change shape, release it on the other side. More specific but slower (thousands–millions/sec). Can become <em>saturated</em> when all proteins are occupied.</p>
+    <div class="example-box">📌 Glucose cannot cross by simple diffusion — it uses GLUT carrier proteins. Na⁺ and K⁺ use gated channel proteins in nerve and muscle cells. Water uses aquaporins in red blood cells and kidney tubules.</div>
+  </div>
+  <div id="ev-osmosis"     class="ev-panel">
+    <h4>💧 Osmosis — Water's Special Case of Diffusion</h4>
+    <p>Osmosis is the diffusion of <em>water only</em> through a selectively permeable membrane — from <strong>high water concentration (low solute) to low water concentration (high solute)</strong>. Driven by the water concentration gradient, which is inversely proportional to solute concentration. Water moves through <strong>aquaporins</strong>. Osmosis proceeds until either concentration is equalised or hydrostatic pressure balances the osmotic pressure. Key insight: water moves TOWARD higher solute concentration (lower water concentration).</p>
+    <div class="example-box">📌 Mnemonic: SALTOUT — Salty water pulls water OUT. If a cell is placed in a salty (hypertonic) solution, water leaves the cell. If placed in a dilute (hypotonic) solution, water enters the cell.</div>
+  </div>
+  <div id="ev-tonicity"    class="ev-panel">
+    <h4>🫧 Tonicity — How Osmolarity Affects Cell Volume</h4>
+    <p><strong>Hypotonic solution</strong>: extracellular fluid has LOWER solute concentration than cytoplasm → water enters the cell → cell <em>swells</em> (animal cells may <em>lyse/burst</em>; plant cells become <em>turgid</em> — good!). <strong>Isotonic solution</strong>: equal solute concentrations on both sides → no net water movement → cell <em>unchanged</em>. <strong>Hypertonic solution</strong>: extracellular fluid has HIGHER solute concentration than cytoplasm → water leaves the cell → cell <em>shrinks</em> (animal cells <em>crenate</em>; plant cells <em>plasmolyse</em> — bad!). Organisms maintain osmotic balance via <em>osmoregulation</em>.</p>
+    <div class="example-box">📌 IV fluids are formulated as isotonic to blood plasma to prevent red blood cell lysis. Saltwater fish secrete excess salt through gills (hypertonic ocean pulls water out); freshwater fish actively take in salt (hypotonic stream pushes water in).</div>
+  </div>
+  <div id="ev-factors"     class="ev-panel">
+    <h4>⚡ Six Factors That Affect Diffusion Rate</h4>
+    <p>
+      (1) <strong>Concentration gradient</strong>: larger gradient → faster diffusion.<br>
+      (2) <strong>Molecular mass</strong>: heavier molecules → slower diffusion.<br>
+      (3) <strong>Temperature</strong>: higher temp → faster diffusion (more kinetic energy).<br>
+      (4) <strong>Solvent density</strong>: denser cytoplasm (e.g., during dehydration) → slower diffusion.<br>
+      (5) <strong>Lipid solubility</strong>: nonpolar/lipid-soluble → faster membrane diffusion.<br>
+      (6) <strong>Surface area &amp; membrane thickness</strong>: larger surface area → faster; thicker membrane → slower.
+    </p>
+    <div class="example-box">📌 Distance limits cell size — the further a molecule must diffuse, the slower it gets there. This is why cells either stay small or develop specialised transport systems.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 Passive Transport Summary</h3>
+  <table class="vocab-table">
+    <tr><th>Type</th><th>Protein needed?</th><th>Energy (ATP)?</th><th>Direction</th><th>Examples</th></tr>
+    <tr><td>Simple Diffusion</td><td>No</td><td>No</td><td>High → Low concentration</td><td>O₂, CO₂, lipid-soluble vitamins</td></tr>
+    <tr><td>Facilitated — Channel</td><td>Yes (channel protein)</td><td>No</td><td>High → Low concentration</td><td>Water (aquaporins), ions (Na⁺, K⁺)</td></tr>
+    <tr><td>Facilitated — Carrier</td><td>Yes (carrier protein)</td><td>No</td><td>High → Low concentration</td><td>Glucose (GLUT proteins), amino acids</td></tr>
+    <tr><td>Osmosis</td><td>Yes (aquaporins)</td><td>No</td><td>High water → Low water (= low solute → high solute)</td><td>Water across all membranes</td></tr>
+  </table>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(4)">Next: Osmosis Lab →</button>
+  </div>
+</div>
+<!-- ═══ SECTION 4: OSMOSIS LAB ═══ -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-lav">5</div>
+    <span class="eyebrow-label">Phase 5 · Osmosis &amp; Tonicity Lab</span>
+  </div>
+  <h2>💧 What Happens to a Cell in Different Solutions?</h2>
+  <p class="lead">Place a red blood cell and a plant cell into different solutions and observe what happens. This is one of the most commonly tested osmosis scenarios on the AP exam.</p>
+
+  <div class="predict-box">
+    <h4>✏️ Before the lab — your prediction</h4>
+    <textarea id="osmosis-predict" placeholder="Predict: if you place a red blood cell in pure water (hypotonic), what will happen to it and why? What if you place the same cell in very salty water (hypertonic)? What is different about what happens to a plant cell in the same solutions?"></textarea>
+  </div>
+
+  <div class="demo-zone">
+    <h3>🔬 Cell Tonicity Simulator</h3>
+    <div class="hint">Select a solution type and a cell type to see what happens</div>
+
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
+      <div style="flex:1;min-width:200px;">
+        <p style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--muted);margin-bottom:.5rem;">SOLUTION TYPE:</p>
+        <div style="display:flex;flex-direction:column;gap:.5rem;">
+          <button class="btn btn-lav"   id="btn-hypo" onclick="setTonicity('hypo')">💧 Hypotonic (pure water / low solute)</button>
+          <button class="btn btn-mint"  id="btn-iso"  onclick="setTonicity('iso')">⚖️ Isotonic (same as cell)</button>
+          <button class="btn btn-coral" id="btn-hyper" onclick="setTonicity('hyper')">🧂 Hypertonic (high solute / salty)</button>
+        </div>
+      </div>
+      <div style="flex:1;min-width:200px;">
+        <p style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--muted);margin-bottom:.5rem;">CELL TYPE:</p>
+        <div style="display:flex;flex-direction:column;gap:.5rem;">
+          <button class="btn btn-coral" id="btn-rbc"   onclick="setCellType('rbc')">🔴 Red Blood Cell (animal)</button>
+          <button class="btn btn-mint"  id="btn-plant" onclick="setCellType('plant')">🌿 Plant Cell</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="osmosis-result" style="background:#f5f7fa;border-radius:12px;padding:1.4rem;border:2px solid var(--border);min-height:100px;font-size:.88rem;line-height:1.8;">
+      Select a solution and a cell type above to see the osmosis result…
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Tonicity practice check -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.5rem;">🧪 Apply It — Tonicity Scenario</h3>
+  <p style="font-size:.9rem;line-height:1.7;margin-bottom:1rem;">A marine biologist places a freshwater amoeba (whose cytoplasm has lower solute concentration than sea water) into a saltwater tank. What will happen to the amoeba?</p>
+  <div class="demo-zone">
+    <h3>Select your answer:</h3>
+    <div class="quiz-options" style="display:flex;flex-direction:column;gap:.5rem;" id="tonic-opts">
+      <button class="quiz-opt" onclick="checkTonicity(this,'wrong')">A. The amoeba will swell and burst (lyse) because water enters</button>
+      <button class="quiz-opt" onclick="checkTonicity(this,'correct')">B. The amoeba will shrink (crenate) because water leaves — sea water is hypertonic to the amoeba</button>
+      <button class="quiz-opt" onclick="checkTonicity(this,'wrong')">C. Nothing changes — the solutions are isotonic</button>
+      <button class="quiz-opt" onclick="checkTonicity(this,'wrong')">D. Water leaves the sea water and enters the amoeba because sea water has more solute</button>
+    </div>
+    <div id="tonic-fb" class="quiz-feedback" style="margin-top:1rem;"></div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Osmosis &amp; Living Systems</h4>
+    <textarea placeholder="Why do freshwater fish actively take in salt through their gills, while saltwater fish secrete salt? How does the plant cell wall change the outcome of osmosis compared to animal cells? Why are IV fluids formulated to be isotonic to blood?"></textarea>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(3)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(5)">Next: Quiz →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 5: QUIZ ═══ -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-forest">6</div>
+    <span class="eyebrow-label">Phase 6 · Real Test Practice</span>
+  </div>
+  <h2>📝 AP-Style Quiz — Chapter 5, Sections 5.1 &amp; 5.2</h2>
+  <p class="lead">These questions cover OpenStax AP Biology Chapter 5, Sections 5.1–5.2 in AP exam style. Answer each — instant feedback with full explanations.</p>
+  <div id="quiz-container"></div>
+  <div id="score-panel" class="score-panel" style="display:none;">
+    <h3>Quiz Complete! 🎉</h3>
+    <div class="score-num" id="score-display">0/20</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-gold" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button>
+  </div>
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(4)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(6)">Next: Reflect →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 6: REFLECT ═══ -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">7</div>
+    <span class="eyebrow-label">Phase 7 · Reflect</span>
+  </div>
+  <h2>💭 Reflection &amp; Review</h2>
+  <p class="lead">Solidify your understanding. Answer all four questions in your own words.</p>
+
+  <div class="quiz-card">
+    <div class="quiz-q">1. Describe the fluid mosaic model of the plasma membrane. What are the five main components, where is each located, and what is each component's primary function? Why is the membrane described as both "fluid" and a "mosaic"?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">2. Explain how three factors — fatty acid saturation, temperature, and cholesterol — each affect membrane fluidity. What adaptation would you expect in a cold-water fish's membranes, and why?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">3. Compare simple diffusion, facilitated diffusion (channels vs. carrier proteins), and osmosis. For each: does it require a protein? Does it require energy? What types of molecules use it? What is the direction of movement?</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">4. Define hypotonic, isotonic, and hypertonic. For each solution type, describe what happens to (a) a red blood cell and (b) a plant cell — and explain why the outcomes differ between the two cell types.</div>
+    <textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.8rem;">✏️ Fill-in-the-Blank Review</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1.2rem;">Type the answer and press Enter or click Check All.</p>
+  <div id="fill-container"></div>
+  <div style="margin-top:.8rem;">
+    <button class="btn btn-mint" onclick="checkAllFills()">✓ Check All Answers</button>
+    <button class="btn btn-ghost" onclick="resetFills()" style="margin-left:.6rem;">↺ Reset</button>
+  </div>
+
+  <div class="congrats-panel" style="margin-top:2rem;">
+    <h2>🔬 Membrane Structure &amp; Passive Transport Mastered!</h2>
+    <p>You've worked through OpenStax AP Biology Chapter 5, Sections 5.1 (Fluid Mosaic Model) and 5.2 (Passive Transport) — the structural and passive-movement foundations of all membrane biology. Up next: Active Transport and Bulk Transport (Chapter 5, Part 2)!</p>
+    <p style="font-size:.85rem;opacity:.75;">AP Bio tip: osmosis and tonicity questions appear on virtually every AP Biology exam. Practise predicting what happens to cells in different solutions until it's automatic.</p>
+    <div class="summary-chips">
+      <span class="summary-chip">Fluid Mosaic Model ✓</span>
+      <span class="summary-chip">Phospholipid Bilayer ✓</span>
+      <span class="summary-chip">Integral Proteins ✓</span>
+      <span class="summary-chip">Glycocalyx ✓</span>
+      <span class="summary-chip">Cholesterol ✓</span>
+      <span class="summary-chip">Selective Permeability ✓</span>
+      <span class="summary-chip">Simple Diffusion ✓</span>
+      <span class="summary-chip">Facilitated Diffusion ✓</span>
+      <span class="summary-chip">Osmosis ✓</span>
+      <span class="summary-chip">Tonicity ✓</span>
+    </div>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(5)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(7)">Next: Submit →</button>
+  </div>
+</div>
+
+<!-- ═══ SECTION 7: SUBMIT ═══ -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow">
+    <div class="eyebrow-num num-mint">8</div>
+    <span class="eyebrow-label">Your Completed Work</span>
+  </div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Here's a summary of everything you worked on. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> to your teacher.</p>
+
+  <div class="summary-section" style="background:var(--forest);color:white;border-color:var(--forest);">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">STUDENT</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">LESSON</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;">Plasma Membrane Explorer 🔬 (Ch. 5 Part 1)</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6;" id="summaryDate"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section"><h3>📝 Quiz Score</h3><div class="summary-answer" id="sum-quiz"></div></div>
+  <div class="summary-section"><h3>🤔 Opening Prediction</h3><div class="summary-answer" id="sum-pred"></div></div>
+  <div class="summary-section"><h3>🌡️ Membrane Fluidity Lab Prediction</h3><div class="summary-answer" id="sum-fluidity-pred"></div></div>
+  <div class="summary-section"><h3>💧 Osmosis Lab Prediction</h3><div class="summary-answer" id="sum-osmosis-pred"></div></div>
+  <div class="summary-section">
+    <h3>💭 Reflection Questions</h3>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;">Q1 — Fluid Mosaic Model</div>
+    <div class="summary-answer" id="sum-r1"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q2 — Membrane Fluidity Factors</div>
+    <div class="summary-answer" id="sum-r2"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q3 — Passive Transport Types</div>
+    <div class="summary-answer" id="sum-r3"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q4 — Tonicity in Red Blood Cells vs. Plant Cells</div>
+    <div class="summary-answer" id="sum-r4"></div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.6rem;">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2;">
+      <strong>📋 Copy My Results</strong> — Copies all answers. Paste into Google Classroom.<br>
+      <strong>📧 Email to Teacher</strong> — Opens your email app with answers pre-filled.<br>
+      <strong>🖨️ Print / Save PDF</strong> — Mac: bottom-left → Save as PDF. Windows: Microsoft Print to PDF.
+    </p>
+  </div>
+
+  <div class="nav-row" style="padding:2rem 0 0;">
+    <button class="btn btn-ghost" onclick="goTo(6)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(0)">↺ Start Over</button>
+  </div>
+</div>
+
+</div><!-- /sheet -->
+
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.<br>
+  Content informed by OpenStax Biology for AP Courses (CC BY-NC-SA 4.0)
+</div>
+<script>
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+const steps    = document.querySelectorAll('.prog-step');
+const sections = document.querySelectorAll('.section');
+
+function goTo(n) {
+  sections.forEach((s, i) => s.classList.toggle('active', i === n));
+  steps.forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    if (i === n) s.classList.add('active');
+    if (i < n)  s.classList.add('done');
+  });
+  if (n === 7) buildSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════════════
+// CONCEPT REVEALS (Section 1)
+// ═══════════════════════════════════════════════
+const revIds = ['fmm','phospho','integral','peripheral','glyco','glycocalyx','cholesterol','fluidity','selective'];
+function reveal(key) {
+  revIds.forEach(id => {
+    const el = document.getElementById('rev-' + id);
+    if (el) el.classList.remove('show');
+  });
+  const t = document.getElementById('rev-' + key);
+  if (t) t.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// MATCHING GAME (Section 1)
+// ═══════════════════════════════════════════════
+let matchSelected = null;
+let matchScore = 0;
+
+function matchClick(el) {
+  if (el.classList.contains('matched')) return;
+  if (!matchSelected) {
+    el.classList.add('selected');
+    matchSelected = el;
+  } else if (matchSelected === el) {
+    el.classList.remove('selected');
+    matchSelected = null;
+  } else {
+    const pA = matchSelected.dataset.pair, pB = el.dataset.pair;
+    const sA = matchSelected.dataset.side, sB = el.dataset.side;
+    if (pA === pB && sA !== sB) {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('matched');
+      el.classList.add('matched');
+      matchScore++;
+      document.getElementById('match-score').textContent = matchScore + '/5 matched';
+      matchSelected = null;
+    } else {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('wrong');
+      el.classList.add('wrong');
+      const a = matchSelected, b = el;
+      setTimeout(() => { a.classList.remove('wrong'); b.classList.remove('wrong'); }, 650);
+      matchSelected = null;
+    }
+  }
+}
+function resetMatch() {
+  matchSelected = null; matchScore = 0;
+  document.querySelectorAll('.match-item').forEach(el => el.classList.remove('selected','matched','wrong'));
+  document.getElementById('match-score').textContent = '';
+}
+
+// ═══════════════════════════════════════════════
+// FLUIDITY STEP CARDS (Section 2)
+// ═══════════════════════════════════════════════
+function showSel(type) {
+  document.querySelectorAll('.sel-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.sel-detail').forEach(d => d.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const det = document.getElementById('sel-' + type);
+  if (det) det.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// EVIDENCE CARDS (Section 3)
+// ═══════════════════════════════════════════════
+function showEvidence(type) {
+  document.querySelectorAll('.ev-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.ev-panel').forEach(p => p.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const panel = document.getElementById('ev-' + type);
+  if (panel) panel.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// OSMOSIS / TONICITY LAB (Section 4)
+// ═══════════════════════════════════════════════
+let currentTonicity = null;
+let currentCellType = null;
+
+const tonicityData = {
+  rbc: {
+    hypo: {
+      title: '🔴 Red Blood Cell in Hypotonic Solution',
+      result: '💧 Water rushes INTO the cell (from low solute outside → higher solute inside). The cell <strong>swells</strong> and may <strong>lyse (burst)</strong> — a process called <em>hemolysis</em>. Red blood cells have no cell wall to stop this. This is why pure water cannot be used in IV drips.',
+      color: 'var(--lav-pale)', border: 'var(--lavender)'
+    },
+    iso: {
+      title: '🔴 Red Blood Cell in Isotonic Solution',
+      result: '⚖️ Solute concentrations are <strong>equal</strong> on both sides. There is no net movement of water — water enters and exits at the same rate. The cell <strong>maintains its normal, biconcave disc shape</strong>. This is why IV fluids (like saline) are formulated to be isotonic to blood plasma.',
+      color: 'var(--mint-pale)', border: 'var(--mint)'
+    },
+    hyper: {
+      title: '🔴 Red Blood Cell in Hypertonic Solution',
+      result: '🧂 Water leaves the cell (higher solute outside draws water out). The cell <strong>shrinks and shrivels</strong> — a process called <em>crenation</em>. The cytoplasm becomes more concentrated and the cell\'s functions are compromised. Severe dehydration can cause this in the body.',
+      color: 'var(--coral-pale)', border: 'var(--coral)'
+    }
+  },
+  plant: {
+    hypo: {
+      title: '🌿 Plant Cell in Hypotonic Solution',
+      result: '💧 Water rushes INTO the cell. The cell <strong>swells</strong>, but the <em>cell wall</em> prevents it from bursting. Instead, it becomes <strong>turgid</strong> (firm/rigid). The plasma membrane presses against the cell wall — this is called <em>turgor pressure</em>. This is the normal, healthy state for plant cells and is what keeps non-woody plants upright!',
+      color: 'var(--lav-pale)', border: 'var(--lavender)'
+    },
+    iso: {
+      title: '🌿 Plant Cell in Isotonic Solution',
+      result: '⚖️ No net water movement. The cell is <strong>flaccid</strong> (limp) — the plasma membrane is not pressed firmly against the cell wall. This is actually a sign of poor health for a plant cell; plants need some turgor pressure to remain upright.',
+      color: 'var(--mint-pale)', border: 'var(--mint)'
+    },
+    hyper: {
+      title: '🌿 Plant Cell in Hypertonic Solution',
+      result: '🧂 Water leaves the cell. Unlike animal cells, the rigid cell wall doesn\'t shrink. Instead, the plasma membrane <em>pulls away from the cell wall</em> — a process called <em>plasmolysis</em>. The central vacuole shrinks. The plant loses turgor pressure and <strong>wilts</strong>. If severe, the plant dies. This is what happens when you over-fertilise plants.',
+      color: 'var(--coral-pale)', border: 'var(--coral)'
+    }
+  }
+};
+
+function setTonicity(type) {
+  currentTonicity = type;
+  ['hypo','iso','hyper'].forEach(t => {
+    document.getElementById('btn-' + t).style.outline = t === type ? '3px solid white' : 'none';
+  });
+  updateOsmosisResult();
+}
+
+function setCellType(type) {
+  currentCellType = type;
+  ['rbc','plant'].forEach(t => {
+    document.getElementById('btn-' + t).style.outline = t === type ? '3px solid white' : 'none';
+  });
+  updateOsmosisResult();
+}
+
+function updateOsmosisResult() {
+  const box = document.getElementById('osmosis-result');
+  if (!currentTonicity || !currentCellType) {
+    box.innerHTML = 'Select a solution and a cell type above to see the osmosis result…';
+    box.style.background = '#f5f7fa';
+    box.style.borderColor = 'var(--border)';
+    return;
+  }
+  const d = tonicityData[currentCellType][currentTonicity];
+  box.innerHTML = `<strong style="font-family:'Fredoka One',cursive;font-size:1rem;color:var(--forest);">${d.title}</strong><br><br>${d.result}`;
+  box.style.background  = d.color;
+  box.style.borderColor = d.border;
+}
+
+function checkTonicity(btn, result) {
+  document.querySelectorAll('#tonic-opts .quiz-opt').forEach(b => b.disabled = true);
+  const fb = document.getElementById('tonic-fb');
+  if (result === 'correct') {
+    btn.classList.add('correct');
+    fb.className = 'quiz-feedback show correct-fb';
+    fb.textContent = '✅ Correct! Sea water has a much higher solute concentration than the freshwater amoeba\'s cytoplasm — sea water is hypertonic to the amoeba. Water leaves the cell by osmosis → the amoeba shrinks (crenates). Without a contractile vacuole adapted for this direction, the amoeba would likely die.';
+  } else {
+    btn.classList.add('wrong');
+    fb.className = 'quiz-feedback show wrong-fb';
+    fb.textContent = '❌ Not quite. Sea water is hypertonic relative to the freshwater amoeba — it has MORE solute (salt). Water moves OUT of the amoeba into the more concentrated sea water, causing the cell to shrink (crenate), not swell.';
+  }
+  fb.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// QUIZ DATA — 5.1 & 5.2
+// ═══════════════════════════════════════════════
+const quizData = [
+  {
+    q: "The fluid mosaic model of the plasma membrane was proposed by Singer and Nicolson in 1972. What do the terms 'fluid' and 'mosaic' each describe?",
+    opts: [
+      "'Fluid' describes the liquid cytoplasm; 'mosaic' describes the nuclear DNA",
+      "'Fluid' means the phospholipid bilayer allows lateral movement of its components; 'mosaic' means the membrane is composed of multiple different molecular components",
+      "'Fluid' means the membrane can dissolve in water; 'mosaic' describes the pattern of cell division",
+      "'Fluid' and 'mosaic' are both used to describe protein function"
+    ],
+    ans: 1,
+    fb: "In the fluid mosaic model: 'fluid' = phospholipids and proteins can drift laterally within the membrane (it's not rigid). 'Mosaic' = the membrane is a mosaic of different components — phospholipids, cholesterol, integral proteins, peripheral proteins, and carbohydrates."
+  },
+  {
+    q: "Which molecule forms the main structural fabric of the plasma membrane and why does it spontaneously form a bilayer in water?",
+    opts: [
+      "Cholesterol — because it has four fused carbon rings that repel water",
+      "Phospholipids — because their amphipathic nature (hydrophilic heads, hydrophobic tails) drives the tails to hide from water, forming a bilayer",
+      "Glycoproteins — because carbohydrate chains attract water to the membrane surface",
+      "Integral proteins — because their transmembrane regions span the entire bilayer"
+    ],
+    ans: 1,
+    fb: "Phospholipids are amphipathic — they have a hydrophilic phosphate head (loves water) and hydrophobic fatty acid tails (avoid water). In water, they spontaneously arrange so tails face inward and heads face out, forming a bilayer. They can also form micelles and liposomes."
+  },
+  {
+    q: "What distinguishes an integral protein from a peripheral protein in the plasma membrane?",
+    opts: [
+      "Integral proteins are found only in animal membranes; peripheral proteins only in plant membranes",
+      "Integral proteins are embedded within the phospholipid bilayer (often spanning it); peripheral proteins are on the inner or outer membrane surface, not embedded",
+      "Integral proteins are always enzymes; peripheral proteins are always structural",
+      "They are identical — the terms are interchangeable"
+    ],
+    ans: 1,
+    fb: "Integral proteins are embedded within the hydrophobic core of the phospholipid bilayer — many span the full membrane (transmembrane proteins). Peripheral proteins are attached to the membrane surface (either side) but are NOT embedded in the bilayer; they can be more easily removed."
+  },
+  {
+    q: "Carbohydrates attached to membrane proteins (glycoproteins) and lipids (glycolipids) are found on which surface of the plasma membrane?",
+    opts: [
+      "Interior (cytoplasmic) surface only",
+      "Both interior and exterior surfaces equally",
+      "Exterior (extracellular) surface only",
+      "They float freely in the membrane interior"
+    ],
+    ans: 2,
+    fb: "Carbohydrates are found ONLY on the exterior (extracellular) surface of the plasma membrane. They form the glycocalyx, which plays roles in cell recognition, immune identity (self vs. non-self), embryonic development, and cell adhesion. The interior surface has no carbohydrates."
+  },
+  {
+    q: "How does cholesterol affect membrane fluidity, and in which organisms is it found?",
+    opts: [
+      "Cholesterol makes membranes more rigid at all temperatures; found in all organisms",
+      "Cholesterol acts as a fluidity buffer — preventing the membrane from becoming too rigid at low temperatures and too fluid at high temperatures; found in animal cell membranes",
+      "Cholesterol has no effect on membrane fluidity; it only provides structural support",
+      "Cholesterol makes membranes permeable to all molecules"
+    ],
+    ans: 1,
+    fb: "Cholesterol acts as a bidirectional fluidity buffer: at low temperatures it prevents tight packing (maintains fluidity); at high temperatures it restrains movement (prevents excessive fluidity). It is found in animal cell membranes but not in most prokaryote or plant membranes."
+  },
+  {
+    q: "A researcher increases the proportion of unsaturated fatty acids in a bacterium's membrane phospholipids. What effect would this have on membrane fluidity?",
+    opts: [
+      "Decrease fluidity — unsaturated fatty acids pack more tightly",
+      "No effect — only cholesterol affects fluidity",
+      "Increase fluidity — double bonds create kinks that prevent tight packing of the tails",
+      "The membrane would dissolve — unsaturated fats are water soluble"
+    ],
+    ans: 2,
+    fb: "Unsaturated fatty acids have one or more C=C double bonds that create kinks (~30° bend) in the tail. These kinks prevent the tails from packing closely together, increasing space between phospholipids and making the membrane MORE fluid. This is why cold-environment organisms have more unsaturated fatty acids."
+  },
+  {
+    q: "Which of the following substances can cross the plasma membrane by simple diffusion WITHOUT a transport protein?",
+    opts: [
+      "Glucose",
+      "Na⁺ ions",
+      "O₂ molecules",
+      "Amino acids"
+    ],
+    ans: 2,
+    fb: "O₂ is a small, nonpolar molecule — it dissolves freely in the hydrophobic lipid bilayer and crosses by simple diffusion. Glucose, amino acids, and ions (Na⁺) are polar or charged and cannot cross the hydrophobic bilayer without transport proteins."
+  },
+  {
+    q: "What is the key difference between channel proteins and carrier proteins in facilitated diffusion?",
+    opts: [
+      "Channel proteins require ATP; carrier proteins do not",
+      "Channel proteins form a hydrophilic pore and transport much faster; carrier proteins bind their substrate, change shape, and are slower and can become saturated",
+      "Carrier proteins are found only on the outside of the membrane; channel proteins are inside",
+      "They are identical in structure and function"
+    ],
+    ans: 1,
+    fb: "Channel proteins provide a hydrophilic pore for passive movement — very fast (tens of millions of molecules/sec). Carrier proteins bind a specific substrate, undergo a conformational change to release it on the other side, and are slower (thousands to millions/sec). Carriers can become saturated when all binding sites are occupied."
+  },
+  {
+    q: "Aquaporins are a type of channel protein. What is their specific function?",
+    opts: [
+      "Transporting glucose across the membrane",
+      "Pumping Na⁺ out of the cell against its gradient",
+      "Allowing rapid passage of water molecules across the membrane",
+      "Carrying amino acids into the cell"
+    ],
+    ans: 2,
+    fb: "Aquaporins are channel proteins specific for water. They dramatically increase the rate of water movement (osmosis) across the membrane. They are particularly abundant in red blood cells and the membranes of kidney tubules, where rapid water movement is critical."
+  },
+  {
+    q: "In facilitated diffusion, in which direction do substances move relative to their concentration gradient?",
+    opts: [
+      "Against their concentration gradient (low → high), requiring ATP",
+      "Down their concentration gradient (high → low), requiring no ATP",
+      "In random directions, regardless of concentration",
+      "Only from inside the cell to outside, never in reverse"
+    ],
+    ans: 1,
+    fb: "Facilitated diffusion is PASSIVE — substances still move DOWN their concentration gradient (from high to low concentration). Transport proteins simply provide a pathway through the hydrophobic barrier. No ATP is consumed. This distinguishes it from active transport."
+  },
+  {
+    q: "Osmosis is best defined as:",
+    opts: [
+      "The active pumping of water across a membrane using ATP",
+      "The diffusion of solutes from high to low concentration",
+      "The movement of water molecules across a selectively permeable membrane from higher water concentration to lower water concentration",
+      "The random movement of all molecules across a membrane"
+    ],
+    ans: 2,
+    fb: "Osmosis is the diffusion of WATER ONLY across a selectively permeable membrane — from where water is more concentrated (low solute) to where water is less concentrated (high solute). Water moves through aquaporins. Solutes cannot cross — only the water moves."
+  },
+  {
+    q: "A cell is placed in a solution where the extracellular fluid has a lower solute concentration than the cell's cytoplasm. What type of solution is this, and what will happen?",
+    opts: [
+      "Hypertonic — water will leave the cell and it will shrink",
+      "Isotonic — no net water movement",
+      "Hypotonic — water will enter the cell and it may swell or burst",
+      "Hypertonic — water will enter the cell and it will swell"
+    ],
+    ans: 2,
+    fb: "Lower extracellular solute = hypotonic solution. Water moves from high water concentration (outside, low solute) to low water concentration (inside, high solute). Water enters the cell → it swells. Animal cells may lyse; plant cells become turgid (good!)."
+  },
+  {
+    q: "A red blood cell is placed in a very concentrated salt solution. What will happen, and what is this called?",
+    opts: [
+      "It will swell and burst — called hemolysis",
+      "It will shrink and pucker — called crenation",
+      "It will remain unchanged — the solution is isotonic",
+      "It will undergo active transport to equalise salt concentration"
+    ],
+    ans: 1,
+    fb: "A highly concentrated salt solution is hypertonic relative to the red blood cell. Water leaves the cell by osmosis (moving toward higher solute concentration outside). The cell shrinks and takes on a spiky, crenated appearance. This is called crenation."
+  },
+  {
+    q: "Why does a plant cell in a hypotonic solution become turgid rather than lysing, unlike an animal cell?",
+    opts: [
+      "Plant cells have contractile vacuoles that pump out excess water",
+      "Plant cells have a rigid cellulose cell wall that prevents further expansion when the plasma membrane presses against it",
+      "Plant cells do not undergo osmosis",
+      "Plant cells have more aquaporins that allow water to flow back out"
+    ],
+    ans: 1,
+    fb: "The cellulose cell wall provides a rigid boundary that resists expansion. When water enters by osmosis, the plasma membrane presses against the cell wall. The resulting turgor pressure makes the cell firm (turgid) — which is actually the normal, healthy state for plant cells and is what keeps non-woody plants upright."
+  },
+  {
+    q: "Plasmolysis in plant cells occurs in which type of solution?",
+    opts: [
+      "Hypotonic — the plasma membrane bulges outward",
+      "Isotonic — there is no net water movement",
+      "Hypertonic — the plasma membrane pulls away from the cell wall as water leaves",
+      "It can only occur in animal cells"
+    ],
+    ans: 2,
+    fb: "In a hypertonic solution, water leaves the plant cell. The cell wall does not shrink, but the plasma membrane detaches from the wall and contracts inward — this is plasmolysis. The cell becomes flaccid and the plant wilts. Severe plasmolysis can kill the cell."
+  },
+  {
+    q: "Which of the following factors would INCREASE the rate of diffusion across a membrane?",
+    opts: [
+      "Decreasing the temperature",
+      "Increasing the molecular mass of the diffusing substance",
+      "Increasing the concentration gradient across the membrane",
+      "Increasing the thickness of the membrane"
+    ],
+    ans: 2,
+    fb: "A larger concentration gradient means a greater 'driving force' for diffusion → faster rate. Decreasing temperature slows molecules; heavier molecules move more slowly; a thicker membrane increases the distance molecules must travel — all of these decrease the diffusion rate."
+  },
+  {
+    q: "A patient with diabetes has blood glucose levels so high that the kidney's glucose carrier proteins become saturated. What happens to the excess glucose?",
+    opts: [
+      "It is converted to ATP by the kidney",
+      "It is reabsorbed by the kidney using active transport",
+      "It is not reabsorbed and is excreted in the urine ('spilling glucose into the urine')",
+      "It crosses the kidney tubule membrane by simple diffusion"
+    ],
+    ans: 2,
+    fb: "When all glucose carrier proteins (GLUTs) are occupied (saturated), no more glucose can be transported regardless of concentration. The excess glucose remains in the filtrate and is excreted in the urine — a hallmark symptom of uncontrolled diabetes. This illustrates the saturation limit of carrier-protein transport."
+  },
+  {
+    q: "How do viruses like HIV exploit the glycocalyx to infect specific cells?",
+    opts: [
+      "They dissolve the phospholipid bilayer to enter the cell",
+      "They recognise specific glycoproteins (like CD4) on target cell surfaces and use them as binding sites to gain entry",
+      "They inject their DNA directly through the cell wall",
+      "They use active transport to pump themselves into the cell"
+    ],
+    ans: 1,
+    fb: "HIV recognises the CD4 glycoprotein on T-helper lymphocyte surfaces. The virus's own surface proteins bind to CD4, initiating the infection process. The glycocalyx — intended for cell recognition — is exploited by pathogens. HIV's surface proteins also mutate rapidly, making vaccine development very difficult."
+  },
+  {
+    q: "Why is it medically important that IV (intravenous) fluids be formulated as isotonic solutions?",
+    opts: [
+      "Isotonic solutions are cheaper to manufacture",
+      "Isotonic solutions prevent net movement of water into or out of red blood cells, avoiding hemolysis (in hypotonic) or crenation (in hypertonic)",
+      "Isotonic solutions are more easily absorbed by the digestive system",
+      "Isotonic solutions dissolve medications more effectively"
+    ],
+    ans: 1,
+    fb: "If IV fluids were hypotonic, water would rush into red blood cells → hemolysis (bursting). If hypertonic, water would leave red blood cells → crenation (shrinking). An isotonic formulation matches the osmolarity of blood plasma, keeping red blood cells intact and functional."
+  },
+  {
+    q: "Which statement correctly describes the relationship between osmolarity and water concentration?",
+    opts: [
+      "High osmolarity = high water concentration",
+      "High osmolarity = low water concentration (more solute displaces water molecules)",
+      "Osmolarity and water concentration are not related",
+      "Low osmolarity = low water concentration"
+    ],
+    ans: 1,
+    fb: "Osmolarity measures total solute particle concentration. A HIGH osmolarity solution contains many solute particles that 'displace' water molecules — so it has LOW water concentration. Water moves from low osmolarity (high water) to high osmolarity (low water) — always from where there's more water to where there's less."
+  },
+];
+
+let quizScore = 0;
+let quizAnswered = 0;
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  quizScore = 0; quizAnswered = 0;
+  document.getElementById('score-panel').style.display = 'none';
+
+  quizData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `
+      <div class="quiz-q">${idx+1}. ${item.q}</div>
+      <div class="quiz-options">
+        ${item.opts.map((opt, i) => `
+          <button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">
+            ${String.fromCharCode(65+i)}. ${opt}
+          </button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="qfb-${idx}"></div>`;
+    container.appendChild(card);
+  });
+}
+
+function checkAnswer(btn, qIdx, optIdx) {
+  const card    = btn.closest('.quiz-card');
+  const buttons = card.querySelectorAll('.quiz-opt');
+  const fb      = document.getElementById('qfb-' + qIdx);
+  const correct = quizData[qIdx].ans;
+  buttons.forEach(b => b.disabled = true);
+  if (optIdx === correct) {
+    btn.classList.add('correct');
+    fb.textContent = '✅ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show correct-fb';
+    quizScore++;
+  } else {
+    btn.classList.add('wrong');
+    buttons[correct].classList.add('correct');
+    fb.textContent = '❌ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show wrong-fb';
+  }
+  quizAnswered++;
+  if (quizAnswered === quizData.length) showScore();
+}
+
+function showScore() {
+  const panel = document.getElementById('score-panel');
+  panel.style.display = 'block';
+  document.getElementById('score-display').textContent = quizScore + '/' + quizData.length;
+  const pct = quizScore / quizData.length;
+  let msg;
+  if (pct >= .9) msg = '🌟 Outstanding! You clearly understand membrane structure and passive transport. AP exam ready!';
+  else if (pct >= .75) msg = '👍 Great work! Review the questions you missed and you\'ll be in great shape.';
+  else if (pct >= .6) msg = '📚 Good start — revisit Phases 2–4, then retake.';
+  else msg = '💪 Keep going! Go back through the Fluid Mosaic Model and Passive Transport phases, then retake.';
+  document.getElementById('score-msg').textContent = msg;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function retakeQuiz() { buildQuiz(); }
+
+// ═══════════════════════════════════════════════
+// FILL-IN-THE-BLANK
+// ═══════════════════════════════════════════════
+const fills = [
+  { q: "The model describing the membrane as a fluid combination of phospholipids, proteins, and other components is the ___ mosaic model.", ans: "fluid" },
+  { q: "Proteins embedded within the phospholipid bilayer are called ___ proteins.", ans: "integral" },
+  { q: "Carbohydrate chains on the exterior surface of the membrane collectively form the ___.", ans: "glycocalyx" },
+  { q: "In animal cells, ___ acts as a fluidity buffer, preventing the membrane from becoming too rigid or too fluid.", ans: "cholesterol" },
+  { q: "Unsaturated fatty acids contain C=C ___ bonds that create kinks, increasing membrane fluidity.", ans: "double" },
+  { q: "Movement of substances down their concentration gradient without energy is called ___ transport.", ans: "passive" },
+  { q: "Channel proteins specific for water transport are called ___.", ans: "aquaporins" },
+  { q: "The diffusion of water through a selectively permeable membrane is called ___.", ans: "osmosis" },
+  { q: "A solution with LOWER solute concentration than the cell's cytoplasm is described as ___.", ans: "hypotonic" },
+  { q: "When a plant cell loses water in a hypertonic solution, the plasma membrane pulls away from the cell wall — this is called ___.", ans: "plasmolysis" },
+];
+
+function buildFills() {
+  const container = document.getElementById('fill-container');
+  container.innerHTML = '';
+  fills.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-card';
+    div.innerHTML = `<div class="fill-q">${item.q.replace('___',
+      `<input class="blank-input" id="fill-${idx}" type="text" placeholder="?"
+       onkeydown="if(event.key==='Enter')checkFill(${idx})">`)}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function checkFill(idx) {
+  const input = document.getElementById('fill-' + idx);
+  const val   = input.value.trim().toLowerCase();
+  const correct = fills[idx].ans.toLowerCase();
+  if (val === correct || val.includes(correct) || correct.includes(val)) {
+    input.classList.remove('err'); input.classList.add('ok');
+    input.value = fills[idx].ans;
+  } else {
+    input.classList.remove('ok'); input.classList.add('err');
+  }
+}
+function checkAllFills() { fills.forEach((_, idx) => checkFill(idx)); }
+function resetFills() {
+  fills.forEach((_, idx) => {
+    const input = document.getElementById('fill-' + idx);
+    if (input) { input.value = ''; input.classList.remove('ok','err'); }
+  });
+}
+
+// ═══════════════════════════════════════════════
+// SUMMARY / SUBMIT
+// ═══════════════════════════════════════════════
+function fillSummary(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = text && text.trim();
+  el.textContent = val || 'Not answered';
+  el.classList.toggle('empty', !val);
+}
+
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent =
+    new Date().toLocaleDateString('en-GB', {
+      weekday:'long', year:'numeric', month:'long', day:'numeric'
+    });
+  const scoreEl = document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl ? scoreEl.textContent + ' correct' : 'Quiz not yet completed');
+
+  const predTA     = document.querySelector('#sec-0 textarea');
+  fillSummary('sum-pred', predTA ? predTA.value : '');
+
+  const fluidityTA = document.getElementById('fluidity-predict');
+  fillSummary('sum-fluidity-pred', fluidityTA ? fluidityTA.value : '');
+
+  const osmosisTA  = document.getElementById('osmosis-predict');
+  fillSummary('sum-osmosis-pred', osmosisTA ? osmosisTA.value : '');
+
+  const refCards = document.querySelectorAll('#sec-6 .quiz-card textarea');
+  ['sum-r1','sum-r2','sum-r3','sum-r4'].forEach((id, i) => {
+    fillSummary(id, refCards[i] ? refCards[i].value : '');
+  });
+}
+
+function buildPlainText() {
+  const name      = document.getElementById('studentName').value.trim() || 'Student';
+  const date      = new Date().toLocaleDateString('en-GB', {
+    weekday:'long', year:'numeric', month:'long', day:'numeric'
+  });
+  const scoreEl   = document.getElementById('score-display');
+  const score     = scoreEl ? scoreEl.textContent : 'not completed';
+  const predTA    = document.querySelector('#sec-0 textarea');
+  const fluidityTA= document.getElementById('fluidity-predict');
+  const osmosisTA = document.getElementById('osmosis-predict');
+  const refCards  = document.querySelectorAll('#sec-6 .quiz-card textarea');
+  const refs = ['','','',''];
+  refCards.forEach((ta, i) => { refs[i] = ta.value.trim() || 'Not answered'; });
+
+  return [
+    'PLASMA MEMBRANE EXPLORER 🔬 (CH. 5 PART 1) — STUDENT SUBMISSION',
+    '======================================================',
+    'Student: ' + name,
+    'Date: ' + date,
+    'Lesson: AP Biology · OpenStax Chapter 5 (5.1 & 5.2) · Plasma Membrane Explorer Part 1',
+    '',
+    '── QUIZ SCORE ──', score,
+    '',
+    '── OPENING PREDICTION ──',
+    predTA ? (predTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── MEMBRANE FLUIDITY LAB PREDICTION ──',
+    fluidityTA ? (fluidityTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── OSMOSIS LAB PREDICTION ──',
+    osmosisTA ? (osmosisTA.value.trim() || 'Not answered') : 'Not answered',
+    '',
+    '── REFLECTIONS ──',
+    'Q1 — Fluid Mosaic Model:', refs[0],
+    'Q2 — Membrane Fluidity Factors:', refs[1],
+    'Q3 — Passive Transport Types:', refs[2],
+    'Q4 — Tonicity in Red Blood Cells vs. Plant Cells:', refs[3],
+    '',
+    '======================================================',
+    '© 2026 Farvour Explorations · farvourexplorations.com',
+    'Submitted via Plasma Membrane Explorer Part 1 · Interactive Digital Lesson · AP Biology'
+  ].join('\n');
+}
+
+function copyResults() {
+  buildSummary();
+  navigator.clipboard.writeText(buildPlainText()).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Now paste into Google Classroom or your assignment.';
+    setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => {
+    document.getElementById('copyConfirm').textContent =
+      '⚠️ Could not copy automatically — try selecting the text manually.';
+  });
+}
+
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  window.location.href = 'mailto:?subject=' +
+    encodeURIComponent('Plasma Membrane Explorer Part 1 — ' + name) +
+    '&body=' + encodeURIComponent(buildPlainText());
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+buildQuiz();
+buildFills();
+</script>
+</body>
+</html>
