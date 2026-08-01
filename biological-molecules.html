@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biological Molecules — IGCSE Biology</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ocean:      #1a3d2b;
+    --ocean-mid:  #2d6a4f;
+    --ocean-lt:   #40916c;
+    --coral:      #e8603c;
+    --coral-pale: #fdf0ec;
+    --mint:       #3aaf85;
+    --mint-pale:  #e8f8f2;
+    --gold:       #c9962a;
+    --gold-pale:  #fef9e7;
+    --lavender:   #7c6fcd;
+    --lav-pale:   #f0eefb;
+    --paper:      #fffef9;
+    --ink:        #1a2332;
+    --muted:      #7a8899;
+    --border:     #e0e4ea;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: linear-gradient(160deg,#0d2318 0%,#1a3d2b 45%,#2d6a4f 100%);
+    min-height:100vh; font-family:'Nunito',sans-serif; color:var(--ink); overflow-x:hidden;
+  }
+  body::before {
+    content:''; position:fixed; inset:0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%,rgba(144,238,144,.4) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 22% 38%,rgba(255,255,255,.25) 0%,transparent 100%),
+      radial-gradient(2px   2px   at 41% 6%, rgba(144,238,144,.32) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 60% 24%,rgba(255,255,255,.2)  0%,transparent 100%),
+      radial-gradient(1.5px 1.5px at 77% 9%, rgba(144,238,144,.38) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 90% 33%,rgba(255,255,255,.25) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 33% 55%,rgba(144,238,144,.28) 0%,transparent 100%),
+      radial-gradient(2px   2px   at 70% 48%,rgba(255,255,255,.15) 0%,transparent 100%);
+    pointer-events:none; z-index:0;
+  }
+  /* HERO */
+  .hero { position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 2rem;color:white; }
+  .hero-badge { display:inline-block;background:var(--gold);color:var(--ocean);font-family:'Fredoka One',cursive;font-size:.85rem;letter-spacing:.05em;padding:.35rem 1.2rem;border-radius:20px;margin-bottom:1.2rem;box-shadow:0 2px 12px rgba(201,150,42,.45); }
+  .hero h1 { font-family:'Fredoka One',cursive;font-size:clamp(2rem,6vw,3.6rem);line-height:1.1;margin-bottom:.8rem;text-shadow:0 2px 20px rgba(0,0,0,.35); }
+  .hero h1 .accent { color:var(--gold); }
+  .hero p.intro { font-size:1.05rem;line-height:1.7;opacity:.88;max-width:580px;margin:0 auto 2rem; }
+  .name-bar { background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);border-radius:12px;padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;max-width:420px;margin:0 auto 1rem; }
+  .name-bar label { font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;font-family:'DM Mono',monospace; }
+  .name-bar input { flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.4rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:white;outline:none; }
+  .name-bar input::placeholder { color:rgba(255,255,255,.4);font-weight:400; }
+  .progress-wrap { display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem; }
+  .prog-step { background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);border-radius:20px;padding:.35rem .9rem;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace;display:inline-block; }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.35); }
+  .prog-step.active { background:var(--gold);color:var(--ocean);border-color:var(--gold);box-shadow:0 2px 12px rgba(201,150,42,.45); }
+  /* SHEET */
+  .sheet { position:relative;z-index:1;background:var(--paper);border-radius:24px 24px 0 0;margin-top:1.5rem;padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.3); }
+  .section { padding:3rem 2rem 0;max-width:820px;margin:0 auto;display:none; }
+  .section.active { display:block; }
+  .section-eyebrow { display:flex;align-items:center;gap:.6rem;margin-bottom:1rem; }
+  .eyebrow-num { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1rem;color:white;flex-shrink:0; }
+  .num-coral  { background:var(--coral); }
+  .num-mint   { background:var(--mint); }
+  .num-gold   { background:var(--gold);color:var(--ocean); }
+  .num-lav    { background:var(--lavender); }
+  .num-ocean  { background:var(--ocean-mid); }
+  .eyebrow-label { font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace; }
+  .section h2 { font-family:'Fredoka One',cursive;font-size:clamp(1.6rem,3.5vw,2.2rem);color:var(--ocean);margin-bottom:.6rem;line-height:1.2; }
+  .section .lead { font-size:1rem;line-height:1.75;color:#3a4a5a;margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+  /* WONDER BOXES */
+  .wonder-box { background:linear-gradient(135deg,var(--ocean) 0%,var(--ocean-mid) 100%);color:white;border-radius:16px;padding:1.8rem 2rem;margin-bottom:1.8rem;position:relative;overflow:hidden; }
+  .wonder-box::after { content:'🤔';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3; }
+  .wonder-box p { font-size:1rem;line-height:1.7;font-style:italic;opacity:.95;max-width:85%; }
+  .wonder-box strong { color:var(--gold);font-style:normal; }
+  .wonder-box.gold-box { background:linear-gradient(135deg,#8a6a1a 0%,#b8860b 100%); }
+  .wonder-box.gold-box::after { content:'🧪'; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,#1b7a58 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'🧬'; }
+  .wonder-box.coral-box { background:linear-gradient(135deg,#a03020 0%,#c8502a 100%); }
+  .wonder-box.coral-box::after { content:'🍽️'; }
+  .wonder-box.lav-box { background:linear-gradient(135deg,#4a3f96 0%,#7c6fcd 100%); }
+  .wonder-box.lav-box::after { content:'🔗'; }
+  /* PREDICT / REFLECT */
+  .predict-box { background:var(--gold-pale);border:2px dashed var(--gold);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem; }
+  .predict-box textarea,.reflect-box textarea { width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:64px;background:white;color:var(--ink);outline:none;transition:border-color .2s; }
+  .predict-box textarea:focus { border-color:var(--gold); }
+  .reflect-box { background:var(--mint-pale);border:2px dashed var(--mint);border-radius:14px;padding:1.4rem 1.6rem;margin-top:1.5rem; }
+  .reflect-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#1b7a58;margin-bottom:.8rem; }
+  .reflect-box textarea:focus { border-color:var(--mint); }
+  /* DEMO ZONE */
+  .demo-zone { background:white;border:2px solid var(--border);border-radius:16px;padding:1.8rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07); }
+  .demo-zone h3 { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--ocean);margin-bottom:.3rem; }
+  .demo-zone .hint { font-size:.78rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:1.3rem; }
+  /* CHIPS */
+  .chip-row { display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem; }
+  .chip { padding:.45rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;border:2px solid transparent; }
+  .chip.coral  { background:var(--coral-pale);color:var(--coral);border-color:#f8c5b8; }
+  .chip.mint   { background:var(--mint-pale);color:var(--mint);border-color:#b8ebd8; }
+  .chip.gold   { background:var(--gold-pale);color:#8a6a1a;border-color:#f8e0a0; }
+  .chip.lav    { background:var(--lav-pale);color:var(--lavender);border-color:#d0caef; }
+  .chip.ocean  { background:#d4eadd;color:var(--ocean-mid);border-color:#a8ccee; }
+  .chip:hover  { transform:scale(1.05); }
+  .concept-reveal { background:var(--paper);border-left:4px solid var(--coral);border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;margin-top:.5rem;display:none;animation:fadeIn .3s ease; }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border   { border-color:var(--mint); }
+  .concept-reveal.gold-border   { border-color:var(--gold); }
+  .concept-reveal.lav-border    { border-color:var(--lavender); }
+  .concept-reveal.ocean-border  { border-color:var(--ocean-mid); }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+  /* CARDS */
+  .card-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0 1rem; }
+  .info-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.1rem;text-align:center;cursor:pointer;transition:all .2s; }
+  .info-card:hover,.info-card.active { border-color:var(--ocean-mid);transform:translateY(-2px);box-shadow:0 4px 14px rgba(45,106,143,.2); }
+  .info-card.active { background:#d4eadd; }
+  .info-card .ic-icon  { font-size:2rem;margin-bottom:.4rem; }
+  .info-card .ic-title { font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--ocean);margin-bottom:.2rem; }
+  .info-card .ic-sub   { font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em; }
+  .info-panel { background:#d4eadd;border-left:4px solid var(--ocean-mid);border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;display:none;animation:fadeIn .3s ease;margin-bottom:1rem; }
+  .info-panel.show { display:block; }
+  .info-panel h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ocean);margin-bottom:.5rem; }
+  .info-panel p  { font-size:.88rem;line-height:1.7;color:#1a2a3a; }
+  .info-panel .eg { background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;font-size:.82rem;font-family:'DM Mono',monospace;border:1.5px solid rgba(45,106,143,.2); }
+  /* MATCHING */
+  .match-grid { display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1rem 0; }
+  .match-item { padding:.75rem 1rem;border-radius:10px;border:2px solid var(--border);cursor:pointer;font-size:.85rem;font-weight:700;transition:all .2s;background:white;text-align:center;color:var(--ink); }
+  .match-item:hover   { border-color:var(--ocean-mid);background:#f0f7f3; }
+  .match-item.selected{ border-color:var(--lavender);background:var(--lav-pale);color:var(--lavender); }
+  .match-item.matched { border-color:var(--mint);background:var(--mint-pale);color:#1b7a58;cursor:default; }
+  .match-item.wrong   { border-color:var(--coral);background:var(--coral-pale);color:var(--coral);animation:shake .3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  /* FOOD TEST SIMULATOR */
+  .sim-row { display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1.2rem; }
+  .sim-group { display:flex;flex-direction:column;gap:.3rem;font-size:.82rem;font-weight:700;color:var(--ink); }
+  .sim-group select { border:1.5px solid var(--border);border-radius:8px;padding:.55rem .8rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-width:190px;outline:none; }
+  .sim-group select:focus { border-color:var(--ocean-mid); }
+  .sim-result { display:flex;align-items:center;gap:1rem;background:#f5f7fa;border-radius:12px;padding:1.1rem 1.3rem;min-height:70px; }
+  .sim-swatch { width:52px;height:52px;border-radius:50%;flex-shrink:0;border:2px solid rgba(0,0,0,.15);transition:background .3s; }
+  .sim-text { font-size:.9rem;line-height:1.6;color:var(--ink); }
+  .sim-text strong.pos { color:#1b7a58; }
+  .sim-text strong.neg { color:#a83020; }
+  /* DNA PRACTICE */
+  .dna-strand { display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem; }
+  .dna-base-given { width:44px;height:44px;border-radius:8px;background:var(--ocean);color:white;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1.1rem; }
+  .dna-col { display:flex;flex-direction:column;align-items:center;gap:.4rem; }
+  .dna-bond { font-size:.7rem;color:var(--muted); }
+  .dna-answer-cell { width:44px;height:44px;border-radius:8px;background:#f0f2f5;color:var(--muted);display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1.1rem;border:2px dashed var(--border); }
+  .dna-options { display:flex;gap:.25rem; }
+  .dna-btn { width:34px;height:34px;border-radius:6px;border:1.5px solid var(--border);background:white;font-family:'Fredoka One',cursive;font-size:.85rem;cursor:pointer;transition:all .15s; }
+  .dna-btn:hover:not(:disabled) { border-color:var(--ocean-mid);background:#f0f7f3; }
+  .dna-btn:disabled { cursor:default;opacity:.4; }
+  /* VOCAB TABLE */
+  .vocab-table { width:100%;border-collapse:collapse;margin:1rem 0 1.5rem; }
+  .vocab-table th { background:var(--ocean);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;padding:.7rem 1rem;text-align:left; }
+  .vocab-table td { padding:.65rem 1rem;font-size:.85rem;line-height:1.5;border-bottom:1px solid var(--border); }
+  .vocab-table tr:nth-child(even) td { background:#f5f7fa; }
+  .vocab-table tr:hover td { background:#d4eadd;transition:background .15s; }
+  .vocab-table td:first-child { font-weight:800;color:var(--ocean-mid); }
+  /* QUIZ */
+  .quiz-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .quiz-q { font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:1rem;line-height:1.5; }
+  .quiz-options { display:flex;flex-direction:column;gap:.5rem; }
+  .quiz-opt { padding:.6rem 1rem;border-radius:8px;border:2px solid var(--border);background:white;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:600;text-align:left;transition:all .15s;color:var(--ink); }
+  .quiz-opt:hover:not(:disabled) { border-color:var(--ocean-mid);background:#f0f7f3; }
+  .quiz-opt.correct { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .quiz-opt.wrong   { background:var(--coral-pale);border-color:var(--coral);color:#a83020; }
+  .quiz-opt:disabled { cursor:default; }
+  .quiz-feedback { margin-top:.8rem;font-size:.85rem;line-height:1.6;padding:.7rem 1rem;border-radius:8px;display:none;animation:fadeIn .3s ease; }
+  .quiz-feedback.show { display:block; }
+  .quiz-feedback.correct-fb { background:var(--mint-pale);color:#1b7a58;border-left:3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background:var(--coral-pale);color:#a83020;border-left:3px solid var(--coral); }
+  /* PAST PAPER QUESTIONS */
+  .pp-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .pp-label { font-family:'DM Mono',monospace;font-size:.68rem;color:var(--ocean-mid);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem; }
+  .pp-q { font-size:.95rem;line-height:1.6;color:var(--ink);margin-bottom:.8rem;font-weight:700; }
+  .pp-q em { font-weight:400;color:#3a4a5a; }
+  .pp-textarea { width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:72px;background:white;color:var(--ink);outline:none;transition:border-color .2s; }
+  .pp-textarea:focus { border-color:var(--ocean-mid); }
+  .pp-marks { font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);margin-top:.4rem; }
+  .pp-answer { background:#d4eadd;border-left:4px solid var(--ocean-mid);border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.85rem;line-height:1.7;margin-top:.8rem;display:none;animation:fadeIn .3s ease; }
+  .pp-answer.show { display:block; }
+  .pp-answer strong { color:var(--ocean); }
+  .pp-answer ul { margin:.4rem 0 0 1rem; }
+  .pp-answer li { margin-bottom:.3rem; }
+  /* SCORE */
+  .score-panel { background:linear-gradient(135deg,var(--ocean) 0%,var(--ocean-mid) 100%);color:white;border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem; }
+  .score-panel .score-num { font-family:'Fredoka One',cursive;font-size:3.5rem;line-height:1;color:var(--gold); }
+  .score-panel p { opacity:.88;margin-top:.5rem;font-size:1rem; }
+  .score-panel h3 { font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:.3rem; }
+  /* NAV */
+  .nav-row { display:flex;justify-content:space-between;align-items:center;padding:2.5rem 2rem 0;max-width:820px;margin:0 auto; }
+  .btn-next { background:var(--ocean);color:white;border:none;border-radius:50px;padding:.9rem 2rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;display:flex;align-items:center;gap:.6rem;transition:all .2s;box-shadow:0 4px 16px rgba(26,61,43,.35); }
+  .btn-next:hover { background:var(--ocean-mid);transform:translateY(-2px); }
+  .btn-prev { background:transparent;color:var(--muted);border:2px solid var(--border);border-radius:50px;padding:.9rem 1.6rem;font-family:'Fredoka One',cursive;font-size:.95rem;cursor:pointer;transition:all .2s; }
+  .btn-prev:hover { border-color:var(--muted);color:var(--ink); }
+  .btn-prev:disabled,.btn-next:disabled { opacity:.3;cursor:not-allowed;transform:none; }
+  /* SUMMARY */
+  .summary-section { background:white;border-radius:16px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--ocean);margin-bottom:.8rem; }
+  .summary-answer { background:#f5f7fa;border-radius:8px;padding:.7rem 1rem;font-size:.85rem;line-height:1.6;color:var(--ink);margin-bottom:.5rem;font-style:italic;border-left:3px solid var(--lavender);min-height:2rem; }
+  .summary-answer.empty { color:var(--muted);font-style:normal;border-left-color:var(--border); }
+  .sum-label { font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.6rem;text-transform:uppercase;letter-spacing:.06em; }
+  /* SHARE */
+  .share-buttons { display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center; }
+  .share-btn { border:none;border-radius:12px;padding:.85rem 1.6rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem; }
+  .share-btn:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background:var(--mint);color:white; }
+  .share-btn.email { background:var(--lavender);color:white; }
+  .share-btn.print { background:var(--ocean);color:white; }
+  .copy-confirm { text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--mint);min-height:1.2rem;margin-top:.6rem; }
+  .btn { border:none;border-radius:10px;padding:.65rem 1.3rem;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;transition:all .15s; }
+  .btn:hover { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  .btn-mint  { background:var(--mint);color:white; }
+  .btn-ocean { background:var(--ocean);color:white; }
+  .btn-ghost { background:#f0f2f5;color:var(--muted); }
+  .divider { height:1px;background:var(--border);margin:2rem 0; }
+  @media(max-width:560px) {
+    .hero{padding:2.5rem 1.2rem 1.5rem} .section{padding:2rem 1.2rem 0} .nav-row{padding:2rem 1.2rem 0} .match-grid{grid-template-columns:1fr}
+  }
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm{display:none!important}
+    .sheet{box-shadow:none;border-radius:0} .section{display:none!important} #sec-7{display:block!important}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">🔬 IGCSE Biology · Topic 4 · CIE 0610</div>
+  <h1>Biological <span class="accent">Molecules</span></h1>
+  <p class="intro">The building blocks of life: what carbohydrates, fats and proteins are made of, five food tests every biologist must know, and the structure of the DNA molecule. Covers syllabus section 4.1.</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <a class="prog-step active" onclick="goTo(0)">🍽️ Wonder</a>
+    <a class="prog-step"        onclick="goTo(1)">🔗 Building Blocks</a>
+    <a class="prog-step"        onclick="goTo(2)">🧪 Food Tests</a>
+    <a class="prog-step"        onclick="goTo(3)">🧬 DNA Structure</a>
+    <a class="prog-step"        onclick="goTo(4)">🎯 Practice Zone</a>
+    <a class="prog-step"        onclick="goTo(5)">📝 Past Papers</a>
+    <a class="prog-step"        onclick="goTo(6)">❓ Quiz</a>
+    <a class="prog-step"        onclick="goTo(7)">📤 Submit</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+<!-- ══ SEC 0: WONDER ══ -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">Phase 1 · Wonder</span></div>
+  <h2>🍽️ What Is Your Food Actually Made Of?</h2>
+  <p class="lead">Bread, chicken, and butter all look and taste completely different. But underneath, they're all built from a surprisingly small toolkit of chemical building blocks — and biologists have simple chemical tests that can reveal exactly which ones are hiding inside any food.</p>
+  <div class="wonder-box">
+    <p>Imagine you're a food scientist handed three unlabelled white powders. You can't taste or smell them (lab safety rule!). <strong>How could you use a small number of chemical tests to work out which one is a starch, which is a protein, and which is a sugar — without ever seeing what they're made from?</strong></p>
+  </div>
+  <div class="predict-box">
+    <h4>✏️ Your Thinking — Before We Begin</h4>
+    <textarea id="ta-wonder" placeholder="Why might biologists need chemical tests to identify what's in food, rather than just looking at, tasting, or smelling it? What do you already know about the elements that make up carbohydrates, fats, and proteins?"></textarea>
+  </div>
+  <div class="wonder-box gold-box">
+    <p>Every carbohydrate, fat and protein is built from smaller repeating units, and five colour-changing chemical tests can reveal exactly which molecules are present in any food sample. Even the DNA in every one of your cells follows a beautifully simple building code — just two rules.</p>
+  </div>
+  <div class="nav-row"><button class="btn-prev" disabled>← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 1: BUILDING BLOCKS ══ -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">2</div><span class="eyebrow-label">Phase 2 · 4.1 Elements and Building Blocks</span></div>
+  <h2>🔗 Elements and Building Blocks</h2>
+  <p class="lead">All biological molecules are built from a small set of chemical elements, and large molecules are chains of smaller repeating units joined together.</p>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🧪 Chemical Elements — Tap Each</h3>
+  <div class="chip-row">
+    <span class="chip coral" onclick="revealChip('carbelements')">Carbohydrates</span>
+    <span class="chip gold"  onclick="revealChip('fatelements')">Fats and Oils</span>
+    <span class="chip mint"  onclick="revealChip('protelements')">Proteins</span>
+  </div>
+  <div id="chip-carbelements" class="concept-reveal">🍞 <strong>Carbohydrates</strong> are made of the elements <strong>carbon (C), hydrogen (H) and oxygen (O)</strong>.</div>
+  <div id="chip-fatelements"  class="concept-reveal gold-border">🧈 <strong>Fats and oils</strong> are made of the elements <strong>carbon (C), hydrogen (H) and oxygen (O)</strong> — the same three elements as carbohydrates.</div>
+  <div id="chip-protelements" class="concept-reveal mint-border">🥩 <strong>Proteins</strong> are made of <strong>carbon (C), hydrogen (H), oxygen (O) and nitrogen (N)</strong>. Exam trap: nitrogen is the element that distinguishes proteins from carbohydrates and fats.</div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🧱 Large Molecules Are Built From Smaller Molecules</h3>
+  <p class="lead" style="margin-bottom:1rem;">Large biological molecules aren't single units — they are long chains made of many smaller "building block" molecules joined together.</p>
+  <div class="card-grid">
+    <div class="info-card" onclick="showPanel('starch')"><div class="ic-icon">🌾</div><div class="ic-title">Starch</div><div class="ic-sub">from glucose</div></div>
+    <div class="info-card" onclick="showPanel('glycogen')"><div class="ic-icon">🍖</div><div class="ic-title">Glycogen</div><div class="ic-sub">from glucose</div></div>
+    <div class="info-card" onclick="showPanel('cellulose')"><div class="ic-icon">🌿</div><div class="ic-title">Cellulose</div><div class="ic-sub">from glucose</div></div>
+    <div class="info-card" onclick="showPanel('protein')"><div class="ic-icon">🥚</div><div class="ic-title">Proteins</div><div class="ic-sub">from amino acids</div></div>
+    <div class="info-card" onclick="showPanel('fat')"><div class="ic-icon">🧈</div><div class="ic-title">Fats and Oils</div><div class="ic-sub">from fatty acids + glycerol</div></div>
+  </div>
+  <div id="panel-starch"    class="info-panel"><h4>🌾 Starch</h4><p>Built from many <strong>glucose</strong> molecules joined together in a chain. Used by plants to store energy.</p></div>
+  <div id="panel-glycogen"  class="info-panel"><h4>🍖 Glycogen</h4><p>Built from many <strong>glucose</strong> molecules joined together in a (highly branched) chain. Used by animals to store energy, mainly in the liver and muscles.</p></div>
+  <div id="panel-cellulose" class="info-panel"><h4>🌿 Cellulose</h4><p>Built from many <strong>glucose</strong> molecules joined together in long, strong chains. Makes up plant cell walls, giving them strength and support.</p></div>
+  <div id="panel-protein"   class="info-panel"><h4>🥚 Proteins</h4><p>Built from many <strong>amino acids</strong> joined together in a chain. Used to build structures (like muscle) and to make enzymes and antibodies.</p></div>
+  <div id="panel-fat"       class="info-panel"><h4>🧈 Fats and Oils</h4><p>Each fat/oil molecule is built from <strong>one glycerol molecule joined to (usually three) fatty acid molecules</strong>. Used for long-term energy storage and insulation.</p></div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">📋 Summary Table</h3>
+  <table class="vocab-table">
+    <tr><th>Large Molecule</th><th>Built From (Smaller Molecules)</th></tr>
+    <tr><td>Starch</td><td>Glucose</td></tr>
+    <tr><td>Glycogen</td><td>Glucose</td></tr>
+    <tr><td>Cellulose</td><td>Glucose</td></tr>
+    <tr><td>Proteins</td><td>Amino acids</td></tr>
+    <tr><td>Fats and oils</td><td>Fatty acids and glycerol</td></tr>
+  </table>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 2: FOOD TESTS ══ -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">3</div><span class="eyebrow-label">Phase 3 · 4.1 Food Tests</span></div>
+  <h2>🧪 Five Food Tests</h2>
+  <p class="lead">Each biological molecule has its own chemical test with a distinctive colour change. Tap each test to see the method and result, then try the virtual lab below.</p>
+
+  <div class="card-grid">
+    <div class="info-card" onclick="showPanel('iodinetest')"><div class="ic-icon">🟤</div><div class="ic-title">Iodine</div><div class="ic-sub">starch</div></div>
+    <div class="info-card" onclick="showPanel('benedicttest')"><div class="ic-icon">🔵</div><div class="ic-title">Benedict's</div><div class="ic-sub">reducing sugar</div></div>
+    <div class="info-card" onclick="showPanel('biurettest')"><div class="ic-icon">🟣</div><div class="ic-title">Biuret</div><div class="ic-sub">protein</div></div>
+    <div class="info-card" onclick="showPanel('ethanoltest')"><div class="ic-icon">⚪</div><div class="ic-title">Ethanol Emulsion</div><div class="ic-sub">fats and oils</div></div>
+    <div class="info-card" onclick="showPanel('dcpiptest')"><div class="ic-icon">🟡</div><div class="ic-title">DCPIP</div><div class="ic-sub">vitamin C</div></div>
+  </div>
+  <div id="panel-iodinetest" class="info-panel"><h4>🟤 Iodine Solution Test (Starch)</h4><p>Add a few drops of iodine solution (orange-brown) directly to the food sample.</p><div class="eg">✅ Positive: colour changes to blue-black.<br>❌ Negative: stays orange-brown.</div></div>
+  <div id="panel-benedicttest" class="info-panel"><h4>🔵 Benedict's Solution Test (Reducing Sugar)</h4><p>Add Benedict's solution (blue) to the sample and heat gently in a water bath.</p><div class="eg">✅ Positive: colour changes from blue → green → yellow → orange → brick-red precipitate.<br>❌ Negative: stays blue.</div></div>
+  <div id="panel-biurettest" class="info-panel"><h4>🟣 Biuret Test (Protein)</h4><p>Add biuret solution (or sodium hydroxide solution followed by a few drops of copper sulfate solution) to the sample at room temperature — no heating needed.</p><div class="eg">✅ Positive: colour changes from blue to purple/violet (lilac).<br>❌ Negative: stays blue.</div></div>
+  <div id="panel-ethanoltest" class="info-panel"><h4>⚪ Ethanol Emulsion Test (Fats and Oils)</h4><p>Shake the food sample with ethanol, then pour the mixture into a test tube of water.</p><div class="eg">✅ Positive: a cloudy white emulsion forms.<br>❌ Negative: the mixture stays clear.</div></div>
+  <div id="panel-dcpiptest" class="info-panel"><h4>🟡 DCPIP Test (Vitamin C)</h4><p>Add the food sample drop by drop to blue DCPIP solution, counting the drops needed.</p><div class="eg">✅ Positive: DCPIP loses its blue colour (is decolourised). Fewer drops needed = MORE vitamin C present.<br>❌ Negative: DCPIP stays blue even after many drops.</div></div>
+
+  <div class="divider"></div>
+  <div class="demo-zone">
+    <h3>🥼 Virtual Food Test Lab</h3>
+    <div class="hint">Pick a food sample and a test, then run it to see the result.</div>
+    <div class="sim-row">
+      <div class="sim-group">Food Sample
+        <select id="simFood">
+          <option value="potato">Potato extract</option>
+          <option value="glucose">Glucose solution</option>
+          <option value="egg">Egg white (albumen) solution</option>
+          <option value="oil">Cooking oil</option>
+          <option value="oj">Orange juice</option>
+        </select>
+      </div>
+      <div class="sim-group">Test
+        <select id="simTest">
+          <option value="iodine">Iodine solution (starch)</option>
+          <option value="benedicts">Benedict's solution (reducing sugar)</option>
+          <option value="biuret">Biuret test (protein)</option>
+          <option value="ethanol">Ethanol emulsion (fats)</option>
+          <option value="dcpip">DCPIP (vitamin C)</option>
+        </select>
+      </div>
+      <button class="btn btn-ocean" onclick="runFoodTest()">Run Test</button>
+    </div>
+    <div class="sim-result">
+      <div class="sim-swatch" id="simSwatch" style="background:#e5e5e5;"></div>
+      <div class="sim-text" id="simText">Select a food and a test, then click Run Test.</div>
+    </div>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 3: DNA STRUCTURE ══ -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow"><div class="eyebrow-num num-gold">4</div><span class="eyebrow-label">Phase 4 · 4.1 Structure of DNA</span></div>
+  <h2>🧬 The Structure of DNA</h2>
+  <p class="lead">DNA carries the genetic instructions in every cell. Its structure follows a small number of simple, exact rules.</p>
+
+  <div class="chip-row">
+    <span class="chip ocean" onclick="revealChip('helix')">Double Helix</span>
+    <span class="chip mint"  onclick="revealChip('bases')">Bases</span>
+    <span class="chip gold"  onclick="revealChip('bonds')">Bonds Between Bases</span>
+    <span class="chip coral" onclick="revealChip('pairing')">Base Pairing Rule</span>
+  </div>
+  <div id="chip-helix"   class="concept-reveal ocean-border"><strong>Double Helix</strong> — A DNA molecule is made of two strands, coiled together to form a double helix (a twisted-ladder shape).</div>
+  <div id="chip-bases"   class="concept-reveal mint-border"><strong>Bases</strong> — Each of the two strands contains a sequence of chemicals called bases, attached along its length.</div>
+  <div id="chip-bonds"   class="concept-reveal gold-border"><strong>Bonds Between Bases</strong> — Bonds between pairs of bases (one base from each strand) hold the two strands of the DNA molecule together, like the rungs of a ladder.</div>
+  <div id="chip-pairing" class="concept-reveal"><strong>Base Pairing Rule</strong> — The bases always pair up in the same way: <strong>A pairs with T</strong>, and <strong>C pairs with G</strong> (full chemical names are not required at IGCSE).</div>
+
+  <div class="divider"></div>
+  <div class="demo-zone">
+    <h3>🧬 Build the Complementary Strand</h3>
+    <div class="hint">One strand of a DNA molecule is shown below. Click the correct base (A, T, C or G) to complete the matching strand, using the pairing rule: A–T and C–G.</div>
+    <div class="dna-strand" id="dnaGiven"></div>
+    <div class="dna-strand" id="dnaAnswers"></div>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 4: PRACTICE ZONE ══ -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">5</div><span class="eyebrow-label">Phase 5 · Practice Zone</span></div>
+  <h2>🎯 Match the Molecules and Tests</h2>
+  <p class="lead">Practise linking molecules and food tests to their key facts, then apply everything to a real food.</p>
+
+  <div class="demo-zone">
+    <h3>🧩 Match Each Term to Its Key Fact</h3>
+    <div class="hint">Tap a term, then tap its matching fact. Matched pairs turn green.</div>
+    <div class="match-grid" id="moleculeMatch">
+      <div class="match-item" data-pair="starchgroup" onclick="selectMatch(this)">🌾 Starch, Glycogen & Cellulose</div>
+      <div class="match-item" data-pair="sugartest" onclick="selectMatch(this)">Benedict's solution turns brick-red on heating if positive</div>
+      <div class="match-item" data-pair="protein" onclick="selectMatch(this)">🥩 Proteins</div>
+      <div class="match-item" data-pair="starchgroup" onclick="selectMatch(this)">Built from many glucose molecules joined together</div>
+      <div class="match-item" data-pair="fat" onclick="selectMatch(this)">🧈 Fats and Oils</div>
+      <div class="match-item" data-pair="vitctest" onclick="selectMatch(this)">DCPIP solution loses its blue colour if positive</div>
+      <div class="match-item" data-pair="sugartest" onclick="selectMatch(this)">🍬 Reducing Sugar Test</div>
+      <div class="match-item" data-pair="protein" onclick="selectMatch(this)">Built from amino acids joined together</div>
+      <div class="match-item" data-pair="vitctest" onclick="selectMatch(this)">🍊 Vitamin C Test</div>
+      <div class="match-item" data-pair="fat" onclick="selectMatch(this)">Built from fatty acids and glycerol</div>
+    </div>
+    <div id="matchComplete" style="display:none;background:var(--mint-pale);border-left:4px solid var(--mint);border-radius:0 10px 10px 0;padding:.9rem 1.1rem;font-size:.88rem;color:#1b7a58;margin-top:.6rem;">🎉 All matched! You've linked every molecule and test to its key fact.</div>
+  </div>
+
+  <div class="predict-box">
+    <h4>🧪 Construct a Food Test Report</h4>
+    <textarea id="ta-foodreport" placeholder="A slice of bread is suspected to contain starch, protein, and a small amount of fat. Describe which of the five tests you would carry out, and what result would confirm each of the three molecules is present."></textarea>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 5: PAST PAPERS ══ -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow"><div class="eyebrow-num num-gold">6</div><span class="eyebrow-label">Phase 6 · Past Paper Questions</span></div>
+  <h2>📝 IGCSE Past Paper Questions</h2>
+  <p class="lead">These questions follow the style and content of CIE IGCSE Biology past papers (0610). Write your answers, then click <strong>Check All Answers</strong> to reveal the mark-scheme level answers.</p>
+
+  <!-- Q1 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Chemical Elements · 2 marks</div>
+    <div class="pp-q">State the chemical elements that make up carbohydrates, and state ONE element found in proteins that is NOT found in carbohydrates. <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp1" placeholder="Write your answer here..."></textarea>
+    <div class="pp-marks">Tip: Carbohydrates need three elements listed; proteins have one extra.</div>
+    <div class="pp-answer" id="ans1">
+      <strong>Mark Scheme Answer (2 marks):</strong>
+      <ul>
+        <li>Carbohydrates: carbon, hydrogen and oxygen <strong>[1]</strong></li>
+        <li>Proteins additionally contain nitrogen <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Building Blocks · 2 marks</div>
+    <div class="pp-q">Starch, glycogen and cellulose are all built from the same smaller molecule. Name this molecule, and state which of the three is found in plant cell walls. <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp2" placeholder="Write your answer here..."></textarea>
+    <div class="pp-marks">Tip: Think about which one gives plant cells structural support.</div>
+    <div class="pp-answer" id="ans2">
+      <strong>Mark Scheme Answer (2 marks):</strong>
+      <ul>
+        <li>Glucose <strong>[1]</strong></li>
+        <li>Cellulose <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Food Tests · 2 marks</div>
+    <div class="pp-q">A student adds iodine solution to a food sample and it turns blue-black. They then add Benedict's solution to a second sample of the same food and heat it; it stays blue. What do these two results tell you about the food? <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp3" placeholder="Write your answer here..."></textarea>
+    <div class="pp-marks">Tip: One test is positive, the other is negative — what does each result mean?</div>
+    <div class="pp-answer" id="ans3">
+      <strong>Mark Scheme Answer (2 marks):</strong>
+      <ul>
+        <li>The food contains starch (positive iodine test — blue-black) <strong>[1]</strong></li>
+        <li>The food does not contain reducing sugar (Benedict's test remained blue — negative) <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — Biuret Test · 2 marks</div>
+    <div class="pp-q">Describe how you would carry out the biuret test on a food sample, and state the colour change that indicates a positive result. <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp4" placeholder="Write your answer here..."></textarea>
+    <div class="pp-marks">Tip: This test does NOT require heating.</div>
+    <div class="pp-answer" id="ans4">
+      <strong>Mark Scheme Answer (2 marks):</strong>
+      <ul>
+        <li>Add biuret solution (or sodium hydroxide solution followed by a few drops of copper sulfate solution) to the sample at room temperature <strong>[1]</strong></li>
+        <li>A positive result is shown by a colour change from blue to purple/violet (lilac) <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — DCPIP Test · 2 marks</div>
+    <div class="pp-q">Explain why needing fewer drops of a food sample to decolourise DCPIP solution indicates a HIGHER concentration of vitamin C in that sample. <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp5" placeholder="Write your answer here..."></textarea>
+    <div class="pp-marks">Tip: Think about what is actually reacting with the DCPIP.</div>
+    <div class="pp-answer" id="ans5">
+      <strong>Mark Scheme Answer (2 marks):</strong>
+      <ul>
+        <li>DCPIP is decolourised by vitamin C (vitamin C reacts with and removes the blue colour) <strong>[1]</strong></li>
+        <li>If fewer drops are needed to decolourise the DCPIP, each drop must contain more vitamin C, i.e. the sample has a higher concentration <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — DNA Base Pairing · 2 marks</div>
+    <div class="pp-q">One strand of a DNA molecule has the base sequence: A T T C G A. State the sequence of bases on the strand that would pair with it. <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp6" placeholder="Write your paired sequence here..."></textarea>
+    <div class="pp-marks">Tip: Apply the rule A–T and C–G to each base in order.</div>
+    <div class="pp-answer" id="ans6">
+      <strong>Mark Scheme Answer (2 marks):</strong>
+      <ul>
+        <li>Correct application of the base-pairing rule (A pairs with T; C pairs with G) <strong>[1]</strong></li>
+        <li>Correct sequence: T A A G C T <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="pp-card">
+    <div class="pp-label">CIE IGCSE Biology — DNA Structure · 2 marks</div>
+    <div class="pp-q">Describe how the two strands of a DNA molecule are held together, and describe the overall shape of the molecule. <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp7" placeholder="Write your answer here..."></textarea>
+    <div class="pp-marks">Tip: One mark for the bonds, one mark for the overall 3D shape.</div>
+    <div class="pp-answer" id="ans7">
+      <strong>Mark Scheme Answer (2 marks):</strong>
+      <ul>
+        <li>Bonds between pairs of bases hold the two strands together <strong>[1]</strong></li>
+        <li>The two strands are coiled together to form a double helix <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:.8rem;justify-content:center;margin-top:1rem;flex-wrap:wrap;">
+    <button class="btn btn-mint" onclick="showAllAnswers()">✅ Check All Answers</button>
+    <button class="btn btn-ghost" onclick="hideAllAnswers()">🙈 Hide Answers</button>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 6: QUIZ ══ -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">7</div><span class="eyebrow-label">Phase 7 · Knowledge Check</span></div>
+  <h2>❓ Topic 4 Quiz</h2>
+  <p class="lead">12 questions in the style of IGCSE Paper 1. Choose the best answer — you'll get instant feedback with explanations.</p>
+  <div id="quiz-container"></div>
+  <div id="score-panel" class="score-panel" style="display:none;">
+    <h3>Quiz Complete! 🎉</h3>
+    <div class="score-num" id="score-display">0/12</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-ghost" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 7: SUBMIT ══ -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">8</div><span class="eyebrow-label">Your Completed Work</span></div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Summary of all your work. Copy, email, or print to submit to your teacher.</p>
+
+  <div class="summary-section" style="background:var(--ocean);color:white;border-color:var(--ocean);">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">STUDENT</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">LESSON</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;">IGCSE Biology · Topic 4 · Biological Molecules 🧬</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6;" id="summaryDate"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section"><h3>❓ Quiz Score</h3><div class="summary-answer" id="sum-quiz"></div></div>
+  <div class="summary-section"><h3>🍽️ Opening Prediction</h3><div class="summary-answer" id="sum-wonder"></div></div>
+  <div class="summary-section"><h3>🧪 Food Test Report</h3><div class="summary-answer" id="sum-foodreport"></div></div>
+  <div class="summary-section">
+    <h3>📝 Past Paper Responses</h3>
+    <div class="sum-label">Q1 — Chemical Elements</div><div class="summary-answer" id="sum-pp1"></div>
+    <div class="sum-label">Q2 — Building Blocks</div><div class="summary-answer" id="sum-pp2"></div>
+    <div class="sum-label">Q3 — Iodine & Benedict's Results</div><div class="summary-answer" id="sum-pp3"></div>
+    <div class="sum-label">Q4 — Biuret Test Method</div><div class="summary-answer" id="sum-pp4"></div>
+    <div class="sum-label">Q5 — DCPIP & Vitamin C Concentration</div><div class="summary-answer" id="sum-pp5"></div>
+    <div class="sum-label">Q6 — DNA Base Pairing</div><div class="summary-answer" id="sum-pp6"></div>
+    <div class="sum-label">Q7 — DNA Structure</div><div class="summary-answer" id="sum-pp7"></div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem;">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2;">
+      <strong>📋 Copy My Results</strong> — Copies all answers to clipboard. Paste into Google Classroom and submit.<br>
+      <strong>📧 Email to Teacher</strong> — Opens email app pre-filled. Add your teacher's address and send.<br>
+      <strong>🖨️ Print / Save PDF</strong> — Mac: Save as PDF. Windows: Microsoft Print to PDF. Upload to assignment.
+    </p>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" disabled>✓ Complete!</button></div>
+</div>
+
+</div><!-- /sheet -->
+
+<!-- COPYRIGHT -->
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+
+<script>
+// ══ NAVIGATION ══
+let currentSection = 0;
+const totalSections = 8;
+function goTo(n) {
+  document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===n));
+  document.querySelectorAll('.prog-step').forEach((p,i) => {
+    p.classList.remove('active','done');
+    if(i===n) p.classList.add('active');
+    else if(i<n) p.classList.add('done');
+  });
+  currentSection = n;
+  if(n===totalSections-1) buildSummary();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function navigate(dir) { goTo(Math.max(0,Math.min(currentSection+dir,totalSections-1))); }
+
+// ══ VOCAB CHIPS ══
+function revealChip(id) {
+  const all = document.querySelectorAll('.concept-reveal');
+  const t = document.getElementById('chip-'+id);
+  const isOpen = t && t.classList.contains('show');
+  all.forEach(c=>c.classList.remove('show'));
+  if(!isOpen && t) t.classList.add('show');
+}
+
+// ══ PANELS ══
+function showPanel(id) {
+  const allP = document.querySelectorAll('.info-panel');
+  const allC = document.querySelectorAll('.info-card');
+  const t = document.getElementById('panel-'+id);
+  const isOpen = t && t.classList.contains('show');
+  allP.forEach(p=>p.classList.remove('show'));
+  allC.forEach(c=>c.classList.remove('active'));
+  if(!isOpen && t){ t.classList.add('show'); event.currentTarget.classList.add('active'); }
+}
+
+// ══ MATCHING GAME ══
+let selectedMatch = null;
+function selectMatch(el) {
+  if (el.classList.contains('matched')) return;
+  if (!selectedMatch) {
+    el.classList.add('selected');
+    selectedMatch = el;
+    return;
+  }
+  if (selectedMatch === el) {
+    el.classList.remove('selected');
+    selectedMatch = null;
+    return;
+  }
+  if (selectedMatch.dataset.pair === el.dataset.pair) {
+    selectedMatch.classList.remove('selected');
+    selectedMatch.classList.add('matched');
+    el.classList.add('matched');
+    selectedMatch = null;
+    checkMatchComplete();
+  } else {
+    el.classList.add('wrong');
+    selectedMatch.classList.add('wrong');
+    const prev = selectedMatch;
+    setTimeout(function(){
+      el.classList.remove('wrong');
+      prev.classList.remove('wrong','selected');
+    },500);
+    selectedMatch = null;
+  }
+}
+function checkMatchComplete() {
+  const total = document.querySelectorAll('#moleculeMatch .match-item').length;
+  const matched = document.querySelectorAll('#moleculeMatch .match-item.matched').length;
+  if (matched === total) document.getElementById('matchComplete').style.display = 'block';
+}
+
+// ══ FOOD TEST SIMULATOR ══
+const foodResults = {
+  potato:  { iodine:{pos:true},  benedicts:{pos:false}, biuret:{pos:false}, ethanol:{pos:false}, dcpip:{pos:false} },
+  glucose: { iodine:{pos:false}, benedicts:{pos:true},  biuret:{pos:false}, ethanol:{pos:false}, dcpip:{pos:false} },
+  egg:     { iodine:{pos:false}, benedicts:{pos:false}, biuret:{pos:true},  ethanol:{pos:false}, dcpip:{pos:false} },
+  oil:     { iodine:{pos:false}, benedicts:{pos:false}, biuret:{pos:false}, ethanol:{pos:true},  dcpip:{pos:false} },
+  oj:      { iodine:{pos:false}, benedicts:{pos:true},  biuret:{pos:false}, ethanol:{pos:false}, dcpip:{pos:true} }
+};
+const foodNames = { potato:'Potato extract', glucose:'Glucose solution', egg:'Egg white (albumen) solution', oil:'Cooking oil', oj:'Orange juice' };
+const testInfo = {
+  iodine:    { name:'Iodine solution',   posColor:'#1a2a52', negColor:'#c9822f', posDesc:'turns blue-black — POSITIVE for starch.', negDesc:'stays orange-brown — NEGATIVE, no starch present.' },
+  benedicts: { name:"Benedict's solution", posColor:'#c0392b', negColor:'#2d6ac9', posDesc:'turns from blue to a brick-red precipitate on heating — POSITIVE for reducing sugar.', negDesc:'stays blue after heating — NEGATIVE, no reducing sugar.' },
+  biuret:    { name:'Biuret test', posColor:'#8e44ad', negColor:'#2d6ac9', posDesc:'turns from blue to purple/violet (lilac) — POSITIVE for protein.', negDesc:'stays blue — NEGATIVE, no protein present.' },
+  ethanol:   { name:'Ethanol emulsion test', posColor:'#e8e8e8', negColor:'#cfe8fb', posDesc:'forms a cloudy white emulsion — POSITIVE for fats/oils.', negDesc:'stays clear — NEGATIVE, no fat present.' },
+  dcpip:     { name:'DCPIP test', posColor:'#ffffff', negColor:'#2d6ac9', posDesc:'loses its blue colour (is decolourised) — POSITIVE for vitamin C.', negDesc:'stays blue — NEGATIVE, little or no vitamin C.' }
+};
+function runFoodTest() {
+  const food = document.getElementById('simFood').value;
+  const test = document.getElementById('simTest').value;
+  const result = foodResults[food][test];
+  const info = testInfo[test];
+  const swatch = document.getElementById('simSwatch');
+  const text = document.getElementById('simText');
+  swatch.style.background = result.pos ? info.posColor : info.negColor;
+  const desc = result.pos ? info.posDesc : info.negDesc;
+  const cls = result.pos ? 'pos' : 'neg';
+  const label = result.pos ? 'POSITIVE' : 'NEGATIVE';
+  text.innerHTML = '<strong>' + foodNames[food] + '</strong> + ' + info.name + ': the solution ' + desc + ' <br><strong class="' + cls + '">Result: ' + label + '</strong>';
+}
+
+// ══ DNA BASE PAIRING PRACTICE ══
+const givenStrand = ['A','T','T','C','G','A'];
+const pairMap = { A:'T', T:'A', C:'G', G:'C' };
+function buildDNAPractice() {
+  const givenEl = document.getElementById('dnaGiven');
+  const ansEl = document.getElementById('dnaAnswers');
+  givenEl.innerHTML = '';
+  ansEl.innerHTML = '';
+  for (let i = 0; i < givenStrand.length; i++) {
+    const col = document.createElement('div');
+    col.className = 'dna-col';
+    col.innerHTML = '<div class="dna-base-given">' + givenStrand[i] + '</div>';
+    givenEl.appendChild(col);
+
+    const ansCol = document.createElement('div');
+    ansCol.className = 'dna-col';
+    const cell = document.createElement('div');
+    cell.className = 'dna-answer-cell';
+    cell.id = 'dnaCell' + i;
+    cell.textContent = '?';
+    const opts = document.createElement('div');
+    opts.className = 'dna-options';
+    ['A','T','C','G'].forEach(function(letter){
+      const b = document.createElement('button');
+      b.className = 'dna-btn';
+      b.textContent = letter;
+      b.id = 'dnaBtn' + i + '_' + letter;
+      b.onclick = function(){ checkDNABase(i, letter); };
+      opts.appendChild(b);
+    });
+    ansCol.appendChild(cell);
+    ansCol.appendChild(opts);
+    ansEl.appendChild(ansCol);
+  }
+}
+function checkDNABase(i, letter) {
+  const correct = pairMap[givenStrand[i]];
+  const cell = document.getElementById('dnaCell' + i);
+  const buttons = document.querySelectorAll('[id^="dnaBtn' + i + '_"]');
+  buttons.forEach(function(b){ b.disabled = true; });
+  if (letter === correct) {
+    cell.textContent = letter;
+    cell.style.background = 'var(--mint-pale)';
+    cell.style.color = '#1b7a58';
+    cell.style.borderColor = 'var(--mint)';
+  } else {
+    cell.textContent = letter;
+    cell.style.background = 'var(--coral-pale)';
+    cell.style.color = '#a83020';
+    cell.style.borderColor = 'var(--coral)';
+    setTimeout(function(){
+      cell.textContent = correct;
+      cell.style.background = 'var(--mint-pale)';
+      cell.style.color = '#1b7a58';
+      cell.style.borderColor = 'var(--mint)';
+    }, 900);
+  }
+}
+buildDNAPractice();
+
+// ══ PAST PAPER ANSWERS ══
+function showAllAnswers() {
+  for(let i=1;i<=7;i++) {
+    const el = document.getElementById('ans'+i);
+    if(el) el.classList.add('show');
+  }
+}
+function hideAllAnswers() {
+  for(let i=1;i<=7;i++) {
+    const el = document.getElementById('ans'+i);
+    if(el) el.classList.remove('show');
+  }
+}
+
+// ══ QUIZ ══
+const quizData = [
+  { q:'Which chemical elements make up carbohydrates?',
+    opts:['Carbon, hydrogen and oxygen','Carbon, hydrogen, oxygen and nitrogen','Carbon, hydrogen and nitrogen','Carbon and oxygen only'],
+    ans:0, fb:'Carbohydrates are made of carbon, hydrogen and oxygen only.' },
+  { q:'Which element is found in proteins, but NOT in carbohydrates or fats?',
+    opts:['Carbon','Hydrogen','Oxygen','Nitrogen'],
+    ans:3, fb:'Proteins contain nitrogen in addition to carbon, hydrogen and oxygen. This is the key element that distinguishes proteins from carbohydrates and fats.' },
+  { q:'Starch, glycogen and cellulose are all made from many molecules of...',
+    opts:['Amino acids','Glucose','Fatty acids','Glycerol'],
+    ans:1, fb:'All three of these large carbohydrate molecules are built from chains of glucose.' },
+  { q:'Proteins are made from many smaller molecules called...',
+    opts:['Glucose molecules','Fatty acids and glycerol','Amino acids','Bases'],
+    ans:2, fb:'Proteins are built from chains of amino acids joined together.' },
+  { q:'Fats and oils are made from...',
+    opts:['Amino acids only','Fatty acids and glycerol','Glucose only','Bases and sugars'],
+    ans:1, fb:'Each fat or oil molecule is built from fatty acids joined to glycerol.' },
+  { q:'Which reagent is used to test for starch, and what colour indicates a positive result?',
+    opts:["Benedict's solution; brick-red",'Iodine solution; blue-black','Biuret solution; purple','DCPIP; colourless'],
+    ans:1, fb:'Iodine solution is orange-brown normally, and turns blue-black in the presence of starch.' },
+  { q:"A food sample turns Benedict's solution from blue to a brick-red precipitate after heating. This indicates the food contains...",
+    opts:['Starch','A reducing sugar','Protein','Vitamin C'],
+    ans:1, fb:"A colour change from blue to brick-red on heating with Benedict's solution is the positive test result for reducing sugars." },
+  { q:'Which test is used to detect protein in a food sample, and what colour change shows a positive result?',
+    opts:['Iodine solution; orange to blue-black','Ethanol emulsion test; clear to cloudy white','Biuret test; blue to purple (lilac)','DCPIP; blue to colourless'],
+    ans:2, fb:'The biuret test detects protein: the solution changes from blue to purple/violet (lilac) if protein is present, and does not need heating.' },
+  { q:'In the ethanol emulsion test for fats and oils, a positive result appears as...',
+    opts:['A blue-black colour','A brick-red precipitate','A cloudy white emulsion','A purple colour'],
+    ans:2, fb:'Shaking a fat/oil sample with ethanol and then pouring it into water produces a cloudy white emulsion if fat is present.' },
+  { q:'Why does the blue colour of DCPIP disappear when vitamin C is present?',
+    opts:['Vitamin C reacts with and decolourises the DCPIP','Vitamin C makes the solution more concentrated','DCPIP only reacts with starch','Vitamin C is itself blue and masks the DCPIP'],
+    ans:0, fb:'Vitamin C reacts with DCPIP, removing its blue colour. The fewer drops of sample needed to decolourise it, the higher the vitamin C concentration.' },
+  { q:"A DNA molecule's two strands are held together by...",
+    opts:['Cell walls','Bonds between pairs of bases','Ribosomes','Chloroplasts'],
+    ans:1, fb:'Bonds between pairs of bases (one from each strand) hold the two strands of the DNA double helix together.' },
+  { q:'In a DNA molecule, base A always pairs with base..., and base C always pairs with base...',
+    opts:['A pairs with C; T pairs with G','A pairs with T; C pairs with G','A pairs with G; T pairs with C','All bases pair randomly'],
+    ans:1, fb:'The base-pairing rule is fixed: A always pairs with T, and C always pairs with G.' }
+];
+
+let quizScore=0, quizAnswered=0;
+function buildQuiz(){
+  const c=document.getElementById('quiz-container'); c.innerHTML=''; quizScore=0; quizAnswered=0;
+  document.getElementById('score-panel').style.display='none';
+  quizData.forEach((item,idx)=>{
+    const card=document.createElement('div'); card.className='quiz-card';
+    card.innerHTML=`<div class="quiz-q">Q${idx+1}. ${item.q}</div><div class="quiz-options">${item.opts.map((o,i)=>`<button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}</div><div class="quiz-feedback" id="qfb-${idx}"></div>`;
+    c.appendChild(card);
+  });
+}
+function checkAnswer(btn,qIdx,optIdx){
+  const card=btn.closest('.quiz-card');
+  const buttons=card.querySelectorAll('.quiz-opt');
+  const fb=document.getElementById('qfb-'+qIdx);
+  const correct=quizData[qIdx].ans;
+  buttons.forEach(b=>b.disabled=true);
+  if(optIdx===correct){ btn.classList.add('correct'); fb.textContent='✅ '+quizData[qIdx].fb; fb.className='quiz-feedback show correct-fb'; quizScore++; }
+  else { btn.classList.add('wrong'); buttons[correct].classList.add('correct'); fb.textContent='❌ '+quizData[qIdx].fb; fb.className='quiz-feedback show wrong-fb'; }
+  quizAnswered++;
+  if(quizAnswered===quizData.length){
+    const panel=document.getElementById('score-panel'); panel.style.display='block';
+    document.getElementById('score-display').textContent=quizScore+'/'+quizData.length;
+    const pct=quizScore/quizData.length;
+    document.getElementById('score-msg').textContent=pct>=.9?'🌟 Excellent — IGCSE exam ready on this topic!':pct>=.75?'👍 Good work! Review the questions you missed.':pct>=.6?'📚 Solid start — revisit the earlier phases and retake.':'💪 Go back through the lesson phases, then retake.';
+    panel.scrollIntoView({behavior:'smooth'});
+  }
+}
+function retakeQuiz(){ buildQuiz(); }
+buildQuiz();
+
+// ══ SUMMARY ══
+function getTA(id){ const el=document.getElementById(id); return el?el.value.trim():''; }
+function fillSummary(id,text){ const el=document.getElementById(id); if(!el)return; el.textContent=text||'Not answered'; el.classList.toggle('empty',!text); }
+function buildSummary(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  document.getElementById('summaryName').textContent=name;
+  document.getElementById('summaryDate').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const scoreEl=document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl?scoreEl.textContent+' correct':'Quiz not yet completed');
+  fillSummary('sum-wonder',     getTA('ta-wonder'));
+  fillSummary('sum-foodreport', getTA('ta-foodreport'));
+  for(let i=1;i<=7;i++) fillSummary('sum-pp'+i, getTA('pp'+i));
+}
+function buildPlainText(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  const date=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const scoreEl=document.getElementById('score-display');
+  const nl = String.fromCharCode(10);
+  const ppAnswers = [1,2,3,4,5,6,7].map(function(i){ return 'Q'+i+': '+(getTA('pp'+i)||'Not answered'); }).join(nl);
+  return [
+    'IGCSE BIOLOGY · TOPIC 4 · BIOLOGICAL MOLECULES — STUDENT SUBMISSION',
+    '==============================================================================',
+    'Student: '+name, 'Date: '+date,'',
+    '── QUIZ SCORE ──', scoreEl?scoreEl.textContent:'Not completed','',
+    '── OPENING PREDICTION ──', getTA('ta-wonder')||'Not answered','',
+    '── FOOD TEST REPORT ──', getTA('ta-foodreport')||'Not answered','',
+    '── PAST PAPER RESPONSES ──', ppAnswers,'',
+    '==============================================================================',
+    '© 2026 Farvour Explorations · farvourexplorations.com',
+    'Submitted via Biological Molecules · IGCSE Biology Interactive Lesson'
+  ].join(nl);
+}
+function copyResults(){
+  buildSummary();
+  navigator.clipboard.writeText(buildPlainText()).then(function(){
+    const el=document.getElementById('copyConfirm'); el.textContent='✓ Copied! Paste into Google Classroom or your assignment.';
+    setTimeout(function(){ el.textContent=''; },4000);
+  }).catch(function(){ document.getElementById('copyConfirm').textContent='⚠️ Could not copy — try selecting the text manually.'; });
+}
+function emailResults(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  window.location.href='mailto:?subject='+encodeURIComponent('IGCSE Bio Topic 4 — '+name)+'&body='+encodeURIComponent(buildPlainText());
+}
+</script>
+</body>
+</html>
