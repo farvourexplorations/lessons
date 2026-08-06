@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2D Shapes 5.1 — Quadrilaterals 🔷</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #1e3a5f; --sky-mid: #2d5282;
+    --sun: #f6c343; --sun-pale: #fef9e7;
+    --coral: #e8603c; --coral-pale: #fdf0ec;
+    --mint: #3aaf85; --mint-pale: #e8f8f2;
+    --lavender: #7c6fcd; --lavender-pale: #f0eefb;
+    --paper: #fffef9; --ink: #1a2332; --muted: #7a8899; --border: rgba(0,0,0,0.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background: linear-gradient(160deg, #0f2540 0%, #1e3a5f 40%, #2d5282 100%); min-height:100vh; font-family:'Nunito',sans-serif; color:var(--ink); overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 45% 8%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(2px 2px at 65% 22%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 5%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 92% 35%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 35% 28%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 72% 12%, rgba(255,255,255,0.5) 0%, transparent 100%);
+    pointer-events:none; z-index:0; }
+
+  .hero { position:relative; z-index:1; text-align:center; padding:3.5rem 2rem 2rem; color:white; }
+  .hero-badge { display:inline-block; background:var(--sun); color:var(--sky); font-family:'Fredoka One',cursive; font-size:0.85rem; letter-spacing:0.05em; padding:0.35rem 1.2rem; border-radius:20px; margin-bottom:1.2rem; box-shadow:0 2px 12px rgba(246,195,67,0.4); }
+  .hero h1 { font-family:'Fredoka One',cursive; font-size:clamp(2.2rem,6vw,3.6rem); line-height:1.1; margin-bottom:0.8rem; text-shadow:0 2px 20px rgba(0,0,0,0.3); }
+  .hero h1 .accent { color:var(--sun); }
+  .hero p.intro { font-size:1.05rem; line-height:1.7; opacity:0.88; max-width:580px; margin:0 auto 2rem; }
+
+  .name-bar { background:rgba(255,255,255,0.1); border:1.5px solid rgba(255,255,255,0.25); border-radius:12px; padding:0.6rem 1rem; display:flex; align-items:center; gap:0.8rem; max-width:420px; margin:0 auto 1rem; }
+  .name-bar label { font-size:0.78rem; font-weight:700; color:rgba(255,255,255,0.8); white-space:nowrap; font-family:'DM Mono',monospace; }
+  .name-bar input { flex:1; background:rgba(255,255,255,0.15); border:none; border-radius:8px; padding:0.4rem 0.8rem; font-family:'Nunito',sans-serif; font-size:0.9rem; font-weight:700; color:white; outline:none; }
+  .name-bar input::placeholder { color:rgba(255,255,255,0.45); font-weight:400; }
+
+  .progress-wrap { display:flex; justify-content:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.5rem; }
+  .prog-step { display:flex; align-items:center; gap:0.4rem; background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.2); border-radius:20px; padding:0.35rem 0.9rem; font-size:0.76rem; font-weight:700; color:rgba(255,255,255,0.7); cursor:pointer; transition:all 0.2s; text-decoration:none; }
+  .prog-step:hover, .prog-step.done { background:rgba(255,255,255,0.22); color:white; border-color:rgba(255,255,255,0.4); }
+  .prog-step.active { background:var(--sun); color:var(--sky); border-color:var(--sun); box-shadow:0 2px 12px rgba(246,195,67,0.4); }
+
+  .sheet { position:relative; z-index:1; background:var(--paper); border-radius:24px 24px 0 0; margin-top:1.5rem; padding:0 0 6rem; min-height:80vh; box-shadow:0 -8px 40px rgba(0,0,0,0.25); }
+
+  .section { padding:3rem 2rem 0; max-width:860px; margin:0 auto; display:none; }
+  .section.active { display:block; }
+  .section-eyebrow { display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem; }
+  .eyebrow-num { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Fredoka One',cursive; font-size:1rem; color:white; flex-shrink:0; }
+  .num-coral{background:var(--coral);} .num-mint{background:var(--mint);} .num-sun{background:var(--sun);color:var(--sky);} .num-lav{background:var(--lavender);} .num-sky{background:var(--sky-mid);}
+  .eyebrow-label { font-size:0.72rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); font-family:'DM Mono',monospace; }
+  .section h2 { font-family:'Fredoka One',cursive; font-size:clamp(1.5rem,3.5vw,2.1rem); color:var(--sky); margin-bottom:0.6rem; line-height:1.2; }
+  .section .lead { font-size:1rem; line-height:1.75; color:#3a4a5a; margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+
+  .wonder-box { background:linear-gradient(135deg, var(--sky) 0%, var(--sky-mid) 100%); color:white; border-radius:16px; padding:1.8rem 2rem; margin-bottom:1.8rem; position:relative; overflow:hidden; }
+  .wonder-box::after { content:'🔷'; position:absolute; right:1.5rem; top:50%; transform:translateY(-50%); font-size:3rem; opacity:0.3; }
+  .wonder-box p { font-size:1rem; line-height:1.7; font-style:italic; opacity:0.95; max-width:85%; }
+  .wonder-box strong { color:var(--sun); font-style:normal; }
+  .wonder-box.mint-box { background:linear-gradient(135deg, var(--mint) 0%, #2d9970 100%); }
+  .wonder-box.mint-box::after { content:'📐'; }
+
+  .chip-row { display:flex; flex-wrap:wrap; gap:0.6rem; margin-bottom:1.5rem; }
+  .chip { padding:0.45rem 1rem; border-radius:20px; font-size:0.82rem; font-weight:700; cursor:pointer; transition:all 0.2s; border:2px solid transparent; }
+  .chip.coral{background:var(--coral-pale);color:var(--coral);border-color:#f8c5b8;}
+  .chip.mint{background:var(--mint-pale);color:var(--mint);border-color:#b8ebd8;}
+  .chip.sun{background:var(--sun-pale);color:#b8860b;border-color:#f8e0a0;}
+  .chip.lav{background:var(--lavender-pale);color:var(--lavender);border-color:#d0caef;}
+  .chip.sky{background:#e8f0f8;color:var(--sky-mid);border-color:#c0d4ea;}
+  .chip:hover{transform:scale(1.05);}
+  .concept-reveal { background:var(--paper); border-left:4px solid var(--coral); border-radius:0 10px 10px 0; padding:1rem 1.2rem; font-size:0.88rem; line-height:1.7; margin-top:0.5rem; display:none; animation:fadeIn 0.3s ease; }
+  .concept-reveal.show{display:block;}
+  .concept-reveal.mint-border{border-color:var(--mint);} .concept-reveal.sun-border{border-color:var(--sun);} .concept-reveal.lav-border{border-color:var(--lavender);} .concept-reveal.sky-border{border-color:var(--sky-mid);}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+
+  .predict-box { background:var(--sun-pale); border:2px dashed var(--sun); border-radius:14px; padding:1.4rem 1.6rem; margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive; font-size:1rem; color:#b8860b; margin-bottom:0.8rem; }
+  .predict-box textarea { width:100%; border:1.5px solid rgba(0,0,0,0.12); border-radius:8px; padding:0.7rem; font-family:'Nunito',sans-serif; font-size:0.88rem; resize:vertical; min-height:64px; background:white; color:var(--ink); outline:none; transition:border-color 0.2s; }
+  .predict-box textarea:focus{border-color:var(--sun);}
+
+  .demo-zone { background:white; border:2px solid var(--border); border-radius:16px; padding:1.8rem; margin-bottom:1.5rem; }
+  .demo-zone h3 { font-family:'Fredoka One',cursive; font-size:1.15rem; color:var(--sky); margin-bottom:0.3rem; }
+  .demo-zone .hint { font-size:0.78rem; color:var(--muted); font-family:'DM Mono',monospace; margin-bottom:1.3rem; }
+
+  .btn { border:none; border-radius:10px; padding:0.65rem 1.3rem; font-family:'Nunito',sans-serif; font-size:0.88rem; font-weight:800; cursor:pointer; transition:all 0.15s; letter-spacing:0.02em; }
+  .btn:hover{transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,0.15);}
+  .btn:active{transform:translateY(0);}
+  .btn-coral{background:var(--coral);color:white;} .btn-mint{background:var(--mint);color:white;} .btn-sun{background:var(--sun);color:var(--sky);}
+  .btn-lav{background:var(--lavender);color:white;} .btn-ghost{background:#f0f2f5;color:var(--muted);} .btn-sky{background:var(--sky);color:white;}
+  .action-row { display:flex; gap:0.8rem; flex-wrap:wrap; align-items:center; margin-bottom:0.8rem; }
+
+  .shape-gallery { display:flex; flex-wrap:wrap; gap:0.7rem; margin-bottom:1.3rem; }
+  .shape-btn { background:#f5f7fa; border:2px solid var(--border); border-radius:12px; padding:0.6rem; cursor:pointer; text-align:center; width:104px; transition:all 0.15s; }
+  .shape-btn:hover{transform:translateY(-2px);}
+  .shape-btn.active{background:white; border-color:var(--coral); box-shadow:0 3px 12px rgba(232,96,60,0.25);}
+  .shape-btn svg{display:block;margin:0 auto 0.3rem;}
+  .shape-btn span{font-size:0.7rem;font-weight:800;color:var(--sky);}
+
+  .prop-panel { background:#f5f7fa; border-radius:14px; padding:1.4rem; display:flex; gap:1.6rem; flex-wrap:wrap; align-items:flex-start; }
+  .prop-panel .diagram { flex-shrink:0; background:white; border-radius:12px; padding:0.8rem; }
+  .prop-panel .details { flex:1; min-width:220px; }
+  .prop-panel .details h4 { font-family:'Fredoka One',cursive; color:var(--sky); font-size:1.15rem; margin-bottom:0.4rem; }
+  .prop-panel .def { font-size:0.85rem; color:#3a4a5a; line-height:1.6; margin-bottom:0.8rem; }
+  .prop-row { display:flex; gap:0.6rem; padding:0.45rem 0; border-bottom:1px solid var(--border); font-size:0.84rem; }
+  .prop-row:last-child{border-bottom:none;}
+  .prop-row .pk { min-width:170px; font-weight:800; color:var(--muted); font-family:'DM Mono',monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; }
+  .prop-row .pv { color:var(--sky); font-weight:700; }
+
+  .quiz-blank-row { display:flex; align-items:center; gap:0.7rem; background:#f5f7fa; border-radius:10px; padding:0.6rem 1rem; flex-wrap:wrap; margin-bottom:0.6rem; }
+  .quiz-blank-row .qtext { flex:1; min-width:220px; font-size:0.85rem; font-weight:700; color:var(--sky); }
+  .quiz-blank-row input[type=number] { width:64px; border:2px solid var(--lavender); border-radius:6px; padding:0.35rem; text-align:center; font-weight:800; color:var(--sky); font-family:'DM Mono',monospace; outline:none; }
+  .yn-wrap { display:flex; gap:0.5rem; }
+  .yn-btn { border:2px solid var(--border); background:white; border-radius:8px; padding:0.35rem 0.9rem; cursor:pointer; font-weight:800; font-size:0.78rem; color:var(--muted); }
+  .yn-btn.selected { border-color:var(--coral); background:var(--coral-pale); color:var(--coral); }
+  .qfb { font-family:'DM Mono',monospace; font-size:0.9rem; min-width:24px; text-align:center; }
+
+  .speech-row { display:flex; gap:1rem; align-items:flex-start; flex-wrap:wrap; margin:1rem 0 1.4rem; }
+  .speech-bubble { background:var(--lavender-pale); border-radius:14px; padding:1rem 1.2rem; font-size:0.86rem; color:var(--sky); flex:1; min-width:220px; line-height:1.6; }
+  .speech-bubble.zara { background:var(--sun-pale); color:#7a5c00; }
+  .avatar-circ { width:46px; height:46px; border-radius:50%; background:var(--sky); color:white; display:flex; align-items:center; justify-content:center; font-family:'Fredoka One',cursive; flex-shrink:0; }
+  .avatar-circ.zara { background:var(--sun); color:var(--sky); }
+  .zs-btns { display:flex; gap:0.7rem; margin-bottom:0.8rem; }
+  .zs-reveal { display:none; font-size:0.85rem; background:var(--mint-pale); border-left:3px solid var(--mint); border-radius:0 10px 10px 0; padding:0.8rem 1rem; line-height:1.65; }
+  .zs-reveal.show { display:block; }
+
+  .tf-card { background:white; border:2px solid var(--border); border-radius:12px; padding:1.1rem 1.3rem; margin-bottom:0.9rem; }
+  .tf-statement { font-size:0.9rem; font-weight:700; color:var(--sky); margin-bottom:0.7rem; line-height:1.5; }
+  .tf-btns { display:flex; gap:0.6rem; margin-bottom:0.6rem; }
+  .tf-btn { border:2px solid var(--border); background:#f5f7fa; border-radius:8px; padding:0.4rem 1.1rem; cursor:pointer; font-weight:800; font-size:0.8rem; color:var(--muted); }
+  .tf-btn.correct-pick { border-color:var(--mint); background:var(--mint-pale); color:var(--mint); }
+  .tf-btn.wrong-pick { border-color:var(--coral); background:var(--coral-pale); color:var(--coral); }
+  .tf-reveal { font-size:0.82rem; color:#3a4a5a; background:#f5f7fa; border-left:3px solid var(--mint); padding:0.6rem 0.9rem; border-radius:0 8px 8px 0; display:none; line-height:1.6; }
+  .tf-reveal.show { display:block; }
+
+  .mosaic-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; background:#eef2f6; border-radius:12px; padding:12px; }
+  .mosaic-cell { aspect-ratio:1.2/1; display:flex; align-items:center; justify-content:center; }
+
+  .riddle-card { background:var(--lavender-pale); border:2px solid rgba(124,111,205,0.3); border-radius:12px; padding:1.2rem; margin-bottom:1rem; }
+  .riddle-clue { font-size:0.9rem; color:var(--sky); font-weight:700; line-height:1.6; margin-bottom:0.8rem; }
+  .riddle-options { display:flex; flex-wrap:wrap; gap:0.5rem; }
+  .riddle-btn { background:white; border:2px solid var(--lavender); border-radius:10px; padding:0.4rem 0.9rem; font-family:'Fredoka One',cursive; font-size:0.85rem; color:var(--lavender); cursor:pointer; }
+  .riddle-fb { margin-top:0.7rem; font-family:'DM Mono',monospace; font-size:0.8rem; min-height:1.2rem; }
+
+  .flow-diagram { background:#f5f7fa; border-radius:14px; padding:1.4rem; text-align:center; }
+  .flow-q { background:white; border:2px solid var(--sky-mid); border-radius:12px; padding:1rem 1.4rem; font-family:'Fredoka One',cursive; font-size:1rem; color:var(--sky); margin:0 auto 1rem; max-width:400px; }
+  .flow-btns { display:flex; gap:0.8rem; justify-content:center; margin-bottom:1rem; }
+  .flow-path { font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--muted); margin-bottom:0.8rem; min-height:1.2rem; }
+  .flow-letter { display:inline-flex; align-items:center; justify-content:center; width:64px; height:64px; border-radius:50%; background:var(--coral); color:white; font-family:'Fredoka One',cursive; font-size:1.6rem; margin-top:0.4rem; }
+
+  .coord-wrap { display:flex; gap:1.6rem; flex-wrap:wrap; align-items:flex-start; }
+  canvas#coordCanvas { border-radius:10px; border:2px solid var(--border); flex-shrink:0; }
+  .coord-right { flex:1; min-width:200px; }
+  .coord-right .input-group { display:flex; gap:0.7rem; margin-bottom:0.8rem; }
+  .coord-right label { display:block; font-size:0.72rem; font-weight:800; color:var(--muted); font-family:'DM Mono',monospace; text-transform:uppercase; margin-bottom:0.2rem; }
+  .coord-right input[type=number] { width:70px; border:2px solid var(--coral); border-radius:8px; padding:0.4rem 0.6rem; font-family:'DM Mono',monospace; font-weight:700; color:var(--sky); outline:none; }
+  .coord-result { background:#f5f7fa; border-radius:10px; padding:0.9rem 1.1rem; font-family:'DM Mono',monospace; font-size:0.8rem; line-height:1.8; color:var(--sky); min-height:2rem; }
+
+  .world-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+  .world-card { border-radius:14px; padding:1.4rem; }
+  .world-card.coral-bg{background:var(--coral-pale);} .world-card.mint-bg{background:var(--mint-pale);} .world-card.lav-bg{background:var(--lavender-pale);} .world-card.sun-bg{background:var(--sun-pale);}
+  .world-card .wc-icon{font-size:2rem;margin-bottom:0.6rem;}
+  .world-card h4{font-family:'Fredoka One',cursive;font-size:1rem;margin-bottom:0.4rem;color:var(--sky);}
+  .world-card p{font-size:0.82rem;line-height:1.6;color:#3a4a5a;}
+
+  .reflection-card { background:white; border:2px solid var(--border); border-radius:14px; padding:1.4rem; margin-bottom:1rem; }
+  .reflection-card .q { font-family:'Fredoka One',cursive; font-size:1rem; color:var(--sky); margin-bottom:0.7rem; display:flex; gap:0.5rem; align-items:baseline; }
+  .reflection-card .q .qnum { font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--muted); flex-shrink:0; }
+  .reflection-card textarea { width:100%; border:1.5px solid rgba(0,0,0,0.1); border-radius:8px; padding:0.7rem; font-family:'Nunito',sans-serif; font-size:0.88rem; resize:vertical; min-height:72px; background:#fafbfc; color:var(--ink); outline:none; transition:border-color 0.2s; }
+  .reflection-card textarea:focus{border-color:var(--lavender);}
+
+  .congrats { text-align:center; padding:2rem 1rem; }
+  .congrats .trophy { font-size:4rem; margin-bottom:1rem; animation:bounce 0.8s ease infinite alternate; }
+  @keyframes bounce{from{transform:translateY(0);}to{transform:translateY(-10px);}}
+  .congrats h2{font-family:'Fredoka One',cursive;font-size:2rem;color:var(--sky);margin-bottom:0.8rem;}
+  .congrats p{font-size:0.95rem;line-height:1.7;color:#3a4a5a;max-width:520px;margin:0 auto 1.5rem;}
+  .summary-chips{display:flex;flex-wrap:wrap;gap:0.6rem;justify-content:center;}
+  .summary-chip{padding:0.5rem 1.1rem;border-radius:20px;font-size:0.82rem;font-weight:700;background:var(--sun-pale);color:#b8860b;border:1.5px solid #f8e0a0;}
+
+  .divider { height:1px; background:linear-gradient(90deg,transparent,var(--border),transparent); margin:1.5rem 0; }
+
+  .nav-row { display:flex; justify-content:space-between; align-items:center; padding:2.5rem 2rem 0; max-width:860px; margin:0 auto; }
+  .btn-next { background:var(--sky); color:white; border:none; border-radius:50px; padding:0.9rem 2rem; font-family:'Fredoka One',cursive; font-size:1rem; cursor:pointer; display:flex; align-items:center; gap:0.6rem; transition:all 0.2s; box-shadow:0 4px 16px rgba(30,58,95,0.25); }
+  .btn-next:hover{background:var(--sky-mid); transform:translateY(-2px);}
+  .btn-prev { background:transparent; color:var(--muted); border:2px solid var(--border); border-radius:50px; padding:0.9rem 1.6rem; font-family:'Fredoka One',cursive; font-size:0.95rem; cursor:pointer; transition:all 0.2s; }
+  .btn-prev:hover{border-color:var(--muted); color:var(--ink);}
+  .btn-prev:disabled, .btn-next:disabled{opacity:0.3; cursor:not-allowed; transform:none;}
+
+  .summary-section { background:white; border-radius:16px; padding:1.8rem; margin-bottom:1.2rem; border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive; font-size:1.05rem; color:var(--sky); margin-bottom:0.8rem; }
+  .summary-answer { background:#f5f7fa; border-radius:8px; padding:0.7rem 1rem; font-size:0.85rem; line-height:1.6; color:var(--ink); margin-bottom:0.5rem; font-style:italic; border-left:3px solid var(--lavender); min-height:2rem; }
+  .summary-answer.empty { color:var(--muted); font-style:normal; border-left-color:var(--border); }
+  .sum-label { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.4rem; margin-top:0.6rem; text-transform:uppercase; letter-spacing:0.06em; }
+  .share-buttons { display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:1.5rem; justify-content:center; }
+  .share-btn { border:none; border-radius:12px; padding:0.85rem 1.6rem; font-family:'Fredoka One',cursive; font-size:1rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:0.5rem; }
+  .share-btn:hover{transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.15);}
+  .share-btn.copy{background:var(--mint); color:white;} .share-btn.email{background:var(--lavender); color:white;} .share-btn.print{background:var(--sky); color:white;}
+  .copy-confirm { text-align:center; font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--mint); min-height:1.2rem; margin-top:0.6rem; }
+
+  @media (max-width:560px) {
+    .hero{padding:2.5rem 1.2rem 1.5rem;} .section{padding:2rem 1.2rem 0;} .nav-row{padding:2rem 1.2rem 0;}
+    .prop-panel{flex-direction:column;} .coord-wrap{flex-direction:column;}
+  }
+  @media print {
+    .hero, .nav-row, .share-buttons, .copy-confirm { display:none !important; }
+    .sheet{box-shadow:none; border-radius:0;}
+    .section{display:none !important;}
+    #sec-9{display:block !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">✨ Year 6 · 2D Shapes · Lesson 5.1</div>
+  <h1>Quadrilaterals<br><span class="accent">Uncovered</span> 🔷</h1>
+  <p class="intro">Squares, rectangles, rhombuses, kites... they all have four sides, but each one has its own secret rules about sides, angles, diagonals and symmetry. Today you'll become a quadrilateral detective.</p>
+
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+
+  <div class="progress-wrap">
+    <a class="prog-step active" id="pill-0" onclick="goTo(0)">🔷 Wonder</a>
+    <a class="prog-step" id="pill-1" onclick="goTo(1)">📚 Discover</a>
+    <a class="prog-step" id="pill-2" onclick="goTo(2)">🔺 Shapes</a>
+    <a class="prog-step" id="pill-3" onclick="goTo(3)">📐 Properties</a>
+    <a class="prog-step" id="pill-4" onclick="goTo(4)">⚖️ Justify</a>
+    <a class="prog-step" id="pill-5" onclick="goTo(5)">🧩 Tessellate</a>
+    <a class="prog-step" id="pill-6" onclick="goTo(6)">🧭 Classify</a>
+    <a class="prog-step" id="pill-7" onclick="goTo(7)">🌍 Real Life</a>
+    <a class="prog-step" id="pill-8" onclick="goTo(8)">💭 Reflect</a>
+    <a class="prog-step" id="pill-9" onclick="goTo(9)">📤 Submit</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+  <!-- SECTION 0: WONDER -->
+  <div class="section active" id="sec-0">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">The Big Question</span></div>
+    <h2>What makes each quadrilateral special?</h2>
+    <p class="lead">Quadrilateral tiles are used on kitchen and bathroom walls and floors because they fit together exactly, leaving no gaps. But not every four-sided shape is the same — a square, a kite and a trapezium all behave differently. To order the right tiles, you need to know exactly what makes each one tick.</p>
+
+    <div class="wonder-box">
+      <p>Here's the big secret: there are <strong>seven special quadrilaterals</strong> — square, rectangle, parallelogram, rhombus, trapezium, isosceles trapezium and kite. Every one of them is built from the same four ingredients: <strong>sides, angles, diagonals</strong> and <strong>lines of symmetry</strong>. Today you'll learn to identify, describe, classify and sketch all seven.</p>
+    </div>
+
+    <p style="font-size:0.9rem;font-weight:700;color:var(--sky);margin-bottom:0.8rem;">🧠 Warm-up — match each shape to its name:</p>
+    <div style="background:white;border:2px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;">
+      <div id="warmupGrid" style="display:flex;flex-direction:column;gap:0.6rem;"></div>
+      <div id="warmupFb" style="margin-top:1rem;font-family:'DM Mono',monospace;font-size:0.82rem;min-height:1.2rem;color:var(--mint);"></div>
+    </div>
+
+    <div class="wonder-box mint-box">
+      <p>A quadrilateral detective doesn't just say "it looks like a kite." They check the <strong>evidence</strong> — sides, angles, diagonals, symmetry — before they name a shape. That's exactly what you'll practise today.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 1: DISCOVER -->
+  <div class="section" id="sec-1">
+    <div class="section-eyebrow"><div class="eyebrow-num num-lav">2</div><span class="eyebrow-label">Discover the Vocabulary</span></div>
+    <h2>📚 Words quadrilateral detectives use</h2>
+    <p class="lead">Click each word to reveal its meaning. You'll use every one of these words in today's investigations.</p>
+
+    <div class="chip-row">
+      <span class="chip coral" onclick="revealTerm('quadrilateral')">▱ Quadrilateral</span>
+      <span class="chip lav" onclick="revealTerm('diagonal')">╳ Diagonal</span>
+      <span class="chip sun" onclick="revealTerm('parallel')">∥ Parallel</span>
+      <span class="chip mint" onclick="revealTerm('bisect')">✂ Bisect</span>
+      <span class="chip sky" onclick="revealTerm('decompose')">🔧 Decompose</span>
+      <span class="chip coral" onclick="revealTerm('tessellate')">🧩 Tessellate</span>
+    </div>
+
+    <div class="concept-reveal" id="cr-quadrilateral"><strong>Quadrilateral</strong> — any closed 2D shape with exactly four straight sides. <br><br><em>Your turn: name three quadrilaterals you can see around you right now.</em></div>
+    <div class="concept-reveal lav-border" id="cr-diagonal"><strong>Diagonal</strong> — a straight line joining two opposite corners of a shape (not along an edge). Every quadrilateral has two diagonals.<br><br><em>Your turn: in a square, do the diagonals look longer or shorter than the sides?</em></div>
+    <div class="concept-reveal sun-border" id="cr-parallel"><strong>Parallel</strong> — two lines that always stay the same distance apart and never meet, however far they are extended. Shown with matching arrow symbols (→ →).<br><br><em>Your turn: find a pair of parallel lines in your classroom.</em></div>
+    <div class="concept-reveal mint-border" id="cr-bisect"><strong>Bisect</strong> — to cut something exactly in half. "The diagonals bisect each other" means each diagonal cuts the other into two equal parts.<br><br><em>Your turn: if a 10 cm diagonal is bisected, how long is each half?</em></div>
+    <div class="concept-reveal sky-border" id="cr-decompose"><strong>Decompose</strong> — to break a shape apart into smaller shapes. A square can be decomposed into two triangles, for example.<br><br><em>Your turn: how else could you decompose a square?</em></div>
+    <div class="concept-reveal" id="cr-tessellate"><strong>Tessellate</strong> — shapes tessellate when copies of them fit together with no gaps and no overlaps, like tiles on a floor.<br><br><em>Your turn: predict — do you think every quadrilateral can tessellate?</em></div>
+  </div>
+
+  <!-- SECTION 2: SHAPES -->
+  <div class="section" id="sec-2">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">3</div><span class="eyebrow-label">Investigation 1</span></div>
+    <h2>🔺 Meet the Seven Special Quadrilaterals</h2>
+    <p class="lead">Click each shape below to reveal its full property file: sides, angles, diagonals and symmetry. The dashed white lines on each diagram are the <strong>diagonals</strong>.</p>
+
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="shapes-prediction" placeholder="I think a square and a rectangle are similar because... I think a square and a rhombus are similar because... I think the shape with the fewest matching sides is..."></textarea>
+    </div>
+
+    <div class="demo-zone">
+      <h3>🗂️ The Property Files</h3>
+      <div class="hint">CLICK A SHAPE · READ ITS FULL PROPERTY FILE</div>
+      <div class="shape-gallery" id="shapeGallery1"></div>
+      <div class="prop-panel" id="propPanel1"></div>
+    </div>
+
+    <div class="predict-box" style="border-color:var(--mint);background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="shapes-reflection" placeholder="A square is really a special rectangle AND a special rhombus because... The shape with the most lines of symmetry was... because... The shape with no lines of symmetry was..."></textarea>
+    </div>
+  </div>
+
+  <!-- SECTION 3: PROPERTIES QUIZ -->
+  <div class="section" id="sec-3">
+    <div class="section-eyebrow"><div class="eyebrow-num num-mint">4</div><span class="eyebrow-label">Investigation 2</span></div>
+    <h2>📐 Complete the Properties</h2>
+    <p class="lead">Pick a shape, then fill in the missing numbers from memory. Use "Show property file" from the previous section if you get stuck, then come back and try again.</p>
+
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="props-prediction" placeholder="I think a kite has ___ pairs of equal sides and ___ pairs of parallel sides because... I think a rhombus's diagonals cross at ___° because..."></textarea>
+    </div>
+
+    <div class="demo-zone">
+      <h3>✍️ Fill in the Blanks</h3>
+      <div class="hint">CHOOSE A SHAPE · TYPE YOUR ANSWERS · CLICK CHECK</div>
+      <div class="shape-gallery" id="shapeGallery2"></div>
+      <div id="propsQuiz"></div>
+      <div class="action-row" style="margin-top:0.6rem;">
+        <button class="btn btn-coral" onclick="checkPropsQuiz()">✓ Check my answers</button>
+        <button class="btn btn-ghost" onclick="resetPropsQuiz()">↺ Clear</button>
+      </div>
+      <div id="propsQuizFb" style="font-family:'DM Mono',monospace;font-size:0.82rem;min-height:1.2rem;color:var(--mint);"></div>
+    </div>
+
+    <div class="predict-box" style="border-color:var(--lavender);background:var(--lavender-pale);">
+      <h4 style="color:var(--lavender);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="props-reflection" placeholder="The property I found hardest to remember was... A trick I'll use to remember it is... I noticed that shapes with diagonals crossing at 90° were..."></textarea>
+    </div>
+  </div>
+
+  <!-- SECTION 4: JUSTIFY -->
+  <div class="section" id="sec-4">
+    <div class="section-eyebrow"><div class="eyebrow-num num-sun">5</div><span class="eyebrow-label">Investigation 3</span></div>
+    <h2>⚖️ True or False? Justify It</h2>
+    <p class="lead">Good mathematicians never just guess — they <strong>justify</strong> their answer with a reason. Let's practise being convincing.</p>
+
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="justify-prediction" placeholder="I think it's important to justify an answer in maths because..."></textarea>
+    </div>
+
+    <div class="demo-zone">
+      <h3>🤔 What shape am I?</h3>
+      <div class="hint">READ THE CLUE · DECIDE WHO IS RIGHT</div>
+      <p style="font-size:0.9rem;color:#3a4a5a;margin-bottom:0.5rem;"><strong>Clue:</strong> "I am one of the seven special quadrilaterals. I have one pair of equal sides."</p>
+      <div class="speech-row">
+        <div class="avatar-circ zara">Z</div>
+        <div class="speech-bubble zara">Zara says: "There is not enough information to work out what the shape is."</div>
+      </div>
+      <div class="speech-row">
+        <div class="avatar-circ">S</div>
+        <div class="speech-bubble">Sofia says: "I disagree. There is enough information to work out what the shape is."</div>
+      </div>
+      <div class="zs-btns">
+        <button class="btn btn-sun" onclick="pickZS('zara')">I agree with Zara</button>
+        <button class="btn btn-lav" onclick="pickZS('sofia')">I agree with Sofia</button>
+      </div>
+      <div class="zs-reveal" id="zsReveal">
+        <strong>Zara is correct.</strong> "One pair of equal sides" isn't enough to pin down a single shape — it could describe an isosceles trapezium (the two slanted sides are equal), or even part of the description of a kite. To be certain, you'd need more clues, like how many pairs of parallel sides it has too.
+      </div>
+    </div>
+
+    <div class="demo-zone">
+      <h3>✅❌ True or False Statements</h3>
+      <div class="hint">CLICK TRUE OR FALSE · THEN READ THE JUSTIFICATION</div>
+      <div id="tfList"></div>
+    </div>
+
+    <div class="predict-box" style="border-color:var(--mint);background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="justify-reflection" placeholder="A statement I got wrong was... I was surprised that... To justify an answer well, I need to..."></textarea>
+    </div>
+  </div>
+
+  <!-- SECTION 5: TESSELLATE -->
+  <div class="section" id="sec-5">
+    <div class="section-eyebrow"><div class="eyebrow-num num-lav">6</div><span class="eyebrow-label">Investigation 4</span></div>
+    <h2>🧩 The Tessellation Lab</h2>
+    <p class="lead">Shen says parallelograms tessellate because "they fit together leaving no spaces." Let's test whether that's true for <em>every</em> quadrilateral, not just parallelograms.</p>
+
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="tess-prediction" placeholder="I think a rectangle will tessellate because... I think a kite will/will not tessellate because... I think an irregular trapezium will/will not tessellate because..."></textarea>
+    </div>
+
+    <div class="demo-zone">
+      <h3>🧵 Tile it!</h3>
+      <div class="hint">PICK A SHAPE · WATCH IT TILE THE PLANE — ALTERNATE TILES ARE ROTATED 180°</div>
+      <div class="shape-gallery" id="shapeGallery3"></div>
+      <div class="mosaic-grid" id="mosaicGrid"></div>
+    </div>
+
+    <div class="demo-zone">
+      <h3>🤯 The Big Reveal</h3>
+      <div class="hint">MAKE YOUR PREDICTION FIRST</div>
+      <p style="font-size:0.9rem;color:#3a4a5a;margin-bottom:0.8rem;">Do <strong>all</strong> quadrilaterals tessellate — even irregular, wonky-looking ones?</p>
+      <div class="action-row">
+        <button class="btn btn-mint" onclick="answerTess(true)">Yes, all of them</button>
+        <button class="btn btn-coral" onclick="answerTess(false)">No, only some</button>
+      </div>
+      <div id="tessReveal" class="zs-reveal"></div>
+    </div>
+
+    <div class="predict-box" style="border-color:var(--sun);">
+      <h4>🔍 After exploring — what did you discover?</h4>
+      <textarea id="tess-reflection" placeholder="I was surprised that... I think this works because when you rotate a quadrilateral 180° around the midpoint of a side..."></textarea>
+    </div>
+  </div>
+
+  <!-- SECTION 6: CLASSIFY -->
+  <div class="section" id="sec-6">
+    <div class="section-eyebrow"><div class="eyebrow-num num-sky">7</div><span class="eyebrow-label">Investigation 5</span></div>
+    <h2>🧭 Classify with a Flow Chart</h2>
+    <p class="lead">A flow chart sorts shapes using yes/no questions. Pick a shape you know well, then answer each question about <em>that</em> shape to see which letter you land on. Compare your path with a partner — did you both land in the same place?</p>
+
+    <div class="demo-zone">
+      <h3>🧭 Walk the Flow Chart</h3>
+      <div class="hint">CHOOSE YOUR TARGET SHAPE · ANSWER YES OR NO AT EACH STEP</div>
+      <div class="shape-gallery" id="shapeGallery4"></div>
+      <div class="flow-diagram" id="flowDiagram" style="display:none;">
+        <div class="flow-q" id="flowQ"></div>
+        <div class="flow-btns" id="flowBtns"></div>
+        <div class="flow-path" id="flowPath"></div>
+        <div id="flowResult"></div>
+      </div>
+      <div class="action-row" style="margin-top:0.8rem;">
+        <button class="btn btn-ghost" onclick="resetFlow()">↺ Start over</button>
+      </div>
+    </div>
+
+    <div class="demo-zone">
+      <h3>📍 Find the Missing Corner</h3>
+      <div class="hint">A(4,7), B(7,7) AND C(4,4) ARE FIXED · MOVE POINT D TO TRY TO MAKE A SQUARE</div>
+      <div class="coord-wrap">
+        <canvas id="coordCanvas" width="300" height="300"></canvas>
+        <div class="coord-right">
+          <div class="input-group">
+            <div><label>D — x</label><input type="number" id="dx" value="7" min="0" max="10" oninput="drawCoord()"></div>
+            <div><label>D — y</label><input type="number" id="dy" value="4" min="0" max="10" oninput="drawCoord()"></div>
+          </div>
+          <div class="coord-result" id="coordResult"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 7: REAL LIFE -->
+  <div class="section" id="sec-7">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">8</div><span class="eyebrow-label">Real-World Connections</span></div>
+    <h2>Quadrilaterals are everywhere 🌍</h2>
+    <p class="lead">Once you can name and describe quadrilaterals, you'll start spotting them everywhere — in floors, windows, kites, and even road signs.</p>
+
+    <div class="world-grid">
+      <div class="world-card coral-bg"><div class="wc-icon">🚿</div><h4>Tiling</h4><p>Bathroom and kitchen tiles are almost always quadrilaterals, because they tessellate — they fit together with no gaps, so no material is wasted.</p></div>
+      <div class="world-card mint-bg"><div class="wc-icon">🏠</div><h4>Architecture</h4><p>Roof trusses often use parallelograms and trapeziums for strength, while diamond-shaped (rhombus) windows add style to a building's design.</p></div>
+      <div class="world-card lav-bg"><div class="wc-icon">🎨</div><h4>Art & Pattern</h4><p>Artists like M.C. Escher built entire pictures from tessellating quadrilaterals, proving that maths and art share the same rules.</p></div>
+      <div class="world-card sun-bg"><div class="wc-icon">🪁</div><h4>Kite Flying</h4><p>A flying kite is shaped like the quadrilateral of the same name — its line of symmetry keeps it balanced and stable in the wind.</p></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="demo-zone">
+      <h3>🕵️ Riddle Me This</h3>
+      <div class="hint">READ EACH CLUE · CLICK THE MATCHING SHAPE</div>
+      <div id="riddleList"></div>
+    </div>
+  </div>
+
+  <!-- SECTION 8: REFLECT -->
+  <div class="section" id="sec-8">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">9</div><span class="eyebrow-label">Synthesis & Wonder</span></div>
+    <h2>💭 Let's think it through</h2>
+    <p class="lead">The best mathematicians think about what their discoveries <em>mean</em>. Take your time with these.</p>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q1 /</span> Why is every square also a rectangle, a rhombus AND a parallelogram? Use properties to explain.</div>
+      <textarea placeholder="A square has two pairs of parallel sides, which is the definition of a parallelogram, so... A square has four equal sides, which is the definition of a rhombus, so..."></textarea>
+    </div>
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q2 /</span> A kite is not a parallelogram. How do you know, without checking every single property?</div>
+      <textarea placeholder="A parallelogram must have two pairs of parallel sides. A kite has... so it cannot be a parallelogram because..."></textarea>
+    </div>
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q3 /</span> Why do you think ALL quadrilaterals tessellate, even irregular ones?</div>
+      <textarea placeholder="I think this happens because when you rotate a copy 180°... The angles inside a quadrilateral always add up to..."></textarea>
+    </div>
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q4 /</span> What question does this workshop leave you wondering about?</div>
+      <textarea placeholder="I'm still wondering... I want to know what happens with five-sided shapes..."></textarea>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="congrats">
+      <div class="trophy">🎉</div>
+      <h2>You've mastered the seven special quadrilaterals!</h2>
+      <p>You can now identify, describe, classify and sketch every one of them — using sides, angles, diagonals and symmetry as your evidence. You're ready for Exercise 5.1 in your workbook.</p>
+      <div class="summary-chips">
+        <span class="summary-chip">Square, rectangle, parallelogram</span>
+        <span class="summary-chip">Rhombus, trapezium, isosceles trapezium, kite</span>
+        <span class="summary-chip">Diagonals can bisect at 90°</span>
+        <span class="summary-chip">All quadrilaterals tessellate!</span>
+        <span class="summary-chip">Justify every answer</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 9: SUBMIT -->
+  <div class="section" id="sec-9">
+    <div class="section-eyebrow"><div class="eyebrow-num num-mint">10</div><span class="eyebrow-label">Your Completed Work</span></div>
+    <h2>📤 Ready to Share</h2>
+    <p class="lead">Here's everything you worked on today. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> directly to your teacher — then head into your workbook for Exercise 5.1.</p>
+
+    <div class="summary-section" style="background:var(--sky);color:white;border-color:var(--sky);">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;align-items:center;">
+        <div><div style="font-family:'DM Mono',monospace;font-size:0.7rem;opacity:0.6;margin-bottom:0.3rem;">STUDENT</div><div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div></div>
+        <div style="text-align:right;"><div style="font-family:'DM Mono',monospace;font-size:0.7rem;opacity:0.6;margin-bottom:0.3rem;">LESSON</div><div style="font-family:'Fredoka One',cursive;font-size:1rem;">2D Shapes 5.1 — Quadrilaterals 🔷</div><div style="font-family:'DM Mono',monospace;font-size:0.72rem;opacity:0.6;" id="summaryDate"></div></div>
+      </div>
+    </div>
+
+    <div class="summary-section"><h3>🔺 Section 3 — Shapes</h3><div class="sum-label">Prediction</div><div class="summary-answer" id="sum-shapes-pred"></div><div class="sum-label">Reflection</div><div class="summary-answer" id="sum-shapes-ref"></div></div>
+    <div class="summary-section"><h3>📐 Section 4 — Properties</h3><div class="sum-label">Prediction</div><div class="summary-answer" id="sum-props-pred"></div><div class="sum-label">Reflection</div><div class="summary-answer" id="sum-props-ref"></div></div>
+    <div class="summary-section"><h3>⚖️ Section 5 — Justify</h3><div class="sum-label">Prediction</div><div class="summary-answer" id="sum-justify-pred"></div><div class="sum-label">Reflection</div><div class="summary-answer" id="sum-justify-ref"></div></div>
+    <div class="summary-section"><h3>🧩 Section 6 — Tessellate</h3><div class="sum-label">Prediction</div><div class="summary-answer" id="sum-tess-pred"></div><div class="sum-label">Reflection</div><div class="summary-answer" id="sum-tess-ref"></div></div>
+    <div class="summary-section">
+      <h3>💭 Section 9 — Reflections</h3>
+      <div class="sum-label">Q1 — Why is a square a rectangle, rhombus AND parallelogram?</div><div class="summary-answer" id="sum-q1"></div>
+      <div class="sum-label">Q2 — Why isn't a kite a parallelogram?</div><div class="summary-answer" id="sum-q2"></div>
+      <div class="sum-label">Q3 — Why do all quadrilaterals tessellate?</div><div class="summary-answer" id="sum-q3"></div>
+      <div class="sum-label">Q4 — Still wondering</div><div class="summary-answer" id="sum-q4"></div>
+    </div>
+
+    <div class="share-buttons">
+      <button class="share-btn copy" onclick="copyResults()">📋 Copy My Results</button>
+      <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+      <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+    <div class="copy-confirm" id="copyConfirm"></div>
+
+    <div style="margin-top:1.5rem;background:var(--sun-pale);border:2px dashed var(--sun);border-radius:12px;padding:1.2rem 1.4rem;">
+      <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#b8860b;margin-bottom:0.8rem;">📋 How to submit your work:</p>
+      <p style="font-size:0.82rem;color:#b8860b;font-family:'DM Mono',monospace;line-height:2;">
+        <strong>📋 Copy My Results</strong> — Copies all your answers to your clipboard. Paste into Google Classroom and submit.<br>
+        <strong>📧 Email to Teacher</strong> — Opens your email app with your answers already typed. Add your teacher's address and send.<br>
+        <strong>🖨️ Print / Save PDF</strong> — Mac: "Save as PDF" bottom left · Windows: "Microsoft Print to PDF". Then upload to your assignment.<br><br>
+        <strong>📖 Next step:</strong> open your workbook to <strong>Exercise 5.1</strong> and complete questions 1–10 using what you practised here.
+      </p>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" id="prevBtn" onclick="navigate(-1)" disabled>← Back</button>
+    <button class="btn-next" id="nextBtn" onclick="navigate(1)">Next <span>→</span></button>
+  </div>
+</div>
+
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  Interactive companion for Cambridge Lower Secondary Mathematics · 2D Shapes 5.1 Quadrilaterals<br>
+  For classroom use alongside the Learner's Book and Workbook.
+</div>
+
+<script>
+// ══════════════════════════════════════
+// SHAPE DATA
+// ══════════════════════════════════════
+const shapesList = [
+  { key:'square', name:'Square', color:'#7c6fcd', points:'40,15 80,15 80,55 40,55',
+    def:'A square is a quadrilateral with four equal sides and four right angles.',
+    pairsEqualSides:2, pairsParallelSides:2, pairsEqualAngles:2, diagonals90:true, rightAngles:true, symmetryLines:4 },
+  { key:'rectangle', name:'Rectangle', color:'#e8603c', points:'20,25 100,25 100,60 20,60',
+    def:'A rectangle has two pairs of equal, parallel sides and four right angles.',
+    pairsEqualSides:2, pairsParallelSides:2, pairsEqualAngles:2, diagonals90:false, rightAngles:true, symmetryLines:2 },
+  { key:'parallelogram', name:'Parallelogram', color:'#2d5282', points:'30,20 100,20 90,65 20,65',
+    def:'A parallelogram has two pairs of equal, parallel sides. Opposite angles are equal, but they are not usually 90°.',
+    pairsEqualSides:2, pairsParallelSides:2, pairsEqualAngles:2, diagonals90:false, rightAngles:false, symmetryLines:0 },
+  { key:'rhombus', name:'Rhombus', color:'#3aaf85', points:'60,10 100,45 60,80 20,45',
+    def:'A rhombus is a quadrilateral with four equal sides — like a square that has been pushed over.',
+    pairsEqualSides:2, pairsParallelSides:2, pairsEqualAngles:2, diagonals90:true, rightAngles:false, symmetryLines:2 },
+  { key:'trapezium', name:'Trapezium', color:'#f6c343', points:'35,20 90,20 110,70 15,70',
+    def:'A trapezium has exactly one pair of parallel sides. The other two sides can be any length.',
+    pairsEqualSides:0, pairsParallelSides:1, pairsEqualAngles:0, diagonals90:false, rightAngles:false, symmetryLines:0 },
+  { key:'isoscelesTrapezium', name:'Isosceles Trapezium', color:'#c9539e', points:'35,20 85,20 105,70 15,70',
+    def:'An isosceles trapezium has one pair of parallel sides, and the other (non-parallel) pair of sides is equal in length.',
+    pairsEqualSides:1, pairsParallelSides:1, pairsEqualAngles:1, diagonals90:false, rightAngles:false, symmetryLines:1 },
+  { key:'kite', name:'Kite', color:'#20b2c9', points:'60,8 95,40 60,82 25,40',
+    def:'A kite has two pairs of adjacent equal sides, and one pair of equal angles.',
+    pairsEqualSides:2, pairsParallelSides:0, pairsEqualAngles:1, diagonals90:true, rightAngles:false, symmetryLines:1 },
+];
+function getShape(key){ return shapesList.find(s=>s.key===key); }
+
+function parsePts(s){ return s.points.split(' ').map(p=>p.split(',').map(Number)); }
+function shapeSVG(s, opts={}){
+  const size = opts.size || 110;
+  const h = Math.round(size*0.75);
+  let extra = '';
+  if (opts.diagonals) {
+    const pts = parsePts(s);
+    extra = `<line x1="${pts[0][0]}" y1="${pts[0][1]}" x2="${pts[2][0]}" y2="${pts[2][1]}" stroke="white" stroke-width="1.6" stroke-dasharray="4 3" opacity="0.9"/>
+      <line x1="${pts[1][0]}" y1="${pts[1][1]}" x2="${pts[3][0]}" y2="${pts[3][1]}" stroke="white" stroke-width="1.6" stroke-dasharray="4 3" opacity="0.9"/>`;
+  }
+  return `<svg viewBox="0 0 120 90" width="${size}" height="${h}"><polygon points="${s.points}" fill="${s.color}" stroke="white" stroke-width="2"/>${extra}</svg>`;
+}
+
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+let currentSection = 0;
+const totalSections = 10;
+function goTo(n) {
+  document.querySelectorAll('.section').forEach((s,i)=>s.classList.toggle('active', i===n));
+  document.querySelectorAll('.prog-step').forEach((p,i)=>{
+    p.classList.toggle('active', i===n);
+    if (i<n) p.classList.add('done'); else p.classList.remove('done');
+  });
+  currentSection = n;
+  document.getElementById('prevBtn').disabled = n===0;
+  if (n === totalSections-1) {
+    document.getElementById('nextBtn').textContent = '✓ Complete!';
+    document.getElementById('nextBtn').disabled = true;
+    buildSummary();
+  } else {
+    document.getElementById('nextBtn').innerHTML = 'Next <span>→</span>';
+    document.getElementById('nextBtn').disabled = false;
+  }
+  window.scrollTo({top:0, behavior:'smooth'});
+  if (n===2) { buildGallery('shapeGallery1', selectShape1, 'square'); selectShape1('square'); }
+  if (n===3) { buildGallery('shapeGallery2', selectShape2, 'kite'); selectShape2('kite'); }
+  if (n===4) { buildTF(); }
+  if (n===5) { buildGallery('shapeGallery3', selectShape3, 'square'); selectShape3('square'); }
+  if (n===6) { buildGallery('shapeGallery4', selectFlowShape, 'rhombus'); resetFlow(); drawCoord(); }
+  if (n===7) { buildRiddles(); }
+}
+function navigate(dir){ goTo(Math.min(Math.max(currentSection+dir,0), totalSections-1)); }
+
+function buildGallery(containerId, onClick, initial){
+  const c = document.getElementById(containerId);
+  c.innerHTML = shapesList.map(s=>`
+    <div class="shape-btn ${s.key===initial?'active':''}" id="${containerId}-${s.key}" onclick="${onClick.name}('${s.key}')">
+      ${shapeSVG(s,{size:64})}<span>${s.name}</span>
+    </div>`).join('');
+}
+function highlightGallery(containerId, key){
+  shapesList.forEach(s=>{
+    const el = document.getElementById(`${containerId}-${s.key}`);
+    if (el) el.classList.toggle('active', s.key===key);
+  });
+}
+
+// ══════════════════════════════════════
+// SECTION 0 — WARM-UP MATCH
+// ══════════════════════════════════════
+function buildWarmup(){
+  const shuffledShapes = [...shapesList].sort(()=>Math.random()-0.5);
+  const grid = document.getElementById('warmupGrid');
+  grid.innerHTML = shuffledShapes.map((s,i)=>{
+    const options = [...shapesList].sort(()=>Math.random()-0.5);
+    return `<div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;background:#f5f7fa;border-radius:10px;padding:0.6rem 1rem;">
+      <div style="width:60px;">${shapeSVG(s,{size:56})}</div>
+      <select id="wu-${i}" data-answer="${s.key}" onchange="checkWarmup(${i})" style="flex:1;min-width:160px;border:2px solid var(--lavender);border-radius:8px;padding:0.4rem 0.6rem;font-family:'Nunito',sans-serif;font-weight:700;color:var(--sky);">
+        <option value="">— choose a name —</option>
+        ${options.map(o=>`<option value="${o.key}">${o.name}</option>`).join('')}
+      </select>
+      <span id="wufb-${i}" style="font-family:'DM Mono',monospace;font-size:0.9rem;min-width:24px;"></span>
+    </div>`;
+  }).join('');
+}
+let wuCorrect=0, wuAnswered=0;
+function checkWarmup(i){
+  const sel = document.getElementById(`wu-${i}`);
+  const fb = document.getElementById(`wufb-${i}`);
+  if (fb.textContent) return;
+  wuAnswered++;
+  const ok = sel.value === sel.dataset.answer;
+  if (ok) wuCorrect++;
+  fb.textContent = ok ? '✓' : '✗';
+  fb.style.color = ok ? 'var(--mint)' : 'var(--coral)';
+  if (wuAnswered === shapesList.length) {
+    const fbEl = document.getElementById('warmupFb');
+    fbEl.style.color = wuCorrect===shapesList.length ? 'var(--mint)' : 'var(--coral)';
+    fbEl.textContent = wuCorrect===shapesList.length
+      ? '🎉 Perfect! You already know all seven special quadrilaterals by sight.'
+      : `${wuCorrect}/${shapesList.length} correct. Don't worry — you'll master every one by the end of this workshop.`;
+  }
+}
+buildWarmup();
+
+// ══════════════════════════════════════
+// SECTION 1 — VOCABULARY
+// ══════════════════════════════════════
+const termMap = { quadrilateral:'cr-quadrilateral', diagonal:'cr-diagonal', parallel:'cr-parallel', bisect:'cr-bisect', decompose:'cr-decompose', tessellate:'cr-tessellate' };
+let openTerm = null;
+function revealTerm(key){
+  if (openTerm) document.getElementById(termMap[openTerm]).classList.remove('show');
+  if (openTerm===key) { openTerm=null; return; }
+  document.getElementById(termMap[key]).classList.add('show');
+  openTerm = key;
+}
+
+// ══════════════════════════════════════
+// SECTION 2 — SHAPE PROPERTY FILES
+// ══════════════════════════════════════
+function selectShape1(key){
+  highlightGallery('shapeGallery1', key);
+  const s = getShape(key);
+  document.getElementById('propPanel1').innerHTML = `
+    <div class="diagram">${shapeSVG(s,{size:140, diagonals:true})}</div>
+    <div class="details">
+      <h4>${s.name}</h4>
+      <div class="def">${s.def}</div>
+      <div class="prop-row"><span class="pk">Pairs of equal sides</span><span class="pv">${s.pairsEqualSides}</span></div>
+      <div class="prop-row"><span class="pk">Pairs of parallel sides</span><span class="pv">${s.pairsParallelSides}</span></div>
+      <div class="prop-row"><span class="pk">Pairs of equal angles</span><span class="pv">${s.pairsEqualAngles}</span></div>
+      <div class="prop-row"><span class="pk">All angles 90°?</span><span class="pv">${s.rightAngles ? 'Yes' : 'No'}</span></div>
+      <div class="prop-row"><span class="pk">Diagonals cross at 90°?</span><span class="pv">${s.diagonals90 ? 'Yes' : 'No'}</span></div>
+      <div class="prop-row"><span class="pk">Lines of symmetry</span><span class="pv">${s.symmetryLines}</span></div>
+    </div>`;
+}
+
+// ══════════════════════════════════════
+// SECTION 3 — PROPERTIES QUIZ
+// ══════════════════════════════════════
+let currentQuizShape = 'kite';
+function selectShape2(key){
+  highlightGallery('shapeGallery2', key);
+  currentQuizShape = key;
+  const s = getShape(key);
+  document.getElementById('propsQuiz').innerHTML = `
+    <div class="quiz-blank-row"><span class="qtext">${s.name} — how many pairs of equal sides?</span><input type="number" id="pq0" min="0" max="4"><span class="qfb" id="pqfb0"></span></div>
+    <div class="quiz-blank-row"><span class="qtext">${s.name} — how many pairs of parallel sides?</span><input type="number" id="pq1" min="0" max="4"><span class="qfb" id="pqfb1"></span></div>
+    <div class="quiz-blank-row"><span class="qtext">${s.name} — how many pairs of equal angles?</span><input type="number" id="pq2" min="0" max="4"><span class="qfb" id="pqfb2"></span></div>
+    <div class="quiz-blank-row"><span class="qtext">${s.name} — do the diagonals cross at 90°?</span>
+      <div class="yn-wrap"><button class="yn-btn" id="pqYes" onclick="pickYN(true)">Yes</button><button class="yn-btn" id="pqNo" onclick="pickYN(false)">No</button></div>
+      <span class="qfb" id="pqfb3"></span></div>
+    <div class="quiz-blank-row"><span class="qtext">${s.name} — how many lines of symmetry?</span><input type="number" id="pq4" min="0" max="4"><span class="qfb" id="pqfb4"></span></div>`;
+  document.getElementById('propsQuizFb').textContent = '';
+  window._pqDiag = null;
+}
+function pickYN(val){
+  window._pqDiag = val;
+  document.getElementById('pqYes').classList.toggle('selected', val===true);
+  document.getElementById('pqNo').classList.toggle('selected', val===false);
+}
+function checkPropsQuiz(){
+  const s = getShape(currentQuizShape);
+  let correct = 0;
+  const checks = [
+    [parseInt(document.getElementById('pq0').value), s.pairsEqualSides, 'pqfb0'],
+    [parseInt(document.getElementById('pq1').value), s.pairsParallelSides, 'pqfb1'],
+    [parseInt(document.getElementById('pq2').value), s.pairsEqualAngles, 'pqfb2'],
+    [parseInt(document.getElementById('pq4').value), s.symmetryLines, 'pqfb4'],
+  ];
+  checks.forEach(([val, ans, id])=>{
+    const ok = val === ans;
+    if (ok) correct++;
+    const el = document.getElementById(id);
+    el.textContent = ok ? '✓' : `✗ (${ans})`;
+    el.style.color = ok ? 'var(--mint)' : 'var(--coral)';
+  });
+  const diagOk = window._pqDiag === s.diagonals90;
+  if (diagOk) correct++;
+  const dfb = document.getElementById('pqfb3');
+  dfb.textContent = diagOk ? '✓' : `✗ (${s.diagonals90 ? 'Yes' : 'No'})`;
+  dfb.style.color = diagOk ? 'var(--mint)' : 'var(--coral)';
+  const fbEl = document.getElementById('propsQuizFb');
+  fbEl.style.color = correct===5 ? 'var(--mint)' : 'var(--coral)';
+  fbEl.textContent = correct===5 ? `🎉 Perfect! You know the ${s.name} inside out.` : `${correct}/5 correct. Check the property file in the Shapes section if you need a reminder.`;
+}
+function resetPropsQuiz(){ selectShape2(currentQuizShape); }
+
+// ══════════════════════════════════════
+// SECTION 4 — JUSTIFY IT
+// ══════════════════════════════════════
+function pickZS(who){
+  document.getElementById('zsReveal').classList.add('show');
+}
+const tfStatements = [
+  { s:'A rhombus always has two pairs of parallel sides.', t:true, why:'A rhombus is a special parallelogram, so its opposite sides are always parallel.' },
+  { s:'A kite has two pairs of parallel sides.', t:false, why:'A kite has NO parallel sides at all — instead it has two pairs of equal adjacent sides.' },
+  { s:'A general parallelogram (not a rectangle or rhombus) has at least one line of symmetry.', t:false, why:'A general parallelogram has 0 lines of symmetry. It looks the same after a 180° turn, but folding it never matches the two halves.' },
+  { s:'An isosceles trapezium has exactly one line of symmetry.', t:true, why:'The line of symmetry runs vertically between the two parallel sides, reflecting the two equal slanted sides onto each other.' },
+  { s:'Every rectangle is also a parallelogram.', t:true, why:'A rectangle has two pairs of parallel sides — that is exactly the definition of a parallelogram, plus the extra rule that all angles are 90°.' },
+  { s:'Every square is also a rhombus.', t:true, why:'A square has four equal sides, which is the definition of a rhombus. A square is simply a rhombus with 90° angles too.' },
+];
+function buildTF(){
+  const c = document.getElementById('tfList');
+  c.innerHTML = tfStatements.map((item,i)=>`
+    <div class="tf-card">
+      <div class="tf-statement">${i+1}. ${item.s}</div>
+      <div class="tf-btns">
+        <button class="tf-btn" id="tfT-${i}" onclick="answerTF(${i},true)">True</button>
+        <button class="tf-btn" id="tfF-${i}" onclick="answerTF(${i},false)">False</button>
+      </div>
+      <div class="tf-reveal" id="tfReveal-${i}">${item.t ? '✓ True. ' : '✗ False. '}${item.why}</div>
+    </div>`).join('');
+}
+function answerTF(i, guess){
+  const item = tfStatements[i];
+  const ok = guess === item.t;
+  document.getElementById(`tfT-${i}`).classList.remove('correct-pick','wrong-pick');
+  document.getElementById(`tfF-${i}`).classList.remove('correct-pick','wrong-pick');
+  document.getElementById(guess ? `tfT-${i}` : `tfF-${i}`).classList.add(ok ? 'correct-pick' : 'wrong-pick');
+  document.getElementById(`tfReveal-${i}`).classList.add('show');
+}
+
+// ══════════════════════════════════════
+// SECTION 5 — TESSELLATE
+// ══════════════════════════════════════
+function selectShape3(key){
+  highlightGallery('shapeGallery3', key);
+  const s = getShape(key);
+  const grid = document.getElementById('mosaicGrid');
+  let cells = '';
+  for (let i=0;i<28;i++){
+    const rot = i%2===0 ? 0 : 180;
+    cells += `<div class="mosaic-cell" style="transform:rotate(${rot}deg)">${shapeSVG(s,{size:42})}</div>`;
+  }
+  grid.innerHTML = cells;
+}
+function answerTess(guess){
+  const reveal = document.getElementById('tessReveal');
+  reveal.classList.add('show');
+  reveal.innerHTML = guess
+    ? `<strong>You're right — YES!</strong> Every single quadrilateral tessellates, even irregular, wonky ones. Take any quadrilateral, rotate a copy 180° around the midpoint of one side, and it fits perfectly against the original. Repeat this all over the plane and there are never any gaps.`
+    : `<strong>Actually, the surprising answer is YES — all of them!</strong> Even an irregular quadrilateral tessellates. Rotate a copy 180° around the midpoint of one of its sides, and the two copies fit together perfectly. Tile that pair across the plane and there are no gaps at all.`;
+}
+
+// ══════════════════════════════════════
+// SECTION 6a — FLOW CHART
+// ══════════════════════════════════════
+let flowShapeKey = 'rhombus';
+let flowStep = 0;
+let flowPathArr = [];
+const flowQuestions = [
+  { text:'Do the diagonals meet at 90°?', field:'diagonals90' },
+  { text:'Does it have at least one pair of equal angles?', field:s=>s.pairsEqualAngles>=1 },
+  { text:'Are all the angles 90°?', field:'rightAngles' },
+];
+const flowQuestionsNo = [
+  { text:'Does it have two lines of symmetry (or more)?', field:s=>s.symmetryLines>=2 },
+  { text:'Does it have at least one pair of parallel sides?', field:s=>s.pairsParallelSides>=1 },
+];
+function selectFlowShape(key){
+  highlightGallery('shapeGallery4', key);
+  flowShapeKey = key;
+  resetFlow();
+}
+function resetFlow(){
+  flowStep = 0; flowPathArr = [];
+  document.getElementById('flowDiagram').style.display = 'block';
+  renderFlowStep();
+}
+function renderFlowStep(){
+  const s = getShape(flowShapeKey);
+  document.getElementById('flowResult').innerHTML = '';
+  const q = flowQuestions[0];
+  document.getElementById('flowQ').textContent = `Question 1: ${q.text}`;
+  document.getElementById('flowBtns').innerHTML = `
+    <button class="btn btn-mint" onclick="flowAnswer(true)">Yes</button>
+    <button class="btn btn-coral" onclick="flowAnswer(false)">No</button>`;
+  document.getElementById('flowPath').textContent = `Target shape: ${s.name}`;
+}
+function flowAnswer(ans){
+  flowPathArr.push(ans ? 'Yes' : 'No');
+  const s = getShape(flowShapeKey);
+  const branch = flowPathArr[0]==='Yes' ? flowQuestions : flowQuestionsNo;
+  const stepIndex = flowPathArr.length - 1;
+  if (flowPathArr.length===1) {
+    // move to second question of the correct branch
+    const q2 = branch[1];
+    document.getElementById('flowQ').textContent = `Question 2: ${q2.text}`;
+    document.getElementById('flowBtns').innerHTML = `
+      <button class="btn btn-mint" onclick="flowAnswer(true)">Yes</button>
+      <button class="btn btn-coral" onclick="flowAnswer(false)">No</button>`;
+    document.getElementById('flowPath').textContent = `Target shape: ${s.name} · Path so far: ${flowPathArr.join(' → ')}`;
+    return;
+  }
+  if (flowPathArr.length===2) {
+    if (flowPathArr[0]==='Yes') {
+      const q3 = branch[2];
+      document.getElementById('flowQ').textContent = `Question 3: ${q3.text}`;
+      document.getElementById('flowBtns').innerHTML = `
+        <button class="btn btn-mint" onclick="flowAnswer(true)">Yes</button>
+        <button class="btn btn-coral" onclick="flowAnswer(false)">No</button>`;
+      document.getElementById('flowPath').textContent = `Target shape: ${s.name} · Path so far: ${flowPathArr.join(' → ')}`;
+      return;
+    } else {
+      finishFlow(s);
+      return;
+    }
+  }
+  finishFlow(s);
+}
+function finishFlow(s){
+  const letters = { 'Yes,Yes,Yes':'H', 'Yes,Yes,No':'I', 'Yes,No':'G', 'No,Yes':'J', 'No,No,Yes':'L', 'No,No,No':'K' };
+  const key = flowPathArr.join(',');
+  const letter = letters[key] || '?';
+  document.getElementById('flowQ').textContent = `You've reached the end of the flow chart!`;
+  document.getElementById('flowBtns').innerHTML = '';
+  document.getElementById('flowPath').textContent = `Target shape: ${s.name} · Path: ${flowPathArr.join(' → ')}`;
+  document.getElementById('flowResult').innerHTML = `<div class="flow-letter">${letter}</div>
+    <p style="font-size:0.8rem;color:var(--muted);margin-top:0.6rem;">Compare this letter with a partner who chose the same shape — did you both land on the same one?</p>`;
+}
+
+// ══════════════════════════════════════
+// SECTION 6b — COORDINATE SQUARE CHECK
+// ══════════════════════════════════════
+function drawCoord(){
+  const cvs = document.getElementById('coordCanvas');
+  const ctx = cvs.getContext('2d');
+  const W=300,H=300,pad=30,unit=(W-pad*2)/10;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#fafbfc'; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#e8eef4'; ctx.lineWidth=1;
+  for(let i=0;i<=10;i++){
+    const x=pad+i*unit, y=H-pad-i*unit;
+    ctx.beginPath();ctx.moveTo(x,pad);ctx.lineTo(x,H-pad);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad,y);ctx.stroke();
+  }
+  ctx.strokeStyle='#b8c4cc'; ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(pad,H-pad);ctx.lineTo(W-pad,H-pad);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(pad,H-pad);ctx.lineTo(pad,pad);ctx.stroke();
+  ctx.fillStyle='var(--muted)'; ctx.font='8px DM Mono,monospace'; ctx.textAlign='center';
+  for(let i=0;i<=10;i+=2){ ctx.fillText(i, pad+i*unit, H-pad+14); }
+  ctx.textAlign='right';
+  for(let i=0;i<=10;i+=2){ ctx.fillText(i, pad-6, H-pad-i*unit+3); }
+
+  const dx = parseFloat(document.getElementById('dx').value) || 0;
+  const dy = parseFloat(document.getElementById('dy').value) || 0;
+  const A=[4,7], B=[7,7], C=[4,4], D=[dx,dy];
+  const toPx = (p)=>[pad+p[0]*unit, H-pad-p[1]*unit];
+  const order = [A,B,D,C];
+  ctx.beginPath();
+  order.forEach((p,i)=>{ const [x,y]=toPx(p); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+  ctx.closePath();
+  ctx.fillStyle='rgba(58,175,133,0.18)'; ctx.fill();
+  ctx.strokeStyle='var(--coral)'; ctx.lineWidth=2.5; ctx.stroke();
+
+  const labels=[['A',A],['B',B],['C',C],['D',D]];
+  labels.forEach(([label,p])=>{
+    const [x,y]=toPx(p);
+    ctx.beginPath();ctx.arc(x,y,5,0,2*Math.PI);
+    ctx.fillStyle = label==='D' ? 'var(--lavender)' : 'var(--sky)';
+    ctx.fill(); ctx.strokeStyle='white'; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.fillStyle='var(--sky)'; ctx.font='bold 11px Nunito,sans-serif'; ctx.textAlign='left';
+    ctx.fillText(label, x+8, y-6);
+  });
+
+  // maths check
+  const dist=(p,q)=>Math.hypot(p[0]-q[0], p[1]-q[1]);
+  const AB=dist(A,B), BD=dist(B,D), DC=dist(D,C), CA=dist(C,A);
+  const vec=(p,q)=>[q[0]-p[0], q[1]-p[1]];
+  const dot=(u,v)=>u[0]*v[0]+u[1]*v[1];
+  const rAtB = Math.abs(dot(vec(B,A), vec(B,D))) < 0.001;
+  const rAtC = Math.abs(dot(vec(C,D), vec(C,A))) < 0.001;
+  const sidesEqual = Math.abs(AB-BD)<0.01 && Math.abs(BD-DC)<0.01 && Math.abs(DC-CA)<0.01;
+  const isSquare = sidesEqual && rAtB && rAtC;
+  document.getElementById('coordResult').innerHTML =
+    `AB = ${AB.toFixed(2)}   BD = ${BD.toFixed(2)}<br>DC = ${DC.toFixed(2)}   CA = ${CA.toFixed(2)}<br><br>` +
+    (isSquare
+      ? `<strong style="color:var(--mint);">✓ Yes — ABDC is a square!</strong> All four sides are equal and every angle is 90°.`
+      : `<strong style="color:var(--coral);">✗ Not a square yet.</strong> ${sidesEqual ? 'The sides are equal, but the corners are not all 90°.' : 'The four sides are not all equal in length.'} Try D = (7, 4).`);
+}
+
+// ══════════════════════════════════════
+// SECTION 7 — REAL LIFE RIDDLES
+// ══════════════════════════════════════
+const riddles = [
+  { clue:'All my sides are different lengths. Two of my sides are parallel.', answer:'trapezium' },
+  { clue:'All my angles are 90°. My opposite sides are equal, but my diagonals do NOT cross at 90°.', answer:'rectangle' },
+  { clue:'I have two pairs of adjacent equal sides and just one pair of equal angles.', answer:'kite' },
+  { clue:'All four of my sides are equal in length, but my angles are not right angles.', answer:'rhombus' },
+  { clue:'I have one pair of parallel sides, and my other two sides are equal in length.', answer:'isoscelesTrapezium' },
+  { clue:'I have two pairs of parallel sides and two pairs of equal angles, but my angles are not 90° and my sides are not all equal.', answer:'parallelogram' },
+];
+function buildRiddles(){
+  const c = document.getElementById('riddleList');
+  c.innerHTML = riddles.map((r,i)=>`
+    <div class="riddle-card">
+      <div class="riddle-clue">🕵️ Clue ${i+1}: "${r.clue}"</div>
+      <div class="riddle-options" id="riddleOpts-${i}">
+        ${[...shapesList].sort(()=>Math.random()-0.5).map(s=>`<button class="riddle-btn" onclick="answerRiddle(${i},'${s.key}',this)">${s.name}</button>`).join('')}
+      </div>
+      <div class="riddle-fb" id="riddleFb-${i}"></div>
+    </div>`).join('');
+}
+function answerRiddle(i, key, btn){
+  const r = riddles[i];
+  const ok = key === r.answer;
+  btn.style.background = ok ? 'var(--mint-pale)' : 'var(--coral-pale)';
+  btn.style.borderColor = ok ? 'var(--mint)' : 'var(--coral)';
+  btn.style.color = ok ? 'var(--mint)' : 'var(--coral)';
+  const fb = document.getElementById(`riddleFb-${i}`);
+  fb.style.color = ok ? 'var(--mint)' : 'var(--coral)';
+  fb.textContent = ok ? `✓ Correct — it's a ${getShape(r.answer).name}!` : `✗ Not quite. Read the clue again — think about sides, parallel lines and angles.`;
+}
+
+// ══════════════════════════════════════
+// SUMMARY & SUBMIT
+// ══════════════════════════════════════
+function fill(id, text){
+  const el = document.getElementById(id); if(!el) return;
+  const val = text && text.trim();
+  el.textContent = val || 'Not answered';
+  el.classList.toggle('empty', !val);
+}
+function buildSummary(){
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  fill('sum-shapes-pred', document.getElementById('shapes-prediction').value);
+  fill('sum-shapes-ref', document.getElementById('shapes-reflection').value);
+  fill('sum-props-pred', document.getElementById('props-prediction').value);
+  fill('sum-props-ref', document.getElementById('props-reflection').value);
+  fill('sum-justify-pred', document.getElementById('justify-prediction').value);
+  fill('sum-justify-ref', document.getElementById('justify-reflection').value);
+  fill('sum-tess-pred', document.getElementById('tess-prediction').value);
+  fill('sum-tess-ref', document.getElementById('tess-reflection').value);
+  const refTAs = document.querySelectorAll('#sec-8 .reflection-card textarea');
+  ['sum-q1','sum-q2','sum-q3','sum-q4'].forEach((id,i)=>fill(id, refTAs[i]?.value || ''));
+}
+function buildPlainText(){
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const date = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const refTAs = document.querySelectorAll('#sec-8 .reflection-card textarea');
+  const qs = ['Not answered','Not answered','Not answered','Not answered'];
+  refTAs.forEach((ta,i)=>{ if(ta.value.trim()) qs[i]=ta.value.trim(); });
+  return `
+2D SHAPES 5.1 — QUADRILATERALS 🔷 — STUDENT SUBMISSION
+============================================================
+Student: ${name}
+Date: ${date}
+Lesson: Year 6 · 2D Shapes · Lesson 5.1 Quadrilaterals
+
+── SECTION 3: SHAPES ──
+Prediction:
+${document.getElementById('shapes-prediction').value.trim()||'Not answered'}
+Reflection:
+${document.getElementById('shapes-reflection').value.trim()||'Not answered'}
+
+── SECTION 4: PROPERTIES ──
+Prediction:
+${document.getElementById('props-prediction').value.trim()||'Not answered'}
+Reflection:
+${document.getElementById('props-reflection').value.trim()||'Not answered'}
+
+── SECTION 5: JUSTIFY IT ──
+Prediction:
+${document.getElementById('justify-prediction').value.trim()||'Not answered'}
+Reflection:
+${document.getElementById('justify-reflection').value.trim()||'Not answered'}
+
+── SECTION 6: TESSELLATE ──
+Prediction:
+${document.getElementById('tess-prediction').value.trim()||'Not answered'}
+Reflection:
+${document.getElementById('tess-reflection').value.trim()||'Not answered'}
+
+── REFLECTIONS ──
+Q1 — Why is a square a rectangle, rhombus AND parallelogram?
+${qs[0]}
+Q2 — Why isn't a kite a parallelogram?
+${qs[1]}
+Q3 — Why do all quadrilaterals tessellate?
+${qs[2]}
+Q4 — Still wondering
+${qs[3]}
+
+============================================================
+Next step: complete Workbook Exercise 5.1, questions 1–10.
+Submitted via 2D Shapes 5.1 · Interactive Digital Lesson
+`.trim();
+}
+function copyResults(){
+  buildSummary();
+  navigator.clipboard.writeText(buildPlainText()).then(()=>{
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Now paste into Google Classroom or your assignment.';
+    setTimeout(()=>el.textContent='', 4000);
+  }).catch(()=>{
+    document.getElementById('copyConfirm').textContent = '⚠️ Could not copy — try selecting manually.';
+  });
+}
+function emailResults(){
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const subject = encodeURIComponent(`2D Shapes 5.1 Quadrilaterals — ${name}`);
+  const body = encodeURIComponent(buildPlainText());
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+
+// ── INIT ──
+window.addEventListener('load', ()=>{
+  buildGallery('shapeGallery1', selectShape1, 'square');
+  selectShape1('square');
+});
+</script>
+</body>
+</html>
