@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plasma Membrane Explorer 🔬 (Chapter 5, Part 2)</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:    #1a3d2b;
+    --forest-mid:#2d6a4f;
+    --forest-lt: #40916c;
+    --coral:     #e8603c;
+    --coral-pale:#fdf0ec;
+    --mint:      #3aaf85;
+    --mint-pale: #e8f8f2;
+    --gold:      #c9962a;
+    --gold-pale: #fef9e7;
+    --lavender:  #7c6fcd;
+    --lav-pale:  #f0eefb;
+    --paper:     #fffef9;
+    --ink:       #1a2332;
+    --muted:     #7a8899;
+    --border:    #e0e4ea;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: linear-gradient(160deg, #0d2318 0%, #1a3d2b 45%, #2d6a4f 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%, rgba(144,238,144,.45) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 22%  38%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 41%  6%,  rgba(144,238,144,.35) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 60%  24%, rgba(255,255,255,.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 77%  9%,  rgba(144,238,144,.4)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 90%  33%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 33%  55%, rgba(144,238,144,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 70%  48%, rgba(255,255,255,.2)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 55%  70%, rgba(144,238,144,.25) 0%, transparent 100%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ─── HERO ─── */
+  .hero { position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 2rem;color:white; }
+  .hero-badge {
+    display:inline-block;background:var(--gold);color:var(--forest);
+    font-family:'Fredoka One',cursive;font-size:.85rem;letter-spacing:.05em;
+    padding:.35rem 1.2rem;border-radius:20px;margin-bottom:1.2rem;
+    box-shadow:0 2px 12px rgba(201,150,42,.45);
+  }
+  .hero h1 { font-family:'Fredoka One',cursive;font-size:clamp(2.2rem,6vw,4rem);line-height:1.1;margin-bottom:.8rem;text-shadow:0 2px 20px rgba(0,0,0,.35); }
+  .hero h1 .accent { color:var(--gold); }
+  .hero p.intro { font-size:1.05rem;line-height:1.7;opacity:.88;max-width:580px;margin:0 auto 2rem; }
+
+  /* ─── PROGRESS PILLS ─── */
+  .progress-wrap { display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem; }
+  .prog-step {
+    display:flex;align-items:center;gap:.4rem;
+    background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);
+    border-radius:20px;padding:.35rem .9rem;font-size:.78rem;font-weight:700;
+    color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace;
+  }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.35); }
+  .prog-step.active { background:var(--gold);color:var(--forest);border-color:var(--gold);box-shadow:0 2px 12px rgba(201,150,42,.45); }
+
+  /* ─── SHEET ─── */
+  .sheet {
+    position:relative;z-index:1;background:var(--paper);
+    border-radius:24px 24px 0 0;margin-top:1.5rem;
+    padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.3);
+  }
+
+  /* ─── SECTIONS ─── */
+  .section { padding:3rem 2rem 0;max-width:820px;margin:0 auto;display:none; }
+  .section.active { display:block; }
+
+  .section-eyebrow { display:flex;align-items:center;gap:.6rem;margin-bottom:1rem; }
+  .eyebrow-num {
+    width:32px;height:32px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fredoka One',cursive;font-size:1rem;color:white;flex-shrink:0;
+  }
+  .num-coral  { background:var(--coral); }
+  .num-mint   { background:var(--mint); }
+  .num-gold   { background:var(--gold);color:var(--forest); }
+  .num-lav    { background:var(--lavender); }
+  .num-forest { background:var(--forest-mid); }
+
+  .eyebrow-label { font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace; }
+
+  .section h2 { font-family:'Fredoka One',cursive;font-size:clamp(1.6rem,3.5vw,2.2rem);color:var(--forest);margin-bottom:.6rem;line-height:1.2; }
+  .section .lead { font-size:1rem;line-height:1.75;color:#3a4a5a;margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+
+  /* ─── WONDER / INFO BOXES ─── */
+  .wonder-box {
+    background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);
+    color:white;border-radius:16px;padding:1.8rem 2rem;margin-bottom:1.8rem;
+    position:relative;overflow:hidden;
+  }
+  .wonder-box::after { content:'🤔';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3; }
+  .wonder-box p { font-size:1rem;line-height:1.7;font-style:italic;opacity:.95;max-width:85%; }
+  .wonder-box strong { color:var(--gold);font-style:normal; }
+  .wonder-box.gold-box { background:linear-gradient(135deg,#8a6a1a 0%,#b8860b 100%); }
+  .wonder-box.gold-box::after { content:'⚡'; }
+  .wonder-box.lav-box  { background:linear-gradient(135deg,#4a3a8a 0%,#6a5acd 100%); }
+  .wonder-box.lav-box::after { content:'🔋'; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,#1b7a58 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'🍬'; }
+
+  /* ─── PREDICT BOX ─── */
+  .predict-box { background:var(--gold-pale);border:2px dashed var(--gold);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem; }
+  .predict-box textarea,.reflect-box textarea {
+    width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;
+    font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:64px;
+    background:white;color:var(--ink);outline:none;transition:border-color .2s;
+  }
+  .predict-box textarea:focus { border-color:var(--gold); }
+  .reflect-box { background:var(--mint-pale);border:2px dashed var(--mint);border-radius:14px;padding:1.4rem 1.6rem;margin-top:1.5rem; }
+  .reflect-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#1b7a58;margin-bottom:.8rem; }
+  .reflect-box textarea:focus { border-color:var(--mint); }
+
+  /* ─── DEMO ZONE ─── */
+  .demo-zone {
+    background:white;border:2px solid var(--border);border-radius:16px;
+    padding:1.8rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07);
+  }
+  .demo-zone h3 { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.3rem; }
+  .demo-zone .hint { font-size:.78rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:1.3rem; }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    border:none;border-radius:10px;padding:.65rem 1.3rem;font-family:'Nunito',sans-serif;
+    font-size:.88rem;font-weight:800;cursor:pointer;transition:all .15s;letter-spacing:.02em;
+  }
+  .btn:hover  { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  .btn:active { transform:translateY(0); }
+  .btn:disabled { opacity:.4;cursor:default;transform:none;box-shadow:none; }
+  .btn-coral  { background:var(--coral);    color:white; }
+  .btn-mint   { background:var(--mint);     color:white; }
+  .btn-gold   { background:var(--gold);     color:var(--forest); }
+  .btn-lav    { background:var(--lavender); color:white; }
+  .btn-ghost  { background:#f0f2f5;         color:var(--muted); }
+  .btn-forest { background:var(--forest);   color:white; }
+  .action-row { display:flex;gap:.8rem;flex-wrap:wrap;align-items:center;margin-bottom:.8rem; }
+
+  /* ─── NAV ROW ─── */
+  .nav-row { display:flex;justify-content:space-between;align-items:center;padding:2.5rem 2rem 0;max-width:820px;margin:0 auto; }
+
+  /* ─── CONCEPT CHIPS ─── */
+  .chip-row { display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem; }
+  .chip {
+    padding:.45rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;
+    cursor:pointer;transition:all .2s;border:2px solid transparent;
+  }
+  .chip.coral  { background:var(--coral-pale); color:var(--coral);     border-color:#f8c5b8; }
+  .chip.mint   { background:var(--mint-pale);  color:var(--mint);      border-color:#b8ebd8; }
+  .chip.gold   { background:var(--gold-pale);  color:#8a6a1a;          border-color:#f8e0a0; }
+  .chip.lav    { background:var(--lav-pale);   color:var(--lavender);  border-color:#d0caef; }
+  .chip.forest { background:#d4eadd;           color:var(--forest-mid);border-color:#a8d5b8; }
+  .chip:hover  { transform:scale(1.05); }
+
+  .concept-reveal {
+    background:var(--paper);border-left:4px solid var(--coral);
+    border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;
+    margin-top:.5rem;margin-bottom:.3rem;display:none;animation:fadeIn .3s ease;
+  }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border   { border-color:var(--mint); }
+  .concept-reveal.gold-border   { border-color:var(--gold); }
+  .concept-reveal.lav-border    { border-color:var(--lavender); }
+  .concept-reveal.forest-border { border-color:var(--forest-mid); }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ─── EVIDENCE CARDS ─── */
+  .evidence-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin-bottom:1.5rem; }
+  .ev-card {
+    background:white;border:2px solid var(--border);border-radius:14px;
+    padding:1.2rem;cursor:pointer;transition:all .2s;text-align:center;
+  }
+  .ev-card:hover,.ev-card.active { border-color:var(--forest-mid);box-shadow:0 4px 16px rgba(45,106,79,.2);transform:translateY(-2px); }
+  .ev-card.active { background:#d4eadd; }
+  .ev-card .ev-icon { font-size:2.4rem;margin-bottom:.5rem; }
+  .ev-card .ev-title { font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--forest);margin-bottom:.3rem; }
+  .ev-card .ev-sub   { font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace; }
+  .ev-panel {
+    background:#d4eadd;border-left:4px solid var(--forest-mid);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1rem;
+  }
+  .ev-panel.show { display:block; }
+  .ev-panel h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.5rem; }
+  .ev-panel p  { font-size:.88rem;line-height:1.7;color:#2a3a2a; }
+  .ev-panel .example-box {
+    background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;
+    font-size:.82rem;font-family:'DM Mono',monospace;color:var(--ink);
+    border:1.5px solid rgba(45,106,79,.2);
+  }
+
+  /* ─── STEP CARDS ─── */
+  .sel-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0 1.5rem; }
+  .sel-card {
+    background:white;border:2px solid var(--border);border-radius:14px;
+    padding:1rem;text-align:center;cursor:pointer;transition:all .2s;
+  }
+  .sel-card:hover,.sel-card.active { border-color:var(--coral);box-shadow:0 3px 12px rgba(232,96,60,.18);transform:translateY(-2px); }
+  .sel-card.active { background:var(--coral-pale); }
+  .sel-card .sel-icon { font-size:2rem;margin-bottom:.4rem; }
+  .sel-card .sel-name { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--forest);margin-bottom:.2rem; }
+  .sel-card .sel-key  { font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em; }
+  .sel-detail {
+    background:var(--coral-pale);border-left:4px solid var(--coral);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1.5rem;
+  }
+  .sel-detail.show { display:block; }
+  .sel-detail h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.4rem; }
+  .sel-detail p  { font-size:.88rem;line-height:1.7; }
+  .sel-detail .examples { margin-top:.6rem;font-style:italic;color:var(--muted);font-size:.82rem; }
+
+  /* ─── MATCHING GAME ─── */
+  .match-grid { display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1rem 0; }
+  .match-item {
+    padding:.75rem 1rem;border-radius:10px;border:2px solid var(--border);
+    cursor:pointer;font-size:.84rem;font-weight:700;transition:all .2s;
+    background:white;text-align:center;color:var(--ink);line-height:1.4;
+  }
+  .match-item:hover    { border-color:var(--forest-mid);background:#f0f7f3; }
+  .match-item.selected { border-color:var(--lavender);background:var(--lav-pale);color:var(--lavender); }
+  .match-item.matched  { border-color:var(--mint);background:var(--mint-pale);color:#1b7a58;cursor:default; }
+  .match-item.wrong    { border-color:var(--coral);background:var(--coral-pale);color:var(--coral);animation:shake .3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+  /* ─── ATP SIMULATOR ─── */
+  .atp-display {
+    display:flex;align-items:center;justify-content:center;gap:1.5rem;
+    flex-wrap:wrap;margin:1.2rem 0;
+  }
+  .atp-molecule {
+    text-align:center;padding:1rem 1.4rem;border-radius:14px;
+    font-family:'DM Mono',monospace;font-size:.85rem;font-weight:700;
+    border:2px solid;transition:all .4s;min-width:120px;
+  }
+  .atp-molecule .mol-label { font-family:'Fredoka One',cursive;font-size:1.3rem;margin-bottom:.3rem; }
+  .atp-molecule .mol-desc  { font-size:.7rem;color:var(--muted);margin-top:.3rem;font-weight:400; }
+  .mol-atp  { background:var(--gold-pale);border-color:var(--gold);color:#8a6a1a; }
+  .mol-adp  { background:#f5f7fa;border-color:var(--border);color:var(--muted); }
+  .mol-pi   { background:var(--lav-pale);border-color:var(--lavender);color:var(--lavender); }
+  .mol-nadh { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .mol-nad  { background:#f5f7fa;border-color:var(--border);color:var(--muted); }
+  .arrow-label { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest-mid);text-align:center; }
+  .energy-badge {
+    display:inline-block;padding:.25rem .8rem;border-radius:20px;font-size:.72rem;
+    font-weight:800;font-family:'DM Mono',monospace;letter-spacing:.05em;margin-top:.4rem;
+  }
+  .release  { background:#ffeaa7;color:#8a6a1a; }
+  .absorb   { background:var(--lav-pale);color:var(--lavender); }
+
+  /* ─── GLYCOLYSIS TRACKER ─── */
+  .glyc-track {
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:.8rem;margin:1rem 0;
+  }
+  .glyc-box {
+    background:white;border:2px solid var(--border);border-radius:12px;
+    padding:.9rem 1rem;text-align:center;transition:all .3s;
+  }
+  .glyc-box .g-label { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--forest);margin-bottom:.3rem; }
+  .glyc-box .g-val   { font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:700;color:var(--ink); }
+  .glyc-box .g-unit  { font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace; }
+  .glyc-box.active   { border-color:var(--gold);background:var(--gold-pale); }
+  .glyc-box.done     { border-color:var(--mint);background:var(--mint-pale); }
+
+  /* ─── REDOX ANIMATOR ─── */
+  .redox-row { display:flex;gap:1rem;flex-wrap:wrap;margin:1rem 0; }
+  .redox-box {
+    flex:1;min-width:200px;border-radius:14px;padding:1.1rem 1.2rem;
+    border:2px solid var(--border);text-align:center;transition:all .4s;
+  }
+  .redox-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;margin-bottom:.4rem; }
+  .redox-box p  { font-family:'DM Mono',monospace;font-size:.78rem;line-height:1.6; }
+  .redox-oxidized  { background:var(--coral-pale);border-color:var(--coral); }
+  .redox-oxidized h4 { color:var(--coral); }
+  .redox-reduced   { background:var(--mint-pale);border-color:var(--mint); }
+  .redox-reduced h4 { color:#1b7a58; }
+
+  /* ─── QUIZ ─── */
+  .quiz-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .quiz-q { font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:1rem;line-height:1.5; }
+  .quiz-options { display:flex;flex-direction:column;gap:.5rem; }
+  .quiz-opt {
+    padding:.6rem 1rem;border-radius:8px;border:2px solid var(--border);
+    background:white;cursor:pointer;font-family:'Nunito',sans-serif;
+    font-size:.88rem;font-weight:600;text-align:left;transition:all .15s;color:var(--ink);
+  }
+  .quiz-opt:hover:not(:disabled) { border-color:var(--forest-mid);background:#f0f7f3; }
+  .quiz-opt.correct  { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .quiz-opt.wrong    { background:var(--coral-pale);border-color:var(--coral);color:#a83020; }
+  .quiz-opt:disabled { cursor:default; }
+  .quiz-feedback { margin-top:.8rem;font-size:.85rem;line-height:1.6;padding:.7rem 1rem;border-radius:8px;display:none;animation:fadeIn .3s ease; }
+  .quiz-feedback.show { display:block; }
+  .quiz-feedback.correct-fb { background:var(--mint-pale);color:#1b7a58;border-left:3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background:var(--coral-pale);color:#a83020;border-left:3px solid var(--coral); }
+
+  /* ─── SCORE ─── */
+  .score-panel { background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);color:white;border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem; }
+  .score-panel .score-num { font-family:'Fredoka One',cursive;font-size:3.5rem;line-height:1;color:var(--gold); }
+  .score-panel p { opacity:.88;margin-top:.5rem;font-size:1rem; }
+  .score-panel h3 { font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:.3rem; }
+
+  /* ─── CONGRATS ─── */
+  .congrats-panel { background:linear-gradient(135deg,var(--forest) 0%,#1b7a58 100%);color:white;border-radius:20px;padding:2.5rem 2rem;text-align:center;margin-top:2rem; }
+  .congrats-panel h2 { font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:.6rem; }
+  .congrats-panel p  { opacity:.9;line-height:1.7;max-width:480px;margin:0 auto .8rem; }
+  .summary-chips { display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:1rem; }
+  .summary-chip {
+    background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);
+    border-radius:20px;padding:.3rem .9rem;font-size:.78rem;font-weight:700;
+    font-family:'DM Mono',monospace;letter-spacing:.04em;
+  }
+
+  /* ─── VOCAB TABLE ─── */
+  .vocab-table { width:100%;border-collapse:collapse;margin:1rem 0 1.5rem; }
+  .vocab-table th { background:var(--forest);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;padding:.7rem 1rem;text-align:left; }
+  .vocab-table td { padding:.65rem 1rem;font-size:.85rem;line-height:1.5;border-bottom:1px solid var(--border); }
+  .vocab-table tr:nth-child(even) td { background:#f5f7fa; }
+  .vocab-table tr:hover td { background:#d4eadd;transition:background .15s; }
+  .vocab-table td:first-child { font-weight:800;color:var(--forest-mid); }
+
+  /* ─── FILL IN THE BLANK ─── */
+  .blank-input {
+    border:none;border-bottom:2.5px solid var(--forest-mid);background:transparent;
+    font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;color:var(--forest);
+    width:180px;text-align:center;outline:none;padding:0 4px;transition:border-color .2s;
+  }
+  .blank-input:focus { border-color:var(--coral); }
+  .blank-input.ok { border-color:var(--mint);color:var(--mint); }
+  .blank-input.err{ border-color:var(--coral);color:var(--coral); }
+  .fill-q { font-size:.95rem;line-height:2;color:var(--ink);margin-bottom:.8rem; }
+  .divider { height:1px;background:var(--border);margin:2rem 0; }
+
+  /* ─── NAME BAR ─── */
+  .name-bar {
+    background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);
+    border-radius:12px;padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;
+    max-width:420px;margin:0 auto 1rem;
+  }
+  .name-bar label { font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;font-family:'DM Mono',monospace; }
+  .name-bar input {
+    flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;
+    padding:.4rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:white;outline:none;
+  }
+  .name-bar input::placeholder { color:rgba(255,255,255,.4);font-weight:400; }
+
+  /* ─── SUMMARY / SUBMIT ─── */
+  .summary-section { background:white;border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--forest);margin-bottom:.8rem; }
+  .summary-answer {
+    background:#f5f7fa;border-radius:8px;padding:.7rem 1rem;font-size:.85rem;
+    line-height:1.6;color:var(--ink);margin-bottom:.5rem;font-style:italic;
+    border-left:3px solid var(--lavender);min-height:2rem;
+  }
+  .summary-answer.empty { color:var(--muted);font-style:normal;border-left-color:var(--border); }
+  .share-buttons { display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center; }
+  .share-btn {
+    border:none;border-radius:12px;padding:.85rem 1.6rem;font-family:'Fredoka One',cursive;
+    font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem;
+  }
+  .share-btn:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background:var(--mint);color:white; }
+  .share-btn.email { background:var(--lavender);color:white; }
+  .share-btn.print { background:var(--forest);color:white; }
+  .copy-confirm { text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--mint);min-height:1.2rem;margin-top:.6rem; }
+
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm,.prog-step,.name-bar { display:none !important; }
+    .sheet { box-shadow:none;border-radius:0; }
+    .section { display:none !important; }
+    #sec-7 { display:block !important; }
+  }
+  /* ─── FATTY ACID COMPARISON ─── */
+  .fat-compare { display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1rem 0; }
+  .fat-card {
+    border-radius:14px;padding:1.2rem;text-align:center;border:2px solid var(--border);
+    cursor:pointer;transition:all .25s;background:white;
+  }
+  .fat-card:hover,.fat-card.active { transform:translateY(-3px);box-shadow:0 4px 16px rgba(0,0,0,.12); }
+  .fat-card.active.saturated   { border-color:var(--gold); background:var(--gold-pale); }
+  .fat-card.active.unsaturated { border-color:var(--mint); background:var(--mint-pale); }
+  .fat-card.active.trans       { border-color:var(--coral); background:var(--coral-pale); }
+  .fat-chain {
+    font-family:'DM Mono',monospace;font-size:1.3rem;letter-spacing:2px;
+    margin:.8rem 0;color:var(--ink);
+  }
+  .fat-card .fat-name { font-family:'Fredoka One',cursive;font-size:1rem;color:var(--forest);margin-bottom:.3rem; }
+  .fat-card .fat-state { font-size:.75rem;font-family:'DM Mono',monospace;color:var(--muted); }
+
+  /* ─── PROTEIN STRUCTURE LEVELS ─── */
+  .protein-level-track {
+    display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0;justify-content:center;
+  }
+  .protein-level-step {
+    flex:1;min-width:130px;text-align:center;padding:1rem .8rem;border-radius:12px;
+    border:2px solid var(--border);background:white;cursor:pointer;transition:all .25s;
+  }
+  .protein-level-step:hover,.protein-level-step.active { border-color:var(--lavender);box-shadow:0 4px 14px rgba(124,111,205,.2);transform:translateY(-2px); }
+  .protein-level-step.active { background:var(--lav-pale); }
+  .protein-level-step .pl-icon { font-size:1.8rem;margin-bottom:.3rem; }
+  .protein-level-step .pl-name { font-family:'Fredoka One',cursive;font-size:.85rem;color:var(--forest); }
+  .protein-level-detail {
+    background:var(--lav-pale);border-left:4px solid var(--lavender);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1rem;
+  }
+  .protein-level-detail.show { display:block; }
+  .protein-level-detail h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.5rem; }
+  .protein-level-detail p  { font-size:.88rem;line-height:1.7;color:#2a2a3a; }
+
+  /* ─── AMINO ACID CLASSIFIER ─── */
+  .aa-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.6rem;margin:1rem 0; }
+  .aa-tile {
+    border-radius:10px;padding:.7rem .5rem;text-align:center;cursor:pointer;
+    border:2px solid var(--border);background:white;transition:all .2s;
+  }
+  .aa-tile:hover { transform:scale(1.04); }
+  .aa-tile .aa-letter { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest); }
+  .aa-tile .aa-full { font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.2rem; }
+  .aa-tile.cat-nonpolar  { border-color:#a8d5b8; }
+  .aa-tile.cat-polar     { border-color:var(--mint); }
+  .aa-tile.cat-positive  { border-color:var(--coral); }
+  /* ─── NUCLEOTIDE BUILDER ─── */
+  .nuc-parts { display:flex;justify-content:center;gap:1.2rem;flex-wrap:wrap;margin:1.2rem 0; }
+  .nuc-part {
+    text-align:center;padding:1rem 1.3rem;border-radius:14px;
+    border:2px solid var(--border);background:white;min-width:130px;
+    transition:all .3s;
+  }
+  .nuc-part .np-icon { font-size:1.8rem;margin-bottom:.4rem; }
+  .nuc-part .np-name { font-family:'Fredoka One',cursive;font-size:.92rem;color:var(--forest); }
+  .nuc-part .np-sub  { font-size:.68rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.3rem; }
+  .nuc-part.sugar     { border-color:var(--mint); background:var(--mint-pale); }
+  .nuc-part.phosphate { border-color:var(--gold); background:var(--gold-pale); }
+  .nuc-part.base      { border-color:var(--coral); background:var(--coral-pale); }
+
+  /* ─── BASE PAIRING TABLE / SELECTOR ─── */
+  .base-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.7rem;margin:1rem 0; }
+  .base-tile {
+    border-radius:12px;padding:1rem .6rem;text-align:center;cursor:pointer;
+    border:2px solid var(--border);background:white;transition:all .2s;
+  }
+  .base-tile:hover,.base-tile.active { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.12); }
+  .base-tile .bt-letter { font-family:'Fredoka One',cursive;font-size:1.5rem; }
+  .base-tile .bt-name   { font-size:.68rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.3rem; }
+  .base-tile.purine     { border-color:var(--lavender); }
+  .base-tile.purine.active { background:var(--lav-pale); }
+  .base-tile.pyrimidine { border-color:var(--coral); }
+  .base-tile.pyrimidine.active { background:var(--coral-pale); }
+
+  /* ─── DOUBLE HELIX STRAND BUILDER ─── */
+  .helix-row { display:flex; flex-wrap:nowrap; gap:3px; overflow-x:auto; padding:.6rem 0; margin:.6rem 0; }
+  .helix-base {
+    min-width:34px;height:38px;display:flex;align-items:center;justify-content:center;
+    font-family:'DM Mono',monospace;font-weight:700;font-size:.92rem;
+    border-radius:6px;border:2px solid var(--border);flex-shrink:0;transition:all .3s;
+  }
+  .helix-base.hA { background:var(--coral-pale); color:var(--coral); border-color:#f8c5b8; }
+  .helix-base.hT { background:var(--lav-pale);   color:var(--lavender); border-color:#d0caef; }
+  .helix-base.hU { background:#eafaf3;           color:#1b7a58; border-color:#b8ebd8; }
+  .helix-base.hC { background:var(--gold-pale);  color:#8a6a1a; border-color:#f8e0a0; }
+  .helix-base.hG { background:#d4eadd;           color:var(--forest-mid); border-color:#a8d5b8; }
+  .helix-base.empty { background:#f5f7fa; color:var(--border); border-style:dashed; }
+
+  /* ─── SA:V CALCULATOR ─── */
+  .sav-display {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem; margin: 1rem 0;
+  }
+  .sav-box {
+    border-radius: 14px; padding: 1.2rem; text-align: center;
+    border: 2px solid var(--border); background: white; transition: all .3s;
+  }
+  .sav-box .sav-title { font-family:'Fredoka One',cursive; font-size:.95rem; color:var(--forest); margin-bottom:.5rem; }
+  .sav-box .sav-num   { font-family:'DM Mono',monospace; font-size:1.6rem; font-weight:700; }
+  .sav-box .sav-unit  { font-size:.68rem; color:var(--muted); font-family:'DM Mono',monospace; margin-top:.2rem; }
+  .sav-box.highlight-good { border-color:var(--mint); background:var(--mint-pale); }
+  .sav-box.highlight-good .sav-num { color:var(--mint); }
+  .sav-box.highlight-bad  { border-color:var(--coral); background:var(--coral-pale); }
+  .sav-box.highlight-bad  .sav-num { color:var(--coral); }
+
+  .sav-slider-row { display:flex; align-items:center; gap:1rem; margin:.8rem 0; flex-wrap:wrap; }
+  .sav-slider-row label { font-family:'DM Mono',monospace; font-size:.82rem; color:var(--muted); min-width:140px; }
+  .sav-slider-row input[type=range] { flex:1; min-width:120px; accent-color:var(--forest-mid); }
+  .sav-slider-row .sav-readout { font-family:'DM Mono',monospace; font-weight:700; color:var(--forest); min-width:50px; text-align:right; }
+
+  /* ─── PROKARYOTE STRUCTURE DIAGRAM ─── */
+  .prok-part {
+    display: inline-block; padding:.5rem 1rem; border-radius:20px;
+    font-family:'Fredoka One',cursive; font-size:.88rem; cursor:pointer;
+    border:2px solid var(--border); background:white; transition:all .2s; margin:.3rem;
+  }
+  .prok-part:hover,.prok-part.active { transform:scale(1.06); }
+  .prok-part.p-membrane   { border-color:var(--coral); color:var(--coral); }
+  .prok-part.p-membrane.active { background:var(--coral-pale); }
+  .prok-part.p-wall       { border-color:var(--gold); color:#8a6a1a; }
+  .prok-part.p-wall.active { background:var(--gold-pale); }
+  .prok-part.p-nucleoid   { border-color:var(--lavender); color:var(--lavender); }
+  .prok-part.p-nucleoid.active { background:var(--lav-pale); }
+  .prok-part.p-ribosome   { border-color:var(--mint); color:var(--mint); }
+  .prok-part.p-ribosome.active { background:var(--mint-pale); }
+  .prok-part.p-flagella   { border-color:var(--forest-mid); color:var(--forest-mid); }
+  .prok-part.p-flagella.active { background:#d4eadd; }
+  .prok-part.p-capsule    { border-color:#888; color:#555; }
+  .prok-part.p-capsule.active { background:#f0f0f0; }
+  .prok-part.p-pili       { border-color:var(--forest-lt); color:var(--forest-lt); }
+  .prok-part.p-pili.active { background:#e0f5e8; }
+</style>
+</head>
+<body>
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-badge">🔬 AP Biology · Chapter 5 (Part 2 of 2)</div>
+  <h1>Plasma Membrane <span class="accent">Explorer</span></h1>
+  <p class="intro">Master active transport, pumps, electrochemical gradients, and bulk transport — covering OpenStax AP Biology Chapter 5, sections 5.3 (Active Transport) and 5.4 (Bulk Transport).</p>
+  <div class="name-bar"><label>👤 YOUR NAME:</label><input type="text" id="studentName" placeholder="Type your name here..."></div>
+  <div class="progress-wrap">
+    <span class="prog-step active" onclick="goTo(0)">① Wonder</span>
+    <span class="prog-step" onclick="goTo(1)">② Active Transport</span>
+    <span class="prog-step" onclick="goTo(2)">③ Na⁺-K⁺ Pump Lab</span>
+    <span class="prog-step" onclick="goTo(3)">④ Bulk Transport</span>
+    <span class="prog-step" onclick="goTo(4)">⑤ Endocytosis Lab</span>
+    <span class="prog-step" onclick="goTo(5)">⑥ Quiz</span>
+    <span class="prog-step" onclick="goTo(6)">⑦ Reflect</span>
+    <span class="prog-step" onclick="goTo(7)">📤 Submit</span>
+  </div>
+</div>
+<div class="sheet">
+
+<!-- SEC 0: WONDER -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">Phase 1 · Wonder</span></div>
+  <h2>⚡ Swimming Upstream — When Cells Work Against the Current</h2>
+  <p class="lead">Passive transport is easy — molecules just drift downhill. But sometimes a cell absolutely <em>must</em> move something uphill — against its concentration gradient. That takes energy, precision machinery, and some clever chemistry.</p>
+  <div class="wonder-box"><p>Your nerve cells fire because sodium ions rush IN and potassium ions rush OUT — then pumps immediately restore the original balance. This happens hundreds of times per second in every neuron you have. <strong>If a cell is constantly pumping ions against their gradients, spending massive amounts of ATP, why not just let them distribute evenly? What would happen if the sodium-potassium pump stopped working?</strong></p></div>
+  <div class="predict-box"><h4>✏️ Your Prediction (before we dig in)</h4><textarea placeholder="Predict: if a cell's sodium-potassium pump stopped working (say, due to lack of ATP), what do you think would happen to the ion concentrations inside and outside the cell? What effect would this have on nerve cell function?"></textarea></div>
+  <div class="wonder-box gold-box"><p>The answer: the carefully maintained ion gradient would collapse — Na⁺ would flood in, K⁺ would leak out, and the electrical potential would equalise. With no gradient, nerve cells cannot fire, heart muscle cannot contract, and kidney cells cannot reabsorb glucose. When cells need to move things in bulk — whole proteins, pathogens, or waste — they use a completely different approach: <strong>bulk transport</strong>, wrapping cargo in membrane vesicles.</p></div>
+  <div class="nav-row" style="padding:2rem 0 0;"><button class="btn btn-ghost" disabled>← Back</button><button class="btn btn-coral" onclick="goTo(1)">Next: Active Transport →</button></div>
+</div>
+
+<!-- SEC 1: 5.3 ACTIVE TRANSPORT -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">2</div><span class="eyebrow-label">Phase 2 · 5.3 Active Transport</span></div>
+  <h2>📖 Active Transport — Core Vocabulary</h2>
+  <p class="lead">Tap each term to reveal its definition. Active transport is one of the most tested AP Biology concepts — know the distinction between primary and secondary, and the Na⁺-K⁺ pump in detail.</p>
+  <div class="chip-row">
+    <span class="chip coral" onclick="reveal('activetrans')">Active Transport</span>
+    <span class="chip forest" onclick="reveal('electrochem')">Electrochemical Gradient</span>
+    <span class="chip mint" onclick="reveal('primary')">Primary Active Transport</span>
+    <span class="chip gold" onclick="reveal('nakpump')">Na⁺-K⁺ ATPase Pump</span>
+    <span class="chip lav" onclick="reveal('electrogenic')">Electrogenic Pump</span>
+    <span class="chip coral" onclick="reveal('secondary')">Secondary Active Transport</span>
+    <span class="chip forest" onclick="reveal('cotransport')">Co-transport &amp; Symporters</span>
+    <span class="chip mint" onclick="reveal('pumptypes')">Uniporter / Symporter / Antiporter</span>
+  </div>
+  <div id="rev-activetrans" class="concept-reveal coral"><strong>Active Transport</strong> — Movement of substances <em>against</em> their concentration or electrochemical gradient — from low to high concentration. Requires <strong>energy (ATP)</strong> and specific carrier proteins acting as pumps. Examples: Na⁺-K⁺ ATPase, H⁺-K⁺ ATPase, Ca²⁺ ATPase. Unlike facilitated diffusion, active transport can move things uphill. Sensitive to metabolic poisons that block ATP production.</div>
+  <div id="rev-electrochem" class="concept-reveal forest-border"><strong>Electrochemical Gradient</strong> — The combined effect of a substance's <em>concentration gradient</em> AND its <em>electrical gradient</em> (difference in charge). For ions, both gradients must be considered. Na⁺ is driven into cells by BOTH gradients: higher concentration outside AND the negative interior attracts positive Na⁺. K⁺ is more complex — its concentration drives it OUT, but the negative interior pulls it IN.</div>
+  <div id="rev-primary" class="concept-reveal mint-border"><strong>Primary Active Transport</strong> — Directly uses ATP hydrolysis to move ions across the membrane, creating a charge difference. The Na⁺-K⁺ ATPase pump is the classic example — it uses ATP directly to move 3 Na⁺ OUT and 2 K⁺ IN per cycle. Creates the electrochemical gradient that powers secondary active transport.</div>
+  <div id="rev-nakpump" class="concept-reveal gold-border"><strong>Na⁺-K⁺ ATPase (Sodium-Potassium Pump)</strong> — An antiporter that moves <strong>3 Na⁺ OUT</strong> and <strong>2 K⁺ IN</strong> per ATP molecule hydrolysed. 6-step cycle: Na⁺ binds inside → ATP hydrolysed → phosphate attached → pump changes shape → Na⁺ released outside → K⁺ binds → phosphate released → pump returns → K⁺ released inside. Net result: interior becomes slightly more negative (electrogenic effect). Critical for nerve cell membrane potential.</div>
+  <div id="rev-electrogenic" class="concept-reveal lav-border"><strong>Electrogenic Pump</strong> — A pump that creates a net charge difference across the membrane by moving unequal numbers of ions. The Na⁺-K⁺ pump moves 3 positive charges out for every 2 positive charges in — making the cell interior more negative. This contributes to the resting membrane potential (~-70 mV in neurons). In plants, H⁺ ATPase pumps are the major electrogenic pumps.</div>
+  <div id="rev-secondary" class="concept-reveal coral"><strong>Secondary Active Transport</strong> — Uses the electrochemical gradient created by primary active transport (not ATP directly) to move other substances against their gradients. Indirectly depends on ATP. Example: glucose and amino acids ride the Na⁺ gradient into intestinal cells via Na⁺-glucose symporters. The Na⁺-K⁺ pump maintains the Na⁺ gradient that drives this.</div>
+  <div id="rev-cotransport" class="concept-reveal forest-border"><strong>Co-transport (Symporter)</strong> — A type of secondary active transport where two substances move in the <em>same direction</em>. Na⁺ moves DOWN its gradient into the cell, dragging glucose or amino acids with it AGAINST their gradients. Used in the small intestine to absorb glucose, and in kidney tubules to reabsorb glucose from urine. ATP synthase in mitochondria also uses H⁺ co-transport.</div>
+  <div id="rev-pumptypes" class="concept-reveal mint-border"><strong>Uniporter / Symporter / Antiporter</strong> — Three types of carrier proteins: <em>Uniporter</em>: carries one specific ion or molecule in one direction. <em>Symporter</em>: carries two different molecules in the <strong>same direction</strong> (e.g., Na⁺ + glucose into cell). <em>Antiporter</em>: carries two different molecules in <strong>opposite directions</strong> (e.g., Na⁺-K⁺ ATPase moves Na⁺ out while K⁺ comes in).</div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 Active vs. Passive Transport — Full Comparison</h3>
+  <table class="vocab-table">
+    <tr><th>Feature</th><th>Passive Transport</th><th>Active Transport</th></tr>
+    <tr><td>Direction</td><td>Down gradient</td><td>Against gradient</td></tr>
+    <tr><td>Energy (ATP)?</td><td>No</td><td>Yes (directly or indirectly)</td></tr>
+    <tr><td>Protein needed?</td><td>Sometimes</td><td>Always</td></tr>
+    <tr><td>Examples</td><td>O₂, CO₂, osmosis, facilitated diffusion</td><td>Na⁺-K⁺ pump, glucose reabsorption</td></tr>
+    <tr><td>Effect if ATP blocked?</td><td>No effect</td><td>Stops immediately</td></tr>
+  </table>
+  <div class="divider"></div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.4rem;">🎯 Quick Match — Active Transport Terms</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Tap a term, then tap its match.</p>
+  <div class="match-grid" id="matchGrid">
+    <div class="match-item" data-pair="a" data-side="term" onclick="matchClick(this)">Antiporter</div>
+    <div class="match-item" data-pair="b" data-side="def" onclick="matchClick(this)">Uses ATP directly to move ions against gradient</div>
+    <div class="match-item" data-pair="c" data-side="term" onclick="matchClick(this)">Secondary Active Transport</div>
+    <div class="match-item" data-pair="d" data-side="def" onclick="matchClick(this)">Moves 3 Na⁺ out, 2 K⁺ in per ATP</div>
+    <div class="match-item" data-pair="a" data-side="def" onclick="matchClick(this)">Carries two substances in opposite directions</div>
+    <div class="match-item" data-pair="e" data-side="term" onclick="matchClick(this)">Electrochemical Gradient</div>
+    <div class="match-item" data-pair="b" data-side="term" onclick="matchClick(this)">Primary Active Transport</div>
+    <div class="match-item" data-pair="c" data-side="def" onclick="matchClick(this)">Uses electrochemical gradient (not ATP directly) to move substances</div>
+    <div class="match-item" data-pair="d" data-side="term" onclick="matchClick(this)">Na⁺-K⁺ ATPase Pump</div>
+    <div class="match-item" data-pair="e" data-side="def" onclick="matchClick(this)">Combined concentration gradient + electrical charge gradient</div>
+  </div>
+  <div style="margin-top:.8rem;"><button class="btn btn-ghost" onclick="resetMatch()">↺ Reset Match</button><span id="match-score" style="margin-left:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted);"></span></div>
+  <div class="nav-row" style="padding:2rem 0 0;"><button class="btn btn-ghost" onclick="goTo(0)">← Back</button><button class="btn btn-coral" onclick="goTo(2)">Next: Na⁺-K⁺ Pump Lab →</button></div>
+</div>
+
+<!-- SEC 2: Na-K PUMP LAB -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow"><div class="eyebrow-num num-gold">3</div><span class="eyebrow-label">Phase 3 · Na⁺-K⁺ Pump Step-Through Lab</span></div>
+  <h2>⚡ Step Through the Sodium-Potassium Pump</h2>
+  <p class="lead">The Na⁺-K⁺ ATPase pump operates in 6 precise steps. Step through each one and track what happens to ion concentrations and the pump's shape. This is the most commonly tested active transport mechanism on the AP exam.</p>
+  <div class="predict-box"><h4>✏️ Before the lab — your prediction</h4><textarea id="pump-predict" placeholder="The Na⁺-K⁺ pump moves 3 Na⁺ OUT and 2 K⁺ IN per ATP. Predict: after many cycles of this pump, will the inside of the cell become more positive or more negative? Why? How does this help nerve cells function?"></textarea></div>
+  <div class="demo-zone">
+    <h3>🔬 Na⁺-K⁺ ATPase — 6-Step Cycle</h3>
+    <div class="hint" id="pump-hint">Click "Begin Cycle" to start stepping through the pump's 6-step mechanism</div>
+    <div class="sav-display" id="pumpTrack" style="grid-template-columns:repeat(3,1fr);margin-bottom:1rem;"></div>
+    <div id="pump-status" style="background:var(--lav-pale);border:2px solid var(--lavender);border-radius:10px;padding:1rem 1.2rem;margin:1rem 0;font-size:.88rem;line-height:1.8;font-family:'DM Mono',monospace;min-height:80px;color:var(--lavender);">🎬 Ready to begin — click the button below to step through the 6-step Na⁺-K⁺ pump cycle.</div>
+    <div class="sim-stat-row">
+      <div class="sim-stat"><div class="stat-val" id="pump-na-out">Low</div><div class="stat-lbl">Na⁺ Outside</div></div>
+      <div class="sim-stat"><div class="stat-val" id="pump-na-in">High</div><div class="stat-lbl">Na⁺ Inside</div></div>
+      <div class="sim-stat"><div class="stat-val" id="pump-k-out">High</div><div class="stat-lbl">K⁺ Outside</div></div>
+      <div class="sim-stat"><div class="stat-val" id="pump-k-in">Low</div><div class="stat-lbl">K⁺ Inside</div></div>
+    </div>
+    <div class="action-row">
+      <button class="btn btn-lav" id="btn-pump-start" onclick="pumpStep(0)">▶ Begin Cycle</button>
+      <button class="btn btn-coral" id="btn-pump-next" onclick="pumpNextStep()" disabled>⏩ Next Step</button>
+      <button class="btn btn-ghost" onclick="pumpReset()">↺ Reset</button>
+    </div>
+  </div>
+  <div class="reflect-box"><h4>✅ Reflect — The Pump's Bigger Purpose</h4><textarea placeholder="Why does the Na⁺-K⁺ pump move 3 Na⁺ out for every 2 K⁺ in? What does this unequal ratio do to the electrical charge inside the cell? How does this connect to the secondary active transport of glucose in intestinal cells?"></textarea></div>
+  <div class="nav-row" style="padding:2rem 0 0;"><button class="btn btn-ghost" onclick="goTo(1)">← Back</button><button class="btn btn-coral" onclick="goTo(3)">Next: Bulk Transport →</button></div>
+</div>
+
+<!-- SEC 3: 5.4 BULK TRANSPORT -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">4</div><span class="eyebrow-label">Phase 4 · 5.4 Bulk Transport</span></div>
+  <h2>📦 Moving Big Things — Endocytosis &amp; Exocytosis</h2>
+  <p class="lead">When molecules are too large for transport proteins, cells wrap them in membrane vesicles. Tap each card to explore the three types of endocytosis and exocytosis.</p>
+  <div class="evidence-grid">
+    <div class="ev-card" onclick="showEvidence('phago')"><div class="ev-icon">😋</div><div class="ev-title">Phagocytosis</div><div class="ev-sub">"cell eating"</div></div>
+    <div class="ev-card" onclick="showEvidence('pino')"><div class="ev-icon">💧</div><div class="ev-title">Pinocytosis</div><div class="ev-sub">"cell drinking"</div></div>
+    <div class="ev-card" onclick="showEvidence('rme')"><div class="ev-icon">🎯</div><div class="ev-title">Receptor-Mediated Endocytosis</div><div class="ev-sub">targeted uptake</div></div>
+    <div class="ev-card" onclick="showEvidence('exo')"><div class="ev-icon">🚀</div><div class="ev-title">Exocytosis</div><div class="ev-sub">secretion out</div></div>
+  </div>
+  <div id="ev-phago" class="ev-panel"><h4>😋 Phagocytosis — "Cell Eating"</h4><p>The cell membrane invaginates and completely surrounds a large particle (bacteria, dead cells, debris) forming a large vesicle called a <strong>phagosome</strong>. The phagosome then fuses with a lysosome, whose hydrolytic enzymes digest the contents. Primary role: <strong>immune defence</strong> — neutrophils and macrophages engulf and destroy pathogens. Also used by protists like Amoeba for feeding.</p><div class="example-box">📌 When bacteria invade the body, white blood cells (neutrophils) destroy them via phagocytosis. The phagosome fuses with a lysosome to form a phagolysosome where digestion occurs.</div></div>
+  <div id="ev-pino" class="ev-panel"><h4>💧 Pinocytosis — "Cell Drinking"</h4><p>The cell takes in small droplets of extracellular fluid by forming small vesicles (much smaller than phagosomes). The cell non-specifically ingests water and small solutes dissolved in it. A variation called <strong>potocytosis</strong> uses a protein called <em>caveolin</em> on the cytoplasmic side to form even smaller vesicles. Unlike receptor-mediated endocytosis, pinocytosis is non-selective.</p><div class="example-box">📌 Pinocytosis vesicles do NOT need to fuse with lysosomes because the contents are small solutes, not large particles requiring digestion.</div></div>
+  <div id="ev-rme" class="ev-panel"><h4>🎯 Receptor-Mediated Endocytosis — Targeted Uptake</h4><p>Specific <strong>receptor proteins</strong> on the cell surface bind to a particular molecule (the <em>ligand</em>). Once bound, the membrane invaginates and forms a vesicle coated with the protein <strong>clathrin</strong>, which concentrates the receptors and cargo. This allows the cell to take in specific molecules at much higher concentrations than pinocytosis. Examples: LDL (cholesterol) uptake, insulin receptor binding, iron uptake via transferrin.</p><div class="example-box">📌 Familial hypercholesterolaemia: defective LDL receptor proteins prevent LDL clearance from the blood → dangerous build-up of cholesterol → very early heart disease.</div></div>
+  <div id="ev-exo" class="ev-panel"><h4>🚀 Exocytosis — Secretion Out of the Cell</h4><p>A membrane vesicle inside the cell fuses with the plasma membrane and releases its contents to the extracellular space. The vesicle membrane becomes part of the plasma membrane. Used for: secreting proteins (insulin, antibodies, digestive enzymes), releasing neurotransmitters at synapses, secreting extracellular matrix components, and expelling waste. The entire secretory pathway (RER → Golgi → vesicle) ends in exocytosis.</p><div class="example-box">📌 Neurotransmitter release at a synapse = exocytosis. The synaptic vesicle fuses with the presynaptic membrane, releasing neurotransmitters into the synaptic cleft.</div></div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 Bulk Transport Types — Summary</h3>
+  <table class="vocab-table">
+    <tr><th>Type</th><th>Direction</th><th>Selectivity</th><th>Key examples</th></tr>
+    <tr><td>Phagocytosis</td><td>Into cell</td><td>Non-selective (large particles)</td><td>Macrophages eating bacteria</td></tr>
+    <tr><td>Pinocytosis</td><td>Into cell</td><td>Non-selective (fluid + solutes)</td><td>Non-specific fluid uptake</td></tr>
+    <tr><td>Receptor-Mediated Endocytosis</td><td>Into cell</td><td>Highly selective (specific ligand)</td><td>LDL/cholesterol, insulin, iron</td></tr>
+    <tr><td>Exocytosis</td><td>Out of cell</td><td>Specific cargo</td><td>Neurotransmitters, insulin, antibodies</td></tr>
+  </table>
+  <div class="nav-row" style="padding:2rem 0 0;"><button class="btn btn-ghost" onclick="goTo(2)">← Back</button><button class="btn btn-coral" onclick="goTo(4)">Next: Endocytosis Lab →</button></div>
+</div>
+
+<!-- SEC 4: BULK TRANSPORT LAB -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">5</div><span class="eyebrow-label">Phase 5 · Bulk Transport Sorting Lab</span></div>
+  <h2>🎯 Sort Each Scenario — Which Transport Mechanism?</h2>
+  <p class="lead">Tap each scenario, then tap the transport type you think matches it. This is exactly the type of application question the AP exam tests.</p>
+  <div class="predict-box"><h4>✏️ Before the lab — your prediction</h4><textarea id="bulk-predict" placeholder="A person has a genetic defect that prevents their cells from making functional clathrin protein. Predict: which type of bulk transport would be most affected? What disease might result? How would this differ from a person who lacks phagocytic cells?"></textarea></div>
+  <div class="demo-zone">
+    <h3>🔬 Match the Scenario to the Transport Type</h3>
+    <div class="hint">Tap a scenario on the left, then tap the matching transport type on the right.</div>
+    <div class="match-grid" id="bulkMatchGrid">
+      <div class="match-item" data-pair="a" data-side="term" onclick="bulkMatchClick(this)">A macrophage surrounds and engulfs a bacterium</div>
+      <div class="match-item" data-pair="b" data-side="def" onclick="bulkMatchClick(this)">Exocytosis</div>
+      <div class="match-item" data-pair="c" data-side="term" onclick="bulkMatchClick(this)">LDL cholesterol binds to cell surface receptors and is brought into the cell</div>
+      <div class="match-item" data-pair="d" data-side="def" onclick="bulkMatchClick(this)">Pinocytosis</div>
+      <div class="match-item" data-pair="a" data-side="def" onclick="bulkMatchClick(this)">Phagocytosis</div>
+      <div class="match-item" data-pair="e" data-side="term" onclick="bulkMatchClick(this)">A pancreatic beta cell releases insulin into the bloodstream</div>
+      <div class="match-item" data-pair="b" data-side="term" onclick="bulkMatchClick(this)">Synaptic vesicles release neurotransmitters into the synaptic cleft</div>
+      <div class="match-item" data-pair="c" data-side="def" onclick="bulkMatchClick(this)">Receptor-mediated endocytosis</div>
+      <div class="match-item" data-pair="d" data-side="term" onclick="bulkMatchClick(this)">A cell takes in small droplets of extracellular fluid non-selectively</div>
+      <div class="match-item" data-pair="e" data-side="def" onclick="bulkMatchClick(this)">Exocytosis</div>
+    </div>
+    <div style="margin-top:.8rem;"><button class="btn btn-ghost" onclick="resetBulkMatch()">↺ Reset</button><span id="bulk-match-score" style="margin-left:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted);"></span></div>
+  </div>
+  <div class="reflect-box"><h4>✅ Reflect — Bulk Transport &amp; Disease</h4><textarea placeholder="Explain how familial hypercholesterolaemia is connected to receptor-mediated endocytosis. How does a macrophage's phagocytosis of bacteria differ from receptor-mediated endocytosis? What happens to the membrane after exocytosis?"></textarea></div>
+  <div class="nav-row" style="padding:2rem 0 0;"><button class="btn btn-ghost" onclick="goTo(3)">← Back</button><button class="btn btn-coral" onclick="goTo(5)">Next: Quiz →</button></div>
+</div>
+
+<!-- SEC 5: QUIZ -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow"><div class="eyebrow-num num-forest">6</div><span class="eyebrow-label">Phase 6 · Real Test Practice</span></div>
+  <h2>📝 AP-Style Quiz — Chapter 5, Sections 5.3 &amp; 5.4</h2>
+  <p class="lead">These questions cover OpenStax AP Biology Chapter 5, Sections 5.3–5.4. Answer each — instant feedback with full explanations.</p>
+  <div id="quiz-container"></div>
+  <div id="score-panel" class="score-panel" style="display:none;"><h3>Quiz Complete! 🎉</h3><div class="score-num" id="score-display">0/18</div><p id="score-msg"></p><button class="btn btn-gold" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button></div>
+  <div class="nav-row" style="padding:2rem 0 0;"><button class="btn btn-ghost" onclick="goTo(4)">← Back</button><button class="btn btn-coral" onclick="goTo(6)">Next: Reflect →</button></div>
+</div>
+
+<!-- SEC 6: REFLECT -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">7</div><span class="eyebrow-label">Phase 7 · Reflect</span></div>
+  <h2>💭 Reflection &amp; Review</h2>
+  <p class="lead">Solidify your understanding. Answer all four questions in your own words.</p>
+  <div class="quiz-card"><div class="quiz-q">1. Explain what an electrochemical gradient is and why it is more complex than a simple concentration gradient. How do both components affect Na⁺ movement into cells?</div><textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea></div>
+  <div class="quiz-card"><div class="quiz-q">2. Describe all 6 steps of the sodium-potassium pump cycle. What is the net result in terms of ion distribution and electrical charge? Why is this pump described as "electrogenic"?</div><textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea></div>
+  <div class="quiz-card"><div class="quiz-q">3. Compare primary and secondary active transport. Why is secondary active transport still considered "active"? Give a specific example of secondary active transport and trace the energy connection back to ATP.</div><textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea></div>
+  <div class="quiz-card"><div class="quiz-q">4. Compare phagocytosis, pinocytosis, and receptor-mediated endocytosis. How does each work, what is each selective for, and what is a real-world example of each? Then explain what happens to the cell membrane during exocytosis.</div><textarea style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea></div>
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.8rem;">✏️ Fill-in-the-Blank Review</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1.2rem;">Type the answer and press Enter or click Check All.</p>
+  <div id="fill-container"></div>
+  <div style="margin-top:.8rem;"><button class="btn btn-mint" onclick="checkAllFills()">✓ Check All Answers</button><button class="btn btn-ghost" onclick="resetFills()" style="margin-left:.6rem;">↺ Reset</button></div>
+  <div class="congrats-panel" style="margin-top:2rem;">
+    <h2>🔬 Chapter 5 Complete!</h2>
+    <p>You've mastered all of OpenStax AP Biology Chapter 5 — Fluid Mosaic Model (5.1), Passive Transport (5.2), Active Transport (5.3), and Bulk Transport (5.4). You now have complete command of how cells manage everything that crosses their membranes!</p>
+    <p style="font-size:.85rem;opacity:.75;">AP Bio tip: membrane transport is among the most common AP exam topics. Be ready to compare all transport types and apply them to novel scenarios in FRQs.</p>
+    <div class="summary-chips">
+      <span class="summary-chip">Active Transport ✓</span><span class="summary-chip">Electrochemical Gradient ✓</span>
+      <span class="summary-chip">Na⁺-K⁺ ATPase ✓</span><span class="summary-chip">Electrogenic Pump ✓</span>
+      <span class="summary-chip">Primary Active Transport ✓</span><span class="summary-chip">Secondary Active Transport ✓</span>
+      <span class="summary-chip">Phagocytosis ✓</span><span class="summary-chip">Pinocytosis ✓</span>
+      <span class="summary-chip">Receptor-Mediated Endocytosis ✓</span><span class="summary-chip">Exocytosis ✓</span>
+    </div>
+  </div>
+  <div class="nav-row" style="padding:2rem 0 0;"><button class="btn btn-ghost" onclick="goTo(5)">← Back</button><button class="btn btn-forest" onclick="goTo(7)">Next: Submit →</button></div>
+</div>
+
+<!-- SEC 7: SUBMIT -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">8</div><span class="eyebrow-label">Your Completed Work</span></div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Here's a summary of everything you worked on. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> to your teacher.</p>
+  <div class="summary-section" style="background:var(--forest);color:white;border-color:var(--forest);"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;"><div><div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">STUDENT</div><div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div></div><div style="text-align:right;"><div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">LESSON</div><div style="font-family:'Fredoka One',cursive;font-size:1rem;">Plasma Membrane Explorer 🔬 (Ch. 5 Part 2)</div><div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6;" id="summaryDate"></div></div></div></div>
+  <div class="summary-section"><h3>📝 Quiz Score</h3><div class="summary-answer" id="sum-quiz"></div></div>
+  <div class="summary-section"><h3>🤔 Opening Prediction</h3><div class="summary-answer" id="sum-pred"></div></div>
+  <div class="summary-section"><h3>⚡ Na⁺-K⁺ Pump Lab Prediction</h3><div class="summary-answer" id="sum-pump-pred"></div></div>
+  <div class="summary-section"><h3>🎯 Bulk Transport Lab Prediction</h3><div class="summary-answer" id="sum-bulk-pred"></div></div>
+  <div class="summary-section"><h3>💭 Reflection Questions</h3>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;">Q1 — Electrochemical Gradient</div><div class="summary-answer" id="sum-r1"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q2 — Na⁺-K⁺ Pump 6-Step Cycle</div><div class="summary-answer" id="sum-r2"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q3 — Primary vs. Secondary Active Transport</div><div class="summary-answer" id="sum-r3"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q4 — Bulk Transport Types</div><div class="summary-answer" id="sum-r4"></div>
+  </div>
+  <div class="share-buttons">
+    <button class="share-btn copy" onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.6rem;">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2;"><strong>📋 Copy My Results</strong> — Copies all answers. Paste into Google Classroom.<br><strong>📧 Email to Teacher</strong> — Opens your email app with answers pre-filled.<br><strong>🖨️ Print / Save PDF</strong> — Mac: bottom-left → Save as PDF. Windows: Microsoft Print to PDF.</p>
+  </div>
+  <div class="nav-row" style="padding:2rem 0 0;"><button class="btn btn-ghost" onclick="goTo(6)">← Back</button><button class="btn btn-forest" onclick="goTo(0)">↺ Start Over</button></div>
+</div>
+
+</div><!-- /sheet -->
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.<br>
+  Content informed by OpenStax Biology for AP Courses (CC BY-NC-SA 4.0)
+</div>
+<script>
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+const steps    = document.querySelectorAll('.prog-step');
+const sections = document.querySelectorAll('.section');
+
+function goTo(n) {
+  sections.forEach((s, i) => s.classList.toggle('active', i === n));
+  steps.forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    if (i === n) s.classList.add('active');
+    if (i < n)  s.classList.add('done');
+  });
+  if (n === 7) buildSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════════════
+// CONCEPT REVEALS (Section 1)
+// ═══════════════════════════════════════════════
+const revIds = ['activetrans','electrochem','primary','nakpump','electrogenic','secondary','cotransport','pumptypes'];
+function reveal(key) {
+  revIds.forEach(id => {
+    const el = document.getElementById('rev-' + id);
+    if (el) el.classList.remove('show');
+  });
+  const t = document.getElementById('rev-' + key);
+  if (t) t.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// MATCHING GAME (Section 1)
+// ═══════════════════════════════════════════════
+let matchSelected = null;
+let matchScore = 0;
+
+function matchClick(el) {
+  if (el.classList.contains('matched')) return;
+  if (!matchSelected) {
+    el.classList.add('selected');
+    matchSelected = el;
+  } else if (matchSelected === el) {
+    el.classList.remove('selected');
+    matchSelected = null;
+  } else {
+    const pA = matchSelected.dataset.pair, pB = el.dataset.pair;
+    const sA = matchSelected.dataset.side, sB = el.dataset.side;
+    if (pA === pB && sA !== sB) {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('matched');
+      el.classList.add('matched');
+      matchScore++;
+      document.getElementById('match-score').textContent = matchScore + '/5 matched';
+      matchSelected = null;
+    } else {
+      matchSelected.classList.remove('selected');
+      matchSelected.classList.add('wrong');
+      el.classList.add('wrong');
+      const a = matchSelected, b = el;
+      setTimeout(() => { a.classList.remove('wrong'); b.classList.remove('wrong'); }, 650);
+      matchSelected = null;
+    }
+  }
+}
+function resetMatch() {
+  matchSelected = null; matchScore = 0;
+  document.querySelectorAll('#sec-1 .match-item').forEach(el => el.classList.remove('selected','matched','wrong'));
+  document.getElementById('match-score').textContent = '';
+}
+
+// ═══════════════════════════════════════════════
+// Na⁺-K⁺ PUMP LAB (Section 2)
+// ═══════════════════════════════════════════════
+const pumpSteps = [
+  {
+    label: 'Step 1', sub: '3 Na⁺ bind inside',
+    status: '⚡ <strong>Step 1 — Na⁺ Binding:</strong> Three Na⁺ ions inside the cell bind to the carrier protein. The pump is in its "open-to-inside" conformation. Na⁺ inside the cell is high (not yet pumped), so binding is thermodynamically favourable at this stage.',
+    naIn: 'High', naOut: 'Low', kIn: 'Low', kOut: 'High', color: 'coral'
+  },
+  {
+    label: 'Step 2', sub: 'ATP hydrolysed',
+    status: '⚡ <strong>Step 2 — ATP Hydrolysis:</strong> ATP is hydrolysed → ADP + Pᵢ. The phosphate group attaches to the pump protein (phosphorylation), providing energy for the conformational change. This is the energy-consuming step — this is what makes it PRIMARY active transport.',
+    naIn: 'High', naOut: 'Low', kIn: 'Low', kOut: 'High', color: 'gold'
+  },
+  {
+    label: 'Step 3', sub: 'Pump opens outward',
+    status: '⚡ <strong>Step 3 — Conformational Change:</strong> The phosphorylation causes the pump to change shape, opening to the outside of the cell. The Na⁺ binding sites now have low affinity for Na⁺ at the exterior.',
+    naIn: 'High', naOut: 'Low', kIn: 'Low', kOut: 'High', color: 'gold'
+  },
+  {
+    label: 'Step 4', sub: '3 Na⁺ released outside',
+    status: '⚡ <strong>Step 4 — Na⁺ Released:</strong> Three Na⁺ ions are released into the extracellular space. Na⁺ concentration outside the cell increases. Na⁺ inside begins to decrease. Two K⁺ ions from outside now bind to the pump.',
+    naIn: 'Decreasing', naOut: 'Increasing', kIn: 'Low', kOut: 'High', color: 'mint'
+  },
+  {
+    label: 'Step 5', sub: '2 K⁺ bind, phosphate released',
+    status: '⚡ <strong>Step 5 — K⁺ Binding &amp; Dephosphorylation:</strong> Two K⁺ ions bind to the pump from outside. The phosphate group is released (dephosphorylation), triggering another conformational change — the pump reopens to the inside.',
+    naIn: 'Decreasing', naOut: 'High', kIn: 'Low', kOut: 'Decreasing', color: 'lav'
+  },
+  {
+    label: 'Step 6', sub: '2 K⁺ released inside ✅',
+    status: '✅ <strong>Step 6 — K⁺ Released &amp; Cycle Complete:</strong> The pump opens to the cytoplasm, releases 2 K⁺ inside the cell. Net result: 3 Na⁺ pumped OUT, 2 K⁺ pumped IN, 1 ATP used. The unequal charge transfer (3+ out vs. 2+ in) makes the cell interior slightly more negative — the electrogenic effect. Pump resets for next cycle!',
+    naIn: 'Low', naOut: 'High', kIn: 'High', kOut: 'Low', color: 'forest'
+  }
+];
+
+const pumpColorMap = {
+  coral:  { bg: 'var(--coral-pale)',  border: 'var(--coral)',      text: 'var(--coral)' },
+  gold:   { bg: 'var(--gold-pale)',   border: 'var(--gold)',       text: '#8a6a1a' },
+  mint:   { bg: 'var(--mint-pale)',   border: 'var(--mint)',       text: 'var(--mint)' },
+  lav:    { bg: 'var(--lav-pale)',    border: 'var(--lavender)',   text: 'var(--lavender)' },
+  forest: { bg: '#d4eadd',           border: 'var(--forest-mid)', text: 'var(--forest-mid)' }
+};
+
+let pumpPos = -1;
+
+function buildPumpTrack() {
+  const track = document.getElementById('pumpTrack');
+  track.innerHTML = pumpSteps.map((s, i) => {
+    const done   = i < pumpPos;
+    const active = i === pumpPos;
+    const c = pumpColorMap[s.color];
+    const style = (done || active) ? `background:${c.bg};border-color:${c.border};` : 'background:white;border-color:var(--border);';
+    return `
+      <div class="sav-box" style="${style}">
+        <div class="sav-title" style="color:${(done||active) ? c.text : 'var(--muted)'};">${s.label}</div>
+        <div class="sav-unit">${s.sub}</div>
+        ${done   ? '<div style="font-size:1.1rem;margin-top:.3rem;">✅</div>' : ''}
+        ${active ? '<div style="font-size:1.1rem;margin-top:.3rem;">▶</div>' : ''}
+      </div>`;
+  }).join('');
+}
+
+function updatePumpStats(step) {
+  const s = pumpSteps[step];
+  document.getElementById('pump-na-in').textContent  = s.naIn;
+  document.getElementById('pump-na-out').textContent = s.naOut;
+  document.getElementById('pump-k-in').textContent   = s.kIn;
+  document.getElementById('pump-k-out').textContent  = s.kOut;
+}
+
+function pumpStep(n) {
+  pumpPos = n;
+  buildPumpTrack();
+  const status = document.getElementById('pump-status');
+  const c = pumpColorMap[pumpSteps[n].color];
+  status.innerHTML     = pumpSteps[n].status;
+  status.style.background  = c.bg;
+  status.style.borderColor = c.border;
+  status.style.color       = c.text;
+  updatePumpStats(n);
+  document.getElementById('btn-pump-start').disabled = true;
+  document.getElementById('btn-pump-next').disabled  = (n >= pumpSteps.length - 1);
+  document.getElementById('pump-hint').textContent   = `Step ${n+1} of ${pumpSteps.length} — click Next Step to continue`;
+}
+
+function pumpNextStep() {
+  if (pumpPos < pumpSteps.length - 1) pumpStep(pumpPos + 1);
+}
+
+function pumpReset() {
+  pumpPos = -1;
+  buildPumpTrack();
+  const status = document.getElementById('pump-status');
+  status.innerHTML         = '🎬 Ready to begin — click the button below to step through the 6-step Na⁺-K⁺ pump cycle.';
+  status.style.background  = 'var(--lav-pale)';
+  status.style.borderColor = 'var(--lavender)';
+  status.style.color       = 'var(--lavender)';
+  document.getElementById('btn-pump-start').disabled = false;
+  document.getElementById('btn-pump-next').disabled  = true;
+  document.getElementById('pump-hint').textContent   = 'Click "Begin Cycle" to start stepping through the pump\'s 6-step mechanism';
+  ['pump-na-in','pump-na-out','pump-k-in','pump-k-out'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = '—';
+  });
+}
+buildPumpTrack();
+
+// ═══════════════════════════════════════════════
+// EVIDENCE CARDS (Section 3)
+// ═══════════════════════════════════════════════
+function showEvidence(type) {
+  document.querySelectorAll('.ev-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.ev-panel').forEach(p => p.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const panel = document.getElementById('ev-' + type);
+  if (panel) panel.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// BULK TRANSPORT MATCHING GAME (Section 4)
+// ═══════════════════════════════════════════════
+let bulkSelected = null;
+let bulkScore    = 0;
+
+function bulkMatchClick(el) {
+  if (el.classList.contains('matched')) return;
+  if (!bulkSelected) {
+    el.classList.add('selected');
+    bulkSelected = el;
+  } else if (bulkSelected === el) {
+    el.classList.remove('selected');
+    bulkSelected = null;
+  } else {
+    const pA = bulkSelected.dataset.pair, pB = el.dataset.pair;
+    const sA = bulkSelected.dataset.side, sB = el.dataset.side;
+    if (pA === pB && sA !== sB) {
+      bulkSelected.classList.remove('selected');
+      bulkSelected.classList.add('matched');
+      el.classList.add('matched');
+      bulkScore++;
+      document.getElementById('bulk-match-score').textContent = bulkScore + '/5 matched';
+      bulkSelected = null;
+    } else {
+      bulkSelected.classList.remove('selected');
+      bulkSelected.classList.add('wrong');
+      el.classList.add('wrong');
+      const a = bulkSelected, b = el;
+      setTimeout(() => { a.classList.remove('wrong'); b.classList.remove('wrong'); }, 650);
+      bulkSelected = null;
+    }
+  }
+}
+function resetBulkMatch() {
+  bulkSelected = null; bulkScore = 0;
+  document.querySelectorAll('#bulkMatchGrid .match-item').forEach(el => el.classList.remove('selected','matched','wrong'));
+  document.getElementById('bulk-match-score').textContent = '';
+}
+
+// ═══════════════════════════════════════════════
+// QUIZ DATA — 5.3 & 5.4
+// ═══════════════════════════════════════════════
+const quizData = [
+  {
+    q: "How does active transport differ fundamentally from facilitated diffusion?",
+    opts: [
+      "Active transport uses membrane proteins; facilitated diffusion does not",
+      "Active transport moves substances against their concentration/electrochemical gradient using energy; facilitated diffusion moves substances down their gradient without energy",
+      "Active transport only works for water; facilitated diffusion works for all molecules",
+      "Active transport occurs only in plant cells; facilitated diffusion only in animal cells"
+    ],
+    ans: 1,
+    fb: "The key distinction is direction and energy: active transport moves substances AGAINST their gradient (low → high concentration) and requires ATP. Facilitated diffusion moves substances DOWN their gradient (high → low) and needs no energy — only a transport protein."
+  },
+  {
+    q: "An electrochemical gradient combines which two factors?",
+    opts: [
+      "Temperature gradient and pH gradient",
+      "Concentration gradient and electrical charge gradient",
+      "Osmotic pressure and hydrostatic pressure",
+      "Membrane fluidity and membrane thickness"
+    ],
+    ans: 1,
+    fb: "An electrochemical gradient = concentration gradient (difference in amount of a substance) + electrical gradient (difference in charge across the membrane). For ions, both must be considered — Na⁺ enters cells driven by BOTH: higher outside concentration AND the negative interior attracting positive Na⁺."
+  },
+  {
+    q: "The Na⁺-K⁺ ATPase pump moves which ions in which directions per cycle?",
+    opts: [
+      "2 Na⁺ out, 3 K⁺ in",
+      "3 K⁺ out, 2 Na⁺ in",
+      "3 Na⁺ out, 2 K⁺ in",
+      "Equal numbers of Na⁺ and K⁺ in opposite directions"
+    ],
+    ans: 2,
+    fb: "The Na⁺-K⁺ ATPase moves 3 Na⁺ OUT and 2 K⁺ IN per ATP hydrolysed. This unequal exchange (3 positive charges out vs. 2 in) makes the pump electrogenic — it contributes to the negative resting membrane potential inside cells."
+  },
+  {
+    q: "Why is the Na⁺-K⁺ pump described as an 'electrogenic pump'?",
+    opts: [
+      "Because it generates electricity to power the cell",
+      "Because it moves unequal numbers of charges — 3 positive charges out vs. 2 in — creating a net negative charge inside the cell",
+      "Because it uses electrical energy rather than chemical energy",
+      "Because it only works during electrical impulses in nerve cells"
+    ],
+    ans: 1,
+    fb: "The Na⁺-K⁺ pump pumps 3 positive charges (Na⁺) out for every 2 positive charges (K⁺) it brings in. This unequal movement creates a net charge difference — contributing to the negative interior of the cell (resting membrane potential ~-70 mV in neurons)."
+  },
+  {
+    q: "What happens at the molecular level during Step 2 of the Na⁺-K⁺ pump cycle?",
+    opts: [
+      "K⁺ ions bind to the extracellular face of the pump",
+      "The pump returns to its original conformation",
+      "ATP is hydrolysed and a phosphate group is attached to the pump protein, providing energy for conformational change",
+      "Na⁺ ions are released into the extracellular space"
+    ],
+    ans: 2,
+    fb: "In Step 2, ATP is hydrolysed to ADP + Pᵢ. The phosphate group attaches to (phosphorylates) the pump protein. This phosphorylation provides the energy needed for the pump to change its conformation and open toward the outside in Step 3, releasing the bound Na⁺ ions."
+  },
+  {
+    q: "Secondary active transport differs from primary active transport because secondary active transport:",
+    opts: [
+      "Uses ATP directly to power ion movement",
+      "Does not require any membrane proteins",
+      "Uses the electrochemical gradient built by primary active transport (not ATP directly) to move substances against their gradients",
+      "Only works in the reverse direction (out of the cell)"
+    ],
+    ans: 2,
+    fb: "Secondary active transport is 'indirect' — it uses the energy stored in an ion gradient (typically the Na⁺ gradient created by the Na⁺-K⁺ pump) to move another substance against its gradient. ATP is used, but not directly — it powers the primary pump that builds the gradient."
+  },
+  {
+    q: "Glucose is absorbed into intestinal epithelial cells via a Na⁺-glucose symporter. This is an example of:",
+    opts: [
+      "Primary active transport — ATP directly powers glucose movement",
+      "Simple diffusion — glucose moves down its gradient",
+      "Secondary active transport — glucose 'hitchhikes' on the Na⁺ gradient built by the Na⁺-K⁺ pump",
+      "Facilitated diffusion — no energy is required"
+    ],
+    ans: 2,
+    fb: "This is secondary active transport (co-transport). Na⁺ flows DOWN its gradient (created by the Na⁺-K⁺ pump) into the intestinal cell via the symporter, and glucose is dragged AGAINST its gradient at the same time. ATP powers the Na⁺-K⁺ pump, which indirectly powers glucose absorption."
+  },
+  {
+    q: "A symporter moves two substances in the same direction; an antiporter moves them in opposite directions. The Na⁺-K⁺ pump is which type?",
+    opts: [
+      "Symporter — Na⁺ and K⁺ move in the same direction",
+      "Antiporter — Na⁺ moves out while K⁺ moves in (opposite directions)",
+      "Uniporter — it only moves one type of ion",
+      "It is not classified as any of these types"
+    ],
+    ans: 1,
+    fb: "The Na⁺-K⁺ pump is an ANTIPORTER — Na⁺ is pumped OUT while K⁺ is pumped IN simultaneously, in opposite directions through the same protein. A symporter would move both in the same direction (like the Na⁺-glucose co-transporter, which brings both Na⁺ and glucose INTO the cell)."
+  },
+  {
+    q: "Which type of endocytosis is used by macrophages to engulf and destroy bacteria?",
+    opts: [
+      "Pinocytosis",
+      "Receptor-mediated endocytosis",
+      "Phagocytosis",
+      "Exocytosis"
+    ],
+    ans: 2,
+    fb: "Phagocytosis ('cell eating') is used by immune cells like macrophages and neutrophils to engulf large particles such as bacteria, dead cells, and debris. The engulfed material is enclosed in a phagosome, which fuses with a lysosome for digestion."
+  },
+  {
+    q: "What is pinocytosis, and how does it differ from receptor-mediated endocytosis?",
+    opts: [
+      "Pinocytosis uses specific receptors to bring in targeted molecules; receptor-mediated endocytosis is non-selective",
+      "Pinocytosis non-selectively takes in small droplets of extracellular fluid; receptor-mediated endocytosis specifically targets particular ligands via surface receptors",
+      "They are identical processes with different names",
+      "Pinocytosis releases substances out of the cell; receptor-mediated endocytosis brings them in"
+    ],
+    ans: 1,
+    fb: "Pinocytosis = 'cell drinking' — non-selective uptake of small fluid droplets and dissolved solutes. Receptor-mediated endocytosis is highly specific — receptors on the cell surface bind a particular ligand (like LDL or insulin), triggering clathrin-coated vesicle formation to bring in that specific molecule."
+  },
+  {
+    q: "Familial hypercholesterolaemia is caused by defective LDL receptors. Why does this lead to dangerously high blood cholesterol?",
+    opts: [
+      "The liver produces too much cholesterol in the absence of functional receptors",
+      "Without functional LDL receptors, cells cannot perform receptor-mediated endocytosis to remove LDL from the blood — it accumulates to dangerous levels",
+      "Defective receptors allow too much cholesterol into cells",
+      "LDL molecules become stuck in the plasma membrane"
+    ],
+    ans: 1,
+    fb: "Normally, cells remove LDL (which carries cholesterol) from the blood via receptor-mediated endocytosis. Without functional LDL receptors, this process fails — LDL remains in the bloodstream, deposits in artery walls, and causes premature cardiovascular disease. This was discovered by Brown and Goldstein (Nobel Prize 1985)."
+  },
+  {
+    q: "Receptor-mediated endocytosis involves which specific protein that coats the forming vesicle?",
+    opts: [
+      "Actin",
+      "Tubulin",
+      "Clathrin",
+      "Connexin"
+    ],
+    ans: 2,
+    fb: "Clathrin is the coat protein that assembles around the forming vesicle during receptor-mediated endocytosis. It concentrates the receptors and bound ligands into the vesicle and helps it pinch off from the plasma membrane. The resulting structure is called a clathrin-coated vesicle."
+  },
+  {
+    q: "Exocytosis is the reverse of endocytosis. What happens to the vesicle membrane after exocytosis?",
+    opts: [
+      "It is destroyed by lysosomal enzymes",
+      "It becomes part of the plasma membrane, slightly increasing its surface area",
+      "It returns to the Golgi apparatus immediately",
+      "It floats freely in the extracellular space"
+    ],
+    ans: 1,
+    fb: "During exocytosis, the vesicle fuses with the plasma membrane and its contents are released outside. The vesicle membrane becomes incorporated INTO the plasma membrane — the cell's surface area increases slightly. This offsets the membrane lost during endocytosis, maintaining overall membrane balance."
+  },
+  {
+    q: "A neuron releasing neurotransmitters into a synapse is an example of which process?",
+    opts: [
+      "Phagocytosis",
+      "Pinocytosis",
+      "Receptor-mediated endocytosis",
+      "Exocytosis"
+    ],
+    ans: 3,
+    fb: "Neurotransmitter release is a classic example of exocytosis. Synaptic vesicles (loaded with neurotransmitters) fuse with the presynaptic plasma membrane and release their contents into the synaptic cleft. This is how nerve cells communicate with each other and with muscle cells."
+  },
+  {
+    q: "How does the Na⁺-K⁺ pump support secondary active transport of glucose in the small intestine?",
+    opts: [
+      "The pump directly phosphorylates the glucose transporter",
+      "The pump maintains a low Na⁺ concentration inside intestinal cells, creating a Na⁺ gradient that drives Na⁺-glucose symporters to bring glucose in against its concentration gradient",
+      "The pump provides glucose directly from ATP hydrolysis",
+      "There is no connection between the Na⁺-K⁺ pump and glucose transport"
+    ],
+    ans: 1,
+    fb: "The Na⁺-K⁺ pump keeps Na⁺ low inside intestinal epithelial cells. This creates a strong Na⁺ gradient. Na⁺-glucose symporters harness this gradient — as Na⁺ flows in (down its gradient), it drags glucose in too, even against glucose's own concentration gradient. Without the pump, the gradient collapses and glucose absorption stops."
+  },
+  {
+    q: "A drug blocks ATP production in cells. Which transport processes would be DIRECTLY affected?",
+    opts: [
+      "Only simple diffusion",
+      "Only osmosis",
+      "All active transport (primary and secondary) and any process that depends on ATP-built gradients",
+      "Only facilitated diffusion through carrier proteins"
+    ],
+    ans: 2,
+    fb: "Primary active transport directly requires ATP. Secondary active transport depends on gradients built by primary active transport — so blocking ATP collapses these gradients too. Simple diffusion, facilitated diffusion, and osmosis don't use ATP and would continue (though ion gradients that affect them would eventually dissipate)."
+  },
+  {
+    q: "Which of the following correctly describes what happens to Na⁺ and K⁺ concentrations in a typical animal cell at rest (due to Na⁺-K⁺ pump activity)?",
+    opts: [
+      "Na⁺ is high inside, low outside; K⁺ is high outside, low inside",
+      "Both Na⁺ and K⁺ are equally distributed inside and outside",
+      "Na⁺ is low inside, high outside; K⁺ is high inside, low outside",
+      "Both Na⁺ and K⁺ are high inside the cell"
+    ],
+    ans: 2,
+    fb: "The Na⁺-K⁺ pump maintains: Na⁺ LOW inside (pumped out), HIGH outside — and K⁺ HIGH inside (pumped in), LOW outside. This creates the electrochemical gradients essential for nerve impulse conduction, muscle contraction, and secondary active transport."
+  },
+  {
+    q: "Amoeba feeds by surrounding smaller organisms with its cell membrane. Which process does this describe?",
+    opts: [
+      "Exocytosis",
+      "Pinocytosis",
+      "Phagocytosis",
+      "Receptor-mediated endocytosis"
+    ],
+    ans: 2,
+    fb: "This is phagocytosis — Amoeba extends pseudopodia around prey, engulfs it into a large phagosome, and digests it with lysosomal enzymes. Phagocytosis is how many unicellular organisms feed, and how animal immune cells destroy pathogens."
+  },
+  {
+    q: "Which statement about bulk transport is correct?",
+    opts: [
+      "Bulk transport requires no energy since it uses membrane vesicles",
+      "Bulk transport is used for ions and small molecules that cannot cross by diffusion",
+      "Bulk transport uses membrane-bound vesicles to move large molecules or bulk quantities of material into or out of cells, and requires energy",
+      "Bulk transport only occurs in plant cells"
+    ],
+    ans: 2,
+    fb: "Bulk transport (endocytosis and exocytosis) uses membrane vesicles to move large molecules or bulk quantities across the plasma membrane. It DOES require energy (ATP) — forming and fusing vesicles is an active process. It is used for large molecules (proteins, polysaccharides, pathogens) that cannot cross through transport proteins."
+  },
+];
+
+let quizScore    = 0;
+let quizAnswered = 0;
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  quizScore = 0; quizAnswered = 0;
+  document.getElementById('score-panel').style.display = 'none';
+
+  quizData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `
+      <div class="quiz-q">${idx+1}. ${item.q}</div>
+      <div class="quiz-options">
+        ${item.opts.map((opt, i) => `
+          <button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">
+            ${String.fromCharCode(65+i)}. ${opt}
+          </button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="qfb-${idx}"></div>`;
+    container.appendChild(card);
+  });
+}
+
+function checkAnswer(btn, qIdx, optIdx) {
+  const card    = btn.closest('.quiz-card');
+  const buttons = card.querySelectorAll('.quiz-opt');
+  const fb      = document.getElementById('qfb-' + qIdx);
+  const correct = quizData[qIdx].ans;
+  buttons.forEach(b => b.disabled = true);
+  if (optIdx === correct) {
+    btn.classList.add('correct');
+    fb.textContent = '✅ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show correct-fb';
+    quizScore++;
+  } else {
+    btn.classList.add('wrong');
+    buttons[correct].classList.add('correct');
+    fb.textContent = '❌ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show wrong-fb';
+  }
+  quizAnswered++;
+  if (quizAnswered === quizData.length) showScore();
+}
+
+function showScore() {
+  const panel = document.getElementById('score-panel');
+  panel.style.display = 'block';
+  document.getElementById('score-display').textContent = quizScore + '/' + quizData.length;
+  const pct = quizScore / quizData.length;
+  let msg;
+  if (pct >= .9) msg = '🌟 Outstanding! You have mastered active and bulk transport. AP exam ready!';
+  else if (pct >= .75) msg = '👍 Great work! Review the questions you missed and you\'ll be in great shape.';
+  else if (pct >= .6) msg = '📚 Good start — revisit Phases 2–4, then retake.';
+  else msg = '💪 Keep going! Go back through Active Transport and Bulk Transport phases, then retake.';
+  document.getElementById('score-msg').textContent = msg;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function retakeQuiz() { buildQuiz(); }
+
+// ═══════════════════════════════════════════════
+// FILL-IN-THE-BLANK
+// ═══════════════════════════════════════════════
+const fills = [
+  { q: "Active transport moves substances ___ their concentration gradient, requiring ATP.", ans: "against" },
+  { q: "The combined concentration gradient and electrical charge gradient is called the ___ gradient.", ans: "electrochemical" },
+  { q: "The Na⁺-K⁺ pump moves 3 Na⁺ ___ and 2 K⁺ into the cell per ATP used.", ans: "out" },
+  { q: "Because it moves unequal numbers of charges, the Na⁺-K⁺ pump is called an ___ pump.", ans: "electrogenic" },
+  { q: "Transport that uses an ion gradient built by primary active transport is called ___ active transport.", ans: "secondary" },
+  { q: "A transporter that moves two substances in the same direction is called a ___.", ans: "symporter" },
+  { q: "A transporter that moves two substances in opposite directions is called an ___.", ans: "antiporter" },
+  { q: "The form of endocytosis used by immune cells to engulf bacteria is called ___.", ans: "phagocytosis" },
+  { q: "Receptor-mediated endocytosis uses the coat protein ___ to form the vesicle.", ans: "clathrin" },
+  { q: "The process by which secretory vesicles fuse with the plasma membrane to release contents is called ___.", ans: "exocytosis" },
+];
+
+function buildFills() {
+  const container = document.getElementById('fill-container');
+  container.innerHTML = '';
+  fills.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-card';
+    div.innerHTML = `<div class="fill-q">${item.q.replace('___',
+      `<input class="blank-input" id="fill-${idx}" type="text" placeholder="?"
+       onkeydown="if(event.key==='Enter')checkFill(${idx})">`)}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function checkFill(idx) {
+  const input = document.getElementById('fill-' + idx);
+  const val   = input.value.trim().toLowerCase();
+  const correct = fills[idx].ans.toLowerCase();
+  if (val === correct || val.includes(correct) || correct.includes(val)) {
+    input.classList.remove('err'); input.classList.add('ok');
+    input.value = fills[idx].ans;
+  } else {
+    input.classList.remove('ok'); input.classList.add('err');
+  }
+}
+function checkAllFills() { fills.forEach((_, idx) => checkFill(idx)); }
+function resetFills() {
+  fills.forEach((_, idx) => {
+    const input = document.getElementById('fill-' + idx);
+    if (input) { input.value = ''; input.classList.remove('ok','err'); }
+  });
+}
+
+// ═══════════════════════════════════════════════
+// SUMMARY / SUBMIT
+// ═══════════════════════════════════════════════
+function fillSummary(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = text && text.trim();
+  el.textContent = val || 'Not answered';
+  el.classList.toggle('empty', !val);
+}
+
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const scoreEl = document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl ? scoreEl.textContent + ' correct' : 'Quiz not yet completed');
+  const predTA   = document.querySelector('#sec-0 textarea');
+  fillSummary('sum-pred', predTA ? predTA.value : '');
+  const pumpTA   = document.getElementById('pump-predict');
+  fillSummary('sum-pump-pred', pumpTA ? pumpTA.value : '');
+  const bulkTA   = document.getElementById('bulk-predict');
+  fillSummary('sum-bulk-pred', bulkTA ? bulkTA.value : '');
+  const refCards = document.querySelectorAll('#sec-6 .quiz-card textarea');
+  ['sum-r1','sum-r2','sum-r3','sum-r4'].forEach((id, i) => {
+    fillSummary(id, refCards[i] ? refCards[i].value : '');
+  });
+}
+
+function buildPlainText() {
+  const name   = document.getElementById('studentName').value.trim() || 'Student';
+  const date   = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const scoreEl= document.getElementById('score-display');
+  const score  = scoreEl ? scoreEl.textContent : 'not completed';
+  const predTA = document.querySelector('#sec-0 textarea');
+  const pumpTA = document.getElementById('pump-predict');
+  const bulkTA = document.getElementById('bulk-predict');
+  const refCards = document.querySelectorAll('#sec-6 .quiz-card textarea');
+  const refs = ['','','',''];
+  refCards.forEach((ta, i) => { refs[i] = ta.value.trim() || 'Not answered'; });
+  return [
+    'PLASMA MEMBRANE EXPLORER 🔬 (CH. 5 PART 2) — STUDENT SUBMISSION',
+    '======================================================',
+    'Student: ' + name, 'Date: ' + date,
+    'Lesson: AP Biology · OpenStax Chapter 5 (5.3 & 5.4) · Plasma Membrane Explorer Part 2',
+    '', '── QUIZ SCORE ──', score,
+    '', '── OPENING PREDICTION ──',
+    predTA ? (predTA.value.trim() || 'Not answered') : 'Not answered',
+    '', '── Na⁺-K⁺ PUMP LAB PREDICTION ──',
+    pumpTA ? (pumpTA.value.trim() || 'Not answered') : 'Not answered',
+    '', '── BULK TRANSPORT LAB PREDICTION ──',
+    bulkTA ? (bulkTA.value.trim() || 'Not answered') : 'Not answered',
+    '', '── REFLECTIONS ──',
+    'Q1 — Electrochemical Gradient:', refs[0],
+    'Q2 — Na⁺-K⁺ Pump 6-Step Cycle:', refs[1],
+    'Q3 — Primary vs. Secondary Active Transport:', refs[2],
+    'Q4 — Bulk Transport Types:', refs[3],
+    '', '======================================================',
+    '© 2026 Farvour Explorations · farvourexplorations.com',
+    'Submitted via Plasma Membrane Explorer Part 2 · Interactive Digital Lesson · AP Biology'
+  ].join('\n');
+}
+
+function copyResults() {
+  buildSummary();
+  navigator.clipboard.writeText(buildPlainText()).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Now paste into Google Classroom or your assignment.';
+    setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => {
+    document.getElementById('copyConfirm').textContent = '⚠️ Could not copy automatically — try selecting the text manually.';
+  });
+}
+
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  window.location.href = 'mailto:?subject=' +
+    encodeURIComponent('Plasma Membrane Explorer Part 2 — ' + name) +
+    '&body=' + encodeURIComponent(buildPlainText());
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+buildQuiz();
+buildFills();
+</script>
+</body>
+</html>
