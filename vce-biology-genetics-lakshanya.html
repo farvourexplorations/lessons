@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genetics Review — VCE Biology</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:    #1a3d2b;
+    --forest-mid:#2d6a4f;
+    --forest-lt: #40916c;
+    --coral:     #e8603c;
+    --coral-pale:#fdf0ec;
+    --mint:      #3aaf85;
+    --mint-pale: #e8f8f2;
+    --gold:      #c9962a;
+    --gold-pale: #fef9e7;
+    --lavender:  #7c6fcd;
+    --lav-pale:  #f0eefb;
+    --paper:     #fffef9;
+    --ink:       #1a2332;
+    --muted:     #7a8899;
+    --border:    #e0e4ea;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: linear-gradient(160deg, #0d2318 0%, #1a3d2b 45%, #2d6a4f 100%);
+    min-height: 100vh; font-family: 'Nunito', sans-serif; color: var(--ink); overflow-x: hidden;
+  }
+  body::before {
+    content:''; position:fixed; inset:0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%, rgba(144,238,144,.45) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 22% 38%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 41% 6%,  rgba(144,238,144,.35) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 60% 24%, rgba(255,255,255,.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 77% 9%,  rgba(144,238,144,.4)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 90% 33%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 33% 55%, rgba(144,238,144,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 70% 48%, rgba(255,255,255,.2)  0%, transparent 100%);
+    pointer-events:none; z-index:0;
+  }
+
+  /* ── HERO ── */
+  .hero { position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 2rem;color:white; }
+  .hero-badge { display:inline-block;background:var(--gold);color:var(--forest);font-family:'Fredoka One',cursive;font-size:.85rem;letter-spacing:.05em;padding:.35rem 1.2rem;border-radius:20px;margin-bottom:1.2rem;box-shadow:0 2px 12px rgba(201,150,42,.45); }
+  .hero h1 { font-family:'Fredoka One',cursive;font-size:clamp(2.2rem,6vw,3.8rem);line-height:1.1;margin-bottom:.8rem;text-shadow:0 2px 20px rgba(0,0,0,.35); }
+  .hero h1 .accent { color:var(--gold); }
+  .hero .intro { font-size:1rem;line-height:1.7;opacity:.88;max-width:620px;margin:0 auto 1.5rem; }
+  .student-tag { display:inline-block;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:20px;padding:.4rem 1.2rem;font-family:'DM Mono',monospace;font-size:.8rem;color:rgba(255,255,255,.9);margin-bottom:1.2rem; }
+
+  /* ── NAME BAR ── */
+  .name-bar { background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);border-radius:12px;padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;max-width:420px;margin:0 auto 1rem; }
+  .name-bar label { font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;font-family:'DM Mono',monospace; }
+  .name-bar input { flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.4rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:white;outline:none; }
+  .name-bar input::placeholder { color:rgba(255,255,255,.4);font-weight:400; }
+
+  /* ── PROGRESS ── */
+  .progress-wrap { display:flex;justify-content:center;gap:.4rem;flex-wrap:wrap;margin-bottom:.5rem; }
+  .prog-step { background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);border-radius:20px;padding:.3rem .85rem;font-size:.74rem;font-weight:700;color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace; }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.35); }
+  .prog-step.active { background:var(--gold);color:var(--forest);border-color:var(--gold);box-shadow:0 2px 12px rgba(201,150,42,.45); }
+
+  /* ── SHEET ── */
+  .sheet { position:relative;z-index:1;background:var(--paper);border-radius:24px 24px 0 0;margin-top:1.5rem;padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.3); }
+
+  /* ── SECTIONS ── */
+  .section { padding:3rem 2rem 0;max-width:820px;margin:0 auto;display:none; }
+  .section.active { display:block; }
+  .section-eyebrow { display:flex;align-items:center;gap:.6rem;margin-bottom:1rem; }
+  .eyebrow-num { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1rem;color:white;flex-shrink:0; }
+  .num-coral{background:var(--coral)}.num-mint{background:var(--mint)}.num-gold{background:var(--gold);color:var(--forest)}.num-lav{background:var(--lavender)}.num-forest{background:var(--forest-mid)}
+  .eyebrow-label { font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace; }
+  .section h2 { font-family:'Fredoka One',cursive;font-size:clamp(1.6rem,3.5vw,2.2rem);color:var(--forest);margin-bottom:.6rem;line-height:1.2; }
+  .section .lead { font-size:1rem;line-height:1.75;color:#3a4a5a;margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+
+  /* ── WONDER BOXES ── */
+  .wonder-box { background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);color:white;border-radius:16px;padding:1.8rem 2rem;margin-bottom:1.8rem;position:relative;overflow:hidden; }
+  .wonder-box::after { content:'🤔';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3; }
+  .wonder-box p { font-size:1rem;line-height:1.7;font-style:italic;opacity:.95;max-width:85%; }
+  .wonder-box strong { color:var(--gold);font-style:normal; }
+  .wonder-box.gold-box  { background:linear-gradient(135deg,#8a6a1a 0%,#b8860b 100%); }
+  .wonder-box.gold-box::after  { content:'⚡'; }
+  .wonder-box.mint-box  { background:linear-gradient(135deg,#1b7a58 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after  { content:'🌱'; }
+  .wonder-box.lav-box   { background:linear-gradient(135deg,#4a3a8a 0%,#6a5acd 100%); }
+  .wonder-box.lav-box::after   { content:'🧬'; }
+  .wonder-box.coral-box { background:linear-gradient(135deg,#a03020 0%,#c8502a 100%); }
+  .wonder-box.coral-box::after { content:'🔬'; }
+  .wonder-box.teal-box  { background:linear-gradient(135deg,#0d5c6e 0%,#0e8a8a 100%); }
+  .wonder-box.teal-box::after  { content:'🌳'; }
+
+  /* ── PREDICT / REFLECT ── */
+  .predict-box { background:var(--gold-pale);border:2px dashed var(--gold);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem; }
+  .predict-box textarea { width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:68px;background:white;color:var(--ink);outline:none;transition:border-color .2s; }
+  .predict-box textarea:focus { border-color:var(--gold); }
+  .reflect-box { background:var(--mint-pale);border:2px dashed var(--mint);border-radius:14px;padding:1.4rem 1.6rem;margin-top:1.5rem; }
+  .reflect-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#1b7a58;margin-bottom:.8rem; }
+  .reflect-box textarea { width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:68px;background:white;color:var(--ink);outline:none; }
+  .reflect-box textarea:focus { border-color:var(--mint); }
+
+  /* ── CHIP REVEALS ── */
+  .chip-row { display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem; }
+  .chip { padding:.45rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;border:2px solid transparent; }
+  .chip.coral  { background:var(--coral-pale);color:var(--coral);border-color:#f8c5b8; }
+  .chip.mint   { background:var(--mint-pale);color:var(--mint);border-color:#b8ebd8; }
+  .chip.gold   { background:var(--gold-pale);color:#8a6a1a;border-color:#f8e0a0; }
+  .chip.lav    { background:var(--lav-pale);color:var(--lavender);border-color:#d0caef; }
+  .chip.forest { background:#d4eadd;color:var(--forest-mid);border-color:#a8d5b8; }
+  .chip:hover  { transform:scale(1.05); }
+  .concept-reveal { background:var(--paper);border-left:4px solid var(--coral);border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;margin-top:.5rem;margin-bottom:.3rem;display:none;animation:fadeIn .3s ease; }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border   { border-color:var(--mint); }
+  .concept-reveal.gold-border   { border-color:var(--gold); }
+  .concept-reveal.lav-border    { border-color:var(--lavender); }
+  .concept-reveal.forest-border { border-color:var(--forest-mid); }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── INFO CARDS ── */
+  .card-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:.8rem;margin:1rem 0 1.5rem; }
+  .info-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.1rem;text-align:center;cursor:pointer;transition:all .2s; }
+  .info-card:hover,.info-card.active { border-color:var(--forest-mid);transform:translateY(-2px);box-shadow:0 4px 14px rgba(45,106,79,.18); }
+  .info-card.active { background:#d4eadd; }
+  .info-card .ic-icon { font-size:2rem;margin-bottom:.4rem; }
+  .info-card .ic-title { font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--forest);margin-bottom:.2rem; }
+  .info-card .ic-sub { font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em; }
+  .info-panel { background:#d4eadd;border-left:4px solid var(--forest-mid);border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;display:none;animation:fadeIn .3s ease;margin-bottom:1rem; }
+  .info-panel.show { display:block; }
+  .info-panel h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.5rem; }
+  .info-panel p { font-size:.88rem;line-height:1.7;color:#2a3a2a; }
+  .info-panel .eg { background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;font-size:.82rem;font-family:'DM Mono',monospace;color:var(--ink);border:1.5px solid rgba(45,106,79,.2); }
+
+  /* ── VOCAB TABLE ── */
+  .vocab-table { width:100%;border-collapse:collapse;margin:1rem 0 1.5rem; }
+  .vocab-table th { background:var(--forest);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;padding:.7rem 1rem;text-align:left; }
+  .vocab-table td { padding:.65rem 1rem;font-size:.85rem;line-height:1.5;border-bottom:1px solid var(--border); }
+  .vocab-table tr:nth-child(even) td { background:#f5f7fa; }
+  .vocab-table tr:hover td { background:#d4eadd;transition:background .15s; }
+  .vocab-table td:first-child { font-weight:800;color:var(--forest-mid); }
+
+  /* ── MATCHING ── */
+  .match-grid { display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1rem 0; }
+  .match-item { padding:.75rem 1rem;border-radius:10px;border:2px solid var(--border);cursor:pointer;font-size:.82rem;font-weight:700;transition:all .2s;background:white;text-align:center;color:var(--ink);line-height:1.35; }
+  .match-item:hover    { border-color:var(--forest-mid);background:#f0f7f3; }
+  .match-item.selected { border-color:var(--lavender);background:var(--lav-pale);color:var(--lavender); }
+  .match-item.matched  { border-color:var(--mint);background:var(--mint-pale);color:#1b7a58;cursor:default; }
+  .match-item.wrong    { border-color:var(--coral);background:var(--coral-pale);color:var(--coral);animation:shake .3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+  /* ── ACCORDION STEPS ── */
+  .accord-list { display:flex;flex-direction:column;gap:.6rem;margin:1rem 0; }
+  .accord-item { background:white;border:2px solid var(--border);border-radius:12px;padding:.9rem 1.1rem;cursor:pointer;transition:all .2s;display:flex;align-items:flex-start;gap:.8rem; }
+  .accord-item:hover { border-color:var(--forest-mid);background:#f0f7f3; }
+  .accord-item.open  { border-color:var(--mint);background:var(--mint-pale); }
+  .accord-badge { width:28px;height:28px;border-radius:50%;background:var(--forest);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.1rem; }
+  .accord-content .ac-title { font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--forest); }
+  .accord-content .ac-body  { font-size:.85rem;line-height:1.7;color:var(--ink);margin-top:.5rem;display:none; }
+  .accord-item.open .ac-body { display:block; }
+  .accord-content .ac-vcaa { font-size:.75rem;font-family:'DM Mono',monospace;color:var(--muted);margin-top:.4rem; }
+
+  /* ── FLOW DIAGRAM (stages / process nodes) ── */
+  .stem-flow { display:flex;flex-wrap:wrap;gap:.8rem;margin:1rem 0;align-items:center;justify-content:center; }
+  .stem-node { background:white;border:2px solid var(--border);border-radius:12px;padding:.9rem 1.1rem;text-align:center;min-width:120px;transition:all .2s;cursor:pointer; }
+  .stem-node:hover,.stem-node.active { border-color:var(--lavender);background:var(--lav-pale);transform:translateY(-2px); }
+  .stem-node .sn-icon { font-size:1.6rem;margin-bottom:.3rem; }
+  .stem-node .sn-label { font-family:'Fredoka One',cursive;font-size:.82rem;color:var(--forest); }
+  .stem-node .sn-sub { font-family:'DM Mono',monospace;font-size:.6rem;color:var(--muted);text-transform:uppercase; }
+  .stem-detail { background:var(--lav-pale);border-left:4px solid var(--lavender);border-radius:0 12px 12px 0;padding:1.1rem 1.3rem;display:none;animation:fadeIn .3s ease;margin-bottom:1rem;font-size:.86rem;line-height:1.7; }
+  .stem-detail.show { display:block; }
+  .stem-detail h5 { font-family:'Fredoka One',cursive;font-size:1rem;color:var(--lavender);margin-bottom:.4rem; }
+  .stem-arrow { font-size:1.8rem;color:var(--muted); }
+
+  /* ── TABBED PANELS ── */
+  .wb-tabs { display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap; }
+  .wb-tab { padding:.45rem 1.1rem;border-radius:20px;border:2px solid var(--border);background:white;cursor:pointer;font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--muted);transition:all .2s; }
+  .wb-tab:hover { border-color:var(--forest-mid); }
+  .wb-tab.active { background:var(--forest);color:white;border-color:var(--forest); }
+  .wb-panel { display:none;animation:fadeIn .3s ease; }
+  .wb-panel.show { display:block; }
+
+  /* ── PUNNETT GRID ── */
+  .punnett-wrap { overflow-x:auto;margin:1rem 0 1.5rem; }
+  .punnett { border-collapse:collapse;margin:0 auto;background:white; }
+  .punnett th,.punnett td { border:2px solid var(--border);padding:.7rem 1rem;text-align:center;font-size:.9rem;min-width:56px; }
+  .punnett th { background:var(--lav-pale);color:var(--lavender);font-family:'Fredoka One',cursive;font-size:.95rem; }
+  .punnett td { font-family:'DM Mono',monospace;font-weight:700;color:var(--forest); }
+  .punnett td.hom-dom { background:var(--mint-pale); }
+  .punnett td.het     { background:var(--gold-pale); }
+  .punnett td.hom-rec  { background:var(--coral-pale); }
+
+  /* ── FILL BLANK ── */
+  .blank-input { border:none;border-bottom:2.5px solid var(--forest-mid);background:transparent;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;color:var(--forest);width:90px;text-align:center;outline:none;padding:0 4px;transition:border-color .2s; }
+  .blank-input:focus { border-color:var(--coral); }
+  .blank-input.ok  { border-color:var(--mint);color:var(--mint); }
+  .blank-input.err { border-color:var(--coral);color:var(--coral); }
+  .fill-q { font-size:.95rem;line-height:2.1;color:var(--ink);margin-bottom:.8rem; }
+  .fill-check-btn { margin-top:.4rem; }
+  .fill-feedback { font-size:.82rem;font-family:'DM Mono',monospace;margin-top:.5rem;min-height:1.2rem; }
+
+  /* ── PEDIGREE SYMBOL KEY ── */
+  .pedigree-key { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.7rem;margin:1rem 0 1.5rem; }
+  .ped-key-item { background:white;border:2px solid var(--border);border-radius:12px;padding:.8rem 1rem;display:flex;align-items:center;gap:.7rem;font-size:.8rem;color:var(--ink); }
+  .ped-shape { flex-shrink:0;width:26px;height:26px;border:2.5px solid var(--forest); }
+  .ped-shape.circle { border-radius:50%; }
+  .ped-shape.filled { background:var(--forest); }
+
+  /* ── QUIZ ── */
+  .quiz-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .quiz-q { font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:1rem;line-height:1.5; }
+  .quiz-options { display:flex;flex-direction:column;gap:.5rem; }
+  .quiz-opt { padding:.6rem 1rem;border-radius:8px;border:2px solid var(--border);background:white;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:600;text-align:left;transition:all .15s;color:var(--ink); }
+  .quiz-opt:hover:not(:disabled) { border-color:var(--forest-mid);background:#f0f7f3; }
+  .quiz-opt.correct { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .quiz-opt.wrong   { background:var(--coral-pale);border-color:var(--coral);color:#a83020; }
+  .quiz-opt:disabled { cursor:default; }
+  .quiz-feedback { margin-top:.8rem;font-size:.85rem;line-height:1.6;padding:.7rem 1rem;border-radius:8px;display:none;animation:fadeIn .3s ease; }
+  .quiz-feedback.show { display:block; }
+  .quiz-feedback.correct-fb { background:var(--mint-pale);color:#1b7a58;border-left:3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background:var(--coral-pale);color:#a83020;border-left:3px solid var(--coral); }
+
+  /* ── SCORE ── */
+  .score-panel { background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);color:white;border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem; }
+  .score-panel .score-num { font-family:'Fredoka One',cursive;font-size:3.5rem;line-height:1;color:var(--gold); }
+  .score-panel p { opacity:.88;margin-top:.5rem;font-size:1rem; }
+  .score-panel h3 { font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:.3rem; }
+
+  /* ── BUTTONS ── */
+  .btn { border:none;border-radius:10px;padding:.65rem 1.3rem;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;transition:all .15s; }
+  .btn:hover  { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  .btn:active { transform:translateY(0); }
+  .btn:disabled { opacity:.4;cursor:default;transform:none; }
+  .btn-coral  { background:var(--coral);color:white; }
+  .btn-mint   { background:var(--mint);color:white; }
+  .btn-gold   { background:var(--gold);color:var(--forest); }
+  .btn-ghost  { background:#f0f2f5;color:var(--muted); }
+  .btn-forest { background:var(--forest);color:white; }
+
+  /* ── NAV ── */
+  .nav-row { display:flex;justify-content:space-between;align-items:center;padding:2.5rem 2rem 0;max-width:820px;margin:0 auto; }
+
+  /* ── DIVIDER ── */
+  .divider { height:1px;background:var(--border);margin:2rem 0; }
+
+  /* ── SUMMARY ── */
+  .summary-section { background:white;border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--forest);margin-bottom:.8rem; }
+  .summary-answer { background:#f5f7fa;border-radius:8px;padding:.7rem 1rem;font-size:.85rem;line-height:1.6;color:var(--ink);margin-bottom:.5rem;font-style:italic;border-left:3px solid var(--lavender);min-height:2rem; }
+  .summary-answer.empty { color:var(--muted);font-style:normal;border-left-color:var(--border); }
+  .sum-label { font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.6rem;text-transform:uppercase;letter-spacing:.06em; }
+  .share-buttons { display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center; }
+  .share-btn { border:none;border-radius:12px;padding:.85rem 1.6rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem; }
+  .share-btn:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background:var(--mint);color:white; }
+  .share-btn.email { background:var(--lavender);color:white; }
+  .share-btn.print { background:var(--forest);color:white; }
+  .copy-confirm { text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--mint);min-height:1.2rem;margin-top:.6rem; }
+
+  /* ── CONGRATS ── */
+  .congrats-panel { background:linear-gradient(135deg,var(--forest) 0%,#1b7a58 100%);color:white;border-radius:20px;padding:2.5rem 2rem;text-align:center;margin-top:2rem; }
+  .congrats-panel h2 { font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:.6rem; }
+  .congrats-panel p { opacity:.9;line-height:1.7;max-width:480px;margin:0 auto .8rem; }
+  .summary-chips { display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:1rem; }
+  .summary-chip { background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:20px;padding:.3rem .9rem;font-size:.78rem;font-weight:700;font-family:'DM Mono',monospace; }
+
+  @media(max-width:560px){
+    .hero{padding:2.5rem 1.2rem 1.5rem} .section{padding:2rem 1.2rem 0} .nav-row{padding:2rem 1.2rem 0}
+    .match-grid{grid-template-columns:1fr} .punnett th,.punnett td{padding:.5rem .6rem;min-width:42px;font-size:.78rem}
+  }
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm,.progress-wrap,.name-bar{display:none!important}
+    .sheet{box-shadow:none;border-radius:0} .section{display:none!important} #sec-9{display:block!important}
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ HERO ══ -->
+<div class="hero">
+  <div class="hero-badge">🧬 VCE Biology · Genetics · Personalised Review</div>
+  <div class="student-tag">👋 Hey Lakshanya — this one's for you!</div>
+  <h1>Genetics — Chapters <span class="accent">7 &amp; 8</span> Review</h1>
+  <p class="intro">A focused review of genes and chromosomes, meiosis, genotypes &amp; phenotypes, nature vs nurture, monohybrid and dihybrid crosses, and reading pedigree charts — ready for your upcoming test.</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" value="Lakshanya" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <span class="prog-step active" onclick="goTo(0)">① Wonder</span>
+    <span class="prog-step"        onclick="goTo(1)">② 7A Genes &amp; Chromosomes</span>
+    <span class="prog-step"        onclick="goTo(2)">③ 7B Meiosis</span>
+    <span class="prog-step"        onclick="goTo(3)">④ 7C Genotypes &amp; Phenotypes</span>
+    <span class="prog-step"        onclick="goTo(4)">⑤ 7D Nature vs Nurture</span>
+    <span class="prog-step"        onclick="goTo(5)">⑥ 8A Monohybrid Crosses</span>
+    <span class="prog-step"        onclick="goTo(6)">⑦ 8B Dihybrid Crosses</span>
+    <span class="prog-step"        onclick="goTo(7)">⑧ 8C Pedigree Charts</span>
+    <span class="prog-step"        onclick="goTo(8)">📝 Exam Practice</span>
+    <span class="prog-step"        onclick="goTo(9)">📤 Submit</span>
+  </div>
+</div>
+
+<div class="sheet">
+
+<!-- ══ SEC 0: WONDER ══ -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">Warm-Up · Wonder</span></div>
+  <h2>🧬 Why Don't You Look Exactly Like Either Parent?</h2>
+  <p class="lead">You share DNA with both of your parents, yet you're not identical to either of them — and if you have siblings, you're not identical to them either (unless you're an identical twin). Every cell in your body carries the same genome, but somewhere between your parents' cells and yours, new combinations were shuffled into existence.</p>
+  <div class="wonder-box">
+    <p>Your parents each carry two copies of every gene, but they only pass on <strong>one copy</strong> to you — and which copy gets passed on is partly down to chance. Add in the shuffling that happens during <strong>meiosis</strong>, and every egg or sperm cell your parents ever produced was genetically unique. <strong>That's why siblings — other than identical twins — are never genetically identical, even with the same two parents.</strong></p>
+  </div>
+  <div class="predict-box">
+    <h4>✏️ Lakshanya's Starting Point</h4>
+    <textarea id="ta-wonder" placeholder="What do you already remember about genes, alleles and chromosomes? What's the difference between a genotype and a phenotype? And have you covered meiosis before — what do you remember about it?"></textarea>
+  </div>
+  <div class="wonder-box gold-box">
+    <p>This review covers <strong>Chapter 7</strong>: genes and chromosomes, meiosis, genotypes and phenotypes, and nature vs nurture — plus <strong>Chapter 8</strong>: monohybrid crosses, dihybrid crosses, and using pedigree charts. It finishes with exam-style practice questions.</p>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-ghost" disabled>← Back</button>
+    <button class="btn btn-coral" onclick="goTo(1)">Next: 7A Genes &amp; Chromosomes →</button>
+  </div>
+</div>
+
+<!-- ══ SEC 1: 7A GENES AND CHROMOSOMES ══ -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">2</div><span class="eyebrow-label">7A · Genes &amp; Chromosomes</span></div>
+  <h2>🧬 Genes, Alleles &amp; Chromosomes</h2>
+  <p class="lead">Every instruction for building and running your body is stored as <strong>DNA</strong>, organised into <strong>genes</strong>, which are packaged into <strong>chromosomes</strong>. Getting these levels of organisation straight — and knowing the difference between a gene and an allele — is the foundation for everything else in this chapter.</p>
+
+  <div class="wonder-box lav-box">
+    <p>Humans have <strong>46 chromosomes</strong> arranged as <strong>23 homologous pairs</strong> — one member of each pair from your mother, one from your father. 22 pairs are <strong>autosomes</strong> (non-sex chromosomes) and one pair is the <strong>sex chromosomes</strong> (XX in females, XY in males). A <strong>gene</strong> is a section of DNA coding for a particular characteristic; an <strong>allele</strong> is one version of that gene.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin:.5rem 0 .8rem">📐 Levels of Organisation</h3>
+  <table class="vocab-table">
+    <tr><th>Term</th><th>Definition</th></tr>
+    <tr><td>DNA</td><td>The molecule that stores genetic information, coiled into a double helix</td></tr>
+    <tr><td>Gene</td><td>A section of DNA that codes for a particular characteristic or protein</td></tr>
+    <tr><td>Allele</td><td>A different version of the same gene (e.g. brown-eye allele vs blue-eye allele)</td></tr>
+    <tr><td>Locus</td><td>The specific position of a gene on a chromosome</td></tr>
+    <tr><td>Chromosome</td><td>A tightly coiled structure of DNA and protein carrying many genes</td></tr>
+    <tr><td>Homologous pair</td><td>Two chromosomes (one from each parent) carrying the same genes at the same loci</td></tr>
+    <tr><td>Genome</td><td>The complete set of genetic material of an organism</td></tr>
+    <tr><td>Karyotype</td><td>An image showing an individual's full set of chromosomes, arranged in pairs by size</td></tr>
+  </table>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin:.5rem 0 .8rem">🔍 Tap Each Term to Reveal More</h3>
+  <div class="card-grid">
+    <div class="info-card" onclick="showCard('gene')"><div class="ic-icon">🧬</div><div class="ic-title">Gene</div><div class="ic-sub">Unit of heredity</div></div>
+    <div class="info-card" onclick="showCard('allele')"><div class="ic-icon">🔀</div><div class="ic-title">Allele</div><div class="ic-sub">Version of a gene</div></div>
+    <div class="info-card" onclick="showCard('chromosome')"><div class="ic-icon">🧵</div><div class="ic-title">Chromosome</div><div class="ic-sub">Coiled DNA</div></div>
+    <div class="info-card" onclick="showCard('homologous')"><div class="ic-icon">👯</div><div class="ic-title">Homologous Pair</div><div class="ic-sub">Matching chromosomes</div></div>
+    <div class="info-card" onclick="showCard('autosomes')"><div class="ic-icon">🔢</div><div class="ic-title">Autosomes</div><div class="ic-sub">22 non-sex pairs</div></div>
+    <div class="info-card" onclick="showCard('sexchrom')"><div class="ic-icon">⚥</div><div class="ic-title">Sex Chromosomes</div><div class="ic-sub">XX or XY</div></div>
+    <div class="info-card" onclick="showCard('genome')"><div class="ic-icon">📚</div><div class="ic-title">Genome</div><div class="ic-sub">Full genetic set</div></div>
+    <div class="info-card" onclick="showCard('karyotype')"><div class="ic-icon">🖼️</div><div class="ic-title">Karyotype</div><div class="ic-sub">Chromosome image</div></div>
+  </div>
+  <div id="panel-gene"        class="info-panel"><h4>🧬 Gene</h4><p>A section of DNA that codes for a particular characteristic, usually by providing the instructions to build a specific protein. Humans have roughly 20,000 genes. Each gene occupies a specific <strong>locus</strong> (position) on a chromosome.</p><div class="eg">📌 VCE: Don't confuse a gene with an allele — the gene is the "category" (e.g. eye colour), the allele is the specific "version" (e.g. brown or blue).</div></div>
+  <div id="panel-allele"      class="info-panel"><h4>🔀 Allele</h4><p>One of two or more alternative forms of the same gene, occupying the same locus on homologous chromosomes. Because you have two copies of every autosomal gene (one from each parent), you have two alleles for every autosomal gene — which may be the same or different.</p><div class="eg">📌 Example: the gene for pea plant height has a "tall" allele (T) and a "short" allele (t).</div></div>
+  <div id="panel-chromosome"  class="info-panel"><h4>🧵 Chromosome</h4><p>A single, very long molecule of DNA tightly coiled around proteins (histones), carrying hundreds to thousands of genes. Chromosomes are only visible as distinct rod-like structures under a microscope during cell division — the rest of the time DNA exists as loosely packed chromatin.</p><div class="eg">📌 Humans: 46 chromosomes = 23 pairs. Different species have different chromosome numbers — this is not linked to complexity.</div></div>
+  <div id="panel-homologous"  class="info-panel"><h4>👯 Homologous Pair</h4><p>Two chromosomes — one inherited from each parent — that are the same size, have the same banding pattern, and carry genes for the same characteristics at the same loci (though the alleles may differ). One homologous pair is not identical, since each member may carry different alleles.</p><div class="eg">📌 VCE: Homologous ≠ identical. They match in structure and gene content, not necessarily in allele content.</div></div>
+  <div id="panel-autosomes"   class="info-panel"><h4>🔢 Autosomes</h4><p>The 22 pairs of chromosomes (44 chromosomes total in humans) that are not involved in determining biological sex. They carry the vast majority of your genes — for everything from blood type to enzyme production.</p><div class="eg">📌 Autosomal inheritance patterns (like most monohybrid crosses) don't depend on whether the offspring is male or female.</div></div>
+  <div id="panel-sexchrom"    class="info-panel"><h4>⚥ Sex Chromosomes</h4><p>The 23rd pair, which determines biological sex. Females typically have two X chromosomes (XX); males typically have one X and one Y (XY). The Y chromosome is much smaller than the X and carries far fewer genes — this is why X-linked conditions affect males and females differently.</p><div class="eg">📌 Since males have only one X, any recessive allele on their single X will be expressed — they can't be "carriers" the way females can.</div></div>
+  <div id="panel-genome"      class="info-panel"><h4>📚 Genome</h4><p>The complete set of genetic material (all the DNA) belonging to an organism, including every gene on every chromosome. The Human Genome Project (completed 2003) mapped the full sequence of human DNA.</p><div class="eg">📌 Every cell in your body (with a nucleus) contains a full copy of your genome — but different cells switch different genes on and off.</div></div>
+  <div id="panel-karyotype"   class="info-panel"><h4>🖼️ Karyotype</h4><p>A photograph or image of an individual's chromosomes, arranged in matching homologous pairs by size, from largest (pair 1) to smallest (pair 22), with the sex chromosomes shown last. Karyotyping is used to detect chromosomal abnormalities — such as an extra chromosome 21 (trisomy 21, Down syndrome).</p><div class="eg">📌 A karyotype shows chromosome number and structure — but not the specific alleles an individual carries.</div></div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.5rem">🎯 Quick Match — Term to Definition</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem">Tap a term, then its matching definition.</p>
+  <div class="match-grid" id="matchGrid1">
+    <div class="match-item" data-pair="a" data-side="term" onclick="matchClick(this,'m1')">Gene</div>
+    <div class="match-item" data-pair="b" data-side="def"  onclick="matchClick(this,'m1')">One version of a gene</div>
+    <div class="match-item" data-pair="c" data-side="term" onclick="matchClick(this,'m1')">Homologous pair</div>
+    <div class="match-item" data-pair="d" data-side="def"  onclick="matchClick(this,'m1')">Position of a gene on a chromosome</div>
+    <div class="match-item" data-pair="a" data-side="def"  onclick="matchClick(this,'m1')">Section of DNA coding for a characteristic</div>
+    <div class="match-item" data-pair="e" data-side="term" onclick="matchClick(this,'m1')">Karyotype</div>
+    <div class="match-item" data-pair="b" data-side="term" onclick="matchClick(this,'m1')">Allele</div>
+    <div class="match-item" data-pair="c" data-side="def"  onclick="matchClick(this,'m1')">Matching chromosomes, one from each parent</div>
+    <div class="match-item" data-pair="d" data-side="term" onclick="matchClick(this,'m1')">Locus</div>
+    <div class="match-item" data-pair="e" data-side="def"  onclick="matchClick(this,'m1')">Image of an individual's full chromosome set</div>
+  </div>
+  <div style="margin-top:.8rem">
+    <button class="btn btn-ghost" onclick="resetMatch('m1','mscore1')">↺ Reset</button>
+    <span id="mscore1" style="margin-left:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted)"></span>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Genes vs Alleles</h4>
+    <textarea id="ta-genes" placeholder="Explain, in your own words, the difference between a gene and an allele — using the example of a gene for flower colour with a 'purple' allele and a 'white' allele. Then explain why you have two alleles for almost every gene, but only one copy of each gene on your Y chromosome (if you have one)."></textarea>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(0)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(2)">Next: 7B Meiosis →</button>
+  </div>
+</div>
+
+<!-- ══ SEC 2: 7B MEIOSIS ══ -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow"><div class="eyebrow-num num-gold">3</div><span class="eyebrow-label">7B · Meiosis</span></div>
+  <h2>🔬 Meiosis — Making Gametes</h2>
+  <p class="lead"><strong>Meiosis</strong> is a special type of cell division that produces gametes (sperm and egg cells) with <strong>half</strong> the number of chromosomes of a normal body cell — and it's the source of almost all genetic variation between siblings.</p>
+
+  <div class="wonder-box mint-box">
+    <p>Body cells (produced by mitosis) are <strong>diploid (2n)</strong> — they have chromosomes in pairs. Gametes must be <strong>haploid (n)</strong> — just one of each pair — so that when a sperm (n) fertilises an egg (n), the resulting zygote is diploid (2n) again. Meiosis is how the chromosome number is halved, and it involves <strong>two</strong> divisions, not one.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin:.5rem 0 .8rem">🔄 The Stages of Meiosis — Tap Each</h3>
+  <div class="stem-flow">
+    <div class="stem-node" onclick="showStem('interphase')"><div class="sn-icon">➕</div><div class="sn-label">Interphase</div><div class="sn-sub">DNA replicates</div></div>
+    <div class="stem-arrow">→</div>
+    <div class="stem-node" onclick="showStem('meiosis1')"><div class="sn-icon">↔️</div><div class="sn-label">Meiosis I</div><div class="sn-sub">Homologs separate</div></div>
+    <div class="stem-arrow">→</div>
+    <div class="stem-node" onclick="showStem('meiosis2')"><div class="sn-icon">✂️</div><div class="sn-label">Meiosis II</div><div class="sn-sub">Sisters separate</div></div>
+    <div class="stem-arrow">→</div>
+    <div class="stem-node" onclick="showStem('gametes')"><div class="sn-icon">🧫</div><div class="sn-label">Gametes</div><div class="sn-sub">4 haploid cells</div></div>
+  </div>
+
+  <div id="stem-interphase" class="stem-detail"><h5>➕ Interphase (Before Meiosis Begins)</h5>The cell grows and each chromosome is <strong>replicated</strong>, so it now consists of two identical <strong>sister chromatids</strong> joined at a centromere. The cell still has 46 chromosomes (23 pairs) at this point — just each one is doubled.</div>
+  <div id="stem-meiosis1" class="stem-detail"><h5>↔️ Meiosis I — The Reduction Division</h5>Homologous chromosomes pair up (<strong>synapsis</strong>) and <strong>crossing over</strong> can occur — sections of DNA are swapped between homologs, creating new allele combinations. The homologous pairs then line up randomly at the equator (<strong>independent assortment</strong>) before being pulled to opposite poles. The cell divides into two cells, each now <strong>haploid</strong> but with chromosomes still doubled (sister chromatids attached).</div>
+  <div id="stem-meiosis2" class="stem-detail"><h5>✂️ Meiosis II — Like Mitosis, But Haploid</h5>Very similar to mitosis: the sister chromatids of each chromosome are pulled apart and separated into new cells. No further reduction in chromosome number happens here — this step just separates the sister chromatids that were created back in interphase.</div>
+  <div id="stem-gametes" class="stem-detail"><h5>🧫 Result — Four Genetically Unique Haploid Gametes</h5>Meiosis produces <strong>four haploid daughter cells</strong>, each genetically different from the others and from the parent cell, thanks to crossing over and independent assortment. In males this produces four functional sperm; in females it typically produces one functional egg and smaller polar bodies that don't develop further.</div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.6rem">🧫 Mitosis vs Meiosis</h3>
+  <table class="vocab-table">
+    <tr><th>Feature</th><th>Mitosis</th><th>Meiosis</th></tr>
+    <tr><td>Purpose</td><td>Growth &amp; repair — makes body cells</td><td>Makes gametes for sexual reproduction</td></tr>
+    <tr><td>Number of divisions</td><td>One</td><td>Two (Meiosis I and II)</td></tr>
+    <tr><td>Daughter cells</td><td>2 diploid (2n), genetically identical</td><td>4 haploid (n), genetically unique</td></tr>
+    <tr><td>Genetic variation</td><td>None — clones of parent cell</td><td>Crossing over + independent assortment</td></tr>
+    <tr><td>Where it occurs</td><td>Throughout the body</td><td>Only in reproductive organs (testes/ovaries)</td></tr>
+  </table>
+
+  <div class="chip-row">
+    <span class="chip lav"    onclick="revealChip('crossingover')">Crossing Over</span>
+    <span class="chip mint"   onclick="revealChip('assortment')">Independent Assortment</span>
+    <span class="chip gold"   onclick="revealChip('nondisjunction')">Non-Disjunction</span>
+  </div>
+  <div id="chip-crossingover"   class="concept-reveal lav-border"><strong>Crossing Over</strong> — During prophase I, homologous chromosomes pair up closely and exchange sections of DNA at points called <strong>chiasmata</strong>. This creates chromosomes with new combinations of alleles that neither parent chromosome had — a major source of genetic variation.</div>
+  <div id="chip-assortment"     class="concept-reveal mint-border"><strong>Independent Assortment</strong> — During metaphase I, each homologous pair lines up at the equator independently of the others, so the combination of maternal and paternal chromosomes that ends up in each gamete is random. With 23 pairs, this alone creates over 8 million possible chromosome combinations per gamete.</div>
+  <div id="chip-nondisjunction" class="concept-reveal gold-border"><strong>Non-Disjunction</strong> — An error where homologous chromosomes (or sister chromatids) fail to separate properly during meiosis, producing gametes with an abnormal chromosome number. If a gamete with an extra chromosome 21 is fertilised, the result is <strong>trisomy 21 (Down syndrome)</strong>.</div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Where Does Variation Come From?</h4>
+    <textarea id="ta-meiosis" placeholder="Explain TWO different mechanisms during meiosis that create genetic variation between gametes. Then explain why mitosis does NOT create genetic variation, even though it also involves cell division."></textarea>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(3)">Next: 7C Genotypes &amp; Phenotypes →</button>
+  </div>
+</div>
+
+<!-- ══ SEC 3: 7C GENOTYPES AND PHENOTYPES ══ -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">4</div><span class="eyebrow-label">7C · Genotypes &amp; Phenotypes</span></div>
+  <h2>🧪 Genotype, Phenotype &amp; How Alleles Interact</h2>
+  <p class="lead">Two individuals can carry different combinations of alleles (a different <strong>genotype</strong>) yet look the same (the same <strong>phenotype</strong>) — or vice versa. Understanding dominant, recessive, homozygous and heterozygous is essential before you can predict any cross.</p>
+
+  <div class="chip-row">
+    <span class="chip coral"  onclick="revealChip('genotype')">Genotype</span>
+    <span class="chip mint"   onclick="revealChip('phenotype')">Phenotype</span>
+    <span class="chip gold"   onclick="revealChip('dominant')">Dominant Allele</span>
+    <span class="chip lav"    onclick="revealChip('recessive')">Recessive Allele</span>
+    <span class="chip forest" onclick="revealChip('homohetero')">Homozygous &amp; Heterozygous</span>
+    <span class="chip coral"  onclick="revealChip('incomplete')">Incomplete Dominance</span>
+    <span class="chip mint"   onclick="revealChip('codominance')">Codominance</span>
+  </div>
+  <div id="chip-genotype"    class="concept-reveal coral"><strong>Genotype</strong> — The actual combination of alleles an individual carries for a gene, written using letters (e.g. <em>Bb</em>, <em>TT</em>, <em>tt</em>). The genotype is the genetic "recipe," but it isn't necessarily visible.</div>
+  <div id="chip-phenotype"   class="concept-reveal mint-border"><strong>Phenotype</strong> — The observable physical, biochemical or behavioural characteristic that results from a genotype (and often the environment too), e.g. brown eyes, blood type A, tallness in pea plants.</div>
+  <div id="chip-dominant"    class="concept-reveal gold-border"><strong>Dominant Allele</strong> — An allele that is expressed in the phenotype whenever it is present, even with only one copy (heterozygous). Written with a capital letter, e.g. <em>T</em> for tall.</div>
+  <div id="chip-recessive"   class="concept-reveal lav-border"><strong>Recessive Allele</strong> — An allele that is only expressed in the phenotype when <strong>two</strong> copies are present (homozygous recessive) — its effect is "masked" by a dominant allele if one is present. Written with a lowercase letter, e.g. <em>t</em> for short.</div>
+  <div id="chip-homohetero"  class="concept-reveal forest-border"><strong>Homozygous</strong> — Both alleles for a gene are the same (e.g. <em>TT</em> or <em>tt</em>). <strong>Heterozygous</strong> — the two alleles are different (e.g. <em>Tt</em>) — sometimes called a "carrier" for a recessive condition.</div>
+  <div id="chip-incomplete"  class="concept-reveal coral"><strong>Incomplete Dominance</strong> — Neither allele is fully dominant; the heterozygous phenotype is a <strong>blend</strong> of both. E.g. red (<em>RR</em>) × white (<em>R′R′</em>) snapdragons → pink (<em>RR′</em>) offspring.</div>
+  <div id="chip-codominance" class="concept-reveal mint-border"><strong>Codominance</strong> — Both alleles are fully expressed at the same time, with neither masking the other, so <strong>both</strong> phenotypes show simultaneously. E.g. the <em>I<sup>A</sup></em> and <em>I<sup>B</sup></em> alleles in the ABO blood group system — a person with both alleles has blood type AB, showing both A and B antigens.</div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.6rem">🔤 Genotype Notation — Worked Example</h3>
+  <table class="vocab-table">
+    <tr><th>Genotype</th><th>Type</th><th>Phenotype (using T = tall, t = short)</th></tr>
+    <tr><td>TT</td><td>Homozygous dominant</td><td>Tall</td></tr>
+    <tr><td>Tt</td><td>Heterozygous</td><td>Tall (T masks t)</td></tr>
+    <tr><td>tt</td><td>Homozygous recessive</td><td>Short</td></tr>
+  </table>
+
+  <div class="predict-box">
+    <h4>✏️ Apply It — Genotype to Phenotype</h4>
+    <textarea id="ta-genotype" placeholder="In pea plants, purple flower colour (P) is dominant to white (p). A plant has the genotype Pp. What is its phenotype, and why? Then explain: could two purple-flowered plants ever produce a white-flowered offspring? Under what genotype conditions?"></textarea>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(4)">Next: 7D Nature vs Nurture →</button>
+  </div>
+</div>
+
+<!-- ══ SEC 4: 7D NATURE VS NURTURE ══ -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">5</div><span class="eyebrow-label">7D · Nature vs Nurture</span></div>
+  <h2>🌱 Nature vs Nurture — Genes &amp; Environment</h2>
+  <p class="lead">Not every characteristic is determined by genes alone. Most traits result from an <strong>interaction</strong> between an organism's genotype (nature) and the environment it experiences (nurture) — and this is a common source of exam confusion, so it's worth being precise.</p>
+
+  <div class="wonder-box teal-box">
+    <p>Identical twins share 100% of their DNA. If a characteristic were purely genetic, identical twins would always match perfectly for it. But studies consistently show identical twins can differ in things like height, weight, intelligence test scores, and disease risk — evidence that the <strong>environment</strong> (diet, illness, upbringing, chance) also shapes the phenotype, even when the genotype is identical.</p>
+  </div>
+
+  <div class="chip-row">
+    <span class="chip coral"  onclick="revealChip('nature')">Nature</span>
+    <span class="chip mint"   onclick="revealChip('nurture')">Nurture</span>
+    <span class="chip lav"    onclick="revealChip('epigenetics')">Epigenetics</span>
+    <span class="chip gold"   onclick="revealChip('twinstudies')">Twin Studies</span>
+  </div>
+  <div id="chip-nature"       class="concept-reveal coral"><strong>Nature</strong> — The genetic contribution to a trait; the influence of the genotype an individual inherited from their parents. Traits controlled almost entirely by genes (e.g. blood type, eye colour in simple models) are described as largely due to nature.</div>
+  <div id="chip-nurture"      class="concept-reveal mint-border"><strong>Nurture</strong> — The environmental contribution to a trait — including diet, exposure to toxins, sunlight, education, illness and social experiences. Traits like body weight, skin tone (from sun exposure), muscle development and academic performance are strongly shaped by nurture.</div>
+  <div id="chip-epigenetics"  class="concept-reveal lav-border"><strong>Epigenetics</strong> — Changes in <strong>gene expression</strong> (whether a gene is switched on or off) caused by the environment, without any change to the underlying DNA sequence. Epigenetic changes can sometimes be triggered by diet, stress or chemical exposure, and in some cases can even be passed on to offspring.</div>
+  <div id="chip-twinstudies"  class="concept-reveal gold-border"><strong>Twin Studies</strong> — Comparing identical twins (100% shared DNA) to fraternal twins (~50% shared DNA, like regular siblings), especially twins raised apart, lets researchers estimate how much of a trait's variation is due to genes versus environment. If identical twins are consistently more similar than fraternal twins for a trait, that trait has a stronger genetic component.</div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Identical Twins, Different Traits</h4>
+    <textarea id="ta-nature" placeholder="Identical twins raised in different households can end up with noticeably different heights, weights, and personalities, despite having identical DNA. Using the concepts of genotype, phenotype, environment and epigenetics, explain how this is biologically possible."></textarea>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(3)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(5)">Next: 8A Monohybrid Crosses →</button>
+  </div>
+</div>
+
+<!-- ══ SEC 5: 8A MONOHYBRID CROSSES ══ -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">6</div><span class="eyebrow-label">8A · Monohybrid Crosses</span></div>
+  <h2>🟣 Monohybrid Crosses &amp; Punnett Squares</h2>
+  <p class="lead">A <strong>monohybrid cross</strong> tracks the inheritance of a <strong>single gene</strong> between two parents, using a <strong>Punnett square</strong> to predict the possible genotypes and phenotypes of the offspring.</p>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin:.5rem 0 .8rem">📋 How to Set Up a Monohybrid Cross</h3>
+  <div class="accord-list">
+    <div class="accord-item" onclick="toggleAccord(this)">
+      <div class="accord-badge">1</div>
+      <div class="accord-content">
+        <div class="ac-title">Define the Alleles</div>
+        <div class="ac-body">Choose a letter for the gene, using the capital for the dominant allele and lowercase for the recessive allele. E.g. <strong>T</strong> = tall (dominant), <strong>t</strong> = short (recessive).
+          <div class="ac-vcaa">VCE: Always state your allele key explicitly in an exam answer — markers need to see you've defined which letter means what.</div>
+        </div>
+      </div>
+    </div>
+    <div class="accord-item" onclick="toggleAccord(this)">
+      <div class="accord-badge">2</div>
+      <div class="accord-content">
+        <div class="ac-title">Write the Parental Genotypes</div>
+        <div class="ac-body">Determine or use the given genotype of each parent, e.g. <strong>Tt</strong> (tall, heterozygous) × <strong>Tt</strong> (tall, heterozygous). Each parent contributes one allele per gene to each gamete.</div>
+      </div>
+    </div>
+    <div class="accord-item" onclick="toggleAccord(this)">
+      <div class="accord-badge">3</div>
+      <div class="accord-content">
+        <div class="ac-title">Set Up the Punnett Square</div>
+        <div class="ac-body">Write one parent's possible gametes (alleles) across the top, and the other parent's possible gametes down the side. Fill in each box by combining the row and column allele — this gives every possible offspring genotype.</div>
+      </div>
+    </div>
+    <div class="accord-item" onclick="toggleAccord(this)">
+      <div class="accord-badge">4</div>
+      <div class="accord-content">
+        <div class="ac-title">Read Off the Ratios</div>
+        <div class="ac-body">Count the genotypes in the grid to get the <strong>genotypic ratio</strong>, then apply dominance rules to get the <strong>phenotypic ratio</strong>. For Tt × Tt, the classic result is a 1:2:1 genotypic ratio (TT:Tt:tt) and a 3:1 phenotypic ratio (tall:short).
+          <div class="ac-vcaa">VCE: Always give BOTH the genotypic and phenotypic ratio unless the question asks for only one — they are frequently marked separately.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin:1.2rem 0 .6rem">🔲 Worked Example: Tt × Tt</h3>
+  <div class="punnett-wrap">
+    <table class="punnett">
+      <tr><th></th><th>T</th><th>t</th></tr>
+      <tr><th>T</th><td class="hom-dom">TT</td><td class="het">Tt</td></tr>
+      <tr><th>t</th><td class="het">Tt</td><td class="hom-rec">tt</td></tr>
+    </table>
+  </div>
+  <p style="font-size:.85rem;color:#3a4a5a;line-height:1.7;margin-bottom:1.5rem">Genotypic ratio: <strong>1 TT : 2 Tt : 1 tt</strong>. Since T is dominant, both TT and Tt are tall — giving a phenotypic ratio of <strong>3 tall : 1 short</strong>.</p>
+
+  <div class="predict-box">
+    <h4>✏️ Practice Cross</h4>
+    <textarea id="ta-monohybrid" placeholder="In guinea pigs, black fur (B) is dominant to white fur (b). A heterozygous black guinea pig (Bb) is crossed with a white guinea pig (bb). Draw the Punnett square (describe it in words), then state the genotypic ratio and phenotypic ratio of the offspring."></textarea>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(4)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(6)">Next: 8B Dihybrid Crosses →</button>
+  </div>
+</div>
+
+<!-- ══ SEC 6: 8B DIHYBRID CROSSES ══ -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow"><div class="eyebrow-num num-gold">7</div><span class="eyebrow-label">8B · Dihybrid Crosses</span></div>
+  <h2>🔵 Dihybrid Crosses — Two Genes at Once</h2>
+  <p class="lead">A <strong>dihybrid cross</strong> tracks the inheritance of <strong>two different genes</strong> at the same time — for example, seed shape and seed colour in pea plants. It relies on Mendel's <strong>Law of Independent Assortment</strong>: alleles for different genes are inherited independently of one another (assuming the genes are on different chromosomes, or far apart on the same one).</p>
+
+  <div class="wonder-box gold-box">
+    <p>Because each parent is heterozygous for two genes (e.g. <strong>RrYy</strong>), each parent can produce <strong>four</strong> different types of gametes (RY, Ry, rY, ry) rather than just two. This means a dihybrid Punnett square needs a <strong>4 × 4 grid</strong> — 16 boxes — instead of the 2 × 2 grid used for a monohybrid cross.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin:.5rem 0 .8rem">📋 Setting Up a Dihybrid Cross</h3>
+  <div class="accord-list">
+    <div class="accord-item" onclick="toggleAccord(this)">
+      <div class="accord-badge">1</div>
+      <div class="accord-content">
+        <div class="ac-title">Define Both Genes' Alleles</div>
+        <div class="ac-body">E.g. <strong>R</strong> = round seed (dominant), <strong>r</strong> = wrinkled seed (recessive); <strong>Y</strong> = yellow seed (dominant), <strong>y</strong> = green seed (recessive).</div>
+      </div>
+    </div>
+    <div class="accord-item" onclick="toggleAccord(this)">
+      <div class="accord-badge">2</div>
+      <div class="accord-content">
+        <div class="ac-title">List All Possible Gametes for Each Parent</div>
+        <div class="ac-body">For a doubly heterozygous parent <strong>RrYy</strong>, the four possible gametes are <strong>RY, Ry, rY, ry</strong> — one allele from each gene, in every combination.
+          <div class="ac-vcaa">VCE: Listing gametes in this order (using the FOIL-style pattern) reduces careless errors when filling in the grid.</div>
+        </div>
+      </div>
+    </div>
+    <div class="accord-item" onclick="toggleAccord(this)">
+      <div class="accord-badge">3</div>
+      <div class="accord-content">
+        <div class="ac-title">Build the 4×4 Grid</div>
+        <div class="ac-body">Write one parent's four gamete types across the top, the other's down the side, and fill in all 16 boxes by combining each row and column gamete.</div>
+      </div>
+    </div>
+    <div class="accord-item" onclick="toggleAccord(this)">
+      <div class="accord-badge">4</div>
+      <div class="accord-content">
+        <div class="ac-title">Read Off the Classic 9:3:3:1 Ratio</div>
+        <div class="ac-body">For a cross between two double heterozygotes (RrYy × RrYy), the phenotypic ratio is always <strong>9 round-yellow : 3 round-green : 3 wrinkled-yellow : 1 wrinkled-green</strong> — as long as the two genes assort independently.
+          <div class="ac-vcaa">VCE: The 9:3:3:1 ratio is worth memorising as the signature result of a dihybrid cross between two double heterozygotes — recognising it quickly saves time in exams.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin:1.2rem 0 .6rem">🔢 Breaking Down the 9:3:3:1 Ratio</h3>
+  <table class="vocab-table">
+    <tr><th>Phenotype</th><th>Fraction</th><th>Out of 16</th></tr>
+    <tr><td>Round, Yellow</td><td>9/16</td><td>9</td></tr>
+    <tr><td>Round, Green</td><td>3/16</td><td>3</td></tr>
+    <tr><td>Wrinkled, Yellow</td><td>3/16</td><td>3</td></tr>
+    <tr><td>Wrinkled, Green</td><td>1/16</td><td>1</td></tr>
+  </table>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Why 9:3:3:1?</h4>
+    <textarea id="ta-dihybrid" placeholder="Explain why a cross between two RrYy individuals produces offspring in a 9:3:3:1 ratio, referring to the law of independent assortment. Then explain what condition must be true about the two genes' chromosome locations for this ratio to hold exactly."></textarea>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(5)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(7)">Next: 8C Pedigree Charts →</button>
+  </div>
+</div>
+
+<!-- ══ SEC 7: 8C PEDIGREE CHARTS ══ -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">8</div><span class="eyebrow-label">8C · Pedigree Charts</span></div>
+  <h2>🌳 Reading Pedigree Charts</h2>
+  <p class="lead">A <strong>pedigree chart</strong> is a diagram showing how a trait or genetic condition is inherited across generations of a family. Being able to read one — and identify the inheritance pattern it shows — is a core VCE Biology skill.</p>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin:.5rem 0 .8rem">🔑 Pedigree Symbol Key</h3>
+  <div class="pedigree-key">
+    <div class="ped-key-item"><span class="ped-shape" style="border-radius:2px"></span> Square = male</div>
+    <div class="ped-key-item"><span class="ped-shape circle"></span> Circle = female</div>
+    <div class="ped-key-item"><span class="ped-shape filled" style="border-radius:2px"></span> Filled = affected individual</div>
+    <div class="ped-key-item"><span class="ped-shape" style="border-radius:2px;background:linear-gradient(to right, var(--forest) 50%, white 50%)"></span> Half-filled = carrier</div>
+    <div class="ped-key-item">━ Horizontal line = mating pair</div>
+    <div class="ped-key-item">┃ Vertical line = parent-to-offspring</div>
+  </div>
+
+  <div class="wb-tabs">
+    <div class="wb-tab active" onclick="showWB('autodom',this)">Autosomal Dominant</div>
+    <div class="wb-tab"        onclick="showWB('autorec',this)">Autosomal Recessive</div>
+    <div class="wb-tab"        onclick="showWB('xrec',this)">X-Linked Recessive</div>
+    <div class="wb-tab"        onclick="showWB('xdom',this)">X-Linked Dominant</div>
+  </div>
+
+  <div id="wb-autodom" class="wb-panel show">
+    <div class="wonder-box lav-box" style="margin-bottom:1rem">
+      <p><strong>Look for: the trait appears in every generation, and an affected individual usually has at least one affected parent.</strong></p>
+    </div>
+    <table class="vocab-table">
+      <tr><th>Clue</th><th>What It Tells You</th></tr>
+      <tr><td>Appears every generation</td><td>Consistent with dominant inheritance — doesn't skip generations</td></tr>
+      <tr><td>Affected × unaffected → ~50% affected offspring</td><td>Typical if the affected parent is heterozygous (Aa × aa)</td></tr>
+      <tr><td>Two unaffected parents never have an affected child</td><td>Confirms dominant, not recessive, pattern</td></tr>
+      <tr><td>Affects males and females equally</td><td>Confirms it's autosomal, not X-linked</td></tr>
+    </table>
+  </div>
+
+  <div id="wb-autorec" class="wb-panel">
+    <div class="wonder-box mint-box" style="margin-bottom:1rem">
+      <p><strong>Look for: the trait can "skip" generations, and two unaffected parents can have an affected child.</strong></p>
+    </div>
+    <table class="vocab-table">
+      <tr><th>Clue</th><th>What It Tells You</th></tr>
+      <tr><td>Two unaffected parents → affected child</td><td>Both parents must be heterozygous carriers (Aa × Aa)</td></tr>
+      <tr><td>Trait skips generations</td><td>Classic sign of a recessive condition — carriers show no symptoms</td></tr>
+      <tr><td>Affects males and females equally</td><td>Confirms it's autosomal, not X-linked</td></tr>
+      <tr><td>More common with consanguinity (related parents)</td><td>Related parents are more likely to carry the same rare recessive allele</td></tr>
+    </table>
+  </div>
+
+  <div id="wb-xrec" class="wb-panel">
+    <div class="wonder-box teal-box" style="margin-bottom:1rem">
+      <p><strong>Look for: affected males are far more common than affected females, and the condition often passes from an unaffected mother to her sons.</strong></p>
+    </div>
+    <table class="vocab-table">
+      <tr><th>Clue</th><th>What It Tells You</th></tr>
+      <tr><td>Mostly affects males</td><td>Males have only one X, so one recessive allele is enough to be affected</td></tr>
+      <tr><td>Affected father → all daughters are carriers, no sons affected</td><td>Fathers pass their Y (not X) to sons — sons can't inherit their father's X-linked allele</td></tr>
+      <tr><td>Carrier mother × unaffected father → ~50% of sons affected</td><td>Sons get their only X from their mother</td></tr>
+      <tr><td>Examples</td><td>Haemophilia, red-green colour blindness</td></tr>
+    </table>
+  </div>
+
+  <div id="wb-xdom" class="wb-panel">
+    <div class="wonder-box coral-box" style="margin-bottom:1rem">
+      <p><strong>Look for: affected fathers pass the trait to ALL of their daughters but NONE of their sons.</strong></p>
+    </div>
+    <table class="vocab-table">
+      <tr><th>Clue</th><th>What It Tells You</th></tr>
+      <tr><td>Affected father → all daughters affected, no sons affected</td><td>Signature clue distinguishing X-linked dominant from autosomal dominant</td></tr>
+      <tr><td>Affects females more often than males overall</td><td>Females have two chances (two X chromosomes) to inherit the allele</td></tr>
+      <tr><td>Trait does not skip generations</td><td>Consistent with dominant inheritance</td></tr>
+      <tr><td>Rarer pattern than the other three</td><td>Fewer real-world conditions follow this pattern (e.g. some forms of vitamin D-resistant rickets)</td></tr>
+    </table>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Interpreting a Pedigree</h4>
+    <textarea id="ta-pedigree" placeholder="A pedigree shows two unaffected parents with an affected daughter and an affected son. The condition does not appear in either grandparent's generation. What inheritance pattern is this most consistent with, and why? What genotype must each parent have?"></textarea>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(6)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(8)">Next: Exam Practice →</button>
+  </div>
+</div>
+
+<!-- ══ SEC 8: QUIZ ══ -->
+<div class="section" id="sec-8">
+  <div class="section-eyebrow"><div class="eyebrow-num num-forest">9</div><span class="eyebrow-label">Chapter 7 &amp; 8 · Exam Practice</span></div>
+  <h2>📝 VCE-Style Questions — Genetics Review</h2>
+  <p class="lead">Questions covering everything from today's session, written in VCE Biology exam style — with instant feedback.</p>
+  <div id="quiz-container"></div>
+  <div id="score-panel" class="score-panel" style="display:none">
+    <h3>Quiz Complete! 🎉</h3>
+    <div class="score-num" id="score-display">0/16</div>
+    <p id="score-msg"></p>
+    <button class="btn btn-gold" onclick="retakeQuiz()" style="margin-top:1rem">↺ Retake Quiz</button>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(7)">← Back</button>
+    <button class="btn btn-coral" onclick="goTo(9)">📤 Submit My Work →</button>
+  </div>
+</div>
+
+<!-- ══ SEC 9: SUBMIT ══ -->
+<div class="section" id="sec-9">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">10</div><span class="eyebrow-label">Your Completed Work</span></div>
+  <h2>📤 Ready to Submit</h2>
+  <p class="lead">Great work, Lakshanya! Here's a summary of everything you covered today.</p>
+
+  <div class="summary-section" style="background:var(--forest);color:white;border-color:var(--forest)">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem">STUDENT</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.4rem" id="summaryName">—</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem">LESSON</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem">VCE Biology · Genetics — Chapters 7 &amp; 8 Review 🧬</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6" id="summaryDate"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section"><h3>📝 Quiz Score</h3><div class="summary-answer" id="sum-quiz"></div></div>
+  <div class="summary-section">
+    <h3>✏️ All Written Responses</h3>
+    <div class="sum-label">Opening — What Do You Remember?</div><div class="summary-answer" id="sum-wonder"></div>
+    <div class="sum-label">7A — Genes vs Alleles</div><div class="summary-answer" id="sum-genes"></div>
+    <div class="sum-label">7B — Where Does Variation Come From?</div><div class="summary-answer" id="sum-meiosis"></div>
+    <div class="sum-label">7C — Genotype to Phenotype</div><div class="summary-answer" id="sum-genotype"></div>
+    <div class="sum-label">7D — Identical Twins, Different Traits</div><div class="summary-answer" id="sum-nature"></div>
+    <div class="sum-label">8A — Monohybrid Practice Cross</div><div class="summary-answer" id="sum-monohybrid"></div>
+    <div class="sum-label">8B — Why 9:3:3:1?</div><div class="summary-answer" id="sum-dihybrid"></div>
+    <div class="sum-label">8C — Interpreting a Pedigree</div><div class="summary-answer" id="sum-pedigree"></div>
+  </div>
+
+  <div class="congrats-panel">
+    <h2>🧬 Genetics Review Complete!</h2>
+    <p>You've worked through every topic in Chapters 7 &amp; 8 — genes, chromosomes, meiosis, genotypes, phenotypes, nature vs nurture, monohybrid and dihybrid crosses, and pedigree charts. Good luck in your test!</p>
+    <p style="font-size:.85rem;opacity:.75">VCE tip: For crosses, always state your allele key, show your Punnett square working, and give both the genotypic AND phenotypic ratio unless told otherwise.</p>
+    <div class="summary-chips">
+      <span class="summary-chip">Genes &amp; Alleles ✓</span>
+      <span class="summary-chip">Chromosomes ✓</span>
+      <span class="summary-chip">Meiosis ✓</span>
+      <span class="summary-chip">Genotype &amp; Phenotype ✓</span>
+      <span class="summary-chip">Nature vs Nurture ✓</span>
+      <span class="summary-chip">Monohybrid Crosses ✓</span>
+      <span class="summary-chip">Dihybrid Crosses ✓</span>
+      <span class="summary-chip">Pedigree Charts ✓</span>
+    </div>
+  </div>
+
+  <div class="share-buttons">
+    <button class="share-btn copy"  onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.6rem">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2">
+      <strong>📋 Copy</strong> — Copies all your answers. Paste into Google Classroom.<br>
+      <strong>📧 Email</strong> — Opens email pre-filled. Add teacher address and send.<br>
+      <strong>🖨️ Print / PDF</strong> — Save as PDF for your records.
+    </p>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(8)">← Back</button>
+    <button class="btn btn-forest" onclick="goTo(0)">↺ Start Over</button>
+  </div>
+</div>
+
+</div><!-- /sheet -->
+
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+
+<script>
+'use strict';
+
+// ══ NAVIGATION ══
+const TOTAL = 10;
+let cur = 0;
+function goTo(n) {
+  document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===n));
+  document.querySelectorAll('.prog-step').forEach((s,i) => {
+    s.classList.remove('active','done');
+    if(i===n) s.classList.add('active');
+    if(i<n)   s.classList.add('done');
+  });
+  cur = n;
+  if(n===9) buildSummary();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ══ CHIP REVEALS ══
+function revealChip(id) {
+  const all = document.querySelectorAll('.concept-reveal');
+  const t   = document.getElementById('chip-'+id);
+  const was = t && t.classList.contains('show');
+  all.forEach(c=>c.classList.remove('show'));
+  if(!was && t) t.classList.add('show');
+}
+
+// ══ INFO CARDS ══
+function showCard(id) {
+  const all = document.querySelectorAll('.info-panel');
+  const allC= document.querySelectorAll('.info-card');
+  const t   = document.getElementById('panel-'+id);
+  const was = t && t.classList.contains('show');
+  all.forEach(p=>p.classList.remove('show'));
+  allC.forEach(c=>c.classList.remove('active'));
+  if(!was && t){ t.classList.add('show'); event.currentTarget.classList.add('active'); }
+}
+
+// ══ MATCHING ══
+const matchState = {};
+function matchClick(el, gid) {
+  if(!matchState[gid]) matchState[gid]={sel:null,score:0};
+  const st = matchState[gid];
+  if(el.classList.contains('matched')) return;
+  if(!st.sel) {
+    el.classList.add('selected'); st.sel=el;
+  } else if(st.sel===el) {
+    el.classList.remove('selected'); st.sel=null;
+  } else {
+    const pA=st.sel.dataset.pair, pB=el.dataset.pair;
+    const sA=st.sel.dataset.side, sB=el.dataset.side;
+    if(pA===pB && sA!==sB) {
+      st.sel.classList.remove('selected'); st.sel.classList.add('matched');
+      el.classList.add('matched'); st.score++;
+      const sc=document.getElementById('mscore'+gid.slice(1));
+      if(sc) sc.textContent=st.score+'/5 matched';
+    } else {
+      const a=st.sel,b=el;
+      a.classList.remove('selected'); a.classList.add('wrong'); b.classList.add('wrong');
+      setTimeout(()=>{ a.classList.remove('wrong'); b.classList.remove('wrong'); },650);
+    }
+    st.sel=null;
+  }
+}
+function resetMatch(gid,scoreId){
+  matchState[gid]={sel:null,score:0};
+  document.querySelectorAll('#'+gid+' .match-item').forEach(el=>el.classList.remove('selected','matched','wrong'));
+  const s=document.getElementById(scoreId); if(s) s.textContent='';
+}
+
+// ══ ACCORDION ══
+function toggleAccord(el) {
+  const was = el.classList.contains('open');
+  el.closest('.accord-list').querySelectorAll('.accord-item').forEach(s=>s.classList.remove('open'));
+  if(!was) el.classList.add('open');
+}
+
+// ══ FLOW DIAGRAM (meiosis stages) ══
+function showStem(id) {
+  const all = document.querySelectorAll('.stem-detail');
+  const allN= document.querySelectorAll('.stem-node');
+  const t   = document.getElementById('stem-'+id);
+  const was = t && t.classList.contains('show');
+  all.forEach(p=>p.classList.remove('show'));
+  allN.forEach(c=>c.classList.remove('active'));
+  if(!was && t){ t.classList.add('show'); event.currentTarget.classList.add('active'); }
+}
+
+// ══ TABS (pedigree patterns) ══
+function showWB(id, tab) {
+  document.querySelectorAll('.wb-panel').forEach(p=>p.classList.remove('show'));
+  document.querySelectorAll('.wb-tab').forEach(t=>t.classList.remove('active'));
+  const p = document.getElementById('wb-'+id);
+  if(p) p.classList.add('show');
+  tab.classList.add('active');
+}
+
+// ══ QUIZ DATA ══
+const quizData = [
+  { q:'What is the difference between a gene and an allele?',
+    opts:['A gene and an allele are the same thing','A gene is a section of DNA coding for a characteristic; an allele is one version of that gene','A gene is found only on autosomes; an allele is found only on sex chromosomes','A gene is visible under a microscope; an allele is not'],
+    ans:1, fb:'A GENE is a section of DNA that codes for a particular characteristic (e.g. the gene for flower colour). An ALLELE is a specific version of that gene (e.g. the "purple" allele or the "white" allele). You have two alleles for every autosomal gene — one from each parent — which may be the same or different.' },
+  { q:'How many chromosomes do normal human body cells contain, and how are they arranged?',
+    opts:['23 chromosomes, all unpaired','46 chromosomes, arranged as 23 homologous pairs','92 chromosomes, arranged as 46 pairs','44 chromosomes, all autosomes'],
+    ans:1, fb:'Human body cells are diploid, containing 46 chromosomes arranged as 23 HOMOLOGOUS PAIRS — one member of each pair inherited from each parent. 22 pairs are autosomes; 1 pair is the sex chromosomes (XX or XY).' },
+  { q:'Why must gametes (sperm and egg cells) be haploid rather than diploid?',
+    opts:['So that fertilisation restores the normal diploid chromosome number in the zygote','Because gametes cannot survive with a full set of chromosomes','So that gametes can move faster','Because meiosis always produces diploid cells'],
+    ans:0, fb:'Gametes must be HAPLOID (n) so that when two gametes fuse during fertilisation, the resulting zygote has the correct DIPLOID (2n) chromosome number. If gametes were diploid, the chromosome number would double every generation.' },
+  { q:'During which stage of meiosis does crossing over typically occur?',
+    opts:['Meiosis II, anaphase','Interphase, before DNA replication','Meiosis I, prophase I (as homologous chromosomes pair up)','Meiosis II, telophase'],
+    ans:2, fb:'CROSSING OVER occurs during PROPHASE I of Meiosis I, when homologous chromosomes pair closely together (synapsis) and exchange segments of DNA at points called chiasmata. This creates new allele combinations not present in either parent chromosome — a major source of genetic variation.' },
+  { q:'A cell undergoes meiosis. How many daughter cells are produced, and what is their chromosome number relative to the parent cell?',
+    opts:['2 daughter cells, each diploid','4 daughter cells, each haploid (half the parent\'s chromosome number)','1 daughter cell, haploid','4 daughter cells, each diploid'],
+    ans:1, fb:'Meiosis produces FOUR haploid daughter cells from one diploid parent cell, via two divisions (Meiosis I and Meiosis II). Each daughter cell has half the chromosome number of the parent cell, and each is genetically unique due to crossing over and independent assortment.' },
+  { q:'A pea plant has the genotype Tt for height, where T (tall) is dominant to t (short). What is its phenotype?',
+    opts:['Short, because it carries the t allele','Tall, because the dominant T allele masks the recessive t allele','Both tall and short at different times','Cannot be determined without more information'],
+    ans:1, fb:'A HETEROZYGOUS genotype (Tt) shows the DOMINANT phenotype, because the dominant allele (T) masks the effect of the recessive allele (t). Only a homozygous recessive genotype (tt) shows the recessive phenotype.' },
+  { q:'Two heterozygous tall pea plants (Tt × Tt) are crossed. What is the expected phenotypic ratio of the offspring?',
+    opts:['1 tall : 1 short','1 tall : 3 short','3 tall : 1 short','All offspring will be tall'],
+    ans:2, fb:'A Tt × Tt cross gives a genotypic ratio of 1 TT : 2 Tt : 1 tt. Since T is dominant, TT and Tt are both tall, giving a PHENOTYPIC ratio of 3 TALL : 1 SHORT — the classic monohybrid cross result.' },
+  { q:'A heterozygous tall pea plant (Tt) is crossed with a homozygous recessive short plant (tt). What phenotypic ratio is expected in the offspring?',
+    opts:['3 tall : 1 short','1 tall : 1 short','All offspring tall','All offspring short'],
+    ans:1, fb:'This is a TEST CROSS: Tt × tt produces offspring in a 1:1 genotypic ratio (1 Tt : 1 tt), giving a 1:1 PHENOTYPIC ratio (1 tall : 1 short). Test crosses like this are used to determine whether an individual showing the dominant phenotype is homozygous or heterozygous.' },
+  { q:'In a dihybrid cross between two double heterozygotes (RrYy × RrYy), how many different gamete types can each parent produce, and what is the resulting classic phenotypic ratio?',
+    opts:['2 gamete types; 3:1 ratio','4 gamete types; 9:3:3:1 ratio','4 gamete types; 1:1:1:1 ratio','8 gamete types; 9:3:3:1 ratio'],
+    ans:1, fb:'A doubly heterozygous parent (RrYy) can produce FOUR gamete types (RY, Ry, rY, ry) due to independent assortment. Crossing two such parents (RrYy × RrYy) produces the classic 9:3:3:1 PHENOTYPIC ratio across the four possible phenotype combinations.' },
+  { q:'What condition is required for Mendel\'s Law of Independent Assortment to apply exactly, producing the classic 9:3:3:1 dihybrid ratio?',
+    opts:['The two genes must be on the same chromosome, close together','The two genes must be on different chromosomes (or far apart on the same chromosome)','Both genes must show incomplete dominance','Both parents must be homozygous'],
+    ans:1, fb:'Independent assortment applies when the two genes are located on DIFFERENT chromosomes (or far enough apart on the same chromosome that crossing over effectively separates them). If genes are close together on the same chromosome, they tend to be inherited together (linked genes) and the 9:3:3:1 ratio breaks down.' },
+  { q:'On a pedigree chart, what does a fully filled-in (shaded) square or circle usually represent?',
+    opts:['A deceased individual','An individual affected by the trait or condition being studied','An individual who is a carrier but unaffected','A set of twins'],
+    ans:1, fb:'A FILLED (shaded) symbol on a pedigree chart represents an individual who is AFFECTED by (shows the phenotype for) the trait or condition being studied. An unfilled symbol represents an unaffected individual. Squares represent males, circles represent females.' },
+  { q:'A pedigree shows two unaffected parents who have an affected child. What does this tell you about the inheritance pattern?',
+    opts:['The condition must be dominant','The condition must be recessive, and both parents are heterozygous carriers','The condition must be X-linked dominant','This combination is impossible'],
+    ans:1, fb:'If TWO UNAFFECTED parents produce an AFFECTED child, the condition must be RECESSIVE (the trait "skipped" the parents\' visible phenotype). Both parents must be heterozygous CARRIERS, each contributing a recessive allele to the affected child.' },
+  { q:'A pedigree shows an affected father whose sons are never affected, but all his daughters are affected. What inheritance pattern does this best match?',
+    opts:['Autosomal recessive','Autosomal dominant','X-linked dominant','X-linked recessive'],
+    ans:2, fb:'An affected father passing the trait to ALL daughters and NO sons is the signature pattern of X-LINKED DOMINANT inheritance. Fathers pass their single X chromosome (carrying the dominant allele) to every daughter, but pass their Y chromosome (not X) to every son, so sons cannot inherit an X-linked trait from their father.' },
+  { q:'Why are recessive X-linked conditions (like haemophilia or red-green colour blindness) much more common in males than females?',
+    opts:['Males have two X chromosomes, doubling their risk','Males have only one X chromosome, so a single recessive allele is enough to cause the condition; females need two copies','Females cannot inherit X-linked conditions at all','Y chromosomes carry the disease-causing gene'],
+    ans:1, fb:'Males (XY) have only ONE X chromosome, so a single copy of a recessive X-linked allele is enough to cause the condition (there\'s no second X to mask it). Females (XX) need TWO copies (homozygous recessive) to be affected — with only one copy they are unaffected carriers. This is why males are affected far more often.' },
+  { q:'Identical twins share 100% of their DNA but can differ in body weight, personality and disease risk. This is best explained by:',
+    opts:['A mistake in the twinning process that changed their DNA','The interaction between genotype and environment (nurture) shaping the phenotype, sometimes via epigenetic changes to gene expression','Identical twins do not actually share the same DNA','Mitosis introducing random mutations after birth'],
+    ans:1, fb:'Even with an identical genotype, differences in ENVIRONMENT — diet, illness, activity, social experience — can shape the phenotype differently in each twin. This can occur through EPIGENETIC changes, which switch genes on or off in response to environmental factors WITHOUT altering the underlying DNA sequence.' },
+  { q:'A gene shows codominance rather than complete dominance. What does this mean for a heterozygous individual\'s phenotype?',
+    opts:['The heterozygous phenotype is a blend of both alleles\' effects','Both alleles are fully and separately expressed at the same time, so both phenotypes appear together','The recessive allele is always hidden','The dominant allele completely masks the other'],
+    ans:1, fb:'In CODOMINANCE, both alleles are fully expressed simultaneously in the heterozygote, with neither masking the other — both phenotypes appear together (e.g. blood type AB shows both A and B antigens). This is different from incomplete dominance, where the heterozygote shows a BLENDED, intermediate phenotype (e.g. pink flowers from red × white).' },
+];
+
+let qScore=0, qAnswered=0;
+function buildQuiz(){
+  const c=document.getElementById('quiz-container');
+  if(!c) return;
+  c.innerHTML=''; qScore=0; qAnswered=0;
+  document.getElementById('score-panel').style.display='none';
+  quizData.forEach((item,idx)=>{
+    const card=document.createElement('div'); card.className='quiz-card';
+    card.innerHTML=`<div class="quiz-q">Q${idx+1}. ${item.q}</div><div class="quiz-options">${item.opts.map((o,i)=>`<button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}</div><div class="quiz-feedback" id="qfb-${idx}"></div>`;
+    c.appendChild(card);
+  });
+}
+function checkAnswer(btn,qIdx,optIdx){
+  const card=btn.closest('.quiz-card');
+  const buttons=card.querySelectorAll('.quiz-opt');
+  const fb=document.getElementById('qfb-'+qIdx);
+  const correct=quizData[qIdx].ans;
+  buttons.forEach(b=>b.disabled=true);
+  if(optIdx===correct){ btn.classList.add('correct'); fb.textContent='✅ '+quizData[qIdx].fb; fb.className='quiz-feedback show correct-fb'; qScore++; }
+  else { btn.classList.add('wrong'); buttons[correct].classList.add('correct'); fb.textContent='❌ '+quizData[qIdx].fb; fb.className='quiz-feedback show wrong-fb'; }
+  qAnswered++;
+  if(qAnswered===quizData.length){
+    const panel=document.getElementById('score-panel'); panel.style.display='block';
+    document.getElementById('score-display').textContent=qScore+'/'+quizData.length;
+    const pct=qScore/quizData.length;
+    document.getElementById('score-msg').textContent=pct>=.9?'🌟 Excellent work, Lakshanya — very well reviewed!':pct>=.75?'👍 Great effort! Go back over the questions you missed.':pct>=.6?'📚 Good start — revisit the sections you found tricky and retake.':'💪 Keep going! Work through the lesson again, then retake the quiz.';
+    panel.scrollIntoView({behavior:'smooth'});
+  }
+}
+function retakeQuiz(){ buildQuiz(); }
+
+// ══ SUMMARY ══
+function getTA(id){ const el=document.getElementById(id); return el?el.value.trim():''; }
+function setS(id,txt){ const el=document.getElementById(id); if(!el)return; el.textContent=txt||'Not answered'; el.classList.toggle('empty',!txt); }
+function buildSummary(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  document.getElementById('summaryName').textContent=name;
+  document.getElementById('summaryDate').textContent=new Date().toLocaleDateString('en-AU',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const sc=document.getElementById('score-display');
+  setS('sum-quiz', sc?sc.textContent+' correct':'Quiz not yet completed');
+  setS('sum-wonder',     getTA('ta-wonder'));
+  setS('sum-genes',      getTA('ta-genes'));
+  setS('sum-meiosis',    getTA('ta-meiosis'));
+  setS('sum-genotype',   getTA('ta-genotype'));
+  setS('sum-nature',     getTA('ta-nature'));
+  setS('sum-monohybrid', getTA('ta-monohybrid'));
+  setS('sum-dihybrid',   getTA('ta-dihybrid'));
+  setS('sum-pedigree',   getTA('ta-pedigree'));
+}
+function buildPlainText(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  const date=new Date().toLocaleDateString('en-AU',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const sc=document.getElementById('score-display');
+  return [
+    'VCE BIOLOGY — GENETICS REVIEW (CHAPTERS 7 & 8)',
+    'Personalised Review for Lakshanya',
+    '='.repeat(66),
+    'Student: '+name, 'Date: '+date, '',
+    '── QUIZ SCORE ──', sc?sc.textContent:'Not completed', '',
+    '── OPENING — WHAT DO YOU REMEMBER? ──', getTA('ta-wonder')||'Not answered', '',
+    '── 7A GENES & CHROMOSOMES — GENES VS ALLELES ──', getTA('ta-genes')||'Not answered', '',
+    '── 7B MEIOSIS — WHERE DOES VARIATION COME FROM? ──', getTA('ta-meiosis')||'Not answered', '',
+    '── 7C GENOTYPES & PHENOTYPES — GENOTYPE TO PHENOTYPE ──', getTA('ta-genotype')||'Not answered', '',
+    '── 7D NATURE VS NURTURE — IDENTICAL TWINS ──', getTA('ta-nature')||'Not answered', '',
+    '── 8A MONOHYBRID CROSSES — PRACTICE CROSS ──', getTA('ta-monohybrid')||'Not answered', '',
+    '── 8B DIHYBRID CROSSES — WHY 9:3:3:1? ──', getTA('ta-dihybrid')||'Not answered', '',
+    '── 8C PEDIGREE CHARTS — INTERPRETING A PEDIGREE ──', getTA('ta-pedigree')||'Not answered', '',
+    '='.repeat(66),
+    '© 2026 Farvour Explorations — farvourexplorations.com',
+    'Submitted via VCE Biology Genetics Personalised Review Interactive Lesson'
+  ].join('\n');
+}
+function copyResults(){
+  buildSummary();
+  navigator.clipboard.writeText(buildPlainText()).then(()=>{
+    const el=document.getElementById('copyConfirm'); el.textContent='✓ Copied! Paste into Google Classroom or your assignment.';
+    setTimeout(()=>el.textContent='',4000);
+  }).catch(()=>{ document.getElementById('copyConfirm').textContent='⚠️ Could not copy automatically.'; });
+}
+function emailResults(){
+  const name=document.getElementById('studentName').value.trim()||'Student';
+  window.location.href='mailto:?subject='+encodeURIComponent('VCE Bio Genetics Review — '+name)+'&body='+encodeURIComponent(buildPlainText());
+}
+
+// ══ INIT ══
+buildQuiz();
+</script>
+</body>
+</html>
