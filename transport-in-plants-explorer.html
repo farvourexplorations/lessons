@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transport in Plants Explorer 🌿 — IGCSE Biology (Edexcel 4BI1)</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ocean:      #1a3d2b;
+    --ocean-mid:  #2d6a4f;
+    --ocean-lt:   #40916c;
+    --coral:      #e8603c;
+    --coral-pale: #fdf0ec;
+    --mint:       #3aaf85;
+    --mint-pale:  #e8f8f2;
+    --gold:       #c9962a;
+    --gold-pale:  #fef9e7;
+    --lavender:   #7c6fcd;
+    --lav-pale:   #f0eefb;
+    --paper:      #fffef9;
+    --ink:        #1a2332;
+    --muted:      #7a8899;
+    --border:     #e0e4ea;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: linear-gradient(160deg,#0d2318 0%,#1a3d2b 45%,#2d6a4f 100%);
+    min-height:100vh; font-family:'Nunito',sans-serif; color:var(--ink); overflow-x:hidden;
+  }
+  body::before {
+    content:''; position:fixed; inset:0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%,rgba(144,238,144,.4) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 22% 38%,rgba(255,255,255,.25) 0%,transparent 100%),
+      radial-gradient(2px   2px   at 41% 6%, rgba(144,238,144,.32) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 60% 24%,rgba(255,255,255,.2)  0%,transparent 100%),
+      radial-gradient(1.5px 1.5px at 77% 9%, rgba(144,238,144,.38) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 90% 33%,rgba(255,255,255,.25) 0%,transparent 100%),
+      radial-gradient(1px   1px   at 33% 55%,rgba(144,238,144,.28) 0%,transparent 100%),
+      radial-gradient(2px   2px   at 70% 48%,rgba(255,255,255,.15) 0%,transparent 100%);
+    pointer-events:none; z-index:0;
+  }
+  /* HERO */
+  .hero { position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 2rem;color:white; }
+  .hero-badge { display:inline-block;background:var(--gold);color:var(--ocean);font-family:'Fredoka One',cursive;font-size:.85rem;letter-spacing:.05em;padding:.35rem 1.2rem;border-radius:20px;margin-bottom:1.2rem;box-shadow:0 2px 12px rgba(201,150,42,.45); }
+  .hero h1 { font-family:'Fredoka One',cursive;font-size:clamp(2rem,6vw,3.6rem);line-height:1.1;margin-bottom:.8rem;text-shadow:0 2px 20px rgba(0,0,0,.35); }
+  .hero h1 .accent { color:var(--gold); }
+  .hero p.intro { font-size:1.05rem;line-height:1.7;opacity:.88;max-width:600px;margin:0 auto 2rem; }
+  .name-bar { background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);border-radius:12px;padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;max-width:420px;margin:0 auto 1rem; }
+  .name-bar label { font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;font-family:'DM Mono',monospace; }
+  .name-bar input { flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.4rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:white;outline:none; }
+  .name-bar input::placeholder { color:rgba(255,255,255,.4);font-weight:400; }
+  .progress-wrap { display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem; }
+  .prog-step { background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);border-radius:20px;padding:.35rem .9rem;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace;display:inline-block; }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.35); }
+  .prog-step.active { background:var(--gold);color:var(--ocean);border-color:var(--gold);box-shadow:0 2px 12px rgba(201,150,42,.45); }
+  /* SHEET */
+  .sheet { position:relative;z-index:1;background:var(--paper);border-radius:24px 24px 0 0;margin-top:1.5rem;padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.3); }
+  .section { padding:3rem 2rem 0;max-width:820px;margin:0 auto;display:none; }
+  .section.active { display:block; }
+  .section-eyebrow { display:flex;align-items:center;gap:.6rem;margin-bottom:1rem; }
+  .eyebrow-num { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1rem;color:white;flex-shrink:0; }
+  .num-coral  { background:var(--coral); }
+  .num-mint   { background:var(--mint); }
+  .num-gold   { background:var(--gold);color:var(--ocean); }
+  .num-lav    { background:var(--lavender); }
+  .num-ocean  { background:var(--ocean-mid); }
+  .eyebrow-label { font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace; }
+  .section h2 { font-family:'Fredoka One',cursive;font-size:clamp(1.6rem,3.5vw,2.2rem);color:var(--ocean);margin-bottom:.6rem;line-height:1.2; }
+  .section .lead { font-size:1rem;line-height:1.75;color:#3a4a5a;margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+  /* WONDER BOXES */
+  .wonder-box { background:linear-gradient(135deg,var(--ocean) 0%,var(--ocean-mid) 100%);color:white;border-radius:16px;padding:1.8rem 2rem;margin-bottom:1.8rem;position:relative;overflow:hidden; }
+  .wonder-box::after { content:'🤔';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3; }
+  .wonder-box p { font-size:1rem;line-height:1.7;font-style:italic;opacity:.95;max-width:85%; }
+  .wonder-box strong { color:var(--gold);font-style:normal; }
+  .wonder-box.gold-box { background:linear-gradient(135deg,#8a6a1a 0%,#b8860b 100%); }
+  .wonder-box.gold-box::after { content:'🌳'; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,#1b7a58 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'💧'; }
+  .wonder-box.coral-box { background:linear-gradient(135deg,#a03020 0%,#c8502a 100%); }
+  .wonder-box.coral-box::after { content:'🍃'; }
+  .wonder-box.lav-box { background:linear-gradient(135deg,#4a3a8a 0%,#6a5acd 100%); }
+  .wonder-box.lav-box::after { content:'🧪'; }
+  /* PREDICT / REFLECT */
+  .predict-box { background:var(--gold-pale);border:2px dashed var(--gold);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem; }
+  .predict-box textarea,.reflect-box textarea { width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:64px;background:white;color:var(--ink);outline:none;transition:border-color .2s; }
+  .predict-box textarea:focus { border-color:var(--gold); }
+  .reflect-box { background:var(--mint-pale);border:2px dashed var(--mint);border-radius:14px;padding:1.4rem 1.6rem;margin-top:1.5rem; }
+  .reflect-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#1b7a58;margin-bottom:.8rem; }
+  .reflect-box textarea:focus { border-color:var(--mint); }
+  /* DEMO ZONE */
+  .demo-zone { background:white;border:2px solid var(--border);border-radius:16px;padding:1.8rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07); }
+  .demo-zone h3 { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--ocean);margin-bottom:.3rem; }
+  .demo-zone .hint { font-size:.78rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:1.3rem; }
+  /* CHIPS */
+  .chip-row { display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem; }
+  .chip { padding:.45rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;border:2px solid transparent; }
+  .chip.coral  { background:var(--coral-pale);color:var(--coral);border-color:#f8c5b8; }
+  .chip.mint   { background:var(--mint-pale);color:var(--mint);border-color:#b8ebd8; }
+  .chip.gold   { background:var(--gold-pale);color:#8a6a1a;border-color:#f8e0a0; }
+  .chip.lav    { background:var(--lav-pale);color:var(--lavender);border-color:#d0caef; }
+  .chip.ocean  { background:#d4eadd;color:var(--ocean-mid);border-color:#a8ccee; }
+  .chip:hover  { transform:scale(1.05); }
+  .concept-reveal { background:var(--paper);border-left:4px solid var(--coral);border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;margin-top:.5rem;display:none;animation:fadeIn .3s ease; }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border   { border-color:var(--mint); }
+  .concept-reveal.gold-border   { border-color:var(--gold); }
+  .concept-reveal.lav-border    { border-color:var(--lavender); }
+  .concept-reveal.ocean-border  { border-color:var(--ocean-mid); }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+  /* CARDS */
+  .card-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0 1rem; }
+  .info-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.1rem;text-align:center;cursor:pointer;transition:all .2s; }
+  .info-card:hover,.info-card.active { border-color:var(--ocean-mid);transform:translateY(-2px);box-shadow:0 4px 14px rgba(45,106,143,.2); }
+  .info-card.active { background:#d4eadd; }
+  .info-card .ic-icon  { font-size:2rem;margin-bottom:.4rem; }
+  .info-card .ic-title { font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--ocean);margin-bottom:.2rem; }
+  .info-card .ic-sub   { font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em; }
+  .info-panel { background:#d4eadd;border-left:4px solid var(--ocean-mid);border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;display:none;animation:fadeIn .3s ease;margin-bottom:1rem; }
+  .info-panel.show { display:block; }
+  .info-panel h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ocean);margin-bottom:.5rem; }
+  .info-panel p  { font-size:.88rem;line-height:1.7;color:#1a2a3a; }
+  .info-panel .eg { background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;font-size:.82rem;font-family:'DM Mono',monospace;border:1.5px solid rgba(45,106,143,.2); }
+  /* ACCORDION */
+  .accord-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1rem 1.2rem;margin-bottom:.8rem;cursor:pointer;transition:all .2s; }
+  .accord-card:hover { border-color:var(--ocean-mid); }
+  .accord-card.open { border-color:var(--mint);background:var(--mint-pale); }
+  .accord-title { font-family:'Fredoka One',cursive;font-size:1rem;color:var(--ocean);display:flex;align-items:center;justify-content:space-between;gap:.6rem; }
+  .accord-arrow { transition:transform .2s;flex-shrink:0; }
+  .accord-card.open .accord-arrow { transform:rotate(180deg); }
+  .accord-body { font-size:.85rem;line-height:1.7;color:var(--ink);margin-top:.6rem;display:none; }
+  .accord-card.open .accord-body { display:block; }
+  .accord-eg { font-family:'DM Mono',monospace;font-size:.78rem;color:var(--muted);margin-top:.4rem;font-style:italic; }
+  /* QUIZ */
+  .quiz-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .quiz-q { font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:1rem;line-height:1.5; }
+  .quiz-options { display:flex;flex-direction:column;gap:.5rem; }
+  .quiz-opt { padding:.6rem 1rem;border-radius:8px;border:2px solid var(--border);background:white;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:600;text-align:left;transition:all .15s;color:var(--ink); }
+  .quiz-opt:hover:not(:disabled) { border-color:var(--ocean-mid);background:#f0f7f3; }
+  .quiz-opt.correct { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .quiz-opt.wrong   { background:var(--coral-pale);border-color:var(--coral);color:#a83020; }
+  .quiz-opt:disabled { cursor:default; }
+  .quiz-feedback { margin-top:.8rem;font-size:.85rem;line-height:1.6;padding:.7rem 1rem;border-radius:8px;display:none;animation:fadeIn .3s ease; }
+  .quiz-feedback.show { display:block; }
+  .quiz-feedback.correct-fb { background:var(--mint-pale);color:#1b7a58;border-left:3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background:var(--coral-pale);color:#a83020;border-left:3px solid var(--coral); }
+  /* MATCHING */
+  .match-grid { display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1rem 0; }
+  .match-item { padding:.75rem 1rem;border-radius:10px;border:2px solid var(--border);cursor:pointer;font-size:.83rem;font-weight:700;transition:all .2s;background:white;text-align:center;color:var(--ink);line-height:1.4; }
+  .match-item:hover   { border-color:var(--ocean-mid);background:#f0f7f3; }
+  .match-item.selected{ border-color:var(--lavender);background:var(--lav-pale);color:var(--lavender); }
+  .match-item.matched { border-color:var(--mint);background:var(--mint-pale);color:#1b7a58;cursor:default; }
+  .match-item.wrong   { border-color:var(--coral);background:var(--coral-pale);color:var(--coral);animation:shake .3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  /* OSMOSIS / WATER POTENTIAL SIMULATOR */
+  .osm-container { display:flex;gap:0;align-items:stretch;margin:1rem 0;border-radius:12px;overflow:hidden;border:2px solid var(--border); }
+  .osm-side { flex:1;padding:1.2rem 1rem;text-align:center;transition:all .6s;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center; }
+  .osm-side.left  { background:#fff9e6; }
+  .osm-side.right { background:#e8f8f2; }
+  .osm-membrane { width:6px;background:repeating-linear-gradient(180deg,var(--ocean) 0px,var(--ocean) 8px,transparent 8px,transparent 14px);flex-shrink:0; }
+  .osm-label { font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--ocean);margin-bottom:.4rem; }
+  .osm-dots { font-size:1.4rem;line-height:1.5;transition:all .6s;min-height:40px; }
+  .osm-conc  { font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);margin-top:.4rem; }
+  .osm-arrow { font-size:1.4rem;align-self:center;padding:0 .5rem;transition:all .5s;opacity:0; }
+  .osm-arrow.show { opacity:1; }
+  .osm-result { margin-top:.8rem;padding:.7rem 1rem;border-radius:10px;font-size:.85rem;background:#f5f7fa;min-height:2.5rem;transition:all .3s; }
+  /* VOCAB TABLE */
+  .vocab-table { width:100%;border-collapse:collapse;margin:1rem 0 1.5rem; }
+  .vocab-table th { background:var(--ocean);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;padding:.7rem 1rem;text-align:left; }
+  .vocab-table td { padding:.65rem 1rem;font-size:.85rem;line-height:1.5;border-bottom:1px solid var(--border); }
+  .vocab-table tr:nth-child(even) td { background:#f5f7fa; }
+  .vocab-table tr:hover td { background:#d4eadd;transition:background .15s; }
+  .vocab-table td:first-child { font-weight:800;color:var(--ocean-mid); }
+  /* PAST PAPER QUESTIONS */
+  .pp-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .pp-label { font-family:'DM Mono',monospace;font-size:.68rem;color:var(--ocean-mid);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem; }
+  .pp-q { font-size:.95rem;line-height:1.6;color:var(--ink);margin-bottom:.8rem;font-weight:700; }
+  .pp-q em { font-weight:400;color:#3a4a5a; }
+  .pp-textarea { width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:72px;background:white;color:var(--ink);outline:none;transition:border-color .2s; }
+  .pp-textarea:focus { border-color:var(--ocean-mid); }
+  .pp-marks { font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);margin-top:.4rem; }
+  .pp-answer { background:#d4eadd;border-left:4px solid var(--ocean-mid);border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.85rem;line-height:1.7;margin-top:.8rem;display:none;animation:fadeIn .3s ease; }
+  .pp-answer.show { display:block; }
+  .pp-answer strong { color:var(--ocean); }
+  .pp-answer ul { margin:.4rem 0 0 1rem; }
+  .pp-answer li { margin-bottom:.3rem; }
+  /* SCORE */
+  .score-panel { background:linear-gradient(135deg,var(--ocean) 0%,var(--ocean-mid) 100%);color:white;border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem; }
+  .score-panel .score-num { font-family:'Fredoka One',cursive;font-size:3.5rem;line-height:1;color:var(--gold); }
+  .score-panel p { opacity:.88;margin-top:.5rem;font-size:1rem; }
+  .score-panel h3 { font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:.3rem; }
+  /* CONGRATS */
+  .congrats-panel { background:linear-gradient(135deg,var(--ocean) 0%,#1b7a58 100%);color:white;border-radius:20px;padding:2.5rem 2rem;text-align:center;margin-top:2rem; }
+  .congrats-panel h2 { font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:.6rem; }
+  .congrats-panel p  { opacity:.9;line-height:1.7;max-width:480px;margin:0 auto .8rem; }
+  .summary-chips { display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:1rem; }
+  .summary-chip { background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:20px;padding:.3rem .9rem;font-size:.78rem;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:.04em; }
+  /* NAV */
+  .nav-row { display:flex;justify-content:space-between;align-items:center;padding:2.5rem 2rem 0;max-width:820px;margin:0 auto; }
+  .btn-next { background:var(--ocean);color:white;border:none;border-radius:50px;padding:.9rem 2rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;display:flex;align-items:center;gap:.6rem;transition:all .2s;box-shadow:0 4px 16px rgba(26,61,43,.35); }
+  .btn-next:hover { background:var(--ocean-mid);transform:translateY(-2px); }
+  .btn-prev { background:transparent;color:var(--muted);border:2px solid var(--border);border-radius:50px;padding:.9rem 1.6rem;font-family:'Fredoka One',cursive;font-size:.95rem;cursor:pointer;transition:all .2s; }
+  .btn-prev:hover { border-color:var(--muted);color:var(--ink); }
+  .btn-prev:disabled,.btn-next:disabled { opacity:.3;cursor:not-allowed;transform:none; }
+  /* SUMMARY */
+  .summary-section { background:white;border-radius:16px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--ocean);margin-bottom:.8rem; }
+  .summary-answer { background:#f5f7fa;border-radius:8px;padding:.7rem 1rem;font-size:.85rem;line-height:1.6;color:var(--ink);margin-bottom:.5rem;font-style:italic;border-left:3px solid var(--lavender);min-height:2rem; }
+  .summary-answer.empty { color:var(--muted);font-style:normal;border-left-color:var(--border); }
+  .sum-label { font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.6rem;text-transform:uppercase;letter-spacing:.06em; }
+  /* SHARE */
+  .share-buttons { display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center; }
+  .share-btn { border:none;border-radius:12px;padding:.85rem 1.6rem;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem; }
+  .share-btn:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background:var(--mint);color:white; }
+  .share-btn.email { background:var(--lavender);color:white; }
+  .share-btn.print { background:var(--ocean);color:white; }
+  .copy-confirm { text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--mint);min-height:1.2rem;margin-top:.6rem; }
+  .btn { border:none;border-radius:10px;padding:.65rem 1.3rem;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;transition:all .15s; }
+  .btn:hover { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  .btn-mint  { background:var(--mint);color:white; }
+  .btn-ocean { background:var(--ocean);color:white; }
+  .btn-gold  { background:var(--gold);color:var(--ocean); }
+  .btn-ghost { background:#f0f2f5;color:var(--muted); }
+  .divider { height:1px;background:var(--border);margin:2rem 0; }
+  /* SLIDER FACTOR SIMULATOR */
+  .sim-slider-row { display:flex; align-items:center; gap:1rem; margin:1rem 0; flex-wrap:wrap; }
+  .sim-slider-row label { font-family:'DM Mono',monospace; font-size:.82rem; color:var(--ink); font-weight:700; min-width:150px; }
+  .sim-slider-row input[type=range] { flex:1; min-width:140px; accent-color:var(--ocean-mid); }
+  .sim-slider-row .sim-readout { font-family:'DM Mono',monospace; font-weight:700; color:var(--ocean); min-width:70px; text-align:right; }
+  .rate-display { display:flex; align-items:center; gap:1.2rem; margin:1.2rem 0; flex-wrap:wrap; }
+  .rate-gauge-wrap { flex:1; min-width:200px; background:#e0e4ea; border-radius:20px; height:26px; overflow:hidden; position:relative; }
+  .rate-gauge-fill { height:100%; border-radius:20px; background:linear-gradient(90deg,#3aaf85,#c9962a,#e8603c); transition:width .4s ease; }
+  .rate-gauge-label { font-family:'Fredoka One',cursive; font-size:1.3rem; color:var(--ocean); min-width:120px; text-align:center; }
+  .rate-explain { background:#f5f7fa;border-radius:10px;padding:.9rem 1.1rem;font-size:.85rem;line-height:1.7;color:var(--ink);margin-top:.6rem; }
+  .factor-row { display:flex;align-items:center;gap:.8rem;margin-bottom:.8rem; }
+  .factor-label { font-size:.85rem;font-weight:700;min-width:150px;color:var(--ink); }
+  .factor-bar-wrap { flex:1;background:#e0e4ea;border-radius:20px;height:14px;overflow:hidden; }
+  .factor-bar { height:100%;border-radius:20px;background:var(--ocean-mid);transition:width .6s; }
+  .factor-desc { font-size:.78rem;color:var(--muted);font-family:'DM Mono',monospace;min-width:100px;text-align:right; }
+  /* PATHWAY TRACK */
+  .path-track { display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; margin:1rem 0 1.5rem; }
+  .path-step { background:white;border:2px solid var(--border);border-radius:12px;padding:.7rem 1rem;font-family:'DM Mono',monospace;font-size:.78rem;font-weight:700;color:var(--ocean-mid);text-align:center; }
+  .path-arrow { color:var(--gold); font-size:1.1rem; }
+  @media(max-width:560px) {
+    .hero{padding:2.5rem 1.2rem 1.5rem} .section{padding:2rem 1.2rem 0} .nav-row{padding:2rem 1.2rem 0} .match-grid{grid-template-columns:1fr} .path-track{flex-direction:column;align-items:stretch} .path-arrow{transform:rotate(90deg);text-align:center}
+  }
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm,.prog-step,.name-bar{display:none!important}
+    .sheet{box-shadow:none;border-radius:0} .section{display:none!important} #sec-8{display:block!important}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">🌿 Pearson Edexcel International GCSE Biology · 4BI1 · Topic 2(h)</div>
+  <h1>Transport in <span class="accent">Plants</span> Explorer</h1>
+  <p class="intro">Master how water and food travel through flowering plants — covering xylem, phloem, root hair cells, transpiration, and the factors that control it. Specification points 2.53–2.58B.</p>
+  <div class="name-bar"><label>👤 YOUR NAME:</label><input type="text" id="studentName" placeholder="Type your name here..."></div>
+  <div class="progress-wrap">
+    <span class="prog-step active" onclick="goTo(0)">① Wonder</span>
+    <span class="prog-step" onclick="goTo(1)">② Xylem &amp; Phloem</span>
+    <span class="prog-step" onclick="goTo(2)">③ Root Hair Cells</span>
+    <span class="prog-step" onclick="goTo(3)">④ Transpiration</span>
+    <span class="prog-step" onclick="goTo(4)">⑤ Factors &amp; Practical</span>
+    <span class="prog-step" onclick="goTo(5)">⑥ Quiz</span>
+    <span class="prog-step" onclick="goTo(6)">⑦ Past Papers</span>
+    <span class="prog-step" onclick="goTo(7)">⑧ Reflect</span>
+    <span class="prog-step" onclick="goTo(8)">📤 Submit</span>
+  </div>
+</div>
+
+<div class="sheet">
+
+<!-- ══ SEC 0: WONDER ══ -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">Phase 1 · Wonder</span></div>
+  <h2>🌳 No Heart, No Pump — So How Does a 100m Tree Drink?</h2>
+  <p class="lead">A giant redwood can grow taller than a 30-storey building. Its roots pull water from the soil, but the leaves at the very top are over 100 metres away — with no heart, no pump, and no muscles anywhere in the plant.</p>
+  <div class="wonder-box">
+    <p>Meanwhile, sugar made by photosynthesis in the leaves has to travel all the way <strong>down</strong> to the roots, which have no chlorophyll and cannot make their own food. <strong>Two substances need to travel in almost opposite directions, through two completely separate tissues. How do you think water manages to rise so high against gravity with no pump — and how might sugar travel from the leaves down to the roots?</strong></p>
+  </div>
+  <div class="predict-box">
+    <h4>✏️ Your Prediction (before we dig in)</h4>
+    <textarea id="ta-wonder" placeholder="Predict: what do you think pulls water up to the top of a tall tree with no pump? And how do you think plants move the sugar they make in their leaves down to parts of the plant that can't photosynthesise, like the roots?"></textarea>
+  </div>
+  <div class="wonder-box gold-box">
+    <p>The answer: plants have <strong>two separate transport tissues</strong>. <strong>Xylem</strong> carries water and mineral ions upward in one direction only, pulled by the continuous evaporation of water from the leaves (transpiration). <strong>Phloem</strong> carries dissolved sugars and amino acids in <em>either</em> direction, from wherever they are made or stored to wherever they are needed — a process called <strong>translocation</strong>. Let's explore both systems.</p>
+  </div>
+  <div class="nav-row"><button class="btn-prev" disabled>← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 1: XYLEM & PHLOEM ══ -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow"><div class="eyebrow-num num-ocean">2</div><span class="eyebrow-label">Phase 2 · 2.53–2.54 Xylem &amp; Phloem</span></div>
+  <h2>🌿 Two Transport Tissues, Two Jobs</h2>
+  <p class="lead">Flowering plants have a <strong>vascular bundle</strong> containing two transport tissues that run side by side but do completely different jobs. Tap each term to reveal its definition.</p>
+
+  <div class="chip-row">
+    <span class="chip ocean" onclick="revealChip('xylem')">Xylem</span>
+    <span class="chip mint"  onclick="revealChip('phloem')">Phloem</span>
+    <span class="chip coral" onclick="revealChip('translocation')">Translocation</span>
+    <span class="chip gold"  onclick="revealChip('transtream')">Transpiration Stream</span>
+    <span class="chip lav"   onclick="revealChip('vascular')">Vascular Bundle</span>
+  </div>
+  <div id="chip-xylem"        class="concept-reveal ocean-border"><strong>Xylem</strong> — Tissue made of dead, hollow, lignified (strengthened) tubes that transport <strong>water and mineral ions</strong> from the roots to the stem, leaves and other parts of the plant. Movement is <strong>one-way only — upward</strong>. The lignin in xylem walls also gives the plant mechanical support.</div>
+  <div id="chip-phloem"       class="concept-reveal mint-border"><strong>Phloem</strong> — Tissue made of living <strong>sieve tube elements</strong> (with perforated end walls) and companion cells, which transport <strong>sucrose and amino acids</strong> made in the leaves (or released from storage organs) to other parts of the plant that need them, such as roots, flowers, fruits and growing shoots.</div>
+  <div id="chip-translocation" class="concept-reveal coral"><strong>Translocation</strong> — The movement of sucrose and amino acids through phloem tissue, from a "source" (where they are made or stored, e.g. a photosynthesising leaf) to a "sink" (where they are used or stored, e.g. roots, buds, fruits). Unlike xylem, translocation can move substances <strong>up or down</strong> the plant depending on where the source and sink are.</div>
+  <div id="chip-transtream"    class="concept-reveal gold-border"><strong>Transpiration Stream</strong> — The continuous, one-way movement of water through a plant: from the soil → into root hair cells → across the root → up the xylem → into the leaves → out through the stomata as water vapour. It is driven by evaporation of water from the leaf surface, which "pulls" more water up behind it.</div>
+  <div id="chip-vascular"      class="concept-reveal lav-border"><strong>Vascular Bundle</strong> — A strand of tissue running through the root, stem and leaf of a plant, containing both xylem (usually toward the centre) and phloem (usually toward the outside) running alongside each other. This arrangement allows water/ion transport and sugar transport to happen simultaneously throughout the whole plant.</div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🔬 Xylem vs Phloem — Tap Each</h3>
+  <div class="card-grid">
+    <div class="info-card" onclick="showPanel('xylemcard')"><div class="ic-icon">💧</div><div class="ic-title">Xylem</div><div class="ic-sub">water &amp; mineral ions</div></div>
+    <div class="info-card" onclick="showPanel('phloemcard')"><div class="ic-icon">🍯</div><div class="ic-title">Phloem</div><div class="ic-sub">sucrose &amp; amino acids</div></div>
+  </div>
+  <div id="panel-xylemcard" class="info-panel"><h4>💧 Xylem</h4><p>Made of dead cells joined end to end into long, hollow tubes with no cross-walls or cell contents — this creates an unobstructed pipe. Their walls are thickened with a strengthening material called <strong>lignin</strong>, which also helps support the plant and keeps it upright. Xylem transports <strong>water and dissolved mineral ions</strong> from the roots, and movement only ever goes <strong>one way: upward</strong>, driven by transpiration.</p><div class="eg">📌 Exam answer: "Xylem transports water and mineral ions from the roots to the rest of the plant. It is made of dead, hollow, lignified cells, which also provide structural support."</div></div>
+  <div id="panel-phloemcard" class="info-panel"><h4>🍯 Phloem</h4><p>Made of <strong>living</strong> sieve tube cells stacked end to end, with perforated "sieve plates" between them that allow dissolved substances to flow through. Each sieve tube is supported by a <strong>companion cell</strong> next to it, which provides the energy needed for transport. Phloem transports <strong>sucrose and amino acids</strong> and can move them <strong>in either direction</strong> — this process is called translocation.</p><div class="eg">📌 Exam answer: "Phloem transports sucrose and amino acids between the leaves, where they are made, and other parts of the plant that need them, such as the roots and growing regions."</div></div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">📋 Xylem vs Phloem — Full Comparison</h3>
+  <table class="vocab-table">
+    <tr><th>Feature</th><th>Xylem</th><th>Phloem</th></tr>
+    <tr><td>Transports</td><td>Water &amp; mineral ions</td><td>Sucrose &amp; amino acids</td></tr>
+    <tr><td>Direction</td><td>One way — upward only (roots → leaves)</td><td>Either direction (source → sink)</td></tr>
+    <tr><td>Cells alive?</td><td>Dead</td><td>Living</td></tr>
+    <tr><td>Structure</td><td>Hollow, lignified tubes, no end walls</td><td>Sieve tubes with perforated end plates + companion cells</td></tr>
+    <tr><td>Extra role</td><td>Provides structural support (lignin)</td><td>Companion cells provide energy for transport</td></tr>
+    <tr><td>Process name</td><td>Transpiration stream</td><td>Translocation</td></tr>
+  </table>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🎯 Quick Match</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Tap a term, then tap its match.</p>
+  <div class="match-grid" id="matchGrid1">
+    <div class="match-item" data-pair="a" data-side="term" onclick="matchClick(this,'m1')">Xylem</div>
+    <div class="match-item" data-pair="b" data-side="def" onclick="matchClick(this,'m1')">Movement of sucrose &amp; amino acids, source to sink</div>
+    <div class="match-item" data-pair="c" data-side="term" onclick="matchClick(this,'m1')">Phloem</div>
+    <div class="match-item" data-pair="d" data-side="def" onclick="matchClick(this,'m1')">Living sieve tube cells with companion cells</div>
+    <div class="match-item" data-pair="a" data-side="def" onclick="matchClick(this,'m1')">Dead, hollow, lignified tubes carrying water upward</div>
+    <div class="match-item" data-pair="e" data-side="term" onclick="matchClick(this,'m1')">Translocation</div>
+    <div class="match-item" data-pair="b" data-side="term" onclick="matchClick(this,'m1')">Transpiration stream</div>
+    <div class="match-item" data-pair="c" data-side="def" onclick="matchClick(this,'m1')">Carries sucrose and amino acids around the plant</div>
+    <div class="match-item" data-pair="d" data-side="term" onclick="matchClick(this,'m1')">Vascular bundle</div>
+    <div class="match-item" data-pair="e" data-side="def" onclick="matchClick(this,'m1')">Continuous one-way flow of water from roots to leaves to air</div>
+  </div>
+  <div style="margin-top:.8rem;"><button class="btn btn-ghost" onclick="resetMatch('matchGrid1','m1')">↺ Reset Match</button><span id="match-score-m1" style="margin-left:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted);"></span></div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Two Systems, One Plant</h4>
+    <textarea id="ta-xylphlo" placeholder="A gardener strips a ring of bark (which contains the phloem) all the way around a tree trunk. The xylem underneath is undamaged. Predict what will happen to the roots over the following weeks, and explain why, using the terms 'translocation', 'source' and 'sink'."></textarea>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 2: ROOT HAIR CELLS ══ -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow"><div class="eyebrow-num num-gold">3</div><span class="eyebrow-label">Phase 3 · 2.55B Root Hair Cells</span></div>
+  <h2>🌱 Root Hair Cells — Where the Journey Begins</h2>
+  <p class="lead">Before water can travel up the xylem, it first has to get <em>into</em> the plant. This happens at specialised cells on the root surface called <strong>root hair cells</strong>.</p>
+
+  <div class="wonder-box mint-box">
+    <p><strong>Root hair cells</strong> are single-celled extensions of the root epidermis. Each one grows a long, thin hair-like projection into the soil, dramatically increasing the surface area available for water and mineral ion absorption.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🧬 Adaptations of Root Hair Cells — Tap Each</h3>
+  <div class="card-grid">
+    <div class="info-card" onclick="showPanel('rh-sa')"><div class="ic-icon">📐</div><div class="ic-title">Large Surface Area</div><div class="ic-sub">the root hair</div></div>
+    <div class="info-card" onclick="showPanel('rh-wall')"><div class="ic-icon">🧻</div><div class="ic-title">Thin Cell Wall</div><div class="ic-sub">short diffusion path</div></div>
+    <div class="info-card" onclick="showPanel('rh-sap')"><div class="ic-icon">🧪</div><div class="ic-title">Concentrated Cell Sap</div><div class="ic-sub">maintains water potential gradient</div></div>
+    <div class="info-card" onclick="showPanel('rh-mito')"><div class="ic-icon">⚡</div><div class="ic-title">Many Mitochondria</div><div class="ic-sub">for active transport</div></div>
+  </div>
+  <div id="panel-rh-sa"   class="info-panel"><h4>📐 Large Surface Area</h4><p>The long, thin hair-like extension increases the surface area of the cell that is in contact with the soil, so more water and mineral ions can be absorbed at the same time. This is a very common IGCSE "adaptation" answer style.</p><div class="eg">📌 Exam answer: "The root hair provides a large surface area for the absorption of water and mineral ions."</div></div>
+  <div id="panel-rh-wall" class="info-panel"><h4>🧻 Thin Cell Wall / Membrane</h4><p>A thin wall and membrane means substances have a shorter distance to diffuse or move across, increasing the rate of water and ion uptake.</p><div class="eg">📌 Exam answer: "A thin cell wall provides a short diffusion pathway for water and mineral ions entering the cell."</div></div>
+  <div id="panel-rh-sap" class="info-panel"><h4>🧪 Concentrated Cell Sap</h4><p>The vacuole of a root hair cell contains a fairly concentrated solution of sugars and salts. This gives the cell a <strong>lower water potential</strong> than the surrounding soil water, which is usually very dilute. This water potential difference is exactly what drives water into the cell by osmosis.</p><div class="eg">📌 Exam answer: "The cell sap has a lower water potential than the soil water, so water moves into the root hair cell by osmosis, down the water potential gradient."</div></div>
+  <div id="panel-rh-mito" class="info-panel"><h4>⚡ Many Mitochondria</h4><p>Mineral ions (such as nitrate and potassium ions) are often already at a higher concentration inside the root hair cell than in the soil. Diffusion alone cannot move them further in. Instead, mineral ions are absorbed by <strong>active transport</strong>, which needs energy (ATP) from respiration — hence the large number of mitochondria.</p><div class="eg">📌 Exam answer: "Root hair cells contain many mitochondria to provide energy (ATP) from respiration for the active transport of mineral ions against their concentration gradient."</div></div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🔬 Water Potential Simulator — Soil vs Root Hair Cell</h3>
+  <div class="demo-zone">
+    <h3>💧 Osmosis at the Root Hair Cell</h3>
+    <div class="hint">Select a scenario to see how the water potential gradient drives water uptake by osmosis</div>
+    <div class="osm-container" id="osmContainer">
+      <div class="osm-side left" id="osmLeft">
+        <div class="osm-label" id="osmLeftLabel">Soil Water</div>
+        <div class="osm-dots" id="osmLeftDots">💧💧💧💧💧💧💧</div>
+        <div class="osm-conc" id="osmLeftConc"></div>
+      </div>
+      <div class="osm-arrow" id="osmArrow">←</div>
+      <div class="osm-membrane"></div>
+      <div class="osm-side right" id="osmRight">
+        <div class="osm-label" id="osmRightLabel">Root Hair Cell Sap</div>
+        <div class="osm-dots" id="osmRightDots">🟡🟡🟡💧💧</div>
+        <div class="osm-conc" id="osmRightConc"></div>
+      </div>
+    </div>
+    <div class="osm-result" id="osmResult">Select a scenario below to begin</div>
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.8rem;">
+      <button class="btn btn-ocean" onclick="setScenario('normal')">🌱 Typical Moist Soil</button>
+      <button class="btn btn-mint"  onclick="setScenario('flood')">🌧️ Waterlogged / Flooded Soil</button>
+      <button class="btn btn-ghost" onclick="setScenario('drought')">🏜️ Drought / Dry Soil</button>
+    </div>
+  </div>
+
+  <div class="predict-box">
+    <h4>✏️ Predict</h4>
+    <textarea id="ta-roothair" placeholder="During a drought, the concentration of the soil water solution effectively becomes higher (because there is so little water left around the soil particles). Predict what would happen to water movement into the root hair cell, and explain your answer using the term 'water potential'."></textarea>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 3: TRANSPIRATION ══ -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">4</div><span class="eyebrow-label">Phase 4 · 2.56B Transpiration</span></div>
+  <h2>💨 Transpiration — The Engine Behind the Pull</h2>
+  <p class="lead">So what actually drives water all the way up the xylem to the top of a tree? The answer is <strong>transpiration</strong> — and it happens at the opposite end of the plant from where water enters.</p>
+
+  <div class="wonder-box coral-box">
+    <p><strong>Definition (learn this word for word):</strong> Transpiration is the <strong>evaporation of water from the surface of a plant</strong>, mainly through tiny pores called <strong>stomata</strong> on the underside of leaves. As water vapour is lost from the leaf's internal air spaces, more water is drawn up through the xylem to replace it — creating a continuous pull called the <strong>transpiration stream</strong>.</p>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🧭 The Pathway of Water Through a Plant — Tap Each Step</h3>
+  <div class="path-track">
+    <div class="path-step">Soil water</div><div class="path-arrow">→</div>
+    <div class="path-step">Root hair cell</div><div class="path-arrow">→</div>
+    <div class="path-step">Root cortex</div><div class="path-arrow">→</div>
+    <div class="path-step">Xylem (root)</div><div class="path-arrow">→</div>
+    <div class="path-step">Xylem (stem)</div><div class="path-arrow">→</div>
+    <div class="path-step">Xylem (leaf)</div><div class="path-arrow">→</div>
+    <div class="path-step">Mesophyll cells</div><div class="path-arrow">→</div>
+    <div class="path-step">Air spaces</div><div class="path-arrow">→</div>
+    <div class="path-step">Stomata</div><div class="path-arrow">→</div>
+    <div class="path-step">Evaporates</div>
+  </div>
+
+  <div class="accord-card" onclick="toggleAccord(this)">
+    <div class="accord-title"><span>🌡️ Step 1 — Water evaporates from mesophyll cells into the leaf's air spaces</span><span class="accord-arrow">▼</span></div>
+    <div class="accord-body">Water on the surface of spongy mesophyll cells inside the leaf evaporates into the air spaces between the cells. This lowers the water potential of the mesophyll cells, so water moves into them by osmosis from neighbouring cells.<div class="accord-eg">📌 The leaf's internal air spaces provide a large surface area for this evaporation to occur efficiently.</div></div>
+  </div>
+  <div class="accord-card" onclick="toggleAccord(this)">
+    <div class="accord-title"><span>🚪 Step 2 — Water vapour diffuses out through open stomata</span><span class="accord-arrow">▼</span></div>
+    <div class="accord-body">Because the water vapour concentration is higher inside the leaf's air spaces than in the air outside, water vapour diffuses out of the leaf through the open stomata (tiny pores, mostly on the underside of the leaf, each controlled by a pair of guard cells).<div class="accord-eg">📌 Exam link: Guard cells control the size of the stomatal pore, and therefore the rate of transpiration.</div></div>
+  </div>
+  <div class="accord-card" onclick="toggleAccord(this)">
+    <div class="accord-title"><span>🧲 Step 3 — Loss of water "pulls" more water up the xylem</span><span class="accord-arrow">▼</span></div>
+    <div class="accord-body">As mesophyll cells lose water, they draw in replacement water from the xylem in the leaf veins. This creates a continuous "pull" of water molecules all the way down the xylem, through the stem, and up from the root — this unbroken chain of moving water is the transpiration stream.<div class="accord-eg">📌 This pulling effect is strong enough to draw water to the top of very tall trees with no pump needed — water molecules effectively "stick together" as they are pulled upward.</div></div>
+  </div>
+  <div class="accord-card" onclick="toggleAccord(this)">
+    <div class="accord-title"><span>🌱 Step 4 — More water is drawn into root hair cells to replace the loss</span><span class="accord-arrow">▼</span></div>
+    <div class="accord-body">As water leaves the xylem in the roots to replace water pulled up higher in the plant, the water potential in the root drops, so more water is drawn in from the soil into root hair cells by osmosis — restarting the whole process.<div class="accord-eg">📌 Exam tip: transpiration is often described as a "necessary side-effect" of gas exchange — stomata must open for CO₂ to enter for photosynthesis, and this inevitably lets water vapour escape too.</div></div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">📊 Why Does the Plant Need the Transpiration Stream?</h3>
+  <table class="vocab-table">
+    <tr><th>Benefit</th><th>Explanation</th></tr>
+    <tr><td>Water supply</td><td>Delivers water to all cells for turgor, cooling and as a reactant in photosynthesis</td></tr>
+    <tr><td>Mineral ion supply</td><td>Carries dissolved mineral ions (e.g. nitrate, magnesium) up from the soil to where they're needed</td></tr>
+    <tr><td>Cooling</td><td>Evaporation of water from leaves has a cooling effect on the plant, like sweating</td></tr>
+    <tr><td>Support</td><td>Water entering cells keeps them turgid, which helps support non-woody parts of the plant</td></tr>
+  </table>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Tracing the Journey</h4>
+    <textarea id="ta-transp" placeholder="Describe, in the correct order, the full pathway a water molecule takes from the soil to the atmosphere, and explain what causes it to move at each stage (osmosis, diffusion, or the pulling effect of the transpiration stream)."></textarea>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 4: FACTORS & PRACTICAL ══ -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">5</div><span class="eyebrow-label">Phase 5 · 2.57B–2.58B Factors &amp; Practical</span></div>
+  <h2>🌦️ Factors Affecting the Rate of Transpiration</h2>
+  <p class="lead">Four environmental factors change how fast a plant transpires. For each one, IGCSE examiners want the <strong>trend AND the reason</strong> — never just one or the other.</p>
+
+  <div class="demo-zone">
+    <h3>🎛️ Transpiration Rate Simulator</h3>
+    <div class="hint">Drag each slider and watch the predicted transpiration rate change</div>
+    <div class="sim-slider-row">
+      <label>💧 Humidity</label>
+      <input type="range" id="sl-humidity" min="0" max="100" value="50" oninput="updateRate()">
+      <div class="sim-readout" id="ro-humidity">50%</div>
+    </div>
+    <div class="sim-slider-row">
+      <label>💨 Wind Speed</label>
+      <input type="range" id="sl-wind" min="0" max="100" value="50" oninput="updateRate()">
+      <div class="sim-readout" id="ro-wind">Moderate</div>
+    </div>
+    <div class="sim-slider-row">
+      <label>🌡️ Temperature</label>
+      <input type="range" id="sl-temp" min="0" max="100" value="50" oninput="updateRate()">
+      <div class="sim-readout" id="ro-temp">20°C</div>
+    </div>
+    <div class="sim-slider-row">
+      <label>☀️ Light Intensity</label>
+      <input type="range" id="sl-light" min="0" max="100" value="50" oninput="updateRate()">
+      <div class="sim-readout" id="ro-light">Medium</div>
+    </div>
+    <div class="rate-display">
+      <div class="rate-gauge-label" id="rateLabel">Moderate</div>
+      <div class="rate-gauge-wrap"><div class="rate-gauge-fill" id="rateFill" style="width:50%;"></div></div>
+    </div>
+    <div class="rate-explain" id="rateExplain">Adjust the sliders above to see how each environmental factor changes the predicted transpiration rate, and why.</div>
+  </div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:1.5rem 0 .8rem;">🧠 Each Factor Explained — Tap to Reveal</h3>
+  <div class="card-grid">
+    <div class="info-card" onclick="showPanel('f-hum')"><div class="ic-icon">💧</div><div class="ic-title">Humidity</div><div class="ic-sub">lower = faster</div></div>
+    <div class="info-card" onclick="showPanel('f-wind')"><div class="ic-icon">💨</div><div class="ic-title">Wind Speed</div><div class="ic-sub">higher = faster</div></div>
+    <div class="info-card" onclick="showPanel('f-temp')"><div class="ic-icon">🌡️</div><div class="ic-title">Temperature</div><div class="ic-sub">higher = faster</div></div>
+    <div class="info-card" onclick="showPanel('f-light')"><div class="ic-icon">☀️</div><div class="ic-title">Light Intensity</div><div class="ic-sub">higher = faster</div></div>
+  </div>
+  <div id="panel-f-hum" class="info-panel"><h4>💧 Humidity</h4><p>Humidity is the amount of water vapour already in the air. In <strong>low humidity</strong> (dry air), there is a much steeper water vapour concentration gradient between the leaf's air spaces and the outside air, so water vapour diffuses out faster. In <strong>high humidity</strong>, the air outside is already nearly saturated with water vapour, reducing the gradient and slowing diffusion out of the stomata.</p><div class="eg">📌 Exam answer: "In low humidity, the concentration gradient of water vapour between the leaf and the air is steeper, so water diffuses out of the stomata faster, increasing the rate of transpiration."</div></div>
+  <div id="panel-f-wind" class="info-panel"><h4>💨 Wind Speed</h4><p>Moving air constantly sweeps away water vapour molecules from around the stomata as soon as they diffuse out, preventing a "humid layer" building up near the leaf surface. This keeps the concentration gradient steep, so diffusion — and transpiration — continues at a fast rate.</p><div class="eg">📌 Exam answer: "Higher wind speed removes water vapour from around the leaf surface, maintaining a steep concentration gradient, so the rate of transpiration increases."</div></div>
+  <div id="panel-f-temp" class="info-panel"><h4>🌡️ Temperature</h4><p>Higher temperatures give water molecules more kinetic energy, so they evaporate from cell surfaces inside the leaf faster and diffuse out of the stomata more quickly. Higher temperature also means the air can hold more water vapour before becoming saturated, keeping the gradient steep.</p><div class="eg">📌 Exam answer: "As temperature increases, water molecules gain more kinetic energy and evaporate faster, increasing the rate of diffusion of water vapour out of the stomata."</div></div>
+  <div id="panel-f-light" class="info-panel"><h4>☀️ Light Intensity</h4><p>Light intensity affects transpiration <strong>indirectly</strong>, through the stomata. In bright light, guard cells cause stomata to open wide (so the plant can take in CO₂ for photosynthesis), which also lets more water vapour escape. In darkness, most stomata close, dramatically reducing water loss.</p><div class="eg">📌 Exam answer: "In bright light, stomata open wider to allow more carbon dioxide in for photosynthesis, which also increases the rate at which water vapour is lost, so transpiration increases."</div></div>
+
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ocean);margin:.5rem 0 .8rem;">🧪 2.58B Practical — Investigating Factors Affecting Transpiration Rate</h3>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Using a <strong>potometer</strong>, a piece of apparatus that measures the rate of water uptake by a cut, leafy shoot (used as an estimate for transpiration rate).</p>
+
+  <div class="accord-card" onclick="toggleAccord(this)">
+    <div class="accord-title"><span>🔬 Method — Setting Up a Potometer</span><span class="accord-arrow">▼</span></div>
+    <div class="accord-body">Cut a leafy shoot underwater (to prevent air entering the xylem) and attach it to the potometer, again underwater, so no air bubbles enter the system. Ensure all joints are airtight and watertight (e.g. sealed with petroleum jelly). Introduce a single air bubble into the capillary tube. As the shoot takes up water (as a proxy for transpiration), the air bubble moves along the scale on the capillary tube — the distance moved in a set time gives the rate of water uptake.<div class="accord-eg">📌 Exam trap: the potometer measures the rate of <em>water uptake</em>, not transpiration directly — but the two are assumed to be approximately equal, since most water taken up is lost by transpiration.</div></div>
+  </div>
+  <div class="accord-card" onclick="toggleAccord(this)">
+    <div class="accord-title"><span>📊 Variables in the Investigation</span><span class="accord-arrow">▼</span></div>
+    <div class="accord-body"><strong>Independent variable:</strong> the environmental factor being tested (e.g. use a fan for wind speed, a lamp at different distances for light intensity, a heater for temperature, or a plastic bag/humidifier for humidity).<br><br><strong>Dependent variable:</strong> distance moved by the air bubble in a fixed time (rate of water uptake).<br><br><strong>Controlled variables:</strong> the same shoot/species, same leaf area, and keep all other environmental factors constant while only changing the one being tested.<div class="accord-eg">📌 Exam tip: always reset the air bubble to the same starting point before each repeat, and take repeat readings to calculate a mean.</div></div>
+  </div>
+  <div class="accord-card" onclick="toggleAccord(this)">
+    <div class="accord-title"><span>📈 Typical Results &amp; Explanation</span><span class="accord-arrow">▼</span></div>
+    <div class="accord-body">The air bubble moves further per minute under conditions of: <strong>high temperature, low humidity, high wind speed, and high light intensity</strong> — because each of these increases the concentration gradient for water vapour diffusion, or (for light) causes the stomata to open wider.<div class="accord-eg">📌 A student can plot rate of bubble movement (mm/min) against each factor to produce a graph showing a positive correlation for temperature, wind and light, and a negative correlation for humidity.</div></div>
+  </div>
+
+  <div class="reflect-box">
+    <h4>✅ Reflect — Design Your Own Investigation</h4>
+    <textarea id="ta-factors" placeholder="A student wants to investigate the effect of wind speed on the rate of transpiration using a potometer and an electric fan set at different speeds. Identify the independent variable, the dependent variable, and TWO variables that must be controlled. Explain why each controlled variable must be kept constant."></textarea>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 5: QUIZ ══ -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow"><div class="eyebrow-num num-gold">6</div><span class="eyebrow-label">Phase 6 · Practice Quiz</span></div>
+  <h2>📝 Transport in Plants — Quiz</h2>
+  <p class="lead">Covers Pearson Edexcel IGCSE Biology specification points 2.53–2.58B. Answer each — instant feedback with full explanations.</p>
+  <div id="quiz-container"></div>
+  <div id="score-panel" class="score-panel" style="display:none;"><h3>Quiz Complete! 🎉</h3><div class="score-num" id="score-display">0/17</div><p id="score-msg"></p><button class="btn btn-gold" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button></div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 6: PAST PAPERS ══ -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">7</div><span class="eyebrow-label">Phase 7 · Exam-Style Questions</span></div>
+  <h2>📝 Pearson Edexcel-Style Exam Questions</h2>
+  <p class="lead">Written in the style and command words used by Pearson Edexcel International GCSE Biology (4BI1) past papers. Write your answers, then click <strong>Reveal All Answers</strong> to check against mark-scheme-style responses.</p>
+
+  <div class="pp-card">
+    <div class="pp-label">Command word: Describe · 3 marks</div>
+    <div class="pp-q">Describe the role of xylem in a flowering plant. <em>[3]</em></div>
+    <textarea class="pp-textarea" id="pp1" placeholder="Write your answer here..."></textarea>
+    <div class="pp-marks">Tip: "Describe" wants a developed account, not just one word.</div>
+    <div class="pp-answer" id="ans1">
+      <strong>Indicative content (3 marks):</strong>
+      <ul>
+        <li>Transports water (and mineral ions) <strong>[1]</strong></li>
+        <li>From the roots to the stem / leaves / other parts of the plant <strong>[1]</strong></li>
+        <li>Made of dead, hollow, lignified cells (which also provide support) <strong>[1]</strong></li>
+      </ul>
+      <em>Note: "Xylem carries water" alone only earns 1 mark — you need direction and a structural detail too.</em>
+    </div>
+  </div>
+
+  <div class="pp-card">
+    <div class="pp-label">Command word: Describe · 2 marks</div>
+    <div class="pp-q">Describe the role of phloem in a flowering plant. <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp2" placeholder="Write your answer here..."></textarea>
+    <div class="pp-marks">Tip: name both substances transported.</div>
+    <div class="pp-answer" id="ans2">
+      <strong>Indicative content (2 marks):</strong>
+      <ul>
+        <li>Transports sucrose and amino acids <strong>[1]</strong></li>
+        <li>Between the leaves and other parts of the plant (e.g. from source to sink) <strong>[1]</strong></li>
+      </ul>
+      <em>Do not say "food" — the mark scheme wants the named substances: sucrose and amino acids.</em>
+    </div>
+  </div>
+
+  <div class="pp-card">
+    <div class="pp-label">Command word: Explain · 3 marks</div>
+    <div class="pp-q">Root hair cells absorb mineral ions by active transport. Explain why active transport, rather than diffusion, is needed for this process. <em>[3]</em></div>
+    <textarea class="pp-textarea" id="pp3" placeholder="Write your answer here..."></textarea>
+    <div class="pp-marks">Tip: "Explain" needs a reason, not just a description.</div>
+    <div class="pp-answer" id="ans3">
+      <strong>Indicative content (3 marks):</strong>
+      <ul>
+        <li>The concentration of mineral ions is often already higher inside the root hair cell than in the soil <strong>[1]</strong></li>
+        <li>So diffusion cannot move ions further in, as diffusion only moves substances down a concentration gradient <strong>[1]</strong></li>
+        <li>Active transport uses energy (ATP) from respiration to move ions against their concentration gradient <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="pp-card">
+    <div class="pp-label">Command word: Explain · 4 marks</div>
+    <div class="pp-q">A plant is moved from a humid greenhouse to a windy, dry field. Explain the effect this is likely to have on its rate of transpiration. <em>[4]</em></div>
+    <textarea class="pp-textarea" id="pp4" placeholder="Write your answer here..."></textarea>
+    <div class="pp-marks">Tip: address BOTH factors named in the question (humidity AND wind).</div>
+    <div class="pp-answer" id="ans4">
+      <strong>Indicative content (4 marks):</strong>
+      <ul>
+        <li>Transpiration rate will increase <strong>[1]</strong></li>
+        <li>Lower humidity increases the water vapour concentration gradient between the leaf and the air, so water diffuses out faster <strong>[1]</strong></li>
+        <li>Higher wind speed removes water vapour from around the leaf/stomata <strong>[1]</strong></li>
+        <li>This maintains a steep concentration gradient, so diffusion of water vapour out of the stomata continues at a fast rate <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="pp-card">
+    <div class="pp-label">Command word: Determine · 2 marks</div>
+    <div class="pp-q">A potometer is used to measure water uptake in a leafy shoot. The air bubble moves 24mm in 6 minutes. Determine the rate of water uptake in mm per minute. <em>[2]</em></div>
+    <textarea class="pp-textarea" id="pp5" placeholder="Show your working here..."></textarea>
+    <div class="pp-marks">Tip: "Determine" requires a numerical answer with working shown.</div>
+    <div class="pp-answer" id="ans5">
+      <strong>Indicative content (2 marks):</strong>
+      <ul>
+        <li>24 ÷ 6 <strong>[1]</strong></li>
+        <li>= 4 mm per minute <strong>[1]</strong></li>
+      </ul>
+      <em>Always show the division, not just the final answer — method marks are available even if the final number is wrong.</em>
+    </div>
+  </div>
+
+  <div class="pp-card">
+    <div class="pp-label">Command word: Suggest · 3 marks</div>
+    <div class="pp-q">Cacti live in hot, dry environments and have very few stomata, most of which are sunk into pits on the stem surface. Suggest how this reduces water loss by transpiration. <em>[3]</em></div>
+    <textarea class="pp-textarea" id="pp6" placeholder="Write your answer here..."></textarea>
+    <div class="pp-marks">Tip: "Suggest" allows you to apply your knowledge to an unfamiliar (novel) situation.</div>
+    <div class="pp-answer" id="ans6">
+      <strong>Indicative content (3 marks):</strong>
+      <ul>
+        <li>Fewer stomata means a smaller total area/number of pores through which water vapour can diffuse out <strong>[1]</strong></li>
+        <li>Sunken stomata trap a pocket of still, humid air around the pore <strong>[1]</strong></li>
+        <li>This reduces the water vapour concentration gradient between the leaf/stem and the air outside, slowing diffusion out <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="pp-card">
+    <div class="pp-label">Command word: Explain · 3 marks</div>
+    <div class="pp-q">A ring of bark, including the phloem, is removed from around a tree trunk (a process called ring-barking), while the xylem underneath is left intact. Explain why the roots eventually die, but the leaves remain healthy for some time. <em>[3]</em></div>
+    <textarea class="pp-textarea" id="pp7" placeholder="Write your answer here..."></textarea>
+    <div class="pp-marks">Tip: think about which tissue was removed and what it transports.</div>
+    <div class="pp-answer" id="ans7">
+      <strong>Indicative content (3 marks):</strong>
+      <ul>
+        <li>Phloem transports sucrose (and amino acids) from the leaves (source) down to the roots (sink) <strong>[1]</strong></li>
+        <li>With the phloem removed, sucrose can no longer reach the roots, so the roots starve of food/energy <strong>[1]</strong></li>
+        <li>The xylem is undamaged, so water and mineral ions can still travel up to the leaves, keeping them alive/healthy in the short term <strong>[1]</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin:1.2rem 0 2rem;text-align:center;"><button class="btn btn-ocean" onclick="showAllAnswers()">👁️ Reveal All Answers</button> <button class="btn btn-ghost" onclick="hideAllAnswers()">🙈 Hide All Answers</button></div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 7: REFLECT ══ -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">8</div><span class="eyebrow-label">Phase 8 · Reflect</span></div>
+  <h2>💭 Reflection &amp; Review</h2>
+  <p class="lead">Solidify your understanding. Answer each question in your own words.</p>
+  <div class="quiz-card"><div class="quiz-q">1. Compare xylem and phloem in terms of what they transport, the direction of transport, and whether their cells are alive or dead.</div><textarea id="r1" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea></div>
+  <div class="quiz-card"><div class="quiz-q">2. Explain how the structure of a root hair cell is adapted for the absorption of water and mineral ions from the soil.</div><textarea id="r2" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea></div>
+  <div class="quiz-card"><div class="quiz-q">3. Describe the pathway of water from the soil to the atmosphere and explain what causes water to move through the xylem without a pump.</div><textarea id="r3" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea></div>
+  <div class="quiz-card"><div class="quiz-q">4. Explain how each of the following affects the rate of transpiration, giving a reason for each: humidity, wind speed, temperature, and light intensity.</div><textarea id="r4" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.88rem;min-height:80px;background:white;outline:none;resize:vertical;" placeholder="Write your answer…"></textarea></div>
+  <div class="divider"></div>
+  <div class="congrats-panel">
+    <h2>🌿 Transport in Plants — Complete!</h2>
+    <p>You've covered the roles of xylem and phloem, how root hair cells absorb water and mineral ions, what transpiration is and why it happens, and the four factors that control its rate — including the potometer practical.</p>
+    <p style="font-size:.85rem;opacity:.75;">Exam tip: transport in plants questions almost always ask you to explain a trend, not just describe it. Practise pairing every "what happens" with a "because…".</p>
+    <div class="summary-chips">
+      <span class="summary-chip">Xylem ✓</span><span class="summary-chip">Phloem ✓</span>
+      <span class="summary-chip">Translocation ✓</span><span class="summary-chip">Root Hair Cells ✓</span>
+      <span class="summary-chip">Transpiration ✓</span><span class="summary-chip">Transpiration Stream ✓</span>
+      <span class="summary-chip">Humidity ✓</span><span class="summary-chip">Wind Speed ✓</span>
+      <span class="summary-chip">Temperature ✓</span><span class="summary-chip">Light Intensity ✓</span>
+      <span class="summary-chip">Potometer Practical ✓</span>
+    </div>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="navigate(1)">Next <span>→</span></button></div>
+</div>
+
+<!-- ══ SEC 8: SUBMIT ══ -->
+<div class="section" id="sec-8">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">9</div><span class="eyebrow-label">Your Completed Work</span></div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Here's a summary of everything you worked on. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> to your teacher.</p>
+  <div class="summary-section" style="background:var(--ocean);color:white;border-color:var(--ocean);"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;"><div><div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">STUDENT</div><div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div></div><div style="text-align:right;"><div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">LESSON</div><div style="font-family:'Fredoka One',cursive;font-size:1rem;">Transport in Plants Explorer 🌿</div><div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6;" id="summaryDate"></div></div></div></div>
+  <div class="summary-section"><h3>📝 Quiz Score</h3><div class="summary-answer" id="sum-quiz"></div></div>
+  <div class="summary-section"><h3>🤔 Opening Prediction</h3><div class="summary-answer" id="sum-wonder"></div></div>
+  <div class="summary-section"><h3>🌿 Xylem &amp; Phloem Reflection</h3><div class="summary-answer" id="sum-xylphlo"></div></div>
+  <div class="summary-section"><h3>🌱 Root Hair Cell Prediction</h3><div class="summary-answer" id="sum-roothair"></div></div>
+  <div class="summary-section"><h3>💨 Transpiration Pathway Reflection</h3><div class="summary-answer" id="sum-transp"></div></div>
+  <div class="summary-section"><h3>🌦️ Factors &amp; Practical Design Reflection</h3><div class="summary-answer" id="sum-factors"></div></div>
+  <div class="summary-section"><h3>💭 Reflection Questions</h3>
+    <div class="sum-label">Q1 — Xylem vs Phloem</div><div class="summary-answer" id="sum-r1"></div>
+    <div class="sum-label">Q2 — Root Hair Cell Adaptations</div><div class="summary-answer" id="sum-r2"></div>
+    <div class="sum-label">Q3 — Pathway of Water &amp; the Pull of Transpiration</div><div class="summary-answer" id="sum-r3"></div>
+    <div class="sum-label">Q4 — Factors Affecting Transpiration Rate</div><div class="summary-answer" id="sum-r4"></div>
+  </div>
+  <div class="summary-section"><h3>📝 Exam-Style Question Responses</h3>
+    <div class="sum-label">Q1 — Role of Xylem</div><div class="summary-answer" id="sum-pp1"></div>
+    <div class="sum-label">Q2 — Role of Phloem</div><div class="summary-answer" id="sum-pp2"></div>
+    <div class="sum-label">Q3 — Active Transport in Root Hair Cells</div><div class="summary-answer" id="sum-pp3"></div>
+    <div class="sum-label">Q4 — Humid Greenhouse to Windy Field</div><div class="summary-answer" id="sum-pp4"></div>
+    <div class="sum-label">Q5 — Potometer Rate Calculation</div><div class="summary-answer" id="sum-pp5"></div>
+    <div class="sum-label">Q6 — Cactus Adaptations</div><div class="summary-answer" id="sum-pp6"></div>
+    <div class="sum-label">Q7 — Ring-Barking</div><div class="summary-answer" id="sum-pp7"></div>
+  </div>
+  <div class="share-buttons">
+    <button class="share-btn copy" onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.6rem;">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2;"><strong>📋 Copy My Results</strong> — Copies all answers. Paste into Google Classroom.<br><strong>📧 Email to Teacher</strong> — Opens your email app with answers pre-filled.<br><strong>🖨️ Print / Save PDF</strong> — Mac: bottom-left → Save as PDF. Windows: Microsoft Print to PDF.</p>
+  </div>
+  <div class="nav-row"><button class="btn-prev" onclick="navigate(-1)">← Back</button><button class="btn-next" onclick="goTo(0)">↺ Start Over</button></div>
+</div>
+
+</div><!-- /sheet -->
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.<br>
+  Content informed by the Pearson Edexcel International GCSE Biology (4BI1) Specification, Issue 3
+</div>
+
+<script>
+// ══ NAVIGATION ══
+const steps    = document.querySelectorAll('.prog-step');
+const sections = document.querySelectorAll('.section');
+let currentSection = 0;
+
+function goTo(n) {
+  currentSection = n;
+  sections.forEach((s,i) => s.classList.toggle('active', i===n));
+  steps.forEach((s,i) => {
+    s.classList.remove('active','done');
+    if (i===n) s.classList.add('active');
+    if (i<n)  s.classList.add('done');
+  });
+  if (n===8) buildSummary();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function navigate(dir) { goTo(Math.max(0, Math.min(sections.length-1, currentSection+dir))); }
+
+// ══ CONCEPT CHIP REVEALS (Section 1) ══
+const revIds1 = ['xylem','phloem','translocation','transtream','vascular'];
+function revealChip(key) {
+  revIds1.forEach(id => { const el=document.getElementById('chip-'+id); if(el) el.classList.remove('show'); });
+  const t = document.getElementById('chip-'+key);
+  if (t) t.classList.add('show');
+}
+
+// ══ INFO CARD PANELS (shared across sections) ══
+function showPanel(type) {
+  const t = document.getElementById('panel-'+type);
+  const card = event.currentTarget;
+  const allP = card.closest('.section').querySelectorAll('.info-panel');
+  const allC = card.closest('.section').querySelectorAll('.info-card');
+  const isOpen = t && t.classList.contains('show');
+  allP.forEach(p=>p.classList.remove('show'));
+  allC.forEach(c=>c.classList.remove('active'));
+  if (!isOpen && t) { t.classList.add('show'); card.classList.add('active'); }
+}
+
+// ══ ACCORDION ══
+function toggleAccord(el) {
+  const isOpen = el.classList.contains('open');
+  el.parentElement.querySelectorAll('.accord-card').forEach(c=>c.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+
+// ══ MATCHING GAME (generic, supports multiple grids) ══
+const matchState = {};
+function matchClick(el, gridKey) {
+  if (!matchState[gridKey]) matchState[gridKey] = { selected:null, score:0 };
+  const st = matchState[gridKey];
+  if (el.classList.contains('matched')) return;
+  if (!st.selected) {
+    el.classList.add('selected'); st.selected = el;
+  } else if (st.selected === el) {
+    el.classList.remove('selected'); st.selected = null;
+  } else {
+    const pA = st.selected.dataset.pair, pB = el.dataset.pair;
+    const sA = st.selected.dataset.side, sB = el.dataset.side;
+    if (pA===pB && sA!==sB) {
+      st.selected.classList.remove('selected'); st.selected.classList.add('matched');
+      el.classList.add('matched'); st.score++;
+      const scoreEl = document.getElementById('match-score-'+gridKey);
+      if (scoreEl) scoreEl.textContent = st.score + '/5 matched';
+      st.selected = null;
+    } else {
+      st.selected.classList.remove('selected'); st.selected.classList.add('wrong'); el.classList.add('wrong');
+      const a=st.selected, b=el;
+      setTimeout(()=>{ a.classList.remove('wrong'); b.classList.remove('wrong'); }, 650);
+      st.selected = null;
+    }
+  }
+}
+function resetMatch(gridId, gridKey) {
+  matchState[gridKey] = { selected:null, score:0 };
+  document.querySelectorAll('#'+gridId+' .match-item').forEach(el=>el.classList.remove('selected','matched','wrong'));
+  const scoreEl = document.getElementById('match-score-'+gridKey);
+  if (scoreEl) scoreEl.textContent = '';
+}
+
+// ══ ROOT HAIR OSMOSIS SIMULATOR ══
+const rhScenarios = {
+  normal: {
+    leftLabel:'Soil Water', rightLabel:'Root Hair Cell Sap',
+    leftDots:'💧💧💧💧💧💧💧', rightDots:'🟡🟡🟡💧💧',
+    leftConc:'Dilute soil solution → HIGH water potential',
+    rightConc:'Concentrated cell sap → LOWER water potential',
+    arrow:'←', arrowShow:true,
+    result:'🌱 Water moves from the soil INTO the root hair cell by osmosis, down the water potential gradient (high → low). This is how water normally enters the plant.',
+    leftBg:'#e3f2fd', rightBg:'#fff9e6'
+  },
+  flood: {
+    leftLabel:'Waterlogged Soil', rightLabel:'Root Hair Cell Sap',
+    leftDots:'💧💧💧💧💧💧💧💧', rightDots:'🟡🟡🟡💧💧💧',
+    leftConc:'Almost pure water → VERY HIGH water potential',
+    rightConc:'Cell sap → lower water potential',
+    arrow:'←', arrowShow:true,
+    result:'🌧️ The water potential gradient is even steeper, so water enters the root hair cell rapidly by osmosis. However, waterlogging fills the air spaces in the soil, so roots may struggle to get enough oxygen for respiration.',
+    leftBg:'#dceeff', rightBg:'#fff9e6'
+  },
+  drought: {
+    leftLabel:'Dry Soil', rightLabel:'Root Hair Cell Sap',
+    leftDots:'💧🟡🟡🟡🟡', rightDots:'🟡🟡🟡💧💧',
+    leftConc:'Very little water left → LOW water potential',
+    rightConc:'Cell sap → water potential may now be HIGHER than the soil',
+    arrow:'→', arrowShow:true,
+    result:'🏜️ During drought, the soil water potential can drop below that of the root hair cell. The water potential gradient reverses, and water may move OUT of the root by osmosis, causing the plant to wilt.',
+    leftBg:'#f5e9c8', rightBg:'#fff9e6'
+  }
+};
+function setScenario(key) {
+  const s = rhScenarios[key];
+  document.getElementById('osmLeftLabel').textContent = s.leftLabel;
+  document.getElementById('osmRightLabel').textContent = s.rightLabel;
+  document.getElementById('osmLeftDots').textContent = s.leftDots;
+  document.getElementById('osmRightDots').textContent = s.rightDots;
+  document.getElementById('osmLeftConc').textContent = s.leftConc;
+  document.getElementById('osmRightConc').textContent = s.rightConc;
+  document.getElementById('osmArrow').textContent = s.arrow;
+  document.getElementById('osmArrow').classList.toggle('show', s.arrowShow);
+  document.getElementById('osmResult').innerHTML = s.result;
+  document.getElementById('osmLeft').style.background = s.leftBg;
+  document.getElementById('osmRight').style.background = s.rightBg;
+}
+
+// ══ TRANSPIRATION RATE SLIDER SIMULATOR ══
+function updateRate() {
+  const hum   = parseInt(document.getElementById('sl-humidity').value);
+  const wind  = parseInt(document.getElementById('sl-wind').value);
+  const temp  = parseInt(document.getElementById('sl-temp').value);
+  const light = parseInt(document.getElementById('sl-light').value);
+
+  document.getElementById('ro-humidity').textContent = hum + '%';
+  document.getElementById('ro-wind').textContent = wind < 15 ? 'Still' : wind < 40 ? 'Light' : wind < 70 ? 'Moderate' : 'Strong';
+  document.getElementById('ro-temp').textContent = Math.round(5 + (temp/100)*35) + '°C';
+  document.getElementById('ro-light').textContent = light < 15 ? 'Dark' : light < 40 ? 'Dim' : light < 70 ? 'Medium' : 'Bright';
+
+  // Higher humidity REDUCES rate; higher wind/temp/light INCREASE rate
+  const rate = Math.round(((100-hum) + wind + temp + light) / 4);
+  document.getElementById('rateFill').style.width = rate + '%';
+
+  let label, explain;
+  if (rate < 25) {
+    label = 'Very Slow';
+    explain = 'Under these conditions (humid, still, cool, dark) the water vapour concentration gradient between the leaf and the air stays shallow, and stomata are mostly closed — so transpiration is very slow.';
+  } else if (rate < 50) {
+    label = 'Slow';
+    explain = 'Conditions are gentle — moderate humidity keeps the concentration gradient relatively shallow, so water vapour diffuses out of the stomata slowly.';
+  } else if (rate < 75) {
+    label = 'Fast';
+    explain = 'Warmer, drier, or breezier conditions are steepening the water vapour concentration gradient and/or opening stomata wider, speeding up transpiration.';
+  } else {
+    label = 'Very Fast';
+    explain = 'Hot, dry, windy and bright conditions combine to maximise the water vapour concentration gradient and keep stomata wide open — transpiration is at its fastest, and the plant risks losing water faster than roots can replace it (wilting).';
+  }
+  document.getElementById('rateLabel').textContent = label;
+  document.getElementById('rateExplain').textContent = explain;
+}
+updateRate();
+
+// ══ QUIZ DATA ══
+const quizData = [
+  { q:'Which substances does xylem transport, and in which direction?',
+    opts:['Sucrose and amino acids, in either direction','Water and mineral ions, one-way from roots to leaves','Water only, in either direction','Sucrose only, from roots to leaves'],
+    ans:1, fb:'Xylem transports water and mineral ions in ONE direction only — upward, from the roots to the stem and leaves. This movement is driven by transpiration.' },
+  { q:'Which substances does phloem transport, and in which direction?',
+    opts:['Water and mineral ions, one-way upward','Sucrose and amino acids, which can move in either direction','Oxygen and carbon dioxide, one-way downward','Water only, downward from leaves to roots'],
+    ans:1, fb:'Phloem transports sucrose and amino acids. Unlike xylem, this can happen in EITHER direction — from a source (e.g. a photosynthesising leaf) to a sink (e.g. roots, fruits, or growing buds) — this is called translocation.' },
+  { q:'Which of the following best describes the structure of xylem tissue?',
+    opts:['Living cells with sieve plates and companion cells','Dead, hollow, lignified tubes with no cross walls','Cells packed with chloroplasts for photosynthesis','Thin-walled cells filled with mitochondria'],
+    ans:1, fb:'Xylem is made of dead cells joined into long, hollow tubes. Their walls are strengthened with lignin, which also helps support the plant, and there are no cross-walls to obstruct water flow.' },
+  { q:'Why is phloem tissue described as "living", unlike xylem?',
+    opts:['Phloem cells contain chloroplasts','Phloem sieve tube cells and their companion cells are alive and companion cells provide energy for transport','Phloem cells can photosynthesise','Phloem cells have thick lignified walls like xylem'],
+    ans:1, fb:'Sieve tube cells and their companion cells remain alive. Companion cells provide the energy (from respiration) needed to actively load and move sucrose and amino acids through the phloem.' },
+  { q:'What term describes the movement of sucrose and amino acids through the phloem?',
+    opts:['Transpiration', 'Osmosis', 'Translocation', 'Active transport only'],
+    ans:2, fb:'Translocation is the specific term for the movement of dissolved sucrose and amino acids through phloem tissue, from source to sink.' },
+  { q:'Which of the following is an adaptation of a root hair cell for absorbing water and mineral ions?',
+    opts:['A thick, waxy cuticle','A long, thin extension that increases surface area','Many chloroplasts for photosynthesis','A thick lignified cell wall'],
+    ans:1, fb:'The long, hair-like extension of a root hair cell greatly increases its surface area in contact with the soil, allowing more water and mineral ions to be absorbed.' },
+  { q:'Why does a root hair cell absorb water from the soil by osmosis?',
+    opts:['The soil always contains more mineral ions than the cell','The cell sap is more concentrated (has a lower water potential) than the surrounding dilute soil water','The cell actively pumps water in using ATP','Water always moves from low to high water potential'],
+    ans:1, fb:'The concentrated cell sap inside the root hair cell has a LOWER water potential than the dilute soil water outside. Water always moves from high to low water potential — into the cell — by osmosis.' },
+  { q:'Why do root hair cells contain a large number of mitochondria?',
+    opts:['To carry out photosynthesis','To provide energy (ATP) for the active transport of mineral ions','To store starch','To produce lignin for the cell wall'],
+    ans:1, fb:'Mineral ions are often at a higher concentration inside the root hair cell than in the soil, so they cannot enter by diffusion. Active transport is needed, which requires ATP from respiration in the many mitochondria.' },
+  { q:'Which is the correct definition of transpiration?',
+    opts:['The active pumping of water out of leaves','The evaporation of water from the surface of a plant, mainly through the stomata','The movement of sucrose from leaves to roots','The absorption of water by root hair cells'],
+    ans:1, fb:'Transpiration is the evaporation of water from the surface of a plant, occurring mainly through the stomata on the underside of leaves.' },
+  { q:'What ultimately causes water to be pulled upward through the xylem?',
+    opts:['Active transport by xylem cells','Root pressure created by the heart-like pumping of the root','Continuous evaporation of water from the leaves, pulling more water up behind it','Gravity pulling water sideways into the stem'],
+    ans:2, fb:'As water evaporates from the leaves (transpiration) and diffuses out through the stomata, it draws more water up through the xylem to replace it — creating the continuous transpiration stream.' },
+  { q:'How does low humidity affect the rate of transpiration, and why?',
+    opts:['Decreases it, because there is less water vapour available to diffuse','Increases it, because the water vapour concentration gradient between the leaf and the air is steeper','Has no effect on transpiration rate','Decreases it, because stomata close in dry air'],
+    ans:1, fb:'In low humidity, the air outside the leaf holds little water vapour, creating a steeper concentration gradient between the leaf\'s air spaces and the outside air. This speeds up diffusion of water vapour out of the stomata.' },
+  { q:'How does increased wind speed affect the rate of transpiration, and why?',
+    opts:['Decreases it by cooling the leaf surface','Increases it, because moving air removes water vapour from around the stomata, maintaining a steep concentration gradient','Has no effect, since wind cannot influence diffusion','Decreases it by closing the stomata'],
+    ans:1, fb:'Wind sweeps away water vapour molecules as they diffuse out of the stomata, preventing a humid layer building up. This keeps the concentration gradient steep, so transpiration continues at a fast rate.' },
+  { q:'How does increased temperature affect the rate of transpiration, and why?',
+    opts:['Increases it, because water molecules gain kinetic energy and evaporate/diffuse faster','Decreases it, because heat closes the stomata','Has no effect on the rate of diffusion of water vapour','Increases it only because plants photosynthesise faster'],
+    ans:0, fb:'Higher temperature gives water molecules more kinetic energy, so they evaporate from cell surfaces and diffuse out of the stomata faster, increasing the rate of transpiration.' },
+  { q:'Why does light intensity affect the rate of transpiration?',
+    opts:['Light directly evaporates water from the leaf surface','Bright light causes stomata to open wider (to allow CO₂ in for photosynthesis), which also lets more water vapour escape','Light has no real effect on transpiration','Light decreases the temperature of the leaf'],
+    ans:1, fb:'Light intensity affects transpiration indirectly. In bright light, stomata open wider to let in CO₂ for photosynthesis. This wider opening also allows more water vapour to escape, increasing transpiration.' },
+  { q:'A potometer is used in a school investigation. What does it actually measure?',
+    opts:['The exact rate of transpiration from every leaf','The rate of water uptake by a cut shoot, used as an estimate for transpiration rate','The concentration of mineral ions in xylem sap','The rate of sucrose movement through phloem'],
+    ans:1, fb:'A potometer measures the rate at which a cut, leafy shoot takes up water. Since most water taken up is eventually lost through transpiration, this is used as a close estimate of the transpiration rate.' },
+  { q:'In a potometer investigation testing the effect of wind speed, which of these should be a CONTROLLED variable?',
+    opts:['Fan speed', 'Distance the air bubble moves', 'Leaf area / size of the shoot used', 'Rate of water uptake'],
+    ans:2, fb:'Leaf area (and species/size of shoot) must be kept the same between trials, otherwise differences in results could be due to leaf size rather than the independent variable (wind speed) being tested.' },
+  { q:'A tree is ring-barked, removing a strip of bark (containing phloem) all the way around the trunk, while the xylem underneath is left undamaged. What is the most likely long-term result?',
+    opts:['The leaves die immediately because water can no longer reach them','The roots eventually starve and die because sucrose can no longer be translocated to them, while the leaves survive for longer since xylem is intact','Nothing changes because phloem is not essential','The whole tree dies within hours because active transport stops'],
+    ans:1, fb:'Removing the phloem blocks translocation of sucrose from the leaves (source) to the roots (sink), so the roots eventually starve. Since the xylem is untouched, water and mineral ions can still reach the leaves, keeping them alive for longer.' },
+];
+
+let quizScore=0, quizAnswered=0;
+function buildQuiz() {
+  const c = document.getElementById('quiz-container');
+  c.innerHTML = ''; quizScore=0; quizAnswered=0;
+  document.getElementById('score-panel').style.display='none';
+  quizData.forEach((item,idx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `<div class="quiz-q">Q${idx+1}. ${item.q}</div><div class="quiz-options">${item.opts.map((o,i)=>`<button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}</div><div class="quiz-feedback" id="qfb-${idx}"></div>`;
+    c.appendChild(card);
+  });
+}
+function checkAnswer(btn, qIdx, optIdx) {
+  const card = btn.closest('.quiz-card');
+  const buttons = card.querySelectorAll('.quiz-opt');
+  const fb = document.getElementById('qfb-'+qIdx);
+  const correct = quizData[qIdx].ans;
+  buttons.forEach(b=>b.disabled=true);
+  if (optIdx===correct) {
+    btn.classList.add('correct'); fb.textContent='✅ '+quizData[qIdx].fb; fb.className='quiz-feedback show correct-fb'; quizScore++;
+  } else {
+    btn.classList.add('wrong'); buttons[correct].classList.add('correct');
+    fb.textContent='❌ '+quizData[qIdx].fb; fb.className='quiz-feedback show wrong-fb';
+  }
+  quizAnswered++;
+  if (quizAnswered === quizData.length) {
+    const panel = document.getElementById('score-panel');
+    panel.style.display='block';
+    document.getElementById('score-display').textContent = quizScore+'/'+quizData.length;
+    const pct = quizScore/quizData.length;
+    let msg;
+    if (pct>=.9) msg='🌟 Outstanding! You have mastered transport in plants — exam ready!';
+    else if (pct>=.75) msg='👍 Great work! Review the questions you missed.';
+    else if (pct>=.6) msg='📚 Solid start — revisit Phases 2–5, then retake.';
+    else msg='💪 Go back through the earlier phases, then retake the quiz.';
+    document.getElementById('score-msg').textContent = msg;
+    panel.scrollIntoView({behavior:'smooth'});
+  }
+}
+function retakeQuiz() { buildQuiz(); }
+buildQuiz();
+
+// ══ PAST PAPER ANSWERS ══
+function showAllAnswers() { for(let i=1;i<=7;i++){ const el=document.getElementById('ans'+i); if(el) el.classList.add('show'); } }
+function hideAllAnswers() { for(let i=1;i<=7;i++){ const el=document.getElementById('ans'+i); if(el) el.classList.remove('show'); } }
+
+// ══ SUMMARY / SUBMIT ══
+function getTA(id) { const el=document.getElementById(id); return el ? el.value.trim() : ''; }
+function fillSummary(id, text) {
+  const el = document.getElementById(id); if (!el) return;
+  el.textContent = text || 'Not answered';
+  el.classList.toggle('empty', !text);
+}
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent = new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const scoreEl = document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl ? scoreEl.textContent+' correct' : 'Quiz not yet completed');
+  fillSummary('sum-wonder',   getTA('ta-wonder'));
+  fillSummary('sum-xylphlo',  getTA('ta-xylphlo'));
+  fillSummary('sum-roothair', getTA('ta-roothair'));
+  fillSummary('sum-transp',   getTA('ta-transp'));
+  fillSummary('sum-factors',  getTA('ta-factors'));
+  for (let i=1;i<=4;i++) fillSummary('sum-r'+i, getTA('r'+i));
+  for (let i=1;i<=7;i++) fillSummary('sum-pp'+i, getTA('pp'+i));
+}
+function buildPlainText() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const date = new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const scoreEl = document.getElementById('score-display');
+  const refAnswers = [1,2,3,4].map(i=>`Q${i}: ${getTA('r'+i)||'Not answered'}`).join('\n');
+  const ppAnswers  = [1,2,3,4,5,6,7].map(i=>`Q${i}: ${getTA('pp'+i)||'Not answered'}`).join('\n');
+  return [
+    'PEARSON EDEXCEL IGCSE BIOLOGY · TRANSPORT IN PLANTS EXPLORER — STUDENT SUBMISSION',
+    '==============================================================================',
+    'Student: '+name, 'Date: '+date, 'Specification points: 2.53–2.58B', '',
+    '── QUIZ SCORE ──', scoreEl ? scoreEl.textContent : 'Not completed', '',
+    '── OPENING PREDICTION ──', getTA('ta-wonder')||'Not answered', '',
+    '── XYLEM & PHLOEM REFLECTION ──', getTA('ta-xylphlo')||'Not answered', '',
+    '── ROOT HAIR CELL PREDICTION ──', getTA('ta-roothair')||'Not answered', '',
+    '── TRANSPIRATION PATHWAY REFLECTION ──', getTA('ta-transp')||'Not answered', '',
+    '── FACTORS & PRACTICAL DESIGN REFLECTION ──', getTA('ta-factors')||'Not answered', '',
+    '── REFLECTION QUESTIONS ──', refAnswers, '',
+    '── EXAM-STYLE QUESTION RESPONSES ──', ppAnswers, '',
+    '==============================================================================',
+    '© 2026 Farvour Explorations · farvourexplorations.com',
+    'Submitted via Transport in Plants Explorer · Pearson Edexcel IGCSE Biology Interactive Lesson'
+  ].join('\n');
+}
+function copyResults() {
+  buildSummary();
+  navigator.clipboard.writeText(buildPlainText()).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Paste into Google Classroom or your assignment.';
+    setTimeout(()=>el.textContent='', 4000);
+  }).catch(() => {
+    document.getElementById('copyConfirm').textContent = '⚠️ Could not copy — try selecting the text manually.';
+  });
+}
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  window.location.href = 'mailto:?subject=' + encodeURIComponent('IGCSE Bio — Transport in Plants — '+name) + '&body=' + encodeURIComponent(buildPlainText());
+}
+</script>
+</body>
+</html>
