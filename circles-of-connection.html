@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Circles of Connection 🛰️ (Technology · English · Maths)</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #1e3a5f;
+    --sky-mid: #2d5282;
+    --ink: #1a2332;
+    --paper: #fffef9;
+    --coral: #e8603c;
+    --coral-pale: #fdf0ec;
+    --mint: #3aaf85;
+    --mint-pale: #e8f8f2;
+    --gold: #c9962a;
+    --gold-pale: #fef9e7;
+    --lavender: #7c6fcd;
+    --lavender-pale: #f0eefb;
+    --muted: #7a8899;
+    --border: #e0e4ea;
+    --light-grey: #f5f7fa;
+    --mid-grey: #b8c4cc;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: linear-gradient(160deg, #0c1830 0%, var(--sky) 42%, var(--sky-mid) 100%);
+    min-height: 100vh; font-family:'Nunito',sans-serif; color:var(--ink); overflow-x:hidden;
+  }
+  body::before {
+    content:''; position:fixed; inset:0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 25% 40%, rgba(255,255,255,.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 45% 8%, rgba(255,255,255,.5) 0%, transparent 100%),
+      radial-gradient(2px 2px at 65% 22%, rgba(255,255,255,.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 5%, rgba(255,255,255,.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 92% 35%, rgba(255,255,255,.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 35% 28%, rgba(255,255,255,.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 72% 12%, rgba(255,255,255,.5) 0%, transparent 100%);
+    pointer-events:none; z-index:0;
+  }
+  .hero { position:relative; z-index:1; text-align:center; padding:3.5rem 2rem 2rem; color:white; }
+  .hero-badge { display:inline-block; background:var(--gold); color:var(--sky); font-family:'Fredoka One',cursive; font-size:.82rem; letter-spacing:.05em; padding:.35rem 1.2rem; border-radius:20px; margin-bottom:1.2rem; box-shadow:0 2px 12px rgba(201,150,42,.4); }
+  .hero h1 { font-family:'Fredoka One',cursive; font-size:clamp(2.1rem,6vw,3.5rem); line-height:1.1; margin-bottom:.8rem; text-shadow:0 2px 20px rgba(0,0,0,.3); }
+  .hero h1 .accent { color:var(--gold); }
+  .hero p.intro { font-size:1.02rem; line-height:1.7; opacity:.88; max-width:620px; margin:0 auto 2rem; }
+  .name-bar { background:rgba(255,255,255,.1); border:1.5px solid rgba(255,255,255,.25); border-radius:12px; padding:.6rem 1rem; display:flex; align-items:center; gap:.8rem; max-width:420px; margin:0 auto 1rem; }
+  .name-bar label { font-size:.78rem; font-weight:700; color:rgba(255,255,255,.8); white-space:nowrap; font-family:'DM Mono',monospace; }
+  .name-bar input { flex:1; background:rgba(255,255,255,.15); border:none; border-radius:8px; padding:.4rem .8rem; font-family:'Nunito',sans-serif; font-size:.9rem; font-weight:700; color:white; outline:none; }
+  .name-bar input::placeholder { color:rgba(255,255,255,.45); font-weight:400; }
+  .progress-wrap { display:flex; justify-content:center; gap:.5rem; flex-wrap:wrap; margin-bottom:.5rem; }
+  .prog-step { display:flex; align-items:center; gap:.4rem; background:rgba(255,255,255,.12); border:1.5px solid rgba(255,255,255,.2); border-radius:20px; padding:.35rem .9rem; font-size:.75rem; font-weight:700; color:rgba(255,255,255,.7); cursor:pointer; transition:all .2s; }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,.22); color:white; border-color:rgba(255,255,255,.4); }
+  .prog-step.active { background:var(--gold); color:var(--sky); border-color:var(--gold); box-shadow:0 2px 12px rgba(201,150,42,.4); }
+  .sheet { position:relative; z-index:1; background:var(--paper); border-radius:24px 24px 0 0; margin-top:1.5rem; padding:0 0 6rem; min-height:80vh; box-shadow:0 -8px 40px rgba(0,0,0,.25); }
+  .section { padding:3rem 2rem 0; max-width:820px; margin:0 auto; display:none; }
+  .section.active { display:block; }
+  .section-eyebrow { display:flex; align-items:center; gap:.6rem; margin-bottom:1rem; }
+  .eyebrow-num { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Fredoka One',cursive; font-size:1rem; color:white; flex-shrink:0; }
+  .num-coral { background:var(--coral); } .num-mint { background:var(--mint); } .num-gold { background:var(--gold); } .num-lav { background:var(--lavender); } .num-sky { background:var(--sky-mid); }
+  .eyebrow-label { font-size:.72rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-family:'DM Mono',monospace; }
+  .section h2 { font-family:'Fredoka One',cursive; font-size:clamp(1.5rem,3.5vw,2.1rem); color:var(--sky); margin-bottom:.6rem; line-height:1.2; }
+  .section .lead { font-size:1rem; line-height:1.75; color:#3a4a5a; margin-bottom:1.6rem; }
+  .section .lead strong { color:var(--coral); }
+  .wonder-box { background:linear-gradient(135deg,var(--sky) 0%,var(--sky-mid) 100%); color:white; border-radius:16px; padding:1.8rem 2rem; margin-bottom:1.8rem; position:relative; overflow:hidden; }
+  .wonder-box::after { content:'🛰️'; position:absolute; right:1.5rem; top:50%; transform:translateY(-50%); font-size:3rem; opacity:.3; }
+  .wonder-box p { font-size:1rem; line-height:1.7; font-style:italic; opacity:.95; max-width:85%; }
+  .wonder-box strong { color:var(--gold); font-style:normal; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,var(--mint) 0%,#2d9970 100%); } .wonder-box.mint-box::after { content:'🌍'; }
+  .wonder-box.coral-box { background:linear-gradient(135deg,var(--coral) 0%,#c14a2b 100%); } .wonder-box.coral-box::after { content:'🚀'; }
+  .chip-row { display:flex; flex-wrap:wrap; gap:.6rem; margin-bottom:1.5rem; }
+  .chip { padding:.45rem 1rem; border-radius:20px; font-size:.82rem; font-weight:700; cursor:pointer; transition:all .2s; border:2px solid transparent; }
+  .chip.coral { background:var(--coral-pale); color:var(--coral); border-color:#f8c5b8; }
+  .chip.mint { background:var(--mint-pale); color:var(--mint); border-color:#b8ebd8; }
+  .chip.gold { background:var(--gold-pale); color:#8a6a1a; border-color:#f0dca0; }
+  .chip.lav { background:var(--lavender-pale); color:var(--lavender); border-color:#d0caef; }
+  .chip:hover { transform:scale(1.05); }
+  .chip.muted-chip { background:var(--light-grey); color:var(--muted); border-color:var(--mid-grey); cursor:default; }
+  .chip.muted-chip:hover { transform:none; }
+  .concept-reveal { background:var(--paper); border-left:4px solid var(--coral); border-radius:0 10px 10px 0; padding:1rem 1.2rem; font-size:.88rem; line-height:1.7; margin-top:.5rem; display:none; animation:fadeIn .3s ease; }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border { border-color:var(--mint); } .concept-reveal.gold-border { border-color:var(--gold); } .concept-reveal.lav-border { border-color:var(--lavender); }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+  .predict-box { background:var(--gold-pale); border:2px dashed var(--gold); border-radius:14px; padding:1.4rem 1.6rem; margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive; font-size:1rem; color:#8a6a1a; margin-bottom:.8rem; }
+  .predict-box textarea,.reflect-box textarea,.demo-zone textarea,.reflection-card textarea,.paragraph-card textarea { width:100%; border:1.5px solid rgba(0,0,0,.12); border-radius:8px; padding:.7rem; font-family:'Nunito',sans-serif; font-size:.88rem; resize:vertical; min-height:64px; background:white; color:var(--ink); outline:none; transition:border-color .2s; }
+  .predict-box textarea:focus { border-color:var(--gold); }
+  .reflect-box { background:var(--mint-pale); border:2px dashed var(--mint); border-radius:14px; padding:1.4rem 1.6rem; margin-top:1.5rem; }
+  .reflect-box h4 { font-family:'Fredoka One',cursive; font-size:1rem; color:#1b7a58; margin-bottom:.8rem; }
+  .reflect-box textarea:focus { border-color:var(--mint); }
+  .demo-zone { background:white; border:2px solid var(--border); border-radius:16px; padding:1.7rem; margin-bottom:1.5rem; }
+  .demo-zone h3 { font-family:'Fredoka One',cursive; font-size:1.15rem; color:var(--sky); margin-bottom:.3rem; }
+  .demo-zone .hint { font-size:.76rem; color:var(--muted); font-family:'DM Mono',monospace; margin-bottom:1.2rem; }
+  .btn { border:none; border-radius:10px; padding:.65rem 1.3rem; font-family:'Nunito',sans-serif; font-size:.88rem; font-weight:800; cursor:pointer; transition:all .15s; letter-spacing:.02em; }
+  .btn:hover { transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  .btn:active { transform:translateY(0); }
+  .btn-coral { background:var(--coral); color:white; } .btn-mint { background:var(--mint); color:white; } .btn-gold { background:var(--gold); color:white; } .btn-lav { background:var(--lavender); color:white; } .btn-ghost { background:#f0f2f5; color:var(--muted); } .btn-sky { background:var(--sky); color:white; }
+  .action-row { display:flex; gap:.8rem; flex-wrap:wrap; align-items:center; margin-bottom:.8rem; }
+  .nav-row { display:flex; justify-content:space-between; align-items:center; padding:2.4rem 2rem 0; max-width:820px; margin:0 auto; }
+  .divider { height:1px; background:linear-gradient(90deg,transparent,var(--border),transparent); margin:1.5rem 0; }
+
+  /* Polygon-to-circle morph lab */
+  .morph-stage { display:flex; gap:1.6rem; flex-wrap:wrap; align-items:center; justify-content:center; margin-bottom:1rem; }
+  .morph-svg-wrap { background:var(--light-grey); border-radius:14px; padding:1rem; }
+  .morph-readout { font-family:'DM Mono',monospace; text-align:center; }
+  .morph-readout .n-val { font-size:2rem; color:var(--sky); font-weight:600; }
+  .morph-readout .n-label { font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:.3rem; }
+  .side-btns { display:flex; gap:.5rem; flex-wrap:wrap; justify-content:center; margin-top:1rem; }
+  .side-btn { border:2px solid var(--border); background:white; color:var(--sky); font-family:'DM Mono',monospace; font-weight:600; font-size:.82rem; padding:.45rem .9rem; border-radius:8px; cursor:pointer; transition:all .15s; }
+  .side-btn:hover { border-color:var(--mint); }
+  .side-btn.active { background:var(--mint); color:white; border-color:var(--mint); }
+  .side-btn.circle-btn.active { background:var(--coral); border-color:var(--coral); }
+
+  /* Circle calculator lab */
+  .calc-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
+  @media (max-width:620px){ .calc-grid{grid-template-columns:1fr;} }
+  .calc-select { width:100%; padding:.7rem .9rem; border:1.5px solid var(--border); border-radius:8px; font-family:'Nunito',sans-serif; font-size:.9rem; color:var(--ink); background:white; margin-bottom:.8rem; }
+  .calc-input-row { display:flex; align-items:center; gap:.6rem; margin-bottom:.8rem; }
+  .calc-input-row input[type=number] { flex:1; padding:.6rem .8rem; border:1.5px solid var(--border); border-radius:8px; font-family:'DM Mono',monospace; font-size:.95rem; }
+  .data-chips { display:grid; grid-template-columns:repeat(3,1fr); gap:.7rem; }
+  @media (max-width:480px){ .data-chips{grid-template-columns:1fr;} }
+  .data-chip { background:var(--sky); color:white; border-radius:12px; padding:.9rem; text-align:center; }
+  .data-chip .dc-label { font-family:'DM Mono',monospace; font-size:.65rem; opacity:.7; text-transform:uppercase; letter-spacing:.08em; margin-bottom:.3rem; }
+  .data-chip .dc-val { font-family:'Fredoka One',cursive; font-size:1.3rem; color:var(--gold); }
+
+  /* World cards / places (real-world section) */
+  .place-grid { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; margin-bottom:1rem; }
+  @media (max-width:620px){ .place-grid{grid-template-columns:1fr;} }
+  .place-card { background:var(--light-grey); border:2px solid var(--border); border-radius:14px; padding:1.1rem 1.3rem; cursor:pointer; transition:all .18s ease; }
+  .place-card:hover { border-color:var(--mint); }
+  .place-card.selected { border-color:var(--gold); background:var(--gold-pale); }
+  .place-top { display:flex; justify-content:space-between; align-items:flex-start; gap:.6rem; }
+  .place-icon { font-size:1.7rem; }
+  .place-check { width:22px; height:22px; border-radius:50%; border:1.5px solid var(--mid-grey); display:flex; align-items:center; justify-content:center; font-size:.7rem; color:transparent; flex-shrink:0; }
+  .place-card.selected .place-check { border-color:var(--gold); background:var(--gold); color:white; }
+  .place-name { font-family:'Fredoka One',cursive; font-size:.95rem; color:var(--sky); margin:.5rem 0 .3rem; }
+  .place-desc { font-size:.8rem; color:var(--muted); line-height:1.5; }
+  .paragraph-card { background:white; border:2px solid var(--border); border-left:4px solid var(--mint); border-radius:0 12px 12px 0; padding:1.2rem 1.4rem; margin-bottom:1rem; }
+  .paragraph-card .ph-title { font-family:'Fredoka One',cursive; font-size:.95rem; color:var(--sky); margin-bottom:.3rem; }
+  .paragraph-card .ph-prompt { font-size:.8rem; color:var(--muted); margin-bottom:.7rem; line-height:1.5; }
+  .word-count { font-family:'DM Mono',monospace; font-size:.7rem; color:var(--muted); text-align:right; margin-top:.4rem; }
+  .word-count.ok { color:var(--mint); }
+  .placeholder-note { font-size:.85rem; color:var(--muted); border:2px dashed var(--border); border-radius:12px; padding:1.2rem; text-align:center; font-family:'DM Mono',monospace; }
+
+  /* Sci-fi spark cards */
+  .evidence-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:1.2rem; }
+  .ev-card { background:white; border:2px solid var(--border); border-radius:14px; padding:1.1rem; cursor:pointer; transition:all .2s; text-align:center; }
+  .ev-card:hover,.ev-card.active { border-color:var(--sky-mid); box-shadow:0 4px 16px rgba(44,61,122,.18); transform:translateY(-2px); }
+  .ev-card.active { background:#e6eaf7; }
+  .ev-card .ev-icon { font-size:2rem; margin-bottom:.4rem; }
+  .ev-card .ev-title { font-family:'Fredoka One',cursive; font-size:.88rem; color:var(--sky); margin-bottom:.2rem; }
+  .ev-panel { background:#e6eaf7; border-left:4px solid var(--sky-mid); border-radius:0 12px 12px 0; padding:1.1rem 1.3rem; display:none; animation:fadeIn .3s ease; margin-bottom:1rem; }
+  .ev-panel.show { display:block; }
+  .ev-panel h4 { font-family:'Fredoka One',cursive; font-size:1rem; color:var(--sky); margin-bottom:.4rem; }
+  .ev-panel p { font-size:.85rem; line-height:1.7; color:#2a2a3a; }
+
+  /* Quiz */
+  .quiz-card { background:white; border:2px solid var(--border); border-radius:14px; padding:1.4rem 1.6rem; margin-bottom:1.2rem; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .quiz-q { font-weight:700; font-size:.95rem; color:var(--ink); margin-bottom:1rem; line-height:1.5; }
+  .quiz-options { display:flex; flex-direction:column; gap:.5rem; }
+  .quiz-opt { padding:.6rem 1rem; border-radius:8px; border:2px solid var(--border); background:white; cursor:pointer; font-family:'Nunito',sans-serif; font-size:.88rem; font-weight:600; text-align:left; transition:all .15s; color:var(--ink); }
+  .quiz-opt:hover:not(:disabled) { border-color:var(--sky-mid); background:#eef1fa; }
+  .quiz-opt.correct { background:var(--mint-pale); border-color:var(--mint); color:#1b7a58; }
+  .quiz-opt.wrong { background:var(--coral-pale); border-color:var(--coral); color:#a83020; }
+  .quiz-opt:disabled { cursor:default; }
+  .quiz-feedback { margin-top:.8rem; font-size:.85rem; line-height:1.6; padding:.7rem 1rem; border-radius:8px; display:none; animation:fadeIn .3s ease; }
+  .quiz-feedback.show { display:block; }
+  .quiz-feedback.correct-fb { background:var(--mint-pale); color:#1b7a58; border-left:3px solid var(--mint); }
+  .quiz-feedback.wrong-fb { background:var(--coral-pale); color:#a83020; border-left:3px solid var(--coral); }
+  .score-panel { background:linear-gradient(135deg,var(--sky) 0%,var(--sky-mid) 100%); color:white; border-radius:16px; padding:2rem; text-align:center; margin-top:1.5rem; }
+  .score-panel .score-num { font-family:'Fredoka One',cursive; font-size:3.2rem; line-height:1; color:var(--gold); }
+  .score-panel p { opacity:.88; margin-top:.5rem; font-size:1rem; }
+  .score-panel h3 { font-family:'Fredoka One',cursive; font-size:1.4rem; margin-bottom:.3rem; }
+
+  /* Reflection / congrats / summary */
+  .reflection-card { background:white; border:2px solid var(--border); border-radius:14px; padding:1.3rem; margin-bottom:1rem; }
+  .reflection-card .q { font-family:'Fredoka One',cursive; font-size:.98rem; color:var(--sky); margin-bottom:.7rem; display:flex; gap:.5rem; align-items:baseline; }
+  .reflection-card .q .qnum { font-family:'DM Mono',monospace; font-size:.65rem; color:var(--muted); flex-shrink:0; }
+  .congrats { text-align:center; padding:2rem 1rem; }
+  .congrats .trophy { font-size:3.6rem; margin-bottom:1rem; animation:bounce .8s ease infinite alternate; }
+  @keyframes bounce { from{transform:translateY(0)} to{transform:translateY(-10px)} }
+  .congrats h2 { font-family:'Fredoka One',cursive; font-size:1.8rem; color:var(--sky); margin-bottom:.7rem; }
+  .congrats p { font-size:.94rem; line-height:1.7; color:#3a4a5a; max-width:520px; margin:0 auto 1.3rem; }
+  .summary-chips { display:flex; flex-wrap:wrap; gap:.5rem; justify-content:center; }
+  .summary-chip { padding:.4rem 1rem; border-radius:20px; font-size:.78rem; font-weight:700; background:var(--gold-pale); color:#8a6a1a; border:1.5px solid #f0dca0; }
+  .summary-section { background:white; border-radius:16px; padding:1.6rem; margin-bottom:1.1rem; border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive; font-size:1.02rem; color:var(--sky); margin-bottom:.7rem; }
+  .summary-answer { background:var(--light-grey); border-radius:8px; padding:.7rem 1rem; font-size:.85rem; line-height:1.6; color:var(--ink); margin-bottom:.5rem; font-style:italic; border-left:3px solid var(--lavender); min-height:2rem; }
+  .summary-answer.empty { color:var(--muted); font-style:normal; border-left-color:var(--border); }
+  .sum-label { font-family:'DM Mono',monospace; font-size:.68rem; color:var(--muted); margin-bottom:.35rem; margin-top:.55rem; text-transform:uppercase; letter-spacing:.06em; }
+  .share-buttons { display:flex; gap:.8rem; flex-wrap:wrap; margin-top:1.4rem; justify-content:center; }
+  .share-btn { border:none; border-radius:12px; padding:.85rem 1.6rem; font-family:'Fredoka One',cursive; font-size:1rem; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:.5rem; }
+  .share-btn:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy { background:var(--mint); color:white; } .share-btn.email { background:var(--lavender); color:white; } .share-btn.print { background:var(--sky); color:white; }
+  .copy-confirm { text-align:center; font-family:'DM Mono',monospace; font-size:.78rem; color:var(--mint); min-height:1.2rem; margin-top:.6rem; }
+  @media (max-width:560px){ .hero{padding:2.4rem 1.2rem 1.4rem;} .section{padding:2rem 1.2rem 0;} .nav-row{padding:2rem 1.2rem 0;} }
+  @media print { .hero,.nav-row,.share-buttons,.copy-confirm,.prog-step,.name-bar{display:none !important;} .sheet{box-shadow:none;border-radius:0;} .section{display:none !important;} #sec-8{display:block !important;} }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">🛰️ AOI Technology · English (Sci-Fi) · Maths (Quadrilaterals → Circles)</div>
+  <h1>Circles of <span class="accent">Connection</span> 🌍</h1>
+  <p class="intro">You've spent this term as quadrilateral detectives, thinking about technology that connects communities, and imagining science-fiction futures. Today all three come together: we discover why so much of the technology that connects our world is round.</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <span class="prog-step active" onclick="goTo(0)">🔵 Wonder</span>
+    <span class="prog-step" onclick="goTo(1)">📚 Discover</span>
+    <span class="prog-step" onclick="goTo(2)">🔷 Shapes Lab</span>
+    <span class="prog-step" onclick="goTo(3)">🛰️ Circles Lab</span>
+    <span class="prog-step" onclick="goTo(4)">🌍 Real World</span>
+    <span class="prog-step" onclick="goTo(5)">🚀 Sci-Fi</span>
+    <span class="prog-step" onclick="goTo(6)">📝 Quiz</span>
+    <span class="prog-step" onclick="goTo(7)">💭 Reflect</span>
+    <span class="prog-step" onclick="goTo(8)">📤 Submit</span>
+  </div>
+</div>
+
+<div class="sheet">
+
+  <!-- SECTION 0: WONDER -->
+  <div class="section active" id="sec-0">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">The Big Question</span></div>
+    <h2>What if technology had to be round to work?</h2>
+    <p class="lead">This term you became <strong>quadrilateral detectives</strong> — sorting squares, rhombi, kites and trapezia by their straight sides and sharp corners. But look at the technology that actually connects communities around the world: wheels, satellite dishes, solar panels, drone rotors, irrigation systems. Almost none of it is a quadrilateral. Today we ask why.</p>
+    <div class="wonder-box">
+      <p>Our inquiry question all term has been: <strong>how does technology help communities grow, stay healthy, learn, and connect with each other around the world?</strong> What if every part of the technology you invented to answer that question had to be a circle — not one straight edge allowed? What would you build, and why might round shapes work better than square ones for connecting people over distance?</p>
+    </div>
+    <div class="predict-box">
+      <h4>💭 Jot your first idea</h4>
+      <textarea id="wonder-predict" placeholder="I might invent... it would connect people by..."></textarea>
+    </div>
+    <div class="nav-row" style="padding:0;">
+      <span></span>
+      <button class="btn btn-coral" onclick="goTo(1)">Next: Discover →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 1: DISCOVER VOCABULARY -->
+  <div class="section" id="sec-1">
+    <div class="section-eyebrow"><div class="eyebrow-num num-lav">2</div><span class="eyebrow-label">Discover the Vocabulary</span></div>
+    <h2>📚 Words circle detectives use</h2>
+    <p class="lead">You already know <em>parallel</em>, <em>bisect</em>, <em>perpendicular</em>, <em>isosceles</em>, and <em>line of symmetry</em> from quadrilaterals. Circles need some new words. Tap each one below to reveal what it means.</p>
+
+    <div class="chip-row">
+      <span class="chip lav" onclick="reveal('radius')">Radius</span>
+      <span class="chip lav" onclick="reveal('diameter')">Diameter</span>
+      <span class="chip lav" onclick="reveal('circumference')">Circumference</span>
+      <span class="chip lav" onclick="reveal('chord')">Chord</span>
+      <span class="chip lav" onclick="reveal('arc')">Arc</span>
+      <span class="chip lav" onclick="reveal('sector')">Sector</span>
+      <span class="chip lav" onclick="reveal('tangent')">Tangent</span>
+    </div>
+    <div id="rev-radius" class="concept-reveal lav-border"><strong>Radius</strong> — the distance from the centre of a circle to any point on its edge. Every radius in the same circle is exactly equal.</div>
+    <div id="rev-diameter" class="concept-reveal lav-border"><strong>Diameter</strong> — a straight line passing through the centre, touching the edge on both sides. It's always exactly double the radius.</div>
+    <div id="rev-circumference" class="concept-reveal lav-border"><strong>Circumference</strong> — the distance all the way around the outside of the circle. This is the circle's version of "perimeter." Circumference = π × diameter.</div>
+    <div id="rev-chord" class="concept-reveal lav-border"><strong>Chord</strong> — any straight line connecting two points on the circle's edge. The diameter is actually the longest possible chord.</div>
+    <div id="rev-arc" class="concept-reveal lav-border"><strong>Arc</strong> — a curved section of the circle's edge, like a slice of the circumference.</div>
+    <div id="rev-sector" class="concept-reveal lav-border"><strong>Sector</strong> — a "pizza slice" shaped region between two radii and the arc between them.</div>
+    <div id="rev-tangent" class="concept-reveal lav-border"><strong>Tangent</strong> — a straight line that touches the circle at exactly one point, and never crosses inside it.</div>
+
+    <div class="divider"></div>
+    <p style="font-size:.85rem; color:var(--muted); font-family:'DM Mono',monospace;">🧠 REMEMBER FROM QUADRILATERALS</p>
+    <div class="chip-row" style="margin-top:.6rem;">
+      <span class="chip muted-chip">Parallel</span>
+      <span class="chip muted-chip">Bisect</span>
+      <span class="chip muted-chip">Perpendicular</span>
+      <span class="chip muted-chip">Isosceles</span>
+      <span class="chip muted-chip">Line of symmetry</span>
+    </div>
+
+    <div class="nav-row" style="padding:2rem 0 0;">
+      <button class="btn btn-ghost" onclick="goTo(0)">← Back</button>
+      <button class="btn btn-coral" onclick="goTo(2)">Next: Shapes Lab →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 2: LAB 1 - QUADRILATERALS TO CIRCLES -->
+  <div class="section" id="sec-2">
+    <div class="section-eyebrow"><div class="eyebrow-num num-mint">3</div><span class="eyebrow-label">Investigation 1</span></div>
+    <h2>🔷➡️⭕ What happens when a shape gets more sides?</h2>
+    <p class="lead">A square has 4 sides. What if we kept adding more?</p>
+
+    <div class="predict-box">
+      <h4>📝 Before we experiment</h4>
+      <textarea id="shape-predict" placeholder="If a regular polygon kept gaining more and more sides, what do you think it would eventually start to look like? Why?"></textarea>
+    </div>
+
+    <div class="demo-zone">
+      <h3>🔬 The polygon lab</h3>
+      <div class="hint">TAP EACH BUTTON TO ADD MORE SIDES — WATCH WHAT HAPPENS</div>
+      <div class="morph-stage">
+        <div class="morph-svg-wrap">
+          <svg id="morphSvg" width="220" height="220" viewBox="0 0 220 220"></svg>
+        </div>
+        <div class="morph-readout">
+          <div class="n-label">Sides</div>
+          <div class="n-val" id="nVal">4</div>
+        </div>
+      </div>
+      <div class="side-btns" id="sideBtns"></div>
+    </div>
+
+    <div class="reflect-box">
+      <h4>🔍 Now reflect</h4>
+      <textarea id="shape-reflect" placeholder="How is a circle related to the quadrilaterals you already know? Try to use the words 'sides' and 'curve' in your answer."></textarea>
+    </div>
+
+    <div class="nav-row" style="padding:2rem 0 0;">
+      <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+      <button class="btn btn-coral" onclick="goTo(3)">Next: Circles Lab →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 3: LAB 2 - CIRCLES IN TECHNOLOGY -->
+  <div class="section" id="sec-3">
+    <div class="section-eyebrow"><div class="eyebrow-num num-gold">4</div><span class="eyebrow-label">Investigation 2</span></div>
+    <h2>🛰️ Measuring the circles that connect us</h2>
+    <p class="lead">A satellite dish, a wind turbine, and a farm irrigation circle are all real circular technology. Let's measure them.</p>
+
+    <div class="predict-box">
+      <h4>📝 Before you calculate</h4>
+      <textarea id="calc-predict" placeholder="A satellite dish has a diameter of 3 metres. Roughly how far do you think it is around the outer edge (the circumference)? Just a guess."></textarea>
+    </div>
+
+    <div class="demo-zone">
+      <h3>🧮 The circle calculator</h3>
+      <div class="hint">CHOOSE A REAL TECHNOLOGY, OR TYPE YOUR OWN DIAMETER</div>
+      <div class="calc-grid">
+        <div>
+          <select class="calc-select" id="techSelect" onchange="onTechSelect()">
+            <option value="0">🛰️ Satellite dish — 3 m diameter</option>
+            <option value="1">🌾 Farm irrigation circle — 400 m diameter</option>
+            <option value="2">💨 Wind turbine blade sweep — 120 m diameter</option>
+            <option value="3">🚁 Delivery drone rotor — 0.5 m diameter</option>
+            <option value="4">🚲 Bicycle wheel — 0.7 m diameter</option>
+            <option value="custom">✏️ Custom diameter</option>
+          </select>
+          <div class="calc-input-row">
+            <label style="font-family:'DM Mono',monospace; font-size:.78rem; color:var(--muted);">Diameter (m)</label>
+            <input type="number" id="diameterInput" value="3" min="0.1" step="0.1" oninput="calcCircle()">
+          </div>
+        </div>
+        <div class="data-chips">
+          <div class="data-chip"><div class="dc-label">Radius</div><div class="dc-val" id="outRadius">1.5 m</div></div>
+          <div class="data-chip"><div class="dc-label">Circumference</div><div class="dc-val" id="outCirc">9.42 m</div></div>
+          <div class="data-chip"><div class="dc-label">Area</div><div class="dc-val" id="outArea">7.07 m²</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reflect-box">
+      <h4>🔍 Now reflect</h4>
+      <textarea id="calc-reflect" placeholder="Why do you think circular shapes are so common in technology that needs to spin, move, or send signals in every direction? Give one real example from today's lab."></textarea>
+    </div>
+
+    <div class="nav-row" style="padding:2rem 0 0;">
+      <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
+      <button class="btn btn-coral" onclick="goTo(4)">Next: Real World →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 4: REAL WORLD -->
+  <div class="section" id="sec-4">
+    <div class="section-eyebrow"><div class="eyebrow-num num-sky">5</div><span class="eyebrow-label">Real-World Connections</span></div>
+    <h2>🌍 Circles of connection around the world</h2>
+    <p class="lead">Choose exactly <strong>3 places</strong> below. For each one, research and write a paragraph explaining how technology — including any circular parts — helped that place develop.</p>
+
+    <div class="place-grid" id="placeGrid"></div>
+    <div class="paragraph-zone" id="paragraphZone"></div>
+
+    <div class="nav-row" style="padding:2rem 0 0;">
+      <button class="btn btn-ghost" onclick="goTo(3)">← Back</button>
+      <button class="btn btn-coral" onclick="goTo(5)">Next: Sci-Fi →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 5: SCI-FI WRITE -->
+  <div class="section" id="sec-5">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">6</div><span class="eyebrow-label">English Connection · Science Fiction</span></div>
+    <h2>🚀 Write the future of connection</h2>
+    <p class="lead">Every real technology you researched today — satellite dishes, irrigation circles, drones — was once someone's <strong>"what if"</strong> idea. Science fiction imagines worlds shaped by science and technology, often set in the future or on other worlds. Now it's your turn.</p>
+
+    <p style="font-size:.88rem; font-weight:700; color:var(--sky); margin-bottom:.8rem;">✨ Tap a setting spark for inspiration (optional):</p>
+    <div class="evidence-grid">
+      <div class="ev-card" onclick="showEvidence('underwater')"><div class="ev-icon">🌊</div><div class="ev-title">Underwater city</div></div>
+      <div class="ev-card" onclick="showEvidence('desert')"><div class="ev-icon">🏜️</div><div class="ev-title">Desert outpost</div></div>
+      <div class="ev-card" onclick="showEvidence('sky')"><div class="ev-icon">☁️</div><div class="ev-title">Floating sky village</div></div>
+      <div class="ev-card" onclick="showEvidence('polar')"><div class="ev-icon">🧊</div><div class="ev-title">Polar research station</div></div>
+    </div>
+    <div id="ev-underwater" class="ev-panel"><h4>🌊 Underwater city</h4><p>Circular viewing domes and porthole windows resist water pressure evenly from every direction — a real reason engineers reach for circles underwater.</p></div>
+    <div id="ev-desert" class="ev-panel"><h4>🏜️ Desert outpost</h4><p>Circular solar collectors and dome shelters lose less heat and catch sunlight from every angle as the sun moves overhead.</p></div>
+    <div id="ev-sky" class="ev-panel"><h4>☁️ Floating sky village</h4><p>A circular rotor or balloon shape spreads lift evenly — no corner to catch the wind and tip the whole village over.</p></div>
+    <div id="ev-polar" class="ev-panel"><h4>🧊 Polar research station</h4><p>Round satellite dishes point toward orbiting satellites for communication, even in a landscape with no straight lines at all.</p></div>
+
+    <div class="predict-box">
+      <h4>✍️ Your opening paragraph</h4>
+      <textarea id="scifi-write" style="min-height:120px;" placeholder="Imagine you're a science-fiction writer 100 years from now. Describe one round piece of technology that connects a community you invented. What does it do? Where is it? Try to use at least one circle word: radius, diameter, circumference, arc, tangent, or sector."></textarea>
+    </div>
+
+    <div class="reflect-box">
+      <h4>🔍 Compare to real life</h4>
+      <textarea id="scifi-reflect" placeholder="How close is your invented technology to something that already exists today? What's different?"></textarea>
+    </div>
+
+    <div class="nav-row" style="padding:2rem 0 0;">
+      <button class="btn btn-ghost" onclick="goTo(4)">← Back</button>
+      <button class="btn btn-coral" onclick="goTo(6)">Next: Quiz →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 6: QUIZ -->
+  <div class="section" id="sec-6">
+    <div class="section-eyebrow"><div class="eyebrow-num num-sky">7</div><span class="eyebrow-label">Quick Check</span></div>
+    <h2>📝 Quiz — Technology, Circles &amp; Sci-Fi</h2>
+    <p class="lead">8 quick questions covering today's mini-lesson. Instant feedback with explanations.</p>
+    <div id="quiz-container"></div>
+    <div id="score-panel" class="score-panel" style="display:none;">
+      <h3>Quiz Complete! 🎉</h3>
+      <div class="score-num" id="score-display">0/8</div>
+      <p id="score-msg"></p>
+      <button class="btn btn-gold" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button>
+    </div>
+    <div class="nav-row" style="padding:2rem 0 0;">
+      <button class="btn btn-ghost" onclick="goTo(5)">← Back</button>
+      <button class="btn btn-coral" onclick="goTo(7)">Next: Reflect →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 7: REFLECT -->
+  <div class="section" id="sec-7">
+    <div class="section-eyebrow"><div class="eyebrow-num num-mint">8</div><span class="eyebrow-label">Synthesis</span></div>
+    <h2>💭 Let's think it through</h2>
+    <p class="lead">Four questions, no single right answer. Take your time.</p>
+
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q1 /</span> Why might circles work better than quadrilaterals for technology that spins, moves, or sends signals?</div>
+      <textarea placeholder="I think circles work better because..."></textarea>
+    </div>
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q2 /</span> What is one property of a circle that a quadrilateral does not have?</div>
+      <textarea placeholder="A circle has..."></textarea>
+    </div>
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q3 /</span> Going back to our inquiry question — how does technology help communities grow, stay healthy, learn, and connect, whatever shape it is?</div>
+      <textarea placeholder="Technology helps communities by..."></textarea>
+    </div>
+    <div class="reflection-card">
+      <div class="q"><span class="qnum">Q4 /</span> What's your own "what if" idea for a piece of round technology you'd like to invent one day?</div>
+      <textarea placeholder="My idea is..."></textarea>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="congrats">
+      <div class="trophy">🛰️</div>
+      <h2>You've connected technology, English, and maths!</h2>
+      <p>You've explored how technology connects communities, imagined a science-fiction future, and discovered why circles show up everywhere in the technology that links our world. Head into your workbook to keep exploring circles: parts of a circle, and circumference.</p>
+      <div class="summary-chips">
+        <span class="summary-chip">Radius &amp; diameter</span>
+        <span class="summary-chip">Circumference = π × diameter</span>
+        <span class="summary-chip">Quadrilaterals → circles</span>
+        <span class="summary-chip">Circular tech connects the world</span>
+        <span class="summary-chip">Science fiction ≠ fantasy</span>
+        <span class="summary-chip">Technology helps communities grow</span>
+      </div>
+    </div>
+
+    <div class="nav-row" style="padding:2rem 0 0;">
+      <button class="btn btn-ghost" onclick="goTo(6)">← Back</button>
+      <button class="btn btn-sky" onclick="goTo(8)">Next: Submit →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 8: SUBMIT -->
+  <div class="section" id="sec-8">
+    <div class="section-eyebrow"><div class="eyebrow-num num-mint">9</div><span class="eyebrow-label">Your Completed Work</span></div>
+    <h2>📤 Ready to Share</h2>
+    <p class="lead">Here's a summary of everything you worked on. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> to your teacher.</p>
+
+    <div class="summary-section" style="background:var(--sky); color:white; border-color:var(--sky);">
+      <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:.5rem; align-items:center;">
+        <div>
+          <div style="font-family:'DM Mono',monospace; font-size:.7rem; opacity:.6; margin-bottom:.3rem;">STUDENT</div>
+          <div style="font-family:'Fredoka One',cursive; font-size:1.4rem;" id="summaryName">—</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'DM Mono',monospace; font-size:.7rem; opacity:.6; margin-bottom:.3rem;">LESSON</div>
+          <div style="font-family:'Fredoka One',cursive; font-size:1rem;">Circles of Connection 🛰️</div>
+          <div style="font-family:'DM Mono',monospace; font-size:.72rem; opacity:.6;" id="summaryDate"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-section"><h3>📝 Quiz Score</h3><div class="summary-answer" id="sum-quiz"></div></div>
+
+    <div class="summary-section">
+      <h3>🔵 Wonder &amp; Shapes Lab</h3>
+      <div class="sum-label">First idea spark</div><div class="summary-answer" id="sum-wonder"></div>
+      <div class="sum-label">Shapes lab reflection</div><div class="summary-answer" id="sum-shape-reflect"></div>
+    </div>
+
+    <div class="summary-section">
+      <h3>🛰️ Circles Lab</h3>
+      <div class="sum-label">Circumference prediction</div><div class="summary-answer" id="sum-calc-predict"></div>
+      <div class="sum-label">Why circles work in technology</div><div class="summary-answer" id="sum-calc-reflect"></div>
+    </div>
+
+    <div class="summary-section">
+      <h3>🚀 Science Fiction Writing</h3>
+      <div class="sum-label">Opening paragraph</div><div class="summary-answer" id="sum-scifi-write"></div>
+    </div>
+
+    <div class="summary-section">
+      <h3>💭 Reflections</h3>
+      <div class="sum-label">Q1 — Circles vs quadrilaterals</div><div class="summary-answer" id="sum-r1"></div>
+      <div class="sum-label">Q2 — A circle property quadrilaterals lack</div><div class="summary-answer" id="sum-r2"></div>
+      <div class="sum-label">Q3 — How technology helps communities</div><div class="summary-answer" id="sum-r3"></div>
+      <div class="sum-label">Q4 — My own "what if" idea</div><div class="summary-answer" id="sum-r4"></div>
+    </div>
+
+    <div class="share-buttons">
+      <button class="share-btn copy" onclick="copyResults()">📋 Copy My Results</button>
+      <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+      <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+    <div class="copy-confirm" id="copyConfirm"></div>
+
+    <div class="nav-row" style="padding:2rem 0 0;">
+      <button class="btn btn-ghost" onclick="goTo(7)">← Back</button>
+      <button class="btn btn-sky" onclick="goTo(0)">↺ Start Over</button>
+    </div>
+  </div>
+
+</div><!-- /sheet -->
+
+<div style="position:relative; z-index:1; text-align:center; padding:1.5rem 2rem 2rem; color:rgba(255,255,255,.45); font-family:'DM Mono',monospace; font-size:.7rem; line-height:1.8;">
+  Cross-curricular inquiry mini-lesson · AOI Technology + English (Science Fiction) + Maths (Quadrilaterals → Circles) · For classroom use.
+</div>
+
+<script>
+// NAVIGATION
+const steps = document.querySelectorAll('.prog-step');
+const sections = document.querySelectorAll('.section');
+function goTo(n) {
+  sections.forEach((s,i) => s.classList.toggle('active', i===n));
+  steps.forEach((s,i) => { s.classList.remove('active','done'); if(i===n) s.classList.add('active'); if(i<n) s.classList.add('done'); });
+  if (n === 8) buildSummary();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// VOCAB CONCEPT REVEALS
+const revIds = ['radius','diameter','circumference','chord','arc','sector','tangent'];
+function reveal(key) {
+  const t = document.getElementById('rev-' + key);
+  if (!t) return;
+  const wasShown = t.classList.contains('show');
+  revIds.forEach(id => { const el = document.getElementById('rev-'+id); if (el) el.classList.remove('show'); });
+  if (!wasShown) t.classList.add('show');
+}
+
+// EVIDENCE / SPARK CARDS
+function showEvidence(type) {
+  document.querySelectorAll('.ev-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.ev-panel').forEach(p => p.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const panel = document.getElementById('ev-' + type);
+  if (panel) panel.classList.add('show');
+}
+
+// POLYGON -> CIRCLE MORPH LAB
+const sideOptions = [4,5,6,8,12,24,'circle'];
+function drawShape(n) {
+  const svg = document.getElementById('morphSvg');
+  const cx = 110, cy = 110, r = 85;
+  if (n === 'circle') {
+    svg.innerHTML = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#fdf0ec" stroke="#e8603c" stroke-width="3"/>`;
+    document.getElementById('nVal').textContent = '∞';
+    return;
+  }
+  let points = [];
+  for (let i=0; i<n; i++) {
+    const angle = (Math.PI*2 * i / n) - Math.PI/2;
+    points.push((cx + r*Math.cos(angle)).toFixed(1) + ',' + (cy + r*Math.sin(angle)).toFixed(1));
+  }
+  svg.innerHTML = `<polygon points="${points.join(' ')}" fill="#e8f8f2" stroke="#3aaf85" stroke-width="3"/>`;
+  document.getElementById('nVal').textContent = n;
+}
+function buildSideBtns() {
+  const wrap = document.getElementById('sideBtns');
+  wrap.innerHTML = sideOptions.map((n,i) => {
+    const label = n === 'circle' ? '⭕ Circle' : n + ' sides';
+    const cls = n === 'circle' ? 'side-btn circle-btn' : 'side-btn';
+    return `<button class="${cls}${i===0?' active':''}" onclick="pickSides(this, ${typeof n === 'number' ? n : `'${n}'`})">${label}</button>`;
+  }).join('');
+}
+function pickSides(btn, n) {
+  document.querySelectorAll('.side-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  drawShape(n);
+}
+buildSideBtns();
+drawShape(4);
+
+// CIRCLE CALCULATOR LAB
+const techCircles = [
+  { name:'Satellite dish', diameter:3 },
+  { name:'Farm irrigation circle', diameter:400 },
+  { name:'Wind turbine blade sweep', diameter:120 },
+  { name:'Delivery drone rotor', diameter:0.5 },
+  { name:'Bicycle wheel', diameter:0.7 }
+];
+function fmt(v) {
+  return (Math.round(v*100)/100).toLocaleString();
+}
+function calcCircle() {
+  const d = parseFloat(document.getElementById('diameterInput').value) || 0;
+  const r = d/2;
+  const circ = Math.PI * d;
+  const area = Math.PI * r * r;
+  document.getElementById('outRadius').textContent = fmt(r) + ' m';
+  document.getElementById('outCirc').textContent = fmt(circ) + ' m';
+  document.getElementById('outArea').textContent = fmt(area) + ' m\u00B2';
+}
+function onTechSelect() {
+  const val = document.getElementById('techSelect').value;
+  const input = document.getElementById('diameterInput');
+  if (val === 'custom') { input.focus(); return; }
+  input.value = techCircles[parseInt(val)].diameter;
+  calcCircle();
+}
+calcCircle();
+
+// REAL WORLD PLACES
+const places = [
+  {id:'village', icon:'💧', name:'A village in Africa that now has clean water', prompt:'What technology (pipes, pump wheels, tanks) helped bring clean water? How did daily life change for people there?'},
+  {id:'island', icon:'🛰️', name:'A remote island that now has internet', prompt:'How does a circular satellite dish help connect the island? What can people do now that they couldn\u2019t before?'},
+  {id:'city', icon:'☀️', name:'A city that uses solar power', prompt:'Where does the solar power come from? How does it help the environment and the people living there?'},
+  {id:'drones', icon:'🚁', name:'A country that uses drones to deliver medicine', prompt:'Drone rotors are circles spinning fast. Why does that shape help drones fly and deliver quickly?'},
+  {id:'farm', icon:'🌾', name:'A farm that uses smart farming technology', prompt:'Many farms use huge circular irrigation systems visible from space. How does this help farmers grow more food?'},
+  {id:'school', icon:'📱', name:'A school that uses iPads for learning', prompt:'How do the iPads change what and how students learn? What is different from a normal classroom?'},
+  {id:'hospital', icon:'🤖', name:'A hospital that uses robots for surgery', prompt:'Robotic surgical arms often rotate around circular joints. How does this precision help patients recover?'}
+];
+let selectedPlaces = [];
+const placeParagraphs = {};
+
+function togglePlace(id) {
+  const i = selectedPlaces.indexOf(id);
+  if (i !== -1) { selectedPlaces.splice(i,1); }
+  else { if (selectedPlaces.length >= 3) return; selectedPlaces.push(id); }
+  renderPlaces();
+  renderParagraphZone();
+}
+function renderPlaces() {
+  const grid = document.getElementById('placeGrid');
+  grid.innerHTML = places.map(p => {
+    const sel = selectedPlaces.includes(p.id);
+    return `<div class="place-card${sel?' selected':''}" onclick="togglePlace('${p.id}')">
+      <div class="place-top"><div class="place-icon">${p.icon}</div><div class="place-check">${sel?'✓':''}</div></div>
+      <div class="place-name">${p.name}</div>
+      <div class="place-desc">${p.prompt}</div>
+    </div>`;
+  }).join('');
+}
+function renderParagraphZone() {
+  const zone = document.getElementById('paragraphZone');
+  if (selectedPlaces.length === 0) {
+    zone.innerHTML = `<div class="placeholder-note">Select 3 places above — your writing boxes will appear here.</div>`;
+    return;
+  }
+  zone.innerHTML = '';
+  selectedPlaces.forEach(id => {
+    const p = places.find(pl => pl.id === id);
+    const val = placeParagraphs[id] || '';
+    const words = val.trim().length ? val.trim().split(/\s+/).length : 0;
+    const card = document.createElement('div');
+    card.className = 'paragraph-card';
+    card.innerHTML = `
+      <div class="ph-title">${p.icon} ${p.name}</div>
+      <div class="ph-prompt">${p.prompt}</div>
+      <textarea placeholder="Write your paragraph here (aim for 60–100 words)...">${val}</textarea>
+      <div class="word-count${words>=40?' ok':''}">${words} words</div>
+    `;
+    const ta = card.querySelector('textarea');
+    const wc = card.querySelector('.word-count');
+    ta.addEventListener('input', () => {
+      placeParagraphs[id] = ta.value;
+      const w = ta.value.trim().length ? ta.value.trim().split(/\s+/).length : 0;
+      wc.textContent = w + ' words';
+      wc.className = 'word-count' + (w>=40?' ok':'');
+    });
+    zone.appendChild(card);
+  });
+  if (selectedPlaces.length < 3) {
+    const note = document.createElement('div');
+    note.className = 'placeholder-note';
+    note.textContent = `Pick ${3 - selectedPlaces.length} more place${3-selectedPlaces.length>1?'s':''} to finish.`;
+    zone.appendChild(note);
+  }
+}
+renderPlaces();
+renderParagraphZone();
+
+// QUIZ
+const quizData = [
+  { q:"What is the distance from the centre of a circle to its edge called?",
+    opts:["Diameter","Radius","Circumference","Chord"], ans:1,
+    fb:"The radius is the distance from the centre to any point on the circle's edge — always equal, no matter which direction you measure." },
+  { q:"What is the formula for the circumference of a circle?",
+    opts:["π × radius","π × diameter","2 × radius²","diameter ÷ π"], ans:1,
+    fb:"Circumference = π × diameter (or equivalently 2 × π × radius)." },
+  { q:"As a regular polygon gains more and more sides, it starts to look more like...",
+    opts:["A triangle","A straight line","A circle","A square"], ans:2,
+    fb:"With enough tiny sides, the corners disappear and the shape becomes indistinguishable from a circle." },
+  { q:"Which real technology from today's lab uses a circular shape to catch wind and generate power?",
+    opts:["A satellite dish","A wind turbine's blade sweep","A drone rotor","A bicycle wheel"], ans:1,
+    fb:"A wind turbine's spinning blades trace out a huge circle, catching wind evenly from whichever direction it blows." },
+  { q:"A straight line that touches a circle at exactly one point, without crossing inside it, is called a...",
+    opts:["Chord","Sector","Tangent","Arc"], ans:2,
+    fb:"A tangent line just grazes the circle's edge at a single point." },
+  { q:"Farms sometimes use giant circular fields, visible even from space. What is this smart farming technology called?",
+    opts:["Center-pivot irrigation","Vertical farming","Drone spraying","Crop rotation"], ans:0,
+    fb:"Center-pivot irrigation rotates a long arm around a central point, watering a perfect circle of crops." },
+  { q:"According to today's investigation, why are circles common in technology that needs to move, spin, or send signals?",
+    opts:["Circles are easier to draw","Every point on a circle's edge is the same distance from the centre, so motion and signals stay balanced","Circles use less material always","There is no real reason"], ans:1,
+    fb:"That equal distance from the centre in every direction is exactly why wheels roll smoothly and dishes/rotors work evenly all around." },
+  { q:"What makes a science-fiction story feel believable, even though it imagines the future?",
+    opts:["It uses only magic and spells","It grounds its ideas in real science or technology, even when imagining something new","It never explains anything","It copies another story exactly"], ans:1,
+    fb:"Good science fiction extends real science and technology — like satellite dishes or drones — into imagined new possibilities." },
+];
+let quizScore = 0, quizAnswered = 0;
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  quizScore = 0; quizAnswered = 0;
+  document.getElementById('score-panel').style.display = 'none';
+  quizData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `
+      <div class="quiz-q">${idx+1}. ${item.q}</div>
+      <div class="quiz-options">
+        ${item.opts.map((opt,i) => `<button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">${String.fromCharCode(65+i)}. ${opt}</button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="qfb-${idx}"></div>`;
+    container.appendChild(card);
+  });
+}
+function checkAnswer(btn, qIdx, optIdx) {
+  const card = btn.closest('.quiz-card');
+  const buttons = card.querySelectorAll('.quiz-opt');
+  const fb = document.getElementById('qfb-'+qIdx);
+  const correct = quizData[qIdx].ans;
+  buttons.forEach(b => b.disabled = true);
+  if (optIdx === correct) {
+    btn.classList.add('correct'); fb.textContent = '✅ ' + quizData[qIdx].fb; fb.className = 'quiz-feedback show correct-fb'; quizScore++;
+  } else {
+    btn.classList.add('wrong'); buttons[correct].classList.add('correct');
+    fb.textContent = '❌ ' + quizData[qIdx].fb; fb.className = 'quiz-feedback show wrong-fb';
+  }
+  quizAnswered++;
+  if (quizAnswered === quizData.length) showScore();
+}
+function showScore() {
+  const panel = document.getElementById('score-panel');
+  panel.style.display = 'block';
+  document.getElementById('score-display').textContent = quizScore + '/' + quizData.length;
+  const pct = quizScore / quizData.length;
+  let msg;
+  if (pct >= .9) msg = '🌟 Outstanding! You\'ve mastered circles, connection, and sci-fi thinking!';
+  else if (pct >= .7) msg = '👍 Great work! A quick review of the missed ones and you\'re set.';
+  else msg = '📚 Good start — revisit the labs above, then retake.';
+  document.getElementById('score-msg').textContent = msg;
+  panel.scrollIntoView({behavior:'smooth'});
+}
+function retakeQuiz() { buildQuiz(); }
+buildQuiz();
+
+// SUMMARY / SUBMIT
+function fillSummary(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = text && text.trim();
+  el.textContent = val || 'Not answered';
+  el.classList.toggle('empty', !val);
+}
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent = new Date().toLocaleDateString('en-GB', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+  const scoreEl = document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl ? scoreEl.textContent + ' correct' : 'Quiz not yet completed');
+  fillSummary('sum-wonder', document.getElementById('wonder-predict').value);
+  fillSummary('sum-shape-reflect', document.getElementById('shape-reflect').value);
+  fillSummary('sum-calc-predict', document.getElementById('calc-predict').value);
+  fillSummary('sum-calc-reflect', document.getElementById('calc-reflect').value);
+  fillSummary('sum-scifi-write', document.getElementById('scifi-write').value);
+  const refTAs = document.querySelectorAll('#sec-7 .reflection-card textarea');
+  ['sum-r1','sum-r2','sum-r3','sum-r4'].forEach((id,i) => fillSummary(id, refTAs[i] ? refTAs[i].value : ''));
+}
+function buildPlainText() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const date = new Date().toLocaleDateString('en-GB', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+  const scoreEl = document.getElementById('score-display');
+  const score = scoreEl ? scoreEl.textContent : 'not completed';
+  const refTAs = document.querySelectorAll('#sec-7 .reflection-card textarea');
+  const refs = ['','','',''];
+  refTAs.forEach((ta,i) => { refs[i] = ta.value.trim() || 'Not answered'; });
+  const placesText = selectedPlaces.length
+    ? selectedPlaces.map(id => {
+        const p = places.find(pl => pl.id === id);
+        return p.name + ':\n' + (placeParagraphs[id] || '').trim() || 'Not answered';
+      }).join('\n\n')
+    : 'No places selected yet';
+  return [
+    'CIRCLES OF CONNECTION 🛰️ — STUDENT SUBMISSION',
+    '======================================================',
+    'Student: ' + name,
+    'Date: ' + date,
+    'Lesson: AOI Technology + English (Sci-Fi) + Maths (Quadrilaterals → Circles)',
+    '',
+    '── QUIZ SCORE ──', score,
+    '',
+    '── WONDER & SHAPES LAB ──',
+    'First idea spark:', document.getElementById('wonder-predict').value.trim() || 'Not answered',
+    'Shapes lab reflection:', document.getElementById('shape-reflect').value.trim() || 'Not answered',
+    '',
+    '── CIRCLES LAB ──',
+    'Circumference prediction:', document.getElementById('calc-predict').value.trim() || 'Not answered',
+    'Why circles work in technology:', document.getElementById('calc-reflect').value.trim() || 'Not answered',
+    '',
+    '── REAL-WORLD PLACES (3 chosen) ──',
+    placesText,
+    '',
+    '── SCIENCE FICTION WRITING ──',
+    document.getElementById('scifi-write').value.trim() || 'Not answered',
+    '',
+    '── REFLECTIONS ──',
+    'Q1 — Circles vs quadrilaterals?', refs[0],
+    'Q2 — A circle property quadrilaterals lack?', refs[1],
+    'Q3 — How technology helps communities?', refs[2],
+    'Q4 — My own "what if" idea?', refs[3],
+    '',
+    '======================================================',
+    'Submitted via Circles of Connection · Interactive Inquiry Mini-Lesson'
+  ].join('\n');
+}
+function copyResults() {
+  buildSummary();
+  navigator.clipboard.writeText(buildPlainText()).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Now paste into Google Classroom or your assignment.';
+    setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => {
+    document.getElementById('copyConfirm').textContent = '⚠️ Could not copy automatically — try selecting the text manually.';
+  });
+}
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  window.location.href = 'mailto:?subject=' + encodeURIComponent('Circles of Connection — ' + name) + '&body=' + encodeURIComponent(buildPlainText());
+}
+</script>
+</body>
+</html>
