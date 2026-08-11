@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2.1 Atoms, Bonds &amp; Water — Interactive Lesson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#146C7A; --teal-dark:#0D4F5A; --teal-light:#E3F1F2; --teal-mid:#59A6AE;
+  --orange:#DD7A2E; --orange-light:#FBEADB;
+  --purple:#5B3E96; --purple-light:#F0EAFA;
+  --red:#C0392B; --red-light:#FBE7E4;
+  --blue:#2B71C9; --blue-light:#E9F1FC;
+  --green:#3F8F5C; --green-light:#E7F5EC;
+  --ink:#1D2B32; --ink-soft:#4B5B62;
+  --paper:#FFFFFF; --cream:#F6F4EF; --line:#DDE4E3;
+  --r-lg:22px; --r-md:14px; --r-sm:8px;
+  --shadow: 0 10px 30px rgba(13,79,90,.14);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0; background:var(--cream); color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;
+  overflow:hidden;
+}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+
+/* ===== App shell ===== */
+#app{position:relative; width:100vw; height:100vh; display:flex; flex-direction:column;}
+
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 28px; background:var(--paper); border-bottom:1px solid var(--line);
+  flex:0 0 auto; z-index:20;
+}
+.crumb{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft); font-weight:600;}
+.crumb .tag{
+  background:var(--teal); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12px;
+  padding:5px 12px; border-radius:100px; letter-spacing:.3px;
+}
+.crumb .sep{color:#B9C4C3;}
+.crumb .current{color:var(--teal-dark);}
+
+.dots{display:flex; gap:6px; align-items:center;}
+.dot{
+  width:9px; height:9px; border-radius:50%; background:#D7DEDD; border:none; cursor:pointer;
+  transition:all .25s;
+}
+.dot.active{ background:var(--teal); width:22px; border-radius:6px;}
+.dot:hover{background:var(--teal-mid);}
+
+.counter{font-size:12px; color:var(--ink-soft); font-weight:600; font-variant-numeric:tabular-nums; min-width:44px; text-align:right;}
+
+/* ===== Stage ===== */
+.stage{position:relative; flex:1 1 auto; overflow:hidden;}
+.slide{
+  position:absolute; inset:0; opacity:0; pointer-events:none;
+  transform:translateX(30px) scale(.99);
+  transition:opacity .45s ease, transform .45s ease;
+  overflow-y:auto;
+}
+.slide.active{opacity:1; pointer-events:auto; transform:translateX(0) scale(1);}
+.slide.prev{transform:translateX(-30px) scale(.99);}
+
+.slide-inner{
+  max-width:1180px; margin:0 auto; padding:40px 44px 90px;
+  min-height:100%;
+}
+
+/* nav arrows */
+.navbtn{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:15;
+  width:46px; height:46px; border-radius:50%; border:1px solid var(--line);
+  background:var(--paper); box-shadow:var(--shadow); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; color:var(--teal-dark);
+  transition:.2s;
+}
+.navbtn:hover{background:var(--teal); color:#fff; border-color:var(--teal);}
+.navbtn.disabled{opacity:.25; pointer-events:none;}
+#prevBtn{left:16px;} #nextBtn{right:16px;}
+.navbtn svg{width:20px; height:20px;}
+
+/* ===== shared components ===== */
+.chevron-badge{
+  display:inline-flex; align-items:center; gap:10px; background:var(--teal); color:#fff;
+  padding:9px 20px 9px 16px; font-family:'Poppins'; font-weight:700; font-size:15px;
+  clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%); margin-bottom:16px;
+}
+.eyebrow{
+  font-family:'Poppins'; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--orange); margin-bottom:8px;
+}
+h1.slide-title{font-size:36px; font-weight:800; color:var(--teal-dark); margin:0 0 6px; line-height:1.15;}
+h2.section-title{font-size:26px; font-weight:700; color:var(--teal-dark); margin:0 0 14px;}
+h3.mini-title{font-size:17px; font-weight:700; color:var(--ink); margin:0 0 8px;}
+p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
+.lede{font-size:17px; color:var(--ink-soft); margin-bottom:22px; max-width:640px;}
+.term{color:var(--orange); font-weight:700; cursor:help; border-bottom:1.5px dotted var(--orange);}
+.zh{color:var(--purple); font-weight:600;}
+
+.box{
+  border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--paper);
+  box-shadow:var(--shadow);
+}
+.box-head{
+  padding:12px 20px; font-family:'Poppins'; font-weight:700; font-size:14px; color:#fff;
+  display:flex; align-items:center; gap:8px;
+}
+.box-body{padding:20px 22px;}
+.box.blue .box-head{background:var(--blue);}
+.box.purple .box-head{background:var(--purple);}
+.box.red .box-head{background:var(--red);}
+.box.orange .box-head{background:var(--orange);}
+.box.green .box-head{background:var(--green);}
+.box.teal .box-head{background:var(--teal);}
+
+.two-col{display:grid; grid-template-columns:1.05fr .95fr; gap:36px; align-items:start;}
+@media (max-width:900px){.two-col{grid-template-columns:1fr;}}
+
+.photo{
+  width:100%; border-radius:var(--r-md); display:block; object-fit:cover; background:#eee;
+  box-shadow:0 6px 18px rgba(20,108,122,.18);
+}
+.photo-cap{font-size:12px; color:var(--ink-soft); margin-top:8px; font-style:italic;}
+
+.pill{
+  display:inline-block; padding:4px 12px; border-radius:100px; font-size:12px; font-weight:700;
+  background:var(--teal-light); color:var(--teal-dark); margin:2px 4px 2px 0;
+}
+
+.check-item{display:flex; gap:10px; align-items:flex-start; margin-bottom:10px; font-size:14.5px;}
+.check-item svg{flex:0 0 auto; margin-top:2px; width:16px; height:16px; color:var(--teal);}
+
+/* buttons generic */
+.btn{
+  border:none; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:14px;
+  padding:10px 20px; border-radius:100px; background:var(--teal); color:#fff; transition:.2s;
+}
+.btn:hover{background:var(--teal-dark);}
+.btn.ghost{background:transparent; border:1.5px solid var(--teal); color:var(--teal);}
+.btn.ghost:hover{background:var(--teal-light);}
+.btn[disabled]{opacity:.45; cursor:default;}
+
+.hint{
+  font-size:12.5px; color:var(--ink-soft); background:var(--teal-light); border-radius:100px;
+  padding:6px 14px; display:inline-flex; gap:6px; align-items:center; margin-bottom:18px; font-weight:600;
+}
+.hint svg{width:14px; height:14px;}
+
+/* ============ SLIDE 0 : COVER ============ */
+.cover{
+  height:100%; display:flex; align-items:center; justify-content:center; position:relative;
+  background:
+    radial-gradient(ellipse at 20% 15%, rgba(255,255,255,.10), transparent 45%),
+    linear-gradient(160deg, var(--teal) 0%, var(--teal-dark) 62%, #0A3A42 100%);
+  overflow:hidden;
+}
+.cover-rock{position:absolute; border-radius:38% 62% 55% 45% / 45% 40% 60% 55%; opacity:.16; background:#fff;}
+.cover-content{position:relative; z-index:2; text-align:center; color:#fff; max-width:760px; padding:0 30px;}
+.cover-content .unit{font-family:'Poppins'; font-weight:700; letter-spacing:3px; font-size:13px; text-transform:uppercase; color:#BFE3E6; margin-bottom:14px;}
+.cover-content h1{font-size:52px; font-weight:800; margin:0 0 10px; line-height:1.08;}
+.cover-content .sub{font-size:19px; color:#DCEEEF; font-weight:500; margin-bottom:8px;}
+.cover-content .sub-zh{font-size:15px; color:#BFE3E6; font-weight:500; margin-bottom:34px;}
+.cover-chip-row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:38px;}
+.cover-chip{
+  background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff;
+  padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600; backdrop-filter:blur(4px);
+}
+.cover-start{
+  background:var(--orange); color:#fff; border:none; font-family:'Poppins'; font-weight:700; font-size:16px;
+  padding:15px 34px; border-radius:100px; cursor:pointer; box-shadow:0 12px 26px rgba(221,122,46,.4);
+  display:inline-flex; align-items:center; gap:10px; transition:.2s;
+}
+.cover-start:hover{transform:translateY(-2px); box-shadow:0 16px 30px rgba(221,122,46,.5);}
+
+/* ============ objectives slide ============ */
+.obj-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 22px; margin-top:6px;}
+.obj-card{
+  display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:var(--r-md);
+  background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.2s;
+}
+.obj-card:hover{border-color:var(--teal-mid); box-shadow:var(--shadow);}
+.obj-num{
+  flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--teal-light); color:var(--teal-dark);
+  font-family:'Poppins'; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;
+}
+.obj-card.done .obj-num{background:var(--teal); color:#fff;}
+.obj-card.done p{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:#B9C4C3;}
+.obj-card p{margin:0; font-size:13.8px; line-height:1.5;}
+
+/* ============ atom builder ============ */
+.atom-builder{display:flex; gap:34px; align-items:flex-start; flex-wrap:wrap;}
+.atom-stage{
+  position:relative; width:320px; height:320px; flex:0 0 auto; background:var(--paper);
+  border-radius:50%; border:1px solid var(--line); box-shadow:var(--shadow);
+}
+.atom-stage svg{position:absolute; inset:0; width:100%; height:100%;}
+.atom-controls{flex:1 1 300px; min-width:280px;}
+.atom-btn-row{display:flex; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap;}
+.atom-btn-row .label{font-family:'Poppins'; font-weight:700; font-size:13px; width:96px; flex:0 0 auto;}
+.circle-btn{
+  width:30px; height:30px; border-radius:50%; border:1.5px solid var(--teal); background:#fff; color:var(--teal);
+  font-weight:800; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:.15s;
+}
+.circle-btn:hover{background:var(--teal); color:#fff;}
+.atom-count{min-width:26px; text-align:center; font-family:'Poppins'; font-weight:700; font-size:15px;}
+.readout-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:16px 0;}
+.readout-card{background:var(--teal-light); border-radius:var(--r-md); padding:10px 14px; text-align:center;}
+.readout-card .num{font-family:'Poppins'; font-weight:800; font-size:24px; color:var(--teal-dark);}
+.readout-card .lbl{font-size:11px; color:var(--ink-soft); font-weight:600;}
+.el-tab-btn{
+  padding:8px 14px; border-radius:100px; border:1.5px solid var(--line); background:#fff; cursor:pointer;
+  font-family:'Poppins'; font-weight:700; font-size:13px; color:var(--ink-soft); transition:.2s;
+}
+.el-tab-btn.active{background:var(--purple); border-color:var(--purple); color:#fff;}
+
+/* ============ element composition bars ============ */
+.element-bars{display:flex; flex-direction:column; gap:9px; margin-top:6px;}
+.element-bar-row{display:flex; align-items:center; gap:12px; cursor:pointer; padding:7px 8px; border-radius:10px; transition:.15s;}
+.element-bar-row:hover{background:var(--teal-light);}
+.element-bar-row.active{background:var(--teal-light);}
+.element-symbol{
+  flex:0 0 auto; width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+  font-family:'Poppins'; font-weight:800; color:#fff; font-size:14px;
+}
+.element-bar-track{flex:1 1 auto; height:15px; background:#EEF3F2; border-radius:100px; overflow:hidden;}
+.element-bar-fill{height:100%; width:0%; border-radius:100px; transition:width 1.2s ease;}
+.element-pct{flex:0 0 auto; width:44px; text-align:right; font-family:'Poppins'; font-weight:700; font-size:12.5px; color:var(--ink-soft);}
+
+/* ============ tabs (bond types) ============ */
+.tabs{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+.tab-btn{
+  padding:10px 18px; border-radius:100px; border:1.5px solid var(--line); background:#fff; cursor:pointer;
+  font-family:'Poppins'; font-weight:600; font-size:13.5px; color:var(--ink-soft); transition:.2s;
+}
+.tab-btn.active{background:var(--teal); border-color:var(--teal); color:#fff;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block; animation:fadein .35s;}
+@keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+/* ============ hotspot photo ============ */
+.hotspot-photo-wrap{position:relative; display:inline-block; width:100%;}
+.hotspot{
+  position:absolute; width:22px; height:22px; border-radius:50%; background:var(--orange); border:3px solid #fff;
+  cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.3); animation:pulse 2s infinite;
+}
+.hotspot::after{content:'+'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:13px;}
+.hotspot.done{animation:none; background:var(--teal);}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(221,122,46,.45);} 50%{box-shadow:0 0 0 8px rgba(221,122,46,0);}}
+.hotspot-tip{
+  position:absolute; background:var(--ink); color:#fff; padding:8px 12px; border-radius:8px; font-size:12.5px;
+  max-width:210px; z-index:5; display:none; box-shadow:0 8px 18px rgba(0,0,0,.25); line-height:1.4;
+}
+.hotspot-tip.show{display:block;}
+
+/* ============ molecule / ice-water demo ============ */
+.cool-demo{display:grid; grid-template-columns:1fr 1fr; gap:22px;}
+.cool-card{background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:18px; text-align:center;}
+.cool-card h4{font-family:'Poppins'; font-size:14px; margin:0 0 4px; color:var(--teal-dark);}
+.cool-card .rate{font-size:12.5px; color:var(--ink-soft); margin-bottom:12px;}
+.molecule-box{height:150px; border-radius:10px; position:relative; overflow:hidden; margin-bottom:10px;}
+.molecule-box.liquid{background:#D7ECEF;}
+.molecule-box.ice{background:#EAF6FB; border:2px dashed #BEE0EA;}
+.molecule-dot{position:absolute; width:15px; height:15px; border-radius:50%; opacity:0; transition:opacity .5s;}
+.molecule-dot.show{opacity:1;}
+.molecule-dot.liquid-dot{background:radial-gradient(circle at 35% 30%,#59A6AE,#146C7A);}
+.molecule-dot.ice-dot{background:radial-gradient(circle at 35% 30%,#BFE3E6,#59A6AE); border:1.5px solid #fff;}
+
+/* ============ matching game (bonds) ============ */
+.match-wrap{display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:10px;}
+.match-col h4{font-family:'Poppins'; font-size:12.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:1px; margin:0 0 10px;}
+.match-card{
+  border:1.5px solid var(--line); background:#fff; border-radius:var(--r-md); padding:14px 16px; margin-bottom:10px;
+  cursor:pointer; font-weight:600; font-size:13.5px; transition:.15s; line-height:1.5;
+}
+.match-card:hover{border-color:var(--teal-mid);}
+.match-card.selected{border-color:var(--purple); background:var(--purple-light);}
+.match-card.matched{border-color:var(--green); background:var(--green-light); color:#245A38; cursor:default;}
+.match-card.shake{animation:shake .4s;}
+@keyframes shake{0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);}}
+
+/* ============ fill blanks ============ */
+.wordbank{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding:14px; background:var(--purple-light); border-radius:var(--r-md);}
+.word-chip{
+  background:#fff; border:1.5px solid var(--purple); color:var(--purple); font-family:'Poppins'; font-weight:600;
+  font-size:13px; padding:7px 14px; border-radius:100px; cursor:pointer; transition:.15s;
+}
+.word-chip:hover{background:var(--purple); color:#fff;}
+.word-chip.used{opacity:.3; pointer-events:none; text-decoration:line-through;}
+.fillp{font-size:15.5px; line-height:2.3;}
+.blank{
+  display:inline-flex; align-items:center; justify-content:center; min-width:96px; height:28px;
+  border-bottom:2.5px solid var(--purple); font-family:'Poppins'; font-weight:700; color:var(--purple);
+  cursor:pointer; padding:0 6px; font-size:13.5px; vertical-align:middle;
+}
+.blank.filled{border-bottom-style:solid;}
+.blank:empty::after{content:'\00a0';}
+
+/* ============ scenario / challenge ============ */
+.scenario{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); padding:22px 24px; box-shadow:var(--shadow);}
+.speech{
+  background:var(--teal-light); border-radius:14px; padding:10px 16px; font-size:14px; margin:6px 0; max-width:320px;
+  position:relative; font-weight:600; color:var(--teal-dark);
+}
+.speech.right{margin-left:auto; background:var(--orange-light); color:#8A4A16;}
+.quiz-opts{display:flex; gap:12px; margin-top:14px; flex-wrap:wrap;}
+.quiz-opt{
+  flex:1 1 160px; border:1.5px solid var(--line); background:#fff; border-radius:var(--r-md); padding:14px 16px;
+  cursor:pointer; font-weight:700; font-family:'Poppins'; font-size:14px; text-align:left; transition:.2s;
+}
+.quiz-opt:hover{border-color:var(--teal-mid);}
+.quiz-opt.correct{background:var(--green-light); border-color:var(--green); color:var(--green);}
+.quiz-opt.wrong{background:var(--red-light); border-color:var(--red); color:var(--red);}
+.feedback{margin-top:14px; padding:14px 16px; border-radius:var(--r-md); font-size:14px; display:none; line-height:1.6;}
+.feedback.show{display:block; animation:fadein .3s;}
+.feedback.good{background:var(--green-light); color:#245A38; border:1px solid #BFE2CC;}
+
+/* ============ checklist ============ */
+.assess-list{display:flex; flex-direction:column; gap:2px;}
+.assess-item{
+  display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px; cursor:pointer;
+  transition:.15s;
+}
+.assess-item:hover{background:var(--teal-light);}
+.assess-box{
+  flex:0 0 auto; width:22px; height:22px; border-radius:6px; border:2px solid var(--teal); position:relative;
+}
+.assess-item.checked .assess-box{background:var(--teal);}
+.assess-box svg{position:absolute; inset:0; margin:auto; width:14px; height:14px; color:#fff; opacity:0;}
+.assess-item.checked .assess-box svg{opacity:1;}
+.assess-item p{margin:0; font-size:14px;}
+.assess-item.checked p{color:var(--ink-soft);}
+.progress-bar-track{height:10px; background:var(--teal-light); border-radius:100px; overflow:hidden; margin:16px 0 22px;}
+.progress-bar-fill{height:100%; width:0%; background:linear-gradient(90deg,var(--teal),var(--orange)); border-radius:100px; transition:width .4s;}
+
+/* glossary cards */
+.gloss-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px;}
+.gloss-card{
+  background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:14px; cursor:pointer;
+  perspective:800px; height:118px; position:relative;
+}
+.gloss-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+.gloss-card.flip .gloss-inner{transform:rotateY(180deg);}
+.gloss-face{position:absolute; inset:0; backface-visibility:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:3px;}
+.gloss-face.front{font-family:'Poppins'; font-weight:700; color:var(--teal-dark); font-size:14px;}
+.gloss-face.front .zh-term{font-family:'Inter'; font-weight:600; color:var(--purple); font-size:12.5px;}
+.gloss-face.back{transform:rotateY(180deg); font-size:11.5px; color:var(--ink-soft); padding:4px; line-height:1.4;}
+
+::-webkit-scrollbar{width:8px;}
+::-webkit-scrollbar-thumb{background:#C9D6D5; border-radius:10px;}
+
+@media(max-width:760px){
+  .obj-grid{grid-template-columns:1fr;}
+  .two-col{grid-template-columns:1fr;}
+  .gloss-grid{grid-template-columns:repeat(2,1fr);}
+  .cover-content h1{font-size:34px;}
+  h1.slide-title{font-size:26px;}
+  .match-wrap{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="topbar">
+    <div class="crumb">
+      <span class="tag">Unit 1</span>
+      <span>The Chemistry of Life</span>
+      <span class="sep">/</span>
+      <span class="current">2.1 Atoms, Bonds &amp; Water</span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="counter" id="counter">1 / 12</div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- ================= SLIDE 0 : COVER ================= -->
+    <section class="slide">
+      <div class="cover">
+        <div class="cover-rock" style="width:260px;height:260px; top:-60px; left:-60px;"></div>
+        <div class="cover-rock" style="width:180px;height:180px; bottom:-40px; right:-30px;"></div>
+        <div class="cover-rock" style="width:120px;height:120px; bottom:60px; left:8%;"></div>
+        <div class="cover-content">
+          <div class="unit">Unit 1 &middot; The Chemistry of Life</div>
+          <h1>Atoms, Bonds &amp; Water</h1>
+          <div class="sub">The tiny building blocks and simple molecule that make life possible</div>
+          <div class="sub-zh">生命背后的化学 — 原子、化学键与水</div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">⚛️ Atoms</span>
+            <span class="cover-chip">🧪 Bonds</span>
+            <span class="cover-chip">💧 Water</span>
+            <span class="cover-chip">🗣️ English + 中文</span>
+          </div>
+          <button class="cover-start" onclick="goTo(1)">
+            Start the lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 1 : OBJECTIVES ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">2.1</div>
+        <h1 class="slide-title">We are going to…</h1>
+        <p class="lede">Tap each goal as you meet it during the lesson. Chemistry has a lot of new words — this lesson explains each one with pictures, interactives, and Chinese support.</p>
+        <div class="obj-grid" id="objGrid">
+          <div class="obj-card" data-i="1"><div class="obj-num">1</div><p>Describe what atoms are made of: protons, neutrons, and electrons</p></div>
+          <div class="obj-card" data-i="2"><div class="obj-num">2</div><p>Explain atomic number and mass number, and what an isotope is</p></div>
+          <div class="obj-card" data-i="3"><div class="obj-num">3</div><p>Name the elements that make up most of your body (CHNOPS)</p></div>
+          <div class="obj-card" data-i="4"><div class="obj-num">4</div><p>Explain how electron shells decide how an atom bonds</p></div>
+          <div class="obj-card" data-i="5"><div class="obj-num">5</div><p>Compare covalent, ionic, and hydrogen bonds</p></div>
+          <div class="obj-card" data-i="6"><div class="obj-num">6</div><p>Explain why water is called "the solvent of life"</p></div>
+          <div class="obj-card" data-i="7"><div class="obj-num">7</div><p>Describe cohesion, adhesion, and why ice floats on water</p></div>
+          <div class="obj-card" data-i="8"><div class="obj-num">8</div><p>Learn 12 new chemistry words in English, with Chinese translations</p></div>
+        </div>
+        <div style="margin-top:22px;">
+          <span class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Key vocabulary: atom · element · proton · neutron · electron · isotope · covalent bond · ionic bond · hydrogen bond · cohesion</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 2 : GETTING STARTED — BUILD AN ATOM ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Getting started · interactive</div>
+        <h1 class="slide-title">Build an atom</h1>
+        <p class="lede">Every living thing is built from atoms <span class="zh">原子</span>. Use the buttons to add particles and build your own atom. Can you build a <strong>carbon</strong> atom — the element found in every biological molecule?</p>
+
+        <div class="atom-builder">
+          <div class="atom-stage" id="atomStage"></div>
+          <div class="atom-controls">
+            <div class="atom-btn-row">
+              <span class="label">Protons <span class="zh">质子</span></span>
+              <button class="circle-btn" onclick="changeParticle('proton',-1)">−</button>
+              <span class="atom-count" id="protonCount">0</span>
+              <button class="circle-btn" onclick="changeParticle('proton',1)">+</button>
+            </div>
+            <div class="atom-btn-row">
+              <span class="label">Neutrons <span class="zh">中子</span></span>
+              <button class="circle-btn" onclick="changeParticle('neutron',-1)">−</button>
+              <span class="atom-count" id="neutronCount">0</span>
+              <button class="circle-btn" onclick="changeParticle('neutron',1)">+</button>
+            </div>
+            <div class="atom-btn-row">
+              <span class="label">Electrons <span class="zh">电子</span></span>
+              <button class="circle-btn" onclick="changeParticle('electron',-1)">−</button>
+              <span class="atom-count" id="electronCount">0</span>
+              <button class="circle-btn" onclick="changeParticle('electron',1)">+</button>
+            </div>
+
+            <div class="readout-grid">
+              <div class="readout-card"><div class="num" id="atomicNumReadout">0</div><div class="lbl">ATOMIC NUMBER 原子序数<br>(number of protons)</div></div>
+              <div class="readout-card"><div class="num" id="massNumReadout">0</div><div class="lbl">MASS NUMBER 质量数<br>(protons + neutrons)</div></div>
+            </div>
+
+            <div class="box orange">
+              <div class="box-head">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                Challenge
+              </div>
+              <div class="box-body">
+                <p style="margin:0 0 10px;">🎯 Build a <strong>carbon</strong> atom: 6 protons, 6 neutrons, 6 electrons.</p>
+                <button class="btn" onclick="checkAtom()">Check my atom</button>
+                <p id="atomCheckFeedback" style="margin:10px 0 0; font-weight:700; font-size:13.5px;"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p style="margin-top:10px; font-size:13px; color:var(--ink-soft);"><strong>Note:</strong> an <span class="term" data-def="Atoms of the same element with different numbers of neutrons. (同位素)">isotope</span> is the same element with a different number of neutrons — try keeping 6 protons but changing the neutrons!</p>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 3 : ELECTRON SHELLS & BONDING ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Why atoms bond</div>
+        <h1 class="slide-title">Electron shells decide everything</h1>
+        <p class="lede">Electrons live in rings called <span class="term" data-def="A region around the nucleus where electrons are found. The first shell holds up to 2 electrons, the second up to 8. (电子层)">shells</span>. Atoms are most stable when their outer shell is full. Tap an element to see its shells.</p>
+
+        <div class="tabs" id="elementTabs">
+          <button class="el-tab-btn active" data-el="hydrogen" onclick="selectElement('hydrogen')">Hydrogen (H)</button>
+          <button class="el-tab-btn" data-el="carbon" onclick="selectElement('carbon')">Carbon (C)</button>
+          <button class="el-tab-btn" data-el="oxygen" onclick="selectElement('oxygen')">Oxygen (O)</button>
+          <button class="el-tab-btn" data-el="neon" onclick="selectElement('neon')">Neon (Ne)</button>
+        </div>
+
+        <div class="two-col">
+          <div class="atom-stage" id="elementStage" style="margin:0 auto;"></div>
+          <div>
+            <h3 class="mini-title" id="elementTitle">Hydrogen</h3>
+            <p id="elementDesc"></p>
+            <div class="pill">Valence electrons <span class="zh">价电子</span> = electrons in the outer shell</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 4 : ELEMENTS OF LIFE — CHNOPS BAR CHART ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">The elements of life</div>
+        <h1 class="slide-title">What are you made of?</h1>
+        <p class="lede">Of over 100 elements, only a handful build almost all of living matter. Click a bar to learn what each element does in your body.</p>
+        <div class="two-col">
+          <div>
+            <div class="element-bars" id="elementBars"></div>
+          </div>
+          <div class="box teal">
+            <div class="box-head">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
+              Element facts
+            </div>
+            <div class="box-body" id="elementInfo">
+              <p style="color:var(--ink-soft); margin:0;">Tap a bar on the left to see what that element does for living things.</p>
+            </div>
+          </div>
+        </div>
+        <p style="margin-top:16px; font-size:13px; color:var(--ink-soft);"><strong>CHNOPS</strong> is an easy way to remember the "big four" plus two more: Carbon, Hydrogen, Nitrogen, Oxygen, Phosphorus, Sulfur — together they make up almost all of your body's mass.</p>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 5 : TYPES OF BONDS (3 TABS) ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">How atoms connect</div>
+        <h1 class="slide-title">Three kinds of chemical bonds</h1>
+        <p class="lede">A <span class="term" data-def="Two or more atoms joined together. (分子)">molecule</span> forms when atoms connect using a <strong>bond</strong>. Tap each tab to compare the three main types.</p>
+
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="covalent">🔗 Covalent</button>
+          <button class="tab-btn" data-tab="ionic">⚡ Ionic</button>
+          <button class="tab-btn" data-tab="hydrogen">💧 Hydrogen</button>
+        </div>
+
+        <div class="tab-panel active" id="tab-covalent">
+          <div class="two-col">
+            <div>
+              <h3 class="mini-title">Sharing electrons <span class="zh">共价键</span></h3>
+              <p>A <span class="term" data-def="A strong bond formed when two atoms share a pair of electrons. (共价键)">covalent bond</span> forms when two atoms <strong>share</strong> electrons. It is a strong, stable bond. When millions of carbon atoms share electrons with their neighbours, they can build a giant, super-hard network.</p>
+              <p><strong>Example: diamond</strong> — pure carbon, with every atom covalently bonded to four others.</p>
+            </div>
+            <div>
+              <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Rough%20diamond.jpg" alt="A rough, uncut diamond crystal">
+              <div class="photo-cap">A rough diamond — carbon atoms sharing electrons in a giant covalent network.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-ionic">
+          <div class="two-col">
+            <div>
+              <h3 class="mini-title">Transferring electrons <span class="zh">离子键</span></h3>
+              <p>An <span class="term" data-def="A bond formed when one atom gives an electron to another, and the resulting charged ions attract each other. (离子键)">ionic bond</span> forms when one atom <strong>gives away</strong> an electron and another atom <strong>takes it</strong>. This leaves both atoms electrically charged — now called <strong>ions</strong> — and opposite charges attract, like tiny magnets.</p>
+              <p><strong>Example: table salt (NaCl)</strong> — sodium gives an electron to chlorine, and Na⁺ and Cl⁻ ions stack into a crystal.</p>
+            </div>
+            <div>
+              <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Salt%20Crystals.JPG" alt="Close-up of table salt crystals">
+              <div class="photo-cap">Table salt crystals — held together by ionic bonds between Na⁺ and Cl⁻ ions.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-hydrogen">
+          <div class="two-col">
+            <div>
+              <h3 class="mini-title">A weak but powerful attraction <span class="zh">氢键</span></h3>
+              <p>A <span class="term" data-def="A weak attraction between a slightly positive hydrogen atom on one molecule and a slightly negative atom on a nearby molecule. (氢键)">hydrogen bond</span> is not a "real" bond inside one molecule — it is a weak attraction <strong>between</strong> molecules. Each water molecule is slightly positive near its hydrogen atoms and slightly negative near its oxygen atom, so water molecules pull on each other constantly.</p>
+              <p><strong>Example: water droplets</strong> — millions of weak hydrogen bonds add up to give water its unusual properties.</p>
+            </div>
+            <div>
+              <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Dew%20on%20nasturtium%20leaf.JPG" alt="Water droplets beaded on a leaf surface">
+              <div class="photo-cap">Water beads into round droplets — hydrogen bonds pull water molecules toward each other.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 6 : LABEL THE WATER STRIDER PHOTO ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Activity — water in action</div>
+        <h1 class="slide-title">Why can this insect walk on water?</h1>
+        <p class="lede">Click each orange marker on the photograph to learn a new word about water's special properties.</p>
+        <div class="two-col">
+          <div>
+            <div class="hotspot-photo-wrap" id="hotspotWrap">
+              <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Water%20strider.jpg" alt="A water strider insect standing on the surface of water" style="width:100%;">
+              <div class="hotspot" style="top:45%; left:48%;" data-mineral="Surface tension" data-desc="表面张力 — Hydrogen bonds pull surface water molecules together, forming a thin, tough 'skin'.">1</div>
+              <div class="hotspot" style="top:60%; left:30%;" data-mineral="Cohesion" data-desc="内聚力 — The attraction between water molecules and other water molecules.">2</div>
+              <div class="hotspot" style="top:25%; left:70%;" data-mineral="Polarity" data-desc="极性 — Water molecules have a slightly positive side and a slightly negative side, so they attract each other.">3</div>
+              <div class="hotspot-tip" id="hotspotTip"></div>
+            </div>
+          </div>
+          <div>
+            <h3 class="mini-title">Riding on hydrogen bonds</h3>
+            <p>The insect's legs are covered in tiny water-repelling hairs, but the real secret is the water itself: hydrogen bonds between surface water molecules create <span class="term" data-def="The tendency of a liquid's surface to resist being broken, caused by strong attraction between surface molecules. (表面张力)">surface tension</span> — a thin, stretchy 'skin' strong enough to support the insect's tiny weight.</p>
+            <div class="box purple">
+              <div class="box-head">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
+                Found so far
+              </div>
+              <div class="box-body" id="mineralsFound">
+                <p style="color:var(--ink-soft); margin:0;">Tap the markers to reveal each word (0 / 3 found).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 7 : CAUSE & EFFECT — WHY ICE FLOATS ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Cause and effect</div>
+        <h1 class="slide-title">Why does ice float?</h1>
+        <p class="lede">In most substances, the solid form is denser than the liquid. Water is strange — ice is <em>less</em> dense than liquid water. Press the button to see why.</p>
+
+        <div class="cool-demo">
+          <div class="cool-card">
+            <h4>Liquid water</h4>
+            <div class="rate">Molecules slide past each other and pack closely</div>
+            <div class="molecule-box liquid" id="liquidBox"></div>
+            <p style="font-size:13px; margin:0;">Molecules move freely — <strong>tightly packed</strong></p>
+          </div>
+          <div class="cool-card">
+            <h4>Ice (solid)</h4>
+            <div class="rate">Hydrogen bonds lock into a fixed pattern</div>
+            <div class="molecule-box ice" id="iceBox"></div>
+            <p style="font-size:13px; margin:0;" id="iceCaption">Press the button to freeze it →</p>
+          </div>
+        </div>
+        <div style="text-align:center; margin-top:20px;">
+          <button class="btn" id="freezeBtn" onclick="freezeWater()">❄️ Freeze it!</button>
+        </div>
+
+        <div class="box blue" style="margin-top:26px;">
+          <div class="box-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            Why this matters for life
+          </div>
+          <div class="box-body">
+            <p style="margin:0;">Because ice floats, it forms an insulating layer on top of lakes and oceans in winter. The water underneath stays liquid, so fish and other organisms can survive the cold. If ice sank, most bodies of water would freeze solid from the bottom up!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 8 : MATCH THE BOND GAME ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Activity</div>
+        <h1 class="slide-title">Match each bond to its example</h1>
+        <p class="lede">Click a bond type on the left, then click the example on the right that matches it.</p>
+
+        <div class="match-wrap">
+          <div class="match-col">
+            <h4>Bond type</h4>
+            <div class="match-card" data-key="covalent">🔗 <strong>Covalent bond</strong> <span class="zh">共价键</span> — atoms share electrons</div>
+            <div class="match-card" data-key="ionic">⚡ <strong>Ionic bond</strong> <span class="zh">离子键</span> — atoms transfer electrons and attract</div>
+            <div class="match-card" data-key="hydrogen">💧 <strong>Hydrogen bond</strong> <span class="zh">氢键</span> — weak attraction between molecules</div>
+          </div>
+          <div class="match-col">
+            <h4>Real-world example</h4>
+            <div class="match-card example" data-key="salt">🧂 <strong>Table salt</strong> — Na⁺ and Cl⁻ ions attract each other</div>
+            <div class="match-card example" data-key="water">💧 <strong>Water droplets</strong> — molecules weakly attracted to each other</div>
+            <div class="match-card example" data-key="diamond">💎 <strong>Diamond</strong> — carbon atoms sharing electrons in a network</div>
+          </div>
+        </div>
+        <p id="matchFeedback" style="text-align:center; margin-top:14px; font-weight:700; color:var(--green);"></p>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 9 : FOCUS FILL IN THE BLANKS ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Focus</div>
+        <h1 class="slide-title">Complete the summary</h1>
+        <p class="lede">Tap a word from the bank, then tap the blank you want to fill. Tap a filled blank to send the word back.</p>
+        <div class="wordbank" id="wordbank"></div>
+        <div class="fillp" id="fillPara"></div>
+        <div id="fillResult" style="margin-top:16px;"></div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 10 : CHALLENGE ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Challenge</div>
+        <h1 class="slide-title">Mei and Tom's salad dressing puzzle</h1>
+        <div class="two-col">
+          <div class="scenario">
+            <p style="margin-bottom:14px;">Mei <span class="zh">(美)</span> and Tom are making salad dressing. They shake olive oil and vinegar (mostly water) together hard, but a few seconds later the oil and water separate again into two layers.</p>
+            <div class="speech">"If I shake it hard enough, they will finally mix and stay mixed," says Mei.</div>
+            <div class="speech right">"No, Mei — they will always separate again," says Tom.</div>
+            <h3 class="mini-title" style="margin-top:18px;">Who is correct?</h3>
+            <div class="quiz-opts">
+              <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false)">Mei — they will mix and stay mixed</button>
+              <button class="quiz-opt" data-correct="true" onclick="answerQuiz(this,true)">Tom — they will always separate</button>
+            </div>
+            <div class="feedback good" id="quizFeedback">
+              <strong>Tom is correct.</strong> Water is a <span class="term" data-def="A molecule with an unequal, lopsided distribution of charge. (极性)">polar</span> molecule, so it forms hydrogen bonds with other water molecules. Oil is <strong>non-polar</strong> — it cannot form hydrogen bonds with water at all. Scientists sum this up as "like dissolves like": polar substances mix with polar substances, and non-polar substances mix with non-polar substances. No amount of shaking changes that chemistry!
+            </div>
+          </div>
+          <div>
+            <div class="box orange">
+              <div class="box-head">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>
+                Water: the solvent of life
+              </div>
+              <div class="box-body">
+                <p style="margin:0;">Because water is polar, it can surround and dissolve many other polar or charged substances — like salts, sugars, and many proteins. This is why water is often called the <strong>"solvent of life"</strong> <span class="zh">生命的溶剂</span>: almost every chemical reaction inside your cells happens dissolved in water.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 11 : LOOK WHAT I CAN DO ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Look what I can do!</div>
+        <h1 class="slide-title">Self-check &amp; recap</h1>
+        <div class="progress-bar-track"><div class="progress-bar-fill" id="assessFill"></div></div>
+        <div class="assess-list" id="assessList"></div>
+
+        <h3 class="mini-title" style="margin-top:30px;">Key vocabulary — tap a card to flip it (English 中文)</h3>
+        <div class="gloss-grid" id="glossGrid"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <button class="navbtn" id="prevBtn" onclick="prevSlide()" aria-label="Previous">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button class="navbtn" id="nextBtn" onclick="nextSlide()" aria-label="Next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+
+<script>
+/* ============ core slide navigation ============ */
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let idx = 0;
+
+const dotsWrap = document.getElementById('dots');
+slides.forEach((s,i)=>{
+  const d = document.createElement('button');
+  d.className = 'dot' + (i===0?' active':'');
+  d.onclick = ()=>goTo(i);
+  dotsWrap.appendChild(d);
+});
+
+function render(){
+  slides.forEach((s,i)=> s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.dot').forEach((d,i)=> d.classList.toggle('active', i===idx));
+  document.getElementById('counter').textContent = (idx+1) + ' / ' + total;
+  document.getElementById('prevBtn').classList.toggle('disabled', idx===0);
+  document.getElementById('nextBtn').classList.toggle('disabled', idx===total-1);
+  slides[idx].scrollTop = 0;
+}
+function goTo(i){ idx = Math.max(0, Math.min(total-1, i)); render(); }
+function nextSlide(){ goTo(idx+1); }
+function prevSlide(){ goTo(idx-1); }
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight') nextSlide();
+  if(e.key==='ArrowLeft') prevSlide();
+});
+render();
+
+/* ============ objectives checklist ============ */
+document.querySelectorAll('.obj-card').forEach(card=>{
+  card.addEventListener('click', ()=> card.classList.toggle('done'));
+});
+
+/* ============ shared atomic shell diagram renderer ============ */
+function renderShellDiagram(containerId, protons, neutrons, shellCounts){
+  const cx=150, cy=150;
+  const radii=[55,100,140];
+  let svg = `<svg viewBox="0 0 300 300">`;
+  shellCounts.forEach((count,i)=>{
+    svg += `<circle cx="${cx}" cy="${cy}" r="${radii[i]}" fill="none" stroke="#CFE3E1" stroke-width="2" stroke-dasharray="5 5"/>`;
+  });
+  svg += `<circle cx="${cx}" cy="${cy}" r="38" fill="#0D4F5A"/>`;
+  svg += `<text x="${cx}" y="${cy-3}" text-anchor="middle" fill="#fff" font-family="Poppins" font-weight="700" font-size="14">${protons}p</text>`;
+  svg += `<text x="${cx}" y="${cy+15}" text-anchor="middle" fill="#BFE3E6" font-family="Poppins" font-weight="700" font-size="12">${neutrons}n</text>`;
+  shellCounts.forEach((count,i)=>{
+    for(let k=0;k<count;k++){
+      const angle = (k/count)*2*Math.PI - Math.PI/2;
+      const x = cx + radii[i]*Math.cos(angle);
+      const y = cy + radii[i]*Math.sin(angle);
+      svg += `<circle cx="${x}" cy="${y}" r="9" fill="#DD7A2E" stroke="#fff" stroke-width="2"/>`;
+    }
+  });
+  svg += `</svg>`;
+  const el = document.getElementById(containerId);
+  if(el) el.innerHTML = svg;
+}
+
+/* ============ atom builder ============ */
+let atom = {protons:0, neutrons:0, electrons:0};
+function updateAtom(){
+  const shell1 = Math.min(atom.electrons,2);
+  const shell2 = Math.min(Math.max(atom.electrons-2,0),8);
+  renderShellDiagram('atomStage', atom.protons, atom.neutrons, [shell1, shell2]);
+  document.getElementById('protonCount').textContent = atom.protons;
+  document.getElementById('neutronCount').textContent = atom.neutrons;
+  document.getElementById('electronCount').textContent = atom.electrons;
+  document.getElementById('atomicNumReadout').textContent = atom.protons;
+  document.getElementById('massNumReadout').textContent = atom.protons + atom.neutrons;
+}
+function changeParticle(type, delta){
+  if(type==='proton')   atom.protons   = Math.max(0, Math.min(12, atom.protons + delta));
+  if(type==='neutron')  atom.neutrons  = Math.max(0, Math.min(12, atom.neutrons + delta));
+  if(type==='electron') atom.electrons = Math.max(0, Math.min(10, atom.electrons + delta));
+  updateAtom();
+}
+function checkAtom(){
+  const fb = document.getElementById('atomCheckFeedback');
+  if(atom.protons===6 && atom.neutrons===6 && atom.electrons===6){
+    fb.textContent = '🎉 Correct! 6 protons + 6 neutrons + 6 electrons = a carbon atom (atomic number 6, mass number 12).';
+    fb.style.color = 'var(--green)';
+  } else {
+    fb.textContent = 'Not quite yet — carbon needs 6 protons, 6 neutrons, and 6 electrons. Keep adjusting!';
+    fb.style.color = 'var(--orange)';
+  }
+}
+updateAtom();
+
+/* ============ electron shells & bonding tabs ============ */
+const elements = {
+  hydrogen:{name:'Hydrogen', protons:1, neutrons:0, shells:[1,0],
+    desc:'Hydrogen has just 1 electron, in a shell that can hold 2. It needs 1 more electron to be full, so hydrogen usually forms just 1 bond.'},
+  carbon:{name:'Carbon', protons:6, neutrons:6, shells:[2,4],
+    desc:'Carbon has 4 valence electrons — exactly half of the 8 it needs. This is why carbon is famous for forming 4 strong bonds, and why it is the backbone of every biological molecule.'},
+  oxygen:{name:'Oxygen', protons:8, neutrons:8, shells:[2,6],
+    desc:'Oxygen has 6 valence electrons — 2 short of a full outer shell. This is why oxygen atoms are so eager to bond, often forming 2 bonds (like in H₂O).'},
+  neon:{name:'Neon', protons:10, neutrons:10, shells:[2,8],
+    desc:"Neon's outer shell is already full with 8 electrons. A full outer shell means neon almost never bonds with anything — this is why it is called a noble gas 惰性气体."}
+};
+function selectElement(key){
+  const e = elements[key];
+  renderShellDiagram('elementStage', e.protons, e.neutrons, e.shells);
+  document.getElementById('elementTitle').textContent = e.name;
+  document.getElementById('elementDesc').textContent = e.desc;
+  document.querySelectorAll('.el-tab-btn').forEach(b=> b.classList.toggle('active', b.dataset.el===key));
+}
+selectElement('hydrogen');
+
+/* ============ CHNOPS bar chart ============ */
+const elementsData = [
+  {sym:'O', name:'Oxygen 氧', pct:65, color:'#146C7A', fact:'Oxygen is part of every water molecule and is needed for cellular respiration, the process that releases energy from food.'},
+  {sym:'C', name:'Carbon 碳', pct:18, color:'#DD7A2E', fact:'Carbon can form 4 bonds and link into long chains and rings — it is the backbone of every biological molecule, from sugars to DNA.'},
+  {sym:'H', name:'Hydrogen 氢', pct:10, color:'#59A6AE', fact:'Hydrogen is part of water and almost every biological molecule; its bonds help store chemical energy.'},
+  {sym:'N', name:'Nitrogen 氮', pct:3, color:'#5B3E96', fact:'Nitrogen is an essential ingredient of proteins and DNA.'},
+  {sym:'Ca', name:'Calcium 钙', pct:1.5, color:'#3F8F5C', fact:'Calcium strengthens bones and teeth, and helps nerve cells send signals.'},
+  {sym:'P', name:'Phosphorus 磷', pct:1, color:'#C0392B', fact:'Phosphorus is part of DNA, RNA, and ATP — the molecule cells use to store energy.'},
+  {sym:'Other', name:'Trace elements 微量元素', pct:1.5, color:'#8A94A6', fact:'Elements like sulfur, sodium, potassium, and iron are needed only in tiny amounts, but life could not work without them.'}
+];
+const barsWrap = document.getElementById('elementBars');
+elementsData.forEach((el,i)=>{
+  const row = document.createElement('div');
+  row.className = 'element-bar-row';
+  row.innerHTML = `
+    <div class="element-symbol" style="background:${el.color};">${el.sym}</div>
+    <div class="element-bar-track"><div class="element-bar-fill" style="background:${el.color};" id="barFill${i}"></div></div>
+    <div class="element-pct">${el.pct}%</div>
+  `;
+  row.addEventListener('click', ()=>{
+    document.querySelectorAll('.element-bar-row').forEach(r=>r.classList.remove('active'));
+    row.classList.add('active');
+    document.getElementById('elementInfo').innerHTML = `<h4 class="mini-title" style="margin:0 0 6px;">${el.name}</h4><p style="margin:0;">${el.fact}</p>`;
+  });
+  barsWrap.appendChild(row);
+});
+setTimeout(()=>{
+  elementsData.forEach((el,i)=>{
+    document.getElementById('barFill'+i).style.width = el.pct + '%';
+  });
+}, 250);
+
+/* ============ tabs (generic — bond types) ============ */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ============ water strider hotspots ============ */
+const tip = document.getElementById('hotspotTip');
+const foundSet = new Set();
+document.querySelectorAll('.hotspot').forEach(h=>{
+  h.addEventListener('click', ()=>{
+    h.classList.add('done');
+    tip.textContent = h.dataset.mineral + ': ' + h.dataset.desc;
+    tip.style.top = (parseFloat(h.style.top)) + '%';
+    let left = parseFloat(h.style.left);
+    tip.style.left = (left > 55 ? (left-28) : (left+4)) + '%';
+    tip.classList.add('show');
+    foundSet.add(h.dataset.mineral);
+    const box = document.getElementById('mineralsFound');
+    box.innerHTML = [...foundSet].map(m=>'<div class="pill">'+m+'</div>').join('') +
+      `<p style="margin:8px 0 0; color:var(--ink-soft); font-size:12.5px;">${foundSet.size} / 3 words found</p>`;
+  });
+});
+
+/* ============ ice vs liquid water demo ============ */
+const liquidBox = document.getElementById('liquidBox');
+const iceBox = document.getElementById('iceBox');
+for(let i=0;i<55;i++){
+  const d = document.createElement('div');
+  d.className = 'molecule-dot liquid-dot show';
+  d.style.top = (Math.random()*85) + '%';
+  d.style.left = (Math.random()*92) + '%';
+  liquidBox.appendChild(d);
+}
+let frozen = false;
+function freezeWater(){
+  if(frozen) return;
+  frozen = true;
+  const btn = document.getElementById('freezeBtn');
+  btn.disabled = true; btn.textContent = '❄️ Freezing…';
+  const cols = 7, rows = 4;
+  let count = 0;
+  const total = cols*rows;
+  const timer = setInterval(()=>{
+    if(count>=total){ clearInterval(timer); btn.textContent = '❄️ Frozen!';
+      document.getElementById('iceCaption').innerHTML = 'Same number of molecules, but spread into a wider lattice — <strong>ice takes up ~9% more space</strong>, so it floats.';
+      return;
+    }
+    const row = Math.floor(count/cols);
+    const col = count % cols;
+    const offset = (row % 2 === 0) ? 0 : 7;
+    const d = document.createElement('div');
+    d.className = 'molecule-dot ice-dot';
+    d.style.top = (10 + row*24) + '%';
+    d.style.left = (offset + col*13) + '%';
+    iceBox.appendChild(d);
+    requestAnimationFrame(()=> d.classList.add('show'));
+    count++;
+  }, 70);
+}
+
+/* ============ matching game — bonds ============ */
+const bondPairs = {covalent:'diamond', ionic:'salt', hydrogen:'water'};
+let selectedBond = null;
+let matchedCount = 0;
+document.querySelectorAll('.match-card:not(.example)').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    if(card.classList.contains('matched')) return;
+    document.querySelectorAll('.match-card:not(.example)').forEach(c=>c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedBond = card;
+  });
+});
+document.querySelectorAll('.match-card.example').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    if(card.classList.contains('matched') || !selectedBond) return;
+    const bondKey = selectedBond.dataset.key;
+    const exKey = card.dataset.key;
+    if(bondPairs[bondKey] === exKey){
+      selectedBond.classList.add('matched');
+      selectedBond.classList.remove('selected');
+      card.classList.add('matched');
+      matchedCount++;
+      selectedBond = null;
+      if(matchedCount === 3){
+        document.getElementById('matchFeedback').textContent = '🎉 All matched! You understand the three bond types.';
+      }
+    } else {
+      card.classList.add('shake');
+      selectedBond.classList.add('shake');
+      setTimeout(()=>{
+        card.classList.remove('shake');
+        if(selectedBond){ selectedBond.classList.remove('shake'); selectedBond.classList.remove('selected'); }
+        selectedBond = null;
+      }, 400);
+    }
+  });
+});
+
+/* ============ fill in the blanks ============ */
+const paraTemplate = [
+  "An atom is the smallest particle that keeps the properties of an ", 0, ". Atoms are built from three particles: positively charged ", 1,
+  ", neutral ", 2, ", and negatively charged ", 3, " that move around the nucleus. When two atoms share electrons, they form a ", 4,
+  " bond, like the carbon atoms inside a diamond. When atoms transfer electrons and attract each other, they form an ", 5,
+  " bond, like the ions inside table salt. Water molecules are held together loosely by ", 6, " bonds, giving water many of its special properties."
+];
+const blankAnswerKey = {0:'element',1:'protons',2:'neutrons',3:'electrons',4:'covalent',5:'ionic',6:'hydrogen'};
+const fullBank = Object.values(blankAnswerKey);
+
+const bankEl = document.getElementById('wordbank');
+const paraEl = document.getElementById('fillPara');
+let placed = {};
+
+function shuffle(arr){ return arr.sort(()=>Math.random()-0.5); }
+shuffle([...fullBank]).forEach(w=>{
+  const chip = document.createElement('button');
+  chip.className = 'word-chip';
+  chip.textContent = w;
+  chip.dataset.word = w;
+  chip.addEventListener('click', ()=>selectWord(chip));
+  bankEl.appendChild(chip);
+});
+
+let selectedChip = null;
+function selectWord(chip){
+  if(chip.classList.contains('used')) return;
+  document.querySelectorAll('.word-chip').forEach(c=>c.style.outline='none');
+  selectedChip = chip;
+  chip.style.outline = '2.5px solid var(--purple)';
+}
+
+paraTemplate.forEach(part=>{
+  if(typeof part === 'string'){
+    paraEl.appendChild(document.createTextNode(part));
+  } else {
+    const blank = document.createElement('span');
+    blank.className = 'blank';
+    blank.dataset.idx = part;
+    blank.addEventListener('click', ()=>fillBlank(blank));
+    paraEl.appendChild(blank);
+  }
+});
+
+function fillBlank(blank){
+  if(blank.classList.contains('filled')){
+    const word = blank.textContent;
+    blank.textContent = '';
+    blank.classList.remove('filled');
+    const chip = [...document.querySelectorAll('.word-chip')].find(c=>c.dataset.word===word && c.classList.contains('used'));
+    if(chip) chip.classList.remove('used');
+    delete placed[blank.dataset.idx];
+    return;
+  }
+  if(!selectedChip) return;
+  blank.textContent = selectedChip.dataset.word;
+  blank.classList.add('filled');
+  selectedChip.classList.add('used');
+  placed[blank.dataset.idx] = selectedChip.dataset.word;
+  selectedChip.style.outline = 'none';
+  selectedChip = null;
+
+  if(Object.keys(placed).length === Object.keys(blankAnswerKey).length){
+    checkFill();
+  }
+}
+function checkFill(){
+  let correct = 0;
+  Object.keys(blankAnswerKey).forEach(k=>{
+    if(placed[k] === blankAnswerKey[k]) correct++;
+  });
+  const totalBlanks = Object.keys(blankAnswerKey).length;
+  const resEl = document.getElementById('fillResult');
+  resEl.innerHTML = `<div class="feedback show ${correct===totalBlanks?'good':''}" style="background:${correct===totalBlanks?'var(--green-light)':'var(--orange-light)'};">
+    <strong>${correct} / ${totalBlanks} correct.</strong> ${correct===totalBlanks ? 'Great work — you have got the whole idea right!' : 'Tap a filled blank to swap it and try again.'}
+  </div>`;
+}
+
+/* ============ challenge quiz ============ */
+function answerQuiz(btn, correct){
+  document.querySelectorAll('.quiz-opt').forEach(b=>{
+    b.disabled = true;
+    if(b.dataset.correct === 'true') b.classList.add('correct');
+  });
+  if(!correct) btn.classList.add('wrong');
+  document.getElementById('quizFeedback').classList.add('show');
+}
+
+/* ============ assessment checklist ============ */
+const assessItems = [
+  'I can describe what atoms are made of.',
+  'I can explain atomic number, mass number, and isotopes.',
+  'I can name the main elements found in living things (CHNOPS).',
+  'I can explain how electron shells and valence electrons affect bonding.',
+  'I can compare covalent, ionic, and hydrogen bonds.',
+  'I can explain why water is a great solvent for life.',
+  'I can explain cohesion, adhesion, and why ice floats.',
+  'I can match different bond types to real-world examples.',
+  'I can use 12 new chemistry words in English.'
+];
+const assessList = document.getElementById('assessList');
+assessItems.forEach(text=>{
+  const item = document.createElement('div');
+  item.className = 'assess-item';
+  item.innerHTML = `<div class="assess-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>${text}</p>`;
+  item.addEventListener('click', ()=>{
+    item.classList.toggle('checked');
+    updateAssessProgress();
+  });
+  assessList.appendChild(item);
+});
+function updateAssessProgress(){
+  const checked = document.querySelectorAll('.assess-item.checked').length;
+  const pct = (checked/assessItems.length)*100;
+  document.getElementById('assessFill').style.width = pct+'%';
+}
+
+/* ============ glossary flip cards ============ */
+const glossary = [
+  {term:'Atom', zh:'原子', def:'The smallest particle of an element that keeps its properties.'},
+  {term:'Element', zh:'元素', def:'A pure substance made of only one type of atom.'},
+  {term:'Proton', zh:'质子', def:'A positively charged particle in the nucleus.'},
+  {term:'Neutron', zh:'中子', def:'A particle with no charge, found in the nucleus.'},
+  {term:'Electron', zh:'电子', def:'A negatively charged particle that moves around the nucleus.'},
+  {term:'Isotope', zh:'同位素', def:'Atoms of the same element with different numbers of neutrons.'},
+  {term:'Molecule', zh:'分子', def:'Two or more atoms bonded together.'},
+  {term:'Covalent bond', zh:'共价键', def:'A bond formed when atoms share electrons.'},
+  {term:'Ionic bond', zh:'离子键', def:'A bond formed when atoms transfer electrons and attract as ions.'},
+  {term:'Hydrogen bond', zh:'氢键', def:'A weak attraction between a hydrogen atom and a nearby atom.'},
+  {term:'Cohesion', zh:'内聚力', def:'The attraction between molecules of the same substance.'},
+  {term:'Adhesion', zh:'附着力', def:'The attraction between molecules of different substances.'},
+];
+const glossGrid = document.getElementById('glossGrid');
+glossary.forEach(g=>{
+  const card = document.createElement('div');
+  card.className = 'gloss-card';
+  card.innerHTML = `<div class="gloss-inner">
+      <div class="gloss-face front"><div>${g.term}</div><div class="zh-term">${g.zh}</div></div>
+      <div class="gloss-face back">${g.def}</div>
+    </div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flip'));
+  glossGrid.appendChild(card);
+});
+
+/* ============ tooltip terms ============ */
+document.querySelectorAll('.term').forEach(t=>{
+  t.addEventListener('click', ()=>{
+    alert(t.dataset.def);
+  });
+});
+</script>
+</body>
+</html>
