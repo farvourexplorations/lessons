@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C1.1 Enzymes &amp; Metabolism — Interactive Lesson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --violet:#4A3F8C; --violet-dark:#2A2360; --violet-light:#ECE9F8; --violet-mid:#8478C9;
+  --coral:#E0563F; --coral-light:#FCE9E5;
+  --amber:#CE9526; --amber-light:#FAF1DC;
+  --mint:#2E9E76; --mint-light:#E3F5EC;
+  --sky:#2B79C9; --sky-light:#E8F1FB;
+  --ink:#20232B; --ink-soft:#585E6C;
+  --paper:#FFFFFF; --cream:#F7F5F1; --line:#E1DFEA;
+  --r-lg:22px; --r-md:14px; --r-sm:8px;
+  --shadow: 0 10px 30px rgba(42,35,96,.14);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0; background:var(--cream); color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;
+  overflow:hidden;
+}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+
+/* ===== App shell ===== */
+#app{position:relative; width:100vw; height:100vh; display:flex; flex-direction:column;}
+
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 28px; background:var(--paper); border-bottom:1px solid var(--line);
+  flex:0 0 auto; z-index:20;
+}
+.crumb{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft); font-weight:600;}
+.crumb .tag{
+  background:var(--violet); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12px;
+  padding:5px 12px; border-radius:100px; letter-spacing:.3px;
+}
+.crumb .sep{color:#C6C2D6;}
+.crumb .current{color:var(--violet-dark);}
+
+.dots{display:flex; gap:6px; align-items:center; flex-wrap:wrap; max-width:40vw;}
+.dot{
+  width:9px; height:9px; border-radius:50%; background:#DAD7E6; border:none; cursor:pointer;
+  transition:all .25s;
+}
+.dot.active{ background:var(--violet); width:22px; border-radius:6px;}
+.dot:hover{background:var(--violet-mid);}
+
+.counter{font-size:12px; color:var(--ink-soft); font-weight:600; font-variant-numeric:tabular-nums; min-width:50px; text-align:right;}
+
+/* ===== Stage ===== */
+.stage{position:relative; flex:1 1 auto; overflow:hidden;}
+.slide{
+  position:absolute; inset:0; opacity:0; pointer-events:none;
+  transform:translateX(30px) scale(.99);
+  transition:opacity .45s ease, transform .45s ease;
+  overflow-y:auto;
+}
+.slide.active{opacity:1; pointer-events:auto; transform:translateX(0) scale(1);}
+.slide.prev{transform:translateX(-30px) scale(.99);}
+
+.slide-inner{
+  max-width:1180px; margin:0 auto; padding:40px 44px 90px;
+  min-height:100%;
+}
+
+/* nav arrows */
+.navbtn{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:15;
+  width:46px; height:46px; border-radius:50%; border:1px solid var(--line);
+  background:var(--paper); box-shadow:var(--shadow); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; color:var(--violet-dark);
+  transition:.2s;
+}
+.navbtn:hover{background:var(--violet); color:#fff; border-color:var(--violet);}
+.navbtn.disabled{opacity:.25; pointer-events:none;}
+#prevBtn{left:16px;} #nextBtn{right:16px;}
+.navbtn svg{width:20px; height:20px;}
+
+/* ===== shared components ===== */
+.chevron-badge{
+  display:inline-flex; align-items:center; gap:10px; background:var(--violet); color:#fff;
+  padding:9px 20px 9px 16px; font-family:'Poppins'; font-weight:700; font-size:15px;
+  clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%); margin-bottom:16px;
+}
+.eyebrow{
+  font-family:'Poppins'; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--coral); margin-bottom:8px;
+}
+h1.slide-title{font-size:34px; font-weight:800; color:var(--violet-dark); margin:0 0 6px; line-height:1.15;}
+h2.section-title{font-size:25px; font-weight:700; color:var(--violet-dark); margin:0 0 14px;}
+h3.mini-title{font-size:17px; font-weight:700; color:var(--ink); margin:0 0 8px;}
+p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
+.lede{font-size:17px; color:var(--ink-soft); margin-bottom:22px; max-width:660px;}
+.term{color:var(--coral); font-weight:700; cursor:help; border-bottom:1.5px dotted var(--coral);}
+
+.box{
+  border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--paper);
+  box-shadow:var(--shadow);
+}
+.box-head{
+  padding:12px 20px; font-family:'Poppins'; font-weight:700; font-size:14px; color:#fff;
+  display:flex; align-items:center; gap:8px;
+}
+.box-body{padding:20px 22px;}
+.box.violet .box-head{background:var(--violet);}
+.box.coral .box-head{background:var(--coral);}
+.box.amber .box-head{background:var(--amber);}
+.box.mint .box-head{background:var(--mint);}
+.box.sky .box-head{background:var(--sky);}
+
+.two-col{display:grid; grid-template-columns:1.05fr .95fr; gap:36px; align-items:start;}
+@media (max-width:900px){.two-col{grid-template-columns:1fr;}}
+
+.pill{
+  display:inline-block; padding:4px 12px; border-radius:100px; font-size:12px; font-weight:700;
+  background:var(--violet-light); color:var(--violet-dark); margin:2px 4px 2px 0;
+}
+
+.check-item{display:flex; gap:10px; align-items:flex-start; margin-bottom:10px; font-size:14.5px;}
+.check-item svg{flex:0 0 auto; margin-top:2px; width:16px; height:16px; color:var(--violet);}
+
+/* buttons generic */
+.btn{
+  border:none; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:14px;
+  padding:10px 20px; border-radius:100px; background:var(--violet); color:#fff; transition:.2s;
+}
+.btn:hover{background:var(--violet-dark);}
+.btn.ghost{background:transparent; border:1.5px solid var(--violet); color:var(--violet);}
+.btn.ghost:hover{background:var(--violet-light);}
+.btn[disabled]{opacity:.45; cursor:default;}
+
+.hint{
+  font-size:12.5px; color:var(--ink-soft); background:var(--violet-light); border-radius:100px;
+  padding:6px 14px; display:inline-flex; gap:6px; align-items:center; margin-bottom:18px; font-weight:600;
+}
+.hint svg{width:14px; height:14px; flex:0 0 auto;}
+
+/* ============ SLIDE 0 : COVER ============ */
+.cover{
+  height:100%; display:flex; align-items:center; justify-content:center; position:relative;
+  background:
+    radial-gradient(ellipse at 20% 15%, rgba(255,255,255,.10), transparent 45%),
+    linear-gradient(160deg, var(--violet) 0%, var(--violet-dark) 62%, #191348 100%);
+  overflow:hidden;
+}
+.cover-hex{position:absolute; opacity:.14; background:#fff; clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);}
+.cover-content{position:relative; z-index:2; text-align:center; color:#fff; max-width:760px; padding:0 30px;}
+.cover-content .unit{font-family:'Poppins'; font-weight:700; letter-spacing:3px; font-size:13px; text-transform:uppercase; color:#D6CFF3; margin-bottom:14px;}
+.cover-content h1{font-size:50px; font-weight:800; margin:0 0 10px; line-height:1.1;}
+.cover-content .sub{font-size:19px; color:#E5DFF7; font-weight:500; margin-bottom:34px;}
+.cover-chip-row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:38px;}
+.cover-chip{
+  background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff;
+  padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600; backdrop-filter:blur(4px);
+}
+.cover-start{
+  background:var(--coral); color:#fff; border:none; font-family:'Poppins'; font-weight:700; font-size:16px;
+  padding:15px 34px; border-radius:100px; cursor:pointer; box-shadow:0 12px 26px rgba(224,86,63,.4);
+  display:inline-flex; align-items:center; gap:10px; transition:.2s;
+}
+.cover-start:hover{transform:translateY(-2px); box-shadow:0 16px 30px rgba(224,86,63,.5);}
+.cover-note{margin-top:22px; font-size:13px; color:#C9C1EE;}
+
+/* ============ objectives slide ============ */
+.obj-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 22px; margin-top:6px;}
+.obj-card{
+  display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:var(--r-md);
+  background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.2s;
+}
+.obj-card:hover{border-color:var(--violet-mid); box-shadow:var(--shadow);}
+.obj-num{
+  flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--violet-light); color:var(--violet-dark);
+  font-family:'Poppins'; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;
+}
+.obj-card.done .obj-num{background:var(--violet); color:#fff;}
+.obj-card.done p{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:#C6C2D6;}
+.obj-card p{margin:0; font-size:13.8px; line-height:1.5;}
+
+/* ============ metabolism pathway chain ============ */
+.metab-row{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:18px 0 8px;}
+.mol{
+  width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-family:'Poppins'; font-weight:800; color:#fff; font-size:12.5px; text-align:center; line-height:1.1;
+  box-shadow:0 4px 10px rgba(0,0,0,.16); flex:0 0 auto;
+}
+.mol.lg{width:76px; height:76px; font-size:14px;}
+.mol.sm{width:40px; height:40px; font-size:11px;}
+.arrow-enz{display:flex; flex-direction:column; align-items:center; gap:2px; font-size:11px; color:var(--ink-soft); font-weight:700; flex:0 0 auto;}
+.arrow-enz svg{width:30px; height:16px; color:var(--violet-mid);}
+.mol-group{display:flex; align-items:center; gap:4px;}
+
+/* ============ tabs ============ */
+.tabs{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+.tab-btn{
+  padding:10px 18px; border-radius:100px; border:1.5px solid var(--line); background:#fff; cursor:pointer;
+  font-family:'Poppins'; font-weight:600; font-size:13.5px; color:var(--ink-soft); transition:.2s;
+}
+.tab-btn.active{background:var(--violet); border-color:var(--violet); color:#fff;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block; animation:fadein .35s;}
+@keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+/* ============ energy graph ============ */
+.graph-box{background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:18px 22px 10px; box-shadow:var(--shadow);}
+.graph-box svg{width:100%; height:auto; display:block;}
+.legend-row{display:flex; gap:18px; flex-wrap:wrap; margin-top:8px; font-size:12.5px; font-weight:600; color:var(--ink-soft);}
+.legend-dot{display:inline-flex; align-items:center; gap:6px;}
+.legend-dot::before{content:''; width:14px; height:4px; border-radius:2px; display:inline-block;}
+.legend-dot.no-enz::before{background:var(--coral);}
+.legend-dot.enz::before{background:var(--mint);}
+
+/* ============ slider row ============ */
+.slider-row{display:flex; align-items:center; gap:16px; margin:16px 0 6px;}
+input[type=range]{flex:1; accent-color:var(--coral); height:6px;}
+.slider-val{font-family:'Poppins'; font-weight:800; color:var(--violet-dark); min-width:70px; text-align:right; font-size:17px;}
+.zone-feedback{
+  margin-top:14px; padding:12px 16px; border-radius:var(--r-md); background:var(--violet-light); color:var(--violet-dark);
+  font-size:13.8px; font-weight:600; min-height:20px; transition:.2s;
+}
+
+/* ============ induced fit ============ */
+.fit-wrap{display:flex; gap:40px; align-items:center; flex-wrap:wrap;}
+.fit-stage{width:300px; height:220px; position:relative; flex:0 0 auto;}
+.enzyme-body{
+  position:absolute; left:10px; top:35px; width:220px; height:150px;
+  background:linear-gradient(135deg,var(--violet-mid),var(--violet));
+  border-radius:60% 40% 55% 45%/50% 60% 40% 50%;
+  box-shadow:0 10px 24px rgba(74,63,140,.35); transition:.55s;
+}
+.enzyme-body.closed{border-radius:55% 45% 50% 50%/55% 50% 50% 45%; transform:scale(1.03);}
+.active-site-notch{
+  position:absolute; width:74px; height:74px; background:var(--cream); border-radius:50%;
+  right:-16px; top:60px; transition:.55s; box-shadow:inset 0 3px 8px rgba(0,0,0,.15);
+}
+.active-site-notch.closed{width:52px; height:52px; right:14px; top:70px;}
+.substrate-shape{
+  position:absolute; width:44px; height:44px; background:var(--coral);
+  clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);
+  right:-90px; top:65px; box-shadow:0 4px 10px rgba(0,0,0,.22);
+  transition:.6s cubic-bezier(.4,0,.2,1); display:flex; align-items:center; justify-content:center;
+  color:#fff; font-family:'Poppins'; font-weight:800; font-size:10px; text-align:center;
+}
+.substrate-shape.bound{right:38px; top:75px; transform:scale(.8); opacity:1;}
+.substrate-shape.hidden{opacity:0;}
+.product-shapes{position:absolute; left:-40px; top:70px; display:flex; gap:6px; opacity:0; transform:translateX(0); transition:.7s ease;}
+.product-shapes.show{opacity:1; transform:translateX(-60px);}
+.product-dot{width:26px; height:26px; border-radius:50%; background:var(--mint); box-shadow:0 3px 8px rgba(0,0,0,.2);}
+.fit-info{flex:1 1 260px; min-width:240px;}
+.fit-label{
+  background:var(--violet-light); color:var(--violet-dark); border-radius:var(--r-md); padding:12px 16px;
+  font-size:13.8px; font-weight:600; margin-bottom:16px; min-height:44px;
+}
+
+/* ============ denaturation ============ */
+.denature-row{display:flex; gap:28px; flex-wrap:wrap; justify-content:center; margin-top:10px;}
+.dena-card{width:230px; text-align:center;}
+.dena-shape{
+  height:150px; border-radius:var(--r-md); background:var(--violet-light); display:flex;
+  align-items:center; justify-content:center; margin-bottom:10px; position:relative; overflow:hidden;
+}
+.dena-native{width:130px; height:88px; background:linear-gradient(135deg,var(--violet-mid),var(--violet)); border-radius:60% 40% 55% 45%/50% 60% 40% 50%; position:relative; box-shadow:0 8px 16px rgba(74,63,140,.3);}
+.dena-native::after{content:''; position:absolute; width:38px; height:38px; background:var(--violet-light); border-radius:50%; right:-8px; top:24px;}
+.dena-broken{width:130px; height:100px; background:linear-gradient(135deg,#B9A8D9,#9587C4); clip-path:polygon(10% 5%,40% 0,55% 20%,80% 5%,100% 30%,85% 55%,100% 75%,70% 100%,45% 80%,20% 100%,0 70%,15% 40%); box-shadow:0 8px 16px rgba(74,63,140,.25);}
+.dena-card h4{font-family:'Poppins'; font-size:14px; margin:0 0 4px; color:var(--violet-dark);}
+.dena-card p{font-size:13px; color:var(--ink-soft); margin:0;}
+
+/* ============ inhibition diagram ============ */
+.inhib-row{display:flex; gap:30px; align-items:center; flex-wrap:wrap; margin-top:6px;}
+.inhib-stage{width:260px; height:170px; position:relative; flex:0 0 auto;}
+.inhib-shape{
+  position:absolute; left:10px; top:25px; width:190px; height:130px;
+  background:linear-gradient(135deg,var(--violet-mid),var(--violet));
+  border-radius:60% 40% 55% 45%/50% 60% 40% 50%; box-shadow:0 8px 18px rgba(74,63,140,.3);
+}
+.inhib-site{position:absolute; width:56px; height:56px; background:var(--cream); border-radius:50%; right:0; top:45px; box-shadow:inset 0 3px 6px rgba(0,0,0,.15);}
+.inhib-allo{position:absolute; width:36px; height:36px; background:var(--cream); border-radius:50%; left:22px; bottom:8px; box-shadow:inset 0 3px 6px rgba(0,0,0,.15);}
+.inhib-blocker{position:absolute; width:38px; height:38px; background:var(--ink-soft); border-radius:6px; right:8px; top:56px; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:16px;}
+.inhib-diamond{position:absolute; width:30px; height:30px; background:var(--ink-soft); left:14px; bottom:2px; transform:rotate(45deg); display:flex; align-items:center; justify-content:center;}
+.inhib-diamond::after{content:'X'; transform:rotate(-45deg); color:#fff; font-weight:800; font-size:12px;}
+.inhib-substrate{position:absolute; width:34px; height:34px; background:var(--coral); opacity:.35; clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%); right:6px; top:-14px;}
+
+/* ============ concentration graphs ============ */
+.conc-grid{display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:8px;}
+@media (max-width:900px){.conc-grid{grid-template-columns:1fr;}}
+
+/* ============ fill blanks ============ */
+.wordbank{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding:14px; background:var(--violet-light); border-radius:var(--r-md);}
+.word-chip{
+  background:#fff; border:1.5px solid var(--violet); color:var(--violet); font-family:'Poppins'; font-weight:600;
+  font-size:13px; padding:7px 14px; border-radius:100px; cursor:pointer; transition:.15s;
+}
+.word-chip:hover{background:var(--violet); color:#fff;}
+.word-chip.used{opacity:.3; pointer-events:none; text-decoration:line-through;}
+.fillp{font-size:15.5px; line-height:2.3;}
+.blank{
+  display:inline-flex; align-items:center; justify-content:center; min-width:100px; height:28px;
+  border-bottom:2.5px solid var(--coral); font-family:'Poppins'; font-weight:700; color:var(--coral);
+  cursor:pointer; padding:0 6px; font-size:13.5px; vertical-align:middle;
+}
+.blank.filled{border-bottom-style:solid;}
+.blank:empty::after{content:'\00a0';}
+.feedback{padding:12px 16px; border-radius:var(--r-md); font-size:13.8px; margin-top:8px; display:none;}
+.feedback.show{display:block;}
+.feedback.good{background:var(--mint-light); color:#1E6B4E;}
+
+/* ============ quiz ============ */
+.scenario{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); padding:22px 24px; box-shadow:var(--shadow);}
+.quiz-opts{display:flex; gap:12px; margin-top:14px; flex-wrap:wrap;}
+.quiz-opt{
+  flex:1 1 220px; border:1.5px solid var(--line); background:#fff; border-radius:var(--r-md); padding:14px 16px;
+  cursor:pointer; font-weight:700; font-family:'Poppins'; font-size:13.5px; text-align:left; transition:.2s;
+}
+.quiz-opt:hover{border-color:var(--violet-mid);}
+.quiz-opt.correct{background:var(--mint-light); border-color:var(--mint); color:#1E6B4E;}
+.quiz-opt.wrong{background:var(--coral-light); border-color:var(--coral); color:#A8362A;}
+.quiz-opt[disabled]{cursor:default;}
+#quizFeedback{margin-top:16px; padding:14px 18px; border-radius:var(--r-md); background:var(--violet-light); color:var(--violet-dark); font-size:14px; display:none;}
+#quizFeedback.show{display:block;}
+
+/* ============ glossary flip cards ============ */
+.gloss-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:10px;}
+@media (max-width:900px){.gloss-grid{grid-template-columns:repeat(2,1fr);}}
+.gloss-card{height:110px; perspective:800px; cursor:pointer;}
+.gloss-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+.gloss-card.flip .gloss-inner{transform:rotateY(180deg);}
+.gloss-face{
+  position:absolute; inset:0; backface-visibility:hidden; border-radius:var(--r-md); display:flex;
+  align-items:center; justify-content:center; text-align:center; padding:12px; font-size:13.5px;
+}
+.gloss-face.front{background:var(--violet); color:#fff; font-family:'Poppins'; font-weight:700; font-size:14.5px;}
+.gloss-face.back{background:var(--paper); border:1.5px solid var(--violet-light); color:var(--ink); transform:rotateY(180deg); font-size:12.5px; line-height:1.5;}
+
+/* ============ assessment checklist ============ */
+.assess-list{margin-top:10px;}
+.assess-item{display:flex; gap:12px; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--line); cursor:pointer;}
+.assess-box{
+  flex:0 0 auto; width:22px; height:22px; border-radius:6px; border:2px solid var(--line); display:flex;
+  align-items:center; justify-content:center; color:#fff; margin-top:1px; transition:.2s;
+}
+.assess-item.checked .assess-box{background:var(--mint); border-color:var(--mint);}
+.assess-item p{margin:0; font-size:14.5px;}
+.assess-progress{height:8px; background:var(--violet-light); border-radius:100px; overflow:hidden; margin-top:16px;}
+.assess-fill{height:100%; width:0%; background:var(--mint); transition:.35s;}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="crumb">
+      <span class="tag">C1.1</span>
+      <span class="sep">/</span>
+      <span class="current">Enzymes &amp; Metabolism</span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="counter" id="counter">1 / 14</div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- ================= SLIDE 0 : COVER ================= -->
+    <section class="slide">
+      <div class="cover">
+        <div class="cover-hex" style="width:220px;height:220px; top:-50px; left:-50px;"></div>
+        <div class="cover-hex" style="width:160px;height:160px; bottom:-30px; right:-20px;"></div>
+        <div class="cover-hex" style="width:100px;height:100px; bottom:70px; left:10%;"></div>
+        <div class="cover-content">
+          <div class="unit">IB Biology HL &middot; Structure C1</div>
+          <h1>Enzymes &amp; Metabolism</h1>
+          <div class="sub">The foundation everything else is built on — start here before respiration, photosynthesis, and cell signalling.</div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">🧬 Metabolism</span>
+            <span class="cover-chip">⚡ Activation energy</span>
+            <span class="cover-chip">🔑 Active site</span>
+            <span class="cover-chip">🌡️ Rate factors</span>
+            <span class="cover-chip">🚫 Inhibition</span>
+          </div>
+          <button class="cover-start" onclick="goTo(1)">
+            Start the lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <div class="cover-note">No rush — go at your own pace. Every slide can be revisited any time.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 1 : OBJECTIVES ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">C1.1</div>
+        <h1 class="slide-title">We are going to build this up, piece by piece</h1>
+        <p class="lede">Tap each goal as you meet it. There's no timer here — take as long as each idea needs before moving on.</p>
+        <div class="obj-grid" id="objGrid">
+          <div class="obj-card" data-i="1"><div class="obj-num">1</div><p>Define metabolism, and tell apart anabolic and catabolic reactions</p></div>
+          <div class="obj-card" data-i="2"><div class="obj-num">2</div><p>Explain why cells need enzymes, in terms of activation energy</p></div>
+          <div class="obj-card" data-i="3"><div class="obj-num">3</div><p>Describe enzyme structure and the induced-fit model of specificity</p></div>
+          <div class="obj-card" data-i="4"><div class="obj-num">4</div><p>Explain how temperature and pH affect the rate of enzyme reactions</p></div>
+          <div class="obj-card" data-i="5"><div class="obj-num">5</div><p>Explain how substrate and enzyme concentration affect reaction rate</p></div>
+          <div class="obj-card" data-i="6"><div class="obj-num">6</div><p>Explain denaturation, and why it is usually irreversible</p></div>
+          <div class="obj-card" data-i="7"><div class="obj-num">7</div><p>Tell apart competitive and non-competitive enzyme inhibition</p></div>
+        </div>
+        <div style="margin-top:22px;">
+          <span class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Key vocabulary: metabolism &middot; catabolic &middot; anabolic &middot; enzyme &middot; substrate &middot; active site &middot; activation energy &middot; induced fit &middot; denaturation &middot; inhibitor</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 2 : WHAT IS METABOLISM ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Getting started</div>
+        <h1 class="slide-title">What is metabolism, really?</h1>
+        <p class="lede"><span class="term" data-def="The sum of all the enzyme-catalysed chemical reactions taking place inside a cell or organism.">Metabolism</span> isn't one reaction — it's the entire web of thousands of enzyme-controlled reactions happening inside you, right now. Every one of those reactions falls into one of two families.</p>
+
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="catabolic">⬇️ Catabolic (breaking down)</button>
+          <button class="tab-btn" data-tab="anabolic">⬆️ Anabolic (building up)</button>
+        </div>
+
+        <div class="tab-panel active" id="tab-catabolic">
+          <p><span class="term" data-def="A reaction pathway that breaks large, complex molecules down into smaller ones, usually releasing energy.">Catabolic</span> reactions break large molecules into smaller ones. Energy stored in chemical bonds is released — this is how you get usable energy out of food.</p>
+          <div class="metab-row">
+            <div class="mol lg" style="background:var(--violet);">Starch</div>
+            <div class="arrow-enz"><svg viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 6h18M14 1l6 5-6 5"/></svg>amylase</div>
+            <div class="mol" style="background:var(--violet-mid);">Maltose</div>
+            <div class="arrow-enz"><svg viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 6h18M14 1l6 5-6 5"/></svg>maltase</div>
+            <div class="mol-group">
+              <div class="mol sm" style="background:var(--coral);">Glu</div>
+              <div class="mol sm" style="background:var(--coral);">Glu</div>
+            </div>
+          </div>
+          <p style="font-size:13.5px; color:var(--ink-soft);">Large → small. Bonds break. Energy is released.</p>
+        </div>
+        <div class="tab-panel" id="tab-anabolic">
+          <p><span class="term" data-def="A reaction pathway that builds larger, complex molecules from smaller ones, usually requiring an input of energy.">Anabolic</span> reactions build small molecules into larger ones. This requires an input of energy — your cells spend energy to construct things they need.</p>
+          <div class="metab-row">
+            <div class="mol-group">
+              <div class="mol sm" style="background:var(--mint);">AA</div>
+              <div class="mol sm" style="background:var(--mint);">AA</div>
+              <div class="mol sm" style="background:var(--mint);">AA</div>
+            </div>
+            <div class="arrow-enz"><svg viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 6h18M14 1l6 5-6 5"/></svg>ribosome</div>
+            <div class="mol lg" style="background:var(--violet);">Polypeptide</div>
+          </div>
+          <p style="font-size:13.5px; color:var(--ink-soft);">Small → large. Bonds form. Energy is invested.</p>
+        </div>
+
+        <p style="margin-top:16px; font-size:14px; color:var(--ink-soft);"><strong>Think ahead:</strong> both cell respiration (breaking down glucose) and photosynthesis (building up glucose) are metabolic pathways. Which one is catabolic, and which is anabolic?</p>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 3 : WHY ENZYMES ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="two-col">
+          <div>
+            <div class="eyebrow">Why do we need enzymes?</div>
+            <h1 class="slide-title">Getting over the energy hill</h1>
+            <p>Most reactions in your cells could happen on their own — but painfully slowly, over years. Before reactant molecules can turn into products, they need a small energy "push" called the <span class="term" data-def="The minimum amount of energy needed to start a chemical reaction — for example, to break existing bonds so new ones can form.">activation energy</span>, shown as the hill on the graph.</p>
+            <p>An <span class="term" data-def="A biological catalyst — usually a globular protein — that speeds up the rate of a specific chemical reaction without being used up itself.">enzyme</span> is a biological catalyst. It doesn't change the reactants or products — it simply lowers the size of that hill, so far more molecules have enough energy to react at body temperature.</p>
+            <div class="box mint" style="margin-top:16px;">
+              <div class="box-head">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>
+                Remember
+              </div>
+              <div class="box-body">
+                <p style="margin:0;">An enzyme is not used up or changed by the reaction. Once it releases its products, it's free to catalyse the same reaction again — and again, thousands of times a second.</p>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="graph-box">
+              <svg viewBox="0 0 460 260">
+                <line x1="40" y1="220" x2="440" y2="220" stroke="#C6C2D6" stroke-width="2"/>
+                <line x1="40" y1="220" x2="40" y2="20" stroke="#C6C2D6" stroke-width="2"/>
+                <text x="240" y="248" text-anchor="middle" font-size="12" fill="#585E6C" font-family="Inter">Progress of reaction →</text>
+                <text x="20" y="120" text-anchor="middle" font-size="12" fill="#585E6C" font-family="Inter" transform="rotate(-90 20 120)">Free energy →</text>
+
+                <line x1="60" y1="180" x2="420" y2="180" stroke="#DAD7E6" stroke-dasharray="4 4" stroke-width="1.5"/>
+                <line x1="60" y1="140" x2="420" y2="140" stroke="#DAD7E6" stroke-dasharray="4 4" stroke-width="1.5"/>
+
+                <path d="M60,180 C150,180 180,40 250,40 C320,40 350,140 420,140" fill="none" stroke="var(--coral)" stroke-width="3"/>
+                <path d="M60,180 C150,180 180,112 250,112 C320,112 350,140 420,140" fill="none" stroke="var(--mint)" stroke-width="3"/>
+
+                <line x1="250" y1="180" x2="250" y2="40" stroke="var(--coral)" stroke-width="1.5" stroke-dasharray="3 3" opacity=".6"/>
+                <line x1="200" y1="180" x2="200" y2="112" stroke="var(--mint)" stroke-width="1.5" stroke-dasharray="3 3" opacity=".6"/>
+
+                <text x="255" y="70" font-size="11.5" fill="#A8362A" font-family="Poppins" font-weight="700">Ea (no enzyme)</text>
+                <text x="150" y="105" font-size="11.5" fill="#1E6B4E" font-family="Poppins" font-weight="700">Ea (with enzyme)</text>
+
+                <circle cx="60" cy="180" r="4" fill="#4A3F8C"/>
+                <text x="60" y="200" font-size="11.5" fill="#4A3F8C" font-family="Poppins" font-weight="700" text-anchor="middle">Reactants</text>
+                <circle cx="420" cy="140" r="4" fill="#4A3F8C"/>
+                <text x="420" y="160" font-size="11.5" fill="#4A3F8C" font-family="Poppins" font-weight="700" text-anchor="middle">Products</text>
+              </svg>
+              <div class="legend-row">
+                <span class="legend-dot no-enz">Without enzyme — high activation energy</span>
+                <span class="legend-dot enz">With enzyme — lowered activation energy</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 4 : ENZYME STRUCTURE / INDUCED FIT ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Enzyme structure</div>
+        <h1 class="slide-title">A perfect (and flexible) fit</h1>
+        <p class="lede">Enzymes are globular proteins folded into a precise 3D shape. Part of that shape forms the <span class="term" data-def="The region of an enzyme, formed by folding of the polypeptide chain, where the substrate binds and the reaction is catalysed.">active site</span> — a pocket where one specific substrate binds.</p>
+
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="induced">✅ Induced fit (the real model)</button>
+          <button class="tab-btn" data-tab="lockkey">📜 Lock and key (the old idea)</button>
+        </div>
+        <div class="tab-panel active" id="tab-induced">
+          <p>The active site isn't a rigid, fixed shape. As the substrate binds, the active site <strong>moulds slightly around it</strong>, forming a snug enzyme–substrate complex. This flexibility is why it's called <span class="term" data-def="The idea that an enzyme's active site changes shape slightly as it binds its substrate, improving the fit and straining bonds to help the reaction along.">induced fit</span> — the fit is induced by the substrate binding.</p>
+        </div>
+        <div class="tab-panel" id="tab-lockkey">
+          <p>Early scientists imagined the active site as a rigid lock that only one key (substrate) could fit — a useful first picture, but too simple. Real active sites flex and adjust, which is why induced fit replaced this model.</p>
+        </div>
+
+        <div class="fit-wrap" style="margin-top:10px;">
+          <div class="fit-stage">
+            <div class="enzyme-body" id="enzymeBody"></div>
+            <div class="active-site-notch" id="activeSiteNotch"></div>
+            <div class="substrate-shape" id="substrateShape">S</div>
+            <div class="product-shapes" id="productShapes">
+              <div class="product-dot"></div>
+              <div class="product-dot"></div>
+            </div>
+          </div>
+          <div class="fit-info">
+            <div class="fit-label" id="fitLabel">Click "Add substrate" to see the active site respond.</div>
+            <button class="btn" id="fitBtn" onclick="runInducedFit()">▶ Add substrate</button>
+            <p style="margin-top:14px; font-size:13.5px; color:var(--ink-soft);">Notice: the enzyme comes out unchanged at the end, ready to bind another substrate molecule. This is what makes it a <em>catalyst</em>, not a reactant.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 5 : TEMPERATURE ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Factors affecting rate — temperature</div>
+        <h1 class="slide-title">Too cold, too hot, just right</h1>
+        <p class="lede">Drag the slider to change temperature and watch what happens to the rate of an enzyme-catalysed reaction.</p>
+        <div class="two-col">
+          <div>
+            <div class="graph-box">
+              <svg viewBox="0 0 460 260" id="tempSvg">
+                <line x1="40" y1="220" x2="440" y2="220" stroke="#C6C2D6" stroke-width="2"/>
+                <line x1="40" y1="220" x2="40" y2="20" stroke="#C6C2D6" stroke-width="2"/>
+                <text x="240" y="248" text-anchor="middle" font-size="12" fill="#585E6C" font-family="Inter">Temperature (°C) →</text>
+                <text x="18" y="120" text-anchor="middle" font-size="12" fill="#585E6C" font-family="Inter" transform="rotate(-90 18 120)">Rate of reaction →</text>
+                <polyline id="tempCurve" fill="none" stroke="var(--violet)" stroke-width="3" points=""/>
+                <circle id="tempMarker" cx="40" cy="220" r="7" fill="var(--coral)" stroke="#fff" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="slider-row">
+              <span style="font-size:12.5px; color:var(--ink-soft); font-weight:600;">0°C</span>
+              <input type="range" id="tempSlider" min="0" max="70" value="20" step="1">
+              <span style="font-size:12.5px; color:var(--ink-soft); font-weight:600;">70°C</span>
+              <span class="slider-val" id="tempVal">20°C</span>
+            </div>
+            <div class="zone-feedback" id="tempFeedback"></div>
+          </div>
+          <div>
+            <p>As temperature rises, molecules move faster and collide more often — the rate of reaction increases. But past the <span class="term" data-def="The temperature or pH at which an enzyme catalyses its reaction fastest.">optimum</span>, rising heat starts to break the weak bonds holding the enzyme's 3D shape together.</p>
+            <p>The protein <span class="term" data-def="A permanent change to a protein's 3D shape, caused by heat or extreme pH, that destroys the active site so the enzyme can no longer function.">denatures</span> — its active site loses its precise shape, the substrate no longer fits, and the rate collapses.</p>
+            <div class="box coral">
+              <div class="box-head">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M12 2v6M12 16v6M4.9 4.9l4.2 4.2M14.9 14.9l4.2 4.2M2 12h6M16 12h6M4.9 19.1l4.2-4.2M14.9 9.1l4.2-4.2"/></svg>
+                Exam tip
+              </div>
+              <div class="box-body">
+                <p style="margin:0;">Most human enzymes have an optimum around 37–40°C. The rise before the optimum is gradual; the fall after it is sharp and steep — the two halves of the curve are <em>not</em> symmetrical.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 6 : pH ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Factors affecting rate — pH</div>
+        <h1 class="slide-title">Every enzyme has its own comfort zone</h1>
+        <p class="lede">pH affects the charges on amino acids in the enzyme, which can distort the active site. Different enzymes in your body have very different optimum pH values, matched to where they work.</p>
+        <div class="tabs">
+          <button class="tab-btn active" data-ph="pepsin" data-opt="2" data-width="1.4">🟠 Pepsin (stomach)</button>
+          <button class="tab-btn" data-ph="trypsin" data-opt="8" data-width="1.6">🔵 Trypsin (small intestine)</button>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="graph-box">
+              <svg viewBox="0 0 460 260" id="phSvg">
+                <line x1="40" y1="220" x2="440" y2="220" stroke="#C6C2D6" stroke-width="2"/>
+                <line x1="40" y1="220" x2="40" y2="20" stroke="#C6C2D6" stroke-width="2"/>
+                <text x="240" y="248" text-anchor="middle" font-size="12" fill="#585E6C" font-family="Inter">pH →</text>
+                <text x="18" y="120" text-anchor="middle" font-size="12" fill="#585E6C" font-family="Inter" transform="rotate(-90 18 120)">Rate of reaction →</text>
+                <polyline id="phCurve" fill="none" stroke="var(--sky)" stroke-width="3" points=""/>
+                <circle id="phMarker" cx="40" cy="220" r="7" fill="var(--coral)" stroke="#fff" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="slider-row">
+              <span style="font-size:12.5px; color:var(--ink-soft); font-weight:600;">pH 0</span>
+              <input type="range" id="phSlider" min="0" max="14" value="7" step="0.5">
+              <span style="font-size:12.5px; color:var(--ink-soft); font-weight:600;">pH 14</span>
+              <span class="slider-val" id="phVal">pH 7.0</span>
+            </div>
+            <div class="zone-feedback" id="phFeedback"></div>
+          </div>
+          <div>
+            <p><strong>Pepsin</strong> digests protein in the highly acidic stomach — its optimum is around pH 2. <strong>Trypsin</strong> digests protein in the small intestine, where pancreatic secretions make the environment mildly alkaline — its optimum is around pH 8.</p>
+            <p>Move far enough from an enzyme's optimum pH in either direction — too acidic or too alkaline — and the same thing happens as with heat: the enzyme's shape distorts and, if extreme enough, it denatures.</p>
+            <div class="box sky">
+              <div class="box-head">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>
+                Why it matters
+              </div>
+              <div class="box-body">
+                <p style="margin:0;">This is exactly why pepsin would be useless in the small intestine, and trypsin would be useless in the stomach — each enzyme is matched to the pH of the compartment it works in.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 7 : CONCENTRATION ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Factors affecting rate — concentration</div>
+        <h1 class="slide-title">More molecules, faster reaction — up to a point</h1>
+        <p class="lede">Unlike temperature and pH, increasing substrate or enzyme concentration never slows the reaction down. Instead, the rate rises and then levels off at a plateau.</p>
+        <div class="conc-grid">
+          <div class="graph-box">
+            <h3 class="mini-title">Increasing substrate concentration</h3>
+            <svg viewBox="0 0 400 220">
+              <line x1="40" y1="190" x2="380" y2="190" stroke="#C6C2D6" stroke-width="2"/>
+              <line x1="40" y1="190" x2="40" y2="20" stroke="#C6C2D6" stroke-width="2"/>
+              <path d="M40,190 C120,190 140,50 220,45 C280,42 330,42 380,42" fill="none" stroke="var(--violet)" stroke-width="3"/>
+              <line x1="220" y1="190" x2="220" y2="45" stroke="#DAD7E6" stroke-dasharray="4 4"/>
+              <text x="225" y="35" font-size="11" fill="#585E6C" font-family="Inter">plateau — enzyme is saturated</text>
+              <text x="200" y="210" text-anchor="middle" font-size="11.5" fill="#585E6C" font-family="Inter">Substrate concentration →</text>
+            </svg>
+            <p style="font-size:13.5px; color:var(--ink-soft); margin-top:6px;">With enzyme concentration fixed, adding more substrate speeds things up — until every active site is occupied at once. After that, adding more substrate makes no difference.</p>
+          </div>
+          <div class="graph-box">
+            <h3 class="mini-title">Increasing enzyme concentration</h3>
+            <svg viewBox="0 0 400 220">
+              <line x1="40" y1="190" x2="380" y2="190" stroke="#C6C2D6" stroke-width="2"/>
+              <line x1="40" y1="190" x2="40" y2="20" stroke="#C6C2D6" stroke-width="2"/>
+              <path d="M40,190 C110,190 130,60 200,50 C260,44 320,42 380,42" fill="none" stroke="var(--mint)" stroke-width="3"/>
+              <line x1="200" y1="190" x2="200" y2="50" stroke="#DAD7E6" stroke-dasharray="4 4"/>
+              <text x="205" y="40" font-size="11" fill="#585E6C" font-family="Inter">plateau — substrate is limiting</text>
+              <text x="200" y="210" text-anchor="middle" font-size="11.5" fill="#585E6C" font-family="Inter">Enzyme concentration →</text>
+            </svg>
+            <p style="font-size:13.5px; color:var(--ink-soft); margin-top:6px;">With substrate fixed, adding more enzyme speeds things up — until substrate becomes the limiting factor. Beyond that point, extra enzyme molecules simply have nothing to bind.</p>
+          </div>
+        </div>
+        <div class="hint" style="margin-top:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Both curves plateau for the same underlying reason: whichever reactant is scarcer becomes the limiting factor.</div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 8 : DENATURATION ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">A closer look</div>
+        <h1 class="slide-title">Denaturation isn't the same as "dying"</h1>
+        <p class="lede">A protein isn't alive, so it can't die — but heat, extreme pH, and heavy metal ions can permanently disrupt the bonds holding its 3D shape together.</p>
+        <div class="denature-row">
+          <div class="dena-card">
+            <div class="dena-shape"><div class="dena-native"></div></div>
+            <h4>Native (folded) enzyme</h4>
+            <p>The active site is a precise shape, complementary to its substrate. Catalysis proceeds normally.</p>
+          </div>
+          <div class="dena-card">
+            <div class="dena-shape"><div class="dena-broken"></div></div>
+            <h4>Denatured enzyme</h4>
+            <p>The tertiary structure has unravelled. The active site no longer exists in a usable shape — the substrate can't bind at all.</p>
+          </div>
+        </div>
+        <div class="box violet" style="margin-top:22px;">
+          <div class="box-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M9 3v18M15 3v18M4 8h16M4 16h16"/></svg>
+            Precise wording matters
+          </div>
+          <div class="box-body">
+            <p style="margin:0;">In an exam answer, say the enzyme's <strong>tertiary structure is disrupted</strong> and its <strong>active site changes shape</strong> — not that the enzyme "melts" or "gets killed." Denaturation breaks weak bonds (hydrogen, ionic, some disulfide) holding the folded shape; it does not break the strong covalent bonds of the primary structure (the amino acid sequence itself stays intact).</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 9 : INHIBITION ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">HL extension</div>
+        <h1 class="slide-title">Enzyme inhibitors</h1>
+        <p class="lede">An <span class="term" data-def="A molecule that reduces or blocks the activity of an enzyme.">inhibitor</span> is a molecule that reduces enzyme activity. There are two very different ways this can happen.</p>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="comp">🔴 Competitive</button>
+          <button class="tab-btn" data-tab="noncomp">🟣 Non-competitive</button>
+        </div>
+        <div class="tab-panel active" id="tab-comp">
+          <div class="inhib-row">
+            <div class="inhib-stage">
+              <div class="inhib-shape"></div>
+              <div class="inhib-site"></div>
+              <div class="inhib-blocker">✕</div>
+            </div>
+            <div style="flex:1; min-width:240px;">
+              <p>A <span class="term" data-def="A molecule structurally similar to the substrate that binds directly to the active site, physically blocking the substrate from binding.">competitive inhibitor</span> is shaped like the real substrate and binds directly to the active site — it competes with the substrate for the same spot.</p>
+              <p style="font-size:13.5px; color:var(--ink-soft);"><strong>Key fact:</strong> because it's a fair fight for the same site, adding a lot more substrate can out-compete the inhibitor and restore the rate. The effect is <strong>reversible</strong> by increasing substrate concentration.</p>
+            </div>
+          </div>
+        </div>
+        <div class="tab-panel" id="tab-noncomp">
+          <div class="inhib-row">
+            <div class="inhib-stage">
+              <div class="inhib-shape"></div>
+              <div class="inhib-site"></div>
+              <div class="inhib-substrate"></div>
+              <div class="inhib-allo"></div>
+              <div class="inhib-diamond"></div>
+            </div>
+            <div style="flex:1; min-width:240px;">
+              <p>A <span class="term" data-def="An inhibitor that binds to a site other than the active site, changing the enzyme's overall shape so the active site no longer fits its substrate.">non-competitive inhibitor</span> binds somewhere else entirely — an allosteric site — and distorts the enzyme's overall shape so the active site stops fitting the substrate.</p>
+              <p style="font-size:13.5px; color:var(--ink-soft);"><strong>Key fact:</strong> since it isn't competing for the active site, adding more substrate does <strong>not</strong> reverse the effect — the substrate simply has nowhere to bind.</p>
+            </div>
+          </div>
+        </div>
+        <div class="hint" style="margin-top:8px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> The "does more substrate fix it?" question is the fastest way to tell these two apart in an exam.</div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 10 : FILL IN THE BLANKS ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Practice</div>
+        <h1 class="slide-title">Fill in the blanks</h1>
+        <p class="lede">Tap a word from the bank, then tap the blank you want to fill. Tap a filled blank to swap it out.</p>
+        <div class="wordbank" id="wordbank"></div>
+        <p class="fillp" id="fillPara"></p>
+        <div id="fillResult"></div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 11 : QUIZ ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Check your understanding</div>
+        <h1 class="slide-title">Read the graph, then decide</h1>
+        <div class="scenario">
+          <p><strong>Scenario:</strong> a student measures the rate of an enzyme-catalysed reaction at different temperatures. The rate rises steadily up to 40°C, then drops sharply between 40°C and 55°C, reaching almost zero.</p>
+          <h3 class="mini-title" style="margin-top:14px;">What best explains the sharp drop after 40°C?</h3>
+          <div class="quiz-opts">
+            <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false)">The substrate ran out partway through the experiment</button>
+            <button class="quiz-opt" data-correct="true" onclick="answerQuiz(this,true)">The enzyme denatured — its active site lost its shape</button>
+            <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false)">The enzyme became more specific to its substrate</button>
+            <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false)">The reaction reached chemical equilibrium</button>
+          </div>
+          <div id="quizFeedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 12 : GLOSSARY ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Reference</div>
+        <h1 class="slide-title">Glossary — tap a card to flip it</h1>
+        <div class="gloss-grid" id="glossGrid"></div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 13 : WRAP-UP / SELF-CHECK ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Wrap-up</div>
+        <h1 class="slide-title">Self-check before you move on</h1>
+        <p class="lede">Go back through honestly. This foundation is what makes cell respiration, photosynthesis, and cell signalling click into place — it's worth being solid here first.</p>
+        <div class="assess-list" id="assessList"></div>
+        <div class="assess-progress"><div class="assess-fill" id="assessFill"></div></div>
+        <div class="box mint" style="margin-top:24px;">
+          <div class="box-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>
+            What comes next
+          </div>
+          <div class="box-body">
+            <p style="margin:0;">Cell respiration and photosynthesis are both metabolic pathways controlled by enzymes — everything from this lesson (active sites, activation energy, rate factors) applies directly. Cell signalling also relies on enzymes to relay and amplify messages inside cells. Once this lesson feels solid, that's the natural next stop.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <button class="navbtn" id="prevBtn" onclick="prevSlide()" aria-label="Previous">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button class="navbtn" id="nextBtn" onclick="nextSlide()" aria-label="Next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+
+<script>
+/* ============ core slide navigation ============ */
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let idx = 0;
+
+const dotsWrap = document.getElementById('dots');
+slides.forEach((s,i)=>{
+  const d = document.createElement('button');
+  d.className = 'dot' + (i===0?' active':'');
+  d.onclick = ()=>goTo(i);
+  dotsWrap.appendChild(d);
+});
+
+function render(){
+  slides.forEach((s,i)=> s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.dot').forEach((d,i)=> d.classList.toggle('active', i===idx));
+  document.getElementById('counter').textContent = (idx+1) + ' / ' + total;
+  document.getElementById('prevBtn').classList.toggle('disabled', idx===0);
+  document.getElementById('nextBtn').classList.toggle('disabled', idx===total-1);
+  slides[idx].scrollTop = 0;
+}
+function goTo(i){ idx = Math.max(0, Math.min(total-1, i)); render(); }
+function nextSlide(){ goTo(idx+1); }
+function prevSlide(){ goTo(idx-1); }
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight') nextSlide();
+  if(e.key==='ArrowLeft') prevSlide();
+});
+render();
+
+/* ============ objectives checklist ============ */
+document.querySelectorAll('.obj-card').forEach(card=>{
+  card.addEventListener('click', ()=> card.classList.toggle('done'));
+});
+
+/* ============ tabs (shared by all tab groups) ============ */
+document.querySelectorAll('.tabs').forEach(group=>{
+  const btns = group.querySelectorAll('.tab-btn');
+  btns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      btns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      if(btn.dataset.tab){
+        const panels = group.parentElement.querySelectorAll(':scope > .tab-panel');
+        panels.forEach(p=>p.classList.remove('active'));
+        const target = group.parentElement.querySelector('#tab-'+btn.dataset.tab);
+        if(target) target.classList.add('active');
+      }
+      if(btn.dataset.ph){
+        currentPhOptimum = parseFloat(btn.dataset.opt);
+        currentPhWidth = parseFloat(btn.dataset.width);
+        drawPhCurve();
+        updatePh();
+      }
+    });
+  });
+});
+
+/* ============ induced fit animation ============ */
+function runInducedFit(){
+  const btn = document.getElementById('fitBtn');
+  const sub = document.getElementById('substrateShape');
+  const enz = document.getElementById('enzymeBody');
+  const site = document.getElementById('activeSiteNotch');
+  const label = document.getElementById('fitLabel');
+  const products = document.getElementById('productShapes');
+  btn.disabled = true;
+  sub.classList.add('bound');
+  enz.classList.add('closed');
+  site.classList.add('closed');
+  label.textContent = 'Induced fit: the active site moulds around the substrate, forming the enzyme–substrate complex.';
+  setTimeout(()=>{
+    label.textContent = 'Reaction catalysed — products released. The enzyme itself is unchanged and ready to react again.';
+    sub.classList.add('hidden');
+    products.classList.add('show');
+  }, 1300);
+  setTimeout(()=>{
+    sub.classList.remove('bound','hidden');
+    enz.classList.remove('closed');
+    site.classList.remove('closed');
+    products.classList.remove('show');
+    label.textContent = 'Click "Add substrate" to see the active site respond.';
+    btn.disabled = false;
+  }, 3300);
+}
+
+/* ============ temperature graph ============ */
+function tempRate(t){
+  const optimum = 40;
+  if(t <= optimum){
+    return Math.pow(t/optimum, 1.6);
+  } else {
+    const d = t - optimum;
+    return Math.exp(-Math.pow(d/7.5, 2));
+  }
+}
+function buildCurve(fn, xMin, xMax, xToPx, yToPx, steps){
+  let pts = [];
+  for(let i=0;i<=steps;i++){
+    const x = xMin + (xMax-xMin)*i/steps;
+    const y = fn(x);
+    pts.push(xToPx(x)+','+yToPx(y));
+  }
+  return pts.join(' ');
+}
+const tempXToPx = t => 40 + (t/70)*400;
+const tempYToPx = r => 220 - r*190;
+function drawTempCurve(){
+  document.getElementById('tempCurve').setAttribute('points', buildCurve(tempRate, 0, 70, tempXToPx, tempYToPx, 70));
+}
+function tempFeedbackText(t){
+  if(t < 15) return 'Cold: molecules move slowly, so collisions between enzyme and substrate are rare. The reaction is slow.';
+  if(t < 33) return 'Warming up: molecules have more kinetic energy, so more frequent, more successful collisions occur. Rate is climbing.';
+  if(t <= 42) return 'Optimum zone: the active site fits its substrate perfectly here. Reaction rate is at its highest.';
+  if(t < 50) return 'Getting hot: weak bonds holding the enzyme\'s shape are starting to break. The active site is beginning to distort.';
+  return 'Denatured: the tertiary structure has unravelled. The active site no longer fits the substrate, so the rate has collapsed.';
+}
+function updateTemp(){
+  const t = parseFloat(document.getElementById('tempSlider').value);
+  document.getElementById('tempVal').textContent = t + '°C';
+  const r = tempRate(t);
+  document.getElementById('tempMarker').setAttribute('cx', tempXToPx(t));
+  document.getElementById('tempMarker').setAttribute('cy', tempYToPx(r));
+  document.getElementById('tempFeedback').textContent = tempFeedbackText(t);
+}
+document.getElementById('tempSlider').addEventListener('input', updateTemp);
+drawTempCurve();
+updateTemp();
+
+/* ============ pH graph ============ */
+let currentPhOptimum = 2, currentPhWidth = 1.4;
+function phRate(pH){
+  return Math.exp(-Math.pow((pH - currentPhOptimum)/currentPhWidth, 2));
+}
+const phXToPx = p => 40 + (p/14)*400;
+const phYToPx = r => 220 - r*190;
+function drawPhCurve(){
+  document.getElementById('phCurve').setAttribute('points', buildCurve(phRate, 0, 14, phXToPx, phYToPx, 56));
+}
+function phFeedbackText(pH){
+  const dist = Math.abs(pH - currentPhOptimum);
+  if(dist < 0.6) return 'Right at the optimum: the active site fits its substrate as well as it possibly can. Rate is at its peak.';
+  if(dist < 2) return 'Getting close: the active site shape is still fairly good, so the reaction still proceeds at a decent rate.';
+  if(dist < 4) return 'Far from optimum: charges on the enzyme\'s amino acids are being disrupted, distorting the active site. Rate is falling fast.';
+  return 'Extreme pH: the enzyme has likely denatured. The active site no longer matches its substrate at all.';
+}
+function updatePh(){
+  const p = parseFloat(document.getElementById('phSlider').value);
+  document.getElementById('phVal').textContent = 'pH ' + p.toFixed(1);
+  const r = phRate(p);
+  document.getElementById('phMarker').setAttribute('cx', phXToPx(p));
+  document.getElementById('phMarker').setAttribute('cy', phYToPx(r));
+  document.getElementById('phFeedback').textContent = phFeedbackText(p);
+}
+document.getElementById('phSlider').addEventListener('input', updatePh);
+drawPhCurve();
+updatePh();
+
+/* ============ fill in the blanks ============ */
+const paraTemplate = [
+  "Metabolism is the sum of all enzyme-catalysed reactions in a cell. Reactions that build up complex molecules from simpler ones are called ", 0,
+  " reactions, and reactions that break down complex molecules into simpler ones are called ", 1,
+  " reactions. Enzymes are ", 2, " catalysts made of ", 3,
+  ". They speed up reactions by lowering the ", 4, " energy needed, without being ", 5,
+  " in the process. Each enzyme has an active ", 6, " with a shape that matches its substrate. According to the ", 7,
+  " fit model, this site moulds around the substrate as it binds, forming an enzyme-substrate ", 8, "."
+];
+const blankAnswerKey = {0:'anabolic',1:'catabolic',2:'biological',3:'protein',4:'activation',5:'consumed',6:'site',7:'induced',8:'complex'};
+const fullBank = Object.values(blankAnswerKey);
+
+const bankEl = document.getElementById('wordbank');
+const paraEl = document.getElementById('fillPara');
+let placed = {};
+
+function shuffle(arr){ return arr.slice().sort(()=>Math.random()-0.5); }
+shuffle(fullBank).forEach(w=>{
+  const chip = document.createElement('button');
+  chip.className = 'word-chip';
+  chip.textContent = w;
+  chip.dataset.word = w;
+  chip.addEventListener('click', ()=>selectWord(chip));
+  bankEl.appendChild(chip);
+});
+
+let selectedChip = null;
+function selectWord(chip){
+  if(chip.classList.contains('used')) return;
+  document.querySelectorAll('.word-chip').forEach(c=>c.style.outline='none');
+  selectedChip = chip;
+  chip.style.outline = '2.5px solid var(--coral)';
+}
+
+paraTemplate.forEach(part=>{
+  if(typeof part === 'string'){
+    paraEl.appendChild(document.createTextNode(part));
+  } else {
+    const blank = document.createElement('span');
+    blank.className = 'blank';
+    blank.dataset.idx = part;
+    blank.addEventListener('click', ()=>fillBlank(blank));
+    paraEl.appendChild(blank);
+  }
+});
+
+function fillBlank(blank){
+  if(blank.classList.contains('filled')){
+    const word = blank.textContent;
+    blank.textContent = '';
+    blank.classList.remove('filled');
+    const chip = [...document.querySelectorAll('.word-chip')].find(c=>c.dataset.word===word && c.classList.contains('used'));
+    if(chip) chip.classList.remove('used');
+    delete placed[blank.dataset.idx];
+    return;
+  }
+  if(!selectedChip) return;
+  blank.textContent = selectedChip.dataset.word;
+  blank.classList.add('filled');
+  selectedChip.classList.add('used');
+  placed[blank.dataset.idx] = selectedChip.dataset.word;
+  selectedChip.style.outline='none';
+  selectedChip = null;
+  if(Object.keys(placed).length === Object.keys(blankAnswerKey).length){
+    checkFill();
+  }
+}
+function checkFill(){
+  let correct = 0;
+  Object.keys(blankAnswerKey).forEach(k=>{
+    if(placed[k] === blankAnswerKey[k]) correct++;
+  });
+  const total2 = Object.keys(blankAnswerKey).length;
+  const resEl = document.getElementById('fillResult');
+  resEl.innerHTML = `<div class="feedback show ${correct===total2?'good':''}" style="background:${correct===total2?'var(--mint-light)':'var(--coral-light)'};">
+    <strong>${correct} / ${total2} correct.</strong> ${correct===total2 ? 'Great work — the whole picture of metabolism and enzyme action is right there.' : 'Tap a filled blank to swap it and try again.'}
+  </div>`;
+}
+
+/* ============ quiz ============ */
+function answerQuiz(btn, correct){
+  document.querySelectorAll('.quiz-opt').forEach(b=>{
+    b.disabled = true;
+    if(b.dataset.correct === 'true') b.classList.add('correct');
+  });
+  if(!correct) btn.classList.add('wrong');
+  const fb = document.getElementById('quizFeedback');
+  fb.textContent = 'Correct answer: the enzyme denatured. Heat disrupted the bonds holding its tertiary structure, destroying the active site — that\'s why the drop is sudden and severe rather than gradual.';
+  fb.classList.add('show');
+}
+
+/* ============ glossary flip cards ============ */
+const glossary = [
+  {term:'Metabolism', def:'The sum of all enzyme-catalysed chemical reactions taking place in a cell or organism.'},
+  {term:'Catabolic reaction', def:'A reaction pathway that breaks large molecules into smaller ones, releasing energy.'},
+  {term:'Anabolic reaction', def:'A reaction pathway that builds larger molecules from smaller ones, requiring energy.'},
+  {term:'Enzyme', def:'A biological catalyst, usually a globular protein, that speeds up a specific reaction without being used up.'},
+  {term:'Substrate', def:'The molecule an enzyme acts on, which binds to the active site.'},
+  {term:'Active site', def:'The region of an enzyme, formed by protein folding, where the substrate binds and catalysis occurs.'},
+  {term:'Activation energy', def:'The minimum energy needed to start a reaction; enzymes lower this value.'},
+  {term:'Induced fit', def:'The model where the active site changes shape slightly as it binds the substrate.'},
+  {term:'Denaturation', def:'A permanent change to a protein\'s 3D shape, caused by heat or extreme pH, that destroys function.'},
+  {term:'Optimum', def:'The temperature or pH at which an enzyme works fastest.'},
+  {term:'Competitive inhibitor', def:'A molecule shaped like the substrate that binds the active site, blocking the substrate; reversed by more substrate.'},
+  {term:'Non-competitive inhibitor', def:'A molecule that binds elsewhere on the enzyme, distorting the active site; not reversed by more substrate.'},
+];
+const glossGrid = document.getElementById('glossGrid');
+glossary.forEach(g=>{
+  const card = document.createElement('div');
+  card.className = 'gloss-card';
+  card.innerHTML = `<div class="gloss-inner">
+      <div class="gloss-face front">${g.term}</div>
+      <div class="gloss-face back">${g.def}</div>
+    </div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flip'));
+  glossGrid.appendChild(card);
+});
+
+/* ============ tooltip terms ============ */
+document.querySelectorAll('.term').forEach(t=>{
+  t.addEventListener('click', (e)=>{
+    alert(t.dataset.def);
+  });
+});
+
+/* ============ assessment checklist ============ */
+const assessItems = [
+  'I can define metabolism and tell apart anabolic and catabolic reactions.',
+  'I can explain why cells need enzymes, in terms of activation energy.',
+  'I can describe enzyme structure and the induced-fit model.',
+  'I can explain how temperature affects the rate of enzyme reactions, including denaturation.',
+  'I can explain how pH affects the rate of enzyme reactions.',
+  'I can explain how substrate and enzyme concentration affect reaction rate.',
+  'I can tell apart competitive and non-competitive inhibition.',
+];
+const assessList = document.getElementById('assessList');
+assessItems.forEach(text=>{
+  const item = document.createElement('div');
+  item.className = 'assess-item';
+  item.innerHTML = `<div class="assess-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>${text}</p>`;
+  item.addEventListener('click', ()=>{
+    item.classList.toggle('checked');
+    updateAssessProgress();
+  });
+  assessList.appendChild(item);
+});
+function updateAssessProgress(){
+  const checked = document.querySelectorAll('.assess-item.checked').length;
+  const pct = (checked/assessItems.length)*100;
+  document.getElementById('assessFill').style.width = pct+'%';
+}
+</script>
+</body>
+</html>
