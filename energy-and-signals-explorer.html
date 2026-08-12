@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Energy &amp; Signals Explorer 🔋 (IB Biology C1–C2)</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:    #1a3d2b;
+    --forest-mid:#2d6a4f;
+    --forest-lt: #40916c;
+    --coral:     #e8603c;
+    --coral-pale:#fdf0ec;
+    --mint:      #3aaf85;
+    --mint-pale: #e8f8f2;
+    --gold:      #c9962a;
+    --gold-pale: #fef9e7;
+    --lavender:  #7c6fcd;
+    --lav-pale:  #f0eefb;
+    --paper:     #fffef9;
+    --ink:       #1a2332;
+    --muted:     #7a8899;
+    --border:    #e0e4ea;
+    --sky:       #2f7fbf;
+    --sky-pale:  #eaf4fb;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: linear-gradient(160deg, #0d2318 0%, #1a3d2b 45%, #2d6a4f 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8%  12%, rgba(144,238,144,.45) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 22%  38%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 41%  6%,  rgba(144,238,144,.35) 0%, transparent 100%),
+      radial-gradient(1px   1px   at 60%  24%, rgba(255,255,255,.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 77%  9%,  rgba(144,238,144,.4)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 90%  33%, rgba(255,255,255,.3)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 33%  55%, rgba(144,238,144,.3)  0%, transparent 100%),
+      radial-gradient(2px   2px   at 70%  48%, rgba(255,255,255,.2)  0%, transparent 100%),
+      radial-gradient(1px   1px   at 55%  70%, rgba(144,238,144,.25) 0%, transparent 100%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ─── HERO ─── */
+  .hero { position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 2rem;color:white; }
+  .hero-badge {
+    display:inline-block;background:var(--gold);color:var(--forest);
+    font-family:'Fredoka One',cursive;font-size:.85rem;letter-spacing:.05em;
+    padding:.35rem 1.2rem;border-radius:20px;margin-bottom:1.2rem;
+    box-shadow:0 2px 12px rgba(201,150,42,.45);
+  }
+  .hero h1 { font-family:'Fredoka One',cursive;font-size:clamp(2.2rem,6vw,4rem);line-height:1.1;margin-bottom:.8rem;text-shadow:0 2px 20px rgba(0,0,0,.35); }
+  .hero h1 .accent { color:var(--gold); }
+  .hero p.intro { font-size:1.05rem;line-height:1.7;opacity:.88;max-width:580px;margin:0 auto 2rem; }
+
+  /* ─── PROGRESS PILLS ─── */
+  .progress-wrap { display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem; }
+  .prog-step {
+    display:flex;align-items:center;gap:.4rem;
+    background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);
+    border-radius:20px;padding:.35rem .9rem;font-size:.78rem;font-weight:700;
+    color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;font-family:'DM Mono',monospace;
+  }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.35); }
+  .prog-step.active { background:var(--gold);color:var(--forest);border-color:var(--gold);box-shadow:0 2px 12px rgba(201,150,42,.45); }
+
+  /* ─── SHEET ─── */
+  .sheet {
+    position:relative;z-index:1;background:var(--paper);
+    border-radius:24px 24px 0 0;margin-top:1.5rem;
+    padding:0 0 6rem;min-height:80vh;box-shadow:0 -8px 40px rgba(0,0,0,.3);
+  }
+
+  /* ─── SECTIONS ─── */
+  .section { padding:3rem 2rem 0;max-width:820px;margin:0 auto;display:none; }
+  .section.active { display:block; }
+
+  .section-eyebrow { display:flex;align-items:center;gap:.6rem;margin-bottom:1rem; }
+  .eyebrow-num {
+    width:32px;height:32px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fredoka One',cursive;font-size:1rem;color:white;flex-shrink:0;
+  }
+  .num-coral  { background:var(--coral); }
+  .num-mint   { background:var(--mint); }
+  .num-gold   { background:var(--gold);color:var(--forest); }
+  .num-lav    { background:var(--lavender); }
+  .num-forest { background:var(--forest-mid); }
+  .num-sky    { background:var(--sky); }
+
+  .eyebrow-label { font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace; }
+
+  .section h2 { font-family:'Fredoka One',cursive;font-size:clamp(1.6rem,3.5vw,2.2rem);color:var(--forest);margin-bottom:.6rem;line-height:1.2; }
+  .section .lead { font-size:1rem;line-height:1.75;color:#3a4a5a;margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+
+  /* ─── WONDER / INFO BOXES ─── */
+  .wonder-box {
+    background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);
+    color:white;border-radius:16px;padding:1.8rem 2rem;margin-bottom:1.8rem;
+    position:relative;overflow:hidden;
+  }
+  .wonder-box::after { content:'🤔';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3; }
+  .wonder-box p { font-size:1rem;line-height:1.7;font-style:italic;opacity:.95;max-width:85%; }
+  .wonder-box strong { color:var(--gold);font-style:normal; }
+  .wonder-box.gold-box { background:linear-gradient(135deg,#8a6a1a 0%,#b8860b 100%); }
+  .wonder-box.gold-box::after { content:'⚡'; }
+  .wonder-box.lav-box  { background:linear-gradient(135deg,#4a3a8a 0%,#6a5acd 100%); }
+  .wonder-box.lav-box::after { content:'📡'; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,#1b7a58 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'🌿'; }
+  .wonder-box.sky-box  { background:linear-gradient(135deg,#1d5c8c 0%,#2f7fbf 100%); }
+  .wonder-box.sky-box::after { content:'☀️'; }
+
+  /* ─── PATIENCE NOTE ─── */
+  .patience-note {
+    background:var(--sky-pale);border:2px dashed var(--sky);border-radius:14px;
+    padding:1.1rem 1.4rem;margin-bottom:1.6rem;font-size:.88rem;line-height:1.7;color:#164a70;
+  }
+  .patience-note strong { color:var(--sky); }
+
+  /* ─── PREDICT BOX ─── */
+  .predict-box { background:var(--gold-pale);border:2px dashed var(--gold);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.8rem; }
+  .predict-box textarea,.reflect-box textarea {
+    width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;padding:.7rem;
+    font-family:'Nunito',sans-serif;font-size:.88rem;resize:vertical;min-height:64px;
+    background:white;color:var(--ink);outline:none;transition:border-color .2s;
+  }
+  .predict-box textarea:focus { border-color:var(--gold); }
+  .reflect-box { background:var(--mint-pale);border:2px dashed var(--mint);border-radius:14px;padding:1.4rem 1.6rem;margin-top:1.5rem; }
+  .reflect-box h4 { font-family:'Fredoka One',cursive;font-size:1rem;color:#1b7a58;margin-bottom:.8rem; }
+  .reflect-box textarea:focus { border-color:var(--mint); }
+
+  /* ─── DEMO ZONE ─── */
+  .demo-zone {
+    background:white;border:2px solid var(--border);border-radius:16px;
+    padding:1.8rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07);
+  }
+  .demo-zone h3 { font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.3rem; }
+  .demo-zone .hint { font-size:.78rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:1.3rem; }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    border:none;border-radius:10px;padding:.65rem 1.3rem;font-family:'Nunito',sans-serif;
+    font-size:.88rem;font-weight:800;cursor:pointer;transition:all .15s;letter-spacing:.02em;
+  }
+  .btn:hover  { transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  .btn:active { transform:translateY(0); }
+  .btn:disabled { opacity:.4;cursor:default;transform:none;box-shadow:none; }
+  .btn-coral  { background:var(--coral);    color:white; }
+  .btn-mint   { background:var(--mint);     color:white; }
+  .btn-gold   { background:var(--gold);     color:var(--forest); }
+  .btn-lav    { background:var(--lavender); color:white; }
+  .btn-sky    { background:var(--sky);      color:white; }
+  .btn-ghost  { background:#f0f2f5;         color:var(--muted); }
+  .btn-forest { background:var(--forest);   color:white; }
+  .action-row { display:flex;gap:.8rem;flex-wrap:wrap;align-items:center;margin-bottom:.8rem; }
+
+  /* ─── NAV ROW ─── */
+  .nav-row { display:flex;justify-content:space-between;align-items:center;padding:2.5rem 2rem 0;max-width:820px;margin:0 auto; }
+
+  /* ─── CONCEPT CHIPS ─── */
+  .chip-row { display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem; }
+  .chip {
+    padding:.45rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;
+    cursor:pointer;transition:all .2s;border:2px solid transparent;
+  }
+  .chip.coral  { background:var(--coral-pale); color:var(--coral);     border-color:#f8c5b8; }
+  .chip.mint   { background:var(--mint-pale);  color:var(--mint);      border-color:#b8ebd8; }
+  .chip.gold   { background:var(--gold-pale);  color:#8a6a1a;          border-color:#f8e0a0; }
+  .chip.lav    { background:var(--lav-pale);   color:var(--lavender);  border-color:#d0caef; }
+  .chip.forest { background:#d4eadd;           color:var(--forest-mid);border-color:#a8d5b8; }
+  .chip.sky    { background:var(--sky-pale);   color:var(--sky);       border-color:#b6dcf3; }
+  .chip:hover  { transform:scale(1.05); }
+
+  .concept-reveal {
+    background:var(--paper);border-left:4px solid var(--coral);
+    border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:.88rem;line-height:1.7;
+    margin-top:.5rem;margin-bottom:.3rem;display:none;animation:fadeIn .3s ease;
+  }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border   { border-color:var(--mint); }
+  .concept-reveal.gold-border   { border-color:var(--gold); }
+  .concept-reveal.lav-border    { border-color:var(--lavender); }
+  .concept-reveal.forest-border { border-color:var(--forest-mid); }
+  .concept-reveal.sky-border    { border-color:var(--sky); }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ─── EVIDENCE CARDS ─── */
+  .evidence-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin-bottom:1.5rem; }
+  .ev-card {
+    background:white;border:2px solid var(--border);border-radius:14px;
+    padding:1.2rem;cursor:pointer;transition:all .2s;text-align:center;
+  }
+  .ev-card:hover,.ev-card.active { border-color:var(--forest-mid);box-shadow:0 4px 16px rgba(45,106,79,.2);transform:translateY(-2px); }
+  .ev-card.active { background:#d4eadd; }
+  .ev-card .ev-icon { font-size:2.4rem;margin-bottom:.5rem; }
+  .ev-card .ev-title { font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--forest);margin-bottom:.3rem; }
+  .ev-card .ev-sub   { font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace; }
+  .ev-panel {
+    background:#d4eadd;border-left:4px solid var(--forest-mid);
+    border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+    display:none;animation:fadeIn .3s ease;margin-bottom:1rem;
+  }
+  .ev-panel.show { display:block; }
+  .ev-panel h4 { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--forest);margin-bottom:.5rem; }
+  .ev-panel p  { font-size:.88rem;line-height:1.7;color:#2a3a2a; }
+  .ev-panel .example-box {
+    background:white;border-radius:8px;padding:.7rem 1rem;margin-top:.8rem;
+    font-size:.82rem;font-family:'DM Mono',monospace;color:var(--ink);
+    border:1.5px solid rgba(45,106,79,.2);
+  }
+
+  /* ─── MATCHING GAME ─── */
+  .match-grid { display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1rem 0; }
+  .match-item {
+    padding:.75rem 1rem;border-radius:10px;border:2px solid var(--border);
+    cursor:pointer;font-size:.84rem;font-weight:700;transition:all .2s;
+    background:white;text-align:center;color:var(--ink);line-height:1.4;
+  }
+  .match-item:hover    { border-color:var(--forest-mid);background:#f0f7f3; }
+  .match-item.selected { border-color:var(--lavender);background:var(--lav-pale);color:var(--lavender); }
+  .match-item.matched  { border-color:var(--mint);background:var(--mint-pale);color:#1b7a58;cursor:default; }
+  .match-item.wrong    { border-color:var(--coral);background:var(--coral-pale);color:var(--coral);animation:shake .3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+  /* ─── STAGE TRACKER (respiration) ─── */
+  .glyc-track {
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:.8rem;margin:1rem 0;
+  }
+  .glyc-box {
+    background:white;border:2px solid var(--border);border-radius:12px;
+    padding:.9rem 1rem;text-align:center;transition:all .3s;cursor:pointer;
+  }
+  .glyc-box .g-label { font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--forest);margin-bottom:.3rem; }
+  .glyc-box .g-val   { font-family:'DM Mono',monospace;font-size:1rem;font-weight:700;color:var(--ink); }
+  .glyc-box .g-unit  { font-size:.62rem;color:var(--muted);font-family:'DM Mono',monospace; }
+  .glyc-box.active   { border-color:var(--gold);background:var(--gold-pale); }
+  .glyc-box.done     { border-color:var(--mint);background:var(--mint-pale); }
+
+  .stage-status {
+    border-radius:10px;padding:1rem 1.2rem;margin:1rem 0;font-size:.88rem;line-height:1.8;
+    font-family:'DM Mono',monospace;min-height:90px;
+  }
+  .sim-stat-row { display:flex;gap:.8rem;flex-wrap:wrap;margin:1rem 0; }
+  .sim-stat { flex:1;min-width:100px;background:#f5f7fa;border-radius:10px;padding:.8rem;text-align:center; }
+  .sim-stat .stat-val { font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:700;color:var(--forest); }
+  .sim-stat .stat-lbl { font-size:.68rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.2rem; }
+
+  /* ─── QUIZ ─── */
+  .quiz-card { background:white;border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .quiz-q { font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:1rem;line-height:1.5; }
+  .quiz-options { display:flex;flex-direction:column;gap:.5rem; }
+  .quiz-opt {
+    padding:.6rem 1rem;border-radius:8px;border:2px solid var(--border);
+    background:white;cursor:pointer;font-family:'Nunito',sans-serif;
+    font-size:.88rem;font-weight:600;text-align:left;transition:all .15s;color:var(--ink);
+  }
+  .quiz-opt:hover:not(:disabled) { border-color:var(--forest-mid);background:#f0f7f3; }
+  .quiz-opt.correct  { background:var(--mint-pale);border-color:var(--mint);color:#1b7a58; }
+  .quiz-opt.wrong    { background:var(--coral-pale);border-color:var(--coral);color:#a83020; }
+  .quiz-opt:disabled { cursor:default; }
+  .quiz-feedback { margin-top:.8rem;font-size:.85rem;line-height:1.6;padding:.7rem 1rem;border-radius:8px;display:none;animation:fadeIn .3s ease; }
+  .quiz-feedback.show { display:block; }
+  .quiz-feedback.correct-fb { background:var(--mint-pale);color:#1b7a58;border-left:3px solid var(--mint); }
+  .quiz-feedback.wrong-fb   { background:var(--coral-pale);color:#a83020;border-left:3px solid var(--coral); }
+
+  /* ─── SCORE ─── */
+  .score-panel { background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 100%);color:white;border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem; }
+  .score-panel .score-num { font-family:'Fredoka One',cursive;font-size:3.5rem;line-height:1;color:var(--gold); }
+  .score-panel p { opacity:.88;margin-top:.5rem;font-size:1rem; }
+  .score-panel h3 { font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:.3rem; }
+
+  /* ─── CONGRATS ─── */
+  .congrats-panel { background:linear-gradient(135deg,var(--forest) 0%,#1b7a58 100%);color:white;border-radius:20px;padding:2.5rem 2rem;text-align:center;margin-top:2rem; }
+  .congrats-panel h2 { font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:.6rem; }
+  .congrats-panel p  { opacity:.9;line-height:1.7;max-width:480px;margin:0 auto .8rem; }
+  .summary-chips { display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:1rem; }
+  .summary-chip {
+    background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);
+    border-radius:20px;padding:.3rem .9rem;font-size:.78rem;font-weight:700;
+    font-family:'DM Mono',monospace;letter-spacing:.04em;
+  }
+
+  /* ─── VOCAB TABLE ─── */
+  .vocab-table { width:100%;border-collapse:collapse;margin:1rem 0 1.5rem; }
+  .vocab-table th { background:var(--forest);color:white;font-family:'Fredoka One',cursive;font-size:.85rem;padding:.7rem 1rem;text-align:left; }
+  .vocab-table td { padding:.65rem 1rem;font-size:.85rem;line-height:1.5;border-bottom:1px solid var(--border); }
+  .vocab-table tr:nth-child(even) td { background:#f5f7fa; }
+  .vocab-table tr:hover td { background:#d4eadd;transition:background .15s; }
+  .vocab-table td:first-child { font-weight:800;color:var(--forest-mid); }
+
+  /* ─── FILL IN THE BLANK ─── */
+  .blank-input {
+    border:none;border-bottom:2.5px solid var(--forest-mid);background:transparent;
+    font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;color:var(--forest);
+    width:180px;text-align:center;outline:none;padding:0 4px;transition:border-color .2s;
+  }
+  .blank-input:focus { border-color:var(--coral); }
+  .blank-input.ok { border-color:var(--mint);color:var(--mint); }
+  .blank-input.err{ border-color:var(--coral);color:var(--coral); }
+  .fill-q { font-size:.95rem;line-height:2;color:var(--ink);margin-bottom:.8rem; }
+  .divider { height:1px;background:var(--border);margin:2rem 0; }
+
+  /* ─── NAME BAR ─── */
+  .name-bar {
+    background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);
+    border-radius:12px;padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;
+    max-width:420px;margin:0 auto 1rem;
+  }
+  .name-bar label { font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;font-family:'DM Mono',monospace; }
+  .name-bar input {
+    flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;
+    padding:.4rem .8rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:white;outline:none;
+  }
+  .name-bar input::placeholder { color:rgba(255,255,255,.4);font-weight:400; }
+
+  /* ─── SUMMARY / SUBMIT ─── */
+  .summary-section { background:white;border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1rem;border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--forest);margin-bottom:.8rem; }
+  .summary-answer {
+    background:#f5f7fa;border-radius:8px;padding:.7rem 1rem;font-size:.85rem;
+    line-height:1.6;color:var(--ink);margin-bottom:.5rem;font-style:italic;
+    border-left:3px solid var(--lavender);min-height:2rem;
+  }
+  .summary-answer.empty { color:var(--muted);font-style:normal;border-left-color:var(--border); }
+  .share-buttons { display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center; }
+  .share-btn {
+    border:none;border-radius:12px;padding:.85rem 1.6rem;font-family:'Fredoka One',cursive;
+    font-size:1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem;
+  }
+  .share-btn:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15); }
+  .share-btn.copy  { background:var(--mint);color:white; }
+  .share-btn.email { background:var(--lavender);color:white; }
+  .share-btn.print { background:var(--forest);color:white; }
+  .copy-confirm { text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--mint);min-height:1.2rem;margin-top:.6rem; }
+
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm,.prog-step,.name-bar { display:none !important; }
+    .sheet { box-shadow:none;border-radius:0; }
+    .section { display:none !important; }
+    #sec-8 { display:block !important; }
+  }
+
+  /* ─── DIAGRAM CARD ─── */
+  .diagram-card {
+    background:white;border:2px solid var(--border);border-radius:16px;
+    padding:1.4rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07);text-align:center;
+  }
+  .diagram-card svg { max-width:100%;height:auto; }
+  .diagram-card .diagram-caption { font-size:.76rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.6rem; }
+  .diagram-legend { display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-top:.8rem; }
+  .diagram-legend span { display:flex;align-items:center;gap:.35rem;font-size:.74rem;color:var(--ink);font-family:'DM Mono',monospace; }
+  .swatch { width:12px;height:12px;border-radius:3px;display:inline-block; }
+
+  /* ─── SLIDER LAB ─── */
+  .slider-lab { background:white;border:2px solid var(--border);border-radius:16px;padding:1.6rem;margin-bottom:1.5rem; }
+  .slider-row { margin-bottom:1.2rem; }
+  .slider-row label { display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:.8rem;color:var(--forest);font-weight:700;margin-bottom:.4rem; }
+  .slider-row input[type=range] { width:100%;accent-color:var(--forest-mid); }
+  .rate-readout {
+    background:var(--sky-pale);border:2px solid var(--sky);border-radius:12px;
+    padding:1.2rem;text-align:center;margin-top:1rem;
+  }
+  .rate-readout .rate-num { font-family:'Fredoka One',cursive;font-size:2.2rem;color:var(--sky); }
+  .rate-readout .rate-lbl { font-size:.72rem;color:#164a70;font-family:'DM Mono',monospace;margin-top:.2rem; }
+  .rate-readout .rate-limit { font-size:.82rem;color:#164a70;margin-top:.6rem;font-weight:700; }
+  .rate-bar-bg { background:#dbeafc;border-radius:8px;height:16px;margin-top:.8rem;overflow:hidden; }
+  .rate-bar-fill { background:linear-gradient(90deg,var(--sky),var(--mint));height:100%;border-radius:8px;transition:width .3s; }
+</style>
+</head>
+<body>
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-badge">🧬 IB BIOLOGY HL · TOPIC C</div>
+  <h1>Energy &amp; Signals <span class="accent">Explorer</span></h1>
+  <div class="name-bar"><label>👤 YOUR NAME:</label><input type="text" id="studentName" placeholder="Type your name here..."></div>
+  <p class="intro">You already know enzymes — great foundation. This one goes slowly and carefully through the three topics that trip people up the most: <strong>cell respiration</strong>, <strong>photosynthesis</strong>, and <strong>cell signalling</strong>. Take your time. Every concept has a plain-English explanation before the technical one.</p>
+  <div class="progress-wrap">
+    <div class="prog-step active" onclick="goTo(0)">0 · Start</div>
+    <div class="prog-step" onclick="goTo(1)">1 · Respiration Vocab</div>
+    <div class="prog-step" onclick="goTo(2)">2 · Respiration Lab</div>
+    <div class="prog-step" onclick="goTo(3)">3 · Photosynthesis Vocab</div>
+    <div class="prog-step" onclick="goTo(4)">4 · Light Lab</div>
+    <div class="prog-step" onclick="goTo(5)">5 · Cell Signalling</div>
+    <div class="prog-step" onclick="goTo(6)">6 · Quiz</div>
+    <div class="prog-step" onclick="goTo(7)">7 · Reflect</div>
+    <div class="prog-step" onclick="goTo(8)">8 · Share</div>
+  </div>
+</div>
+
+<div class="sheet">
+
+<!-- ═══ SECTION 0 — WONDER ═══ -->
+<div class="section active" id="sec-0">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">0</div><span class="eyebrow-label">Before we start</span></div>
+  <h2>⚡ Why This Feels Hard (and Why That's Normal)</h2>
+  <p class="lead">Cell respiration, photosynthesis, and cell signalling are three of the most <strong>process-heavy</strong> topics in the whole course — lots of steps, lots of similar-looking names (NAD⁺ vs NADP⁺, glycolysis vs the Calvin cycle), and diagrams that look intimidating at first glance. That's exactly why most students find them hard to self-study. You are not behind because you're slow — this material is genuinely dense.</p>
+  <div class="patience-note">🐢 <strong>Go at your own pace.</strong> Nothing here is timed. Re-read a box twice if you need to. Click things more than once. The goal by Friday isn't to memorise every arrow — it's to understand the <em>logic</em> of each process well enough that the details start making sense on their own.</div>
+  <div class="wonder-box">
+    <p>🤔 Here's the big connecting idea for both C1 and C2: <strong>life runs on ATP</strong>, and almost everything in these three topics is really just answering one of two questions — "how do we <strong>make</strong> ATP?" (respiration, photosynthesis) or "how does a cell <strong>know what to do</strong> once it has that energy?" (cell signalling). Keep that thread in mind as you go.</p>
+  </div>
+  <div class="predict-box">
+    <h4>✏️ Quick warm-up — no wrong answers</h4>
+    <textarea id="warmup-predict" placeholder="In your own words: why do cells need a constant supply of ATP rather than just making a big batch and storing it?"></textarea>
+  </div>
+  <div class="nav-row" style="padding:1rem 0 0;"><span></span><button class="btn btn-forest" onclick="goTo(1)">Start with Cell Respiration →</button></div>
+</div>
+
+<!-- ═══ SECTION 1 — RESPIRATION VOCAB ═══ -->
+<div class="section" id="sec-1">
+  <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">Phase 1 · Cell Respiration — Core Vocabulary</span></div>
+  <h2>🔥 Cell Respiration — Releasing Energy from Glucose</h2>
+  <p class="lead">In plain English: cell respiration is the process of <strong>slowly, safely burning glucose</strong> inside a cell to make ATP — instead of releasing all the energy at once (like an explosion), the cell releases it in small, controlled steps. Click each term below to unlock a clear explanation.</p>
+
+  <div class="diagram-card">
+    <svg viewBox="0 0 620 300" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="10" width="600" height="280" rx="60" fill="#fdf0ec" stroke="#e8603c" stroke-width="3"/>
+      <rect x="40" y="40" width="540" height="220" rx="45" fill="#fef9e7" stroke="#c9962a" stroke-width="3"/>
+      <text x="60" y="30" font-family="Fredoka One, cursive" font-size="13" fill="#e8603c">outer membrane</text>
+      <text x="90" y="60" font-family="Fredoka One, cursive" font-size="12" fill="#8a6a1a">inner membrane</text>
+      <path d="M90 90 Q140 70 190 90 Q240 110 290 90 Q340 70 390 90 Q440 110 490 90" fill="none" stroke="#c9962a" stroke-width="6" stroke-linecap="round"/>
+      <path d="M90 230 Q140 210 190 230 Q240 250 290 230 Q340 210 390 230 Q440 250 490 230" fill="none" stroke="#c9962a" stroke-width="6" stroke-linecap="round"/>
+      <path d="M110 100 Q120 160 110 220" fill="none" stroke="#c9962a" stroke-width="6" stroke-linecap="round"/>
+      <path d="M480 100 Q470 160 480 220" fill="none" stroke="#c9962a" stroke-width="6" stroke-linecap="round"/>
+      <text x="245" y="165" font-family="Fredoka One, cursive" font-size="15" fill="#8a6a1a" text-anchor="middle">MATRIX</text>
+      <text x="245" y="185" font-family="DM Mono, monospace" font-size="10" fill="#8a6a1a" text-anchor="middle">link reaction + Krebs cycle</text>
+      <text x="200" y="80" font-family="DM Mono, monospace" font-size="10" fill="#a8760f" text-anchor="middle">cristae (folds) — ETC + ATP synthase live here</text>
+      <text x="300" y="18" font-family="DM Mono, monospace" font-size="10" fill="#a83020" text-anchor="middle">intermembrane space</text>
+      <circle cx="150" cy="80" r="4" fill="#7c6fcd"/><circle cx="230" cy="88" r="4" fill="#7c6fcd"/><circle cx="350" cy="82" r="4" fill="#7c6fcd"/>
+      <text x="245" y="290" font-family="DM Mono, monospace" font-size="10" fill="#3a4a5a" text-anchor="middle">H⁺ ions (purple dots) build up here during the electron transport chain</text>
+    </svg>
+    <div class="diagram-caption">Diagram: the mitochondrion — folded inner membrane (cristae) massively increases surface area for the electron transport chain.</div>
+    <div class="diagram-legend">
+      <span><span class="swatch" style="background:#e8603c;"></span> outer membrane</span>
+      <span><span class="swatch" style="background:#c9962a;"></span> inner membrane / cristae</span>
+      <span><span class="swatch" style="background:#7c6fcd;"></span> H⁺ ions</span>
+    </div>
+  </div>
+
+  <div class="chip-row">
+    <div class="chip coral" onclick="reveal('glycolysis')">Glycolysis</div>
+    <div class="chip gold" onclick="reveal('link')">Link Reaction</div>
+    <div class="chip mint" onclick="reveal('krebs')">Krebs Cycle</div>
+    <div class="chip lav" onclick="reveal('etc')">Electron Transport Chain</div>
+    <div class="chip forest" onclick="reveal('chemiosmosis')">Chemiosmosis</div>
+    <div class="chip sky" onclick="reveal('carriers')">NAD⁺ &amp; FAD</div>
+    <div class="chip coral" onclick="reveal('anaerobic')">Anaerobic Respiration</div>
+    <div class="chip gold" onclick="reveal('yield')">ATP Yield</div>
+  </div>
+  <div id="rev-glycolysis" class="concept-reveal coral"><strong>Glycolysis</strong> — "Glucose splitting." Happens in the <strong>cytoplasm</strong> (not the mitochondrion!) of every cell, with or without oxygen. One 6-carbon glucose is broken down into <strong>two 3-carbon pyruvate</strong> molecules. Net result per glucose: <strong>2 ATP</strong> (made directly) and <strong>2 NADH</strong> (electron carriers, loaded up for later). Think of it as the universal first step — every cell does this.</div>
+  <div id="rev-link" class="concept-reveal gold-border"><strong>Link Reaction (Pyruvate Oxidation)</strong> — Each pyruvate moves into the mitochondrial <strong>matrix</strong> and loses one carbon as CO₂ (that's decarboxylation), becoming a 2-carbon <strong>acetyl group</strong>, which attaches to coenzyme A to form <strong>acetyl CoA</strong>. Also produces one NADH per pyruvate. This is the "bridge" between glycolysis and the Krebs cycle — hence the name.</div>
+  <div id="rev-krebs" class="concept-reveal mint-border"><strong>Krebs Cycle (Citric Acid Cycle)</strong> — Happens in the matrix. Acetyl CoA combines with a 4-carbon molecule to form citrate (6-carbon), which is then gradually broken back down, releasing <strong>2 CO₂</strong> per turn and regenerating the starting 4-carbon molecule so the cycle can repeat. Per acetyl CoA it yields <strong>3 NADH, 1 FADH₂, and 1 ATP</strong> (made directly by substrate-level phosphorylation). Because 1 glucose gives 2 acetyl CoA, the cycle turns <strong>twice</strong> per glucose.</div>
+  <div id="rev-etc" class="concept-reveal lav-border"><strong>Electron Transport Chain (ETC)</strong> — Located in the <strong>inner mitochondrial membrane (cristae)</strong>. NADH and FADH₂ drop off their electrons here. As electrons pass along a chain of protein carriers, energy is released and used to <strong>pump H⁺ ions</strong> from the matrix into the intermembrane space. At the very end, <strong>oxygen</strong> accepts the electrons (plus H⁺) to form <strong>water</strong> — this is why we need to breathe! No oxygen = the chain backs up and stops.</div>
+  <div id="rev-chemiosmosis" class="concept-reveal forest-border"><strong>Chemiosmosis</strong> — The H⁺ ions pumped into the intermembrane space build up a steep concentration gradient. They can only get back into the matrix by flowing through a channel enzyme called <strong>ATP synthase</strong>, and that flow of H⁺ physically spins part of the enzyme, driving the synthesis of ATP from ADP + Pᵢ. This is <em>oxidative phosphorylation</em> — "oxidative" because it depends on the oxygen-driven ETC. Same core mechanism you'll see again in photosynthesis.</div>
+  <div id="rev-carriers" class="concept-reveal sky-border"><strong>NAD⁺/NADH and FAD/FADH₂</strong> — These are <strong>electron carriers</strong> ("energy taxis"). NAD⁺ picks up 2 electrons + 1 H⁺ to become NADH; FAD picks up electrons to become FADH₂. They shuttle their cargo to the ETC and drop it off, going back to their empty (oxidised) form to be reused. FADH₂ enters the ETC at a slightly later point than NADH, so it contributes slightly less ATP per molecule.</div>
+  <div id="rev-anaerobic" class="concept-reveal coral"><strong>Anaerobic Respiration (Fermentation)</strong> — When oxygen is unavailable, the ETC can't run (no final electron acceptor), so NADH piles up and glycolysis would grind to a halt. Fermentation regenerates <strong>NAD⁺</strong> so glycolysis can keep going, producing only the 2 ATP from glycolysis itself. In animals: pyruvate → <strong>lactate</strong>. In yeast/plants: pyruvate → <strong>ethanol + CO₂</strong>. Much less efficient than aerobic respiration.</div>
+  <div id="rev-yield" class="concept-reveal gold-border"><strong>Total ATP Yield</strong> — Roughly <strong>30–32 ATP</strong> per glucose via aerobic respiration (textbooks vary slightly depending on the shuttle system used to move electrons into the mitochondrion), compared to just <strong>2 ATP</strong> from anaerobic fermentation. The vast majority of ATP comes from the ETC + chemiosmosis, not from glycolysis or the Krebs cycle directly — that's the whole point of the electron transport chain.</div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">📋 Aerobic vs. Anaerobic Respiration</h3>
+  <table class="vocab-table">
+    <tr><th>Feature</th><th>Aerobic</th><th>Anaerobic (fermentation)</th></tr>
+    <tr><td>Oxygen needed?</td><td>Yes</td><td>No</td></tr>
+    <tr><td>Location</td><td>Cytoplasm + mitochondrion</td><td>Cytoplasm only</td></tr>
+    <tr><td>ATP yield / glucose</td><td>~30–32</td><td>2</td></tr>
+    <tr><td>End product</td><td>CO₂ + H₂O</td><td>Lactate (animals) / ethanol + CO₂ (yeast)</td></tr>
+    <tr><td>Purpose of end step</td><td>Final electron acceptor for ETC</td><td>Regenerates NAD⁺ so glycolysis continues</td></tr>
+  </table>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.4rem;">🎯 Quick Match — Respiration Terms</h3>
+  <div class="match-grid" id="matchGrid1">
+    <div class="match-item" data-pair="1" data-side="a" onclick="matchClick(this,1)">Glycolysis</div>
+    <div class="match-item" data-pair="3" data-side="b" onclick="matchClick(this,1)">Regenerates NAD⁺ without oxygen</div>
+    <div class="match-item" data-pair="2" data-side="a" onclick="matchClick(this,1)">Krebs Cycle</div>
+    <div class="match-item" data-pair="4" data-side="b" onclick="matchClick(this,1)">Drives ATP synthase via H⁺ flow</div>
+    <div class="match-item" data-pair="4" data-side="a" onclick="matchClick(this,1)">Chemiosmosis</div>
+    <div class="match-item" data-pair="1" data-side="b" onclick="matchClick(this,1)">Splits glucose into 2 pyruvate</div>
+    <div class="match-item" data-pair="5" data-side="a" onclick="matchClick(this,1)">Oxygen's role</div>
+    <div class="match-item" data-pair="2" data-side="b" onclick="matchClick(this,1)">Releases CO₂, makes NADH &amp; FADH₂</div>
+    <div class="match-item" data-pair="3" data-side="a" onclick="matchClick(this,1)">Fermentation</div>
+    <div class="match-item" data-pair="5" data-side="b" onclick="matchClick(this,1)">Final electron acceptor in the ETC</div>
+  </div>
+  <div style="margin-top:.8rem;"><button class="btn btn-ghost" onclick="resetMatch(1)">↺ Reset Match</button><span id="match-score-1" style="margin-left:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted);"></span></div>
+
+  <div class="nav-row" style="padding:2rem 0 0;"><button class="btn btn-ghost" onclick="goTo(0)">← Back</button><button class="btn btn-coral" onclick="goTo(2)">Try the Respiration Lab →</button></div>
+</div>
+
+<!-- ═══ SECTION 2 — RESPIRATION STEP-THROUGH LAB ═══ -->
+<div class="section" id="sec-2">
+  <div class="section-eyebrow"><div class="eyebrow-num num-gold">2</div><span class="eyebrow-label">Phase 2 · Follow One Glucose Molecule</span></div>
+  <h2>🔬 Step Through Aerobic Respiration</h2>
+  <p class="lead">Click "Begin" and step through what happens to <strong>one glucose molecule</strong>, stage by stage, tracking exactly how much ATP and how many electron carriers get produced along the way.</p>
+  <div class="predict-box">
+    <h4>✏️ Before the lab — your prediction</h4>
+    <textarea id="resp-predict" placeholder="Which stage do you think produces the MOST ATP directly, and which stage do you think matters most for the ETC? Why?"></textarea>
+  </div>
+  <div class="demo-zone">
+    <h3>🧪 Glucose → 2 Pyruvate → 2 Acetyl CoA → Krebs (×2) → ETC</h3>
+    <div class="hint" id="resp-hint">Click "Begin" to start stepping through aerobic respiration</div>
+    <div class="glyc-track" id="respTrack"></div>
+    <div class="stage-status" id="resp-status" style="background:var(--lav-pale);border:2px solid var(--lavender);color:var(--lavender);">🎬 Ready to begin — click the button below.</div>
+    <div class="sim-stat-row">
+      <div class="sim-stat"><div class="stat-val" id="resp-atp">0</div><div class="stat-lbl">ATP so far</div></div>
+      <div class="sim-stat"><div class="stat-val" id="resp-nadh">0</div><div class="stat-lbl">NADH so far</div></div>
+      <div class="sim-stat"><div class="stat-val" id="resp-fadh2">0</div><div class="stat-lbl">FADH₂ so far</div></div>
+      <div class="sim-stat"><div class="stat-val" id="resp-co2">0</div><div class="stat-lbl">CO₂ released</div></div>
+    </div>
+    <div class="action-row">
+      <button class="btn btn-lav" id="btn-resp-start" onclick="respStep(0)">▶ Begin</button>
+      <button class="btn btn-coral" id="btn-resp-next" onclick="respNextStep()" disabled>⏩ Next Stage</button>
+      <button class="btn btn-ghost" onclick="respReset()">↺ Reset</button>
+    </div>
+  </div>
+  <div class="reflect-box">
+    <h4>💭 After the lab</h4>
+    <textarea id="resp-after" placeholder="Now that you've tracked it — where does most of the ATP actually get made? Was your prediction right?"></textarea>
+  </div>
+  <div class="nav-row" style="padding:2rem 0 0;"><button class="btn btn-ghost" onclick="goTo(1)">← Back</button><button class="btn btn-mint" onclick="goTo(3)">On to Photosynthesis →</button></div>
+</div>
+
+<!-- ═══ SECTION 3 — PHOTOSYNTHESIS VOCAB ═══ -->
+<div class="section" id="sec-3">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">3</div><span class="eyebrow-label">Phase 3 · Photosynthesis — Core Vocabulary</span></div>
+  <h2>☀️ Photosynthesis — Capturing Light as Chemical Energy</h2>
+  <p class="lead">In plain English: photosynthesis is respiration's mirror image — instead of breaking glucose down to release energy, plants <strong>build up</strong> glucose using energy captured from sunlight. It happens in two connected stages inside the chloroplast.</p>
+
+  <div class="diagram-card">
+    <svg viewBox="0 0 620 300" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="10" width="600" height="280" rx="90" fill="#e8f8f2" stroke="#3aaf85" stroke-width="3"/>
+      <rect x="35" y="35" width="550" height="230" rx="75" fill="#fffef9" stroke="#2d6a4f" stroke-width="3"/>
+      <text x="60" y="28" font-family="Fredoka One, cursive" font-size="12" fill="#3aaf85">outer + inner envelope</text>
+      <text x="310" y="70" font-family="Fredoka One, cursive" font-size="14" fill="#2d6a4f" text-anchor="middle">STROMA</text>
+      <text x="310" y="88" font-family="DM Mono, monospace" font-size="10" fill="#2d6a4f" text-anchor="middle">Calvin cycle happens here</text>
+      <g>
+        <rect x="150" y="110" width="60" height="90" rx="8" fill="#c9962a" opacity="0.85"/>
+        <rect x="150" y="115" width="60" height="6" fill="#fef9e7"/>
+        <rect x="150" y="127" width="60" height="6" fill="#fef9e7"/>
+        <rect x="150" y="139" width="60" height="6" fill="#fef9e7"/>
+        <rect x="150" y="151" width="60" height="6" fill="#fef9e7"/>
+        <rect x="150" y="163" width="60" height="6" fill="#fef9e7"/>
+        <rect x="150" y="175" width="60" height="6" fill="#fef9e7"/>
+        <rect x="150" y="187" width="60" height="6" fill="#fef9e7"/>
+      </g>
+      <g>
+        <rect x="330" y="130" width="60" height="70" rx="8" fill="#c9962a" opacity="0.85"/>
+        <rect x="330" y="135" width="60" height="6" fill="#fef9e7"/>
+        <rect x="330" y="147" width="60" height="6" fill="#fef9e7"/>
+        <rect x="330" y="159" width="60" height="6" fill="#fef9e7"/>
+        <rect x="330" y="171" width="60" height="6" fill="#fef9e7"/>
+        <rect x="330" y="183" width="60" height="6" fill="#fef9e7"/>
+      </g>
+      <path d="M210 145 Q270 140 330 155" fill="none" stroke="#c9962a" stroke-width="5" stroke-linecap="round"/>
+      <text x="180" y="225" font-family="DM Mono, monospace" font-size="10" fill="#8a6a1a" text-anchor="middle">granum (thylakoid stack)</text>
+      <text x="360" y="225" font-family="DM Mono, monospace" font-size="10" fill="#8a6a1a" text-anchor="middle">granum</text>
+      <text x="270" y="120" font-family="DM Mono, monospace" font-size="10" fill="#8a6a1a" text-anchor="middle">stroma lamellae</text>
+      <text x="470" y="120" font-family="Fredoka One, cursive" font-size="12" fill="#e8603c">☀️ light</text>
+      <line x1="470" y1="128" x2="470" y2="160" stroke="#e8603c" stroke-width="3" marker-end="url(#arrow)"/>
+      <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#e8603c"/></marker></defs>
+      <text x="470" y="200" font-family="DM Mono, monospace" font-size="9" fill="#a83020" text-anchor="middle">thylakoid membrane —</text>
+      <text x="470" y="212" font-family="DM Mono, monospace" font-size="9" fill="#a83020" text-anchor="middle">light-dependent reactions</text>
+    </svg>
+    <div class="diagram-caption">Diagram: the chloroplast — thylakoid stacks (grana) inside the stroma, connected by stroma lamellae.</div>
+    <div class="diagram-legend">
+      <span><span class="swatch" style="background:#2d6a4f;"></span> envelope</span>
+      <span><span class="swatch" style="background:#c9962a;"></span> thylakoid / granum</span>
+      <span><span class="swatch" style="background:#e8f8f2;border:1px solid #3aaf85;"></span> stroma</span>
+    </div>
+  </div>
+
+  <div class="chip-row">
+    <div class="chip gold" onclick="reveal2('lightdep')">Light-Dependent Reactions</div>
+    <div class="chip coral" onclick="reveal2('photolysis')">Photolysis</div>
+    <div class="chip lav" onclick="reveal2('photosystems')">Photosystems I &amp; II</div>
+    <div class="chip mint" onclick="reveal2('calvin')">Calvin Cycle</div>
+    <div class="chip forest" onclick="reveal2('rubisco')">Rubisco &amp; RuBP</div>
+    <div class="chip sky" onclick="reveal2('limiting')">Limiting Factors</div>
+  </div>
+  <div id="rev2-lightdep" class="concept-reveal gold-border"><strong>Light-Dependent Reactions</strong> — Occur in the <strong>thylakoid membrane</strong>. Chlorophyll absorbs light energy, which excites electrons. Those excited electrons pass along an electron transport chain (very similar idea to respiration!), pumping H⁺ into the thylakoid lumen. H⁺ then flows out through ATP synthase, making <strong>ATP</strong> (this step is called <em>photophosphorylation</em>). Meanwhile, NADP⁺ is reduced to <strong>NADPH</strong>. Both ATP and NADPH are handed off to the Calvin cycle.</div>
+  <div id="rev2-photolysis" class="concept-reveal coral"><strong>Photolysis</strong> — "Light splitting." Water (H₂O) is split at Photosystem II to replace the electrons that chlorophyll lost to the ETC. This produces <strong>O₂</strong> (released as waste — the oxygen we breathe!) and H⁺ ions. This is the source of literally all the oxygen gas plants release.</div>
+  <div id="rev2-photosystems" class="concept-reveal lav-border"><strong>Photosystem II then Photosystem I</strong> — Despite the confusing numbering (II acts first!), light hits <strong>Photosystem II</strong> first, exciting electrons that travel down the ETC to <strong>Photosystem I</strong>, where they get re-excited by a second burst of light and are used to reduce NADP⁺ to NADPH. Each photosystem is a cluster of chlorophyll + proteins tuned to absorb specific wavelengths.</div>
+  <div id="rev2-calvin" class="concept-reveal mint-border"><strong>Calvin Cycle (Light-Independent Reactions)</strong> — Occurs in the <strong>stroma</strong>. Doesn't need light directly, but does need the ATP and NADPH made by the light-dependent reactions, so in practice it still stops in the dark. CO₂ is "fixed" onto RuBP, and using ATP + NADPH the resulting molecules are reduced into <strong>G3P (triose phosphate)</strong> — some of which is used to make glucose and other organic molecules, and some of which regenerates RuBP so the cycle can continue.</div>
+  <div id="rev2-rubisco" class="concept-reveal forest-border"><strong>Rubisco &amp; RuBP</strong> — <strong>RuBP</strong> (ribulose bisphosphate, 5-carbon) is the molecule that CO₂ attaches to. <strong>Rubisco</strong> is the enzyme that catalyses this fixation step — it's thought to be the most abundant enzyme on Earth, because every plant needs huge amounts of it (it's a slow, inefficient enzyme, so lots of copies are needed). The unstable 6-carbon product immediately splits into two 3-carbon molecules of glycerate 3-phosphate (GP).</div>
+  <div id="rev2-limiting" class="concept-reveal sky-border"><strong>Limiting Factors</strong> — The rate of photosynthesis is controlled by whichever factor is in shortest supply: <strong>light intensity, CO₂ concentration, or temperature</strong>. Increasing a non-limiting factor won't speed anything up — only increasing the actual limiting factor will. This is Blackman's Law of Limiting Factors. Try the slider lab in the next section to see this in action.</div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:.4rem;">🎯 Quick Match — Photosynthesis Terms</h3>
+  <div class="match-grid" id="matchGrid2">
+    <div class="match-item" data-pair="1" data-side="a" onclick="matchClick(this,2)">Photolysis</div>
+    <div class="match-item" data-pair="3" data-side="b" onclick="matchClick(this,2)">Occurs in the stroma</div>
+    <div class="match-item" data-pair="2" data-side="a" onclick="matchClick(this,2)">Rubisco</div>
+    <div class="match-item" data-pair="4" data-side="b" onclick="matchClick(this,2)">ATP + NADPH made here</div>
+    <div class="match-item" data-pair="4" data-side="a" onclick="matchClick(this,2)">Light-dependent reactions</div>
+    <div class="match-item" data-pair="1" data-side="b" onclick="matchClick(this,2)">Splits water, releases O₂</div>
+    <div class="match-item" data-pair="5" data-side="a" onclick="matchClick(this,2)">Photophosphorylation</div>
+    <div class="match-item" data-pair="2" data-side="b" onclick="matchClick(this,2)">Enzyme that fixes CO₂ onto RuBP</div>
+    <div class="match-item" data-pair="3" data-side="a" onclick="matchClick(this,2)">Calvin cycle</div>
+    <div class="match-item" data-pair="5" data-side="b" onclick="matchClick(this,2)">Making ATP using light energy</div>
+  </div>
+  <div style="margin-top:.8rem;"><button class="btn btn-ghost" onclick="resetMatch(2)">↺ Reset Match</button><span id="match-score-2" style="margin-left:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted);"></span></div>
+
+  <div class="nav-row" style="padding:2rem 0 0;"><button class="btn btn-ghost" onclick="goTo(2)">← Back</button><button class="btn btn-mint" onclick="goTo(4)">Try the Limiting Factors Lab →</button></div>
+</div>
+
+<!-- ═══ SECTION 4 — LIGHT / LIMITING FACTORS LAB ═══ -->
+<div class="section" id="sec-4">
+  <div class="section-eyebrow"><div class="eyebrow-num num-sky">4</div><span class="eyebrow-label">Phase 4 · Limiting Factors Lab</span></div>
+  <h2>📊 Which Factor Is Limiting the Rate?</h2>
+  <p class="lead">Drag the sliders and watch how the rate of photosynthesis responds. Notice that increasing a factor <strong>only</strong> helps if that factor is currently the bottleneck.</p>
+  <div class="predict-box">
+    <h4>✏️ Before the lab — your prediction</h4>
+    <textarea id="light-predict" placeholder="If light intensity is very high but CO2 is very low, will adding more light increase the rate of photosynthesis? Why or why not?"></textarea>
+  </div>
+  <div class="slider-lab">
+    <div class="slider-row">
+      <label><span>☀️ Light Intensity</span><span id="light-val">50%</span></label>
+      <input type="range" id="light-slider" min="0" max="100" value="50" oninput="updateRate()">
+    </div>
+    <div class="slider-row">
+      <label><span>🫧 CO₂ Concentration</span><span id="co2-val">50%</span></label>
+      <input type="range" id="co2-slider" min="0" max="100" value="50" oninput="updateRate()">
+    </div>
+    <div class="slider-row">
+      <label><span>🌡️ Temperature</span><span id="temp-val">50%</span></label>
+      <input type="range" id="temp-slider" min="0" max="100" value="50" oninput="updateRate()">
+    </div>
+    <div class="rate-readout">
+      <div class="rate-num" id="rate-num">50%</div>
+      <div class="rate-lbl">RATE OF PHOTOSYNTHESIS</div>
+      <div class="rate-bar-bg"><div class="rate-bar-fill" id="rate-bar" style="width:50%;"></div></div>
+      <div class="rate-limit" id="rate-limit-msg">Currently limited by: (all equal)</div>
+    </div>
+  </div>
+  <div class="reflect-box">
+    <h4>💭 After the lab</h4>
+    <textarea id="light-after" placeholder="Try setting one slider very low and the others very high. What happens to the rate, and why?"></textarea>
+  </div>
+  <div class="nav-row" style="padding:2rem 0 0;"><button class="btn btn-ghost" onclick="goTo(3)">← Back</button><button class="btn btn-lav" onclick="goTo(5)">On to Cell Signalling →</button></div>
+</div>
+
+<!-- ═══ SECTION 5 — CELL SIGNALLING ═══ -->
+<div class="section" id="sec-5">
+  <div class="section-eyebrow"><div class="eyebrow-num num-lav">5</div><span class="eyebrow-label">Phase 5 · Cell Signalling</span></div>
+  <h2>📡 Cell Signalling — How Cells Talk to Each Other</h2>
+  <p class="lead">In plain English: a signalling cell releases a "message" (a chemical), and a target cell has a "mailbox" (a receptor) shaped to receive exactly that message. What happens next depends entirely on what kind of mailbox the cell has.</p>
+
+  <div class="diagram-card">
+    <svg viewBox="0 0 620 260" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="90" width="180" height="120" rx="18" fill="#f0eefb" stroke="#7c6fcd" stroke-width="3"/>
+      <text x="110" y="80" font-family="Fredoka One, cursive" font-size="12" fill="#7c6fcd" text-anchor="middle">signalling cell</text>
+      <circle cx="150" cy="150" r="8" fill="#e8603c"/>
+      <circle cx="165" cy="130" r="8" fill="#e8603c"/>
+      <text x="110" y="185" font-family="DM Mono, monospace" font-size="9" fill="#7c6fcd" text-anchor="middle">releases ligand</text>
+      <line x1="200" y1="140" x2="330" y2="140" stroke="#e8603c" stroke-width="3" marker-end="url(#arrow2)"/>
+      <defs><marker id="arrow2" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#e8603c"/></marker></defs>
+      <circle cx="270" cy="120" r="7" fill="#e8603c"/>
+      <rect x="330" y="60" width="230" height="170" rx="18" fill="#e8f8f2" stroke="#3aaf85" stroke-width="3"/>
+      <text x="445" y="50" font-family="Fredoka One, cursive" font-size="12" fill="#3aaf85" text-anchor="middle">target cell</text>
+      <rect x="330" y="130" width="20" height="30" fill="#2d6a4f"/>
+      <text x="358" y="150" font-family="DM Mono, monospace" font-size="9" fill="#1b7a58">receptor</text>
+      <circle cx="340" cy="127" r="7" fill="#e8603c"/>
+      <path d="M350 145 Q400 160 440 170 Q480 178 500 195" fill="none" stroke="#c9962a" stroke-width="3" stroke-dasharray="4,3"/>
+      <text x="470" y="130" font-family="DM Mono, monospace" font-size="9" fill="#8a6a1a" text-anchor="middle">signal transduction</text>
+      <text x="470" y="142" font-family="DM Mono, monospace" font-size="9" fill="#8a6a1a" text-anchor="middle">(often amplified)</text>
+      <circle cx="500" cy="195" r="14" fill="#c9962a" opacity="0.8"/>
+      <text x="500" y="222" font-family="DM Mono, monospace" font-size="9" fill="#8a6a1a" text-anchor="middle">cell response</text>
+    </svg>
+    <div class="diagram-caption">Diagram: a ligand released by one cell binds a specific receptor, triggering a signal transduction pathway and a response.</div>
+    <div class="diagram-legend">
+      <span><span class="swatch" style="background:#e8603c;"></span> ligand</span>
+      <span><span class="swatch" style="background:#2d6a4f;"></span> receptor</span>
+      <span><span class="swatch" style="background:#c9962a;"></span> response</span>
+    </div>
+  </div>
+
+  <div class="chip-row">
+    <div class="chip lav" onclick="reveal3('ligand')">Ligand &amp; Receptor</div>
+    <div class="chip coral" onclick="reveal3('surface')">Cell-Surface Receptors</div>
+    <div class="chip mint" onclick="reveal3('intracellular')">Intracellular Receptors</div>
+    <div class="chip gold" onclick="reveal3('transduction')">Signal Transduction</div>
+    <div class="chip sky" onclick="reveal3('second')">Second Messengers</div>
+    <div class="chip forest" onclick="reveal3('amplify')">Signal Amplification</div>
+  </div>
+  <div id="rev3-ligand" class="concept-reveal lav-border"><strong>Ligand &amp; Receptor</strong> — A <strong>ligand</strong> is any signalling molecule (hormone, neurotransmitter, growth factor, local chemical). A <strong>receptor</strong> is a protein shaped to bind that specific ligand, like a lock and key. Whether the receptor is on the <strong>cell surface</strong> or <strong>inside</strong> the cell depends on whether the ligand can cross the (lipid) plasma membrane on its own.</div>
+  <div id="rev3-surface" class="concept-reveal coral"><strong>Cell-Surface Receptors</strong> — Used for ligands that <em>can't</em> cross the membrane (usually water-soluble, e.g. peptide hormones, neurotransmitters). Three key types: <strong>ion channel-linked</strong> (ligand binding opens a channel, ions flood in/out — fast, used at synapses), <strong>G-protein coupled receptors (GPCRs)</strong> (ligand binding activates a G-protein, which activates an enzyme that produces a second messenger like cAMP), and <strong>enzyme-linked receptors</strong> (e.g. receptor tyrosine kinases — ligand binding directly switches on enzyme activity, starting a phosphorylation cascade).</div>
+  <div id="rev3-intracellular" class="concept-reveal mint-border"><strong>Intracellular Receptors</strong> — Used for ligands that <em>can</em> cross the membrane — typically small, lipid-soluble molecules like <strong>steroid hormones</strong> (e.g. oestrogen, testosterone, cortisol). These diffuse straight through the membrane and bind a receptor inside the cytoplasm or nucleus. The hormone-receptor complex often acts directly as a <strong>transcription factor</strong>, switching genes on or off — slower than surface receptors, but longer-lasting effects.</div>
+  <div id="rev3-transduction" class="concept-reveal gold-border"><strong>Signal Transduction Pathway</strong> — The chain of molecular events that converts "ligand bound to receptor" into an actual cell response (e.g. an enzyme switching on, a gene being transcribed, a muscle contracting). Often involves a <strong>cascade</strong> of proteins activating other proteins one after another — each step can amplify the signal.</div>
+  <div id="rev3-second" class="concept-reveal sky-border"><strong>Second Messengers</strong> — Small molecules that relay the signal <em>inside</em> the cell once the receptor (the "first messenger" receiver) has been activated. Classic example: a GPCR activates an enzyme called adenylyl cyclase, which converts ATP into <strong>cAMP</strong> (cyclic AMP) — cAMP then activates protein kinase A, which phosphorylates target proteins. Other second messengers include Ca²⁺ and IP₃.</div>
+  <div id="rev3-amplify" class="concept-reveal forest-border"><strong>Signal Amplification</strong> — One ligand binding one receptor can end up activating thousands of downstream molecules, because each activated enzyme in a cascade can activate many copies of the next enzyme. This is why hormones like adrenaline can be effective at extremely low concentrations — a tiny signal produces a huge, fast, body-wide response (e.g. the "fight-or-flight" glycogen breakdown response in liver cells).</div>
+
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--forest);margin-bottom:1rem;">🎯 Explore: Which Receptor Type Is It?</h3>
+  <div class="evidence-grid">
+    <div class="ev-card" onclick="showEvidence('ion')"><div class="ev-icon">⚡</div><div class="ev-title">Ion Channel-Linked</div><div class="ev-sub">fast · synapses</div></div>
+    <div class="ev-card" onclick="showEvidence('gpcr')"><div class="ev-icon">🔄</div><div class="ev-title">GPCR</div><div class="ev-sub">adrenaline · cAMP</div></div>
+    <div class="ev-card" onclick="showEvidence('kinase')"><div class="ev-icon">🧩</div><div class="ev-title">Enzyme-Linked</div><div class="ev-sub">insulin · growth factors</div></div>
+    <div class="ev-card" onclick="showEvidence('steroid')"><div class="ev-icon">🧬</div><div class="ev-title">Intracellular</div><div class="ev-sub">steroid hormones</div></div>
+  </div>
+  <div id="ev-ion" class="ev-panel"><h4>⚡ Ion Channel-Linked Receptor</h4><p>Ligand binds → channel physically opens → ions (e.g. Na⁺, Cl⁻) flow across the membrane immediately. This is the fastest type of signalling — milliseconds — because there's no enzyme cascade in between.</p><div class="example-box">📌 Neurotransmitter receptors at a synapse: the neurotransmitter binds and ion channels open instantly, changing the voltage across the postsynaptic membrane.</div></div>
+  <div id="ev-gpcr" class="ev-panel"><h4>🔄 G-Protein Coupled Receptor (GPCR)</h4><p>Ligand binds outside → receptor changes shape → activates a G-protein on the inside of the membrane → G-protein activates an enzyme (e.g. adenylyl cyclase) → second messenger (cAMP) is produced → cascade continues inside the cell.</p><div class="example-box">📌 Adrenaline binding a GPCR on a liver cell triggers a cAMP cascade that rapidly breaks down glycogen into glucose — part of the "fight-or-flight" response.</div></div>
+  <div id="ev-kinase" class="ev-panel"><h4>🧩 Enzyme-Linked Receptor</h4><p>The receptor itself has (or activates) enzyme activity — usually a kinase, which adds phosphate groups to proteins. Ligand binding triggers this enzyme activity directly, starting a phosphorylation cascade inside the cell.</p><div class="example-box">📌 Insulin binds its receptor (a receptor tyrosine kinase) on muscle/fat cells, triggering a cascade that moves glucose transporters to the cell surface.</div></div>
+  <div id="ev-steroid" class="ev-panel"><h4>🧬 Intracellular Receptor</h4><p>The ligand itself crosses the membrane (it's lipid-soluble), so no cell-surface receptor is needed at all. The receptor is inside the cytoplasm or nucleus, and the ligand-receptor complex typically binds DNA directly to switch gene expression on or off.</p><div class="example-box">📌 Cortisol and other steroid hormones diffuse into target cells and alter which genes are transcribed — effects take longer to appear but can last much longer.</div></div>
+
+  <div class="nav-row" style="padding:2rem 0 0;"><button class="btn btn-ghost" onclick="goTo(4)">← Back</button><button class="btn btn-lav" onclick="goTo(6)">Take the Quiz →</button></div>
+</div>
+
+<!-- ═══ SECTION 6 — QUIZ ═══ -->
+<div class="section" id="sec-6">
+  <div class="section-eyebrow"><div class="eyebrow-num num-forest">6</div><span class="eyebrow-label">Phase 6 · Practice Quiz</span></div>
+  <h2>📝 Mixed Quiz — Respiration, Photosynthesis &amp; Signalling</h2>
+  <div id="quiz-container"></div>
+  <div id="score-panel" class="score-panel" style="display:none;"><h3>Quiz Complete! 🎉</h3><div class="score-num" id="score-display">0/16</div><p id="score-msg"></p><button class="btn btn-gold" onclick="retakeQuiz()" style="margin-top:1rem;">↺ Retake Quiz</button></div>
+</div>
+
+<!-- ═══ SECTION 7 — REFLECT ═══ -->
+<div class="section" id="sec-7">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">7</div><span class="eyebrow-label">Phase 7 · Reflect</span></div>
+  <h2>💭 Reflection &amp; Fill-in-the-Blank Review</h2>
+  <div class="reflect-box">
+    <h4>Q1 — The Big Connection</h4>
+    <textarea id="r1" placeholder="How are the electron transport chains in respiration and photosynthesis similar? How are they different?"></textarea>
+  </div>
+  <div class="reflect-box">
+    <h4>Q2 — Respiration in Your Own Words</h4>
+    <textarea id="r2" placeholder="Explain to a friend, in 2-3 sentences, why we need to breathe oxygen in order to make lots of ATP."></textarea>
+  </div>
+  <div class="reflect-box">
+    <h4>Q3 — Photosynthesis in Your Own Words</h4>
+    <textarea id="r3" placeholder="Explain why the Calvin cycle can't keep running in complete darkness, even though it doesn't use light directly."></textarea>
+  </div>
+  <div class="reflect-box">
+    <h4>Q4 — Cell Signalling in Your Own Words</h4>
+    <textarea id="r4" placeholder="Pick one receptor type (ion channel, GPCR, enzyme-linked, or intracellular) and explain how it converts a signal into a response."></textarea>
+  </div>
+  <div class="divider"></div>
+  <h3 style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--forest);margin-bottom:.8rem;">✏️ Fill-in-the-Blank Review</h3>
+  <div id="fill-container"></div>
+  <div class="action-row"><button class="btn btn-forest" onclick="checkAllFills()">✓ Check All</button><button class="btn btn-ghost" onclick="resetFills()">↺ Reset</button></div>
+  <div class="nav-row" style="padding:2rem 0 0;"><button class="btn btn-ghost" onclick="goTo(6)">← Back</button><button class="btn btn-mint" onclick="goTo(8)">Finish &amp; Share →</button></div>
+</div>
+
+<!-- ═══ SECTION 8 — SUMMARY / SHARE ═══ -->
+<div class="section" id="sec-8">
+  <div class="section-eyebrow"><div class="eyebrow-num num-mint">8</div><span class="eyebrow-label">Your Completed Work</span></div>
+  <h2>📤 Ready to Share</h2>
+  <div class="summary-section" style="background:var(--forest);color:white;border-color:var(--forest);"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;"><div><div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">STUDENT</div><div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div></div><div style="text-align:right;"><div style="font-family:'DM Mono',monospace;font-size:.7rem;opacity:.6;margin-bottom:.3rem;">LESSON</div><div style="font-family:'Fredoka One',cursive;font-size:1rem;">Energy &amp; Signals Explorer 🔋 (Topic C)</div><div style="font-family:'DM Mono',monospace;font-size:.72rem;opacity:.6;" id="summaryDate"></div></div></div></div>
+  <div class="summary-section"><h3>📝 Quiz Score</h3><div class="summary-answer" id="sum-quiz"></div></div>
+  <div class="summary-section"><h3>🤔 Warm-up Prediction</h3><div class="summary-answer" id="sum-warmup"></div></div>
+  <div class="summary-section"><h3>🔥 Respiration Lab Prediction</h3><div class="summary-answer" id="sum-resp"></div></div>
+  <div class="summary-section"><h3>☀️ Limiting Factors Lab Prediction</h3><div class="summary-answer" id="sum-light"></div></div>
+  <div class="summary-section"><h3>💭 Reflection Questions</h3>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;">Q1 — The Big Connection</div><div class="summary-answer" id="sum-r1"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q2 — Respiration</div><div class="summary-answer" id="sum-r2"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q3 — Photosynthesis</div><div class="summary-answer" id="sum-r3"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;margin-top:.8rem;">Q4 — Cell Signalling</div><div class="summary-answer" id="sum-r4"></div>
+  </div>
+  <div style="margin-top:1.5rem;background:var(--gold-pale);border:2px dashed var(--gold);border-radius:12px;padding:1.2rem 1.4rem;">
+    <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#8a6a1a;margin-bottom:.6rem;">📋 How to submit:</p>
+    <p style="font-size:.82rem;color:#8a6a1a;font-family:'DM Mono',monospace;line-height:2;"><strong>📋 Copy My Results</strong> — Copies all answers. Paste into Google Classroom.<br><strong>📧 Email to Teacher</strong> — Opens your email app with answers pre-filled.<br><strong>🖨️ Print / Save PDF</strong> — Mac: bottom-left → Save as PDF. Windows: Microsoft Print to PDF.</p>
+  </div>
+  <div class="share-buttons">
+    <button class="share-btn copy" onclick="copyResults()">📋 Copy My Results</button>
+    <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+    <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+  <div class="nav-row" style="padding:2rem 0 0;"><button class="btn btn-ghost" onclick="goTo(7)">← Back</button><button class="btn btn-forest" onclick="goTo(0)">↺ Start Over</button></div>
+</div>
+
+</div><!-- /sheet -->
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  Good luck on Friday — go steady, you've got time to build this properly. 🌱
+</div>
+<script>
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+const steps    = document.querySelectorAll('.prog-step');
+const sections = document.querySelectorAll('.section');
+
+function goTo(n) {
+  sections.forEach((s, i) => s.classList.toggle('active', i === n));
+  steps.forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    if (i === n) s.classList.add('active');
+    if (i < n)  s.classList.add('done');
+  });
+  if (n === 8) buildSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════════════
+// CONCEPT REVEALS
+// ═══════════════════════════════════════════════
+const revIds1 = ['glycolysis','link','krebs','etc','chemiosmosis','carriers','anaerobic','yield'];
+function reveal(key) {
+  revIds1.forEach(id => { const el = document.getElementById('rev-' + id); if (el) el.classList.remove('show'); });
+  const t = document.getElementById('rev-' + key);
+  if (t) t.classList.add('show');
+}
+const revIds2 = ['lightdep','photolysis','photosystems','calvin','rubisco','limiting'];
+function reveal2(key) {
+  revIds2.forEach(id => { const el = document.getElementById('rev2-' + id); if (el) el.classList.remove('show'); });
+  const t = document.getElementById('rev2-' + key);
+  if (t) t.classList.add('show');
+}
+const revIds3 = ['ligand','surface','intracellular','transduction','second','amplify'];
+function reveal3(key) {
+  revIds3.forEach(id => { const el = document.getElementById('rev3-' + id); if (el) el.classList.remove('show'); });
+  const t = document.getElementById('rev3-' + key);
+  if (t) t.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// MATCHING GAMES (generic, supports multiple grids)
+// ═══════════════════════════════════════════════
+let matchSelected = {}, matchScore = {};
+function matchClick(el, gridId) {
+  if (el.classList.contains('matched')) return;
+  if (!matchSelected[gridId]) {
+    el.classList.add('selected');
+    matchSelected[gridId] = el;
+  } else if (matchSelected[gridId] === el) {
+    el.classList.remove('selected');
+    matchSelected[gridId] = null;
+  } else {
+    const a = matchSelected[gridId], b = el;
+    const pA = a.dataset.pair, pB = b.dataset.pair;
+    const sA = a.dataset.side, sB = b.dataset.side;
+    if (pA === pB && sA !== sB) {
+      a.classList.remove('selected'); a.classList.add('matched'); b.classList.add('matched');
+      matchScore[gridId] = (matchScore[gridId] || 0) + 1;
+      const scoreEl = document.getElementById('match-score-' + gridId);
+      if (scoreEl) scoreEl.textContent = matchScore[gridId] + '/5 matched';
+      matchSelected[gridId] = null;
+    } else {
+      a.classList.remove('selected'); a.classList.add('wrong'); b.classList.add('wrong');
+      setTimeout(() => { a.classList.remove('wrong'); b.classList.remove('wrong'); }, 650);
+      matchSelected[gridId] = null;
+    }
+  }
+}
+function resetMatch(gridId) {
+  matchSelected[gridId] = null; matchScore[gridId] = 0;
+  document.querySelectorAll('#matchGrid' + gridId + ' .match-item').forEach(el => el.classList.remove('selected','matched','wrong'));
+  const scoreEl = document.getElementById('match-score-' + gridId);
+  if (scoreEl) scoreEl.textContent = '';
+}
+
+// ═══════════════════════════════════════════════
+// RESPIRATION STEP-THROUGH LAB
+// ═══════════════════════════════════════════════
+const respStages = [
+  { label:'Glycolysis', sub:'cytoplasm', status:'🧪 <strong>Glycolysis (cytoplasm):</strong> One glucose (6C) is split into two pyruvate (3C). Net gain: <strong>2 ATP</strong> and <strong>2 NADH</strong>. No oxygen needed for this stage — every cell can do this.', atp:2, nadh:2, fadh2:0, co2:0, color:'coral' },
+  { label:'Link Reaction', sub:'matrix', status:'🧪 <strong>Link Reaction (matrix):</strong> Both pyruvate molecules are converted to acetyl CoA, releasing <strong>2 CO₂</strong> and making <strong>2 more NADH</strong> (one per pyruvate). No ATP made here.', atp:0, nadh:2, fadh2:0, co2:2, color:'gold' },
+  { label:'Krebs Cycle ×2', sub:'matrix', status:'🧪 <strong>Krebs Cycle (matrix, runs twice):</strong> Each acetyl CoA is fully oxidised, releasing <strong>4 CO₂</strong> total and producing <strong>6 NADH, 2 FADH₂, and 2 ATP</strong> across both turns.', atp:2, nadh:6, fadh2:2, co2:4, color:'mint' },
+  { label:'ETC + Chemiosmosis', sub:'inner membrane', status:'🧪 <strong>Electron Transport Chain + Chemiosmosis (cristae):</strong> All that NADH and FADH₂ now unload their electrons. The resulting H⁺ gradient drives ATP synthase, producing roughly <strong>26–28 ATP</strong> — the vast majority of the total. Oxygen accepts the used-up electrons, forming water.', atp:27, nadh:0, fadh2:0, co2:0, color:'lav', final:true }
+];
+const respColorMap = {
+  coral:{bg:'var(--coral-pale)',border:'var(--coral)',text:'var(--coral)'},
+  gold:{bg:'var(--gold-pale)',border:'var(--gold)',text:'#8a6a1a'},
+  mint:{bg:'var(--mint-pale)',border:'var(--mint)',text:'var(--mint)'},
+  lav:{bg:'var(--lav-pale)',border:'var(--lavender)',text:'var(--lavender)'}
+};
+let respPos = -1, respTotals = {atp:0,nadh:0,fadh2:0,co2:0};
+
+function buildRespTrack() {
+  const track = document.getElementById('respTrack');
+  track.innerHTML = respStages.map((s,i) => {
+    const done = i < respPos, active = i === respPos;
+    const c = respColorMap[s.color];
+    const style = (done||active) ? `background:${c.bg};border-color:${c.border};` : 'background:white;border-color:var(--border);';
+    return `<div class="glyc-box" style="${style}">
+      <div class="g-label" style="${(done||active)?`color:${c.text};`:''}">${s.label}</div>
+      <div class="g-unit">${s.sub}</div>
+      ${done ? '<div style="font-size:1rem;margin-top:.2rem;">✅</div>' : ''}
+      ${active ? '<div style="font-size:1rem;margin-top:.2rem;">▶</div>' : ''}
+    </div>`;
+  }).join('');
+}
+function respStep(n) {
+  respPos = n;
+  buildRespTrack();
+  const s = respStages[n];
+  const c = respColorMap[s.color];
+  const status = document.getElementById('resp-status');
+  status.innerHTML = s.status;
+  status.style.background = c.bg; status.style.borderColor = c.border; status.style.color = c.text;
+  respTotals.atp += s.atp; respTotals.nadh += s.nadh; respTotals.fadh2 += s.fadh2; respTotals.co2 += s.co2;
+  document.getElementById('resp-atp').textContent = respTotals.atp;
+  document.getElementById('resp-nadh').textContent = respTotals.nadh;
+  document.getElementById('resp-fadh2').textContent = respTotals.fadh2;
+  document.getElementById('resp-co2').textContent = respTotals.co2;
+  document.getElementById('btn-resp-start').disabled = true;
+  document.getElementById('btn-resp-next').disabled = !!s.final;
+  document.getElementById('resp-hint').textContent = s.final ? 'Complete! ~' + respTotals.atp + ' ATP total per glucose.' : `Stage ${n+1} of ${respStages.length} — click Next Stage to continue`;
+}
+function respNextStep() { if (respPos < respStages.length - 1) respStep(respPos + 1); }
+function respReset() {
+  respPos = -1; respTotals = {atp:0,nadh:0,fadh2:0,co2:0};
+  buildRespTrack();
+  const status = document.getElementById('resp-status');
+  status.innerHTML = '🎬 Ready to begin — click the button below.';
+  status.style.background = 'var(--lav-pale)'; status.style.borderColor = 'var(--lavender)'; status.style.color = 'var(--lavender)';
+  ['resp-atp','resp-nadh','resp-fadh2','resp-co2'].forEach(id => document.getElementById(id).textContent = '0');
+  document.getElementById('btn-resp-start').disabled = false;
+  document.getElementById('btn-resp-next').disabled = true;
+  document.getElementById('resp-hint').textContent = 'Click "Begin" to start stepping through aerobic respiration';
+}
+buildRespTrack();
+
+// ═══════════════════════════════════════════════
+// EVIDENCE CARDS (cell signalling)
+// ═══════════════════════════════════════════════
+function showEvidence(type) {
+  document.querySelectorAll('#sec-5 .ev-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('#sec-5 .ev-panel').forEach(p => p.classList.remove('show'));
+  event.currentTarget.classList.add('active');
+  const panel = document.getElementById('ev-' + type);
+  if (panel) panel.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════
+// LIMITING FACTORS LAB
+// ═══════════════════════════════════════════════
+function updateRate() {
+  const light = +document.getElementById('light-slider').value;
+  const co2   = +document.getElementById('co2-slider').value;
+  const temp  = +document.getElementById('temp-slider').value;
+  document.getElementById('light-val').textContent = light + '%';
+  document.getElementById('co2-val').textContent = co2 + '%';
+  document.getElementById('temp-val').textContent = temp + '%';
+  // rate limited by whichever factor is lowest (Blackman's law), with slight averaging
+  const minVal = Math.min(light, co2, temp);
+  const avg = (light + co2 + temp) / 3;
+  const rate = Math.round(minVal * 0.75 + avg * 0.25);
+  document.getElementById('rate-num').textContent = rate + '%';
+  document.getElementById('rate-bar').style.width = rate + '%';
+  let limiter = 'light intensity';
+  if (co2 === minVal && co2 <= light && co2 <= temp) limiter = 'CO₂ concentration';
+  if (temp === minVal && temp <= light && temp <= co2) limiter = 'temperature';
+  if (light === minVal && light <= co2 && light <= temp) limiter = 'light intensity';
+  document.getElementById('rate-limit-msg').textContent = 'Currently limited by: ' + limiter;
+}
+updateRate();
+
+// ═══════════════════════════════════════════════
+// QUIZ DATA — mixed C1/C2
+// ═══════════════════════════════════════════════
+const quizData = [
+  { q:"Where in the cell does glycolysis take place?", opts:["Mitochondrial matrix","Cytoplasm","Thylakoid membrane","Nucleus"], ans:1, fb:"Glycolysis happens in the cytoplasm, outside the mitochondrion, and doesn't require oxygen." },
+  { q:"What is the net ATP and NADH yield of glycolysis per glucose molecule?", opts:["2 ATP, 2 NADH","4 ATP, 4 NADH","2 ATP, 4 NADH","36 ATP, 2 NADH"], ans:0, fb:"Glycolysis produces a net 2 ATP and 2 NADH per glucose." },
+  { q:"What happens during the link reaction?", opts:["Pyruvate is converted to acetyl CoA, releasing CO2","Glucose is split into two pyruvate","Water is split to release oxygen","ATP synthase generates ATP"], ans:0, fb:"The link reaction converts pyruvate into acetyl CoA in the mitochondrial matrix, releasing CO2 and producing NADH." },
+  { q:"Why does the electron transport chain stop working without oxygen?", opts:["The proteins in the chain dissolve","Oxygen is the final electron acceptor; without it, electrons have nowhere to go","Oxygen powers ATP synthase directly","NADH can't be made without oxygen"], ans:1, fb:"Oxygen is the final electron acceptor in the ETC, combining with electrons and H+ to form water. Without it, the chain backs up." },
+  { q:"What is chemiosmosis?", opts:["The diffusion of glucose into cells","ATP synthesis driven by H+ ions flowing through ATP synthase down their gradient","The splitting of water during photosynthesis","The movement of pyruvate into the mitochondrion"], ans:1, fb:"Chemiosmosis is ATP production powered by protons flowing through ATP synthase, down their electrochemical gradient." },
+  { q:"In anaerobic respiration in animal muscle cells, pyruvate is converted into:", opts:["Ethanol and CO2","Lactate","Acetyl CoA","Citrate"], ans:1, fb:"In animal cells, anaerobic respiration (fermentation) converts pyruvate into lactate, regenerating NAD+." },
+  { q:"Which stage of aerobic respiration produces the most ATP?", opts:["Glycolysis","Link reaction","Krebs cycle","Oxidative phosphorylation (ETC + chemiosmosis)"], ans:3, fb:"Oxidative phosphorylation produces roughly 26-28 of the ~30-32 total ATP per glucose — by far the most." },
+  { q:"Where do the light-dependent reactions of photosynthesis occur?", opts:["Stroma","Thylakoid membrane","Mitochondrial matrix","Cytoplasm"], ans:1, fb:"The light-dependent reactions take place in the thylakoid membrane, where chlorophyll and the photosystems are located." },
+  { q:"What is produced when water is split during photolysis?", opts:["CO2, ATP, and glucose","Oxygen, H+ ions, and electrons","NADPH and RuBP","Pyruvate and acetyl CoA"], ans:1, fb:"Photolysis splits water into oxygen (released as waste), H+ ions, and electrons that replace those lost by chlorophyll." },
+  { q:"What two products of the light-dependent reactions are used by the Calvin cycle?", opts:["Glucose and oxygen","ATP and NADPH","CO2 and water","RuBP and Rubisco"], ans:1, fb:"The Calvin cycle uses the ATP and NADPH generated by the light-dependent reactions to fix and reduce carbon." },
+  { q:"What is the role of Rubisco?", opts:["It transports electrons in the ETC","It catalyses the fixation of CO2 onto RuBP","It splits water during photolysis","It pumps H+ into the thylakoid lumen"], ans:1, fb:"Rubisco is the enzyme that fixes CO2 by attaching it to RuBP, the first step of the Calvin cycle." },
+  { q:"According to Blackman's law of limiting factors, increasing light intensity will only increase the rate of photosynthesis if:", opts:["Light is currently the factor in shortest supply","CO2 is already at maximum","Temperature is very low","The plant is in complete darkness"], ans:0, fb:"A factor only limits the rate if it's the one in shortest supply — increasing a non-limiting factor has no effect." },
+  { q:"A ligand that is lipid-soluble and can diffuse directly through the plasma membrane would most likely bind to:", opts:["An ion channel-linked receptor","A G-protein coupled receptor","An intracellular receptor", "An enzyme-linked receptor"], ans:2, fb:"Lipid-soluble ligands like steroid hormones cross the membrane directly and bind intracellular receptors in the cytoplasm or nucleus." },
+  { q:"What is a second messenger?", opts:["A backup receptor in case the first one fails","A small molecule that relays a signal inside the cell after receptor activation", "A second ligand needed to activate a receptor", "The protein that makes up the receptor itself"], ans:1, fb:"A second messenger (e.g. cAMP) is a small molecule that carries the signal onward inside the cell after the receptor is activated." },
+  { q:"Adrenaline binding a GPCR on a liver cell most directly leads to:", opts:["A gene being switched on in the nucleus","An ion channel opening", "Activation of an enzyme that produces cAMP, triggering glycogen breakdown", "Water being split to release oxygen"], ans:2, fb:"GPCR activation by adrenaline triggers a G-protein, which activates adenylyl cyclase to produce cAMP, starting a signalling cascade." },
+  { q:"Why can a single hormone molecule trigger such a large cellular response?", opts:["Hormones are much bigger than other molecules", "Signal transduction cascades amplify the signal at each step", "Hormones directly become ATP", "Receptors duplicate the hormone molecule"], ans:1, fb:"Each activated protein in a signalling cascade can activate many copies of the next protein, amplifying a tiny signal into a large response." }
+];
+let quizScore = 0, quizAnswered = 0;
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  quizScore = 0; quizAnswered = 0;
+  document.getElementById('score-panel').style.display = 'none';
+  quizData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `
+      <div class="quiz-q">${idx+1}. ${item.q}</div>
+      <div class="quiz-options">
+        ${item.opts.map((opt, i) => `<button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">${String.fromCharCode(65+i)}. ${opt}</button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="qfb-${idx}"></div>`;
+    container.appendChild(card);
+  });
+}
+function checkAnswer(btn, qIdx, optIdx) {
+  const card = btn.closest('.quiz-card');
+  const buttons = card.querySelectorAll('.quiz-opt');
+  const fb = document.getElementById('qfb-' + qIdx);
+  const correct = quizData[qIdx].ans;
+  buttons.forEach(b => b.disabled = true);
+  if (optIdx === correct) {
+    btn.classList.add('correct');
+    fb.textContent = '✅ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show correct-fb';
+    quizScore++;
+  } else {
+    btn.classList.add('wrong');
+    buttons[correct].classList.add('correct');
+    fb.textContent = '❌ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-feedback show wrong-fb';
+  }
+  quizAnswered++;
+  if (quizAnswered === quizData.length) showScore();
+}
+function showScore() {
+  const panel = document.getElementById('score-panel');
+  panel.style.display = 'block';
+  document.getElementById('score-display').textContent = quizScore + '/' + quizData.length;
+  const pct = quizScore / quizData.length;
+  let msg;
+  if (pct >= .9) msg = '🌟 Outstanding! You have a strong grip on all three topics. Exam ready!';
+  else if (pct >= .75) msg = '👍 Great work! Review the ones you missed, then retake to lock it in.';
+  else if (pct >= .6) msg = '📚 Good start — go back through the vocab sections for your weaker topic, then retake.';
+  else msg = "💪 Keep going! Re-read the concept boxes in Sections 1, 3, and 5 slowly, then retake — you've got time before Friday.";
+  document.getElementById('score-msg').textContent = msg;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+function retakeQuiz() { buildQuiz(); }
+buildQuiz();
+
+// ═══════════════════════════════════════════════
+// FILL-IN-THE-BLANK
+// ═══════════════════════════════════════════════
+const fills = [
+  { q: "Glycolysis takes place in the ___ of the cell.", ans: "cytoplasm" },
+  { q: "The link reaction converts pyruvate into ___.", ans: "acetyl coa" },
+  { q: "The Krebs cycle takes place in the mitochondrial ___.", ans: "matrix" },
+  { q: "Oxygen acts as the final ___ acceptor in the electron transport chain.", ans: "electron" },
+  { q: "ATP made using the H+ gradient through ATP synthase is called ___.", ans: "chemiosmosis" },
+  { q: "During fermentation, pyruvate is converted to regenerate ___ so glycolysis can continue.", ans: "nad+" },
+  { q: "The light-dependent reactions occur in the ___ membrane.", ans: "thylakoid" },
+  { q: "Splitting water to release oxygen during photosynthesis is called ___.", ans: "photolysis" },
+  { q: "The enzyme that fixes CO2 onto RuBP is called ___.", ans: "rubisco" },
+  { q: "A small molecule like cAMP that relays a signal inside a cell is called a ___ messenger.", ans: "second" },
+];
+function buildFills() {
+  const container = document.getElementById('fill-container');
+  container.innerHTML = '';
+  fills.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-card';
+    div.innerHTML = `<div class="fill-q">${item.q.replace('___', `<input class="blank-input" id="fill-${idx}" type="text" placeholder="?" onkeydown="if(event.key==='Enter')checkFill(${idx})">`)}</div>`;
+    container.appendChild(div);
+  });
+}
+function checkFill(idx) {
+  const input = document.getElementById('fill-' + idx);
+  const val = input.value.trim().toLowerCase();
+  const correct = fills[idx].ans.toLowerCase();
+  if (val === correct || val.includes(correct) || correct.includes(val)) {
+    input.classList.remove('err'); input.classList.add('ok');
+    input.value = fills[idx].ans;
+  } else {
+    input.classList.remove('ok'); input.classList.add('err');
+  }
+}
+function checkAllFills() { fills.forEach((_, idx) => checkFill(idx)); }
+function resetFills() {
+  fills.forEach((_, idx) => { const input = document.getElementById('fill-' + idx); if (input) { input.value=''; input.classList.remove('ok','err'); } });
+}
+buildFills();
+
+// ═══════════════════════════════════════════════
+// SUMMARY / SUBMIT
+// ═══════════════════════════════════════════════
+function fillSummary(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (text && text.trim()) { el.textContent = text; el.classList.remove('empty'); }
+  else { el.textContent = 'Not answered yet'; el.classList.add('empty'); }
+}
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim();
+  document.getElementById('summaryName').textContent = name || 'Anonymous Student';
+  document.getElementById('summaryDate').textContent = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  document.getElementById('sum-quiz').textContent = quizAnswered === quizData.length ? (quizScore + ' / ' + quizData.length + ' (' + Math.round(100*quizScore/quizData.length) + '%)') : 'Quiz not completed yet';
+  document.getElementById('sum-quiz').classList.toggle('empty', quizAnswered !== quizData.length);
+  fillSummary('sum-warmup', document.getElementById('warmup-predict').value);
+  fillSummary('sum-resp', document.getElementById('resp-predict').value);
+  fillSummary('sum-light', document.getElementById('light-predict').value);
+  fillSummary('sum-r1', document.getElementById('r1').value);
+  fillSummary('sum-r2', document.getElementById('r2').value);
+  fillSummary('sum-r3', document.getElementById('r3').value);
+  fillSummary('sum-r4', document.getElementById('r4').value);
+}
+function buildPlainText() {
+  const name = document.getElementById('studentName').value.trim() || 'Anonymous Student';
+  const date = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  const quizLine = quizAnswered === quizData.length ? (quizScore + '/' + quizData.length) : 'Not completed';
+  return `ENERGY & SIGNALS EXPLORER — IB Biology Topic C\nStudent: ${name}\nDate: ${date}\n\nQuiz Score: ${quizLine}\n\nWarm-up Prediction:\n${document.getElementById('warmup-predict').value || '(not answered)'}\n\nRespiration Lab Prediction:\n${document.getElementById('resp-predict').value || '(not answered)'}\n\nLimiting Factors Lab Prediction:\n${document.getElementById('light-predict').value || '(not answered)'}\n\nQ1 — The Big Connection:\n${document.getElementById('r1').value || '(not answered)'}\n\nQ2 — Respiration:\n${document.getElementById('r2').value || '(not answered)'}\n\nQ3 — Photosynthesis:\n${document.getElementById('r3').value || '(not answered)'}\n\nQ4 — Cell Signalling:\n${document.getElementById('r4').value || '(not answered)'}\n`;
+}
+function copyResults() {
+  buildSummary();
+  const text = buildPlainText();
+  navigator.clipboard.writeText(text).then(() => {
+    document.getElementById('copyConfirm').textContent = '✅ Copied! Paste it wherever you need to submit.';
+    setTimeout(() => document.getElementById('copyConfirm').textContent = '', 4000);
+  }).catch(() => {
+    document.getElementById('copyConfirm').textContent = '⚠️ Could not copy automatically — please select and copy manually.';
+  });
+}
+function emailResults() {
+  buildSummary();
+  const text = buildPlainText();
+  const subject = encodeURIComponent('Energy & Signals Explorer — Completed Work');
+  const body = encodeURIComponent(text);
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+</script>
+</body>
+</html>
