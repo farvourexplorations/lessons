@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6GP.04 Environmental Change &amp; Sustainability — Interactive Lesson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#1F7A4D; --green-dark:#123D28; --green-light:#E1F3EA; --green-mid:#4FA974;
+  --coral:#E0563F; --coral-light:#FCE9E5;
+  --amber:#CE9526; --amber-light:#FAF1DC;
+  --mint:#2E9E76; --mint-light:#E3F5EC;
+  --sky:#2B79C9; --sky-light:#E8F1FB;
+  --ink:#20232B; --ink-soft:#585E6C;
+  --paper:#FFFFFF; --cream:#F7F5F1; --line:#E1DFEA;
+  --r-lg:22px; --r-md:14px; --r-sm:8px;
+  --shadow: 0 10px 30px rgba(18,61,40,.14);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0; background:var(--cream); color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;
+  overflow:hidden;
+}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+
+/* ===== App shell ===== */
+#app{position:relative; width:100vw; height:100vh; display:flex; flex-direction:column;}
+
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 28px; background:var(--paper); border-bottom:1px solid var(--line);
+  flex:0 0 auto; z-index:20;
+}
+.crumb{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft); font-weight:600;}
+.crumb .tag{
+  background:var(--green); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12px;
+  padding:5px 12px; border-radius:100px; letter-spacing:.3px;
+}
+.crumb .sep{color:#C6C2D6;}
+.crumb .current{color:var(--green-dark);}
+
+.dots{display:flex; gap:6px; align-items:center; flex-wrap:wrap; max-width:40vw;}
+.dot{
+  width:9px; height:9px; border-radius:50%; background:#DCE6DF; border:none; cursor:pointer;
+  transition:all .25s;
+}
+.dot.active{ background:var(--green); width:22px; border-radius:6px;}
+.dot:hover{background:var(--green-mid);}
+
+.counter{font-size:12px; color:var(--ink-soft); font-weight:600; font-variant-numeric:tabular-nums; min-width:50px; text-align:right;}
+
+/* ===== Stage ===== */
+.stage{position:relative; flex:1 1 auto; overflow:hidden;}
+.slide{
+  position:absolute; inset:0; opacity:0; pointer-events:none;
+  transform:translateX(30px) scale(.99);
+  transition:opacity .45s ease, transform .45s ease;
+  overflow-y:auto;
+}
+.slide.active{opacity:1; pointer-events:auto; transform:translateX(0) scale(1);}
+.slide.prev{transform:translateX(-30px) scale(.99);}
+
+.slide-inner{
+  max-width:1180px; margin:0 auto; padding:40px 44px 90px;
+  min-height:100%;
+}
+
+/* nav arrows */
+.navbtn{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:15;
+  width:46px; height:46px; border-radius:50%; border:1px solid var(--line);
+  background:var(--paper); box-shadow:var(--shadow); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; color:var(--green-dark);
+  transition:.2s;
+}
+.navbtn:hover{background:var(--green); color:#fff; border-color:var(--green);}
+.navbtn.disabled{opacity:.25; pointer-events:none;}
+#prevBtn{left:16px;} #nextBtn{right:16px;}
+.navbtn svg{width:20px; height:20px;}
+
+/* ===== shared components ===== */
+.chevron-badge{
+  display:inline-flex; align-items:center; gap:10px; background:var(--green); color:#fff;
+  padding:9px 20px 9px 16px; font-family:'Poppins'; font-weight:700; font-size:15px;
+  clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%); margin-bottom:16px;
+}
+.eyebrow{
+  font-family:'Poppins'; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--coral); margin-bottom:8px;
+}
+h1.slide-title{font-size:32px; font-weight:800; color:var(--green-dark); margin:0 0 6px; line-height:1.15;}
+h2.section-title{font-size:25px; font-weight:700; color:var(--green-dark); margin:0 0 14px;}
+h3.mini-title{font-size:17px; font-weight:700; color:var(--ink); margin:0 0 8px;}
+p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
+.lede{font-size:17px; color:var(--ink-soft); margin-bottom:22px; max-width:700px;}
+.term{color:var(--coral); font-weight:700; cursor:help; border-bottom:1.5px dotted var(--coral);}
+
+.box{
+  border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--paper);
+  box-shadow:var(--shadow);
+}
+.box-head{
+  padding:12px 20px; font-family:'Poppins'; font-weight:700; font-size:14px; color:#fff;
+  display:flex; align-items:center; gap:8px;
+}
+.box-body{padding:20px 22px;}
+.box.green .box-head{background:var(--green);}
+.box.coral .box-head{background:var(--coral);}
+.box.amber .box-head{background:var(--amber);}
+.box.mint .box-head{background:var(--mint);}
+.box.sky .box-head{background:var(--sky);}
+
+.two-col{display:grid; grid-template-columns:1.05fr .95fr; gap:36px; align-items:start;}
+@media (max-width:900px){.two-col{grid-template-columns:1fr;}}
+
+.pill{
+  display:inline-block; padding:5px 13px; border-radius:100px; font-size:12.5px; font-weight:700;
+  background:var(--green-light); color:var(--green-dark); margin:3px 5px 3px 0;
+}
+
+.check-item{display:flex; gap:10px; align-items:flex-start; margin-bottom:10px; font-size:14.5px;}
+.check-item svg{flex:0 0 auto; margin-top:2px; width:16px; height:16px; color:var(--green);}
+
+/* buttons generic */
+.btn{
+  border:none; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:14px;
+  padding:10px 20px; border-radius:100px; background:var(--green); color:#fff; transition:.2s;
+}
+.btn:hover{background:var(--green-dark);}
+.btn.ghost{background:transparent; border:1.5px solid var(--green); color:var(--green);}
+.btn.ghost:hover{background:var(--green-light);}
+.btn[disabled]{opacity:.45; cursor:default;}
+
+.hint{
+  font-size:12.5px; color:var(--ink-soft); background:var(--green-light); border-radius:100px;
+  padding:6px 14px; display:inline-flex; gap:6px; align-items:center; margin-bottom:18px; font-weight:600;
+}
+.hint svg{width:14px; height:14px; flex:0 0 auto;}
+
+/* ============ SLIDE 0 : COVER ============ */
+.cover{
+  height:100%; display:flex; align-items:center; justify-content:center; position:relative;
+  background:
+    radial-gradient(ellipse at 20% 15%, rgba(255,255,255,.10), transparent 45%),
+    linear-gradient(160deg, var(--green) 0%, var(--green-dark) 62%, #0B2418 100%);
+  overflow:hidden;
+}
+.cover-leaf{position:absolute; opacity:.13; background:#fff; border-radius:0% 100% 0% 100%;}
+.cover-content{position:relative; z-index:2; text-align:center; color:#fff; max-width:780px; padding:0 30px;}
+.cover-content .unit{font-family:'Poppins'; font-weight:700; letter-spacing:3px; font-size:13px; text-transform:uppercase; color:#CFEBDB; margin-bottom:14px;}
+.cover-content h1{font-size:47px; font-weight:800; margin:0 0 10px; line-height:1.1;}
+.cover-content .sub{font-size:18px; color:#E3F3EA; font-weight:500; margin-bottom:34px;}
+.cover-chip-row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:38px;}
+.cover-chip{
+  background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff;
+  padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600; backdrop-filter:blur(4px);
+}
+.cover-start{
+  background:var(--coral); color:#fff; border:none; font-family:'Poppins'; font-weight:700; font-size:16px;
+  padding:15px 34px; border-radius:100px; cursor:pointer; box-shadow:0 12px 26px rgba(224,86,63,.4);
+  display:inline-flex; align-items:center; gap:10px; transition:.2s;
+}
+.cover-start:hover{transform:translateY(-2px); box-shadow:0 16px 30px rgba(224,86,63,.5);}
+.cover-note{margin-top:22px; font-size:13px; color:#BFE0CE;}
+
+/* ============ objectives slide ============ */
+.obj-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 22px; margin-top:6px;}
+@media (max-width:800px){.obj-grid{grid-template-columns:1fr;}}
+.obj-card{
+  display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:var(--r-md);
+  background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.2s;
+}
+.obj-card:hover{border-color:var(--green-mid); box-shadow:var(--shadow);}
+.obj-num{
+  flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--green-light); color:var(--green-dark);
+  font-family:'Poppins'; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;
+}
+.obj-card.done .obj-num{background:var(--green); color:#fff;}
+.obj-card.done p{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:#C6C2D6;}
+.obj-card p{margin:0; font-size:13.8px; line-height:1.5;}
+
+/* ============ tabs ============ */
+.tabs{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+.tab-btn{
+  padding:10px 18px; border-radius:100px; border:1.5px solid var(--line); background:#fff; cursor:pointer;
+  font-family:'Poppins'; font-weight:600; font-size:13.5px; color:var(--ink-soft); transition:.2s;
+}
+.tab-btn.active{background:var(--green); border-color:var(--green); color:#fff;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block; animation:fadein .35s;}
+@keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+/* ============ notice-think-wonder cycle diagram ============ */
+.cycle-wrap{display:flex; justify-content:center; margin:6px 0 22px;}
+.cycle-wrap svg{width:100%; max-width:640px; height:auto;}
+
+/* ============ photo compare ============ */
+.photo-compare{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:16px;}
+@media (max-width:820px){.photo-compare{grid-template-columns:1fr;}}
+.photo-card{position:relative; border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--shadow); border:1px solid var(--line); background:#fff;}
+.photo-card img{display:block; width:100%; height:230px; object-fit:cover; background:var(--green-light);}
+.photo-label{position:absolute; top:12px; left:12px; padding:5px 14px; border-radius:100px; font-family:'Poppins'; font-weight:700; font-size:11.5px; color:#fff; letter-spacing:.6px; text-transform:uppercase; box-shadow:0 4px 10px rgba(0,0,0,.2);}
+.photo-label.before{background:var(--mint);}
+.photo-label.after{background:var(--coral);}
+.photo-cap{padding:10px 14px; font-size:12.5px; color:var(--ink-soft); border-top:1px solid var(--line);}
+.wonder-bank{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;}
+
+/* ============ sort cards (open/closed questions) ============ */
+.sort-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:10px;}
+@media (max-width:820px){.sort-grid{grid-template-columns:1fr;}}
+.sort-card{
+  border:1.5px solid var(--line); background:#fff; border-radius:var(--r-md); padding:16px 18px;
+  cursor:pointer; transition:.2s; box-shadow:var(--shadow);
+}
+.sort-card:hover{border-color:var(--green-mid);}
+.sort-q{font-family:'Poppins'; font-weight:700; font-size:14.5px; color:var(--ink); margin:0;}
+.sort-reveal{max-height:0; overflow:hidden; transition:max-height .35s ease;}
+.sort-card.open .sort-reveal{max-height:120px; margin-top:12px;}
+.sort-tag{display:inline-block; padding:4px 12px; border-radius:100px; font-size:11.5px; font-weight:700; font-family:'Poppins'; margin-bottom:6px;}
+.sort-tag.is-open{background:var(--mint-light); color:#1E6B4E;}
+.sort-tag.is-closed{background:var(--coral-light); color:#A8362A;}
+.sort-explain{font-size:13px; color:var(--ink-soft); margin:0;}
+.sort-hint{font-size:11.5px; color:var(--ink-soft); margin-top:2px;}
+
+/* ============ video ============ */
+.video-wrap{position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:var(--r-lg); box-shadow:var(--shadow); border:1px solid var(--line);}
+.video-wrap iframe{position:absolute; top:0; left:0; width:100%; height:100%; border:0;}
+
+/* ============ quiz ============ */
+.scenario{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); padding:22px 24px; box-shadow:var(--shadow);}
+.quiz-opts{display:flex; gap:12px; margin-top:14px; flex-wrap:wrap;}
+.quiz-opt{
+  flex:1 1 220px; border:1.5px solid var(--line); background:#fff; border-radius:var(--r-md); padding:14px 16px;
+  cursor:pointer; font-weight:700; font-family:'Poppins'; font-size:13.5px; text-align:left; transition:.2s;
+}
+.quiz-opt:hover{border-color:var(--green-mid);}
+.quiz-opt.correct{background:var(--mint-light); border-color:var(--mint); color:#1E6B4E;}
+.quiz-opt.wrong{background:var(--coral-light); border-color:var(--coral); color:#A8362A;}
+.quiz-opt[disabled]{cursor:default;}
+#quizFeedback{margin-top:16px; padding:14px 18px; border-radius:var(--r-md); background:var(--green-light); color:var(--green-dark); font-size:14px; display:none;}
+#quizFeedback.show{display:block;}
+
+/* ============ glossary flip cards ============ */
+.gloss-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:10px;}
+@media (max-width:900px){.gloss-grid{grid-template-columns:repeat(2,1fr);}}
+.gloss-card{height:118px; perspective:800px; cursor:pointer;}
+.gloss-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+.gloss-card.flip .gloss-inner{transform:rotateY(180deg);}
+.gloss-face{
+  position:absolute; inset:0; backface-visibility:hidden; border-radius:var(--r-md); display:flex;
+  align-items:center; justify-content:center; text-align:center; padding:12px; font-size:13.5px;
+}
+.gloss-face.front{background:var(--green); color:#fff; font-family:'Poppins'; font-weight:700; font-size:14.5px;}
+.gloss-face.back{background:var(--paper); border:1.5px solid var(--green-light); color:var(--ink); transform:rotateY(180deg); font-size:12.5px; line-height:1.5;}
+
+/* ============ plenary sentence frame ============ */
+.frame-card{
+  background:linear-gradient(135deg,var(--green-light),#fff); border:1.5px dashed var(--green-mid); border-radius:var(--r-lg);
+  padding:30px 32px; text-align:center; margin-top:10px;
+}
+.frame-card .frame-text{font-family:'Poppins'; font-weight:700; font-size:22px; color:var(--green-dark); line-height:1.6;}
+.frame-blank{display:inline-block; min-width:150px; border-bottom:2.5px solid var(--coral); color:var(--coral); padding:0 8px;}
+.example-box{margin-top:18px; padding:14px 18px; border-radius:var(--r-md); background:#fff; border:1px solid var(--line); font-size:14.5px; color:var(--ink-soft); font-style:italic; min-height:26px;}
+
+/* ============ notebook checklist ============ */
+.assess-list{margin-top:10px;}
+.assess-item{display:flex; gap:12px; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--line); cursor:pointer;}
+.assess-box{
+  flex:0 0 auto; width:22px; height:22px; border-radius:6px; border:2px solid var(--line); display:flex;
+  align-items:center; justify-content:center; color:#fff; margin-top:1px; transition:.2s;
+}
+.assess-item.checked .assess-box{background:var(--mint); border-color:var(--mint);}
+.assess-item p{margin:0; font-size:14.5px;}
+.assess-progress{height:8px; background:var(--green-light); border-radius:100px; overflow:hidden; margin-top:16px;}
+.assess-fill{height:100%; width:0%; background:var(--mint); transition:.35s;}
+
+/* ============ resources chip ============ */
+.res-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:10px;}
+.res-chip{display:flex; align-items:center; gap:8px; padding:9px 16px; border-radius:100px; background:var(--sky-light); color:var(--sky); font-family:'Poppins'; font-weight:700; font-size:12.5px;}
+.res-chip svg{width:15px; height:15px;}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="crumb">
+      <span class="tag">6GP.04</span>
+      <span class="sep">/</span>
+      <span class="current">Environmental Change &amp; Sustainability</span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="counter" id="counter">1 / 10</div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- ================= SLIDE 0 : COVER ================= -->
+    <section class="slide">
+      <div class="cover">
+        <div class="cover-leaf" style="width:220px;height:220px; top:-50px; left:-50px;"></div>
+        <div class="cover-leaf" style="width:160px;height:160px; bottom:-30px; right:-20px;"></div>
+        <div class="cover-leaf" style="width:100px;height:100px; bottom:70px; left:10%;"></div>
+        <div class="cover-content">
+          <div class="unit">Year 6C &middot; Geography Inquiry &middot; T1 W13 Day 1</div>
+          <h1>Environmental Change &amp; Sustainability</h1>
+          <div class="sub">Good inquiry starts with a good question. Today we notice, think, and wonder about places that are changing around the world.</div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">🌍 Environmental change</span>
+            <span class="cover-chip">🔎 Notice &middot; Think &middot; Wonder</span>
+            <span class="cover-chip">❓ Great questions</span>
+            <span class="cover-chip">🌱 Sustainability</span>
+          </div>
+          <button class="cover-start" onclick="goTo(1)">
+            Start the lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <div class="cover-note">6GP.04 &middot; Ask questions about environmental change</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 1 : TODAY'S LEARNING ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">6GP.04</div>
+        <h1 class="slide-title">We're learning to ask great questions</h1>
+        <p class="lede"><strong>Learning objective:</strong> ask questions about environmental change.<br><strong>Success criteria:</strong> I can ask questions about environmental change. Tap each goal as you meet it today.</p>
+        <div class="obj-grid" id="objGrid">
+          <div class="obj-card" data-i="1"><div class="obj-num">1</div><p>I can look closely at a photo and notice details of environmental change</p></div>
+          <div class="obj-card" data-i="2"><div class="obj-num">2</div><p>I can think about what might be causing the change I see</p></div>
+          <div class="obj-card" data-i="3"><div class="obj-num">3</div><p>I can wonder and turn my thinking into a question</p></div>
+          <div class="obj-card" data-i="4"><div class="obj-num">4</div><p>I can tell the difference between an open inquiry question and a closed one</p></div>
+          <div class="obj-card" data-i="5"><div class="obj-num">5</div><p>I can choose one question I'm curious about and explain why</p></div>
+        </div>
+        <div style="margin-top:22px;">
+          <span class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Key vocabulary: environmental change &middot; sustainability &middot; deforestation &middot; pollution &middot; urbanisation &middot; inquiry question &middot; open question &middot; closed question</span>
+        </div>
+        <div class="box green">
+          <div class="box-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M9 3v18M15 3v18M4 8h16M4 16h16"/></svg>
+            Notebooks today
+          </div>
+          <div class="box-body">
+            <p style="margin:0;">Everything you write today goes in your <strong>notebook</strong> — this screen is for looking, discussing, and thinking. There's nothing to type here.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 2 : NOTICE-THINK-WONDER ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Starter &middot; 5 minutes</div>
+        <h1 class="slide-title">Look closely. What's changed?</h1>
+        <p class="lede">Good geographers don't just look at a photo — they <span class="term" data-def="A thinking routine: look carefully, think about what's happening, then ask a question about it.">Notice, Think, and Wonder</span> about it. This routine turns a simple photo into the start of an investigation.</p>
+
+        <div class="cycle-wrap">
+          <svg viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#B9C4BD"/></marker>
+            </defs>
+            <path d="M110,110 C160,50 220,50 260,100" fill="none" stroke="#B9C4BD" stroke-width="2.5" stroke-dasharray="5 5" marker-end="url(#arrowhead)"/>
+            <path d="M320,100 C360,50 420,50 470,100" fill="none" stroke="#B9C4BD" stroke-width="2.5" stroke-dasharray="5 5" marker-end="url(#arrowhead)"/>
+            <path d="M530,110 C560,150 560,170 545,190" fill="none" stroke="#B9C4BD" stroke-width="2.5" stroke-dasharray="5 5" marker-end="url(#arrowhead)"/>
+
+            <circle cx="80" cy="100" r="46" fill="var(--coral)"/>
+            <text x="80" y="95" text-anchor="middle" font-size="24" font-family="Poppins">👀</text>
+            <text x="80" y="118" text-anchor="middle" font-size="12" fill="#fff" font-family="Poppins" font-weight="700">NOTICE</text>
+
+            <circle cx="290" cy="90" r="46" fill="var(--amber)"/>
+            <text x="290" y="85" text-anchor="middle" font-size="24" font-family="Poppins">🧠</text>
+            <text x="290" y="108" text-anchor="middle" font-size="12" fill="#fff" font-family="Poppins" font-weight="700">THINK</text>
+
+            <circle cx="500" cy="100" r="46" fill="var(--sky)"/>
+            <text x="500" y="95" text-anchor="middle" font-size="24" font-family="Poppins">💭</text>
+            <text x="500" y="118" text-anchor="middle" font-size="12" fill="#fff" font-family="Poppins" font-weight="700">WONDER</text>
+
+            <circle cx="500" cy="195" r="0" fill="none"/>
+            <rect x="400" y="180" width="200" height="34" rx="17" fill="var(--mint)"/>
+            <text x="500" y="202" text-anchor="middle" font-size="12.5" fill="#fff" font-family="Poppins" font-weight="700">A QUESTION! ❓</text>
+          </svg>
+        </div>
+
+        <div class="tabs" id="ntwTabs">
+          <button class="tab-btn active" data-tab="notice">👀 Notice</button>
+          <button class="tab-btn" data-tab="think">🧠 Think</button>
+          <button class="tab-btn" data-tab="wonder">💭 Wonder</button>
+        </div>
+        <div class="tab-panel active" id="tab-notice">
+          <p>Write down exactly what you can <strong>see</strong> in the photo — no guessing yet, just facts. <em>Example: "The trees are gone. The ground is brown and bare. There are tyre tracks."</em></p>
+        </div>
+        <div class="tab-panel" id="tab-think">
+          <p>Use what you noticed to work out what <strong>change</strong> might be happening. <em>Example: "I think this forest has been cut down, maybe to clear land for farming or building."</em></p>
+        </div>
+        <div class="tab-panel" id="tab-wonder">
+          <p>Turn your thinking into a genuine <strong>question</strong> — something you'd actually like to find out. <em>Example: "Why is this forest being cleared, and what happens to the animals that lived there?"</em></p>
+        </div>
+
+        <div class="hint" style="margin-top:6px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Remember: good inquiry starts with a good question.</div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 3 : EXPLORE GALLERY ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Main activity &middot; Notice-Think-Wonder</div>
+        <h1 class="slide-title">Explore four places that have changed</h1>
+        <p class="lede">In pairs or small groups: pick a scenario below, then use your <strong>notebooks</strong> to Notice, Think, and Wonder about the before-and-after. Try all four if you have time.</p>
+
+        <div class="tabs" id="galleryTabs">
+          <button class="tab-btn active" data-tab="forest">🌳 Forest</button>
+          <button class="tab-btn" data-tab="river">💧 River</button>
+          <button class="tab-btn" data-tab="beach">🏖️ Beach</button>
+          <button class="tab-btn" data-tab="town">🏙️ Town</button>
+        </div>
+
+        <div class="tab-panel active" id="tab-forest">
+          <div class="photo-compare">
+            <div class="photo-card">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Khao%20Sok%20primary%20tropical%20rainforest,%20southern%20Thailand.jpg" alt="A healthy, dense tropical rainforest canopy">
+              <span class="photo-label before">Before</span>
+              <div class="photo-cap">A healthy rainforest — full canopy, layers of life</div>
+            </div>
+            <div class="photo-card">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Deforestation%20of%20Rainforest.jpg" alt="A cleared forest area showing deforestation">
+              <span class="photo-label after">After</span>
+              <div class="photo-cap">The same kind of land after deforestation</div>
+            </div>
+          </div>
+          <div class="wonder-bank"><span class="pill">🔎 What causes forests to disappear?</span><span class="pill">🔎 What happens when people cut down trees?</span></div>
+        </div>
+
+        <div class="tab-panel" id="tab-river">
+          <div class="photo-compare">
+            <div class="photo-card">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Clear%20running%20stream.JPG" alt="A clean, clear flowing river">
+              <span class="photo-label before">Before</span>
+              <div class="photo-cap">A clean river — clear water, healthy banks</div>
+            </div>
+            <div class="photo-card">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/1078Garbage-plastic%20pollution%20in%20Marilao%20River%2004.jpg" alt="A river polluted with plastic waste">
+              <span class="photo-label after">After</span>
+              <div class="photo-cap">A river choked with plastic and rubbish</div>
+            </div>
+          </div>
+          <div class="wonder-bank"><span class="pill">🔎 Why is the river becoming polluted?</span></div>
+        </div>
+
+        <div class="tab-panel" id="tab-beach">
+          <div class="photo-compare">
+            <div class="photo-card">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/White%20sand%20beach%20at%20Pulau%20Maiga,%20Sabah,%20Malaysia.jpg" alt="A clean tropical white sand beach">
+              <span class="photo-label before">Before</span>
+              <div class="photo-cap">A clean beach — soft sand, clear water</div>
+            </div>
+            <div class="photo-card">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Water%20Pollution%20with%20Trash%20Disposal%20of%20Waste%20at%20the%20Garbage%20Beach.jpg" alt="A beach covered in plastic waste">
+              <span class="photo-label after">After</span>
+              <div class="photo-cap">A beach covered in washed-up plastic waste</div>
+            </div>
+          </div>
+          <div class="wonder-bank"><span class="pill">🔎 How does plastic affect animals?</span></div>
+        </div>
+
+        <div class="tab-panel" id="tab-town">
+          <div class="photo-compare">
+            <div class="photo-card">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Small%20town%20aerial.jpg" alt="Aerial view of a small quiet town">
+              <span class="photo-label before">Before</span>
+              <div class="photo-cap">A small town surrounded by open land</div>
+            </div>
+            <div class="photo-card">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Toronto%20urban%20sprawl.jpg" alt="Aerial view of dense urban development and sprawl">
+              <span class="photo-label after">After</span>
+              <div class="photo-cap">The same kind of area after urban development</div>
+            </div>
+          </div>
+          <div class="wonder-bank"><span class="pill">🔎 Why are some places getting hotter?</span></div>
+        </div>
+
+        <div class="box mint" style="margin-top:20px;">
+          <div class="box-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M9 3v18M15 3v18M4 8h16M4 16h16"/></svg>
+            In your notebook
+          </div>
+          <div class="box-body">
+            <p style="margin:0;">For at least one scenario, write: what you <strong>Notice</strong>, what you <strong>Think</strong> is happening, and one thing you <strong>Wonder</strong>. The chips above are just a starting point — your own question is even better.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 4 : OPEN vs CLOSED QUESTIONS ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Skill focus</div>
+        <h1 class="slide-title">Good inquiry starts with a good question</h1>
+        <p class="lede">Not all questions are equally useful for an inquiry. The strongest wonder-questions are <span class="term" data-def="A question that can't be answered with just 'yes' or 'no' — it needs explanation, and opens up investigation.">open questions</span>, not <span class="term" data-def="A question that can be answered with a single word, like 'yes' or 'no' — it closes down investigation instead of opening it up.">closed questions</span>.</p>
+
+        <div class="tabs" id="ocTabs">
+          <button class="tab-btn active" data-tab="open">🔓 Open questions</button>
+          <button class="tab-btn" data-tab="closed">🔒 Closed questions</button>
+        </div>
+        <div class="tab-panel active" id="tab-open">
+          <p>Usually start with <strong>Why, How, What if,</strong> or <strong>What might happen...</strong> They need explaining, and they lead to more questions. <em>"Why is the river becoming polluted?"</em></p>
+        </div>
+        <div class="tab-panel" id="tab-closed">
+          <p>Usually start with <strong>Is, Did, Are, Was,</strong> or <strong>Can</strong>. They can be answered in one word, and the inquiry stops there. <em>"Is the river dirty?"</em></p>
+        </div>
+
+        <p class="lede" style="margin-top:8px; font-size:14px;">Tap each question below to reveal whether it's open or closed, and why.</p>
+        <div class="sort-grid" id="sortGrid"></div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 5 : VIDEO ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Watch and wonder</div>
+        <h1 class="slide-title">Environmental change around the world</h1>
+        <p class="lede">Keep your notebook nearby. While you watch, look for changes happening to forests, water, or towns — you'll use this for your own Notice-Think-Wonder.</p>
+        <div class="video-wrap">
+          <iframe src="https://www.youtube.com/embed/94cA_JLDcFk" title="Environmental change video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="box sky" style="margin-top:20px;">
+          <div class="box-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>
+            While you watch
+          </div>
+          <div class="box-body">
+            <p style="margin:0;">In your notebook, jot down: <strong>2 changes</strong> you notice, <strong>1 idea</strong> about what's causing them, and <strong>1 open question</strong> you're left wondering about.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 6 : CHECK UNDERSTANDING ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Check your understanding</div>
+        <h1 class="slide-title">Turn this into a strong question</h1>
+        <div class="scenario">
+          <p><strong>Scenario:</strong> a student looks at a photo of a polluted beach and asks: <em>"Is there rubbish on the beach?"</em></p>
+          <h3 class="mini-title" style="margin-top:14px;">What's the best way to improve this into a strong inquiry question?</h3>
+          <div class="quiz-opts">
+            <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false)">Leave it as it is — it's already a good question</button>
+            <button class="quiz-opt" data-correct="true" onclick="answerQuiz(this,true)">Ask "Why is rubbish ending up on this beach?"</button>
+            <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false)">Ask "Was the beach clean yesterday?"</button>
+            <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false)">Just describe the photo instead of asking anything</button>
+          </div>
+          <div id="quizFeedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 7 : GLOSSARY ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Reference</div>
+        <h1 class="slide-title">Glossary — tap a card to flip it</h1>
+        <div class="gloss-grid" id="glossGrid"></div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 8 : PLENARY ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Plenary &middot; 10 minutes</div>
+        <h1 class="slide-title">Choose your favourite question</h1>
+        <p class="lede">Look back at all the questions you wondered about today. Choose the <strong>one</strong> you're most interested in, and complete this sentence in your notebook.</p>
+        <div class="frame-card">
+          <div class="frame-text">"I wonder <span class="frame-blank">______</span> because <span class="frame-blank">______</span>."</div>
+          <div style="margin-top:18px;">
+            <button class="btn ghost" onclick="showExample()">💡 Show me an example</button>
+          </div>
+          <div class="example-box" id="exampleBox">Tap the button for an example sentence.</div>
+        </div>
+        <div class="hint" style="margin-top:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Check: is your question open, not closed?</div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 9 : NOTEBOOK CHECKLIST ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Wrap-up</div>
+        <h1 class="slide-title">What should be in your notebook today</h1>
+        <p class="lede">Go through the list honestly before you finish. Asking great questions is a skill we'll keep building all unit.</p>
+        <div class="assess-list" id="assessList"></div>
+        <div class="assess-progress"><div class="assess-fill" id="assessFill"></div></div>
+        <div class="box green" style="margin-top:24px;">
+          <div class="box-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>
+            What comes next
+          </div>
+          <div class="box-body">
+            <p style="margin:0;">Next lesson, we'll take the questions you've wondered about today and start investigating them — looking for causes, effects, and what sustainability could mean for each place.</p>
+          </div>
+        </div>
+        <div class="res-row">
+          <span class="res-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> Notebooks</span>
+          <span class="res-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> Environmental change video</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <button class="navbtn" id="prevBtn" onclick="prevSlide()" aria-label="Previous">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button class="navbtn" id="nextBtn" onclick="nextSlide()" aria-label="Next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+
+<script>
+/* ============ core slide navigation ============ */
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let idx = 0;
+
+const dotsWrap = document.getElementById('dots');
+slides.forEach((s,i)=>{
+  const d = document.createElement('button');
+  d.className = 'dot' + (i===0?' active':'');
+  d.onclick = ()=>goTo(i);
+  dotsWrap.appendChild(d);
+});
+
+function render(){
+  slides.forEach((s,i)=> s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.dot').forEach((d,i)=> d.classList.toggle('active', i===idx));
+  document.getElementById('counter').textContent = (idx+1) + ' / ' + total;
+  document.getElementById('prevBtn').classList.toggle('disabled', idx===0);
+  document.getElementById('nextBtn').classList.toggle('disabled', idx===total-1);
+  slides[idx].scrollTop = 0;
+}
+function goTo(i){ idx = Math.max(0, Math.min(total-1, i)); render(); }
+function nextSlide(){ goTo(idx+1); }
+function prevSlide(){ goTo(idx-1); }
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight') nextSlide();
+  if(e.key==='ArrowLeft') prevSlide();
+});
+render();
+
+/* ============ objectives checklist ============ */
+document.querySelectorAll('.obj-card').forEach(card=>{
+  card.addEventListener('click', ()=> card.classList.toggle('done'));
+});
+
+/* ============ tabs (shared by all tab groups) ============ */
+document.querySelectorAll('.tabs').forEach(group=>{
+  const btns = group.querySelectorAll('.tab-btn');
+  btns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      btns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const panels = group.parentElement.querySelectorAll(':scope > .tab-panel');
+      panels.forEach(p=>p.classList.remove('active'));
+      const target = group.parentElement.querySelector('#tab-'+btn.dataset.tab);
+      if(target) target.classList.add('active');
+    });
+  });
+});
+
+/* ============ open vs closed sort cards ============ */
+const sortQuestions = [
+  {q:'Why is the river becoming polluted?', type:'open', why:'Starts with "Why" and needs a real explanation — great inquiry question.'},
+  {q:'Is the river dirty?', type:'closed', why:'Can be answered with just "yes" — try turning it into a "why" or "how" question instead.'},
+  {q:'What causes forests to disappear?', type:'open', why:'Asks about causes, so it needs explaining — leads somewhere.'},
+  {q:'Did people cut down that tree?', type:'closed', why:'Answerable with "yes" or "no" — doesn&rsquo;t open up an investigation.'},
+  {q:'How does plastic affect animals?', type:'open', why:'"How" questions need explanation and lead to more questions.'},
+  {q:'Is this beach clean?', type:'closed', why:'One-word answer possible — swap it for "why" or "what" to make it open.'},
+];
+const sortGrid = document.getElementById('sortGrid');
+sortQuestions.forEach(item=>{
+  const card = document.createElement('div');
+  card.className = 'sort-card';
+  card.innerHTML = `<p class="sort-q">"${item.q}"</p>
+    <div class="sort-hint">Tap to reveal</div>
+    <div class="sort-reveal">
+      <span class="sort-tag ${item.type==='open'?'is-open':'is-closed'}">${item.type==='open'?'🔓 Open question':'🔒 Closed question'}</span>
+      <p class="sort-explain">${item.why}</p>
+    </div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('open'));
+  sortGrid.appendChild(card);
+});
+
+/* ============ quiz ============ */
+function answerQuiz(btn, correct){
+  document.querySelectorAll('.quiz-opt').forEach(b=>{
+    b.disabled = true;
+    if(b.dataset.correct === 'true') b.classList.add('correct');
+  });
+  if(!correct) btn.classList.add('wrong');
+  const fb = document.getElementById('quizFeedback');
+  fb.textContent = 'Best answer: "Why is rubbish ending up on this beach?" — it swaps a closed yes/no question for an open "why" question that asks about causes, exactly what an inquiry needs.';
+  fb.classList.add('show');
+}
+
+/* ============ glossary flip cards ============ */
+const glossary = [
+  {term:'Environmental change', def:'A change to the natural or built environment, such as deforestation, pollution, or urban growth.'},
+  {term:'Sustainability', def:'Using resources and looking after places in a way that doesn&rsquo;t damage them for the future.'},
+  {term:'Deforestation', def:'The clearing or cutting down of forests, often to make way for farming, building, or resources.'},
+  {term:'Pollution', def:'Harmful substances — like plastic, chemicals, or rubbish — being released into water, air, or land.'},
+  {term:'Urbanisation', def:'The growth of towns and cities as more people and buildings move into an area.'},
+  {term:'Inquiry question', def:'A genuine question that starts an investigation into something you want to find out.'},
+  {term:'Open question', def:'A question that needs explanation to answer, and can&rsquo;t be answered with just "yes" or "no".'},
+  {term:'Closed question', def:'A question that can be answered with one word, like "yes" or "no" — it stops inquiry.'},
+  {term:'Notice-Think-Wonder', def:'A thinking routine: look carefully, think about what&rsquo;s happening, then ask a question.'},
+];
+const glossGrid = document.getElementById('glossGrid');
+glossary.forEach(g=>{
+  const card = document.createElement('div');
+  card.className = 'gloss-card';
+  card.innerHTML = `<div class="gloss-inner">
+      <div class="gloss-face front">${g.term}</div>
+      <div class="gloss-face back">${g.def}</div>
+    </div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flip'));
+  glossGrid.appendChild(card);
+});
+
+/* ============ tooltip terms ============ */
+document.querySelectorAll('.term').forEach(t=>{
+  t.addEventListener('click', (e)=>{
+    alert(t.dataset.def);
+  });
+});
+
+/* ============ plenary example cycler ============ */
+const examples = [
+  'I wonder why the river near my house looks different in summer, because I want to know if it&rsquo;s connected to how much it rains.',
+  'I wonder what happens to sea animals when they eat plastic, because I saw so much rubbish on the beach photo.',
+  'I wonder why some towns keep growing bigger, because I think it might be linked to why cities feel hotter than the countryside.',
+  'I wonder what would happen if everyone stopped cutting down trees, because forests seem important for animals and air.',
+];
+let exampleIdx = 0;
+function showExample(){
+  document.getElementById('exampleBox').textContent = '"' + examples[exampleIdx % examples.length] + '"';
+  exampleIdx++;
+}
+
+/* ============ notebook checklist ============ */
+const assessItems = [
+  'I have chosen at least one photo pair and written what I Notice',
+  'I have written what I Think might be happening, and why',
+  'I have written at least one Wonder question',
+  'I checked my question is open, not closed',
+  'I have completed "I wonder ___ because ___" for my favourite question',
+];
+const assessList = document.getElementById('assessList');
+assessItems.forEach(text=>{
+  const item = document.createElement('div');
+  item.className = 'assess-item';
+  item.innerHTML = `<div class="assess-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>${text}</p>`;
+  item.addEventListener('click', ()=>{
+    item.classList.toggle('checked');
+    updateAssessProgress();
+  });
+  assessList.appendChild(item);
+});
+function updateAssessProgress(){
+  const checked = document.querySelectorAll('.assess-item.checked').length;
+  const pct = (checked/assessItems.length)*100;
+  document.getElementById('assessFill').style.width = pct+'%';
+}
+</script>
+</body>
+</html>
