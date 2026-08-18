@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5.2 Circles — Interactive Lesson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --indigo:#3D4FB5; --indigo-dark:#242D72; --indigo-light:#E8EAFC; --indigo-mid:#6674D6;
+  --coral:#E0563F; --coral-light:#FCE9E5;
+  --amber:#CE9526; --amber-light:#FAF1DC;
+  --teal:#1F8A8C; --teal-light:#E1F5F5;
+  --ink:#20232B; --ink-soft:#585E6C;
+  --paper:#FFFFFF; --cream:#F6F5FB; --line:#E2E1EE;
+  --r-lg:22px; --r-md:14px; --r-sm:8px;
+  --shadow: 0 10px 30px rgba(36,45,114,.14);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{margin:0; background:var(--cream); color:var(--ink); font-family:'Inter',system-ui,sans-serif; overflow:hidden;}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+
+#app{position:relative; width:100vw; height:100vh; display:flex; flex-direction:column;}
+.topbar{display:flex; align-items:center; justify-content:space-between; padding:14px 28px; background:var(--paper); border-bottom:1px solid var(--line); flex:0 0 auto; z-index:20;}
+.crumb{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft); font-weight:600;}
+.crumb .tag{background:var(--indigo); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12px; padding:5px 12px; border-radius:100px; letter-spacing:.3px;}
+.crumb .sep{color:#C6C2D6;}
+.crumb .current{color:var(--indigo-dark);}
+.dots{display:flex; gap:6px; align-items:center; flex-wrap:wrap; max-width:40vw;}
+.dot{width:9px; height:9px; border-radius:50%; background:#DEE1F5; border:none; cursor:pointer; transition:all .25s;}
+.dot.active{background:var(--indigo); width:22px; border-radius:6px;}
+.dot:hover{background:var(--indigo-mid);}
+.counter{font-size:12px; color:var(--ink-soft); font-weight:600; font-variant-numeric:tabular-nums; min-width:50px; text-align:right;}
+
+.stage{position:relative; flex:1 1 auto; overflow:hidden;}
+.slide{position:absolute; inset:0; opacity:0; pointer-events:none; transform:translateX(30px) scale(.99); transition:opacity .45s ease, transform .45s ease; overflow-y:auto;}
+.slide.active{opacity:1; pointer-events:auto; transform:translateX(0) scale(1);}
+.slide.prev{transform:translateX(-30px) scale(.99);}
+.slide-inner{max-width:1180px; margin:0 auto; padding:40px 44px 90px; min-height:100%;}
+
+.navbtn{position:absolute; top:50%; transform:translateY(-50%); z-index:15; width:46px; height:46px; border-radius:50%; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--indigo-dark); transition:.2s;}
+.navbtn:hover{background:var(--indigo); color:#fff; border-color:var(--indigo);}
+.navbtn.disabled{opacity:.25; pointer-events:none;}
+#prevBtn{left:16px;} #nextBtn{right:16px;}
+.navbtn svg{width:20px; height:20px;}
+
+.chevron-badge{display:inline-flex; align-items:center; gap:10px; background:var(--indigo); color:#fff; padding:9px 20px 9px 16px; font-family:'Poppins'; font-weight:700; font-size:15px; clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%); margin-bottom:16px;}
+.eyebrow{font-family:'Poppins'; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--coral); margin-bottom:8px;}
+h1.slide-title{font-size:32px; font-weight:800; color:var(--indigo-dark); margin:0 0 6px; line-height:1.15;}
+h2.section-title{font-size:25px; font-weight:700; color:var(--indigo-dark); margin:0 0 14px;}
+h3.mini-title{font-size:17px; font-weight:700; color:var(--ink); margin:0 0 8px;}
+p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
+.lede{font-size:17px; color:var(--ink-soft); margin-bottom:22px; max-width:760px;}
+.term{color:var(--coral); font-weight:700; cursor:help; border-bottom:1.5px dotted var(--coral);}
+
+.box{border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow);}
+.box-head{padding:12px 20px; font-family:'Poppins'; font-weight:700; font-size:14px; color:#fff; display:flex; align-items:center; gap:8px;}
+.box-body{padding:20px 22px;}
+.box.indigo .box-head{background:var(--indigo);}
+.box.coral .box-head{background:var(--coral);}
+.box.amber .box-head{background:var(--amber);}
+.box.teal .box-head{background:var(--teal);}
+
+.two-col{display:grid; grid-template-columns:1.05fr .95fr; gap:36px; align-items:start;}
+@media (max-width:900px){.two-col{grid-template-columns:1fr;}}
+
+.pill{display:inline-block; padding:5px 13px; border-radius:100px; font-size:12.5px; font-weight:700; background:var(--indigo-light); color:var(--indigo-dark); margin:3px 5px 3px 0;}
+
+.btn{border:none; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:14px; padding:10px 20px; border-radius:100px; background:var(--indigo); color:#fff; transition:.2s;}
+.btn:hover{background:var(--indigo-dark);}
+.btn.ghost{background:transparent; border:1.5px solid var(--indigo); color:var(--indigo);}
+.btn.ghost:hover{background:var(--indigo-light);}
+
+.hint{font-size:12.5px; color:var(--ink-soft); background:var(--indigo-light); border-radius:100px; padding:6px 14px; display:inline-flex; gap:6px; align-items:center; margin-bottom:18px; font-weight:600;}
+.hint svg{width:14px; height:14px; flex:0 0 auto;}
+
+/* ============ COVER ============ */
+.cover{height:100%; display:flex; align-items:center; justify-content:center; position:relative;
+  background:radial-gradient(ellipse at 20% 15%, rgba(255,255,255,.10), transparent 45%), linear-gradient(160deg, var(--indigo) 0%, var(--indigo-dark) 62%, #12173F 100%);
+  overflow:hidden;}
+.cover-ring{position:absolute; border-radius:50%; border:2px solid rgba(255,255,255,.12);}
+.cover-content{position:relative; z-index:2; text-align:center; color:#fff; max-width:780px; padding:0 30px;}
+.cover-content .unit{font-family:'Poppins'; font-weight:700; letter-spacing:3px; font-size:13px; text-transform:uppercase; color:#CBD1F7; margin-bottom:14px;}
+.cover-content h1{font-size:47px; font-weight:800; margin:0 0 10px; line-height:1.1;}
+.cover-content .sub{font-size:18px; color:#E4E6FA; font-weight:500; margin-bottom:34px;}
+.cover-chip-row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:38px;}
+.cover-chip{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff; padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600; backdrop-filter:blur(4px);}
+.cover-start{background:var(--coral); color:#fff; border:none; font-family:'Poppins'; font-weight:700; font-size:16px; padding:15px 34px; border-radius:100px; cursor:pointer; box-shadow:0 12px 26px rgba(224,86,63,.4); display:inline-flex; align-items:center; gap:10px; transition:.2s;}
+.cover-start:hover{transform:translateY(-2px); box-shadow:0 16px 30px rgba(224,86,63,.5);}
+.cover-note{margin-top:22px; font-size:13px; color:#BFC7EE;}
+
+/* ============ objectives ============ */
+.obj-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 22px; margin-top:6px;}
+@media (max-width:800px){.obj-grid{grid-template-columns:1fr;}}
+.obj-card{display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:var(--r-md); background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.2s;}
+.obj-card:hover{border-color:var(--indigo-mid); box-shadow:var(--shadow);}
+.obj-num{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--indigo-light); color:var(--indigo-dark); font-family:'Poppins'; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;}
+.obj-card.done .obj-num{background:var(--indigo); color:#fff;}
+.obj-card.done p{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:#C6C2D6;}
+.obj-card p{margin:0; font-size:14px; line-height:1.5;}
+
+/* ============ diagram label components ============ */
+.diagram-wrap{display:flex; justify-content:center; margin:8px 0 6px;}
+.diagram-wrap svg{max-width:100%; height:auto;}
+.label-row{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:14px 0 22px;}
+.label-chip{padding:8px 16px; border-radius:100px; border:1.5px solid var(--line); background:#fff; font-family:'Poppins'; font-weight:700; font-size:13px; cursor:pointer; transition:.2s; color:var(--ink-soft);}
+.label-chip.active{background:var(--coral); border-color:var(--coral); color:#fff;}
+.def-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px;}
+@media (max-width:800px){.def-grid{grid-template-columns:1fr;}}
+.def-card{border:1.5px solid var(--line); border-radius:var(--r-md); padding:14px 16px; background:#fff; transition:.2s;}
+.def-card.on{border-color:var(--coral); background:var(--coral-light);}
+.def-card h4{margin:0 0 4px; font-family:'Poppins'; font-size:14px; font-weight:700; color:var(--indigo-dark);}
+.def-card p{margin:0; font-size:13.5px; color:var(--ink-soft);}
+
+/* ============ steps ============ */
+.steps{counter-reset:stepnum; margin-top:10px;}
+.step{display:flex; gap:16px; align-items:flex-start; padding:14px 0; border-bottom:1px solid var(--line);}
+.step:last-child{border-bottom:none;}
+.step-num{counter-increment:stepnum; flex:0 0 auto; width:32px; height:32px; border-radius:50%; background:var(--indigo); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Poppins'; font-weight:700; font-size:14px;}
+.step-num::before{content:counter(stepnum);}
+.step-text{padding-top:4px;}
+.step-text strong{color:var(--indigo-dark);}
+
+/* ============ tabs ============ */
+.tabs{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+.tab-btn{padding:10px 18px; border-radius:100px; border:1.5px solid var(--line); background:#fff; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:13.5px; color:var(--ink-soft); transition:.2s;}
+.tab-btn.active{background:var(--indigo); border-color:var(--indigo); color:#fff;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block; animation:fadein .35s;}
+@keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+/* ============ flip cards (quick check) ============ */
+.gloss-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:10px;}
+@media (max-width:900px){.gloss-grid{grid-template-columns:repeat(2,1fr);}}
+.gloss-card{height:108px; perspective:800px; cursor:pointer;}
+.gloss-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+.gloss-card.flip .gloss-inner{transform:rotateY(180deg);}
+.gloss-face{position:absolute; inset:0; backface-visibility:hidden; border-radius:var(--r-md); display:flex; align-items:center; justify-content:center; text-align:center; padding:12px; font-size:13.5px; box-shadow:var(--shadow);}
+.gloss-face.front{background:var(--indigo); color:#fff; font-family:'Poppins'; font-weight:700; font-size:14.5px;}
+.gloss-face.back{background:var(--paper); border:1.5px solid var(--indigo-light); color:var(--ink); transform:rotateY(180deg); font-size:12.5px; line-height:1.5;}
+
+/* ============ notebook checklist ============ */
+.assess-list{margin-top:10px;}
+.assess-item{display:flex; gap:12px; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--line); cursor:pointer;}
+.assess-box{flex:0 0 auto; width:22px; height:22px; border-radius:6px; border:2px solid var(--line); display:flex; align-items:center; justify-content:center; color:#fff; margin-top:1px; transition:.2s;}
+.assess-item.checked .assess-box{background:var(--teal); border-color:var(--teal);}
+.assess-item p{margin:0; font-size:14.5px;}
+.assess-progress{height:8px; background:var(--indigo-light); border-radius:100px; overflow:hidden; margin-top:16px;}
+.assess-fill{height:100%; width:0%; background:var(--teal); transition:.35s;}
+
+/* ============ book callout ============ */
+.book-callout{display:flex; gap:16px; align-items:flex-start; background:linear-gradient(135deg,var(--amber-light),#fff); border:1.5px dashed var(--amber); border-radius:var(--r-lg); padding:20px 24px; margin-top:24px;}
+.book-callout .icon{flex:0 0 auto; width:46px; height:46px; border-radius:12px; background:var(--amber); display:flex; align-items:center; justify-content:center;}
+.book-callout .icon svg{width:24px; height:24px; color:#fff;}
+.book-callout h4{margin:0 0 4px; font-family:'Poppins'; font-weight:700; font-size:15px; color:#7A5A12;}
+.book-callout p{margin:0; font-size:14px; color:#6B5410;}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="crumb">
+      <span class="tag">5.2</span>
+      <span class="sep">›</span>
+      <span class="current">Circles</span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="counter" id="counter">1 / 7</div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- SLIDE 0: COVER -->
+    <section class="slide">
+      <div class="cover">
+        <div class="cover-ring" style="width:520px;height:520px; top:-160px; right:-140px;"></div>
+        <div class="cover-ring" style="width:320px;height:320px; bottom:-100px; left:-80px;"></div>
+        <div class="cover-content">
+          <div class="unit">Year 6 &middot; Unit 5: 2D Shapes &middot; Cambridge GO</div>
+          <h1>5.2 Circles</h1>
+          <div class="sub">Learn the parts of a circle and draw circles accurately using compasses.</div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">⭕ Parts of a circle</span>
+            <span class="cover-chip">📐 Compasses &amp; ruler</span>
+            <span class="cover-chip">📏 Radius &amp; diameter</span>
+          </div>
+          <button class="cover-start" onclick="goTo(1)">
+            Start the lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <div class="cover-note">Have your compasses, ruler and pencil ready.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 1: TODAY'S LEARNING -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">5.2 Circles</div>
+        <h1 class="slide-title">We are going to&hellip;</h1>
+        <p class="lede">Tap each goal as you meet it today.</p>
+        <div class="obj-grid" id="objGrid">
+          <div class="obj-card"><div class="obj-num">1</div><p>Learn the names of the parts of a circle</p></div>
+          <div class="obj-card"><div class="obj-num">2</div><p>Draw circles accurately using compasses</p></div>
+        </div>
+        <div style="margin-top:22px;">
+          <span class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Key vocabulary: centre &middot; radius &middot; diameter &middot; circumference &middot; compasses &middot; radii</span>
+        </div>
+        <div class="box indigo">
+          <div class="box-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M12 2l3 6 6 1-4.5 4.5L18 20l-6-3-6 3 1.5-6.5L3 9l6-1 3-6z"/></svg>
+            Ready for today
+          </div>
+          <div class="box-body">
+            <p style="margin:0;">You will need <strong>compasses, a ruler and a pencil</strong> today. This screen shows the ideas &mdash; your drawing and writing goes in your book.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: PARTS OF A CIRCLE -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Key vocabulary</div>
+        <h1 class="slide-title">The parts of a circle</h1>
+        <p class="lede">Tap a word below to see which part of the circle it means.</p>
+
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 420 300" width="420">
+            <circle cx="210" cy="150" r="110" fill="var(--indigo-light)" stroke="var(--indigo)" stroke-width="2.5" id="circ-circumference"/>
+            <line x1="100" y1="150" x2="320" y2="150" stroke="var(--coral)" stroke-width="0" id="circ-diameter-line"/>
+            <line x1="210" y1="150" x2="210" y2="40" stroke="var(--teal)" stroke-width="0" id="circ-radius-line"/>
+            <circle cx="210" cy="150" r="5" fill="var(--indigo-dark)" id="circ-centre-dot"/>
+          </svg>
+        </div>
+
+        <div class="label-row" id="labelRow">
+          <button class="label-chip" data-part="centre">Centre</button>
+          <button class="label-chip" data-part="radius">Radius</button>
+          <button class="label-chip" data-part="diameter">Diameter</button>
+          <button class="label-chip" data-part="circumference">Circumference</button>
+        </div>
+
+        <div class="def-grid" id="defGrid">
+          <div class="def-card" data-part="centre"><h4>Centre</h4><p>The middle point of the circle. Every point on the edge is the same distance from here.</p></div>
+          <div class="def-card" data-part="radius"><h4>Radius</h4><p>The distance from the centre to the edge of the circle.</p></div>
+          <div class="def-card" data-part="diameter"><h4>Diameter</h4><p>A straight line from one side of the circle to the other, passing through the centre.</p></div>
+          <div class="def-card" data-part="circumference"><h4>Circumference</h4><p>The perimeter &mdash; the distance all the way around the circle.</p></div>
+        </div>
+
+        <div class="book-callout">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>
+          <div>
+            <h4>Open your book</h4>
+            <p>Learner's Book, Exercise 5.2, Question 1 &mdash; copy the diagram and label it using: centre, diameter, radius, circumference.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: RADIUS AND DIAMETER -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Key relationship</div>
+        <h1 class="slide-title">Diameter = 2 &times; radius</h1>
+        <p class="lede">Arun draws a circle with radius 3&nbsp;cm. Sofia draws a circle with diameter 60&nbsp;mm. Are their circles the same size?</p>
+
+        <div class="two-col">
+          <div>
+            <div class="diagram-wrap" style="margin-top:0;">
+              <svg viewBox="0 0 300 240" width="300">
+                <circle cx="150" cy="120" r="90" fill="var(--teal-light)" stroke="var(--teal)" stroke-width="2.5"/>
+                <line x1="150" y1="120" x2="240" y2="120" stroke="var(--coral)" stroke-width="3"/>
+                <circle cx="150" cy="120" r="4" fill="var(--indigo-dark)"/>
+                <text x="192" y="112" font-family="Poppins" font-weight="700" font-size="14" fill="var(--coral)" text-anchor="middle">r</text>
+                <line x1="60" y1="200" x2="240" y2="200" stroke="var(--indigo)" stroke-width="2" stroke-dasharray="4 4"/>
+                <text x="150" y="222" font-family="Poppins" font-weight="700" font-size="14" fill="var(--indigo)" text-anchor="middle">diameter = 2 &times; r</text>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <div class="box amber">
+              <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>Remember</div>
+              <div class="box-body">
+                <p style="margin:0 0 10px;"><strong>diameter = radius &times; 2</strong></p>
+                <p style="margin:0;"><strong>radius = diameter &divide; 2</strong></p>
+              </div>
+            </div>
+            <div class="hint" style="margin-top:16px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Remember: 1&nbsp;cm = 10&nbsp;mm</div>
+          </div>
+        </div>
+
+        <div class="box indigo" style="margin-top:6px;">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>Check it</div>
+          <div class="box-body">
+            <p style="margin:0;">Arun's radius is 3&nbsp;cm, so his diameter is <strong>6&nbsp;cm = 60&nbsp;mm</strong>. Sofia's diameter is 60&nbsp;mm. Their circles are <strong>exactly the same size!</strong></p>
+          </div>
+        </div>
+
+        <div class="book-callout">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>
+          <div>
+            <h4>Open your book</h4>
+            <p>Learner's Book, Think like a mathematician 2 &mdash; write a radius and a diameter, swap with your partner, and draw each other's circles.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: DRAWING A CIRCLE -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Worked example</div>
+        <h1 class="slide-title">Drawing a circle accurately</h1>
+        <p class="lede">Follow these steps to draw a circle of any radius using compasses.</p>
+
+        <div class="two-col">
+          <div class="steps">
+            <div class="step"><div class="step-num"></div><div class="step-text"><strong>Open your compasses</strong> to the radius length, using a ruler to measure.</div></div>
+            <div class="step"><div class="step-num"></div><div class="step-text"><strong>Mark a dot</strong> to show the centre of the circle.</div></div>
+            <div class="step"><div class="step-num"></div><div class="step-text"><strong>Place the point</strong> of the compasses exactly on the dot.</div></div>
+            <div class="step"><div class="step-num"></div><div class="step-text"><strong>Turn the compasses</strong> carefully all the way round to draw the circle.</div></div>
+          </div>
+          <div class="box coral">
+            <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>Tip</div>
+            <div class="box-body">
+              <p style="margin:0;">Hold the top of the compasses lightly and keep the point still &mdash; if it slips, the centre moves and the circle won't be accurate.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="book-callout">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>
+          <div>
+            <h4>Open your book</h4>
+            <p>Workbook, Exercise 5.2, Questions 2 and 5 &mdash; draw the circles with the radii given.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: CIRCLES THAT TOUCH -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Think like a mathematician</div>
+        <h1 class="slide-title">What happens when circles touch?</h1>
+        <p class="lede">Tap each tab to see the rule for circles that touch outside each other, and circles that touch inside each other.</p>
+
+        <div class="tabs" id="touchTabs">
+          <button class="tab-btn active" data-tab="outside">Touching outside</button>
+          <button class="tab-btn" data-tab="inside">Touching inside</button>
+        </div>
+        <div class="tab-panel active" id="tab-outside">
+          <div class="two-col">
+            <div class="diagram-wrap" style="margin-top:0;">
+              <svg viewBox="0 0 340 200" width="340">
+                <circle cx="120" cy="100" r="70" fill="none" stroke="var(--indigo)" stroke-width="2.5"/>
+                <circle cx="235" cy="100" r="45" fill="none" stroke="var(--coral)" stroke-width="2.5"/>
+                <circle cx="120" cy="100" r="3.5" fill="var(--indigo)"/>
+                <circle cx="235" cy="100" r="3.5" fill="var(--coral)"/>
+                <line x1="120" y1="100" x2="235" y2="100" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="4 3"/>
+              </svg>
+            </div>
+            <div class="box teal">
+              <div class="box-head">Rule</div>
+              <div class="box-body"><p style="margin:0;">Distance between centres = <strong>radius A + radius B</strong></p></div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-panel" id="tab-inside">
+          <div class="two-col">
+            <div class="diagram-wrap" style="margin-top:0;">
+              <svg viewBox="0 0 340 200" width="340">
+                <circle cx="160" cy="100" r="85" fill="none" stroke="var(--indigo)" stroke-width="2.5"/>
+                <circle cx="115" cy="100" r="40" fill="none" stroke="var(--coral)" stroke-width="2.5"/>
+                <circle cx="160" cy="100" r="3.5" fill="var(--indigo)"/>
+                <circle cx="115" cy="100" r="3.5" fill="var(--coral)"/>
+                <line x1="160" y1="100" x2="115" y2="100" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="4 3"/>
+              </svg>
+            </div>
+            <div class="box teal">
+              <div class="box-head">Rule</div>
+              <div class="box-body"><p style="margin:0;">Distance between centres = <strong>radius A &minus; radius B</strong></p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="book-callout">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>
+          <div>
+            <h4>Open your book</h4>
+            <p>Learner's Book, Think like a mathematician 3 &mdash; draw two circles that touch, measure the distance between centres, and test the rule yourself.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: CHECK YOUR PROGRESS -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Wrap up</div>
+        <h1 class="slide-title">Check your progress</h1>
+        <p class="lede">Tap each statement once you're confident with it.</p>
+        <div class="assess-list" id="assessList"></div>
+        <div class="assess-progress"><div class="assess-fill" id="assessFill"></div></div>
+
+        <div class="book-callout">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>
+          <div>
+            <h4>Now open your workbook</h4>
+            <p>Complete Exercise 5.2 &mdash; the questions your teacher has set. Use your ruler and compasses carefully!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <button class="navbtn" id="prevBtn" onclick="prevSlide()" aria-label="Previous">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button class="navbtn" id="nextBtn" onclick="nextSlide()" aria-label="Next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let idx = 0;
+const dotsWrap = document.getElementById('dots');
+slides.forEach((s,i)=>{
+  const d = document.createElement('button');
+  d.className = 'dot' + (i===0?' active':'');
+  d.onclick = ()=>goTo(i);
+  dotsWrap.appendChild(d);
+});
+function render(){
+  slides.forEach((s,i)=> s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.dot').forEach((d,i)=> d.classList.toggle('active', i===idx));
+  document.getElementById('counter').textContent = (idx+1) + ' / ' + total;
+  document.getElementById('prevBtn').classList.toggle('disabled', idx===0);
+  document.getElementById('nextBtn').classList.toggle('disabled', idx===total-1);
+  slides[idx].scrollTop = 0;
+}
+function goTo(i){ idx = Math.max(0, Math.min(total-1, i)); render(); }
+function nextSlide(){ goTo(idx+1); }
+function prevSlide(){ goTo(idx-1); }
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight') nextSlide();
+  if(e.key==='ArrowLeft') prevSlide();
+});
+render();
+
+/* objectives */
+document.querySelectorAll('.obj-card').forEach(card=>{
+  card.addEventListener('click', ()=> card.classList.toggle('done'));
+});
+
+/* tabs */
+document.querySelectorAll('.tabs').forEach(group=>{
+  const btns = group.querySelectorAll('.tab-btn');
+  btns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      btns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const panels = group.parentElement.querySelectorAll(':scope > .tab-panel');
+      panels.forEach(p=>p.classList.remove('active'));
+      const target = group.parentElement.querySelector('#tab-'+btn.dataset.tab);
+      if(target) target.classList.add('active');
+    });
+  });
+});
+
+/* parts of circle labelling */
+const labelChips = document.querySelectorAll('#labelRow .label-chip');
+const defCards = document.querySelectorAll('#defGrid .def-card');
+function showPart(part){
+  labelChips.forEach(c=> c.classList.toggle('active', c.dataset.part===part));
+  defCards.forEach(c=> c.classList.toggle('on', c.dataset.part===part));
+  const dia = document.getElementById('circ-diameter-line');
+  const rad = document.getElementById('circ-radius-line');
+  const centre = document.getElementById('circ-centre-dot');
+  const circum = document.getElementById('circ-circumference');
+  dia.setAttribute('stroke-width', part==='diameter' ? 4 : 0);
+  rad.setAttribute('stroke-width', part==='radius' ? 4 : 0);
+  centre.setAttribute('r', part==='centre' ? 8 : 5);
+  circum.setAttribute('stroke-width', part==='circumference' ? 5 : 2.5);
+}
+labelChips.forEach(chip=>{
+  chip.addEventListener('click', ()=> showPart(chip.dataset.part));
+});
+showPart('centre');
+
+/* assess checklist */
+const assessItems = [
+  'I can label the centre, radius, diameter and circumference of a circle',
+  'I can draw a circle accurately using compasses, given the radius',
+  'I know that diameter = 2 &times; radius',
+  'I can work out the distance between the centres of two touching circles',
+];
+const assessList = document.getElementById('assessList');
+assessItems.forEach(text=>{
+  const item = document.createElement('div');
+  item.className = 'assess-item';
+  item.innerHTML = `<div class="assess-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>${text}</p>`;
+  item.addEventListener('click', ()=>{
+    item.classList.toggle('checked');
+    updateAssessProgress();
+  });
+  assessList.appendChild(item);
+});
+function updateAssessProgress(){
+  const checked = document.querySelectorAll('.assess-item.checked').length;
+  const pct = (checked/assessItems.length)*100;
+  document.getElementById('assessFill').style.width = pct+'%';
+}
+</script>
+</body>
+</html>
