@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6GP.04 Sharing Our Inquiry Questions — A3 Poster Lesson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#1F7A4D; --green-dark:#123D28; --green-light:#E1F3EA; --green-mid:#4FA974;
+  --coral:#E0563F; --coral-light:#FCE9E5;
+  --amber:#CE9526; --amber-light:#FAF1DC;
+  --mint:#2E9E76; --mint-light:#E3F5EC;
+  --sky:#2B79C9; --sky-light:#E8F1FB;
+  --ink:#20232B; --ink-soft:#585E6C;
+  --paper:#FFFFFF; --cream:#F7F5F1; --line:#E1DFEA;
+  --r-lg:22px; --r-md:14px; --r-sm:8px;
+  --shadow: 0 10px 30px rgba(18,61,40,.14);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0; background:var(--cream); color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;
+  overflow:hidden;
+}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+
+#app{position:relative; width:100vw; height:100vh; display:flex; flex-direction:column;}
+
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 28px; background:var(--paper); border-bottom:1px solid var(--line);
+  flex:0 0 auto; z-index:20;
+}
+.crumb{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft); font-weight:600;}
+.crumb .tag{
+  background:var(--green); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12px;
+  padding:5px 12px; border-radius:100px; letter-spacing:.3px;
+}
+.crumb .sep{color:#C6C2D6;}
+.crumb .current{color:var(--green-dark);}
+
+.dots{display:flex; gap:6px; align-items:center; flex-wrap:wrap; max-width:40vw;}
+.dot{width:9px; height:9px; border-radius:50%; background:#DCE6DF; border:none; cursor:pointer; transition:all .25s;}
+.dot.active{ background:var(--green); width:22px; border-radius:6px;}
+.dot:hover{background:var(--green-mid);}
+.counter{font-size:12px; color:var(--ink-soft); font-weight:600; font-variant-numeric:tabular-nums; min-width:50px; text-align:right;}
+
+.stage{position:relative; flex:1 1 auto; overflow:hidden;}
+.slide{
+  position:absolute; inset:0; opacity:0; pointer-events:none;
+  transform:translateX(30px) scale(.99);
+  transition:opacity .45s ease, transform .45s ease;
+  overflow-y:auto;
+}
+.slide.active{opacity:1; pointer-events:auto; transform:translateX(0) scale(1);}
+.slide-inner{max-width:1100px; margin:0 auto; padding:40px 44px 90px; min-height:100%;}
+
+.navbtn{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:15;
+  width:46px; height:46px; border-radius:50%; border:1px solid var(--line);
+  background:var(--paper); box-shadow:var(--shadow); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; color:var(--green-dark);
+  transition:.2s;
+}
+.navbtn:hover{background:var(--green); color:#fff; border-color:var(--green);}
+.navbtn.disabled{opacity:.25; pointer-events:none;}
+#prevBtn{left:16px;} #nextBtn{right:16px;}
+.navbtn svg{width:20px; height:20px;}
+
+.chevron-badge{
+  display:inline-flex; align-items:center; gap:10px; background:var(--green); color:#fff;
+  padding:9px 20px 9px 16px; font-family:'Poppins'; font-weight:700; font-size:15px;
+  clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%); margin-bottom:16px;
+}
+.eyebrow{
+  font-family:'Poppins'; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--coral); margin-bottom:8px;
+}
+h1.slide-title{font-size:32px; font-weight:800; color:var(--green-dark); margin:0 0 6px; line-height:1.15;}
+h3.mini-title{font-size:17px; font-weight:700; color:var(--ink); margin:0 0 8px;}
+p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
+.lede{font-size:17px; color:var(--ink-soft); margin-bottom:22px; max-width:720px;}
+
+.box{border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow);}
+.box-head{padding:12px 20px; font-family:'Poppins'; font-weight:700; font-size:14px; color:#fff; display:flex; align-items:center; gap:8px;}
+.box-body{padding:20px 22px;}
+.box.green .box-head{background:var(--green);}
+.box.coral .box-head{background:var(--coral);}
+.box.amber .box-head{background:var(--amber);}
+.box.mint .box-head{background:var(--mint);}
+.box.sky .box-head{background:var(--sky);}
+
+.pill{display:inline-block; padding:5px 13px; border-radius:100px; font-size:12.5px; font-weight:700; background:var(--green-light); color:var(--green-dark); margin:3px 5px 3px 0;}
+
+.hint{font-size:12.5px; color:var(--ink-soft); background:var(--green-light); border-radius:100px; padding:6px 14px; display:inline-flex; gap:6px; align-items:center; margin-bottom:18px; font-weight:600;}
+.hint svg{width:14px; height:14px; flex:0 0 auto;}
+
+.res-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:14px;}
+.res-chip{display:flex; align-items:center; gap:8px; padding:9px 16px; border-radius:100px; background:var(--sky-light); color:var(--sky); font-family:'Poppins'; font-weight:700; font-size:12.5px;}
+.res-chip svg{width:15px; height:15px;}
+
+/* ============ SLIDE 0 : COVER ============ */
+.cover{
+  height:100%; display:flex; align-items:center; justify-content:center; position:relative;
+  background:
+    radial-gradient(ellipse at 20% 15%, rgba(255,255,255,.10), transparent 45%),
+    linear-gradient(160deg, var(--green) 0%, var(--green-dark) 62%, #0B2418 100%);
+  overflow:hidden;
+}
+.cover-leaf{position:absolute; opacity:.13; background:#fff; border-radius:0% 100% 0% 100%;}
+.cover-content{position:relative; z-index:2; text-align:center; color:#fff; max-width:780px; padding:0 30px;}
+.cover-content .unit{font-family:'Poppins'; font-weight:700; letter-spacing:3px; font-size:13px; text-transform:uppercase; color:#CFEBDB; margin-bottom:14px;}
+.cover-content h1{font-size:44px; font-weight:800; margin:0 0 10px; line-height:1.1;}
+.cover-content .sub{font-size:17px; color:#E3F3EA; font-weight:500; margin-bottom:34px;}
+.cover-chip-row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:38px;}
+.cover-chip{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff; padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600; backdrop-filter:blur(4px);}
+.cover-start{
+  background:var(--coral); color:#fff; border:none; font-family:'Poppins'; font-weight:700; font-size:16px;
+  padding:15px 34px; border-radius:100px; cursor:pointer; box-shadow:0 12px 26px rgba(224,86,63,.4);
+  display:inline-flex; align-items:center; gap:10px; transition:.2s;
+}
+.cover-start:hover{transform:translateY(-2px); box-shadow:0 16px 30px rgba(224,86,63,.5);}
+.cover-note{margin-top:22px; font-size:13px; color:#BFE0CE;}
+
+/* ============ objectives ============ */
+.obj-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 22px; margin-top:6px;}
+@media (max-width:800px){.obj-grid{grid-template-columns:1fr;}}
+.obj-card{display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:var(--r-md); background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.2s;}
+.obj-card:hover{border-color:var(--green-mid); box-shadow:var(--shadow);}
+.obj-num{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--green-light); color:var(--green-dark); font-family:'Poppins'; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;}
+.obj-card.done .obj-num{background:var(--green); color:#fff;}
+.obj-card.done p{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:#C6C2D6;}
+.obj-card p{margin:0; font-size:13.8px; line-height:1.5;}
+
+/* ============ agenda timeline ============ */
+.agenda{display:flex; flex-direction:column; gap:14px; margin-top:10px;}
+.agenda-item{display:flex; gap:16px; align-items:flex-start;}
+.agenda-time{
+  flex:0 0 auto; width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  flex-direction:column; color:#fff; font-family:'Poppins'; font-weight:800; box-shadow:var(--shadow);
+}
+.agenda-time span{font-size:10px; font-weight:600; opacity:.9;}
+.agenda-body{flex:1 1 auto; background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:14px 18px; box-shadow:var(--shadow);}
+.agenda-body h3{margin:0 0 4px; font-size:15.5px;}
+.agenda-body p{margin:0; font-size:13.5px; color:var(--ink-soft);}
+
+/* ============ poster mock ============ */
+.poster-wrap{display:flex; justify-content:center; margin-top:8px;}
+.poster-mock{
+  border:2.5px dashed var(--green-mid); border-radius:var(--r-lg); background:#fff; box-shadow:var(--shadow);
+  padding:22px; max-width:460px; width:100%;
+}
+.pm-title{background:var(--green); color:#fff; font-family:'Poppins'; font-weight:700; text-align:center; padding:12px; border-radius:var(--r-md); font-size:13.5px; margin-bottom:16px; letter-spacing:.3px;}
+.pm-field{border:1.5px solid var(--line); border-radius:var(--r-md); padding:12px 14px; margin-bottom:12px; background:var(--cream);}
+.pm-field .pm-label{font-family:'Poppins'; font-weight:700; font-size:12px; color:var(--green-dark); display:flex; align-items:center; gap:6px; margin-bottom:8px;}
+.pm-field .pm-line{border-bottom:1.5px dotted #C6C2D6; height:14px; margin-bottom:6px;}
+.pm-field .pm-line:last-child{margin-bottom:0; width:70%;}
+
+/* ============ star criteria ============ */
+.star-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px;}
+@media (max-width:780px){.star-grid{grid-template-columns:1fr;}}
+.star-card{border-radius:var(--r-md); padding:18px 16px; text-align:center; box-shadow:var(--shadow); border:1px solid var(--line);}
+.star-card .star-emoji{font-size:26px; margin-bottom:8px; display:block;}
+.star-card h3{font-family:'Poppins'; font-weight:700; font-size:14.5px; margin:0 0 4px; color:var(--green-dark);}
+.star-card p{margin:0; font-size:12.5px; color:var(--ink-soft);}
+.star-card.c1{background:var(--mint-light);} .star-card.c2{background:var(--amber-light);} .star-card.c3{background:var(--sky-light);}
+
+/* ============ feedback bubbles ============ */
+.fb-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px;}
+@media (max-width:780px){.fb-grid{grid-template-columns:1fr;}}
+.fb-bubble{position:relative; background:var(--paper); border:1.5px solid var(--line); border-radius:var(--r-lg); padding:16px 18px; box-shadow:var(--shadow);}
+.fb-bubble .fb-lead{font-family:'Poppins'; font-weight:700; font-size:15px; color:var(--coral); margin-bottom:6px;}
+.fb-bubble p{margin:0; font-size:13px; color:var(--ink-soft);}
+
+/* ============ steps list ============ */
+.step-list{margin-top:8px;}
+.step-item{display:flex; gap:14px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--line);}
+.step-num{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--green); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12.5px; display:flex; align-items:center; justify-content:center;}
+.step-item p{margin:0; font-size:14.5px;}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="crumb">
+      <span class="tag">6GP.04</span>
+      <span class="sep">/</span>
+      <span class="current">Lesson 3 &middot; Sharing Our Inquiry Questions</span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="counter" id="counter">1 / 7</div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- ============ SLIDE 0 : COVER ============ -->
+    <section class="slide">
+      <div class="cover">
+        <div class="cover-leaf" style="width:220px;height:220px; top:-50px; left:-50px;"></div>
+        <div class="cover-leaf" style="width:160px;height:160px; bottom:-30px; right:-20px;"></div>
+        <div class="cover-content">
+          <div class="unit">Year 6C &middot; Geography Inquiry &middot; Lesson 3</div>
+          <h1>Sharing Our Inquiry Questions</h1>
+          <div class="sub">In Lesson 1 you noticed, thought, and wondered about environmental change. Today you'll turn your best question into an A3 poster, share it in a gallery walk, and make it even stronger.</div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">📝 A3 poster</span>
+            <span class="cover-chip">🖼️ Gallery walk</span>
+            <span class="cover-chip">💬 Peer feedback</span>
+            <span class="cover-chip">❓ Stronger questions</span>
+          </div>
+          <button class="cover-start" onclick="goTo(1)">
+            Start the lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <div class="cover-note">6GP.04 &middot; Ask questions about environmental change</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 1 : RECAP + LEARNING ============ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">6GP.04</div>
+        <h1 class="slide-title">Quick recap: what makes a question strong?</h1>
+        <p class="lede">In Lesson 1 we learned that <strong>open questions</strong> — the ones that start with <em>Why, How, What if...</em> — make the best inquiry questions, because they need real explanation instead of a one-word answer.</p>
+        <div class="obj-grid" id="objGrid">
+          <div class="obj-card" data-i="1"><div class="obj-num">1</div><p>I can recall what makes an inquiry question strong</p></div>
+          <div class="obj-card" data-i="2"><div class="obj-num">2</div><p>I can spot questions that are interesting, important, and researchable</p></div>
+          <div class="obj-card" data-i="3"><div class="obj-num">3</div><p>I can give kind, useful feedback using sentence starters</p></div>
+          <div class="obj-card" data-i="4"><div class="obj-num">4</div><p>I can revise my question based on feedback</p></div>
+          <div class="obj-card" data-i="5"><div class="obj-num">5</div><p>I can explain how my question has changed since Lesson 1</p></div>
+        </div>
+        <div class="hint" style="margin-top:22px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Remember: good inquiry starts with a good question.</div>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 2 : TODAY'S PLAN ============ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Today's plan &middot; 45 minutes</div>
+        <h1 class="slide-title">Question gallery walk</h1>
+        <p class="lede">Here's how today will run, from recap to your final, stronger inquiry question.</p>
+        <div class="agenda">
+          <div class="agenda-item">
+            <div class="agenda-time" style="background:var(--coral);">5<span>min</span></div>
+            <div class="agenda-body"><h3>Starter &middot; Review</h3><p>Recall together: what makes a good inquiry question?</p></div>
+          </div>
+          <div class="agenda-item">
+            <div class="agenda-time" style="background:var(--mint);">30<span>min</span></div>
+            <div class="agenda-body"><h3>Main &middot; 3 activities</h3><p>Make your A3 poster &rarr; gallery walk &amp; feedback &rarr; revise your question</p></div>
+          </div>
+          <div class="agenda-item">
+            <div class="agenda-time" style="background:var(--sky);">10<span>min</span></div>
+            <div class="agenda-body"><h3>Plenary &middot; Share</h3><p>Share your final question with a partner and reflect on how it changed</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 3 : BUILD YOUR POSTER ============ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Activity 1 &middot; Make your poster</div>
+        <h1 class="slide-title">Put your inquiry question on an A3 poster</h1>
+        <p class="lede">Use your <strong>A3 paper</strong> to make a clear, readable poster with these four parts. Big writing — you'll display it for others to read.</p>
+        <div class="poster-wrap">
+          <div class="poster-mock">
+            <div class="pm-title">MY INQUIRY QUESTION POSTER</div>
+            <div class="pm-field">
+              <div class="pm-label">🌍 My Environmental Change</div>
+              <div class="pm-line"></div>
+            </div>
+            <div class="pm-field">
+              <div class="pm-label">❓ My Inquiry Question</div>
+              <div class="pm-line"></div>
+              <div class="pm-line"></div>
+            </div>
+            <div class="pm-field">
+              <div class="pm-label">🔍 I want to find out...</div>
+              <div class="pm-line"></div>
+            </div>
+            <div class="pm-field">
+              <div class="pm-label">💡 I think this question is important because...</div>
+              <div class="pm-line"></div>
+              <div class="pm-line"></div>
+            </div>
+          </div>
+        </div>
+        <div class="res-row">
+          <span class="res-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> A3 paper</span>
+          <span class="res-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/></svg> Markers or pens</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 4 : GALLERY WALK ============ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Activity 2 &middot; Gallery walk</div>
+        <h1 class="slide-title">Walk, read, and spot great questions</h1>
+        <p class="lede">Display your poster around the room. Walk around quietly and read your classmates' questions. Look for questions that are:</p>
+        <div class="star-grid">
+          <div class="star-card c1"><span class="star-emoji">⭐</span><h3>Interesting</h3><p>It makes you want to know more</p></div>
+          <div class="star-card c2"><span class="star-emoji">⭐</span><h3>Important</h3><p>It matters for people, animals, or places</p></div>
+          <div class="star-card c3"><span class="star-emoji">⭐</span><h3>Researchable</h3><p>You could actually find an answer to it</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 5 : PEER FEEDBACK ============ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Activity 3 &middot; Peer feedback &amp; revise</div>
+        <h1 class="slide-title">Give feedback, then improve your question</h1>
+        <p class="lede">Leave kind, useful feedback on a sticky note or by talking to the poster's owner. Use these sentence starters:</p>
+        <div class="fb-grid">
+          <div class="fb-bubble"><div class="fb-lead">"I like..."</div><p>Say what works well about their question.</p></div>
+          <div class="fb-bubble"><div class="fb-lead">"I wonder..."</div><p>Share a genuine thought their question gave you.</p></div>
+          <div class="fb-bubble"><div class="fb-lead">"Maybe you could ask..."</div><p>Suggest one way to make it stronger or more open.</p></div>
+        </div>
+        <div class="box mint" style="margin-top:22px;">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg> Now revise</div>
+          <div class="box-body"><p style="margin:0;">Read the feedback you received, then update your poster with a stronger, final version of your inquiry question.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 6 : PLENARY ============ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Plenary &middot; 10 minutes</div>
+        <h1 class="slide-title">Share and reflect</h1>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num">1</div><p>Share your final inquiry question with a partner.</p></div>
+          <div class="step-item"><div class="step-num">2</div><p>Remember: good inquiry starts with a good question.</p></div>
+          <div class="step-item"><div class="step-num">3</div><p>Reflect: how has your question changed since Lesson 1?</p></div>
+        </div>
+        <div class="box green" style="margin-top:24px;">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M9 3v18M15 3v18M4 8h16M4 16h16"/></svg> Keep your poster</div>
+          <div class="box-body"><p style="margin:0;">Keep your A3 poster safe — next lesson we'll start investigating the causes and effects behind your question.</p></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <button class="navbtn" id="prevBtn" onclick="prevSlide()" aria-label="Previous">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button class="navbtn" id="nextBtn" onclick="nextSlide()" aria-label="Next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let idx = 0;
+
+const dotsWrap = document.getElementById('dots');
+slides.forEach((s,i)=>{
+  const d = document.createElement('button');
+  d.className = 'dot' + (i===0?' active':'');
+  d.onclick = ()=>goTo(i);
+  dotsWrap.appendChild(d);
+});
+
+function render(){
+  slides.forEach((s,i)=> s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.dot').forEach((d,i)=> d.classList.toggle('active', i===idx));
+  document.getElementById('counter').textContent = (idx+1) + ' / ' + total;
+  document.getElementById('prevBtn').classList.toggle('disabled', idx===0);
+  document.getElementById('nextBtn').classList.toggle('disabled', idx===total-1);
+  slides[idx].scrollTop = 0;
+}
+function goTo(i){ idx = Math.max(0, Math.min(total-1, i)); render(); }
+function nextSlide(){ goTo(idx+1); }
+function prevSlide(){ goTo(idx-1); }
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight') nextSlide();
+  if(e.key==='ArrowLeft') prevSlide();
+});
+render();
+
+document.querySelectorAll('.obj-card').forEach(card=>{
+  card.addEventListener('click', ()=> card.classList.toggle('done'));
+});
+</script>
+</body>
+</html>
