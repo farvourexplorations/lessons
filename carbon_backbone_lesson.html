@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4.1 Carbon: The Backbone of Life — Interactive Lesson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#146C7A; --teal-dark:#0D4F5A; --teal-light:#E3F1F2; --teal-mid:#59A6AE;
+  --orange:#DD7A2E; --orange-light:#FBEADB;
+  --purple:#5B3E96; --purple-light:#F0EAFA;
+  --red:#C0392B; --red-light:#FBE7E4;
+  --blue:#2B71C9; --blue-light:#E9F1FC;
+  --green:#3F8F5C; --green-light:#E7F5EC;
+  --ink:#1D2B32; --ink-soft:#4B5B62;
+  --paper:#FFFFFF; --cream:#F6F4EF; --line:#DDE4E3;
+  --r-lg:22px; --r-md:14px; --r-sm:8px;
+  --shadow: 0 10px 30px rgba(13,79,90,.14);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{margin:0; background:var(--cream); color:var(--ink); font-family:'Inter',system-ui,sans-serif; overflow:hidden;}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+
+#app{position:relative; width:100vw; height:100vh; display:flex; flex-direction:column;}
+.topbar{display:flex; align-items:center; justify-content:space-between; padding:14px 28px; background:var(--paper); border-bottom:1px solid var(--line); flex:0 0 auto; z-index:20;}
+.crumb{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft); font-weight:600;}
+.crumb .tag{background:var(--teal); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12px; padding:5px 12px; border-radius:100px; letter-spacing:.3px;}
+.crumb .sep{color:#B9C4C3;}
+.crumb .current{color:var(--teal-dark);}
+.dots{display:flex; gap:6px; align-items:center;}
+.dot{width:9px; height:9px; border-radius:50%; background:#D7DEDD; border:none; cursor:pointer; transition:all .25s;}
+.dot.active{background:var(--teal); width:22px; border-radius:6px;}
+.dot:hover{background:var(--teal-mid);}
+.counter{font-size:12px; color:var(--ink-soft); font-weight:600; font-variant-numeric:tabular-nums; min-width:44px; text-align:right;}
+
+.stage{position:relative; flex:1 1 auto; overflow:hidden;}
+.slide{position:absolute; inset:0; opacity:0; pointer-events:none; transform:translateX(30px) scale(.99); transition:opacity .45s ease, transform .45s ease; overflow-y:auto;}
+.slide.active{opacity:1; pointer-events:auto; transform:translateX(0) scale(1);}
+.slide-inner{max-width:1180px; margin:0 auto; padding:40px 44px 90px; min-height:100%;}
+
+.navbtn{position:absolute; top:50%; transform:translateY(-50%); z-index:15; width:46px; height:46px; border-radius:50%; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--teal-dark); transition:.2s;}
+.navbtn:hover{background:var(--teal); color:#fff; border-color:var(--teal);}
+.navbtn.disabled{opacity:.25; pointer-events:none;}
+#prevBtn{left:16px;} #nextBtn{right:16px;}
+.navbtn svg{width:20px; height:20px;}
+
+.chevron-badge{display:inline-flex; align-items:center; gap:10px; background:var(--teal); color:#fff; padding:9px 20px 9px 16px; font-family:'Poppins'; font-weight:700; font-size:15px; clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%); margin-bottom:16px;}
+.eyebrow{font-family:'Poppins'; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--orange); margin-bottom:8px;}
+h1.slide-title{font-size:36px; font-weight:800; color:var(--teal-dark); margin:0 0 6px; line-height:1.15;}
+h3.mini-title{font-size:17px; font-weight:700; color:var(--ink); margin:0 0 8px;}
+p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
+.lede{font-size:17px; color:var(--ink-soft); margin-bottom:22px; max-width:640px;}
+.term{color:var(--orange); font-weight:700; cursor:help; border-bottom:1.5px dotted var(--orange);}
+.zh{color:var(--purple); font-weight:600;}
+
+.box{border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow);}
+.box-head{padding:12px 20px; font-family:'Poppins'; font-weight:700; font-size:14px; color:#fff; display:flex; align-items:center; gap:8px;}
+.box-body{padding:20px 22px;}
+.box.blue .box-head{background:var(--blue);}
+.box.purple .box-head{background:var(--purple);}
+.box.orange .box-head{background:var(--orange);}
+.box.green .box-head{background:var(--green);}
+.box.teal .box-head{background:var(--teal);}
+
+.two-col{display:grid; grid-template-columns:1.05fr .95fr; gap:36px; align-items:start;}
+@media (max-width:900px){.two-col{grid-template-columns:1fr;}}
+
+.photo{width:100%; border-radius:var(--r-md); display:block; object-fit:cover; background:#eee; box-shadow:0 6px 18px rgba(20,108,122,.18);}
+.photo-cap{font-size:12px; color:var(--ink-soft); margin-top:8px; font-style:italic;}
+.pill{display:inline-block; padding:4px 12px; border-radius:100px; font-size:12px; font-weight:700; background:var(--teal-light); color:var(--teal-dark); margin:2px 4px 2px 0;}
+
+.btn{border:none; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:14px; padding:10px 20px; border-radius:100px; background:var(--teal); color:#fff; transition:.2s;}
+.btn:hover{background:var(--teal-dark);}
+.btn[disabled]{opacity:.45; cursor:default;}
+.hint{font-size:12.5px; color:var(--ink-soft); background:var(--teal-light); border-radius:100px; padding:6px 14px; display:inline-flex; gap:6px; align-items:center; margin-bottom:18px; font-weight:600;}
+.hint svg{width:14px; height:14px;}
+
+/* cover */
+.cover{height:100%; display:flex; align-items:center; justify-content:center; position:relative; background:radial-gradient(ellipse at 20% 15%, rgba(255,255,255,.10), transparent 45%), linear-gradient(160deg, var(--teal) 0%, var(--teal-dark) 62%, #0A3A42 100%); overflow:hidden;}
+.cover-rock{position:absolute; border-radius:38% 62% 55% 45% / 45% 40% 60% 55%; opacity:.16; background:#fff;}
+.cover-content{position:relative; z-index:2; text-align:center; color:#fff; max-width:760px; padding:0 30px;}
+.cover-content .unit{font-family:'Poppins'; font-weight:700; letter-spacing:3px; font-size:13px; text-transform:uppercase; color:#BFE3E6; margin-bottom:14px;}
+.cover-content h1{font-size:50px; font-weight:800; margin:0 0 10px; line-height:1.08;}
+.cover-content .sub{font-size:19px; color:#DCEEEF; font-weight:500; margin-bottom:8px;}
+.cover-content .sub-zh{font-size:15px; color:#BFE3E6; font-weight:500; margin-bottom:34px;}
+.cover-chip-row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:38px;}
+.cover-chip{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff; padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600; backdrop-filter:blur(4px);}
+.cover-start{background:var(--orange); color:#fff; border:none; font-family:'Poppins'; font-weight:700; font-size:16px; padding:15px 34px; border-radius:100px; cursor:pointer; box-shadow:0 12px 26px rgba(221,122,46,.4); display:inline-flex; align-items:center; gap:10px; transition:.2s;}
+.cover-start:hover{transform:translateY(-2px); box-shadow:0 16px 30px rgba(221,122,46,.5);}
+
+/* objectives */
+.obj-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 22px; margin-top:6px;}
+.obj-card{display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:var(--r-md); background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.2s;}
+.obj-card:hover{border-color:var(--teal-mid); box-shadow:var(--shadow);}
+.obj-num{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--teal-light); color:var(--teal-dark); font-family:'Poppins'; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;}
+.obj-card.done .obj-num{background:var(--teal); color:#fff;}
+.obj-card.done p{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:#B9C4C3;}
+.obj-card p{margin:0; font-size:13.8px; line-height:1.5;}
+
+/* diagram card (skeletons / isomers / steroids) */
+.diagram-card{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow); padding:16px; width:100%;}
+.diagram-card svg{width:100%; height:auto; display:block;}
+.diagram-row{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+.diagram-label{text-align:center; font-family:'Poppins'; font-weight:700; font-size:13px; color:var(--teal-dark); margin-top:8px;}
+
+/* tabs */
+.tabs{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+.tab-btn{padding:10px 18px; border-radius:100px; border:1.5px solid var(--line); background:#fff; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:13.5px; color:var(--ink-soft); transition:.2s;}
+.tab-btn.active{background:var(--teal); border-color:var(--teal); color:#fff;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block; animation:fadein .35s;}
+@keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+/* functional group grid */
+.func-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px;}
+.func-card{background:#fff; border:1.5px solid var(--line); border-radius:var(--r-md); padding:14px 8px; text-align:center; cursor:pointer; transition:.15s;}
+.func-card:hover{border-color:var(--teal-mid);}
+.func-card.active{border-color:var(--purple); background:var(--purple-light);}
+.func-card .sym{font-family:'Poppins'; font-weight:800; font-size:17px; color:var(--teal-dark); display:block; margin-bottom:4px;}
+.func-card .nm{font-size:10.5px; color:var(--ink-soft); font-weight:600; line-height:1.3;}
+@media(max-width:760px){.func-grid{grid-template-columns:repeat(2,1fr);}}
+
+/* fade-swap photo pair (ethylene demo) */
+.fade-pair{position:relative; width:100%; border-radius:var(--r-md); overflow:hidden; box-shadow:0 6px 18px rgba(20,108,122,.18);}
+.fade-pair img{width:100%; display:block; object-fit:cover;}
+.fade-pair .top-img{position:absolute; inset:0; transition:opacity 1.6s ease;}
+
+/* matching game */
+.match-wrap{display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:10px;}
+.match-col h4{font-family:'Poppins'; font-size:12.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:1px; margin:0 0 10px;}
+.match-card{border:1.5px solid var(--line); background:#fff; border-radius:var(--r-md); padding:14px 16px; margin-bottom:10px; cursor:pointer; font-weight:600; font-size:13.5px; transition:.15s; line-height:1.5;}
+.match-card:hover{border-color:var(--teal-mid);}
+.match-card.selected{border-color:var(--purple); background:var(--purple-light);}
+.match-card.matched{border-color:var(--green); background:var(--green-light); color:#245A38; cursor:default;}
+.match-card.shake{animation:shake .4s;}
+@keyframes shake{0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);}}
+
+/* fill blanks */
+.wordbank{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding:14px; background:var(--purple-light); border-radius:var(--r-md);}
+.word-chip{background:#fff; border:1.5px solid var(--purple); color:var(--purple); font-family:'Poppins'; font-weight:600; font-size:13px; padding:7px 14px; border-radius:100px; cursor:pointer; transition:.15s;}
+.word-chip:hover{background:var(--purple); color:#fff;}
+.word-chip.used{opacity:.3; pointer-events:none; text-decoration:line-through;}
+.fillp{font-size:15.5px; line-height:2.3;}
+.blank{display:inline-flex; align-items:center; justify-content:center; min-width:110px; height:28px; border-bottom:2.5px solid var(--purple); font-family:'Poppins'; font-weight:700; color:var(--purple); cursor:pointer; padding:0 6px; font-size:13.5px; vertical-align:middle;}
+.blank.filled{border-bottom-style:solid;}
+.blank:empty::after{content:'\00a0';}
+
+/* scenario */
+.scenario{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); padding:22px 24px; box-shadow:var(--shadow);}
+.speech{background:var(--teal-light); border-radius:14px; padding:10px 16px; font-size:14px; margin:6px 0; max-width:320px; font-weight:600; color:var(--teal-dark);}
+.speech.right{margin-left:auto; background:var(--orange-light); color:#8A4A16;}
+.quiz-opts{display:flex; gap:12px; margin-top:14px; flex-wrap:wrap;}
+.quiz-opt{flex:1 1 160px; border:1.5px solid var(--line); background:#fff; border-radius:var(--r-md); padding:14px 16px; cursor:pointer; font-weight:700; font-family:'Poppins'; font-size:14px; text-align:left; transition:.2s;}
+.quiz-opt:hover{border-color:var(--teal-mid);}
+.quiz-opt.correct{background:var(--green-light); border-color:var(--green); color:var(--green);}
+.quiz-opt.wrong{background:var(--red-light); border-color:var(--red); color:var(--red);}
+.feedback{margin-top:14px; padding:14px 16px; border-radius:var(--r-md); font-size:14px; display:none; line-height:1.6;}
+.feedback.show{display:block; animation:fadein .3s;}
+.feedback.good{background:var(--green-light); color:#245A38; border:1px solid #BFE2CC;}
+
+/* checklist */
+.assess-list{display:flex; flex-direction:column; gap:2px;}
+.assess-item{display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px; cursor:pointer; transition:.15s;}
+.assess-item:hover{background:var(--teal-light);}
+.assess-box{flex:0 0 auto; width:22px; height:22px; border-radius:6px; border:2px solid var(--teal); position:relative;}
+.assess-item.checked .assess-box{background:var(--teal);}
+.assess-box svg{position:absolute; inset:0; margin:auto; width:14px; height:14px; color:#fff; opacity:0;}
+.assess-item.checked .assess-box svg{opacity:1;}
+.assess-item p{margin:0; font-size:14px;}
+.assess-item.checked p{color:var(--ink-soft);}
+.progress-bar-track{height:10px; background:var(--teal-light); border-radius:100px; overflow:hidden; margin:16px 0 22px;}
+.progress-bar-fill{height:100%; width:0%; background:linear-gradient(90deg,var(--teal),var(--orange)); border-radius:100px; transition:width .4s;}
+
+/* glossary */
+.gloss-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px;}
+.gloss-card{background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:14px; cursor:pointer; perspective:800px; height:118px; position:relative;}
+.gloss-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+.gloss-card.flip .gloss-inner{transform:rotateY(180deg);}
+.gloss-face{position:absolute; inset:0; backface-visibility:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:3px;}
+.gloss-face.front{font-family:'Poppins'; font-weight:700; color:var(--teal-dark); font-size:13.5px;}
+.gloss-face.front .zh-term{font-family:'Inter'; font-weight:600; color:var(--purple); font-size:12.5px;}
+.gloss-face.back{transform:rotateY(180deg); font-size:11px; color:var(--ink-soft); padding:4px; line-height:1.4;}
+
+::-webkit-scrollbar{width:8px;}
+::-webkit-scrollbar-thumb{background:#C9D6D5; border-radius:10px;}
+
+@media(max-width:760px){
+  .obj-grid{grid-template-columns:1fr;} .two-col{grid-template-columns:1fr;} .gloss-grid{grid-template-columns:repeat(2,1fr);}
+  .cover-content h1{font-size:32px;} h1.slide-title{font-size:26px;} .match-wrap{grid-template-columns:1fr;} .diagram-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="topbar">
+    <div class="crumb">
+      <span class="tag">Unit 1</span>
+      <span>The Chemistry of Life</span>
+      <span class="sep">/</span>
+      <span class="current">4.1 Carbon: The Backbone of Life</span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="counter" id="counter">1 / 11</div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- SLIDE 0 : COVER -->
+    <section class="slide">
+      <div class="cover">
+        <div class="cover-rock" style="width:260px;height:260px; top:-60px; left:-60px;"></div>
+        <div class="cover-rock" style="width:180px;height:180px; bottom:-40px; right:-30px;"></div>
+        <div class="cover-rock" style="width:120px;height:120px; bottom:60px; left:8%;"></div>
+        <div class="cover-content">
+          <div class="unit">Unit 1 &middot; The Chemistry of Life</div>
+          <h1>Carbon: The Backbone of Life</h1>
+          <div class="sub">One element, endless shapes — how carbon builds every molecule of life</div>
+          <div class="sub-zh">碳：生命的骨架 — 一种元素，无穷的形状</div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">🔗 Carbon skeletons</span>
+            <span class="cover-chip">🪞 Isomers</span>
+            <span class="cover-chip">⚗️ Functional groups</span>
+            <span class="cover-chip">🗣️ English + 中文</span>
+          </div>
+          <button class="cover-start" onclick="goTo(1)">
+            Start the lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 1 : OBJECTIVES -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">4.1</div>
+        <h1 class="slide-title">We are going to…</h1>
+        <p class="lede">Tap each goal as you meet it. This lesson has a lot of chemistry vocabulary — every new word comes with a picture, an interactive, and Chinese support.</p>
+        <div class="obj-grid" id="objGrid">
+          <div class="obj-card" data-i="1"><div class="obj-num">1</div><p>Explain why carbon is so important for building life's molecules</p></div>
+          <div class="obj-card" data-i="2"><div class="obj-num">2</div><p>Describe the three basic shapes of carbon skeletons: chains, branches, and rings</p></div>
+          <div class="obj-card" data-i="3"><div class="obj-num">3</div><p>Define isomer, and describe three different kinds of isomers</p></div>
+          <div class="obj-card" data-i="4"><div class="obj-num">4</div><p>Explain what a functional group is and name several important ones</p></div>
+          <div class="obj-card" data-i="5"><div class="obj-num">5</div><p>Explain how one carbon skeleton can become two very different hormones</p></div>
+          <div class="obj-card" data-i="6"><div class="obj-num">6</div><p>Describe a real-life example: how ethylene gas ripens fruit</p></div>
+          <div class="obj-card" data-i="7"><div class="obj-num">7</div><p>Match functional groups to their real-world roles</p></div>
+          <div class="obj-card" data-i="8"><div class="obj-num">8</div><p>Learn 12 new chemistry words in English, with Chinese translations</p></div>
+        </div>
+        <div style="margin-top:22px;">
+          <span class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Key vocabulary: carbon skeleton · hydrocarbon · isomer · functional group · hydroxyl · carboxyl · amino · organic molecule</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2 : CARBON SKELETON SHAPES -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Getting started</div>
+        <h1 class="slide-title">Carbon's four hands</h1>
+        <p class="lede">A carbon atom can form <strong>4 bonds</strong> at once — like having four hands to hold onto other atoms. This lets carbon build long chains, branches, and rings. Tap each tab to see a shape.</p>
+
+        <div class="tabs" id="skeletonTabs">
+          <button class="tab-btn active" data-sk="chain" onclick="selectSkeleton('chain')">Straight chain</button>
+          <button class="tab-btn" data-sk="branch" onclick="selectSkeleton('branch')">Branched chain</button>
+          <button class="tab-btn" data-sk="ring" onclick="selectSkeleton('ring')">Ring</button>
+        </div>
+
+        <div class="two-col">
+          <div class="diagram-card" id="skeletonStage"></div>
+          <div>
+            <h3 class="mini-title" id="skeletonTitle">Butane — a straight chain</h3>
+            <p id="skeletonDesc"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3 : ISOMERS -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Same formula, different shape</div>
+        <h1 class="slide-title">Meet the isomers</h1>
+        <p class="lede">An <span class="term" data-def="Molecules with the same chemical formula but a different structure. (异构体)">isomer</span> has exactly the same atoms as another molecule, just arranged differently. Different shape can mean very different properties!</p>
+
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="structural">Structural isomers</button>
+          <button class="tab-btn" data-tab="cistrans">Cis-trans isomers</button>
+          <button class="tab-btn" data-tab="enantiomer">Enantiomers</button>
+        </div>
+
+        <div class="tab-panel active" id="tab-structural">
+          <div class="diagram-row">
+            <div><div class="diagram-card" id="isoChainStage"></div><div class="diagram-label">Butane 正丁烷</div></div>
+            <div><div class="diagram-card" id="isoBranchStage"></div><div class="diagram-label">Isobutane 异丁烷</div></div>
+          </div>
+          <p style="margin-top:14px;">Both molecules are C₄H₁₀ — same atoms, same formula. But the carbons connect in a different order. This is a <span class="term" data-def="Isomers with atoms connected in a different order. (结构异构体)">structural isomer</span> <span class="zh">结构异构体</span>. Different structure changes properties, like boiling point.</p>
+        </div>
+
+        <div class="tab-panel" id="tab-cistrans">
+          <div class="diagram-row">
+            <div><div class="diagram-card"><svg viewBox="0 0 260 120"><path d="M20 90 L80 40 L140 90" stroke="#146C7A" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M140 90 L200 40" stroke="#146C7A" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="80" cy="40" r="9" fill="#DD7A2E"/><circle cx="140" cy="90" r="9" fill="#DD7A2E"/></svg></div><div class="diagram-label">Cis 顺式 — bent, usually liquid</div></div>
+            <div><div class="diagram-card"><svg viewBox="0 0 260 120"><path d="M20 90 L80 40 L140 90 L200 40" stroke="#146C7A" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="80" cy="40" r="9" fill="#DD7A2E"/><circle cx="140" cy="90" r="9" fill="#DD7A2E"/></svg></div><div class="diagram-label">Trans 反式 — straight, usually solid</div></div>
+          </div>
+          <p style="margin-top:14px;">Around a double bond, atoms can sit on the <strong>same side</strong> (<span class="term" data-def="Isomers with atoms arranged differently around a double bond. (顺反异构体)">cis</span>, making a kink) or on <strong>opposite sides</strong> (<em>trans</em>, staying straight). Cis fats pack loosely and are usually liquid oils; trans fats pack tightly and are usually solid — and factory-made trans fats are linked to heart disease.</p>
+        </div>
+
+        <div class="tab-panel" id="tab-enantiomer">
+          <div class="diagram-row">
+            <div><div class="diagram-card" style="text-align:center; font-size:52px;">🖐️</div><div class="diagram-label">Smells like spearmint 薄荷</div></div>
+            <div><div class="diagram-card" style="text-align:center; font-size:52px; transform:scaleX(-1);">🖐️</div><div class="diagram-label">Smells like caraway 葛缕子</div></div>
+          </div>
+          <p style="margin-top:14px;"><span class="term" data-def="Isomers that are mirror images of each other, like your left and right hand. (对映异构体)">Enantiomers</span> are mirror images of each other — like your left and right hand: same parts, opposite arrangement. It sounds like a tiny difference, but it matters: one mirror-image form of the molecule <em>carvone</em> smells like spearmint, while its mirror image smells completely different — like caraway seeds!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4 : FUNCTIONAL GROUP EXPLORER -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Activity</div>
+        <h1 class="slide-title">Explore the functional groups</h1>
+        <p class="lede">A <span class="term" data-def="A small group of atoms that gives a molecule specific chemical properties. (官能团)">functional group</span> is a small cluster of atoms attached to a carbon skeleton that gives the whole molecule special chemical behaviour. Tap each group to learn its job.</p>
+        <div class="two-col">
+          <div class="func-grid" id="funcGrid"></div>
+          <div class="box teal">
+            <div class="box-head">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
+              Group facts
+            </div>
+            <div class="box-body" id="funcInfo">
+              <p style="color:var(--ink-soft); margin:0;">Tap a functional group tile to see what it does.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5 : CAUSE & EFFECT — TESTOSTERONE VS ESTRADIOL -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Cause and effect</div>
+        <h1 class="slide-title">One skeleton, two hormones</h1>
+        <p class="lede">Testosterone and estradiol are both built on the exact same four-ring carbon skeleton called a <strong>steroid</strong>. Press the button to see the one small difference between them.</p>
+
+        <div class="diagram-row">
+          <div>
+            <div class="diagram-card">
+              <svg viewBox="0 0 260 160">
+                <path d="M20 100 L20 60 L55 40 L90 60 L90 100 L55 120 Z" fill="none" stroke="#146C7A" stroke-width="4"/>
+                <path d="M90 60 L125 40 L160 60 L160 100 L125 120 L90 100" fill="none" stroke="#146C7A" stroke-width="4"/>
+                <path d="M160 60 L195 45 L220 65 L210 95 L175 100" fill="none" stroke="#146C7A" stroke-width="4"/>
+                <line id="tLine" x1="220" y1="65" x2="240" y2="50" stroke="#DD7A2E" stroke-width="5" stroke-linecap="round"/>
+                <circle id="tGroup" cx="242" cy="46" r="8" fill="#DD7A2E"/>
+                <text x="242" y="30" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="12" fill="#8A4A16">-OH</text>
+              </svg>
+            </div>
+            <div class="diagram-label">Testosterone 睾酮 (male hormone)</div>
+          </div>
+          <div>
+            <div class="diagram-card">
+              <svg viewBox="0 0 260 160">
+                <path d="M20 100 L20 60 L55 40 L90 60 L90 100 L55 120 Z" fill="none" stroke="#146C7A" stroke-width="4"/>
+                <path d="M90 60 L125 40 L160 60 L160 100 L125 120 L90 100" fill="none" stroke="#146C7A" stroke-width="4"/>
+                <path d="M160 60 L195 45 L220 65 L210 95 L175 100" fill="none" stroke="#146C7A" stroke-width="4"/>
+                <line id="eLine" x1="20" y1="60" x2="0" y2="45" stroke="#5B3E96" stroke-width="5" stroke-linecap="round"/>
+                <circle id="eGroup" cx="-2" cy="41" r="8" fill="#5B3E96"/>
+                <text x="0" y="26" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="12" fill="#5B3E96">-OH</text>
+              </svg>
+            </div>
+            <div class="diagram-label">Estradiol 雌二醇 (female hormone)</div>
+          </div>
+        </div>
+        <div style="text-align:center; margin:18px 0;">
+          <button class="btn" onclick="highlightHormoneDiff()">✨ Show me the difference</button>
+        </div>
+        <div class="box orange">
+          <div class="box-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            Why this matters
+          </div>
+          <div class="box-body">
+            <p style="margin:0;">Both molecules share the same carbon skeleton, but a small change in functional groups (and one ring becoming slightly different) is enough to give the body two completely different chemical messages. This shows how a tiny change to a molecule can lead to a huge change in what it does in a living body.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6 : ETHYLENE & FRUIT RIPENING -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Real-life chemistry</div>
+        <h1 class="slide-title">A gas that ripens fruit</h1>
+        <p class="lede"><span class="term" data-def="A small hydrocarbon gas (C2H4) that acts as a plant hormone, signalling fruit to ripen. (乙烯)">Ethylene</span> is one of the simplest organic molecules — just two carbons and four hydrogens (C₂H₄). But plants use it as a hormone that tells fruit "start ripening now!"</p>
+        <div class="two-col">
+          <div>
+            <div class="fade-pair" style="height:260px;">
+              <img class="photo top-img" id="ethyleneTop" src="https://commons.wikimedia.org/wiki/Special:FilePath/Bananas.%20Costa%20Rica.jpg" alt="A bunch of unripe green bananas" style="height:260px;">
+              <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Banana.JPG" alt="A bunch of ripe yellow bananas" style="height:260px;">
+            </div>
+            <div style="text-align:center; margin-top:14px;">
+              <button class="btn" id="ethyleneBtn" onclick="ripenBanana()">🍃 Add ethylene gas</button>
+            </div>
+          </div>
+          <div>
+            <h3 class="mini-title">One functional group, one big signal</h3>
+            <p>Ethylene's simple structure is a carbon-carbon <strong>double bond</strong> — that's it. Yet this tiny molecule triggers a cascade of chemical changes inside fruit: starches turn into sugars, green chlorophyll breaks down, and the fruit softens. This is why grocery stores sometimes ripen fruit with ethylene gas on purpose!</p>
+            <div class="pill">C₂H₄ — the simplest plant hormone</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7 : MATCH THE FUNCTIONAL GROUP -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Activity</div>
+        <h1 class="slide-title">Match the group to its job</h1>
+        <p class="lede">Click a functional group on the left, then click the description on the right that matches it.</p>
+        <div class="match-wrap">
+          <div class="match-col">
+            <h4>Functional group</h4>
+            <div class="match-card" data-key="carboxyl">🧪 <strong>Carboxyl</strong> <span class="zh">羧基</span> −COOH</div>
+            <div class="match-card" data-key="amino">🧪 <strong>Amino</strong> <span class="zh">氨基</span> −NH₂</div>
+            <div class="match-card" data-key="phosphate">🧪 <strong>Phosphate</strong> <span class="zh">磷酸基</span> −PO₄</div>
+          </div>
+          <div class="match-col">
+            <h4>Its job</h4>
+            <div class="match-card example" data-key="base">Acts like a weak base — found in amino acids</div>
+            <div class="match-card example" data-key="energy">Stores energy — found in DNA, RNA, and ATP</div>
+            <div class="match-card example" data-key="acid">Acts like a weak acid — found in amino acids and fatty acids</div>
+          </div>
+        </div>
+        <p id="matchFeedback" style="text-align:center; margin-top:14px; font-weight:700; color:var(--green);"></p>
+      </div>
+    </section>
+
+    <!-- SLIDE 8 : FILL IN THE BLANKS -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Focus</div>
+        <h1 class="slide-title">Complete the summary</h1>
+        <p class="lede">Tap a word from the bank, then tap the blank you want to fill.</p>
+        <div class="wordbank" id="wordbank"></div>
+        <div class="fillp" id="fillPara"></div>
+        <div id="fillResult" style="margin-top:16px;"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9 : CHALLENGE -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Challenge</div>
+        <h1 class="slide-title">Mei and Tom's food label puzzle</h1>
+        <div class="two-col">
+          <div class="scenario">
+            <p style="margin-bottom:14px;">Mei <span class="zh">(美)</span> and Tom are reading a food label. It lists both "unsaturated fat" (cis) and "trans fat."</p>
+            <div class="speech">"They must be the same thing — same atoms, same formula," says Mei.</div>
+            <div class="speech right">"No, Mei — same atoms, but a different shape, so different effects on the body," says Tom.</div>
+            <h3 class="mini-title" style="margin-top:18px;">Who is correct?</h3>
+            <div class="quiz-opts">
+              <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false)">Mei — they are exactly the same</button>
+              <button class="quiz-opt" data-correct="true" onclick="answerQuiz(this,true)">Tom — same formula, different shape and effect</button>
+            </div>
+            <div class="feedback good" id="quizFeedback">
+              <strong>Tom is correct.</strong> Cis and trans fats are isomers — they have the exact same atoms and the same chemical formula, but the atoms are arranged differently around a double bond. That small structural difference changes the fat's shape, how it packs together, and how it affects the body. This is exactly why isomers matter so much in biology!
+            </div>
+          </div>
+          <div>
+            <div class="box purple">
+              <div class="box-head">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>
+                Remember
+              </div>
+              <div class="box-body">
+                <p style="margin:0;">Same formula ≠ same molecule. Isomers prove that in biology, <strong>shape matters</strong> just as much as ingredients.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10 : SELF-CHECK & GLOSSARY -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Look what I can do!</div>
+        <h1 class="slide-title">Self-check &amp; recap</h1>
+        <div class="progress-bar-track"><div class="progress-bar-fill" id="assessFill"></div></div>
+        <div class="assess-list" id="assessList"></div>
+        <h3 class="mini-title" style="margin-top:30px;">Key vocabulary — tap a card to flip it (English 中文)</h3>
+        <div class="gloss-grid" id="glossGrid"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <button class="navbtn" id="prevBtn" onclick="prevSlide()" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <button class="navbtn" id="nextBtn" onclick="nextSlide()" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg></button>
+</div>
+
+<script>
+/* core nav */
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let idx = 0;
+const dotsWrap = document.getElementById('dots');
+slides.forEach((s,i)=>{ const d=document.createElement('button'); d.className='dot'+(i===0?' active':''); d.onclick=()=>goTo(i); dotsWrap.appendChild(d); });
+function render(){
+  slides.forEach((s,i)=> s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.dot').forEach((d,i)=> d.classList.toggle('active', i===idx));
+  document.getElementById('counter').textContent = (idx+1)+' / '+total;
+  document.getElementById('prevBtn').classList.toggle('disabled', idx===0);
+  document.getElementById('nextBtn').classList.toggle('disabled', idx===total-1);
+  slides[idx].scrollTop = 0;
+}
+function goTo(i){ idx = Math.max(0, Math.min(total-1, i)); render(); }
+function nextSlide(){ goTo(idx+1); }
+function prevSlide(){ goTo(idx-1); }
+document.addEventListener('keydown', e=>{ if(e.key==='ArrowRight') nextSlide(); if(e.key==='ArrowLeft') prevSlide(); });
+render();
+
+document.querySelectorAll('.obj-card').forEach(card=> card.addEventListener('click', ()=> card.classList.toggle('done')));
+
+/* carbon skeleton diagrams */
+function skeletonSVG(type){
+  if(type==='chain'){
+    return `<svg viewBox="0 0 260 160">
+      <path d="M30 110 L90 60 L150 110 L210 60" stroke="#146C7A" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <circle cx="30" cy="110" r="12" fill="#DD7A2E"/><circle cx="90" cy="60" r="12" fill="#DD7A2E"/>
+      <circle cx="150" cy="110" r="12" fill="#DD7A2E"/><circle cx="210" cy="60" r="12" fill="#DD7A2E"/>
+    </svg>`;
+  }
+  if(type==='branch'){
+    return `<svg viewBox="0 0 260 160">
+      <path d="M30 110 L90 60 L150 110 L210 60" stroke="#146C7A" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M90 60 L90 20" stroke="#146C7A" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <circle cx="30" cy="110" r="12" fill="#DD7A2E"/><circle cx="90" cy="60" r="12" fill="#5B3E96"/>
+      <circle cx="150" cy="110" r="12" fill="#DD7A2E"/><circle cx="210" cy="60" r="12" fill="#DD7A2E"/>
+      <circle cx="90" cy="20" r="12" fill="#DD7A2E"/>
+    </svg>`;
+  }
+  return `<svg viewBox="0 0 260 160">
+    <polygon points="130,20 195,55 195,105 130,140 65,105 65,55" fill="none" stroke="#146C7A" stroke-width="6" stroke-linejoin="round"/>
+    <circle cx="130" cy="20" r="11" fill="#DD7A2E"/><circle cx="195" cy="55" r="11" fill="#DD7A2E"/>
+    <circle cx="195" cy="105" r="11" fill="#DD7A2E"/><circle cx="130" cy="140" r="11" fill="#DD7A2E"/>
+    <circle cx="65" cy="105" r="11" fill="#DD7A2E"/><circle cx="65" cy="55" r="11" fill="#DD7A2E"/>
+  </svg>`;
+}
+const skeletonInfo = {
+  chain:{title:'Butane — a straight chain', desc:'Four carbons in a row, each carbon filling its remaining bonds with hydrogen. Straight-chain hydrocarbons like this are found in candle wax and natural gas.'},
+  branch:{title:'Isobutane — a branched chain', desc:'The exact same formula as butane (C4H10), but one carbon branches off to the side instead of continuing in a line. Branching changes a molecule\u2019s shape and its properties, like boiling point.'},
+  ring:{title:'Cyclohexane — a ring', desc:'Six carbons bonded in a closed loop. Rings are everywhere in biology — the sugar glucose forms a ring shape, and steroid hormones are built from four fused rings.'}
+};
+function selectSkeleton(type){
+  document.getElementById('skeletonStage').innerHTML = skeletonSVG(type);
+  document.getElementById('skeletonTitle').textContent = skeletonInfo[type].title;
+  document.getElementById('skeletonDesc').textContent = skeletonInfo[type].desc;
+  document.querySelectorAll('#skeletonTabs .tab-btn').forEach(b=> b.classList.toggle('active', b.dataset.sk===type));
+}
+selectSkeleton('chain');
+document.getElementById('isoChainStage').innerHTML = skeletonSVG('chain');
+document.getElementById('isoBranchStage').innerHTML = skeletonSVG('branch');
+
+/* tabs (generic) */
+document.querySelectorAll('.tab-btn[data-tab]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const group = btn.closest('.slide-inner');
+    group.querySelectorAll('.tab-btn[data-tab]').forEach(b=>b.classList.remove('active'));
+    group.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* functional group explorer */
+const funcGroups = [
+  {sym:'−OH', name:'Hydroxyl 羟基', role:'Makes molecules polar and water-soluble. Found in sugars and alcohols.'},
+  {sym:'C=O', name:'Carbonyl 羰基', role:'A carbon double-bonded to oxygen. Found in sugars like glucose.'},
+  {sym:'−COOH', name:'Carboxyl 羧基', role:'Acts like a weak acid — releases a hydrogen ion. Found in amino acids and fatty acids.'},
+  {sym:'−NH₂', name:'Amino 氨基', role:'Acts like a weak base — picks up a hydrogen ion. Found in amino acids, the building blocks of proteins.'},
+  {sym:'−SH', name:'Sulfhydryl 巯基', role:'Two sulfhydryl groups can link together, helping proteins hold their 3D shape. Found in the amino acid cysteine.'},
+  {sym:'−PO₄', name:'Phosphate 磷酸基', role:'Carries a negative charge and stores energy in its bonds. Found in DNA, RNA, and ATP.'},
+  {sym:'−CH₃', name:'Methyl 甲基', role:'Affects how a molecule behaves, and can help switch genes on or off. Found attached to DNA and many hormones.'}
+];
+const funcGrid = document.getElementById('funcGrid');
+funcGroups.forEach((g,i)=>{
+  const card = document.createElement('div');
+  card.className = 'func-card';
+  card.innerHTML = `<span class="sym">${g.sym}</span><span class="nm">${g.name}</span>`;
+  card.addEventListener('click', ()=>{
+    document.querySelectorAll('.func-card').forEach(c=>c.classList.remove('active'));
+    card.classList.add('active');
+    document.getElementById('funcInfo').innerHTML = `<h4 class="mini-title" style="margin:0 0 6px;">${g.sym} — ${g.name}</h4><p style="margin:0;">${g.role}</p>`;
+  });
+  funcGrid.appendChild(card);
+});
+
+/* testosterone vs estradiol highlight */
+function highlightHormoneDiff(){
+  ['tGroup','eGroup'].forEach(id=>{
+    const el = document.getElementById(id);
+    el.style.transition = 'r .3s';
+    let big = false;
+    const timer = setInterval(()=>{
+      el.setAttribute('r', big ? 8 : 14);
+      big = !big;
+    }, 350);
+    setTimeout(()=> clearInterval(timer), 2100);
+  });
+}
+
+/* ethylene ripening fade */
+let ripened = false;
+function ripenBanana(){
+  if(ripened) return;
+  ripened = true;
+  document.getElementById('ethyleneTop').style.opacity = 0;
+  const btn = document.getElementById('ethyleneBtn');
+  btn.textContent = '✅ Ripened!';
+  btn.disabled = true;
+}
+
+/* matching game */
+const funcPairs = {carboxyl:'acid', amino:'base', phosphate:'energy'};
+let selectedFG = null;
+let fgMatched = 0;
+document.querySelectorAll('.match-card:not(.example)').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    if(card.classList.contains('matched')) return;
+    document.querySelectorAll('.match-card:not(.example)').forEach(c=>c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedFG = card;
+  });
+});
+document.querySelectorAll('.match-card.example').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    if(card.classList.contains('matched') || !selectedFG) return;
+    const key = selectedFG.dataset.key;
+    if(funcPairs[key] === card.dataset.key){
+      selectedFG.classList.add('matched'); selectedFG.classList.remove('selected');
+      card.classList.add('matched');
+      fgMatched++;
+      selectedFG = null;
+      if(fgMatched === 3) document.getElementById('matchFeedback').textContent = '🎉 All matched! You understand each group\u2019s job.';
+    } else {
+      card.classList.add('shake'); selectedFG.classList.add('shake');
+      setTimeout(()=>{ card.classList.remove('shake'); if(selectedFG){selectedFG.classList.remove('shake'); selectedFG.classList.remove('selected');} selectedFG=null; },400);
+    }
+  });
+});
+
+/* fill in the blanks */
+const paraTemplate = [
+  "Carbon is important in biology because each carbon atom can form up to ", 0, " bonds, allowing it to build chains, branches, and rings. Molecules with the same chemical formula but a different structure are called ", 1,
+  ". A small group of atoms that gives a molecule special chemical properties is called a ", 2, ". The ", 3, " group (−COOH) makes a molecule act like an acid, while the ", 4, " group (−NH₂) makes a molecule act like a base."
+];
+const blankAnswerKey = {0:'four',1:'isomers',2:'functional group',3:'carboxyl',4:'amino'};
+const fullBank = Object.values(blankAnswerKey);
+const bankEl = document.getElementById('wordbank');
+const paraEl = document.getElementById('fillPara');
+let placed = {};
+function shuffle(arr){ return arr.sort(()=>Math.random()-0.5); }
+shuffle([...fullBank]).forEach(w=>{
+  const chip = document.createElement('button');
+  chip.className = 'word-chip'; chip.textContent = w; chip.dataset.word = w;
+  chip.addEventListener('click', ()=>selectWord(chip));
+  bankEl.appendChild(chip);
+});
+let selectedChip = null;
+function selectWord(chip){
+  if(chip.classList.contains('used')) return;
+  document.querySelectorAll('.word-chip').forEach(c=>c.style.outline='none');
+  selectedChip = chip; chip.style.outline = '2.5px solid var(--purple)';
+}
+paraTemplate.forEach(part=>{
+  if(typeof part === 'string'){ paraEl.appendChild(document.createTextNode(part)); }
+  else{ const blank=document.createElement('span'); blank.className='blank'; blank.dataset.idx=part; blank.addEventListener('click', ()=>fillBlank(blank)); paraEl.appendChild(blank); }
+});
+function fillBlank(blank){
+  if(blank.classList.contains('filled')){
+    const word = blank.textContent; blank.textContent=''; blank.classList.remove('filled');
+    const chip = [...document.querySelectorAll('.word-chip')].find(c=>c.dataset.word===word && c.classList.contains('used'));
+    if(chip) chip.classList.remove('used');
+    delete placed[blank.dataset.idx]; return;
+  }
+  if(!selectedChip) return;
+  blank.textContent = selectedChip.dataset.word; blank.classList.add('filled');
+  selectedChip.classList.add('used'); placed[blank.dataset.idx] = selectedChip.dataset.word;
+  selectedChip.style.outline='none'; selectedChip=null;
+  if(Object.keys(placed).length === Object.keys(blankAnswerKey).length) checkFill();
+}
+function checkFill(){
+  let correct=0;
+  Object.keys(blankAnswerKey).forEach(k=>{ if(placed[k]===blankAnswerKey[k]) correct++; });
+  const totalBlanks = Object.keys(blankAnswerKey).length;
+  document.getElementById('fillResult').innerHTML = `<div class="feedback show ${correct===totalBlanks?'good':''}" style="background:${correct===totalBlanks?'var(--green-light)':'var(--orange-light)'};">
+    <strong>${correct} / ${totalBlanks} correct.</strong> ${correct===totalBlanks ? 'Great work — you have got the whole idea right!' : 'Tap a filled blank to swap it and try again.'}</div>`;
+}
+
+/* quiz */
+function answerQuiz(btn, correct){
+  document.querySelectorAll('.quiz-opt').forEach(b=>{ b.disabled=true; if(b.dataset.correct==='true') b.classList.add('correct'); });
+  if(!correct) btn.classList.add('wrong');
+  document.getElementById('quizFeedback').classList.add('show');
+}
+
+/* assessment */
+const assessItems = [
+  'I can explain why carbon is important for building life\u2019s molecules.',
+  'I can describe carbon skeletons: chains, branches, and rings.',
+  'I can define isomer and describe structural, cis-trans, and mirror-image isomers.',
+  'I can explain what a functional group is.',
+  'I can explain how one carbon skeleton can form two different hormones.',
+  'I can describe how ethylene gas ripens fruit.',
+  'I can match functional groups to their real-world roles.',
+  'I can use 12 new chemistry words in English.'
+];
+const assessList = document.getElementById('assessList');
+assessItems.forEach(text=>{
+  const item = document.createElement('div'); item.className='assess-item';
+  item.innerHTML = `<div class="assess-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>${text}</p>`;
+  item.addEventListener('click', ()=>{ item.classList.toggle('checked'); updateAssessProgress(); });
+  assessList.appendChild(item);
+});
+function updateAssessProgress(){
+  const checked = document.querySelectorAll('.assess-item.checked').length;
+  document.getElementById('assessFill').style.width = (checked/assessItems.length*100)+'%';
+}
+
+/* glossary */
+const glossary = [
+  {term:'Carbon skeleton', zh:'碳骨架', def:'The chain of carbon atoms that forms an organic molecule\u2019s basic structure.'},
+  {term:'Hydrocarbon', zh:'碳氢化合物', def:'A molecule made only of carbon and hydrogen atoms.'},
+  {term:'Isomer', zh:'异构体', def:'Molecules with the same formula but a different structure.'},
+  {term:'Structural isomer', zh:'结构异构体', def:'Isomers with atoms connected in a different order.'},
+  {term:'Cis-trans isomer', zh:'顺反异构体', def:'Isomers with atoms arranged differently around a double bond.'},
+  {term:'Enantiomer', zh:'对映异构体', def:'Isomers that are mirror images of each other.'},
+  {term:'Functional group', zh:'官能团', def:'A group of atoms that gives a molecule specific properties.'},
+  {term:'Hydroxyl group', zh:'羟基', def:'An −OH group; makes molecules polar.'},
+  {term:'Carboxyl group', zh:'羧基', def:'A −COOH group; makes a molecule act like an acid.'},
+  {term:'Amino group', zh:'氨基', def:'An −NH2 group; makes a molecule act like a base.'},
+  {term:'Phosphate group', zh:'磷酸基', def:'A −PO4 group; found in DNA and ATP.'},
+  {term:'Organic molecule', zh:'有机分子', def:'A molecule that contains carbon.'},
+];
+const glossGrid = document.getElementById('glossGrid');
+glossary.forEach(g=>{
+  const card = document.createElement('div'); card.className='gloss-card';
+  card.innerHTML = `<div class="gloss-inner"><div class="gloss-face front"><div>${g.term}</div><div class="zh-term">${g.zh}</div></div><div class="gloss-face back">${g.def}</div></div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flip'));
+  glossGrid.appendChild(card);
+});
+
+/* term tooltips */
+document.querySelectorAll('.term').forEach(t=> t.addEventListener('click', ()=> alert(t.dataset.def)));
+</script>
+</body>
+</html>
