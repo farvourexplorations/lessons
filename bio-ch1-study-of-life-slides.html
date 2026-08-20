@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1.1 The Study of Life — AP Biology Interactive Lesson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#1C6B47; --green-dark:#0F3D28; --green-light:#E4F2EB; --green-mid:#3A9E6E;
+  --gold:#CE9526; --gold-light:#FAF1DC;
+  --coral:#D95F3B; --coral-light:#FBEAE4;
+  --violet:#4A3F8C; --violet-light:#ECE9F8;
+  --sky:#2B79C9; --sky-light:#E8F1FB;
+  --mint:#2E9E76; --mint-light:#E3F5EC;
+  --ink:#1D2B32; --ink-soft:#4B5B62;
+  --paper:#FFFFFF; --cream:#F5F7F4; --line:#DDE4DC;
+  --r-lg:22px; --r-md:14px; --r-sm:8px;
+  --shadow:0 10px 30px rgba(15,61,40,.13);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:'Inter',system-ui,sans-serif;overflow:hidden;}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+
+/* ── App shell ── */
+#app{position:relative;width:100vw;height:100vh;display:flex;flex-direction:column;}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:var(--paper);border-bottom:1px solid var(--line);flex:0 0 auto;z-index:20;}
+.crumb{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-soft);font-weight:600;}
+.crumb .tag{background:var(--green);color:#fff;font-family:'Poppins';font-weight:700;font-size:12px;padding:5px 12px;border-radius:100px;letter-spacing:.3px;}
+.crumb .sep{color:#B0C4B8;}
+.crumb .current{color:var(--green-dark);}
+.dots{display:flex;gap:6px;align-items:center;flex-wrap:wrap;max-width:40vw;}
+.dot{width:9px;height:9px;border-radius:50%;background:#C8D6CC;border:none;cursor:pointer;transition:all .25s;}
+.dot.active{background:var(--green);width:22px;border-radius:6px;}
+.dot:hover{background:var(--green-mid);}
+.counter{font-size:12px;color:var(--ink-soft);font-weight:600;font-variant-numeric:tabular-nums;min-width:50px;text-align:right;}
+
+/* ── Stage ── */
+.stage{position:relative;flex:1 1 auto;overflow:hidden;}
+.slide{position:absolute;inset:0;opacity:0;pointer-events:none;transform:translateX(30px) scale(.99);transition:opacity .45s ease,transform .45s ease;overflow-y:auto;}
+.slide.active{opacity:1;pointer-events:auto;transform:translateX(0) scale(1);}
+.slide.prev{transform:translateX(-30px) scale(.99);}
+.slide-inner{max-width:1180px;margin:0 auto;padding:40px 44px 90px;min-height:100%;}
+
+/* nav arrows */
+.navbtn{position:absolute;top:50%;transform:translateY(-50%);z-index:15;width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--paper);box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--green-dark);transition:.2s;}
+.navbtn:hover{background:var(--green);color:#fff;border-color:var(--green);}
+.navbtn.disabled{opacity:.25;pointer-events:none;}
+#prevBtn{left:16px;}#nextBtn{right:16px;}
+.navbtn svg{width:20px;height:20px;}
+
+/* ── Shared components ── */
+.chevron-badge{display:inline-flex;align-items:center;gap:10px;background:var(--green);color:#fff;padding:9px 20px 9px 16px;font-family:'Poppins';font-weight:700;font-size:15px;clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%);margin-bottom:16px;}
+.eyebrow{font-family:'Poppins';font-weight:700;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+h1.slide-title{font-size:34px;font-weight:800;color:var(--green-dark);margin:0 0 6px;line-height:1.15;}
+h2.section-title{font-size:25px;font-weight:700;color:var(--green-dark);margin:0 0 14px;}
+h3.mini-title{font-size:17px;font-weight:700;color:var(--ink);margin:0 0 8px;}
+p{line-height:1.65;font-size:15.5px;color:var(--ink);margin:0 0 12px;}
+.lede{font-size:17px;color:var(--ink-soft);margin-bottom:22px;max-width:660px;}
+.term{color:var(--gold);font-weight:700;cursor:help;border-bottom:1.5px dotted var(--gold);}
+
+.box{border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--line);background:var(--paper);box-shadow:var(--shadow);}
+.box-head{padding:12px 20px;font-family:'Poppins';font-weight:700;font-size:14px;color:#fff;display:flex;align-items:center;gap:8px;}
+.box-body{padding:20px 22px;}
+.box.green .box-head{background:var(--green);}
+.box.gold .box-head{background:var(--gold);}
+.box.coral .box-head{background:var(--coral);}
+.box.violet .box-head{background:var(--violet);}
+.box.sky .box-head{background:var(--sky);}
+
+.two-col{display:grid;grid-template-columns:1.05fr .95fr;gap:36px;align-items:start;}
+@media(max-width:900px){.two-col{grid-template-columns:1fr;}}
+
+.pill{display:inline-block;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700;background:var(--green-light);color:var(--green-dark);margin:2px 4px 2px 0;}
+
+.btn{border:none;cursor:pointer;font-family:'Poppins';font-weight:600;font-size:14px;padding:10px 20px;border-radius:100px;background:var(--green);color:#fff;transition:.2s;}
+.btn:hover{background:var(--green-dark);}
+.btn.ghost{background:transparent;border:1.5px solid var(--green);color:var(--green);}
+.btn.ghost:hover{background:var(--green-light);}
+.btn[disabled]{opacity:.45;cursor:default;}
+.btn.gold{background:var(--gold);}
+.btn.gold:hover{background:#a87a1a;}
+
+.hint{font-size:12.5px;color:var(--ink-soft);background:var(--green-light);border-radius:100px;padding:6px 14px;display:inline-flex;gap:6px;align-items:center;margin-bottom:18px;font-weight:600;}
+.hint svg{width:14px;height:14px;flex:0 0 auto;}
+
+/* ── COVER ── */
+.cover{height:100%;display:flex;align-items:center;justify-content:center;position:relative;background:radial-gradient(ellipse at 20% 15%,rgba(255,255,255,.10),transparent 45%),linear-gradient(160deg,var(--green) 0%,var(--green-dark) 62%,#071F14 100%);overflow:hidden;}
+.cover-orb{position:absolute;border-radius:50%;opacity:.12;background:#fff;}
+.cover-content{position:relative;z-index:2;text-align:center;color:#fff;max-width:780px;padding:0 30px;}
+.cover-content .unit{font-family:'Poppins';font-weight:700;letter-spacing:3px;font-size:13px;text-transform:uppercase;color:#A8D8B8;margin-bottom:14px;}
+.cover-content h1{font-size:52px;font-weight:800;margin:0 0 10px;line-height:1.08;}
+.cover-content .sub{font-size:19px;color:#CEE8D8;font-weight:500;margin-bottom:34px;}
+.cover-chip-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:38px;}
+.cover-chip{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;padding:8px 16px;border-radius:100px;font-size:13px;font-weight:600;backdrop-filter:blur(4px);}
+.cover-start{background:var(--gold);color:#fff;border:none;font-family:'Poppins';font-weight:700;font-size:16px;padding:15px 34px;border-radius:100px;cursor:pointer;box-shadow:0 12px 26px rgba(206,149,38,.45);display:inline-flex;align-items:center;gap:10px;transition:.2s;}
+.cover-start:hover{transform:translateY(-2px);box-shadow:0 16px 30px rgba(206,149,38,.55);}
+
+/* ── Objectives ── */
+.obj-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 22px;margin-top:6px;}
+.obj-card{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:var(--r-md);background:var(--paper);border:1px solid var(--line);cursor:pointer;transition:.2s;}
+.obj-card:hover{border-color:var(--green-mid);box-shadow:var(--shadow);}
+.obj-num{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--green-light);color:var(--green-dark);font-family:'Poppins';font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;}
+.obj-card.done .obj-num{background:var(--green);color:#fff;}
+.obj-card.done p{color:var(--ink-soft);text-decoration:line-through;text-decoration-color:#B0C4B8;}
+.obj-card p{margin:0;font-size:13.8px;line-height:1.5;}
+
+/* ── Tabs ── */
+.tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.tab-btn{padding:10px 18px;border-radius:100px;border:1.5px solid var(--line);background:#fff;cursor:pointer;font-family:'Poppins';font-weight:600;font-size:13.5px;color:var(--ink-soft);transition:.2s;}
+.tab-btn.active{background:var(--green);border-color:var(--green);color:#fff;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;animation:fadein .35s;}
+@keyframes fadein{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── Info cards (clickable) ── */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:18px;}
+.info-card{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-md);padding:18px 14px;text-align:center;cursor:pointer;transition:.2s;box-shadow:var(--shadow);}
+.info-card:hover{border-color:var(--green-mid);transform:translateY(-2px);}
+.info-card.active{border-color:var(--green);background:var(--green-light);}
+.ic-icon{font-size:2rem;margin-bottom:.4rem;}
+.ic-title{font-family:'Poppins';font-weight:700;font-size:.9rem;color:var(--green-dark);}
+.ic-sub{font-size:.7rem;color:var(--ink-soft);margin-top:.2rem;}
+
+.info-panel{background:var(--green-light);border-left:4px solid var(--green);border-radius:0 var(--r-md) var(--r-md) 0;padding:16px 20px;display:none;animation:fadein .3s ease;margin-bottom:14px;}
+.info-panel.show{display:block;}
+.info-panel h4{font-family:'Poppins';font-weight:700;font-size:1rem;color:var(--green-dark);margin:0 0 6px;}
+.info-panel p{font-size:.9rem;margin:0 0 6px;}
+.info-panel .eg{font-size:.82rem;color:var(--ink-soft);font-style:italic;margin-top:6px;}
+
+/* ── Scientific method steps ── */
+.method-steps{display:flex;flex-direction:column;gap:10px;margin:16px 0;}
+.method-step{display:flex;gap:14px;align-items:flex-start;background:var(--paper);border:1px solid var(--line);border-radius:var(--r-md);padding:14px 16px;cursor:pointer;transition:.2s;}
+.method-step:hover{border-color:var(--green-mid);}
+.method-step.open{border-color:var(--green);box-shadow:var(--shadow);}
+.step-num{flex:0 0 auto;width:32px;height:32px;border-radius:50%;background:var(--green);color:#fff;font-family:'Poppins';font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.step-title{font-family:'Poppins';font-weight:700;font-size:14.5px;color:var(--green-dark);margin-bottom:0;}
+.step-desc{font-size:13.5px;color:var(--ink-soft);line-height:1.6;margin-top:6px;display:none;}
+.method-step.open .step-desc{display:block;animation:fadein .3s;}
+
+/* ── Levels of Organization ladder ── */
+.ladder{display:flex;flex-direction:column;gap:0;}
+.rung{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;cursor:pointer;border-left:5px solid transparent;transition:.2s;border-bottom:1px solid var(--line);}
+.rung:hover{background:var(--green-light);}
+.rung:active{background:var(--green-light);}
+.rung-label{font-family:'Poppins';font-weight:700;font-size:14px;color:var(--green-dark);}
+.rung-badge{font-size:12.5px;color:var(--ink-soft);text-align:right;}
+.rung.atom{border-left-color:#7C3AED;background:#FAF5FF;}
+.rung.molecule{border-left-color:#2563EB;background:#EFF6FF;}
+.rung.macro{border-left-color:#0891B2;background:#ECFEFF;}
+.rung.organelle{border-left-color:var(--green);background:var(--green-light);}
+.rung.cell{border-left-color:var(--green-mid);background:#d4ede0;}
+.rung.tissue{border-left-color:var(--gold);background:var(--gold-light);}
+.rung.organ{border-left-color:#F59E0B;background:#FFFBEB;}
+.rung.organism{border-left-color:var(--coral);background:var(--coral-light);}
+.rung.pop{border-left-color:#DC2626;background:#FEF2F2;}
+.rung.comm{border-left-color:var(--violet);background:var(--violet-light);}
+.rung.eco{border-left-color:#7C3AED;background:#F5F3FF;}
+.rung.bio{border-left-color:var(--ink);background:#F1F5F9;}
+
+/* ── Match game ── */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1rem 0;}
+.match-item{padding:12px 14px;border-radius:10px;border:2px solid var(--line);cursor:pointer;font-size:14px;font-weight:600;transition:all .2s;background:white;text-align:center;color:var(--ink);line-height:1.4;}
+.match-item:hover{border-color:var(--green-mid);background:var(--green-light);}
+.match-item.selected{border-color:var(--violet);background:var(--violet-light);color:var(--violet);}
+.match-item.matched{border-color:var(--mint);background:var(--mint-light);color:#1b7a58;cursor:default;}
+.match-item.wrong{border-color:var(--coral);background:var(--coral-light);color:var(--coral);animation:shake .3s;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* ── Quiz ── */
+.quiz-card{background:white;border:1.5px solid var(--line);border-radius:var(--r-md);padding:18px 20px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.quiz-q{font-family:'Poppins';font-weight:700;font-size:15px;color:var(--ink);margin-bottom:12px;line-height:1.5;}
+.quiz-opts{display:flex;flex-direction:column;gap:8px;}
+.quiz-opt{padding:11px 16px;border-radius:10px;border:1.5px solid var(--line);background:white;cursor:pointer;font-size:14px;font-weight:600;text-align:left;transition:all .15s;color:var(--ink);}
+.quiz-opt:hover:not(:disabled){border-color:var(--green-mid);background:var(--green-light);}
+.quiz-opt.correct{background:var(--mint-light);border-color:var(--mint);color:#1b7a58;}
+.quiz-opt.wrong{background:var(--coral-light);border-color:var(--coral);color:#a83020;}
+.quiz-opt:disabled{cursor:default;}
+.quiz-fb{margin-top:10px;font-size:13.5px;line-height:1.6;padding:10px 14px;border-radius:8px;display:none;animation:fadein .3s;}
+.quiz-fb.show{display:block;}
+.quiz-fb.ok{background:var(--mint-light);color:#1b7a58;border-left:3px solid var(--mint);}
+.quiz-fb.no{background:var(--coral-light);color:#a83020;border-left:3px solid var(--coral);}
+
+/* ── Score panel ── */
+.score-panel{background:linear-gradient(135deg,var(--green) 0%,var(--green-dark) 100%);color:white;border-radius:var(--r-lg);padding:28px;text-align:center;margin-top:18px;}
+.score-panel h3{font-family:'Poppins';font-size:22px;margin:0 0 8px;}
+.score-num{font-family:'Poppins';font-size:52px;font-weight:800;color:var(--gold);line-height:1;}
+
+/* ── Fill blanks ── */
+.wordbank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;padding:14px;background:var(--violet-light);border-radius:var(--r-md);}
+.word-chip{background:#fff;border:1.5px solid var(--violet);color:var(--violet);font-family:'Poppins';font-weight:600;font-size:13px;padding:7px 14px;border-radius:100px;cursor:pointer;transition:.15s;}
+.word-chip:hover{background:var(--violet);color:#fff;}
+.word-chip.used{opacity:.3;pointer-events:none;text-decoration:line-through;}
+.fillp{font-size:15.5px;line-height:2.5;}
+.blank{display:inline-flex;align-items:center;justify-content:center;min-width:100px;height:28px;border-bottom:2.5px solid var(--violet);font-family:'Poppins';font-weight:700;color:var(--violet);cursor:pointer;padding:0 6px;font-size:13.5px;vertical-align:middle;}
+.blank:empty::after{content:'\00a0';}
+
+/* ── Scenario / predict ── */
+.predict-box{background:var(--gold-light);border:1.5px dashed var(--gold);border-radius:var(--r-md);padding:18px 20px;margin:18px 0;}
+.predict-box h4{font-family:'Poppins';font-weight:700;font-size:14px;color:#7A5A10;margin:0 0 10px;}
+.predict-box textarea,.reflect-box textarea,.qa-box textarea{width:100%;border:1.5px solid rgba(0,0,0,.1);border-radius:8px;padding:10px;font-family:'Inter',sans-serif;font-size:14px;resize:vertical;min-height:72px;background:white;color:var(--ink);outline:none;transition:border-color .2s;}
+.reflect-box{background:var(--green-light);border:1.5px dashed var(--green);border-radius:var(--r-md);padding:18px 20px;margin:18px 0;}
+.reflect-box h4{font-family:'Poppins';font-weight:700;font-size:14px;color:var(--green-dark);margin:0 0 10px;}
+.qa-box{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-md);padding:16px 18px;margin-bottom:12px;box-shadow:0 2px 6px rgba(0,0,0,.05);}
+.qa-box .qa-q{font-family:'Poppins';font-weight:700;font-size:14px;color:var(--ink);margin-bottom:10px;}
+
+/* ── Submit / summary ── */
+.sum-section{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-md);padding:16px 18px;margin-bottom:10px;}
+.sum-section h3{font-family:'Poppins';font-weight:700;font-size:14px;color:var(--green-dark);margin:0 0 8px;}
+.sum-val{background:var(--cream);border-radius:8px;padding:10px 14px;font-size:14px;color:var(--ink);border-left:3px solid var(--green-mid);min-height:38px;font-style:italic;}
+.sum-val.empty{color:var(--ink-soft);font-style:normal;border-left-color:var(--line);}
+.share-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:22px;}
+.share-btn{border:none;border-radius:100px;padding:13px 24px;font-family:'Poppins';font-weight:700;font-size:14px;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:8px;}
+.share-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+.share-btn.copy{background:var(--mint);color:white;}
+.share-btn.email{background:var(--violet);color:white;}
+.share-btn.print{background:var(--green-dark);color:white;}
+.copy-confirm{text-align:center;font-size:13px;color:var(--mint);min-height:20px;margin-top:8px;font-weight:600;}
+
+/* ── Table ── */
+.data-table{width:100%;border-collapse:collapse;margin:14px 0;}
+.data-table th{background:var(--green-dark);color:white;font-family:'Poppins';font-weight:700;font-size:13px;padding:10px 14px;text-align:left;}
+.data-table td{padding:9px 14px;font-size:14px;line-height:1.5;border-bottom:1px solid var(--line);}
+.data-table tr:nth-child(even) td{background:#f5f8f5;}
+.data-table td:first-child{font-weight:700;color:var(--green-dark);}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="crumb">
+      <span class="tag">AP Biology</span>
+      <span class="sep">›</span>
+      <span>Chapter 1</span>
+      <span class="sep">›</span>
+      <span class="current">The Study of Life</span>
+    </div>
+    <div class="dots" id="dotsRow"></div>
+    <div class="counter" id="counter">1 / 10</div>
+  </header>
+
+  <!-- STAGE -->
+  <div class="stage">
+
+    <!-- NAV ARROWS -->
+    <button class="navbtn disabled" id="prevBtn" onclick="goTo(cur-1)" aria-label="Previous">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+    </button>
+    <button class="navbtn" id="nextBtn" onclick="goTo(cur+1)" aria-label="Next">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+
+    <!-- ══════ SLIDE 0: COVER ══════ -->
+    <section class="slide">
+      <div class="cover">
+        <div class="cover-orb" style="width:320px;height:320px;top:-80px;left:-80px;"></div>
+        <div class="cover-orb" style="width:200px;height:200px;bottom:-50px;right:-40px;"></div>
+        <div class="cover-orb" style="width:140px;height:140px;top:60px;right:10%;"></div>
+        <div class="cover-content">
+          <div class="unit">OpenStax AP Biology &middot; Chapter 1</div>
+          <h1>The Study of Life 🌿</h1>
+          <div class="sub">What makes something alive? How does science work? Why does biology matter?</div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">🔬 Scientific Method</span>
+            <span class="cover-chip">🧬 8 Properties of Life</span>
+            <span class="cover-chip">🏗️ Levels of Organization</span>
+            <span class="cover-chip">🌳 3 Domains of Life</span>
+            <span class="cover-chip">📝 AP-Style Quiz</span>
+          </div>
+          <button class="cover-start" onclick="goTo(1)">
+            Start Lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════ SLIDE 1: LEARNING OBJECTIVES ══════ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">Chapter 1</div>
+        <h1 class="slide-title">Learning Objectives</h1>
+        <p class="lede">Tap each goal as you master it. By the end of the lesson, every objective should be checked.</p>
+        <div class="obj-grid" id="objGrid">
+          <div class="obj-card" onclick="this.classList.toggle('done')"><div class="obj-num">1</div><p>Identify the shared properties that define all living organisms</p></div>
+          <div class="obj-card" onclick="this.classList.toggle('done')"><div class="obj-num">2</div><p>Distinguish between inductive and deductive reasoning with examples</p></div>
+          <div class="obj-card" onclick="this.classList.toggle('done')"><div class="obj-num">3</div><p>Describe the steps of the scientific method and apply them to a scenario</p></div>
+          <div class="obj-card" onclick="this.classList.toggle('done')"><div class="obj-num">4</div><p>List the 12 levels of biological organization from atom to biosphere</p></div>
+          <div class="obj-card" onclick="this.classList.toggle('done')"><div class="obj-num">5</div><p>Compare the three domains of life and classify organisms into each</p></div>
+          <div class="obj-card" onclick="this.classList.toggle('done')"><div class="obj-num">6</div><p>Interpret a phylogenetic tree — identify nodes, branches, and common ancestors</p></div>
+          <div class="obj-card" onclick="this.classList.toggle('done')"><div class="obj-num">7</div><p>Distinguish between basic science, applied science, and technology</p></div>
+          <div class="obj-card" onclick="this.classList.toggle('done')"><div class="obj-num">8</div><p>Explain why viruses are not classified as living organisms</p></div>
+        </div>
+        <div style="margin-top:22px;">
+          <span class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Key vocabulary: hypothesis · theory · inductive · deductive · domain · phylogeny · homeostasis · evolution</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════ SLIDE 2: WHAT IS LIFE? ══════ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">The Big Question</div>
+        <h1 class="slide-title">What Makes Something Alive?</h1>
+        <p class="lede">Before biology can study life, it must define it. All living organisms share <strong>8 fundamental properties</strong> — tap each one to explore it.</p>
+
+        <div class="predict-box">
+          <h4>💭 Prediction — Before You Learn</h4>
+          <textarea id="ta-wonder" placeholder="In your own words, what do you think makes something alive? List as many criteria as you can. Is fire alive? Is a virus? Is a crystal? Write your reasoning before you tap the properties below."></textarea>
+        </div>
+
+        <div class="card-grid" style="grid-template-columns:repeat(4,1fr);">
+          <div class="info-card" onclick="showProp(this,'order')"><div class="ic-icon">🔩</div><div class="ic-title">Order</div><div class="ic-sub">Property 1</div></div>
+          <div class="info-card" onclick="showProp(this,'sensitivity')"><div class="ic-icon">👁️</div><div class="ic-title">Sensitivity</div><div class="ic-sub">Property 2</div></div>
+          <div class="info-card" onclick="showProp(this,'repro')"><div class="ic-icon">👶</div><div class="ic-title">Reproduction</div><div class="ic-sub">Property 3</div></div>
+          <div class="info-card" onclick="showProp(this,'growth')"><div class="ic-icon">📈</div><div class="ic-title">Growth & Development</div><div class="ic-sub">Property 4</div></div>
+          <div class="info-card" onclick="showProp(this,'regulation')"><div class="ic-icon">⚙️</div><div class="ic-title">Regulation</div><div class="ic-sub">Property 5</div></div>
+          <div class="info-card" onclick="showProp(this,'homeostasis')"><div class="ic-icon">🌡️</div><div class="ic-title">Homeostasis</div><div class="ic-sub">Property 6</div></div>
+          <div class="info-card" onclick="showProp(this,'energy')"><div class="ic-icon">⚡</div><div class="ic-title">Energy Processing</div><div class="ic-sub">Property 7</div></div>
+          <div class="info-card" onclick="showProp(this,'evolution')"><div class="ic-icon">🦋</div><div class="ic-title">Evolutionary Adaptation</div><div class="ic-sub">Property 8</div></div>
+        </div>
+
+        <div id="prop-panel" class="info-panel" style="margin-top:4px;"></div>
+
+        <div class="box green" style="margin-top:18px;">
+          <div class="box-head">🦠 Why Viruses Aren't Alive</div>
+          <div class="box-body"><p style="margin:0;">Viruses have genetic material and can evolve, but they <strong>cannot process energy independently</strong>, have no cellular structure, and cannot maintain homeostasis or reproduce without a host. They fail properties 3 (independently), 5, 6, and 7 — making them fascinating, but officially not alive.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════ SLIDE 3: THE SCIENTIFIC METHOD ══════ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">How Science Works</div>
+        <h1 class="slide-title">The Scientific Method</h1>
+        <div class="two-col">
+          <div>
+            <p class="lede">Science uses a systematic approach to generate reliable knowledge. Tap each step to expand it.</p>
+
+            <div class="method-steps" id="methodSteps">
+              <div class="method-step" onclick="toggleStep(this)">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                  <div class="step-title">Observation</div>
+                  <div class="step-desc">Notice something interesting in the natural world. Observations can be qualitative (descriptive) or quantitative (measured). Good science begins with careful, objective observation — not assumptions.</div>
+                </div>
+              </div>
+              <div class="method-step" onclick="toggleStep(this)">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                  <div class="step-title">Question</div>
+                  <div class="step-desc">Form a testable question based on your observation. Not all questions are scientific — "Is this beautiful?" cannot be tested. Good questions lead to hypotheses that can be falsified.</div>
+                </div>
+              </div>
+              <div class="method-step" onclick="toggleStep(this)">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                  <div class="step-title">Hypothesis</div>
+                  <div class="step-desc">A tentative, testable explanation for the observation — an "educated guess" that makes a specific, falsifiable prediction. Written as an "if…then…" statement. Note: a hypothesis is NOT a guess; it must be based on prior knowledge.</div>
+                </div>
+              </div>
+              <div class="method-step" onclick="toggleStep(this)">
+                <div class="step-num">4</div>
+                <div class="step-body">
+                  <div class="step-title">Experiment / Test</div>
+                  <div class="step-desc">Design a controlled experiment. Independent variable (what you change), dependent variable (what you measure), controlled variables (everything else kept constant). Experimental group receives the manipulation; control group does not.</div>
+                </div>
+              </div>
+              <div class="method-step" onclick="toggleStep(this)">
+                <div class="step-num">5</div>
+                <div class="step-body">
+                  <div class="step-title">Data Collection & Analysis</div>
+                  <div class="step-desc">Record quantitative or qualitative data systematically. Use statistics and graphs to find patterns. Good data is repeatable, unbiased, and accurate. Peer review checks for errors.</div>
+                </div>
+              </div>
+              <div class="method-step" onclick="toggleStep(this)">
+                <div class="step-num">6</div>
+                <div class="step-body">
+                  <div class="step-title">Conclusion</div>
+                  <div class="step-desc">Does the data support or refute the hypothesis? A hypothesis can never be "proven" — only supported or falsified. If not supported, revise and retest. Publish results so others can replicate them.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="box gold" style="margin-bottom:18px;">
+              <div class="box-head">💡 Inductive vs. Deductive Reasoning</div>
+              <div class="box-body">
+                <p><strong>Inductive:</strong> Specific observations → general conclusion. <em>"Every crow I've observed is black, therefore all crows are probably black."</em> Used to form hypotheses.</p>
+                <p><strong>Deductive:</strong> General principle → specific prediction. <em>"If all birds have feathers, and a crow is a bird, then a crow has feathers."</em> Used to design experiments.</p>
+                <p style="margin:0;font-size:13px;color:var(--ink-soft);">📌 AP tip: Science is largely inductive (observations first). Experiments test deductive predictions derived from hypotheses.</p>
+              </div>
+            </div>
+            <div class="box coral">
+              <div class="box-head">⚠️ Hypothesis vs. Theory vs. Law</div>
+              <div class="box-body">
+                <p><strong>Hypothesis:</strong> Testable, falsifiable explanation for one observation.</p>
+                <p><strong>Theory:</strong> Well-substantiated explanation supported by extensive evidence across many experiments. In science, "theory" ≠ "guess." Evolution is a theory.</p>
+                <p style="margin:0;"><strong>Law:</strong> Describes a pattern in nature (e.g., Law of Gravity) without explaining why it occurs. Laws describe; theories explain.</p>
+              </div>
+            </div>
+            <div class="predict-box" style="margin-top:14px;">
+              <h4>🧪 Apply It — Plant & Music Experiment</h4>
+              <textarea id="ta-method" placeholder="A student's houseplants near a speaker grow faster. She tests whether music causes faster growth. Identify: (1) independent variable, (2) dependent variable, (3) control group, (4) is the original observation inductive or deductive?"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════ SLIDE 4: LEVELS OF ORGANIZATION ══════ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Biological Hierarchy</div>
+        <h1 class="slide-title">The 12 Levels of Organization</h1>
+        <div class="two-col">
+          <div>
+            <p style="font-size:13.5px;color:var(--ink-soft);margin-bottom:10px;font-weight:600;">← Smallest to Largest (bottom to top in reality)</p>
+            <div class="ladder">
+              <div class="rung bio" onclick="pingRung(this)"><span class="rung-label">🌐 Biosphere</span><span class="rung-badge">ALL life + environments on Earth</span></div>
+              <div class="rung eco" onclick="pingRung(this)"><span class="rung-label">🌿 Ecosystem</span><span class="rung-badge">community + abiotic environment</span></div>
+              <div class="rung comm" onclick="pingRung(this)"><span class="rung-label">🦁 Community</span><span class="rung-badge">all populations in an area</span></div>
+              <div class="rung pop" onclick="pingRung(this)"><span class="rung-label">🐘 Population</span><span class="rung-badge">individuals of same species, same area</span></div>
+              <div class="rung organism" onclick="pingRung(this)"><span class="rung-label">🧍 Organism</span><span class="rung-badge">individual living thing</span></div>
+              <div class="rung organ" onclick="pingRung(this)"><span class="rung-label">❤️ Organ / Organ System</span><span class="rung-badge">e.g. heart → circulatory system</span></div>
+              <div class="rung tissue" onclick="pingRung(this)"><span class="rung-label">🫀 Tissue</span><span class="rung-badge">group of similar cells (e.g. muscle)</span></div>
+              <div class="rung cell" onclick="pingRung(this)"><span class="rung-label">🔵 Cell ← Smallest Unit of Life</span><span class="rung-badge">everything below this is chemistry</span></div>
+              <div class="rung organelle" onclick="pingRung(this)"><span class="rung-label">⚙️ Organelle</span><span class="rung-badge">functional unit within a cell</span></div>
+              <div class="rung macro" onclick="pingRung(this)"><span class="rung-label">🧪 Macromolecule</span><span class="rung-badge">proteins, DNA, carbs, lipids</span></div>
+              <div class="rung molecule" onclick="pingRung(this)"><span class="rung-label">💧 Molecule</span><span class="rung-badge">two or more bonded atoms (H₂O, CO₂)</span></div>
+              <div class="rung atom" onclick="pingRung(this)"><span class="rung-label">⚛️ Atom</span><span class="rung-badge">smallest unit of an element</span></div>
+            </div>
+          </div>
+          <div>
+            <div class="predict-box">
+              <h4>⚠️ AP Exam Trap — Order These Correctly</h4>
+              <textarea id="ta-levels" placeholder="Without looking at the ladder, write out the 12 levels from smallest to largest. Which ones do you always mix up?"></textarea>
+            </div>
+            <div class="box green">
+              <div class="box-head">🎯 Quick Match — Level to Description</div>
+              <div class="box-body">
+                <div class="match-grid" id="levelsMatch" style="grid-template-columns:1fr 1fr;">
+                  <div class="match-item" data-pair="a" data-side="term" onclick="matchClick2(this)">Cell</div>
+                  <div class="match-item" data-pair="b" data-side="def" onclick="matchClick2(this)">Community + abiotic factors</div>
+                  <div class="match-item" data-pair="c" data-side="term" onclick="matchClick2(this)">Population</div>
+                  <div class="match-item" data-pair="d" data-side="def" onclick="matchClick2(this)">Group of similar cells doing one job</div>
+                  <div class="match-item" data-pair="a" data-side="def" onclick="matchClick2(this)">Smallest unit of life</div>
+                  <div class="match-item" data-pair="e" data-side="term" onclick="matchClick2(this)">Ecosystem</div>
+                  <div class="match-item" data-pair="b" data-side="term" onclick="matchClick2(this)">Biosphere</div>
+                  <div class="match-item" data-pair="c" data-side="def" onclick="matchClick2(this)">All individuals of one species in one area</div>
+                  <div class="match-item" data-pair="d" data-side="term" onclick="matchClick2(this)">Tissue</div>
+                  <div class="match-item" data-pair="e" data-side="def" onclick="matchClick2(this)">All life + environments on Earth</div>
+                </div>
+                <div style="margin-top:10px;display:flex;gap:10px;align-items:center;">
+                  <button class="btn ghost" style="font-size:12px;padding:7px 14px;" onclick="resetMatch2()">↺ Reset</button>
+                  <span id="match2-score" style="font-size:13px;color:var(--ink-soft);font-weight:600;"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════ SLIDE 5: DIVERSITY OF LIFE ══════ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Diversity of Life</div>
+        <h1 class="slide-title">Three Domains &amp; Phylogenetics</h1>
+        <p class="lede">There are ~8.7 million species on Earth. Biology organizes this diversity using evolutionary relationships. The AP exam tests three domains and how to read a phylogenetic tree.</p>
+
+        <h3 class="mini-title" style="margin-bottom:10px;">🌐 Three Domains of Life — Tap Each</h3>
+        <div class="card-grid" style="grid-template-columns:repeat(3,1fr);">
+          <div class="info-card" onclick="showDomain(this,'bacteria')"><div class="ic-icon">🦠</div><div class="ic-title">Bacteria</div><div class="ic-sub">Domain 1 · Prokaryote</div></div>
+          <div class="info-card" onclick="showDomain(this,'archaea')"><div class="ic-icon">🌋</div><div class="ic-title">Archaea</div><div class="ic-sub">Domain 2 · Prokaryote</div></div>
+          <div class="info-card" onclick="showDomain(this,'eukarya')"><div class="ic-icon">🧬</div><div class="ic-title">Eukarya</div><div class="ic-sub">Domain 3 · Eukaryote</div></div>
+        </div>
+        <div id="domain-panel" class="info-panel"></div>
+
+        <div class="divider" style="height:1px;background:var(--line);margin:20px 0;"></div>
+
+        <div class="two-col">
+          <div>
+            <h3 class="mini-title">🌲 Reading a Phylogenetic Tree</h3>
+            <table class="data-table">
+              <tr><th>Term</th><th>What it means</th><th>Analogy</th></tr>
+              <tr><td>Node</td><td>A branching point — the common ancestor of the lineages that split from it</td><td>A fork in a family tree</td></tr>
+              <tr><td>Branch</td><td>A lineage. Length may represent time elapsed since the split</td><td>Lines connecting relatives</td></tr>
+              <tr><td>Tip / Leaf</td><td>End of a branch — a modern species or group</td><td>Living family members today</td></tr>
+              <tr><td>Root</td><td>The oldest common ancestor of all organisms shown</td><td>The founding ancestor</td></tr>
+            </table>
+          </div>
+          <div>
+            <div class="box coral">
+              <div class="box-head">⚠️ AP Exam Tip — Phylogenetics</div>
+              <div class="box-body">
+                <p>Two species that share a <strong>more recent common ancestor</strong> (closer node) are more closely related — regardless of how far apart they look on the page.</p>
+                <p style="margin:0;">Don't be fooled by branch length or visual distance. Only <strong>node positions</strong> determine relatedness.</p>
+              </div>
+            </div>
+            <div class="box sky" style="margin-top:14px;">
+              <div class="box-head">🔬 Basic vs. Applied Science</div>
+              <div class="box-body">
+                <p><strong>Basic science:</strong> expands knowledge for its own sake (no immediate application expected). E.g., studying how DNA replication works.</p>
+                <p style="margin:0;"><strong>Applied science:</strong> uses scientific knowledge to solve specific practical problems. E.g., designing a drug that blocks a viral enzyme based on basic research.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════ SLIDE 6: FILL IN THE BLANK ══════ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Vocabulary Practice</div>
+        <h1 class="slide-title">Fill in the Blank</h1>
+        <p class="lede">Select a word from the bank, then click a blank to fill it. Use each word once.</p>
+        <span class="hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          Click a word chip → then click the blank you want to fill. Click a filled blank to return its word.
+        </span>
+        <div class="wordbank" id="wordbank"></div>
+        <p class="fillp" id="fillPara"></p>
+        <div style="margin-top:18px;">
+          <button class="btn" onclick="checkFill()">✓ Check Answers</button>
+          <button class="btn ghost" onclick="resetFillBlanks()" style="margin-left:10px;">↺ Reset</button>
+        </div>
+        <div id="fillResult" style="margin-top:14px;"></div>
+      </div>
+    </section>
+
+    <!-- ══════ SLIDE 7: REFLECTION ══════ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Short Answer Practice</div>
+        <h1 class="slide-title">Reflection Questions</h1>
+        <p class="lede">Write your own answers in full sentences — this is the highest-impact study technique for AP Biology.</p>
+
+        <div class="qa-box">
+          <div class="qa-q">1. Explain the difference between inductive and deductive reasoning. Give one original example of each (not from the textbook).</div>
+          <textarea id="ref1" placeholder="Your answer…"></textarea>
+        </div>
+        <div class="qa-box">
+          <div class="qa-q">2. List all 8 properties of life. For each, briefly explain why it is necessary — what would happen if a living thing lacked that property?</div>
+          <textarea id="ref2" placeholder="Your answer…"></textarea>
+        </div>
+        <div class="qa-box">
+          <div class="qa-q">3. A classmate says "Evolution is just a theory, so it's not proven." How would you respond using what you know about the difference between a hypothesis, a theory, and a scientific law?</div>
+          <textarea id="ref3" placeholder="Your answer…"></textarea>
+        </div>
+        <div class="qa-box">
+          <div class="qa-q">4. Write out the 12 levels of biological organization from atom to biosphere. Then identify which level is "the smallest unit of life" and explain why this matters for the definition of life.</div>
+          <textarea id="ref4" placeholder="Your answer…"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════ SLIDE 8: QUIZ ══════ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">AP-Style Practice</div>
+        <h1 class="slide-title">Multiple Choice Quiz</h1>
+        <p class="lede">15 questions written in AP Biology exam style. Get instant feedback on each answer.</p>
+        <div id="quiz-container"></div>
+        <div id="score-panel" class="score-panel" style="display:none;">
+          <h3>Quiz Complete! 🎉</h3>
+          <div class="score-num" id="score-display">0/15</div>
+          <p id="score-msg" style="margin-top:10px;opacity:.9;"></p>
+          <button class="btn gold" onclick="retakeQuiz()" style="margin-top:14px;">↺ Retake Quiz</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════ SLIDE 9: SUBMIT ══════ -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">Submit Your Work</div>
+        <h1 class="slide-title">Ready to Share</h1>
+        <p class="lede">Here's a summary of everything you worked on. Copy it and paste into Google Classroom, or email it to your teacher.</p>
+
+        <div class="sum-section" style="background:var(--green-dark);color:white;border-color:var(--green-dark);">
+          <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+            <div>
+              <div style="font-size:11px;opacity:.55;margin-bottom:4px;font-weight:700;letter-spacing:1px;">STUDENT</div>
+              <div style="font-family:'Poppins';font-weight:800;font-size:20px;" id="summaryName">—</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:11px;opacity:.55;margin-bottom:4px;font-weight:700;letter-spacing:1px;">LESSON</div>
+              <div style="font-family:'Poppins';font-weight:700;font-size:14px;">AP Bio · Ch.1 · The Study of Life 🌿</div>
+              <div style="font-size:12px;opacity:.55;" id="summaryDate"></div>
+            </div>
+          </div>
+          <div style="margin-top:14px;display:flex;gap:10px;align-items:center;">
+            <label style="font-size:13px;opacity:.7;white-space:nowrap;">Your name:</label>
+            <input type="text" id="studentName" placeholder="Type your name…" style="flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:8px 12px;font-family:'Inter';font-size:14px;color:white;outline:none;" oninput="buildSummary()">
+          </div>
+        </div>
+
+        <div class="sum-section"><h3>📝 Quiz Score</h3><div class="sum-val" id="sum-quiz">Not yet completed</div></div>
+        <div class="sum-section"><h3>🌍 Opening Prediction — What Makes Something Alive?</h3><div class="sum-val empty" id="sum-wonder">Not answered</div></div>
+        <div class="sum-section"><h3>🔬 Scientific Method — Plant &amp; Music Experiment</h3><div class="sum-val empty" id="sum-method">Not answered</div></div>
+        <div class="sum-section"><h3>🏗️ Levels of Organization Practice</h3><div class="sum-val empty" id="sum-levels">Not answered</div></div>
+        <div class="sum-section">
+          <h3>💭 Reflection Questions</h3>
+          <div style="font-size:12px;color:var(--ink-soft);margin-bottom:4px;font-weight:600;">Q1 — Inductive vs. Deductive</div><div class="sum-val empty" id="sum-r1">Not answered</div>
+          <div style="font-size:12px;color:var(--ink-soft);margin-bottom:4px;margin-top:10px;font-weight:600;">Q2 — 8 Properties of Life</div><div class="sum-val empty" id="sum-r2">Not answered</div>
+          <div style="font-size:12px;color:var(--ink-soft);margin-bottom:4px;margin-top:10px;font-weight:600;">Q3 — Theory vs. Hypothesis</div><div class="sum-val empty" id="sum-r3">Not answered</div>
+          <div style="font-size:12px;color:var(--ink-soft);margin-bottom:4px;margin-top:10px;font-weight:600;">Q4 — 12 Levels of Organization</div><div class="sum-val empty" id="sum-r4">Not answered</div>
+        </div>
+
+        <div class="share-row">
+          <button class="share-btn copy" onclick="copyResults()">📋 Copy My Results</button>
+          <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+          <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+        </div>
+        <div class="copy-confirm" id="copyConfirm"></div>
+
+        <div style="margin-top:22px;background:var(--gold-light);border:1.5px dashed var(--gold);border-radius:var(--r-md);padding:16px 18px;">
+          <p style="font-family:'Poppins';font-weight:700;font-size:13px;color:#7A5A10;margin:0 0 8px;">📋 How to submit:</p>
+          <p style="font-size:13px;color:#7A5A10;line-height:2;margin:0;"><strong>📋 Copy My Results</strong> — Copies all answers. Paste into Google Classroom.<br><strong>📧 Email to Teacher</strong> — Opens your email app with answers pre-filled.<br><strong>🖨️ Print / Save PDF</strong> — Mac: bottom-left → Save as PDF. Windows: Microsoft Print to PDF.</p>
+        </div>
+
+        <div style="text-align:center;margin-top:28px;padding-top:22px;border-top:1px solid var(--line);">
+          <p style="font-size:12px;color:var(--ink-soft);">© 2026 Farvour Explorations · All Rights Reserved · Licensed for single-classroom use only.<br>Content informed by OpenStax Biology for AP Courses (CC BY-NC-SA 4.0)</p>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /stage -->
+</div><!-- /app -->
+
+<script>
+const TOTAL = 10;
+let cur = 0;
+const slides = document.querySelectorAll('.slide');
+
+/* ── DOTS ── */
+const dotsRow = document.getElementById('dotsRow');
+slides.forEach((_, i) => {
+  const d = document.createElement('button');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.setAttribute('aria-label', 'Slide ' + (i+1));
+  d.addEventListener('click', () => goTo(i));
+  dotsRow.appendChild(d);
+});
+
+function goTo(n) {
+  if (n < 0 || n >= TOTAL) return;
+  slides[cur].classList.remove('active');
+  slides[cur].classList.add('prev');
+  setTimeout(() => slides[cur].classList.remove('prev'), 500);
+  cur = n;
+  slides[cur].classList.add('active');
+  dotsRow.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === cur));
+  document.getElementById('counter').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.getElementById('prevBtn').classList.toggle('disabled', cur === 0);
+  document.getElementById('nextBtn').classList.toggle('disabled', cur === TOTAL - 1);
+  if (n === 9) buildSummary();
+  slides[cur].scrollTop = 0;
+}
+goTo(0);
+
+/* ── PROPERTIES OF LIFE ── */
+const propData = {
+  order:       { icon:'🔩', title:'Order', text:'Living things maintain highly organized structures — from the DNA double helix to organ systems. Non-living things can be ordered (crystals) but lack the other 7 properties.', eg:'Cell membrane arrangement, enzyme 3D fold, chromosomal organization' },
+  sensitivity: { icon:'👁️', title:'Sensitivity / Response to Stimuli', text:'Living organisms detect and respond to their internal and external environment. This includes both rapid responses (reflexes) and gradual ones (growth toward light).', eg:'Plants turning toward light (phototropism), white blood cells chasing pathogens, your pupils dilating in the dark' },
+  repro:       { icon:'👶', title:'Reproduction', text:'All living organisms reproduce — sexually or asexually — passing genetic information to offspring. A fire "spreads" but carries no genetic information to its "offspring."', eg:'Bacteria binary fission, human sexual reproduction, fern spore release' },
+  growth:      { icon:'📈', title:'Growth & Development', text:'Organisms grow and develop following genetically encoded instructions — not random expansion like a crystal growing. Development is regulated and orderly.', eg:'Caterpillar → butterfly metamorphosis, embryo cell differentiation, seed → tree development' },
+  regulation:  { icon:'⚙️', title:'Regulation', text:'Living organisms regulate internal processes through feedback mechanisms — controlling gene expression, enzyme activity, hormone levels, and cell cycle progression.', eg:'Insulin/glucagon regulating blood sugar, cell cycle checkpoints, feedback inhibition in enzyme pathways' },
+  homeostasis: { icon:'🌡️', title:'Homeostasis', text:'A subset of regulation — maintaining a stable internal environment despite external changes. Temperature, pH, and osmotic balance are regulated within narrow, life-compatible ranges.', eg:'Sweating to cool down, kidneys regulating blood osmolarity, buffers maintaining blood pH 7.35–7.45' },
+  energy:      { icon:'⚡', title:'Energy Processing', text:'All living organisms take in energy, convert it, and use it to do work. Without energy processing, all other properties fail. Autotrophs capture light; heterotrophs consume organics.', eg:'Plants: light → glucose (photosynthesis). Animals: glucose → ATP (respiration). ATP powers muscle contraction.' },
+  evolution:   { icon:'🦋', title:'Evolutionary Adaptation', text:'Over generations, populations change in response to environmental pressures through natural selection. All life has an evolutionary history — this is what unifies all of biology.', eg:'Antibiotic resistance in bacteria, moth camouflage, immune system memory' }
+};
+let lastPropCard = null;
+function showProp(card, key) {
+  if (lastPropCard) lastPropCard.classList.remove('active');
+  card.classList.add('active');
+  lastPropCard = card;
+  const d = propData[key];
+  const panel = document.getElementById('prop-panel');
+  panel.innerHTML = `<h4>${d.icon} ${d.title}</h4><p>${d.text}</p><div class="eg">📌 Examples: ${d.eg}</div>`;
+  panel.classList.add('show');
+}
+
+/* ── SCIENTIFIC METHOD STEPS ── */
+function toggleStep(el) {
+  el.classList.toggle('open');
+}
+
+/* ── LEVELS LADDER ── */
+function pingRung(el) {
+  el.style.fontWeight = '800';
+  el.style.background = '';
+  setTimeout(() => { el.style.fontWeight = ''; }, 600);
+}
+
+/* ── DOMAIN CARDS ── */
+const domainData = {
+  bacteria: { icon:'🦠', title:'Bacteria', text:'Prokaryotic cells — no membrane-bound nucleus. Single-celled, incredibly metabolically diverse. Some perform photosynthesis, some decompose, some are pathogens, many are essential to ecosystems.', eg:'E. coli, Streptococcus, Cyanobacteria (photosynthetic), Lactobacillus (yogurt)' },
+  archaea:  { icon:'🌋', title:'Archaea', text:'Also prokaryotic, but genetically distinct from Bacteria. Many are extremophiles (hot springs, deep-sea vents, salt lakes). Molecular evidence shows Archaea are more closely related to Eukarya than to Bacteria.', eg:'Methanogens (make methane), Halophiles (salt flats), Thermophiles (hot springs)' },
+  eukarya:  { icon:'🧬', title:'Eukarya', text:'Eukaryotic cells — true membrane-bound nucleus + organelles. Includes four kingdoms: Protista, Fungi, Plantae, Animalia. The endosymbiotic theory explains how eukaryotes evolved from prokaryotic ancestors.', eg:'Kingdoms: Protista (amoeba, algae), Fungi (mushrooms), Plantae (plants), Animalia (all animals)' }
+};
+let lastDomainCard = null;
+function showDomain(card, key) {
+  document.querySelectorAll('#slide5 .info-card, .slide:nth-child(6) .info-card').forEach(c => c.classList.remove('active'));
+  if (lastDomainCard) lastDomainCard.classList.remove('active');
+  card.classList.add('active');
+  lastDomainCard = card;
+  const d = domainData[key];
+  const panel = document.getElementById('domain-panel');
+  panel.innerHTML = `<h4>${d.icon} ${d.title}</h4><p>${d.text}</p><div class="eg">📌 ${d.eg}</div>`;
+  panel.classList.add('show');
+}
+
+/* ── LEVELS MATCH GAME ── */
+let m2Selected = null, m2Score = 0;
+function matchClick2(el) {
+  if (el.classList.contains('matched')) return;
+  if (!m2Selected) {
+    el.classList.add('selected'); m2Selected = el;
+  } else if (m2Selected === el) {
+    el.classList.remove('selected'); m2Selected = null;
+  } else {
+    if (m2Selected.dataset.pair === el.dataset.pair && m2Selected.dataset.side !== el.dataset.side) {
+      m2Selected.classList.remove('selected'); m2Selected.classList.add('matched');
+      el.classList.add('matched'); m2Score++;
+      document.getElementById('match2-score').textContent = m2Score + '/5 matched';
+      m2Selected = null;
+    } else {
+      m2Selected.classList.add('wrong'); el.classList.add('wrong');
+      const a = m2Selected, b = el;
+      setTimeout(() => { a.classList.remove('selected','wrong'); b.classList.remove('wrong'); }, 650);
+      m2Selected = null;
+    }
+  }
+}
+function resetMatch2() {
+  m2Selected = null; m2Score = 0;
+  document.querySelectorAll('#levelsMatch .match-item').forEach(el => el.classList.remove('selected','matched','wrong'));
+  document.getElementById('match2-score').textContent = '';
+}
+
+/* ── FILL IN THE BLANK ── */
+const bankWords = ['hypothesis','theory','inductive','deductive','homeostasis','evolution','biosphere','organism','cell','domain'];
+const fillAnswers = { 0:'inductive', 1:'hypothesis', 2:'deductive', 3:'experiment', 4:'theory', 5:'homeostasis', 6:'evolution', 7:'cell', 8:'biosphere', 9:'domain' };
+const extraBank = ['experiment'];
+const fullBank = [...bankWords, ...extraBank];
+
+const paraTemplate2 = [
+  'Science often begins with ', 0, ' reasoning — drawing general conclusions from specific observations. From these observations, a scientist forms a ', 1,
+  ' — a testable, falsifiable explanation. To test it, ', 2, ' reasoning generates specific predictions that can be tested in a controlled ', 3,
+  '. If supported by extensive evidence from many experiments, an explanation may be elevated to a scientific ', 4,
+  '. One of the 8 properties of life is ', 5, ' — maintaining stable internal conditions. All life also shares ', 6,
+  ' — the capacity to change over generations. The basic unit of life is the ', 7,
+  '. The largest level of biological organisation is the ', 8,
+  '. Bacteria, Archaea, and Eukarya each represent a ', 9, ' of life.'
+];
+
+const bankEl = document.getElementById('wordbank');
+const paraEl = document.getElementById('fillPara');
+let placed2 = {}, selectedChip2 = null;
+
+function shuffleArr(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+function buildFillBlanks() {
+  bankEl.innerHTML = ''; paraEl.innerHTML = ''; placed2 = {}; selectedChip2 = null;
+  shuffleArr(fullBank).forEach(w => {
+    const chip = document.createElement('button');
+    chip.className = 'word-chip'; chip.textContent = w; chip.dataset.word = w;
+    chip.addEventListener('click', () => {
+      if (chip.classList.contains('used')) return;
+      document.querySelectorAll('.word-chip').forEach(c => c.style.outline = 'none');
+      selectedChip2 = chip; chip.style.outline = '2.5px solid var(--violet)';
+    });
+    bankEl.appendChild(chip);
+  });
+  paraTemplate2.forEach(part => {
+    if (typeof part === 'string') { paraEl.appendChild(document.createTextNode(part)); }
+    else {
+      const blank = document.createElement('span');
+      blank.className = 'blank'; blank.dataset.idx = part;
+      blank.addEventListener('click', () => fillBlank2(blank));
+      paraEl.appendChild(blank);
+    }
+  });
+}
+
+function fillBlank2(blank) {
+  if (blank.classList.contains('filled')) {
+    const word = blank.textContent;
+    blank.textContent = ''; blank.classList.remove('filled');
+    const chip = [...document.querySelectorAll('.word-chip')].find(c => c.dataset.word === word && c.classList.contains('used'));
+    if (chip) chip.classList.remove('used');
+    delete placed2[blank.dataset.idx]; return;
+  }
+  if (!selectedChip2) return;
+  blank.textContent = selectedChip2.dataset.word;
+  blank.classList.add('filled');
+  selectedChip2.classList.add('used');
+  placed2[blank.dataset.idx] = selectedChip2.dataset.word;
+  selectedChip2.style.outline = 'none'; selectedChip2 = null;
+  if (Object.keys(placed2).length === Object.keys(fillAnswers).length) checkFill();
+}
+
+function checkFill() {
+  let correct = 0;
+  Object.keys(fillAnswers).forEach(k => { if (placed2[k] === fillAnswers[k]) correct++; });
+  const total = Object.keys(fillAnswers).length;
+  document.getElementById('fillResult').innerHTML = `<div style="padding:14px 18px;border-radius:12px;background:${correct===total?'var(--mint-light)':'var(--gold-light)'};border-left:4px solid ${correct===total?'var(--mint)':'var(--gold)'};font-weight:700;font-size:14.5px;">${correct} / ${total} correct. ${correct===total?'🎉 Perfect — you know your Chapter 1 vocabulary!':'Tap a filled blank to swap it and try again.'}</div>`;
+}
+
+function resetFillBlanks() { buildFillBlanks(); document.getElementById('fillResult').innerHTML = ''; }
+
+/* ── QUIZ ── */
+const quizData = [
+  { q:'Which of the following BEST describes what a scientific theory is?',
+    opts:['An educated guess about what might happen','A hypothesis tested only once','A well-substantiated explanation supported by extensive evidence and repeated testing','A law that describes but does not explain phenomena'],
+    ans:2, fb:'In science, "theory" ≠ "guess." A scientific theory (like the Theory of Evolution or Cell Theory) is the most rigorously tested and supported type of explanation in all of science.' },
+  { q:'A biologist observes that all 500 frogs she has sampled from a pond have green coloring. She concludes that all frogs in that species are green. This is an example of:',
+    opts:['Deductive reasoning','Inductive reasoning','Hypothesis testing','Applied science'],
+    ans:1, fb:'Inductive reasoning moves from specific observations → general conclusion. She observed 500 frogs and drew a general conclusion. Note: this conclusion could be falsified by finding a non-green frog.' },
+  { q:'In a controlled experiment on the effect of light on plant growth, which of the following is the INDEPENDENT variable?',
+    opts:['The height of the plants after 2 weeks','The amount of water given to each plant','The amount of light each plant receives','The type of soil used'],
+    ans:2, fb:'The independent variable is what the experimenter deliberately changes/manipulates. Here, the experimenter controls the light. Plant height (dependent) is what changes as a result.' },
+  { q:'Which of the following is NOT one of the 8 properties of life?',
+    opts:['Homeostasis','Reproduction','Crystalline structure','Energy processing'],
+    ans:2, fb:'Crystalline structure is a property of minerals like quartz or salt — not living things. The 8 properties are: order, sensitivity/response to stimuli, reproduction, growth & development, regulation, homeostasis, energy processing, and evolutionary adaptation.' },
+  { q:'Viruses are not considered living because they:',
+    opts:['Are too small to be seen without a microscope','Cannot independently process energy, maintain homeostasis, or reproduce without a host cell','Do not contain any genetic material','Are not made of carbon-based molecules'],
+    ans:1, fb:'Viruses lack cellular structure and cannot independently carry out energy processing, homeostasis, or reproduction. They are on the boundary of life, but officially fail to meet the complete set of 8 properties.' },
+  { q:'Which sequence correctly represents the levels of organization from LEAST to MOST complex?',
+    opts:['Cell → Tissue → Organ → Organism → Population → Community → Ecosystem → Biosphere','Biosphere → Ecosystem → Community → Population → Organism','Tissue → Cell → Organ → Organism → Population','Atom → Cell → Molecule → Organelle → Tissue'],
+    ans:0, fb:'Correct order (small → large): Atom → Molecule → Macromolecule → Organelle → Cell → Tissue → Organ → Organ System → Organism → Population → Community → Ecosystem → Biosphere.' },
+  { q:'Which domain of life contains organisms that are prokaryotic, often found in extreme environments, and MORE closely related to Eukarya than to Bacteria?',
+    opts:['Bacteria','Fungi','Archaea','Protista'],
+    ans:2, fb:'Archaea are prokaryotes like bacteria, but molecular evidence shows they share a more recent common ancestor with Eukarya. Many are extremophiles — living in hot springs, salt lakes, and deep-sea vents.' },
+  { q:'In a phylogenetic tree, what does a NODE represent?',
+    opts:['A modern species alive today','A common ancestor shared by the lineages that branch from it','The root of the entire tree','The length of time a species has existed'],
+    ans:1, fb:'A node is a branching point representing a hypothetical common ancestor. The two lineages branching from a node both descended from that ancestor. Closer nodes = more recent common ancestor = more closely related.' },
+  { q:'A researcher studies ATP synthesis purely to understand how the enzyme works, with no intention of developing medicine or technology. This is best described as:',
+    opts:['Applied science','Technology','Basic science','Deductive reasoning'],
+    ans:2, fb:'Basic science expands knowledge for its own sake. The knowledge gained may eventually inform applied research, but that\'s not the immediate goal. Applied science, by contrast, aims to solve a specific practical problem.' },
+  { q:'Which property of life explains why your body temperature stays around 37°C even when you exercise vigorously or sit in the cold?',
+    opts:['Reproduction','Homeostasis','Order','Growth and development'],
+    ans:1, fb:'Homeostasis is the maintenance of a stable internal environment. Your body uses sweating, shivering, blood vessel dilation/constriction, and metabolic rate changes to keep temperature within a narrow range.' },
+  { q:'Which of the following is the smallest unit of life?',
+    opts:['Organelle','Macromolecule','Atom','Cell'],
+    ans:3, fb:'The cell is the smallest unit that meets ALL the functional requirements of being alive. Organelles cannot survive independently. Atoms and molecules are chemistry, not biology.' },
+  { q:'Which statement correctly describes the relationship between a hypothesis and a theory?',
+    opts:['A hypothesis is just a weaker form of a theory','A theory becomes a law when it is proven correct','A hypothesis is a testable explanation; a theory is a well-substantiated explanation supported by extensive evidence across many experiments','Hypotheses and theories are identical in terms of scientific strength'],
+    ans:2, fb:'A hypothesis is a single testable explanation for one observation. A scientific theory is a broad explanatory framework supported by a large body of evidence from many independent studies over time.' },
+  { q:'The endosymbiotic theory explains the origin of mitochondria and chloroplasts by proposing that:',
+    opts:['Ancient cells spontaneously generated these organelles from their own membranes','Ancient host cells engulfed bacteria that were not digested and became permanent internal partners','Mitochondria and chloroplasts split off from the nucleus during early evolution','All organelles were present in the first cells on Earth'],
+    ans:1, fb:'Evidence for endosymbiosis: mitochondria and chloroplasts have their own circular DNA, their own 70S ribosomes, double membranes, and reproduce by binary fission independently of the cell cycle — just like bacteria.' },
+  { q:'A student designs an experiment to test whether fertilizer affects plant growth. She grows 20 plants WITH fertilizer and 20 WITHOUT. What is the CONTROL GROUP?',
+    opts:['The 20 plants with fertilizer','The 20 plants without fertilizer','Both groups together','The type of fertilizer used'],
+    ans:1, fb:'The control group receives no manipulation (no fertilizer). It provides the baseline against which the experimental group is compared. Without a control, you cannot know if differences are caused by the fertilizer or something else.' },
+  { q:'Which of the following is an example of evolutionary adaptation as a property of life?',
+    opts:['A bacterium dividing to produce two identical daughter cells','A human kidney filtering blood to maintain osmolarity','Bacteria in a population becoming resistant to an antibiotic over many generations','A plant growing toward a light source'],
+    ans:2, fb:'Evolutionary adaptation occurs over many generations in a population, driven by natural selection. Antibiotic resistance in bacteria is a textbook example — bacteria with resistance genes survive and reproduce more than those without.' }
+];
+
+let quizScore = 0, quizAnswered = 0;
+function buildQuiz() {
+  const c = document.getElementById('quiz-container');
+  c.innerHTML = ''; quizScore = 0; quizAnswered = 0;
+  document.getElementById('score-panel').style.display = 'none';
+  quizData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `<div class="quiz-q">Q${idx+1}. ${item.q}</div><div class="quiz-opts">${item.opts.map((o,i)=>`<button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}</div><div class="quiz-fb" id="qfb-${idx}"></div>`;
+    c.appendChild(card);
+  });
+}
+function checkAnswer(btn, qIdx, optIdx) {
+  const card = btn.closest('.quiz-card');
+  const buttons = card.querySelectorAll('.quiz-opt');
+  const fb = document.getElementById('qfb-' + qIdx);
+  const correct = quizData[qIdx].ans;
+  buttons.forEach(b => b.disabled = true);
+  if (optIdx === correct) {
+    btn.classList.add('correct');
+    fb.textContent = '✅ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-fb show ok';
+    quizScore++;
+  } else {
+    btn.classList.add('wrong');
+    buttons[correct].classList.add('correct');
+    fb.textContent = '❌ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-fb show no';
+  }
+  quizAnswered++;
+  if (quizAnswered === quizData.length) {
+    const panel = document.getElementById('score-panel');
+    panel.style.display = 'block';
+    document.getElementById('score-display').textContent = quizScore + '/' + quizData.length;
+    const pct = quizScore / quizData.length;
+    document.getElementById('score-msg').textContent =
+      pct >= .9  ? '🌟 Outstanding — AP exam ready on Chapter 1!' :
+      pct >= .75 ? '👍 Strong work! Review the questions you missed.' :
+      pct >= .6  ? '📚 Good start — revisit slides 2–5 and retake.' :
+                   '💪 Go back through the lesson slides, then retake.';
+    panel.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+function retakeQuiz() { buildQuiz(); }
+
+/* ── SUMMARY ── */
+function getTA(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+function fillSummary(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = text || 'Not answered';
+  el.classList.toggle('empty', !text);
+}
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const scoreEl = document.getElementById('score-display');
+  fillSummary('sum-quiz',   scoreEl ? scoreEl.textContent + ' correct' : 'Quiz not yet completed');
+  fillSummary('sum-wonder', getTA('ta-wonder'));
+  fillSummary('sum-method', getTA('ta-method'));
+  fillSummary('sum-levels', getTA('ta-levels'));
+  fillSummary('sum-r1', getTA('ref1'));
+  fillSummary('sum-r2', getTA('ref2'));
+  fillSummary('sum-r3', getTA('ref3'));
+  fillSummary('sum-r4', getTA('ref4'));
+}
+function buildPlainText() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const date = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const scoreEl = document.getElementById('score-display');
+  return [
+    'AP BIOLOGY · CH.1 · THE STUDY OF LIFE — STUDENT SUBMISSION',
+    '============================================================',
+    'Student: ' + name, 'Date: ' + date, '',
+    '── QUIZ SCORE ──', scoreEl ? scoreEl.textContent : 'Not completed', '',
+    '── OPENING PREDICTION: What Makes Something Alive? ──', getTA('ta-wonder') || 'Not answered', '',
+    '── SCIENTIFIC METHOD: Plant & Music Experiment ──', getTA('ta-method') || 'Not answered', '',
+    '── LEVELS OF ORGANIZATION PRACTICE ──', getTA('ta-levels') || 'Not answered', '',
+    '── REFLECTION QUESTIONS ──',
+    'Q1 — Inductive vs. Deductive:', getTA('ref1') || 'Not answered',
+    'Q2 — 8 Properties of Life:', getTA('ref2') || 'Not answered',
+    'Q3 — Theory vs. Hypothesis:', getTA('ref3') || 'Not answered',
+    'Q4 — 12 Levels of Organization:', getTA('ref4') || 'Not answered', '',
+    '============================================================',
+    '© 2026 Farvour Explorations · farvourexplorations.com',
+    'Submitted via AP Biology Ch.1 · The Study of Life · Interactive Digital Lesson'
+  ].join('\n');
+}
+function copyResults() {
+  buildSummary();
+  navigator.clipboard.writeText(buildPlainText()).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Paste into Google Classroom or your assignment.';
+    setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => { document.getElementById('copyConfirm').textContent = '⚠️ Could not copy — try selecting the text manually.'; });
+}
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  window.location.href = 'mailto:?subject=' + encodeURIComponent('AP Bio Ch.1 — ' + name) + '&body=' + encodeURIComponent(buildPlainText());
+}
+
+/* ── INIT ── */
+buildQuiz();
+buildFillBlanks();
+</script>
+</body>
+</html>
