@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3. The Genome, the Environment & Phenotype — Edexcel IGCSE Biology</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#1F7A4D; --green-dark:#123D28; --green-light:#E1F3EA; --green-mid:#4FA974;
+  --coral:#E0563F; --coral-light:#FCE9E5;
+  --amber:#CE9526; --amber-light:#FAF1DC;
+  --mint:#2E9E76; --mint-light:#E3F5EC;
+  --sky:#2B79C9; --sky-light:#E8F1FB;
+  --violet:#5B4E9E; --violet-light:#EDEBF8;
+  --ink:#20232B; --ink-soft:#585E6C;
+  --paper:#FFFFFF; --cream:#F7F5F1; --line:#E1DFEA;
+  --r-lg:22px; --r-md:14px; --r-sm:8px;
+  --shadow: 0 10px 30px rgba(18,61,40,.14);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:'Inter',system-ui,sans-serif;overflow:hidden;}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+
+#app{position:relative;width:100vw;height:100vh;display:flex;flex-direction:column;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:var(--paper);border-bottom:1px solid var(--line);flex:0 0 auto;z-index:20;}
+.crumb{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-soft);font-weight:600;}
+.crumb .tag{background:var(--green);color:#fff;font-family:'Poppins';font-weight:700;font-size:12px;padding:5px 12px;border-radius:100px;letter-spacing:.3px;}
+.crumb .sep{color:#C6C2D6;}
+.crumb .current{color:var(--green-dark);}
+.dots{display:flex;gap:6px;align-items:center;flex-wrap:wrap;max-width:36vw;}
+.dot{width:9px;height:9px;border-radius:50%;background:#DCE6DF;border:none;cursor:pointer;transition:all .25s;}
+.dot.active{background:var(--green);width:22px;border-radius:6px;}
+.dot:hover{background:var(--green-mid);}
+.counter{font-size:12px;color:var(--ink-soft);font-weight:600;font-variant-numeric:tabular-nums;min-width:54px;text-align:right;}
+
+.stage{position:relative;flex:1 1 auto;overflow:hidden;}
+.slide{position:absolute;inset:0;opacity:0;pointer-events:none;transform:translateX(30px) scale(.99);transition:opacity .45s ease,transform .45s ease;overflow-y:auto;}
+.slide.active{opacity:1;pointer-events:auto;transform:translateX(0) scale(1);}
+.slide.prev{transform:translateX(-30px) scale(.99);}
+.slide-inner{max-width:1180px;margin:0 auto;padding:40px 44px 90px;min-height:100%;}
+
+.navbtn{position:absolute;top:50%;transform:translateY(-50%);z-index:15;width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--paper);box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--green-dark);transition:.2s;}
+.navbtn:hover{background:var(--green);color:#fff;border-color:var(--green);}
+.navbtn.disabled{opacity:.25;pointer-events:none;}
+#prevBtn{left:16px;}#nextBtn{right:16px;}
+.navbtn svg{width:20px;height:20px;}
+
+.chevron-badge{display:inline-flex;align-items:center;gap:10px;background:var(--green);color:#fff;padding:9px 20px 9px 16px;font-family:'Poppins';font-weight:700;font-size:15px;clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%);margin-bottom:16px;}
+.eyebrow{font-family:'Poppins';font-weight:700;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--coral);margin-bottom:8px;}
+h1.slide-title{font-size:32px;font-weight:800;color:var(--green-dark);margin:0 0 6px;line-height:1.15;}
+h2.section-title{font-size:25px;font-weight:700;color:var(--green-dark);margin:0 0 14px;}
+h3.mini-title{font-size:17px;font-weight:700;color:var(--ink);margin:0 0 8px;}
+p{line-height:1.65;font-size:15.5px;color:var(--ink);margin:0 0 12px;}
+.lede{font-size:17px;color:var(--ink-soft);margin-bottom:22px;max-width:700px;}
+.term{color:var(--coral);font-weight:700;cursor:help;border-bottom:1.5px dotted var(--coral);}
+.spec-tag{display:inline-block;background:var(--sky-light);color:var(--sky);font-family:'Poppins';font-weight:700;font-size:11px;letter-spacing:.4px;padding:3px 10px;border-radius:100px;margin:2px 4px 10px 0;}
+
+.box{border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--line);background:var(--paper);box-shadow:var(--shadow);}
+.box-head{padding:12px 20px;font-family:'Poppins';font-weight:700;font-size:14px;color:#fff;display:flex;align-items:center;gap:8px;}
+.box-body{padding:20px 22px;}
+.box.green .box-head{background:var(--green);}
+.box.coral .box-head{background:var(--coral);}
+.box.amber .box-head{background:var(--amber);}
+.box.mint .box-head{background:var(--mint);}
+.box.sky .box-head{background:var(--sky);}
+.box.violet .box-head{background:var(--violet);}
+
+.two-col{display:grid;grid-template-columns:1.05fr .95fr;gap:36px;align-items:start;}
+@media(max-width:900px){.two-col{grid-template-columns:1fr;}}
+
+.btn{border:none;cursor:pointer;font-family:'Poppins';font-weight:600;font-size:14px;padding:10px 20px;border-radius:100px;background:var(--green);color:#fff;transition:.2s;}
+.btn:hover{background:var(--green-dark);}
+.btn.ghost{background:transparent;border:1.5px solid var(--green);color:var(--green);}
+.btn.ghost:hover{background:var(--green-light);}
+.btn[disabled]{opacity:.45;cursor:default;}
+.btn.amber{background:var(--amber);}
+.btn.amber:hover{background:#a87a1a;}
+.btn.coral{background:var(--coral);}
+.btn.coral:hover{background:#b6412e;}
+
+.hint{font-size:12.5px;color:var(--ink-soft);background:var(--green-light);border-radius:100px;padding:6px 14px;display:inline-flex;gap:6px;align-items:center;margin-bottom:18px;font-weight:600;}
+.hint svg{width:14px;height:14px;flex:0 0 auto;}
+
+/* ── COVER ── */
+.cover{height:100%;display:flex;align-items:center;justify-content:center;position:relative;background:radial-gradient(ellipse at 20% 15%,rgba(255,255,255,.10),transparent 45%),linear-gradient(160deg,var(--green) 0%,var(--green-dark) 62%,#071F14 100%);overflow:hidden;}
+.cover-orb{position:absolute;border-radius:50%;opacity:.12;background:#fff;}
+.cover-content{position:relative;z-index:2;text-align:center;color:#fff;max-width:780px;padding:0 30px;}
+.cover-content .unit{font-family:'Poppins';font-weight:700;letter-spacing:3px;font-size:13px;text-transform:uppercase;color:#A8D8B8;margin-bottom:14px;}
+.cover-content h1{font-size:48px;font-weight:800;margin:0 0 10px;line-height:1.1;}
+.cover-content .sub{font-size:18px;color:#CEE8D8;font-weight:500;margin-bottom:34px;}
+.cover-chip-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:38px;}
+.cover-chip{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;padding:8px 16px;border-radius:100px;font-size:13px;font-weight:600;backdrop-filter:blur(4px);}
+.cover-start{background:var(--amber);color:#fff;border:none;font-family:'Poppins';font-weight:700;font-size:16px;padding:15px 34px;border-radius:100px;cursor:pointer;box-shadow:0 12px 26px rgba(206,149,38,.45);display:inline-flex;align-items:center;gap:10px;transition:.2s;}
+.cover-start:hover{transform:translateY(-2px);box-shadow:0 16px 30px rgba(206,149,38,.55);}
+
+/* ── Objectives ── */
+.obj-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 22px;margin-top:6px;}
+.obj-card{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:var(--r-md);background:var(--paper);border:1px solid var(--line);cursor:pointer;transition:.2s;}
+.obj-card:hover{border-color:var(--green-mid);box-shadow:var(--shadow);}
+.obj-num{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--green-light);color:var(--green-dark);font-family:'Poppins';font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;}
+.obj-card.done .obj-num{background:var(--green);color:#fff;}
+.obj-card.done p{color:var(--ink-soft);text-decoration:line-through;text-decoration-color:#B0C4B8;}
+.obj-card p{margin:0;font-size:13.8px;line-height:1.5;}
+
+/* ── Info cards ── */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:18px;}
+.info-card{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-md);padding:18px 14px;text-align:center;cursor:pointer;transition:.2s;box-shadow:var(--shadow);}
+.info-card:hover{border-color:var(--green-mid);transform:translateY(-2px);}
+.info-card.active{border-color:var(--green);background:var(--green-light);}
+.ic-icon{font-size:2rem;margin-bottom:.4rem;}
+.ic-title{font-family:'Poppins';font-weight:700;font-size:.9rem;color:var(--green-dark);}
+.ic-sub{font-size:.7rem;color:var(--ink-soft);margin-top:.2rem;}
+.info-panel{background:var(--green-light);border-left:4px solid var(--green);border-radius:0 var(--r-md) var(--r-md) 0;padding:16px 20px;display:none;animation:fadein .3s ease;margin-bottom:14px;}
+.info-panel.show{display:block;}
+.info-panel h4{font-family:'Poppins';font-weight:700;font-size:1rem;color:var(--green-dark);margin:0 0 6px;}
+.info-panel p{font-size:.9rem;margin:0 0 6px;}
+.info-panel .eg{font-size:.82rem;color:var(--ink-soft);font-style:italic;margin-top:6px;}
+@keyframes fadein{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── Vocab chips ── */
+.chip-row{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.2rem;}
+.chip{padding:.5rem 1.1rem;border-radius:100px;font-size:.86rem;font-weight:700;cursor:pointer;transition:all .2s;border:2px solid transparent;font-family:'Poppins';}
+.chip.coral{background:var(--coral-light);color:var(--coral);border-color:#f3c3b8;}
+.chip.green{background:var(--green-light);color:var(--green-dark);border-color:#bfe0cc;}
+.chip.amber{background:var(--amber-light);color:#8a6a1a;border-color:#f0d99a;}
+.chip.sky{background:var(--sky-light);color:var(--sky);border-color:#bcd8f2;}
+.chip.violet{background:var(--violet-light);color:var(--violet);border-color:#cac2ea;}
+.chip:hover{transform:scale(1.05);}
+.chip-reveal{background:var(--paper);border-left:4px solid var(--coral);border-radius:0 12px 12px 0;padding:1rem 1.2rem;font-size:.92rem;line-height:1.7;margin-top:.5rem;margin-bottom:.4rem;display:none;animation:fadein .3s ease;box-shadow:var(--shadow);}
+.chip-reveal.show{display:block;}
+.chip-reveal.b-green{border-color:var(--green);}
+.chip-reveal.b-amber{border-color:var(--amber);}
+.chip-reveal.b-sky{border-color:var(--sky);}
+.chip-reveal.b-violet{border-color:var(--violet);}
+
+/* ── True / False ── */
+.tf-card{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-md);padding:16px 20px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.tf-q{font-family:'Poppins';font-weight:700;font-size:15px;color:var(--ink);margin-bottom:12px;line-height:1.5;}
+.tf-btns{display:flex;gap:10px;}
+.tf-btn{flex:1;padding:10px 14px;border-radius:10px;border:2px solid var(--line);background:#fff;cursor:pointer;font-family:'Poppins';font-weight:700;font-size:14px;color:var(--ink-soft);transition:.15s;}
+.tf-btn.true-btn:hover:not(:disabled){border-color:var(--mint);color:var(--mint);background:var(--mint-light);}
+.tf-btn.false-btn:hover:not(:disabled){border-color:var(--coral);color:var(--coral);background:var(--coral-light);}
+.tf-btn:disabled{cursor:default;}
+.tf-btn.correct{background:var(--mint-light);border-color:var(--mint);color:#1b7a58;}
+.tf-btn.wrong{background:var(--coral-light);border-color:var(--coral);color:#a83020;}
+.tf-fb{margin-top:10px;font-size:13.5px;line-height:1.6;padding:10px 14px;border-radius:8px;display:none;animation:fadein .3s;}
+.tf-fb.show{display:block;}
+.tf-fb.ok{background:var(--mint-light);color:#1b7a58;border-left:3px solid var(--mint);}
+.tf-fb.no{background:var(--coral-light);color:#a83020;border-left:3px solid var(--coral);}
+
+/* ── Match game ── */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1rem 0;}
+.match-item{padding:12px 14px;border-radius:10px;border:2px solid var(--line);cursor:pointer;font-size:14px;font-weight:600;transition:all .2s;background:white;text-align:center;color:var(--ink);line-height:1.4;}
+.match-item:hover{border-color:var(--green-mid);background:var(--green-light);}
+.match-item.selected{border-color:var(--violet);background:var(--violet-light);color:var(--violet);}
+.match-item.matched{border-color:var(--mint);background:var(--mint-light);color:#1b7a58;cursor:default;}
+.match-item.wrong{border-color:var(--coral);background:var(--coral-light);color:var(--coral);animation:shake .3s;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* ── Worked example ── */
+.worked{background:var(--amber-light);border:1.5px dashed var(--amber);border-radius:var(--r-md);padding:16px 20px;margin-top:16px;}
+.worked h4{font-family:'Poppins';font-weight:700;font-size:14px;color:#7A5A10;margin:0 0 8px;}
+.punnett{border-collapse:collapse;margin-top:10px;}
+.punnett td,.punnett th{border:1.5px solid #d8bf7a;padding:10px 16px;text-align:center;font-family:'Poppins';font-weight:700;font-size:14px;color:#7A5A10;background:#fff;}
+.punnett th{background:var(--amber);color:#fff;}
+
+/* ── Trait sorting activity ── */
+.trait-grid{display:flex;flex-direction:column;gap:10px;margin:14px 0;}
+.trait-card{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-md);padding:14px 18px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.trait-card .trait-name{font-family:'Poppins';font-weight:700;font-size:14.5px;color:var(--ink);margin-bottom:10px;}
+.trait-opts{display:flex;gap:8px;flex-wrap:wrap;}
+.trait-btn{padding:8px 16px;border-radius:100px;border:2px solid var(--line);background:#fff;cursor:pointer;font-family:'Poppins';font-weight:600;font-size:12.5px;color:var(--ink-soft);transition:.15s;}
+.trait-btn:hover:not(:disabled){border-color:var(--sky);color:var(--sky);}
+.trait-btn:disabled{cursor:default;}
+.trait-btn.correct{background:var(--mint-light);border-color:var(--mint);color:#1b7a58;}
+.trait-btn.wrong{background:var(--coral-light);border-color:var(--coral);color:#a83020;}
+.trait-explain{font-size:13px;color:var(--ink-soft);margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);display:none;}
+.trait-explain.show{display:block;animation:fadein .3s;}
+.trait-tally{display:flex;gap:16px;margin-top:14px;font-family:'Poppins';font-weight:700;font-size:13px;}
+.trait-tally span.t-num{font-size:20px;}
+
+/* ── Mutation roulette simulator ── */
+.mut-stage{background:var(--paper);border:2px solid var(--line);border-radius:var(--r-lg);padding:28px;text-align:center;box-shadow:var(--shadow);margin:16px 0;}
+.mut-result{min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.mut-icon{font-size:3rem;margin-bottom:10px;}
+.mut-label{font-family:'Poppins';font-weight:800;font-size:1.3rem;margin-bottom:6px;}
+.mut-desc{font-size:14px;color:var(--ink-soft);max-width:520px;line-height:1.6;}
+.mut-bars{display:flex;gap:18px;justify-content:center;margin-top:22px;flex-wrap:wrap;}
+.mut-bar-box{text-align:center;}
+.mut-bar-track{width:52px;height:110px;border-radius:10px;background:#eef1ee;position:relative;overflow:hidden;border:1.5px solid var(--line);}
+.mut-bar-fill{position:absolute;bottom:0;left:0;width:100%;border-radius:10px 10px 0 0;transition:height .5s ease;}
+.mut-bar-label{font-size:11.5px;font-weight:700;color:var(--ink-soft);margin-top:6px;font-family:'Poppins';}
+.mut-bar-count{font-family:'Poppins';font-weight:800;font-size:15px;color:var(--ink);}
+
+/* ── Predict / reflect ── */
+.predict-box{background:var(--amber-light);border:1.5px dashed var(--amber);border-radius:var(--r-md);padding:18px 20px;margin:18px 0;}
+.predict-box h4{font-family:'Poppins';font-weight:700;font-size:14px;color:#7A5A10;margin:0 0 10px;}
+.predict-box textarea,.reflect-box textarea,.qa-box textarea{width:100%;border:1.5px solid rgba(0,0,0,.1);border-radius:8px;padding:10px;font-family:'Inter',sans-serif;font-size:14px;resize:vertical;min-height:72px;background:white;color:var(--ink);outline:none;transition:border-color .2s;}
+.reflect-box{background:var(--green-light);border:1.5px dashed var(--green);border-radius:var(--r-md);padding:18px 20px;margin:18px 0;}
+.reflect-box h4{font-family:'Poppins';font-weight:700;font-size:14px;color:var(--green-dark);margin:0 0 10px;}
+.qa-box{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-md);padding:16px 18px;margin-bottom:12px;box-shadow:0 2px 6px rgba(0,0,0,.05);}
+.qa-box .qa-q{font-family:'Poppins';font-weight:700;font-size:14px;color:var(--ink);margin-bottom:10px;}
+
+/* ── Quiz ── */
+.quiz-card{background:white;border:1.5px solid var(--line);border-radius:var(--r-md);padding:18px 20px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.quiz-q{font-family:'Poppins';font-weight:700;font-size:15px;color:var(--ink);margin-bottom:12px;line-height:1.5;}
+.quiz-opts{display:flex;flex-direction:column;gap:8px;}
+.quiz-opt{padding:11px 16px;border-radius:10px;border:1.5px solid var(--line);background:white;cursor:pointer;font-size:14px;font-weight:600;text-align:left;transition:all .15s;color:var(--ink);}
+.quiz-opt:hover:not(:disabled){border-color:var(--green-mid);background:var(--green-light);}
+.quiz-opt.correct{background:var(--mint-light);border-color:var(--mint);color:#1b7a58;}
+.quiz-opt.wrong{background:var(--coral-light);border-color:var(--coral);color:#a83020;}
+.quiz-opt:disabled{cursor:default;}
+.quiz-fb{margin-top:10px;font-size:13.5px;line-height:1.6;padding:10px 14px;border-radius:8px;display:none;animation:fadein .3s;}
+.quiz-fb.show{display:block;}
+.quiz-fb.ok{background:var(--mint-light);color:#1b7a58;border-left:3px solid var(--mint);}
+.quiz-fb.no{background:var(--coral-light);color:#a83020;border-left:3px solid var(--coral);}
+.score-panel{background:linear-gradient(135deg,var(--green) 0%,var(--green-dark) 100%);color:white;border-radius:var(--r-lg);padding:28px;text-align:center;margin-top:18px;}
+.score-panel h3{font-family:'Poppins';font-size:22px;margin:0 0 8px;}
+.score-num{font-family:'Poppins';font-size:52px;font-weight:800;color:var(--amber);line-height:1;}
+
+/* ── Past paper ── */
+.pp-card{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-md);padding:18px 20px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.pp-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px;}
+.pp-q{font-family:'Poppins';font-weight:700;font-size:14.5px;color:var(--ink);line-height:1.55;}
+.pp-marks{flex:0 0 auto;background:var(--violet-light);color:var(--violet);font-family:'Poppins';font-weight:700;font-size:12px;padding:4px 12px;border-radius:100px;white-space:nowrap;}
+.pp-answer-box{width:100%;border:1.5px solid rgba(0,0,0,.1);border-radius:8px;padding:10px;font-family:'Inter';font-size:14px;min-height:64px;margin-bottom:10px;resize:vertical;}
+.pp-ms{background:var(--violet-light);border-left:4px solid var(--violet);border-radius:0 10px 10px 0;padding:14px 16px;font-size:13.5px;line-height:1.7;color:#3a3268;display:none;animation:fadein .3s;}
+.pp-ms.show{display:block;}
+
+/* ── Submit ── */
+.sum-section{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-md);padding:16px 18px;margin-bottom:10px;}
+.sum-section h3{font-family:'Poppins';font-weight:700;font-size:14px;color:var(--green-dark);margin:0 0 8px;}
+.sum-val{background:var(--cream);border-radius:8px;padding:10px 14px;font-size:14px;color:var(--ink);border-left:3px solid var(--green-mid);min-height:38px;font-style:italic;}
+.sum-val.empty{color:var(--ink-soft);font-style:normal;border-left-color:var(--line);}
+.share-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:22px;}
+.share-btn{border:none;border-radius:100px;padding:13px 24px;font-family:'Poppins';font-weight:700;font-size:14px;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:8px;}
+.share-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+.share-btn.copy{background:var(--mint);color:white;}
+.share-btn.email{background:var(--violet);color:white;}
+.share-btn.print{background:var(--green-dark);color:white;}
+.copy-confirm{text-align:center;font-size:13px;color:var(--mint);min-height:20px;margin-top:8px;font-weight:600;}
+
+/* ── Table ── */
+.data-table{width:100%;border-collapse:collapse;margin:14px 0;}
+.data-table th{background:var(--green-dark);color:white;font-family:'Poppins';font-weight:700;font-size:13px;padding:10px 14px;text-align:left;}
+.data-table td{padding:9px 14px;font-size:14px;line-height:1.5;border-bottom:1px solid var(--line);}
+.data-table tr:nth-child(even) td{background:#f5f8f5;}
+.data-table td:first-child{font-weight:700;color:var(--green-dark);}
+
+@media print{
+  .topbar,.navbtn{display:none!important;}
+  .slide{position:static!important;opacity:1!important;transform:none!important;display:none!important;}
+  #slide12{display:block!important;}
+}
+
+.footer-credit{position:relative;z-index:1;text-align:center;padding:10px 2rem;color:var(--ink-soft);font-size:.68rem;line-height:1.8;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header class="topbar">
+    <div class="crumb">
+      <span class="tag">Edexcel IGCSE Biology</span>
+      <span class="sep">›</span>
+      <span>Topic 3 · Reproduction &amp; Inheritance</span>
+      <span class="sep">›</span>
+      <span class="current">Genome, Environment &amp; Phenotype</span>
+    </div>
+    <div class="dots" id="dotsRow"></div>
+    <div class="counter" id="counter">1 / 13</div>
+  </header>
+
+  <div class="stage">
+    <button class="navbtn disabled" id="prevBtn" onclick="goTo(cur-1)" aria-label="Previous">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+    </button>
+    <button class="navbtn" id="nextBtn" onclick="goTo(cur+1)" aria-label="Next">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+
+    <!-- SLIDE 0: COVER -->
+    <section class="slide">
+      <div class="cover">
+        <div class="cover-orb" style="width:320px;height:320px;top:-80px;left:-80px;"></div>
+        <div class="cover-orb" style="width:200px;height:200px;bottom:-50px;right:-40px;"></div>
+        <div class="cover-orb" style="width:140px;height:140px;top:60px;right:10%;"></div>
+        <div class="cover-content">
+          <div class="unit">Pearson Edexcel International GCSE Biology · 4BI1 · Topic 3</div>
+          <h1>The Genome, the Environment &amp; Phenotype 🧬</h1>
+          <div class="sub">What is a genome? How do genotype and environment combine to produce phenotype? Why doesn't every mutation matter?</div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">🧬 Genome &amp; Genes</span>
+            <span class="cover-chip">🔤 Genotype vs Phenotype</span>
+            <span class="cover-chip">🌱 Causes of Variation</span>
+            <span class="cover-chip">☢️ Mutation</span>
+            <span class="cover-chip">📝 Exam-Style Practice</span>
+          </div>
+          <button class="cover-start" onclick="goTo(1)">
+            Start Lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 1: OBJECTIVES -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">Topic 3 · Lesson 3</div>
+        <h1 class="slide-title">Learning Objectives</h1>
+        <p class="lede">Tap each objective as you master it. These map directly onto the Edexcel 4BI1 specification points shown below each card.</p>
+        <div class="obj-grid" id="objGrid">
+          <div class="obj-card" onclick="this.classList.toggle('done')"><div class="obj-num">1</div><p>Define <strong>genome</strong> and <strong>gene</strong>, and state where genes are located <span class="spec-tag">3.14 / 3.15</span></p></div>
+          <div class="obj-card" onclick="this.classList.toggle('done')"><div class="obj-num">2</div><p>Explain the meaning of <strong>genotype</strong>, <strong>phenotype</strong>, <strong>allele</strong>, dominant, recessive, homozygous and heterozygous <span class="spec-tag">3.19 / 3.20</span></p></div>
+          <div class="obj-card" onclick="this.classList.toggle('done')"><div class="obj-num">3</div><p>Explain how genotype and environment interact to produce phenotype <span class="spec-tag">3.14 / 3.20</span></p></div>
+          <div class="obj-card" onclick="this.classList.toggle('done')"><div class="obj-num">4</div><p>Classify examples of variation as genetic, environmental, or a combination of both <span class="spec-tag">3.33</span></p></div>
+          <div class="obj-card" onclick="this.classList.toggle('done')"><div class="obj-num">5</div><p>Describe how a mutation (a change in DNA) can alter the amino acid sequence of a protein <span class="spec-tag">3.35B</span></p></div>
+          <div class="obj-card" onclick="this.classList.toggle('done')"><div class="obj-num">6</div><p>Understand that most mutations have no effect on phenotype, some have a small effect, and very few have a significant effect <span class="spec-tag">3.36B</span></p></div>
+          <div class="obj-card" onclick="this.classList.toggle('done')"><div class="obj-num">7</div><p>State that ionising radiation (e.g. gamma rays, X-rays, UV) increases the rate of mutation <span class="spec-tag">3.37B</span></p></div>
+          <div class="obj-card" onclick="this.classList.toggle('done')"><div class="obj-num">8</div><p>Apply these ideas to unfamiliar examples in exam-style questions <span class="spec-tag">AO2 / AO3</span></p></div>
+        </div>
+        <div style="margin-top:22px;">
+          <span class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Key vocabulary: genome · gene · chromosome · allele · genotype · phenotype · dominant · recessive · homozygous · heterozygous · mutation</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2 (TEACH): WHAT IS A GENOME -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Building Block Vocabulary</div>
+        <h1 class="slide-title">What Is a Genome?</h1>
+        <p class="lede">Before we can talk about genotype, phenotype and variation, we need four foundational terms straight. Tap each card.</p>
+
+        <div class="predict-box">
+          <h4>💭 Prediction — Before You Learn</h4>
+          <textarea id="ta-wonder" placeholder="In your own words: what do you think the difference is between a 'genome' and a 'gene'? Are they the same thing? Write your best guess before tapping the cards below."></textarea>
+        </div>
+
+        <div class="card-grid" style="grid-template-columns:repeat(4,1fr);">
+          <div class="info-card" onclick="showGenome(this,'genome')"><div class="ic-icon">🧬</div><div class="ic-title">Genome</div><div class="ic-sub">3.14</div></div>
+          <div class="info-card" onclick="showGenome(this,'gene')"><div class="ic-icon">📄</div><div class="ic-title">Gene</div><div class="ic-sub">3.14</div></div>
+          <div class="info-card" onclick="showGenome(this,'chromosome')"><div class="ic-icon">➰</div><div class="ic-title">Chromosome</div><div class="ic-sub">3.15</div></div>
+          <div class="info-card" onclick="showGenome(this,'dna')"><div class="ic-icon">🌀</div><div class="ic-title">DNA</div><div class="ic-sub">3.16B</div></div>
+        </div>
+        <div id="genome-panel" class="info-panel"></div>
+
+        <div class="box green" style="margin-top:18px;">
+          <div class="box-head">📦 How They All Fit Together</div>
+          <div class="box-body"><p style="margin:0;">Think of it like a library: the <strong>genome</strong> is the <em>entire library</em> of DNA. Each <strong>chromosome</strong> is one <em>bookshelf</em>. Each <strong>gene</strong> is one <em>book</em> on that shelf, containing the instructions to build one specific protein. A human body cell contains 46 chromosomes (23 pairs) — that's 46 "shelves" holding roughly 20,000 genes in total.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3 (ACTIVITY): TRUE OR FALSE -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Check Your Understanding</div>
+        <h1 class="slide-title">✅❌ True or False — Genome Basics</h1>
+        <p class="lede">Tap TRUE or FALSE for each statement. You'll get instant feedback with the correct reasoning.</p>
+        <div id="tf-container"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4 (TEACH): GENOTYPE / PHENOTYPE / ALLELES -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Core Genetics Vocabulary</div>
+        <h1 class="slide-title">Genotype, Phenotype &amp; Alleles</h1>
+        <p class="lede">These seven words appear in almost every genetics question on the exam. Tap each chip to reveal its definition, then study the worked example.</p>
+        <div class="chip-row">
+          <span class="chip coral" onclick="revealVocab('genotype')">Genotype</span>
+          <span class="chip green" onclick="revealVocab('phenotype')">Phenotype</span>
+          <span class="chip amber" onclick="revealVocab('allele')">Allele</span>
+          <span class="chip sky" onclick="revealVocab('dominant')">Dominant</span>
+          <span class="chip violet" onclick="revealVocab('recessive')">Recessive</span>
+          <span class="chip coral" onclick="revealVocab('homozygous')">Homozygous</span>
+          <span class="chip green" onclick="revealVocab('heterozygous')">Heterozygous</span>
+        </div>
+        <div id="rev-genotype" class="chip-reveal"><strong>Genotype</strong> — The genetic make-up of an organism for a particular characteristic: the actual combination of alleles it carries, e.g. <strong>Bb</strong>. Written as letters, not visible to the eye.</div>
+        <div id="rev-phenotype" class="chip-reveal b-green"><strong>Phenotype</strong> — The observable physical or biochemical characteristic that results from an organism's genotype <em>and</em> its environment, e.g. purple flowers. This is what you can actually see or measure.</div>
+        <div id="rev-allele" class="chip-reveal b-amber"><strong>Allele</strong> — One of the alternative versions of a gene. E.g. the gene for pea flower colour has a "purple" allele and a "white" allele — both code for the same characteristic but produce different versions of it.</div>
+        <div id="rev-dominant" class="chip-reveal b-sky"><strong>Dominant</strong> — An allele whose characteristic appears in the phenotype even when only one copy is present (i.e. in a heterozygote). Shown with a <strong>capital letter</strong>, e.g. <strong>B</strong>.</div>
+        <div id="rev-recessive" class="chip-reveal b-violet"><strong>Recessive</strong> — An allele whose characteristic only appears in the phenotype when two copies are present (homozygous recessive). Shown with a <strong>lowercase letter</strong>, e.g. <strong>b</strong>. Masked by a dominant allele if present.</div>
+        <div id="rev-homozygous" class="chip-reveal"><strong>Homozygous</strong> — Having two <em>identical</em> alleles for a gene, e.g. <strong>BB</strong> (homozygous dominant) or <strong>bb</strong> (homozygous recessive).</div>
+        <div id="rev-heterozygous" class="chip-reveal b-green"><strong>Heterozygous</strong> — Having two <em>different</em> alleles for a gene, e.g. <strong>Bb</strong>. The dominant allele's characteristic is the one seen in the phenotype.</div>
+
+        <div class="worked">
+          <h4>🌸 Worked Example — Pea Flower Colour</h4>
+          <p style="margin:0 0 8px;">Purple flower colour (<strong>B</strong>) is dominant to white flower colour (<strong>b</strong>). A heterozygous plant (<strong>Bb</strong>) is crossed with a homozygous recessive plant (<strong>bb</strong>):</p>
+          <table class="punnett">
+            <tr><th>×</th><th>B</th><th>b</th></tr>
+            <tr><th>b</th><td>Bb</td><td>bb</td></tr>
+            <tr><th>b</th><td>Bb</td><td>bb</td></tr>
+          </table>
+          <p style="margin:10px 0 0;font-size:13.5px;">Genotype ratio: <strong>1 Bb : 1 bb</strong>. Phenotype ratio: <strong>1 purple : 1 white</strong> (50% purple, 50% white) — because <strong>Bb</strong> is heterozygous and B is dominant, so it looks purple even though it carries a hidden <strong>b</strong> allele.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5 (ACTIVITY): MATCH GAME -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Check Your Understanding</div>
+        <h1 class="slide-title">🎯 Quick Match — Genetics Vocabulary</h1>
+        <p class="lede">Tap a term, then tap its matching definition. Get all 5 pairs to complete the round.</p>
+        <div class="match-grid" id="matchGrid">
+          <div class="match-item" data-pair="a" data-side="term" onclick="matchClick(this)">Genotype</div>
+          <div class="match-item" data-pair="b" data-side="def" onclick="matchClick(this)">The observable characteristics of an organism, produced by genotype and environment</div>
+          <div class="match-item" data-pair="c" data-side="term" onclick="matchClick(this)">Homozygous</div>
+          <div class="match-item" data-pair="d" data-side="def" onclick="matchClick(this)">Having two different alleles for a gene, e.g. Bb</div>
+          <div class="match-item" data-pair="a" data-side="def" onclick="matchClick(this)">The genetic make-up of an organism, e.g. Bb or bb</div>
+          <div class="match-item" data-pair="e" data-side="term" onclick="matchClick(this)">Allele</div>
+          <div class="match-item" data-pair="b" data-side="term" onclick="matchClick(this)">Phenotype</div>
+          <div class="match-item" data-pair="c" data-side="def" onclick="matchClick(this)">Having two identical alleles for a gene, e.g. BB or bb</div>
+          <div class="match-item" data-pair="d" data-side="term" onclick="matchClick(this)">Heterozygous</div>
+          <div class="match-item" data-pair="e" data-side="def" onclick="matchClick(this)">An alternative version of a gene</div>
+        </div>
+        <div style="margin-top:.8rem;display:flex;gap:10px;align-items:center;"><button class="btn ghost" onclick="resetMatch()">↺ Reset Match</button><span id="match-score" style="font-family:'Poppins';font-weight:700;font-size:.82rem;color:var(--ink-soft);"></span></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6 (TEACH): CAUSES OF VARIATION -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Genotype + Environment = Phenotype</div>
+        <h1 class="slide-title">What Causes Variation?</h1>
+        <p class="lede">Variation between individuals of the same species can have three possible causes. Tap each card, then look at the examples table.</p>
+
+        <div class="card-grid" style="grid-template-columns:repeat(3,1fr);">
+          <div class="info-card" onclick="showVar(this,'genetic')"><div class="ic-icon">🧬</div><div class="ic-title">Genetic causes</div><div class="ic-sub">from alleles alone</div></div>
+          <div class="info-card" onclick="showVar(this,'environmental')"><div class="ic-icon">☀️</div><div class="ic-title">Environmental causes</div><div class="ic-sub">from surroundings alone</div></div>
+          <div class="info-card" onclick="showVar(this,'both')"><div class="ic-icon">🌗</div><div class="ic-title">Both together</div><div class="ic-sub">genes + environment</div></div>
+        </div>
+        <div id="var-panel" class="info-panel"></div>
+
+        <table class="data-table">
+          <tr><th>Characteristic</th><th>Cause</th><th>Why</th></tr>
+          <tr><td>ABO blood group</td><td>Genetic only</td><td>Fixed entirely by the alleles inherited — the environment cannot change it</td></tr>
+          <tr><td>A scar from a childhood injury</td><td>Environmental only</td><td>Caused entirely by an external event, not by any allele</td></tr>
+          <tr><td>Human height</td><td>Both</td><td>Genes set the potential range; nutrition and health during growth determine where in that range you end up</td></tr>
+          <tr><td>Body mass (weight)</td><td>Both</td><td>Genes influence metabolism and build; diet and exercise (environment) heavily affect the outcome</td></tr>
+        </table>
+
+        <div class="box amber" style="margin-top:8px;">
+          <div class="box-head">⚠️ Exam Tip</div>
+          <div class="box-body"><p style="margin:0;">Command word alert: if a question asks you to <strong>"evaluate"</strong> whether a characteristic is genetic or environmental, you must consider evidence for <em>both</em> sides before reaching a conclusion — don't just assert one cause.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7 (ACTIVITY): SORT THE TRAIT -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Check Your Understanding</div>
+        <h1 class="slide-title">🔍 Sort the Trait — Genetic, Environmental, or Both?</h1>
+        <p class="lede">For each characteristic, tap the option you think is correct. This is exactly the type of application question Edexcel loves to ask.</p>
+        <div id="trait-container" class="trait-grid"></div>
+        <div class="trait-tally" id="trait-tally"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8 (TEACH): MUTATIONS -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">When DNA Changes</div>
+        <h1 class="slide-title">Mutations — What Happens When DNA Changes?</h1>
+        <div class="two-col">
+          <div>
+            <p class="lede">A <span class="term" title="A rare, random change in an organism's genetic material">mutation</span> is a change in the base sequence of DNA. Because a gene's base sequence determines the order of amino acids in a protein, a mutation can change the protein that gene produces.</p>
+            <div class="box coral">
+              <div class="box-head">🔗 The Chain of Cause and Effect</div>
+              <div class="box-body">
+                <p style="margin:0 0 8px;">DNA base sequence changes<br>→ order of amino acids in the protein may change<br>→ the protein's shape may change<br>→ the phenotype may change.</p>
+                <p style="margin:0;font-size:13px;color:var(--ink-soft);">Each arrow is a "may" — a change at any step is not guaranteed to reach the next one.</p>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="box violet" style="margin-bottom:16px;">
+              <div class="box-head">📊 How Much Does a Mutation Matter?</div>
+              <div class="box-body">
+                <p><strong>Most mutations</strong> have no effect on phenotype at all — often because they don't change the amino acid produced, or they occur in a part of the DNA that isn't used.</p>
+                <p><strong>Some mutations</strong> have a small effect on phenotype.</p>
+                <p style="margin:0;"><strong>Very rarely</strong>, a mutation has a significant effect on phenotype — for example if it changes the shape of an enzyme's active site so it can no longer bind its substrate.</p>
+              </div>
+            </div>
+            <div class="box sky">
+              <div class="box-head">☢️ What Increases Mutation Rate?</div>
+              <div class="box-body"><p style="margin:0;">Exposure to <strong>ionising radiation</strong> increases the rate at which mutations occur. Examples include gamma rays, X-rays, and ultraviolet (UV) radiation from the sun. Certain chemicals (mutagens) can also increase mutation rate.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9 (ACTIVITY / SIMULATION): MUTATION ROULETTE -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Simulation</div>
+        <h1 class="slide-title">🎲 Mutation Roulette</h1>
+        <p class="lede">Every time a cell divides, a random mutation <em>could</em> occur. Click the button to simulate a mutation happening and see its effect. Run it several times — watch how the tally builds up.</p>
+        <div class="mut-stage">
+          <div class="mut-result" id="mutResult">
+            <div class="mut-icon">🧬</div>
+            <div class="mut-label" style="color:var(--ink-soft);">Ready to simulate</div>
+            <div class="mut-desc">Click "Roll a Mutation" below to see what typically happens when a random DNA mutation occurs.</div>
+          </div>
+          <button class="btn coral" style="margin-top:18px;" onclick="rollMutation()">🎲 Roll a Mutation</button>
+          <div class="mut-bars">
+            <div class="mut-bar-box"><div class="mut-bar-track"><div class="mut-bar-fill" id="bar-none" style="height:0%;background:var(--mint);"></div></div><div class="mut-bar-count" id="cnt-none">0</div><div class="mut-bar-label">No effect</div></div>
+            <div class="mut-bar-box"><div class="mut-bar-track"><div class="mut-bar-fill" id="bar-small" style="height:0%;background:var(--amber);"></div></div><div class="mut-bar-count" id="cnt-small">0</div><div class="mut-bar-label">Small effect</div></div>
+            <div class="mut-bar-box"><div class="mut-bar-track"><div class="mut-bar-fill" id="bar-sig" style="height:0%;background:var(--coral);"></div></div><div class="mut-bar-count" id="cnt-sig">0</div><div class="mut-bar-label">Significant effect</div></div>
+          </div>
+          <button class="btn ghost" style="margin-top:16px;font-size:12.5px;padding:7px 16px;" onclick="resetMutation()">↺ Reset Tally</button>
+        </div>
+        <div class="reflect-box">
+          <h4>✅ Reflect</h4>
+          <textarea id="ta-mutation" placeholder="After rolling several times, describe the pattern you see. Does this match what the specification says about the likelihood of a mutation having no effect, a small effect, or a significant effect on phenotype? Why might most mutations have no effect at all?"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10: QUIZ + PAST PAPER -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">Exam-Style Practice</div>
+        <h1 class="slide-title">Multiple Choice Quiz</h1>
+        <p class="lede">14 questions in Edexcel IGCSE style. Get instant feedback with full explanations on each one.</p>
+        <div id="quiz-container"></div>
+        <div id="score-panel" class="score-panel" style="display:none;">
+          <h3>Quiz Complete! 🎉</h3>
+          <div class="score-num" id="score-display">0/14</div>
+          <p id="score-msg" style="margin-top:10px;opacity:.9;"></p>
+          <button class="btn amber" onclick="retakeQuiz()" style="margin-top:14px;">↺ Retake Quiz</button>
+        </div>
+
+        <div style="margin-top:32px;">
+          <h2 class="section-title" style="font-size:21px;">📝 Past Paper Style Questions</h2>
+          <p style="font-size:13.5px;color:var(--ink-soft);margin-bottom:16px;">Answer in your own words using the command word given, then reveal the mark scheme to check your answer.</p>
+          <div id="pp-container"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 11: REFLECTION -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Short Answer Practice</div>
+        <h1 class="slide-title">Reflection Questions</h1>
+        <p class="lede">Write your own answers in full sentences — this is the highest-impact way to check your understanding before the exam.</p>
+
+        <div class="qa-box">
+          <div class="qa-q">1. Explain the difference between a genome and a gene, and describe how chromosomes relate to both.</div>
+          <textarea id="ref1" placeholder="Your answer…"></textarea>
+        </div>
+        <div class="qa-box">
+          <div class="qa-q">2. Define genotype and phenotype. Using a worked example (like Bb × bb), explain why two organisms with different genotypes can sometimes have the same phenotype.</div>
+          <textarea id="ref2" placeholder="Your answer…"></textarea>
+        </div>
+        <div class="qa-box">
+          <div class="qa-q">3. A classmate says "variation is only caused by genes." Evaluate this statement using at least two examples.</div>
+          <textarea id="ref3" placeholder="Your answer…"></textarea>
+        </div>
+        <div class="qa-box">
+          <div class="qa-q">4. Explain how a mutation in DNA could lead to a change in phenotype, and why most mutations do not actually change the phenotype at all.</div>
+          <textarea id="ref4" placeholder="Your answer…"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 12: SUBMIT -->
+    <section class="slide" id="slide12">
+      <div class="slide-inner">
+        <div class="chevron-badge">Submit Your Work</div>
+        <h1 class="slide-title">Ready to Share</h1>
+        <p class="lede">Here's a summary of everything you worked on. Copy it and paste into Google Classroom, or email it to your teacher.</p>
+
+        <div class="sum-section" style="background:var(--green-dark);color:white;border-color:var(--green-dark);">
+          <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+            <div>
+              <div style="font-size:11px;opacity:.55;margin-bottom:4px;font-weight:700;letter-spacing:1px;">STUDENT</div>
+              <div style="font-family:'Poppins';font-weight:800;font-size:20px;" id="summaryName">—</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:11px;opacity:.55;margin-bottom:4px;font-weight:700;letter-spacing:1px;">LESSON</div>
+              <div style="font-family:'Poppins';font-weight:700;font-size:14px;">Edexcel IGCSE Bio · Topic 3 · Genome, Environment &amp; Phenotype 🧬</div>
+              <div style="font-size:12px;opacity:.55;" id="summaryDate"></div>
+            </div>
+          </div>
+          <div style="margin-top:14px;display:flex;gap:10px;align-items:center;">
+            <label style="font-size:13px;opacity:.7;white-space:nowrap;">Your name:</label>
+            <input type="text" id="studentName" placeholder="Type your name…" style="flex:1;background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:8px 12px;font-family:'Inter';font-size:14px;color:white;outline:none;" oninput="buildSummary()">
+          </div>
+        </div>
+
+        <div class="sum-section"><h3>📝 Quiz Score</h3><div class="sum-val" id="sum-quiz">Not yet completed</div></div>
+        <div class="sum-section"><h3>💭 Opening Prediction — Genome vs Gene</h3><div class="sum-val empty" id="sum-wonder">Not answered</div></div>
+        <div class="sum-section"><h3>🎲 Mutation Roulette Reflection</h3><div class="sum-val empty" id="sum-mutation">Not answered</div></div>
+        <div class="sum-section">
+          <h3>💭 Reflection Questions</h3>
+          <div style="font-size:12px;color:var(--ink-soft);margin-bottom:4px;font-weight:600;">Q1 — Genome vs Gene vs Chromosome</div><div class="sum-val empty" id="sum-r1">Not answered</div>
+          <div style="font-size:12px;color:var(--ink-soft);margin-bottom:4px;margin-top:10px;font-weight:600;">Q2 — Genotype &amp; Phenotype</div><div class="sum-val empty" id="sum-r2">Not answered</div>
+          <div style="font-size:12px;color:var(--ink-soft);margin-bottom:4px;margin-top:10px;font-weight:600;">Q3 — Causes of Variation</div><div class="sum-val empty" id="sum-r3">Not answered</div>
+          <div style="font-size:12px;color:var(--ink-soft);margin-bottom:4px;margin-top:10px;font-weight:600;">Q4 — Mutation &amp; Phenotype</div><div class="sum-val empty" id="sum-r4">Not answered</div>
+        </div>
+
+        <div class="share-row">
+          <button class="share-btn copy" onclick="copyResults()">📋 Copy My Results</button>
+          <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+          <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+        </div>
+        <div class="copy-confirm" id="copyConfirm"></div>
+
+        <div style="margin-top:22px;background:var(--amber-light);border:1.5px dashed var(--amber);border-radius:var(--r-md);padding:16px 18px;">
+          <p style="font-family:'Poppins';font-weight:700;font-size:13px;color:#7A5A10;margin:0 0 8px;">📋 How to submit:</p>
+          <p style="font-size:13px;color:#7A5A10;line-height:2;margin:0;"><strong>📋 Copy My Results</strong> — Copies all answers. Paste into Google Classroom.<br><strong>📧 Email to Teacher</strong> — Opens your email app with answers pre-filled.<br><strong>🖨️ Print / Save PDF</strong> — Mac: bottom-left → Save as PDF. Windows: Microsoft Print to PDF.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<div class="footer-credit">
+  © 2026 Farvour Explorations · All Rights Reserved · This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission. Content mapped to Pearson Edexcel International GCSE Biology specification (4BI1).
+</div>
+
+<script>
+const TOTAL = 13;
+let cur = 0;
+const slides = document.querySelectorAll('.slide');
+
+const dotsRow = document.getElementById('dotsRow');
+slides.forEach((_, i) => {
+  const d = document.createElement('button');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.setAttribute('aria-label', 'Slide ' + (i+1));
+  d.addEventListener('click', () => goTo(i));
+  dotsRow.appendChild(d);
+});
+
+function goTo(n) {
+  if (n < 0 || n >= TOTAL) return;
+  slides[cur].classList.remove('active');
+  slides[cur].classList.add('prev');
+  setTimeout(() => slides[cur].classList.remove('prev'), 500);
+  cur = n;
+  slides[cur].classList.add('active');
+  dotsRow.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === cur));
+  document.getElementById('counter').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.getElementById('prevBtn').classList.toggle('disabled', cur === 0);
+  document.getElementById('nextBtn').classList.toggle('disabled', cur === TOTAL - 1);
+  if (n === 12) buildSummary();
+  slides[cur].scrollTop = 0;
+}
+goTo(0);
+
+/* ── GENOME INFO CARDS (Slide 2) ── */
+const genomeData = {
+  genome: { icon:'🧬', title:'Genome', text:'The genome is the entire DNA of an organism — every single gene, all rolled into one complete set of genetic instructions. Every one of your body cells contains a full copy of your genome.', eg:'The human genome contains about 20,000 genes across 46 chromosomes.' },
+  gene: { icon:'📄', title:'Gene', text:'A gene is a section of a DNA molecule that codes for a specific protein. Genes are the individual "instructions" that make up the genome.', eg:'One gene codes for the protein insulin; a different gene codes for the enzyme amylase.' },
+  chromosome: { icon:'➰', title:'Chromosome', text:'A thread-like structure of coiled DNA found in the nucleus of a cell. Many genes are strung along the length of each chromosome, like beads on a string.', eg:'A normal human body cell contains 46 chromosomes, arranged as 23 pairs.' },
+  dna: { icon:'🌀', title:'DNA', text:'Deoxyribonucleic acid — the molecule that stores genetic information as a sequence of bases (A, T, C, G), coiled into a double helix shape.', eg:'Base pairing rule: A always pairs with T; C always pairs with G.' }
+};
+let lastGenomeCard = null;
+function showGenome(card, key) {
+  if (lastGenomeCard) lastGenomeCard.classList.remove('active');
+  card.classList.add('active');
+  lastGenomeCard = card;
+  const d = genomeData[key];
+  const panel = document.getElementById('genome-panel');
+  panel.innerHTML = `<h4>${d.icon} ${d.title}</h4><p>${d.text}</p><div class="eg">📌 ${d.eg}</div>`;
+  panel.classList.add('show');
+}
+
+/* ── TRUE / FALSE (Slide 3) ── */
+const tfData = [
+  { s: 'The genome is just one single gene.', ans:false, fb:'FALSE — the genome is the ENTIRE set of DNA an organism has, made up of thousands of genes, not just one.' },
+  { s: 'A gene is a section of a DNA molecule that codes for a specific protein.', ans:true, fb:'TRUE — this is the exact specification definition of a gene.' },
+  { s: 'Chromosomes are found in the cytoplasm, not the nucleus.', ans:false, fb:'FALSE — chromosomes are located in the nucleus of the cell, not the cytoplasm.' },
+  { s: 'A normal human body cell contains 46 chromosomes.', ans:true, fb:'TRUE — 46 chromosomes, arranged as 23 pairs, in a normal diploid human body cell.' },
+  { s: 'DNA is coiled into a double helix shape, with bases pairing A–T and C–G.', ans:true, fb:'TRUE — this is Watson and Crick\'s double helix model, held together by complementary base pairing.' },
+  { s: 'Every gene in an organism\'s genome is only found in a couple of its cells.', ans:false, fb:'FALSE — (almost) every body cell contains a complete copy of the whole genome, even though only some genes are switched on ("expressed") in any one cell.' }
+];
+function buildTF() {
+  const c = document.getElementById('tf-container');
+  c.innerHTML = '';
+  tfData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'tf-card';
+    card.innerHTML = `<div class="tf-q">${idx+1}. ${item.s}</div>
+      <div class="tf-btns">
+        <button class="tf-btn true-btn" onclick="tfAnswer(this,${idx},true)">✓ TRUE</button>
+        <button class="tf-btn false-btn" onclick="tfAnswer(this,${idx},false)">✗ FALSE</button>
+      </div>
+      <div class="tf-fb" id="tffb-${idx}"></div>`;
+    c.appendChild(card);
+  });
+}
+function tfAnswer(btn, idx, choice) {
+  const card = btn.closest('.tf-card');
+  const btns = card.querySelectorAll('.tf-btn');
+  const fb = document.getElementById('tffb-' + idx);
+  const correct = tfData[idx].ans;
+  btns.forEach(b => b.disabled = true);
+  if (choice === correct) {
+    btn.classList.add('correct');
+    fb.textContent = '✅ ' + tfData[idx].fb;
+    fb.className = 'tf-fb show ok';
+  } else {
+    btn.classList.add('wrong');
+    (choice ? btns[1] : btns[0]).classList.add('correct');
+    fb.textContent = '❌ ' + tfData[idx].fb;
+    fb.className = 'tf-fb show no';
+  }
+}
+buildTF();
+
+/* ── VOCAB CHIP REVEAL (Slide 4) ── */
+const vocabIds = ['genotype','phenotype','allele','dominant','recessive','homozygous','heterozygous'];
+function revealVocab(key) {
+  vocabIds.forEach(id => { const el = document.getElementById('rev-' + id); if (el) el.classList.remove('show'); });
+  const t = document.getElementById('rev-' + key);
+  if (t) t.classList.add('show');
+}
+
+/* ── MATCH GAME (Slide 5) ── */
+let matchSelected = null, matchScore = 0;
+function matchClick(el) {
+  if (el.classList.contains('matched')) return;
+  if (!matchSelected) {
+    el.classList.add('selected'); matchSelected = el;
+  } else if (matchSelected === el) {
+    el.classList.remove('selected'); matchSelected = null;
+  } else {
+    if (matchSelected.dataset.pair === el.dataset.pair && matchSelected.dataset.side !== el.dataset.side) {
+      matchSelected.classList.remove('selected'); matchSelected.classList.add('matched');
+      el.classList.add('matched'); matchScore++;
+      document.getElementById('match-score').textContent = matchScore + '/5 matched';
+      matchSelected = null;
+    } else {
+      matchSelected.classList.add('wrong'); el.classList.add('wrong');
+      const a = matchSelected, b = el;
+      setTimeout(() => { a.classList.remove('selected','wrong'); b.classList.remove('wrong'); }, 650);
+      matchSelected = null;
+    }
+  }
+}
+function resetMatch() {
+  matchSelected = null; matchScore = 0;
+  document.querySelectorAll('#matchGrid .match-item').forEach(el => el.classList.remove('selected','matched','wrong'));
+  document.getElementById('match-score').textContent = '';
+}
+
+/* ── VARIATION CARDS (Slide 6) ── */
+const varData = {
+  genetic: { icon:'🧬', title:'Genetic causes only', text:'Some variation is caused entirely by differences in alleles inherited from parents. The environment has no influence on the outcome — the characteristic is fixed at fertilisation.', eg:'ABO blood group, eye colour, ability to roll your tongue' },
+  environmental: { icon:'☀️', title:'Environmental causes only', text:'Some variation is caused entirely by an organism\'s surroundings or experiences, with no genetic basis at all. Two genetically identical twins could differ completely in these.', eg:'A scar, a pierced ear, the language you speak, a suntan' },
+  both: { icon:'🌗', title:'Genetic AND environmental causes', text:'Many characteristics are influenced by BOTH genotype and environment together. Genes set a possible range, and environmental factors (diet, exercise, light, temperature) determine where within that range an individual actually ends up.', eg:'Height, body mass, crop yield, skin colour depth' }
+};
+let lastVarCard = null;
+function showVar(card, key) {
+  if (lastVarCard) lastVarCard.classList.remove('active');
+  card.classList.add('active'); lastVarCard = card;
+  const d = varData[key];
+  const panel = document.getElementById('var-panel');
+  panel.innerHTML = `<h4>${d.icon} ${d.title}</h4><p>${d.text}</p><div class="eg">📌 Examples: ${d.eg}</div>`;
+  panel.classList.add('show');
+}
+
+/* ── TRAIT SORTING ACTIVITY (Slide 7) ── */
+const traitData = [
+  { name:'ABO blood group', correct:'genetic', explain:'Blood group is determined entirely by which alleles you inherit — nothing in the environment can change it.' },
+  { name:'A scar from a childhood injury', correct:'environmental', explain:'A scar is caused entirely by a physical event (an injury), not by any allele.' },
+  { name:'Human height', correct:'both', explain:'Genes set your potential height range, but nutrition and health during childhood growth determine where in that range you end up.' },
+  { name:'Number of chromosomes in a human body cell', correct:'genetic', explain:'This is fixed by inheritance (46 in humans) and is not affected by environment.' },
+  { name:'A suntan (darkened skin from sun exposure)', correct:'environmental', explain:'A suntan is a direct, temporary response to UV exposure — an environmental factor.' },
+  { name:'Body mass (weight)', correct:'both', explain:'Genes affect metabolism and body build, but diet and exercise (environmental factors) strongly affect the outcome.' },
+  { name:'Crop yield of genetically identical plants grown in different soils', correct:'both', explain:'Even with identical genotypes, yield varies with soil quality, water and light — showing environment matters alongside genes.' },
+  { name:'Eye colour', correct:'genetic', explain:'Eye colour is determined by the alleles inherited from your parents, with no significant environmental influence.' }
+];
+let traitTally = { correct: 0, total: 0 };
+function buildTraits() {
+  const c = document.getElementById('trait-container');
+  c.innerHTML = '';
+  traitData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'trait-card';
+    card.innerHTML = `<div class="trait-name">${idx+1}. ${item.name}</div>
+      <div class="trait-opts">
+        <button class="trait-btn" onclick="classifyTrait(this,${idx},'genetic')">Genetic only</button>
+        <button class="trait-btn" onclick="classifyTrait(this,${idx},'environmental')">Environmental only</button>
+        <button class="trait-btn" onclick="classifyTrait(this,${idx},'both')">Both</button>
+      </div>
+      <div class="trait-explain" id="traitex-${idx}"></div>`;
+    c.appendChild(card);
+  });
+  updateTraitTally();
+}
+function classifyTrait(btn, idx, choice) {
+  const card = btn.closest('.trait-card');
+  const btns = card.querySelectorAll('.trait-btn');
+  const explain = document.getElementById('traitex-' + idx);
+  const correct = traitData[idx].correct;
+  btns.forEach(b => b.disabled = true);
+  traitTally.total++;
+  if (choice === correct) {
+    btn.classList.add('correct');
+    traitTally.correct++;
+  } else {
+    btn.classList.add('wrong');
+    btns.forEach(b => { if (b.textContent.toLowerCase().startsWith(correct === 'genetic' ? 'genetic' : correct === 'environmental' ? 'environmental' : 'both')) b.classList.add('correct'); });
+  }
+  explain.textContent = '💡 ' + traitData[idx].explain;
+  explain.classList.add('show');
+  updateTraitTally();
+}
+function updateTraitTally() {
+  document.getElementById('trait-tally').innerHTML =
+    `<span style="color:var(--mint);">✓ Correct: <span class="t-num">${traitTally.correct}</span></span>
+     <span style="color:var(--ink-soft);">Answered: <span class="t-num">${traitTally.total}</span> / ${traitData.length}</span>`;
+}
+buildTraits();
+
+/* ── MUTATION ROULETTE (Slide 9) ── */
+const mutOutcomes = [
+  { key:'none', weight:70, icon:'🙂', label:'No effect on phenotype', color:'var(--mint)',
+    descs:['The base change didn\'t alter the amino acid sequence, or it occurred in a non-coding region — the protein is unaffected.',
+           'The mutation changed a base, but the resulting protein still folds and functions exactly as before.'] },
+  { key:'small', weight:25, icon:'😐', label:'Small effect on phenotype', color:'var(--amber)',
+    descs:['The amino acid sequence changed slightly, causing a minor change to the protein\'s shape and a small, noticeable change in phenotype.',
+           'The protein still works, but slightly less efficiently than before — a subtle phenotypic change.'] },
+  { key:'sig', weight:5, icon:'⚠️', label:'Significant effect on phenotype', color:'var(--coral)',
+    descs:['The mutation changed the shape of an enzyme\'s active site so much that its substrate can no longer bind — the protein has lost its function.',
+           'The change seriously disrupts the protein\'s structure, causing a major, harmful change in phenotype.'] }
+];
+let mutTally = { none:0, small:0, sig:0 };
+function rollMutation() {
+  const r = Math.random() * 100;
+  let outcome;
+  if (r < 70) outcome = mutOutcomes[0];
+  else if (r < 95) outcome = mutOutcomes[1];
+  else outcome = mutOutcomes[2];
+  mutTally[outcome.key]++;
+  const desc = outcome.descs[Math.floor(Math.random() * outcome.descs.length)];
+  const resEl = document.getElementById('mutResult');
+  resEl.innerHTML = `<div class="mut-icon">${outcome.icon}</div><div class="mut-label" style="color:${outcome.color};">${outcome.label}</div><div class="mut-desc">${desc}</div>`;
+  const total = mutTally.none + mutTally.small + mutTally.sig;
+  ['none','small','sig'].forEach(k => {
+    const pct = total ? Math.round((mutTally[k] / total) * 100) : 0;
+    document.getElementById('bar-' + k).style.height = pct + '%';
+    document.getElementById('cnt-' + k).textContent = mutTally[k];
+  });
+}
+function resetMutation() {
+  mutTally = { none:0, small:0, sig:0 };
+  ['none','small','sig'].forEach(k => {
+    document.getElementById('bar-' + k).style.height = '0%';
+    document.getElementById('cnt-' + k).textContent = '0';
+  });
+  document.getElementById('mutResult').innerHTML = `<div class="mut-icon">🧬</div><div class="mut-label" style="color:var(--ink-soft);">Ready to simulate</div><div class="mut-desc">Click "Roll a Mutation" below to see what typically happens when a random DNA mutation occurs.</div>`;
+}
+
+/* ── QUIZ (Slide 10) ── */
+const quizData = [
+  { q:'Which statement correctly defines the genome of an organism?', opts:['A single gene that controls one characteristic','The entire DNA of an organism','One chromosome found in the nucleus','The proteins produced by an organism'], ans:1,
+    fb:'The genome is defined as the ENTIRE DNA of an organism — not a single gene or chromosome. It includes every gene the organism has.' },
+  { q:'A gene is best described as:', opts:['A whole chromosome','An entire cell\'s worth of DNA','A section of a DNA molecule that codes for a specific protein','A pair of chromosomes'], ans:2,
+    fb:'A gene is a section of DNA that codes for one specific protein. Many genes make up a chromosome, and many chromosomes make up the whole genome.' },
+  { q:'Where in a cell are chromosomes located?', opts:['In the cytoplasm','In the nucleus','In the cell membrane','In the mitochondria only'], ans:1,
+    fb:'Chromosomes, which carry the genes, are located in the nucleus of the cell.' },
+  { q:'How many chromosomes are found in a normal human body cell?', opts:['23','46','92','2'], ans:1,
+    fb:'A normal human body (somatic) cell contains 46 chromosomes, arranged as 23 homologous pairs.' },
+  { q:'An allele is best described as:', opts:['A type of chromosome','An alternative version of a gene','A whole genome','A type of protein'], ans:1,
+    fb:'An allele is one alternative version of a gene — e.g. the "purple flower" allele and the "white flower" allele are both versions of the same flower-colour gene.' },
+  { q:'In pea plants, B (purple) is dominant to b (white). What is the genotype "Bb" called?', opts:['Homozygous dominant','Homozygous recessive','Heterozygous','Codominant'], ans:2,
+    fb:'"Bb" has two DIFFERENT alleles, so it is heterozygous. The plant would show the dominant (purple) phenotype.' },
+  { q:'Which term describes the observable characteristics of an organism, resulting from both genotype and environment?', opts:['Genotype','Allele','Phenotype','Chromosome'], ans:2,
+    fb:'Phenotype is the observable characteristic — what you can actually see or measure — produced by the combined effect of genotype and environment.' },
+  { q:'Which of these characteristics is caused ENTIRELY by genetics, with no environmental influence?', opts:['A suntan','ABO blood group','Body mass','Height'], ans:1,
+    fb:'ABO blood group is fixed entirely by inherited alleles. A suntan, body mass and height are all influenced (at least partly) by environment.' },
+  { q:'Which of these characteristics is caused by BOTH genetic and environmental factors?', opts:['A scar', 'ABO blood group', 'Human height', 'Number of chromosomes'], ans:2,
+    fb:'Height is influenced by inherited alleles (which set a potential range) AND by environmental factors like nutrition during growth.' },
+  { q:'What is a mutation?', opts:['The normal process of protein synthesis','A rare, random change in the base sequence of DNA','The pairing of two alleles at fertilisation','A type of chromosome found only in gametes'], ans:1,
+    fb:'A mutation is a rare, random change in an organism\'s genetic material (DNA base sequence), which can sometimes be inherited.' },
+  { q:'How can a mutation in DNA affect an organism\'s phenotype?', opts:['It cannot ever affect phenotype', 'By changing the sequence of amino acids in the protein the gene codes for', 'By directly changing the number of chromosomes', 'By changing the organism\'s diet'], ans:1,
+    fb:'A change in the DNA base sequence can change the order of amino acids in the protein produced, which may change the protein\'s shape and function — and therefore the phenotype.' },
+  { q:'According to the specification, what is true about the effects of most mutations?', opts:['Most mutations have a significant effect on phenotype','Most mutations have no effect on phenotype', 'All mutations are lethal', 'Mutations always improve the organism'], ans:1,
+    fb:'Most genetic mutations have NO effect on phenotype at all. Some have a small effect, and it is rare for a mutation to have a significant effect.' },
+  { q:'Which of the following increases the rate of mutation?', opts:['A balanced diet', 'Exposure to ionising radiation such as X-rays, gamma rays or UV', 'Regular exercise', 'Drinking water'], ans:1,
+    fb:'Ionising radiation — including gamma rays, X-rays and ultraviolet (UV) radiation — increases the rate at which mutations occur.' },
+  { q:'A student says: "A mutation that changes an enzyme\'s active site shape is likely to have a significant effect on phenotype." Is this correct, and why?', opts:['No — active site shape never affects function', 'Yes — if the substrate can no longer bind, the enzyme loses its function, which can significantly affect phenotype', 'No — all enzymes have identical active sites', 'Yes, but only in plant cells'], ans:1,
+    fb:'If a mutation changes the shape of an enzyme\'s active site so its substrate can no longer bind, the enzyme becomes non-functional — this is exactly the kind of rare mutation that has a significant effect on phenotype.' }
+];
+let quizScore = 0, quizAnswered = 0;
+function buildQuiz() {
+  const c = document.getElementById('quiz-container');
+  c.innerHTML = ''; quizScore = 0; quizAnswered = 0;
+  document.getElementById('score-panel').style.display = 'none';
+  quizData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `<div class="quiz-q">Q${idx+1}. ${item.q}</div><div class="quiz-opts">${item.opts.map((o,i)=>`<button class="quiz-opt" onclick="checkAnswer(this,${idx},${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}</div><div class="quiz-fb" id="qfb-${idx}"></div>`;
+    c.appendChild(card);
+  });
+}
+function checkAnswer(btn, qIdx, optIdx) {
+  const card = btn.closest('.quiz-card');
+  const buttons = card.querySelectorAll('.quiz-opt');
+  const fb = document.getElementById('qfb-' + qIdx);
+  const correct = quizData[qIdx].ans;
+  buttons.forEach(b => b.disabled = true);
+  if (optIdx === correct) {
+    btn.classList.add('correct');
+    fb.textContent = '✅ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-fb show ok';
+    quizScore++;
+  } else {
+    btn.classList.add('wrong');
+    buttons[correct].classList.add('correct');
+    fb.textContent = '❌ ' + quizData[qIdx].fb;
+    fb.className = 'quiz-fb show no';
+  }
+  quizAnswered++;
+  if (quizAnswered === quizData.length) {
+    const panel = document.getElementById('score-panel');
+    panel.style.display = 'block';
+    document.getElementById('score-display').textContent = quizScore + '/' + quizData.length;
+    const pct = quizScore / quizData.length;
+    document.getElementById('score-msg').textContent =
+      pct >= .9  ? '🌟 Outstanding — exam ready on this topic!' :
+      pct >= .75 ? '👍 Strong work! Review the questions you missed.' :
+      pct >= .6  ? '📚 Good start — revisit the earlier slides and retake.' :
+                   '💪 Go back through the lesson slides, then retake.';
+    panel.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+function retakeQuiz() { buildQuiz(); }
+buildQuiz();
+
+/* ── PAST PAPER QUESTIONS (Slide 10) ── */
+const ppData = [
+  { q:'<strong>Describe</strong> what is meant by the term \'genome\'.', marks:'2 marks',
+    ms:'• The entire DNA (genetic material) of an organism (1)<br>• Made up of all the genes present in that organism (1)' },
+  { q:'A student says: "Variation between organisms is only caused by genes." <strong>Evaluate</strong> this statement, using examples in your answer.', marks:'4 marks',
+    ms:'• Some variation is caused entirely by genetics, e.g. ABO blood group (1)<br>• Some variation is caused entirely by environment, e.g. a scar or pierced ear (1)<br>• Some variation is caused by a combination of both genes and environment, e.g. height or body mass (1)<br>• Conclusion: the statement is incorrect / only partly correct, as variation can have genetic, environmental, or combined causes (1)' },
+  { q:'<strong>Explain</strong> how a mutation could result in a non-functional protein being produced.', marks:'3 marks',
+    ms:'• A mutation changes the base sequence of DNA (1)<br>• This can change the sequence of amino acids in the protein coded for by that gene (1)<br>• This can change the shape of the protein (e.g. the active site of an enzyme), so it can no longer carry out its function / bind its substrate (1)' }
+];
+function buildPP() {
+  const c = document.getElementById('pp-container');
+  c.innerHTML = '';
+  ppData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'pp-card';
+    card.innerHTML = `<div class="pp-head"><div class="pp-q">${idx+1}. ${item.q}</div><div class="pp-marks">${item.marks}</div></div>
+      <textarea class="pp-answer-box" placeholder="Write your answer here…"></textarea>
+      <button class="btn ghost" style="font-size:12.5px;padding:7px 16px;" onclick="togglePP(${idx})">👁️ Reveal Mark Scheme</button>
+      <div class="pp-ms" id="ppms-${idx}">${item.ms}</div>`;
+    c.appendChild(card);
+  });
+}
+function togglePP(idx) {
+  const el = document.getElementById('ppms-' + idx);
+  el.classList.toggle('show');
+}
+buildPP();
+
+/* ── SUBMIT / SUMMARY ── */
+function getTA(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+function fillSummary(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = text || 'Not answered';
+  el.classList.toggle('empty', !text);
+}
+function buildSummary() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  document.getElementById('summaryName').textContent = name;
+  document.getElementById('summaryDate').textContent = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const scoreEl = document.getElementById('score-display');
+  fillSummary('sum-quiz', scoreEl ? scoreEl.textContent + ' correct' : 'Quiz not yet completed');
+  fillSummary('sum-wonder', getTA('ta-wonder'));
+  fillSummary('sum-mutation', getTA('ta-mutation'));
+  fillSummary('sum-r1', getTA('ref1'));
+  fillSummary('sum-r2', getTA('ref2'));
+  fillSummary('sum-r3', getTA('ref3'));
+  fillSummary('sum-r4', getTA('ref4'));
+}
+function buildPlainText() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const date = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const scoreEl = document.getElementById('score-display');
+  return [
+    'EDEXCEL IGCSE BIOLOGY · TOPIC 3 · THE GENOME, THE ENVIRONMENT & PHENOTYPE — STUDENT SUBMISSION',
+    '============================================================',
+    'Student: ' + name, 'Date: ' + date, '',
+    '── QUIZ SCORE ──', scoreEl ? scoreEl.textContent : 'Not completed', '',
+    '── OPENING PREDICTION: Genome vs Gene ──', getTA('ta-wonder') || 'Not answered', '',
+    '── MUTATION ROULETTE REFLECTION ──', getTA('ta-mutation') || 'Not answered', '',
+    '── REFLECTION QUESTIONS ──',
+    'Q1 — Genome vs Gene vs Chromosome:', getTA('ref1') || 'Not answered',
+    'Q2 — Genotype & Phenotype:', getTA('ref2') || 'Not answered',
+    'Q3 — Causes of Variation:', getTA('ref3') || 'Not answered',
+    'Q4 — Mutation & Phenotype:', getTA('ref4') || 'Not answered', '',
+    '============================================================',
+    '© 2026 Farvour Explorations · farvourexplorations.com',
+    'Submitted via Edexcel IGCSE Biology · Topic 3 · The Genome, the Environment & Phenotype · Interactive Digital Lesson'
+  ].join('\n');
+}
+function copyResults() {
+  buildSummary();
+  navigator.clipboard.writeText(buildPlainText()).then(() => {
+    const el = document.getElementById('copyConfirm');
+    el.textContent = '✓ Copied! Paste into Google Classroom or your assignment.';
+    setTimeout(() => el.textContent = '', 4000);
+  }).catch(() => { document.getElementById('copyConfirm').textContent = '⚠️ Could not copy — try selecting the text manually.'; });
+}
+function emailResults() {
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  window.location.href = 'mailto:?subject=' + encodeURIComponent('Edexcel Bio · Topic 3 — ' + name) + '&body=' + encodeURIComponent(buildPlainText());
+}
+</script>
+</body>
+</html>
