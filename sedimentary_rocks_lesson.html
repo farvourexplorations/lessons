@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.2 Sedimentary Rocks and Fossils — Interactive Lesson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#146C7A; --teal-dark:#0D4F5A; --teal-light:#E3F1F2; --teal-mid:#59A6AE;
+  --orange:#DD7A2E; --orange-light:#FBEADB;
+  --purple:#5B3E96; --purple-light:#F0EAFA;
+  --red:#C0392B; --red-light:#FBE7E4;
+  --blue:#2B71C9; --blue-light:#E9F1FC;
+  --green:#3F8F5C; --green-light:#E7F5EC;
+  --sand:#B08252; --sand-light:#F3E7D8;
+  --ink:#1D2B32; --ink-soft:#4B5B62;
+  --paper:#FFFFFF; --cream:#F6F4EF; --line:#DDE4E3;
+  --r-lg:22px; --r-md:14px; --r-sm:8px;
+  --shadow: 0 10px 30px rgba(13,79,90,.14);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0; background:var(--cream); color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;
+  overflow:hidden;
+}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+
+/* ===== App shell ===== */
+#app{position:relative; width:100vw; height:100vh; display:flex; flex-direction:column;}
+
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 28px; background:var(--paper); border-bottom:1px solid var(--line);
+  flex:0 0 auto; z-index:20;
+}
+.crumb{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft); font-weight:600;}
+.crumb .tag{
+  background:var(--teal); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12px;
+  padding:5px 12px; border-radius:100px; letter-spacing:.3px;
+}
+.crumb .sep{color:#B9C4C3;}
+.crumb .current{color:var(--teal-dark);}
+
+.dots{display:flex; gap:6px; align-items:center; flex-wrap:wrap; max-width:44vw;}
+.dot{
+  width:9px; height:9px; border-radius:50%; background:#D7DEDD; border:none; cursor:pointer;
+  transition:all .25s;
+}
+.dot.active{ background:var(--teal); width:22px; border-radius:6px;}
+.dot:hover{background:var(--teal-mid);}
+
+.counter{font-size:12px; color:var(--ink-soft); font-weight:600; font-variant-numeric:tabular-nums; min-width:44px; text-align:right;}
+
+/* ===== Stage ===== */
+.stage{position:relative; flex:1 1 auto; overflow:hidden;}
+.slide{
+  position:absolute; inset:0; opacity:0; pointer-events:none;
+  transform:translateX(30px) scale(.99);
+  transition:opacity .45s ease, transform .45s ease;
+  overflow-y:auto;
+}
+.slide.active{opacity:1; pointer-events:auto; transform:translateX(0) scale(1);}
+.slide.prev{transform:translateX(-30px) scale(.99);}
+
+.slide-inner{
+  max-width:1180px; margin:0 auto; padding:40px 44px 90px;
+  min-height:100%;
+}
+
+/* nav arrows */
+.navbtn{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:15;
+  width:46px; height:46px; border-radius:50%; border:1px solid var(--line);
+  background:var(--paper); box-shadow:var(--shadow); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; color:var(--teal-dark);
+  transition:.2s;
+}
+.navbtn:hover{background:var(--teal); color:#fff; border-color:var(--teal);}
+.navbtn.disabled{opacity:.25; pointer-events:none;}
+#prevBtn{left:16px;} #nextBtn{right:16px;}
+.navbtn svg{width:20px; height:20px;}
+
+/* ===== shared components ===== */
+.chevron-badge{
+  display:inline-flex; align-items:center; gap:10px; background:var(--teal); color:#fff;
+  padding:9px 20px 9px 16px; font-family:'Poppins'; font-weight:700; font-size:15px;
+  clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%); margin-bottom:16px;
+}
+.eyebrow{
+  font-family:'Poppins'; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--orange); margin-bottom:8px;
+}
+h1.slide-title{font-size:34px; font-weight:800; color:var(--teal-dark); margin:0 0 6px; line-height:1.15;}
+h2.section-title{font-size:26px; font-weight:700; color:var(--teal-dark); margin:0 0 14px;}
+h3.mini-title{font-size:17px; font-weight:700; color:var(--ink); margin:0 0 8px;}
+p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
+.lede{font-size:17px; color:var(--ink-soft); margin-bottom:22px; max-width:680px;}
+.term{color:var(--orange); font-weight:700; cursor:help; border-bottom:1.5px dotted var(--orange);}
+
+.box{
+  border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--paper);
+  box-shadow:var(--shadow);
+}
+.box-head{
+  padding:12px 20px; font-family:'Poppins'; font-weight:700; font-size:14px; color:#fff;
+  display:flex; align-items:center; gap:8px;
+}
+.box-body{padding:20px 22px;}
+.box.blue .box-head{background:var(--blue);}
+.box.purple .box-head{background:var(--purple);}
+.box.red .box-head{background:var(--red);}
+.box.orange .box-head{background:var(--orange);}
+.box.green .box-head{background:var(--green);}
+.box.teal .box-head{background:var(--teal);}
+.box.sand .box-head{background:var(--sand);}
+
+.two-col{display:grid; grid-template-columns:1.05fr .95fr; gap:36px; align-items:start;}
+@media (max-width:900px){.two-col{grid-template-columns:1fr;}}
+
+.photo{
+  width:100%; border-radius:var(--r-md); display:block; object-fit:cover; background:#eee;
+  box-shadow:0 6px 18px rgba(20,108,122,.18);
+}
+.photo-cap{font-size:12px; color:var(--ink-soft); margin-top:8px; font-style:italic;}
+
+.pill{
+  display:inline-block; padding:4px 12px; border-radius:100px; font-size:12px; font-weight:700;
+  background:var(--teal-light); color:var(--teal-dark); margin:2px 4px 2px 0;
+}
+.pill.wb{background:var(--purple-light); color:var(--purple);}
+
+.check-item{display:flex; gap:10px; align-items:flex-start; margin-bottom:10px; font-size:14.5px;}
+.check-item svg{flex:0 0 auto; margin-top:2px; width:16px; height:16px; color:var(--teal);}
+
+/* buttons generic */
+.btn{
+  border:none; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:14px;
+  padding:10px 20px; border-radius:100px; background:var(--teal); color:#fff; transition:.2s;
+}
+.btn:hover{background:var(--teal-dark);}
+.btn.ghost{background:transparent; border:1.5px solid var(--teal); color:var(--teal);}
+.btn.ghost:hover{background:var(--teal-light);}
+.btn[disabled]{opacity:.45; cursor:default;}
+
+/* workbook badge */
+.wb-badge{
+  display:inline-flex; align-items:center; gap:7px; background:var(--purple-light); color:var(--purple);
+  font-family:'Poppins'; font-weight:700; font-size:11.5px; letter-spacing:.3px; text-transform:uppercase;
+  padding:5px 12px; border-radius:100px; margin-bottom:12px;
+}
+.wb-badge svg{width:13px; height:13px;}
+.wb-panel{
+  border:1.5px dashed var(--purple); background:var(--purple-light); border-radius:var(--r-lg);
+  padding:20px 22px; margin-top:8px;
+}
+
+/* progress footer per-slide hint */
+.hint{
+  font-size:12.5px; color:var(--ink-soft); background:var(--teal-light); border-radius:100px;
+  padding:6px 14px; display:inline-flex; gap:6px; align-items:center; margin-bottom:18px; font-weight:600;
+}
+.hint svg{width:14px; height:14px;}
+
+/* ============ SLIDE 0 : COVER ============ */
+.cover{
+  height:100%; display:flex; align-items:center; justify-content:center; position:relative;
+  background:
+    radial-gradient(ellipse at 20% 15%, rgba(255,255,255,.10), transparent 45%),
+    linear-gradient(160deg, var(--teal) 0%, var(--teal-dark) 62%, #0A3A42 100%);
+  overflow:hidden;
+}
+.cover-rock{position:absolute; border-radius:38% 62% 55% 45% / 45% 40% 60% 55%; opacity:.16; background:#fff;}
+.cover-strata{position:absolute; left:0; right:0; bottom:0; height:46%; overflow:hidden;}
+.cover-band{position:absolute; left:-5%; right:-5%; height:14%; opacity:.14; background:#fff;}
+.cover-content{position:relative; z-index:2; text-align:center; color:#fff; max-width:760px; padding:0 30px;}
+.cover-content .unit{font-family:'Poppins'; font-weight:700; letter-spacing:3px; font-size:13px; text-transform:uppercase; color:#BFE3E6; margin-bottom:14px;}
+.cover-content h1{font-size:50px; font-weight:800; margin:0 0 10px; line-height:1.08;}
+.cover-content .sub{font-size:19px; color:#DCEEEF; font-weight:500; margin-bottom:34px;}
+.cover-chip-row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:38px;}
+.cover-chip{
+  background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff;
+  padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600; backdrop-filter:blur(4px);
+}
+.cover-start{
+  background:var(--orange); color:#fff; border:none; font-family:'Poppins'; font-weight:700; font-size:16px;
+  padding:15px 34px; border-radius:100px; cursor:pointer; box-shadow:0 12px 26px rgba(221,122,46,.4);
+  display:inline-flex; align-items:center; gap:10px; transition:.2s;
+}
+.cover-start:hover{transform:translateY(-2px); box-shadow:0 16px 30px rgba(221,122,46,.5);}
+
+/* ============ objectives slide ============ */
+.obj-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 22px; margin-top:6px;}
+.obj-card{
+  display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:var(--r-md);
+  background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.2s;
+}
+.obj-card:hover{border-color:var(--teal-mid); box-shadow:var(--shadow);}
+.obj-num{
+  flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--teal-light); color:var(--teal-dark);
+  font-family:'Poppins'; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;
+}
+.obj-card.done .obj-num{background:var(--teal); color:#fff;}
+.obj-card.done p{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:#B9C4C3;}
+.obj-card p{margin:0; font-size:13.8px; line-height:1.5;}
+
+/* ============ landscape hotspot interactive ============ */
+.land-wrap{display:flex; gap:34px; align-items:center; flex-wrap:wrap;}
+.land-diagram{position:relative; width:400px; flex:0 0 auto;}
+.land-diagram svg{width:100%; height:auto; display:block; border-radius:var(--r-md); box-shadow:var(--shadow);}
+.land-hot{
+  position:absolute; width:26px; height:26px; border-radius:50%; border:3px solid #fff;
+  cursor:pointer; font-family:'Poppins'; font-weight:800; color:#fff; font-size:12px;
+  display:flex; align-items:center; justify-content:center; box-shadow:0 3px 8px rgba(0,0,0,.25);
+  transition:.2s;
+}
+.land-hot:hover{transform:scale(1.15);}
+.land-hot.revealed{outline:3px solid var(--orange); outline-offset:2px;}
+.land-info{flex:1 1 280px; min-width:260px;}
+.land-card{
+  background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:14px 16px;
+  margin-bottom:10px; opacity:.4; transition:.3s; border-left:4px solid #D7DEDD;
+}
+.land-card.active{opacity:1; border-left-color:var(--orange); box-shadow:var(--shadow);}
+.land-card h4{margin:0 0 4px; font-family:'Poppins'; font-size:14.5px; color:var(--teal-dark);}
+.land-card p{margin:0; font-size:13.5px;}
+
+/* ============ choose-word workbook component ============ */
+.choose-item{
+  background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:16px 18px;
+  margin-bottom:12px;
+}
+.choose-q{font-size:15px; margin:0 0 10px; font-weight:600;}
+.choose-blank{color:var(--purple); font-weight:700;}
+.choose-row{display:flex; gap:10px; flex-wrap:wrap;}
+.choose-btn{
+  border:1.5px solid var(--purple); background:#fff; color:var(--purple); font-family:'Poppins'; font-weight:600;
+  font-size:13.5px; padding:8px 18px; border-radius:100px; cursor:pointer; transition:.15s;
+}
+.choose-btn:hover{background:var(--purple-light);}
+.choose-btn.correct{background:var(--green-light); border-color:var(--green); color:var(--green);}
+.choose-btn.wrong{background:var(--red-light); border-color:var(--red); color:var(--red);}
+.choose-btn[disabled]{cursor:default;}
+.choose-fb{display:none; margin-top:10px; font-size:13.5px; color:var(--ink-soft); background:var(--teal-light); border-radius:10px; padding:10px 14px;}
+.choose-fb.show{display:block; animation:fadein .3s;}
+@keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+/* ============ tabs (rock family / mould-cast) ============ */
+.tabs{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+.tab-btn{
+  padding:10px 18px; border-radius:100px; border:1.5px solid var(--line); background:#fff; cursor:pointer;
+  font-family:'Poppins'; font-weight:600; font-size:13.5px; color:var(--ink-soft); transition:.2s;
+}
+.tab-btn.active{background:var(--teal); border-color:var(--teal); color:#fff;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block; animation:fadein .35s;}
+
+/* ============ sediment layer builder ============ */
+.layer-build-wrap{display:flex; gap:30px; align-items:flex-start; flex-wrap:wrap;}
+.layer-stack{
+  display:flex; flex-direction:column; width:230px; height:270px; border:2px dashed var(--line);
+  border-radius:12px; overflow:hidden; background:linear-gradient(180deg,#EAF3F1,#DDEBEA);
+}
+.layer{height:34px; flex:0 0 auto; border-bottom:2px solid rgba(255,255,255,.5); position:relative; transition:.3s;}
+.layer.compacted{height:26px; box-shadow:inset 0 -6px 10px rgba(0,0,0,.15);}
+.layer.compacted::after{
+  content:'rock'; position:absolute; right:8px; top:50%; transform:translateY(-50%);
+  font-family:'Poppins'; font-weight:700; font-size:9.5px; color:rgba(255,255,255,.85); letter-spacing:.5px; text-transform:uppercase;
+}
+.layer-controls{display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;}
+.layer-legend{font-size:13px; color:var(--ink-soft); max-width:340px;}
+
+/* ============ reveal answer component (Practice/Challenge) ============ */
+.reveal-card{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:16px 18px; margin-bottom:14px;}
+.reveal-q{font-size:14.5px; font-weight:700; margin:0 0 10px; color:var(--ink);}
+.reveal-btn{
+  border:1.5px solid var(--orange); background:#fff; color:var(--orange); font-family:'Poppins'; font-weight:600;
+  font-size:12.5px; padding:7px 16px; border-radius:100px; cursor:pointer; transition:.15s;
+}
+.reveal-btn:hover{background:var(--orange-light);}
+.reveal-btn.shown{background:var(--orange); color:#fff;}
+.reveal-answer{display:none; margin-top:12px; padding:12px 14px; background:var(--green-light); border-radius:10px; font-size:14px; color:#245A38; line-height:1.6;}
+.reveal-answer.show{display:block; animation:fadein .3s;}
+
+/* ============ fossil hotspot photo ============ */
+.hotspot-photo-wrap{position:relative; display:inline-block; width:100%;}
+.hotspot{
+  position:absolute; width:22px; height:22px; border-radius:50%; background:var(--orange); border:3px solid #fff;
+  cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.3); animation:pulse 2s infinite;
+}
+.hotspot::after{content:'+'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:13px;}
+.hotspot.done{animation:none; background:var(--teal);}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(221,122,46,.45);} 50%{box-shadow:0 0 0 8px rgba(221,122,46,0);}}
+
+/* ============ accordion (challenge Q&A) ============ */
+.accordion-item{border:1px solid var(--line); border-radius:var(--r-md); background:var(--paper); margin-bottom:10px; overflow:hidden;}
+.accordion-head{
+  display:flex; align-items:center; justify-content:space-between; padding:14px 18px; cursor:pointer;
+  font-weight:700; font-size:14.5px; gap:12px;
+}
+.accordion-head:hover{background:var(--teal-light);}
+.accordion-head svg{flex:0 0 auto; width:16px; height:16px; color:var(--teal); transition:.25s;}
+.accordion-item.open .accordion-head svg{transform:rotate(180deg);}
+.accordion-body{max-height:0; overflow:hidden; transition:max-height .35s ease;}
+.accordion-item.open .accordion-body{max-height:400px;}
+.accordion-body-inner{padding:0 18px 16px; font-size:14px; color:var(--ink-soft); line-height:1.65;}
+
+/* ============ scenario / challenge reading ============ */
+.scenario{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); padding:22px 24px; box-shadow:var(--shadow);}
+
+/* ============ checklist ============ */
+.assess-list{display:flex; flex-direction:column; gap:2px;}
+.assess-item{
+  display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px; cursor:pointer;
+  transition:.15s;
+}
+.assess-item:hover{background:var(--teal-light);}
+.assess-box{
+  flex:0 0 auto; width:22px; height:22px; border-radius:6px; border:2px solid var(--teal); position:relative;
+}
+.assess-item.checked .assess-box{background:var(--teal);}
+.assess-box svg{position:absolute; inset:0; margin:auto; width:14px; height:14px; color:#fff; opacity:0;}
+.assess-item.checked .assess-box svg{opacity:1;}
+.assess-item p{margin:0; font-size:14px;}
+.assess-item.checked p{color:var(--ink-soft);}
+.progress-bar-track{height:10px; background:var(--teal-light); border-radius:100px; overflow:hidden; margin:16px 0 22px;}
+.progress-bar-fill{height:100%; width:0%; background:linear-gradient(90deg,var(--teal),var(--orange)); border-radius:100px; transition:width .4s;}
+
+/* glossary cards */
+.gloss-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px;}
+.gloss-card{
+  background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:14px; cursor:pointer;
+  perspective:800px; height:104px; position:relative;
+}
+.gloss-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+.gloss-card.flip .gloss-inner{transform:rotateY(180deg);}
+.gloss-face{position:absolute; inset:0; backface-visibility:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;}
+.gloss-face.front{font-family:'Poppins'; font-weight:700; color:var(--teal-dark); font-size:14px;}
+.gloss-face.back{transform:rotateY(180deg); font-size:11.5px; color:var(--ink-soft); padding:4px; line-height:1.4;}
+
+::-webkit-scrollbar{width:8px;}
+::-webkit-scrollbar-thumb{background:#C9D6D5; border-radius:10px;}
+
+@media(max-width:760px){
+  .obj-grid{grid-template-columns:1fr;}
+  .two-col{grid-template-columns:1fr;}
+  .gloss-grid{grid-template-columns:repeat(2,1fr);}
+  .cover-content h1{font-size:32px;}
+  h1.slide-title{font-size:24px;}
+  .land-diagram{width:100%;}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="topbar">
+    <div class="crumb">
+      <span class="tag">Unit 3</span>
+      <span>Rocks, the rock cycle and soil</span>
+      <span class="sep">/</span>
+      <span class="current">3.2 Sedimentary rocks and fossils</span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="counter" id="counter">1 / 10</div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- ================= SLIDE 0 : COVER ================= -->
+    <section class="slide">
+      <div class="cover">
+        <div class="cover-rock" style="width:220px;height:220px; top:-50px; left:-50px;"></div>
+        <div class="cover-rock" style="width:150px;height:150px; top:20%; right:-40px;"></div>
+        <div class="cover-strata">
+          <div class="cover-band" style="bottom:0%;"></div>
+          <div class="cover-band" style="bottom:16%;"></div>
+          <div class="cover-band" style="bottom:32%;"></div>
+        </div>
+        <div class="cover-content">
+          <div class="unit">Unit 3 &middot; Rocks, the rock cycle and soil</div>
+          <h1>Sedimentary Rocks &amp; Fossils</h1>
+          <div class="sub">Layer by layer — how mountains become mud, mud becomes rock, and rock keeps the secrets of ancient life</div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">⛰️ Weathering &amp; erosion</span>
+            <span class="cover-chip">🪨 Sandstone, shale, limestone</span>
+            <span class="cover-chip">🦴 Fossils</span>
+            <span class="cover-chip">🧪 Workbook activities</span>
+          </div>
+          <button class="cover-start" onclick="goTo(1)">
+            Start the lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 1 : OBJECTIVES ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">3.2</div>
+        <h1 class="slide-title">We are going to…</h1>
+        <p class="lede">Tap each goal as you meet it during the lesson. By the end, every card should be ticked off.</p>
+        <div class="obj-grid" id="objGrid">
+          <div class="obj-card" data-i="1"><div class="obj-num">1</div><p>Describe how weathering breaks rocks down into smaller pieces</p></div>
+          <div class="obj-card" data-i="2"><div class="obj-num">2</div><p>Explain how erosion, transportation and deposition move sediment from mountains to the sea</p></div>
+          <div class="obj-card" data-i="3"><div class="obj-num">3</div><p>Describe how layers of sediment become sedimentary rock through sedimentation, compaction and cementation</p></div>
+          <div class="obj-card" data-i="4"><div class="obj-num">4</div><p>Identify sandstone, shale and limestone from their grain size and composition</p></div>
+          <div class="obj-card" data-i="5"><div class="obj-num">5</div><p>Describe how fossils form, including moulds and casts</p></div>
+          <div class="obj-card" data-i="6"><div class="obj-num">6</div><p>Use fossils as evidence to describe past environments and climates</p></div>
+          <div class="obj-card" data-i="7"><div class="obj-num">7</div><p>Interpret photographs, diagrams and passages about sedimentary rocks and fossils</p></div>
+          <div class="obj-card" data-i="8"><div class="obj-num">8</div><p>Sort and identify rocks by observing their features</p></div>
+        </div>
+        <div style="margin-top:22px;">
+          <span class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Key vocabulary: weathering · erosion · transportation · deposition · sedimentation · compaction · cementation · fossil · mould · cast · extinct</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 2 : WEATHERING, EROSION, DEPOSITION (LANDSCAPE HOTSPOT) ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">From mountain to sea</div>
+        <h1 class="slide-title">Four journeys of a rock fragment</h1>
+        <p class="lede">Click each glowing spot on the landscape, from the mountain top to the sea bed, to find out what happens to rock at each stage.</p>
+        <div class="land-wrap">
+          <div class="land-diagram">
+            <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+              <rect x="0" y="0" width="400" height="260" fill="#CFEAF0"/>
+              <polygon points="0,150 90,40 160,150" fill="#8B93A0"/>
+              <polygon points="20,150 90,55 130,150" fill="#A6AEBA"/>
+              <path d="M100,150 C120,180 110,210 140,230 C170,250 220,245 260,255 L260,260 L0,260 Z" fill="#9DBF8E"/>
+              <path d="M100,150 C112,175 108,200 128,220 C150,242 200,238 260,255" stroke="#5B8FBF" stroke-width="9" fill="none" stroke-linecap="round"/>
+              <path d="M260,255 C300,262 340,258 400,262 L400,260 L260,260 Z" fill="#DCCB93"/>
+              <ellipse cx="345" cy="235" rx="55" ry="20" fill="#4E7FB0"/>
+              <ellipse cx="330" cy="245" rx="10" ry="4" fill="#C9762E" opacity=".7"/>
+              <ellipse cx="350" cy="248" rx="14" ry="4" fill="#C9762E" opacity=".7"/>
+            </svg>
+            <div class="land-hot" style="background:#8B93A0; top:14%; left:22%;" data-layer="A">A</div>
+            <div class="land-hot" style="background:#A6AEBA; top:42%; left:32%;" data-layer="B">B</div>
+            <div class="land-hot" style="background:#5B8FBF; top:70%; left:52%;" data-layer="C">C</div>
+            <div class="land-hot" style="background:#C9762E; top:90%; left:83%;" data-layer="D">D</div>
+          </div>
+          <div class="land-info">
+            <div class="land-card" data-card="A"><h4>A — Weathering</h4><p>Sun, rain, ice and plant roots attack the exposed mountain rock, breaking it into smaller and smaller pieces without moving it anywhere.</p></div>
+            <div class="land-card" data-card="B"><h4>B — Erosion</h4><p>The river wears away the bottom and sides of its valley, picking up the loose broken rock fragments as it flows downhill.</p></div>
+            <div class="land-card" data-card="C"><h4>C — Transportation</h4><p>The river carries — <strong>transports</strong> — the fragments, now called <strong>sediment</strong>, further and further downstream toward the sea.</p></div>
+            <div class="land-card" data-card="D"><h4>D — Deposition</h4><p>As the river slows down and reaches the sea, it drops — <strong>deposits</strong> — its sediment, which settles in layers on the sea bed.</p></div>
+          </div>
+        </div>
+
+        <div class="wb-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.2 Focus, question 1a–c</div>
+        <div class="wb-panel">
+          <p style="margin:0 0 14px; font-size:14px; color:var(--ink-soft);">Now try the workbook questions yourself. Tap the word you think is correct in each sentence.</p>
+          <div class="choose-item" data-answer="weathering">
+            <p class="choose-q">a &nbsp; Heat and ice break up rocks in a process called <span class="choose-blank">___</span>.</p>
+            <div class="choose-row">
+              <button class="choose-btn" data-val="erosion">erosion</button>
+              <button class="choose-btn" data-val="weathering">weathering</button>
+            </div>
+            <div class="choose-fb">Correct answer: <strong>weathering</strong>. Weathering breaks rock apart where it stands — nothing is carried away.</div>
+          </div>
+          <div class="choose-item" data-answer="erodes">
+            <p class="choose-q">b &nbsp; A river <span class="choose-blank">___</span> the bottom and sides of its valley.</p>
+            <div class="choose-row">
+              <button class="choose-btn" data-val="erodes">erodes</button>
+              <button class="choose-btn" data-val="weathers">weathers</button>
+            </div>
+            <div class="choose-fb">Correct answer: <strong>erodes</strong>. Erosion is when moving water, wind or ice wears rock away and carries it off.</div>
+          </div>
+          <div class="choose-item" data-answer="deposits">
+            <p class="choose-q">c &nbsp; The river <span class="choose-blank">___</span> sediments on the sea bed.</p>
+            <div class="choose-row">
+              <button class="choose-btn" data-val="deposits">deposits</button>
+              <button class="choose-btn" data-val="transports">transports</button>
+            </div>
+            <div class="choose-fb">Correct answer: <strong>deposits</strong>. The river transports sediment while it flows, then deposits (drops) it once it slows down near the sea.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 3 : SEDIMENTATION & COMPACTION (LAYER BUILDER) ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Cause and effect</div>
+        <h1 class="slide-title">Layers build up, then squash into rock</h1>
+        <p class="lede">Each time a river floods, another layer of sediment settles on the sea bed. Press the button to add layers, and watch what happens to the oldest ones at the bottom.</p>
+
+        <div class="layer-build-wrap">
+          <div>
+            <div class="layer-stack" id="layerStack"></div>
+            <div class="layer-controls">
+              <button class="btn" id="addLayerBtn" onclick="addLayer()">+ Add a layer of sediment</button>
+              <button class="btn ghost" onclick="resetLayers()">↺ Reset</button>
+            </div>
+          </div>
+          <div class="layer-legend">
+            <h3 class="mini-title">Sedimentation, compaction and cementation</h3>
+            <p>Layers of sediment build up on the sea floor in a process called <span class="term" data-def="Sediment settling in layers, usually on a sea or lake bed.">sedimentation</span>. As more layers pile on top, the weight above squeezes the water out of the older, deeper layers — this is <strong>compaction</strong>. Dissolved minerals then glue the squashed grains together — this is <strong>cementation</strong>. Together, these processes turn loose sediment into solid sedimentary rock.</p>
+          </div>
+        </div>
+
+        <div class="wb-badge" style="margin-top:26px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.2 Focus, question 1d–e</div>
+        <div class="wb-panel">
+          <div class="choose-item" data-answer="sedimentation">
+            <p class="choose-q">d &nbsp; Layers of sediments build up on the sea floor in a process called <span class="choose-blank">___</span>.</p>
+            <div class="choose-row">
+              <button class="choose-btn" data-val="accumulation">accumulation</button>
+              <button class="choose-btn" data-val="sedimentation">sedimentation</button>
+            </div>
+            <div class="choose-fb">Correct answer: <strong>sedimentation</strong>. This is the specific scientific term for sediment settling and building up in layers.</div>
+          </div>
+          <div class="choose-item" data-answer="bottom">
+            <p class="choose-q">e &nbsp; Over time the <span class="choose-blank">___</span> layers of sediments become rock.</p>
+            <div class="choose-row">
+              <button class="choose-btn" data-val="top">top</button>
+              <button class="choose-btn" data-val="bottom">bottom</button>
+            </div>
+            <div class="choose-fb">Correct answer: <strong>bottom</strong>. Just like in your layer stack above, the deepest, oldest layers carry the most weight pressing down on them, so they compact and cement into rock first.</div>
+          </div>
+        </div>
+
+        <div class="two-col" style="margin-top:28px;">
+          <div>
+            <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Grand%20Canyon%20(1).jpg" alt="Layers of sedimentary rock exposed in a canyon wall">
+            <div class="photo-cap">Each stripe in a canyon wall like this is a layer of sediment laid down at a different time — the oldest, most compacted rock is at the very bottom.</div>
+          </div>
+          <div>
+            <h3 class="mini-title">Reading the layers</h3>
+            <p>Geologists can "read" these layers almost like the pages of a book. Because deposition happens over and over, the oldest layer of rock is always at the bottom and the youngest is at the top — unless huge earth movements have later tilted or folded the rock.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 4 : MEET THE ROCK FAMILY (TABS) ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">What are sedimentary rocks made of?</div>
+        <h1 class="slide-title">Meet the sedimentary rock family</h1>
+        <p class="lede">Not all sedimentary rock looks the same — it depends on the size of the grains, and what they are made from. Explore three common types below.</p>
+
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="sandstone">🏜️ Sandstone</button>
+          <button class="tab-btn" data-tab="shale">📄 Shale</button>
+          <button class="tab-btn" data-tab="limestone">🐚 Limestone</button>
+        </div>
+
+        <div class="tab-panel active" id="tab-sandstone">
+          <div class="two-col">
+            <div>
+              <h3 class="mini-title">Coarse grains you can see and feel</h3>
+              <p>Sandstone forms from grains of sand — often from old deserts, beaches or river beds — that were buried, compacted and cemented together. The grains are large enough to see and feel, giving sandstone a gritty texture.</p>
+              <span class="pill">Coarse grained</span><span class="pill">Feels gritty</span>
+            </div>
+            <div>
+              <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Sandstone.jpg" alt="Close-up of sandstone showing visible sand grains">
+              <div class="photo-cap">Sandstone — you can see individual grains of sand cemented together.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-shale">
+          <div class="two-col">
+            <div>
+              <h3 class="mini-title">Fine grains of mud and clay</h3>
+              <p>Shale forms from mud and clay that settled in very still water, such as a lake, lagoon or deep sea. The particles are much smaller than sand, so shale is fine grained, feels smooth, and often splits apart into thin, flat sheets.</p>
+              <span class="pill">Fine grained</span><span class="pill">Splits into layers</span>
+            </div>
+            <div>
+              <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Mudcracks%20in%20gray%20shale.jpg" alt="Fine-grained grey shale rock">
+              <div class="photo-cap">Shale — made of compacted mud, so fine grained that individual particles are hard to see.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-limestone">
+          <div class="two-col">
+            <div>
+              <h3 class="mini-title">Built from ancient sea life</h3>
+              <p>Limestone is different — instead of forming from weathered rock fragments, it is usually made almost entirely of the crushed shells and skeletons of sea creatures, cemented together over millions of years.</p>
+              <span class="pill">Made of shells</span><span class="pill">Often pale grey/white</span>
+            </div>
+            <div>
+              <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Limestone%20a%20type%20of%20Sedimentary%20Rock.jpg" alt="Pale grey limestone rock">
+              <div class="photo-cap">Limestone — formed largely from the calcium carbonate in shells and coral.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wb-badge" style="margin-top:26px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.2 Focus, question 1f–g</div>
+        <div class="wb-panel">
+          <div class="choose-item" data-answer="coarse grained">
+            <p class="choose-q">f &nbsp; Sediments in sandstone are more <span class="choose-blank">___</span> than in shale.</p>
+            <div class="choose-row">
+              <button class="choose-btn" data-val="fine grained">fine grained</button>
+              <button class="choose-btn" data-val="coarse grained">coarse grained</button>
+            </div>
+            <div class="choose-fb">Correct answer: <strong>coarse grained</strong>. Sandstone's sand grains are much bigger than the tiny mud particles that make up shale.</div>
+          </div>
+          <div class="choose-item" data-answer="limestone">
+            <p class="choose-q">g &nbsp; <span class="choose-blank">___</span> is formed of crushed sea shells.</p>
+            <div class="choose-row">
+              <button class="choose-btn" data-val="limestone">limestone</button>
+              <button class="choose-btn" data-val="sandstone">sandstone</button>
+            </div>
+            <div class="choose-fb">Correct answer: <strong>limestone</strong>. Sandstone is made of sand grains, but limestone is made mostly of shell and skeleton fragments.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 5 : PRACTICE 2 — IDENTIFY THE ROCK ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="wb-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.2 Practice, question 2</div>
+        <h1 class="slide-title">Detective work: is it sedimentary?</h1>
+        <p class="lede">Look carefully at the photograph, then reveal the model answer for each question once you have thought of your own.</p>
+        <div class="two-col">
+          <div>
+            <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Limestone%20rocks.jpg" alt="Pale grey rock made of many small pieces cemented together">
+            <div class="photo-cap">A close-up of a sedimentary rock sample.</div>
+          </div>
+          <div>
+            <div class="reveal-card">
+              <p class="reveal-q">a &nbsp; How do you know that the rock in the picture is sedimentary rock?</p>
+              <button class="reveal-btn" onclick="toggleReveal(this)">Show model answer</button>
+              <div class="reveal-answer">It is made of small fragments or grains that have been cemented together, and it may show layering (bedding). This texture is very different from the interlocking crystals you would see in an igneous rock, so it must have formed from sediment that was compacted and cemented — a sedimentary rock.</div>
+            </div>
+            <div class="reveal-card">
+              <p class="reveal-q">b &nbsp; How could you decide whether this is limestone or shale?</p>
+              <button class="reveal-btn" onclick="toggleReveal(this)">Show model answer</button>
+              <div class="reveal-answer">Test a small piece with a drop of dilute acid: limestone contains calcium carbonate from shells, so it fizzes; shale does not react. You could also look closely — limestone often shows pale colour and fragments of shell, while shale is very fine grained, feels smooth, and splits easily into thin flat sheets.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 6 : FOSSILS — MOULD OR CAST ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Nature's time capsules</div>
+        <h1 class="slide-title">How does a fossil form?</h1>
+        <p class="lede">A <span class="term" data-def="The preserved remains, imprint, or trace of a once-living plant or animal.">fossil</span> forms when a plant or animal is buried quickly by sediment before it can fully rot away. As layer after layer builds up above it, the sediment turns to rock around it. There are two main kinds of fossil — tap each button to see how they differ.</p>
+
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="mould">Mould</button>
+          <button class="tab-btn" data-tab="cast">Cast</button>
+        </div>
+
+        <div class="tab-panel active" id="tab-mould">
+          <div class="two-col">
+            <div>
+              <h3 class="mini-title">An empty imprint</h3>
+              <p>The plant or animal's hard parts leave a hollow impression in the surrounding rock, but the original material itself has dissolved or rotted away completely. What is left behind is the shape and surface pattern — like a footprint pressed into wet sand that then hardens.</p>
+            </div>
+            <div>
+              <svg viewBox="0 0 260 160" style="width:100%; border-radius:var(--r-md); box-shadow:var(--shadow);">
+                <rect width="260" height="160" fill="#D9CBA8"/>
+                <path d="M60 40 C90 20 170 20 200 40 C220 60 200 70 130 72 C60 74 40 60 60 40 Z" fill="#B08252" opacity=".55"/>
+                <path d="M60 40 C90 20 170 20 200 40 C220 60 200 70 130 72 C60 74 40 60 60 40 Z" fill="none" stroke="#5A3F22" stroke-width="3" stroke-dasharray="4 3"/>
+                <text x="130" y="115" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="14" fill="#5A3F22">Hollow shell-shaped imprint</text>
+                <text x="130" y="135" text-anchor="middle" font-family="Inter" font-size="11" fill="#7A5C34">the shell itself has dissolved away</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-cast">
+          <div class="two-col">
+            <div>
+              <h3 class="mini-title">A solid replica</h3>
+              <p>If minerals dissolved in water later seep into a mould and harden inside it, they fill the hollow space and form a solid, natural copy of the original shape — a cast. A cast is a bit like pouring plaster into a mould to make a model.</p>
+            </div>
+            <div>
+              <svg viewBox="0 0 260 160" style="width:100%; border-radius:var(--r-md); box-shadow:var(--shadow);">
+                <rect width="260" height="160" fill="#D9CBA8"/>
+                <path d="M60 40 C90 20 170 20 200 40 C220 60 200 70 130 72 C60 74 40 60 60 40 Z" fill="#8C6C42"/>
+                <path d="M78 40 C100 30 160 30 182 40" stroke="#5A3F22" stroke-width="2" fill="none" opacity=".5"/>
+                <path d="M84 48 C104 42 156 42 176 48" stroke="#5A3F22" stroke-width="2" fill="none" opacity=".5"/>
+                <text x="130" y="115" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="14" fill="#5A3F22">Solid mineral-filled shape</text>
+                <text x="130" y="135" text-anchor="middle" font-family="Inter" font-size="11" fill="#7A5C34">minerals filled and hardened in the mould</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="wb-badge" style="margin-top:26px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.2 Focus, question 1h</div>
+        <div class="wb-panel">
+          <div class="choose-item" data-answer="sedimentary">
+            <p class="choose-q">h &nbsp; Fossils are only found in <span class="choose-blank">___</span> rock.</p>
+            <div class="choose-row">
+              <button class="choose-btn" data-val="sandstone">sandstone</button>
+              <button class="choose-btn" data-val="sedimentary">sedimentary</button>
+            </div>
+            <div class="choose-fb">Correct answer: <strong>sedimentary</strong>. Fossils can form in any sedimentary rock (not just sandstone) because sediment settles gently around the remains instead of destroying them with heat, as igneous rock would.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 7 : PRACTICE 3 — THE FOSSIL LEAF ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="wb-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.2 Practice, question 3</div>
+        <h1 class="slide-title">Investigate this fossil leaf</h1>
+        <p class="lede">Study the photograph, think through each question, then reveal the model answer.</p>
+        <div class="two-col">
+          <div>
+            <div class="hotspot-photo-wrap">
+              <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Glossopteris%20sp.%20(fossil%20leaf)%20(Permian%3B%20Antarctica)%202%20(49062918518).jpg" alt="A fossil leaf preserved as an imprint in fine-grained rock">
+            </div>
+            <div class="photo-cap">A fossil leaf, preserved as a detailed imprint in fine-grained sedimentary rock.</div>
+          </div>
+          <div>
+            <div class="reveal-card">
+              <p class="reveal-q">a &nbsp; How did this rock form?</p>
+              <button class="reveal-btn" onclick="toggleReveal(this)">Show model answer</button>
+              <div class="reveal-answer">Fine sediment such as mud or silt settled in still water and quickly buried the leaf. Over time, more layers piled on top, and compaction and cementation turned the sediment into solid sedimentary rock — with the leaf's imprint preserved inside.</div>
+            </div>
+            <div class="reveal-card">
+              <p class="reveal-q">b &nbsp; Is this fossil a mould or a cast?</p>
+              <button class="reveal-btn" onclick="toggleReveal(this)">Show model answer</button>
+              <div class="reveal-answer">It is a mould. You can see the delicate outline and vein pattern of the leaf pressed into the rock, but the leaf's own material has decayed away — only the flat imprint remains.</div>
+            </div>
+            <div class="reveal-card">
+              <p class="reveal-q">c &nbsp; Describe how the fossil formed.</p>
+              <button class="reveal-btn" onclick="toggleReveal(this)">Show model answer</button>
+              <div class="reveal-answer">The leaf fell into still water and was rapidly covered by fine sediment before it could rot away completely. Further layers of sediment built up above it, and over a long time pressure and cementation turned the sediment into rock. The leaf itself gradually decayed, leaving behind a detailed hollow imprint — its mould — preserved in the surrounding rock.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 8 : CHALLENGE — WEST COAST FOSSIL PARK ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="wb-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.2 Challenge, question 4</div>
+        <h1 class="slide-title">The West Coast Fossil Park</h1>
+        <div class="two-col">
+          <div class="scenario">
+            <p style="margin-bottom:12px;">Along South Africa's dry west coast, a huge collection of ancient bones lies buried in the sand — the West Coast Fossil Park. A phosphate mine once operated here for forty years, and miners kept finding strange fossilised bones that did not match any animal alive today. When the mine closed, the site became a heritage site and open-air museum.</p>
+            <p style="margin-bottom:12px;">Scientists have dated the fossils to about <strong>five million years ago</strong>, when a river once flowed through this now-dry landscape to the sea. Back then the climate was warm and wet, with tall trees, ferns and lush plants — nothing like the arid coastline of today.</p>
+            <p style="margin-bottom:0;">Over 200 kinds of animal have been found here, including huge bears, three-toed horses, several species of elephant, and short-necked giraffes called sivatheres. Scientists think many of these animals drowned trying to cross a flooded river; their bodies were washed downstream, scavenged, and eventually buried under layer upon layer of phosphate-rich sand — slowly turning bone into stone.</p>
+          </div>
+          <div>
+            <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/West%20Coast%20Fossil%20Park.jpg" alt="An excavation site at the West Coast Fossil Park, South Africa">
+            <div class="photo-cap">An excavation trench at the West Coast Fossil Park, Western Cape, South Africa.</div>
+            <img class="photo" style="margin-top:14px;" src="https://commons.wikimedia.org/wiki/Special:FilePath/Z%20Chersina%20ancestor%20fossil%20-%20West%20Coast%20Fossil%20Park%20-%20South%20Africa.jpg" alt="A close-up fossil specimen from the West Coast Fossil Park">
+            <div class="photo-cap">A fossil specimen recovered from the site.</div>
+          </div>
+        </div>
+
+        <h3 class="mini-title" style="margin-top:26px;">Answer the questions — tap each one to reveal the model answer</h3>
+        <div class="accordion" id="accordion">
+          <div class="accordion-item">
+            <div class="accordion-head">a &nbsp; How old are the fossils in the West Coast Fossil Park?
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="accordion-body"><div class="accordion-body-inner">They are about five million years old, dating from a time when the West Coast had a much wetter, greener climate than it does today.</div></div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-head">b &nbsp; How were the bones of the animals "turned into stone"?
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="accordion-body"><div class="accordion-body-inner">The bones were buried under layers of phosphate-rich sand. Over a very long time, minerals dissolved in water gradually seeped into the bones and replaced the original bone material, molecule by molecule — a process of fossilisation that turned soft bone into hard rock.</div></div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-head">c &nbsp; How do scientists know that the fossilised animals are now extinct?
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="accordion-body"><div class="accordion-body-inner">None of the fossilised species — such as the short-necked sivathere, the giant bear, or the three-toed horse — match any animal alive today. Since no living examples of these species have ever been found anywhere on Earth, scientists conclude they are <span class="term" data-def="A species that has died out completely, with no living members left anywhere on Earth.">extinct</span>.</div></div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-head">d &nbsp; How can scientists describe the climate, animal and plant life from five million years ago?
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="accordion-body"><div class="accordion-body-inner">By studying which plants and animals are preserved as fossils, and comparing them with similar living species today, scientists can work out what the climate and habitat must have been like. The type of sediment the fossils were buried in (for example, river sand rather than desert dune sand) also gives clues about the ancient environment.</div></div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-head">e &nbsp; What type of sedimentary rock were the fossils found in?
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="accordion-body"><div class="accordion-body-inner">A phosphate-rich sandstone — the bones were buried in phosphate-rich sand that was later compacted and cemented into rock.</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 9 : SELF-CHECK & RECAP ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Look what I can do!</div>
+        <h1 class="slide-title">Self-check &amp; recap</h1>
+        <div class="progress-bar-track"><div class="progress-bar-fill" id="assessFill"></div></div>
+        <div class="assess-list" id="assessList"></div>
+
+        <h3 class="mini-title" style="margin-top:30px;">Key vocabulary — tap a card to flip it</h3>
+        <div class="gloss-grid" id="glossGrid"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <button class="navbtn" id="prevBtn" onclick="prevSlide()" aria-label="Previous">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button class="navbtn" id="nextBtn" onclick="nextSlide()" aria-label="Next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+
+<script>
+/* ============ core slide navigation ============ */
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let idx = 0;
+
+const dotsWrap = document.getElementById('dots');
+slides.forEach((s,i)=>{
+  const d = document.createElement('button');
+  d.className = 'dot' + (i===0?' active':'');
+  d.onclick = ()=>goTo(i);
+  dotsWrap.appendChild(d);
+});
+
+function render(){
+  slides.forEach((s,i)=> s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.dot').forEach((d,i)=> d.classList.toggle('active', i===idx));
+  document.getElementById('counter').textContent = (idx+1) + ' / ' + total;
+  document.getElementById('prevBtn').classList.toggle('disabled', idx===0);
+  document.getElementById('nextBtn').classList.toggle('disabled', idx===total-1);
+  slides[idx].scrollTop = 0;
+}
+function goTo(i){ idx = Math.max(0, Math.min(total-1, i)); render(); }
+function nextSlide(){ goTo(idx+1); }
+function prevSlide(){ goTo(idx-1); }
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight') nextSlide();
+  if(e.key==='ArrowLeft') prevSlide();
+});
+render();
+
+/* ============ objectives checklist ============ */
+document.querySelectorAll('.obj-card').forEach(card=>{
+  card.addEventListener('click', ()=> card.classList.toggle('done'));
+});
+
+/* ============ landscape hotspots ============ */
+document.querySelectorAll('.land-hot').forEach(hot=>{
+  hot.addEventListener('click', ()=>{
+    hot.classList.add('revealed');
+    document.querySelectorAll('.land-card').forEach(c=>c.classList.remove('active'));
+    document.querySelector('.land-card[data-card="'+hot.dataset.layer+'"]').classList.add('active');
+  });
+});
+
+/* ============ choose-word workbook items (Focus 1) ============ */
+document.querySelectorAll('.choose-item').forEach(item=>{
+  const ans = item.dataset.answer;
+  item.querySelectorAll('.choose-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      item.querySelectorAll('.choose-btn').forEach(b=>{
+        b.disabled = true;
+        if(b.dataset.val === ans) b.classList.add('correct');
+      });
+      if(btn.dataset.val !== ans) btn.classList.add('wrong');
+      item.querySelector('.choose-fb').classList.add('show');
+    });
+  });
+});
+
+/* ============ tabs (rock family + mould/cast) ============ */
+document.querySelectorAll('.tabs').forEach(tabGroup=>{
+  const buttons = tabGroup.querySelectorAll('.tab-btn');
+  buttons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      buttons.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const panels = tabGroup.parentElement.querySelectorAll('.tab-panel');
+      panels.forEach(p=>p.classList.remove('active'));
+      const target = tabGroup.parentElement.querySelector('#tab-'+btn.dataset.tab);
+      if(target) target.classList.add('active');
+    });
+  });
+});
+
+/* ============ sediment layer builder ============ */
+const layerColors = ['#C9A46B','#B4915C','#8C6C42','#6E5334','#5A4429','#4A3820'];
+function addLayer(){
+  const stack = document.getElementById('layerStack');
+  if(stack.children.length >= layerColors.length) return;
+  const div = document.createElement('div');
+  div.className = 'layer';
+  div.style.background = layerColors[stack.children.length % layerColors.length];
+  stack.insertBefore(div, stack.firstChild);
+  updateCompaction();
+  const btn = document.getElementById('addLayerBtn');
+  if(stack.children.length >= layerColors.length){ btn.disabled = true; btn.textContent = 'Stack full — reset to try again'; }
+}
+function updateCompaction(){
+  const stack = document.getElementById('layerStack');
+  [...stack.children].forEach((el,i)=>{
+    el.classList.toggle('compacted', i>=3);
+  });
+}
+function resetLayers(){
+  document.getElementById('layerStack').innerHTML = '';
+  const btn = document.getElementById('addLayerBtn');
+  btn.disabled = false; btn.textContent = '+ Add a layer of sediment';
+}
+
+/* ============ reveal-answer components (Practice 2, Practice 3) ============ */
+function toggleReveal(btn){
+  const card = btn.closest('.reveal-card');
+  const ans = card.querySelector('.reveal-answer');
+  const showing = ans.classList.toggle('show');
+  btn.classList.toggle('shown', showing);
+  btn.textContent = showing ? 'Hide model answer' : 'Show model answer';
+}
+
+/* ============ accordion (Challenge Q4) ============ */
+document.querySelectorAll('.accordion-head').forEach(head=>{
+  head.addEventListener('click', ()=>{
+    head.parentElement.classList.toggle('open');
+  });
+});
+
+/* ============ assessment checklist ============ */
+const assessItems = [
+  'I can describe how weathering breaks rocks down into smaller pieces.',
+  'I can explain how erosion, transportation and deposition move sediment from mountains to the sea.',
+  'I can describe how sedimentation, compaction and cementation turn loose sediment into sedimentary rock.',
+  'I can identify sandstone, shale and limestone from their grain size and composition.',
+  'I can describe how fossils form, including the difference between a mould and a cast.',
+  'I can use fossils as evidence to describe past environments and climates.',
+  'I can interpret photographs, diagrams and passages about sedimentary rocks and fossils.',
+  'I can sort and identify rocks by observing their features.'
+];
+const assessList = document.getElementById('assessList');
+assessItems.forEach(text=>{
+  const item = document.createElement('div');
+  item.className = 'assess-item';
+  item.innerHTML = `<div class="assess-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>${text}</p>`;
+  item.addEventListener('click', ()=>{
+    item.classList.toggle('checked');
+    updateAssessProgress();
+  });
+  assessList.appendChild(item);
+});
+function updateAssessProgress(){
+  const checked = document.querySelectorAll('.assess-item.checked').length;
+  const pct = (checked/assessItems.length)*100;
+  document.getElementById('assessFill').style.width = pct+'%';
+}
+
+/* ============ glossary flip cards ============ */
+const glossary = [
+  {term:'Weathering', def:'The breaking down of rock into smaller pieces where it stands, by sun, rain, ice or plant roots.'},
+  {term:'Erosion', def:'The wearing away and carrying off of rock by moving water, wind or ice.'},
+  {term:'Transportation', def:'The movement of sediment from one place to another, usually by a river.'},
+  {term:'Deposition', def:'The dropping or settling of sediment once moving water slows down.'},
+  {term:'Sedimentation', def:'Layers of sediment building up, usually on a sea or lake bed.'},
+  {term:'Compaction', def:'Older, deeper layers of sediment being squeezed by the weight of layers above.'},
+  {term:'Cementation', def:'Dissolved minerals gluing compacted sediment grains together into solid rock.'},
+  {term:'Fossil', def:'The preserved remains, imprint or trace of a once-living plant or animal.'},
+  {term:'Mould', def:'A hollow fossil imprint left after the original material has decayed away.'},
+  {term:'Cast', def:'A solid fossil formed when minerals fill and harden inside a mould.'},
+  {term:'Extinct', def:'Describes a species that has died out completely, with no living members left.'},
+  {term:'Sediment', def:'Small pieces of rock, mud or shell that have been weathered, eroded and transported.'}
+];
+const glossGrid = document.getElementById('glossGrid');
+glossary.forEach(g=>{
+  const card = document.createElement('div');
+  card.className = 'gloss-card';
+  card.innerHTML = `<div class="gloss-inner">
+      <div class="gloss-face front">${g.term}</div>
+      <div class="gloss-face back">${g.def}</div>
+    </div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flip'));
+  glossGrid.appendChild(card);
+});
+
+/* ============ tooltip terms ============ */
+document.querySelectorAll('.term').forEach(t=>{
+  t.addEventListener('click', (e)=>{
+    alert(t.dataset.def);
+  });
+});
+</script>
+</body>
+</html>
