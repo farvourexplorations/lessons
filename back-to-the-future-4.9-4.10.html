@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Back to the Future | Sessions 4.9 & 4.10</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#0d9488; --teal-dark:#0f766e; --teal-light:#ccfbf1;
+    --orange:#f97316; --orange-light:#ffedd5;
+    --purple:#7c3aed; --purple-light:#ede9fe;
+    --ink:#1e293b; --slate:#64748b; --paper:#ffffff; --bg:#f4f6f8;
+    --radius:20px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{margin:0; font-family:'Inter',sans-serif; background:var(--bg); color:var(--ink); overflow:hidden;}
+  h1,h2,h3,.display{font-family:'Poppins',sans-serif;}
+
+  #app{display:flex; flex-direction:column; height:100vh; width:100vw;}
+
+  #topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 22px; background:var(--paper); border-bottom:1px solid #e6eaee;
+    flex-shrink:0; gap:12px;
+  }
+  .breadcrumb{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--slate); font-weight:600; white-space:nowrap; overflow:hidden;}
+  .breadcrumb .unit{color:var(--teal-dark);}
+  .breadcrumb .sep{color:#c7ced6;}
+  .breadcrumb .current{color:var(--ink);}
+  #dots{display:flex; gap:5px; flex-wrap:wrap; max-width:46%; justify-content:center;}
+  .dot{width:7px; height:7px; border-radius:50%; background:#dbe2e8; cursor:pointer; transition:all .2s ease; flex-shrink:0;}
+  .dot.active{background:var(--teal); width:20px; border-radius:5px;}
+  .dot.section-start{margin-left:6px;}
+  #counter{font-size:12px; font-weight:700; color:var(--slate); white-space:nowrap; font-variant-numeric: tabular-nums;}
+
+  #stage{flex:1; position:relative; overflow:hidden;}
+  .slide{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    padding:26px 5vw 90px; opacity:0; transform:translateX(40px);
+    transition:opacity .35s ease, transform .35s ease; pointer-events:none; overflow-y:auto;
+  }
+  .slide.active{opacity:1; transform:translateX(0); pointer-events:auto;}
+  .card{width:100%; max-width:980px; margin:auto;}
+
+  .badge{
+    display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px;
+    font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-bottom:16px;
+  }
+  .badge::before{content:""; width:7px; height:7px; border-radius:50%; background:currentColor;}
+  .badge.focus{background:var(--teal-light); color:var(--teal-dark);}
+  .badge.practice{background:var(--orange-light); color:#c2410c;}
+  .badge.challenge{background:var(--purple-light); color:var(--purple);}
+  .badge.concept{background:#e0f2fe; color:#0369a1;}
+  .chip{display:inline-block; background:#eef2f6; color:var(--slate); font-size:12px; font-weight:700; padding:4px 10px; border-radius:8px; margin-left:8px;}
+
+  .cover-slide{background:radial-gradient(ellipse at top, #164e63 0%, #0f172a 55%, #0b1120 100%); color:#fff; padding:0;}
+  .cover-slide .card{text-align:center; color:#fff; max-width:760px;}
+  .stars{
+    position:absolute; inset:0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 20% 30%, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 75% 20%, #fff, transparent),
+      radial-gradient(1px 1px at 50% 60%, #fff, transparent),
+      radial-gradient(2px 2px at 85% 70%, #fff, transparent),
+      radial-gradient(1px 1px at 10% 80%, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 65% 45%, #fff, transparent),
+      radial-gradient(1px 1px at 35% 15%, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 92% 40%, #fff, transparent);
+    opacity:.7;
+  }
+  .cover-eyebrow{font-size:13px; letter-spacing:.18em; text-transform:uppercase; color:#5eead4; font-weight:700; margin-bottom:14px;}
+  .cover-slide h1{
+    font-size:clamp(30px,5vw,52px); line-height:1.1; margin:0 0 14px;
+    background:linear-gradient(90deg,#5eead4,#fb923c,#c4b5fd);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .cover-slide p{font-size:16px; color:#cbd5e1; max-width:560px; margin:0 auto 26px;}
+  .cover-pills{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .cover-pill{background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); padding:10px 18px; border-radius:14px; font-size:13px; font-weight:600; color:#e2e8f0;}
+
+  .section-slide .card{text-align:center;}
+  .section-num{font-family:'Poppins',sans-serif; font-size:14px; font-weight:700; color:var(--teal); letter-spacing:.1em; text-transform:uppercase; margin-bottom:6px;}
+  .section-slide h2{font-size:clamp(24px,4vw,38px); margin:0 0 18px; color:var(--ink);}
+  .section-sub{color:var(--slate); font-size:15px; max-width:600px; margin:0 auto;}
+
+  .concept-box{background:var(--paper); border-radius:var(--radius); padding:30px 34px; box-shadow:0 10px 30px rgba(15,23,42,.06); border:1px solid #eef1f4;}
+  h2.q-title{font-size:clamp(19px,2.8vw,25px); margin:0 0 12px; color:var(--ink);}
+  .concept-body{font-size:15.5px; line-height:1.7; color:#334155;}
+  .concept-body strong{color:var(--teal-dark);}
+  .concept-body p{margin:0 0 10px;}
+  .example-block{margin-top:16px; background:var(--teal-light); border-left:4px solid var(--teal); border-radius:12px; padding:14px 18px; font-size:14.5px; color:#134e4a;}
+  .example-block .lab{font-weight:700; text-transform:uppercase; font-size:11px; letter-spacing:.06em; color:var(--teal-dark); margin-bottom:4px;}
+
+  .q-eyebrow{display:flex; align-items:center; flex-wrap:wrap; gap:2px; margin-bottom:10px;}
+  .q-prompt{font-size:clamp(16px,2.3vw,19px); font-weight:500; color:var(--ink); line-height:1.65; margin:6px 0 22px;}
+  .q-prompt .letter{
+    display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%;
+    background:var(--ink); color:#fff; font-size:12.5px; font-weight:700; margin-right:8px; vertical-align:middle;
+  }
+  .instruction-text{font-size:15px; color:var(--slate); margin-bottom:16px; line-height:1.6;}
+  .instruction-text em{color:var(--ink); font-style:normal; font-weight:600;}
+
+  .reveal-btn{
+    display:inline-flex; align-items:center; gap:8px; background:var(--ink); color:#fff; border:none;
+    padding:12px 22px; border-radius:12px; font-family:'Inter',sans-serif; font-size:14px; font-weight:700;
+    cursor:pointer; transition:transform .15s ease, background .15s ease;
+  }
+  .reveal-btn:hover{background:#334155; transform:translateY(-1px);}
+  .reveal-btn svg{width:16px; height:16px;}
+
+  .answer-panel{margin-top:16px; max-height:0; opacity:0; overflow:hidden; transition:max-height .4s ease, opacity .3s ease, margin .3s ease; border-radius:14px;}
+  .answer-panel.open{max-height:1200px; opacity:1;}
+  .answer-inner{background:#ecfdf5; border:1.5px solid #6ee7b7; border-radius:14px; padding:16px 20px; font-size:15.5px; color:#065f46; line-height:1.7;}
+  .answer-inner .lab{font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#059669; margin-bottom:8px; display:flex; align-items:center; gap:6px;}
+  .answer-inner .conn{background:#059669; color:#fff; padding:1px 8px; border-radius:6px; font-weight:700;}
+  .answer-inner .note{display:block; margin-top:10px; font-size:13px; color:#0f766e; font-style:italic;}
+
+  .blank{display:inline-block; min-width:64px; border-bottom:2.5px dashed var(--slate); text-align:center; margin:0 2px;}
+  .passage{font-size:15.5px; line-height:1.95; color:#334155; background:#fbfcfd; border:1px solid #eef1f4; border-radius:14px; padding:20px 22px;}
+
+  .wordbank{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 4px;}
+  .wchip{background:var(--purple-light); color:var(--purple); padding:6px 13px; border-radius:999px; font-size:13px; font-weight:700;}
+  .wchip.orange{background:var(--orange-light); color:#c2410c;}
+  .wchip.teal{background:var(--teal-light); color:var(--teal-dark);}
+  .tip-box{margin-top:16px; background:var(--orange-light); border-radius:12px; padding:12px 16px; font-size:13.5px; color:#9a3412; display:flex; gap:10px; align-items:flex-start;}
+
+  /* ---------- GRAPHIC ORGANIZERS ---------- */
+  .timeline{display:flex; align-items:stretch; gap:0; margin-top:18px; flex-wrap:wrap;}
+  .tl-stage{
+    flex:1; min-width:150px; background:#fff; border:2px solid #e2e8f0; border-radius:14px;
+    padding:14px 16px; position:relative;
+  }
+  .tl-stage.beg{border-color:var(--teal); background:var(--teal-light);}
+  .tl-stage.mid{border-color:var(--orange); background:var(--orange-light);}
+  .tl-stage.end{border-color:var(--purple); background:var(--purple-light);}
+  .tl-stage .tl-lab{font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px;}
+  .tl-stage.beg .tl-lab{color:var(--teal-dark);}
+  .tl-stage.mid .tl-lab{color:#c2410c;}
+  .tl-stage.end .tl-lab{color:var(--purple);}
+  .tl-stage ul{margin:0; padding-left:18px; font-size:13.5px; color:#334155; line-height:1.7;}
+  .tl-arrow{
+    display:flex; align-items:center; justify-content:center; width:34px; color:#94a3b8; font-size:20px; flex-shrink:0;
+  }
+
+  .compare-table{width:100%; border-collapse:separate; border-spacing:0; margin-top:16px; font-size:13.5px;}
+  .compare-table th{
+    text-align:left; padding:10px 14px; font-size:12px; text-transform:uppercase; letter-spacing:.05em;
+    background:var(--ink); color:#fff;
+  }
+  .compare-table th:first-child{border-radius:10px 0 0 0;}
+  .compare-table th:last-child{border-radius:0 10px 0 0;}
+  .compare-table td{padding:10px 14px; border-bottom:1px solid #eef1f4; vertical-align:top; line-height:1.55;}
+  .compare-table tr:nth-child(even) td{background:#fbfcfd;}
+  .compare-table .col-a{color:var(--teal-dark); font-weight:700; white-space:nowrap;}
+  .compare-table .col-b{color:var(--purple); font-weight:700; white-space:nowrap;}
+
+  .word-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(210px,1fr)); gap:10px; margin-top:16px;}
+  .word-card{
+    background:#fff; border:1.5px solid #e2e8f0; border-radius:12px; padding:10px 14px;
+    display:flex; align-items:center; justify-content:space-between; font-size:14.5px; font-weight:600; color:var(--ink);
+  }
+  .word-card .root{color:var(--ink);}
+  .word-card .suffix-reveal{
+    font-weight:800; color:#cbd5e1; transition:color .3s ease;
+  }
+  .word-grid.revealed .suffix-reveal{color:#059669;}
+
+  .checklist{margin-top:16px; display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:10px;}
+  .check-item{
+    background:#fff; border:1.5px solid #e2e8f0; border-radius:12px; padding:12px 14px;
+    font-size:14px; color:#334155; display:flex; gap:10px; align-items:flex-start;
+  }
+  .check-item .ico{color:var(--teal); font-weight:900; flex-shrink:0;}
+
+  .closing-slide .card{text-align:center;}
+  .closing-slide h2{font-size:clamp(24px,4vw,36px); margin-bottom:10px;}
+  .wb-ref{display:inline-flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:22px;}
+  .wb-ref .pg{
+    background:var(--paper); border:1.5px solid #e2e8f0; border-radius:12px; padding:10px 16px;
+    font-size:13px; font-weight:700; color:var(--ink); box-shadow:0 4px 10px rgba(15,23,42,.04);
+  }
+  .wb-ref .pg span{display:block; font-size:11px; font-weight:600; color:var(--slate); text-transform:uppercase; letter-spacing:.04em;}
+
+  #footer{position:absolute; bottom:0; left:0; right:0; display:flex; align-items:center; justify-content:center; gap:18px; padding:16px; pointer-events:none;}
+  .navbtn{
+    pointer-events:auto; width:52px; height:52px; border-radius:50%; border:none; background:var(--paper);
+    box-shadow:0 6px 18px rgba(15,23,42,.12); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:transform .15s ease, background .15s ease; color:var(--ink);
+  }
+  .navbtn:hover{transform:translateY(-2px); background:var(--teal); color:#fff;}
+  .navbtn:disabled{opacity:.3; cursor:not-allowed; transform:none; background:var(--paper); color:var(--ink);}
+  .navbtn svg{width:20px; height:20px;}
+  .navlabel{pointer-events:auto; font-size:12px; font-weight:700; color:var(--slate); background:var(--paper); padding:8px 16px; border-radius:999px; box-shadow:0 6px 18px rgba(15,23,42,.08);}
+
+  @media (max-width: 640px){
+    .concept-box{padding:22px 18px;}
+    .slide{padding:16px 4vw 96px;}
+    #dots{display:none;}
+    .timeline{flex-direction:column;}
+    .tl-arrow{transform:rotate(90deg); width:auto; padding:4px;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="topbar">
+    <div class="breadcrumb">
+      <span class="unit">Unit 4 · Back to the Future</span>
+      <span class="sep">›</span>
+      <span class="current" id="crumbCurrent">Cover</span>
+    </div>
+    <div id="dots"></div>
+    <div id="counter">1 / 1</div>
+  </div>
+  <div id="stage"></div>
+  <div id="footer">
+    <button class="navbtn" id="prevBtn" aria-label="Previous">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="navlabel" id="navLabel">Tap to begin</div>
+    <button class="navbtn" id="nextBtn" aria-label="Next">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+const S = [];
+
+function badge(kind, extra){
+  const label = kind==='focus'?'Focus':kind==='practice'?'Practice':kind==='challenge'?'Challenge':'Concept';
+  return `<span class="badge ${kind}">${label}${extra?' · '+extra:''}</span>`;
+}
+
+function questionSlide({kind, exercise, letter, instruction, prompt, answerHtml}){
+  const idBase = 'ans-' + Math.random().toString(36).slice(2,9);
+  return `
+    <div class="card">
+      <div class="q-eyebrow">${badge(kind)} <span class="chip">${exercise}${letter?' &middot; '+letter:''}</span></div>
+      ${instruction? `<div class="instruction-text">${instruction}</div>`:''}
+      <div class="q-prompt">${letter?`<span class="letter">${letter}</span>`:''}${prompt}</div>
+      <button class="reveal-btn" onclick="toggleAnswer('${idBase}', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Reveal answer
+      </button>
+      <div class="answer-panel" id="${idBase}">
+        <div class="answer-inner">${answerHtml}</div>
+      </div>
+    </div>`;
+}
+
+/* ---------- COVER ---------- */
+S.push({crumb:'Cover', section:true, html:`
+  <div class="slide cover-slide">
+    <div class="stars"></div>
+    <div class="card">
+      <div class="cover-eyebrow">Cambridge Primary English 6 · Unit 4</div>
+      <h1>Back to the Future</h1>
+      <p>Sessions 4.9 &amp; 4.10 — Time connectives for science fiction, and the spelling rules behind &ndash;ible/&ndash;able and &ndash;or/&ndash;er.</p>
+      <div class="cover-pills">
+        <div class="cover-pill">4.9 Going Forward in Time</div>
+        <div class="cover-pill">4.10 Spelling, Punctuation &amp; Grammar</div>
+      </div>
+    </div>
+  </div>`});
+
+/* ========================================================
+   SESSION 4.9 — GOING FORWARD IN TIME
+   ======================================================== */
+S.push({crumb:'4.9 Title', section:true, html:`
+  <div class="slide section-slide">
+    <div class="card">
+      <div class="section-num">Session 4.9</div>
+      <h2>Going forward in time</h2>
+      <p class="section-sub">Science-fiction writers use <strong>time connectives</strong> to move their story forward and help the reader follow the order of events &mdash; even strange, futuristic ones!</p>
+    </div>
+  </div>`});
+
+S.push({crumb:'4.9 Concept', html:`
+  <div class="slide">
+    <div class="card concept-box">
+      ${badge('concept')}
+      <h2 class="q-title">What is a time connective — and why does it matter?</h2>
+      <div class="concept-body">
+        <p>A <strong>time connective</strong> is a linking word or phrase that tells the reader <em>when</em> something happens, or in what <strong>order</strong> events happen. They stitch separate sentences and ideas into one flowing story.</p>
+        <p>In a diary-style or first-person science-fiction narrative &mdash; like the extracts we have been reading &mdash; time connectives are especially important. They help the narrator take the reader step-by-step through a strange or unfamiliar experience, so nothing feels confusing or out of order.</p>
+        <p>Good writers vary <em>where</em> a time connective appears too: at the start of a sentence for emphasis (<em>Next, I stepped outside&hellip;</em>), or in the middle to link two clauses (<em>I waited, and then the door opened.</em>)</p>
+      </div>
+      <div class="timeline">
+        <div class="tl-stage beg">
+          <div class="tl-lab">Beginning</div>
+          <ul><li>First</li><li>To begin with</li><li>Now</li><li>At the start</li></ul>
+        </div>
+        <div class="tl-arrow">&rarr;</div>
+        <div class="tl-stage mid">
+          <div class="tl-lab">Middle</div>
+          <ul><li>Next</li><li>Then</li><li>After that</li><li>As soon as</li><li>Meanwhile</li></ul>
+        </div>
+        <div class="tl-arrow">&rarr;</div>
+        <div class="tl-stage end">
+          <div class="tl-lab">End</div>
+          <ul><li>Finally</li><li>At last</li><li>Eventually</li><li>In the end</li></ul>
+        </div>
+      </div>
+    </div>
+  </div>`});
+
+S.push({crumb:'4.9 Ex1 Instructions', html:`
+  <div class="slide">
+    <div class="card concept-box">
+      ${badge('focus')} <span class="chip">Exercise 1</span>
+      <h2 class="q-title">Complete the passage with time connectives</h2>
+      <div class="concept-body">This is a diary-style extract about a very strange morning. Read it through, then fill each gap with the best time connective from the box. We'll work through it in three chunks.</div>
+      <div class="wordbank">
+        ${['and','but','in addition','next','or','so','as soon as','first','now'].map(w=>`<span class="wchip">${w}</span>`).join('')}
+      </div>
+      <div class="tip-box">💡 Some connectives may be used more than once, and not every word in the box needs to be used. Focus on what makes each sentence make sense.</div>
+    </div>
+  </div>`});
+
+S.push({crumb:'4.9 Ex1 (1/3)', html:`<div class="slide">${questionSlide({
+  kind:'focus', exercise:'Exercise 1', letter:'Part 1',
+  instruction:'Fill the first two gaps.',
+  prompt:'What a strange day I have had, <span class="blank">?</span> that I look back on it. I woke up, <span class="blank">?</span> I knew something was up.',
+  answerHtml:`<div class="lab">Completed</div>What a strange day I have had, <span class="conn">now</span> that I look back on it. I woke up, <span class="conn">and</span> I knew something was up.
+  <span class="note">"Now that…" looks back from the present; "and" links the two things that happened one after another.</span>`
+})}</div>`});
+
+S.push({crumb:'4.9 Ex1 (2/3)', html:`<div class="slide">${questionSlide({
+  kind:'focus', exercise:'Exercise 1', letter:'Part 2',
+  instruction:'Fill the next three gaps.',
+  prompt:'<span class="blank">?</span>, there were no complaints <span class="blank">?</span> moans from my sisters. <span class="blank">?</span>, the bathroom was empty.',
+  answerHtml:`<div class="lab">Completed</div><span class="conn">First</span>, there were no complaints <span class="conn">or</span> moans from my sisters. <span class="conn">Next</span>, the bathroom was empty.
+  <span class="note">"First" and "Next" sequence the events; "or" links two similar negative things (no complaints or moans).</span>`
+})}</div>`});
+
+S.push({crumb:'4.9 Ex1 (3/3)', html:`<div class="slide">${questionSlide({
+  kind:'focus', exercise:'Exercise 1', letter:'Part 3',
+  instruction:'Fill the final gaps and finish the passage.',
+  prompt:'<span class="blank">?</span> I dashed in <span class="blank">?</span> bolted the door. <span class="blank">?</span>, I stepped into the shower <span class="blank">?</span> this was no shower I had ever seen before&hellip;',
+  answerHtml:`<div class="lab">Completed</div><span class="conn">So</span> I dashed in <span class="conn">and</span> bolted the door. <span class="conn">In addition</span>, I stepped into the shower <span class="conn">but</span> this was no shower I had ever seen before&hellip;
+  <span class="note">Learners' own answers accepted where the passage still makes sense &mdash; there is more than one workable combination here.</span>`
+})}</div>`});
+
+S.push({crumb:'4.9 Ex2', html:`
+  <div class="slide">
+    <div class="card concept-box">
+      ${badge('practice')} <span class="chip">Exercise 2</span>
+      <h2 class="q-title">Continue the story</h2>
+      <div class="concept-body">Continue the extract above for another paragraph. Include the following time connectives:</div>
+      <div class="wordbank">
+        ${['after','next','finally','then'].map(w=>`<span class="wchip orange">${w}</span>`).join('')}
+      </div>
+      <div class="tip-box">✍️ Keep writing in the same first-person, present-tense diary voice. What does the narrator discover next about this strange "shower"? Try to use all four connectives, in any order that fits your story.</div>
+    </div>
+  </div>`});
+
+S.push({crumb:'4.9 Ex3', html:`
+  <div class="slide">
+    <div class="card concept-box">
+      ${badge('challenge')} <span class="chip">Exercise 3</span>
+      <h2 class="q-title">The year is 2166&hellip;</h2>
+      <div class="concept-body">Write your own beginning to a science-fiction story. Make sure you include features that tell readers they are starting to read a science-fiction tale. Use time connectives to link your clauses and sentences.</div>
+      <div class="checklist">
+        <div class="check-item"><span class="ico">✓</span>A future or unfamiliar setting (space, another planet, changed Earth)</div>
+        <div class="check-item"><span class="ico">✓</span>Futuristic technology or gadgets</div>
+        <div class="check-item"><span class="ico">✓</span>Something unusual or unexplained happening</div>
+        <div class="check-item"><span class="ico">✓</span>A clear narrator (first or third person)</div>
+        <div class="check-item"><span class="ico">✓</span>Time connectives linking your events in order</div>
+      </div>
+    </div>
+  </div>`});
+
+/* ========================================================
+   SESSION 4.10 — SPELLING, PUNCTUATION AND GRAMMAR
+   ======================================================== */
+S.push({crumb:'4.10 Title', section:true, html:`
+  <div class="slide section-slide">
+    <div class="card">
+      <div class="section-num">Session 4.10</div>
+      <h2>Spelling, punctuation and grammar</h2>
+      <p class="section-sub">Two spelling patterns for today: choosing between <strong>&ndash;ible / &ndash;able</strong>, and choosing between <strong>&ndash;or / &ndash;er</strong> to build agent nouns (words for "a person who&hellip;").</p>
+    </div>
+  </div>`});
+
+S.push({crumb:'4.10 Concept', html:`
+  <div class="slide">
+    <div class="card concept-box">
+      ${badge('concept')}
+      <h2 class="q-title">Choosing the right suffix</h2>
+      <div class="concept-body">
+        <p><strong>&ndash;ible or &ndash;able?</strong> Both suffixes mean roughly "capable of" or "able to be" &mdash; but there isn't always a rule for which one to use, so it often needs to be learned. A few useful patterns:</p>
+      </div>
+      <table class="compare-table">
+        <tr><th>&ndash;ible</th><th>&ndash;able</th></tr>
+        <tr><td class="col-a">Often used when the root is <em>not</em> a complete word on its own</td><td class="col-b">Often used when the root <em>is</em> a complete word on its own</td></tr>
+        <tr><td>e.g. <em>vis</em> + ible = visible; <em>leg</em> + ible = legible</td><td>e.g. <em>fashion</em> + able = fashionable; <em>desire</em> &rarr; desirable</td></tr>
+        <tr><td>Drop a final <em>e</em>: revers<u>e</u> &rarr; reversible</td><td>Keep a final <em>e</em> after soft c/g: notice &rarr; noticeable</td></tr>
+        <tr><td>flex &rarr; flexible; respons(e) &rarr; responsible</td><td>justify &rarr; justifiable (y &rarr; i); love &rarr; lovable</td></tr>
+      </table>
+      <div class="concept-body" style="margin-top:16px;"><p><strong>&ndash;or or &ndash;er?</strong> Both turn a verb into an <strong>agent noun</strong> &mdash; a word for the person or thing that does the action.</p></div>
+      <table class="compare-table">
+        <tr><th>&ndash;or</th><th>&ndash;er (more common)</th></tr>
+        <tr><td class="col-a">Often after roots from Latin, especially ending in -ct, -is, -vis</td><td class="col-b">The default, everyday choice for most English verbs</td></tr>
+        <tr><td>act &rarr; actor, direct &rarr; director, invent &rarr; inventor, survive &rarr; survivor</td><td>work &rarr; worker, build &rarr; builder, teach &rarr; teacher, run &rarr; runner</td></tr>
+      </table>
+    </div>
+  </div>`});
+
+S.push({crumb:'4.10 Ex1', html:`
+  <div class="slide">
+    <div class="card concept-box">
+      ${badge('focus')} <span class="chip">Exercise 1</span>
+      <h2 class="q-title">&ndash;ible or &ndash;able?</h2>
+      <div class="instruction-text">Choose the correct suffix to add to each word root.</div>
+      <div class="word-grid" id="grid410-1">
+        ${[['a','incred','ible'],['b','unsupport','able'],['c','vis','ible'],['d','fashion','able'],['e','desir','able'],['f','leg','ible'],['g','size','able'],['h','flex','ible'],['i','respons','ible']]
+          .map(([l,root,suf])=>`<div class="word-card"><span class="root">${l}) ${root}&ndash;___</span><span class="suffix-reveal" data-suf="${suf}">?</span></div>`).join('')}
+      </div>
+      <button class="reveal-btn" style="margin-top:18px;" onclick="revealGrid('grid410-1', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Reveal all answers
+      </button>
+    </div>
+  </div>`});
+
+S.push({crumb:'4.10 Ex2', html:`
+  <div class="slide">
+    <div class="card concept-box">
+      ${badge('focus')} <span class="chip">Exercise 2</span>
+      <h2 class="q-title">Use three words in sentences</h2>
+      <div class="concept-body">Choose three of the words from the last slide (incredible, unsupportable, visible, fashionable, desirable, legible, sizeable, flexible, responsible) and use each in your own sentence.</div>
+      <div class="tip-box">✍️ Learners' own answers &mdash; check that each sentence shows the word's meaning clearly, and that spelling of the suffix is correct.</div>
+    </div>
+  </div>`});
+
+S.push({crumb:'4.10 Ex3', html:`
+  <div class="slide">
+    <div class="card concept-box">
+      ${badge('practice')} <span class="chip">Exercise 3</span>
+      <h2 class="q-title">&ndash;or or &ndash;er? Build the agent nouns</h2>
+      <div class="instruction-text">Choose the correct suffix to complete each word and create an agent noun (a word for "someone who&hellip;").</div>
+      <div class="word-grid" id="grid410-3">
+        ${[['a','act','or','actor'],['b','sail','or','sailor'],['c','work','er','worker'],['d','build','er','builder'],['e','tut','or','tutor'],['f','dictat','or','dictator'],
+           ['g','edit','or','editor'],['h','danc','er','dancer'],['i','runn','er','runner'],['j','driv','er','driver'],['k','invent','or','inventor'],['l','surviv','or','survivor']]
+          .map(([l,root,suf,full])=>`<div class="word-card"><span class="root">${l}) ${root}&ndash;___</span><span class="suffix-reveal" data-suf="${suf} (${full})">?</span></div>`).join('')}
+      </div>
+      <button class="reveal-btn" style="margin-top:18px;" onclick="revealGrid('grid410-3', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Reveal all answers
+      </button>
+    </div>
+  </div>`});
+
+S.push({crumb:'4.10 Ex4', html:`
+  <div class="slide">
+    <div class="card concept-box">
+      ${badge('practice')} <span class="chip">Exercise 4</span>
+      <h2 class="q-title">Use three agent nouns in sentences</h2>
+      <div class="concept-body">Choose three of the agent nouns from the last slide (actor, sailor, worker, builder, tutor, dictator, editor, dancer, runner, driver, inventor, survivor) and use each in your own sentence.</div>
+      <div class="tip-box">✍️ Learners' own answers &mdash; check the agent noun is spelled correctly and used to mean "a person who does this."</div>
+    </div>
+  </div>`});
+
+S.push({crumb:'4.10 Ex5 (1/2)', html:`
+  <div class="slide">
+    <div class="card concept-box">
+      ${badge('challenge')} <span class="chip">Exercise 5 &middot; Part 1</span>
+      <h2 class="q-title">Wordsearch: choose the correct suffix</h2>
+      <div class="instruction-text">Choose the correct suffix for each word, then find the completed word in the wordsearch on Workbook page 94.</div>
+      <div class="word-grid" id="grid410-5a">
+        ${[['convert','er','converter'],['elig','ible','eligible'],['inspect','or','inspector'],['leg','ible','legible'],['notice','able','noticeable'],
+           ['suggest','ible','suggestible'],['tell','er','teller'],['councill','or','councillor'],['farm','er','farmer'],['justifi','able','justifiable']]
+          .map(([root,suf,full])=>`<div class="word-card"><span class="root">${root}&ndash;___</span><span class="suffix-reveal" data-suf="${suf} (${full})">?</span></div>`).join('')}
+      </div>
+      <button class="reveal-btn" style="margin-top:18px;" onclick="revealGrid('grid410-5a', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Reveal all answers
+      </button>
+    </div>
+  </div>`});
+
+S.push({crumb:'4.10 Ex5 (2/2)', html:`
+  <div class="slide">
+    <div class="card concept-box">
+      ${badge('challenge')} <span class="chip">Exercise 5 &middot; Part 2</span>
+      <h2 class="q-title">Wordsearch: choose the correct suffix</h2>
+      <div class="instruction-text">The rest of the words &mdash; then go hunting for all 19 in the wordsearch grid!</div>
+      <div class="word-grid" id="grid410-5b">
+        ${[['lov','able','lovable'],['revers','ible','reversible'],['survey','or','surveyor'],['direct','or','director'],['govern','or','governor'],
+           ['laugh','able','laughable'],['mak','er','maker'],['skat','er','skater'],['swimm','er','swimmer']]
+          .map(([root,suf,full])=>`<div class="word-card"><span class="root">${root}&ndash;___</span><span class="suffix-reveal" data-suf="${suf} (${full})">?</span></div>`).join('')}
+      </div>
+      <button class="reveal-btn" style="margin-top:18px;" onclick="revealGrid('grid410-5b', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Reveal all answers
+      </button>
+    </div>
+  </div>`});
+
+/* ---------- CLOSING ---------- */
+S.push({crumb:'Well done!', section:true, html:`
+  <div class="slide closing-slide">
+    <div class="card">
+      <div class="badge focus" style="margin:0 auto 16px;">Sessions complete</div>
+      <h2>Great work, explorers!</h2>
+      <p class="section-sub">You've worked through every activity in Sessions 4.9 and 4.10. Now write your answers into your Workbook.</p>
+      <div class="wb-ref">
+        <div class="pg"><span>Session 4.9</span>Workbook pages 91&ndash;92</div>
+        <div class="pg"><span>Session 4.10</span>Workbook pages 92&ndash;94</div>
+      </div>
+    </div>
+  </div>`});
+
+
+/* =========================================================
+   RENDER + NAVIGATION
+   ========================================================= */
+const stage = document.getElementById('stage');
+const dotsEl = document.getElementById('dots');
+const counterEl = document.getElementById('counter');
+const crumbEl = document.getElementById('crumbCurrent');
+const navLabel = document.getElementById('navLabel');
+let current = 0;
+
+S.forEach((s, i)=>{
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = s.html.trim();
+  const el = wrapper.firstChild;
+  el.dataset.index = i;
+  stage.appendChild(el);
+
+  const dot = document.createElement('div');
+  dot.className = 'dot' + (s.section ? ' section-start' : '');
+  dot.addEventListener('click', ()=>goTo(i));
+  dotsEl.appendChild(dot);
+});
+
+function render(){
+  document.querySelectorAll('.slide').forEach((el,i)=>{ el.classList.toggle('active', i===current); });
+  document.querySelectorAll('.dot').forEach((el,i)=>{ el.classList.toggle('active', i===current); });
+  counterEl.textContent = `${current+1} / ${S.length}`;
+  crumbEl.textContent = S[current].crumb;
+  document.getElementById('prevBtn').disabled = current===0;
+  document.getElementById('nextBtn').disabled = current===S.length-1;
+  navLabel.textContent = current===S.length-1 ? 'The end 🎉' : (current===0 ? 'Tap to begin' : 'Swipe or tap arrows');
+  document.querySelectorAll('.dot').forEach((el,i)=>{ if(i===current) el.scrollIntoView({inline:'center', block:'nearest', behavior:'smooth'}); });
+}
+
+function goTo(i){ if(i<0 || i>=S.length) return; current = i; render(); }
+
+document.getElementById('prevBtn').addEventListener('click', ()=>goTo(current-1));
+document.getElementById('nextBtn').addEventListener('click', ()=>goTo(current+1));
+document.addEventListener('keydown', (e)=>{ if(e.key==='ArrowRight') goTo(current+1); if(e.key==='ArrowLeft') goTo(current-1); });
+
+let touchStartX = null;
+stage.addEventListener('touchstart', e=>{touchStartX = e.touches[0].clientX;});
+stage.addEventListener('touchend', e=>{
+  if(touchStartX===null) return;
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if(Math.abs(dx) > 50){ dx<0 ? goTo(current+1) : goTo(current-1); }
+  touchStartX = null;
+});
+
+function toggleAnswer(id, btn){
+  const panel = document.getElementById(id);
+  const opening = !panel.classList.contains('open');
+  panel.classList.toggle('open');
+  btn.innerHTML = opening
+    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg> Hide answer`
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Reveal answer`;
+}
+
+function revealGrid(gridId, btn){
+  const grid = document.getElementById(gridId);
+  const opening = !grid.classList.contains('revealed');
+  grid.classList.toggle('revealed');
+  grid.querySelectorAll('.suffix-reveal').forEach(el=>{
+    el.textContent = opening ? el.dataset.suf : '?';
+  });
+  btn.innerHTML = opening
+    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg> Hide answers`
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Reveal all answers`;
+}
+
+render();
+</script>
+</body>
+</html>
