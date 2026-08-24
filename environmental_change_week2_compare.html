@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5GP.05 How Environments Change — and Why Impacts Differ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#1F7A4D; --green-dark:#123D28; --green-light:#E1F3EA; --green-mid:#4FA974;
+  --coral:#E0563F; --coral-light:#FCE9E5;
+  --amber:#CE9526; --amber-light:#FAF1DC;
+  --mint:#2E9E76; --mint-light:#E3F5EC;
+  --sky:#2B79C9; --sky-light:#E8F1FB;
+  --ink:#20232B; --ink-soft:#585E6C;
+  --paper:#FFFFFF; --cream:#F7F5F1; --line:#E1DFEA;
+  --r-lg:22px; --r-md:14px; --r-sm:8px;
+  --shadow: 0 10px 30px rgba(18,61,40,.14);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{margin:0; background:var(--cream); color:var(--ink); font-family:'Inter',system-ui,sans-serif; overflow:hidden;}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+
+#app{position:relative; width:100vw; height:100vh; display:flex; flex-direction:column;}
+.topbar{display:flex; align-items:center; justify-content:space-between; padding:14px 28px; background:var(--paper); border-bottom:1px solid var(--line); flex:0 0 auto; z-index:20;}
+.crumb{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft); font-weight:600;}
+.crumb .tag{background:var(--green); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12px; padding:5px 12px; border-radius:100px; letter-spacing:.3px;}
+.crumb .sep{color:#C6C2D6;}
+.crumb .current{color:var(--green-dark);}
+.dots{display:flex; gap:4px; align-items:center; flex-wrap:wrap; max-width:44vw;}
+.dot{width:8px; height:8px; border-radius:50%; background:#DCE6DF; border:none; cursor:pointer; transition:all .25s;}
+.dot.active{background:var(--green); width:20px; border-radius:6px;}
+.dot.day-end{margin-right:8px;}
+.dot:hover{background:var(--green-mid);}
+.counter{font-size:12px; color:var(--ink-soft); font-weight:600; font-variant-numeric:tabular-nums; min-width:56px; text-align:right;}
+
+.stage{position:relative; flex:1 1 auto; overflow:hidden;}
+.slide{position:absolute; inset:0; opacity:0; pointer-events:none; transform:translateX(30px) scale(.99); transition:opacity .45s ease, transform .45s ease; overflow-y:auto;}
+.slide.active{opacity:1; pointer-events:auto; transform:translateX(0) scale(1);}
+.slide-inner{max-width:1180px; margin:0 auto; padding:40px 44px 90px; min-height:100%;}
+
+.navbtn{position:absolute; top:50%; transform:translateY(-50%); z-index:15; width:46px; height:46px; border-radius:50%; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--green-dark); transition:.2s;}
+.navbtn:hover{background:var(--green); color:#fff; border-color:var(--green);}
+.navbtn.disabled{opacity:.25; pointer-events:none;}
+#prevBtn{left:16px;} #nextBtn{right:16px;}
+.navbtn svg{width:20px; height:20px;}
+
+.chevron-badge{display:inline-flex; align-items:center; gap:10px; background:var(--green); color:#fff; padding:9px 20px 9px 16px; font-family:'Poppins'; font-weight:700; font-size:15px; clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%); margin-bottom:16px;}
+.day-badge{display:inline-flex; align-items:center; gap:8px; background:var(--coral); color:#fff; padding:7px 16px; border-radius:100px; font-family:'Poppins'; font-weight:700; font-size:12.5px; letter-spacing:.4px; margin-bottom:14px;}
+.eyebrow{font-family:'Poppins'; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--coral); margin-bottom:8px;}
+h1.slide-title{font-size:31px; font-weight:800; color:var(--green-dark); margin:0 0 6px; line-height:1.15;}
+h3.mini-title{font-size:17px; font-weight:700; color:var(--ink); margin:0 0 8px;}
+p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
+.lede{font-size:16.5px; color:var(--ink-soft); margin-bottom:20px; max-width:720px;}
+
+.box{border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow);}
+.box-head{padding:12px 20px; font-family:'Poppins'; font-weight:700; font-size:14px; color:#fff; display:flex; align-items:center; gap:8px;}
+.box-body{padding:18px 22px;}
+.box.green .box-head{background:var(--green);}
+.box.coral .box-head{background:var(--coral);}
+.box.amber .box-head{background:var(--amber);}
+.box.mint .box-head{background:var(--mint);}
+.box.sky .box-head{background:var(--sky);}
+
+.pill{display:inline-block; padding:5px 13px; border-radius:100px; font-size:12.5px; font-weight:700; background:var(--green-light); color:var(--green-dark); margin:3px 5px 3px 0;}
+.hint{font-size:12.5px; color:var(--ink-soft); background:var(--green-light); border-radius:100px; padding:6px 14px; display:inline-flex; gap:6px; align-items:center; margin-bottom:16px; font-weight:600;}
+.hint svg{width:14px; height:14px; flex:0 0 auto;}
+.res-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:10px;}
+.res-chip{display:flex; align-items:center; gap:8px; padding:9px 16px; border-radius:100px; background:var(--sky-light); color:var(--sky); font-family:'Poppins'; font-weight:700; font-size:12.5px;}
+.res-chip svg{width:15px; height:15px;}
+
+/* obj grid */
+.obj-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 22px; margin-top:6px;}
+@media (max-width:800px){.obj-grid{grid-template-columns:1fr;}}
+.obj-card{display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:var(--r-md); background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.2s;}
+.obj-card:hover{border-color:var(--green-mid); box-shadow:var(--shadow);}
+.obj-num{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--green-light); color:var(--green-dark); font-family:'Poppins'; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;}
+.obj-card.done .obj-num{background:var(--green); color:#fff;}
+.obj-card.done p{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:#C6C2D6;}
+.obj-card p{margin:0; font-size:13.8px; line-height:1.5;}
+
+/* tabs */
+.tabs{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
+.tab-btn{padding:9px 17px; border-radius:100px; border:1.5px solid var(--line); background:#fff; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:13.5px; color:var(--ink-soft); transition:.2s;}
+.tab-btn.active{background:var(--green); border-color:var(--green); color:#fff;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block; animation:fadein .35s;}
+@keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+/* type cards (deforestation/pollution/urbanisation/climate) */
+.type-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:6px;}
+@media (max-width:900px){.type-grid{grid-template-columns:1fr 1fr;}}
+.type-card{border-radius:var(--r-md); padding:16px; text-align:center; box-shadow:var(--shadow); border:1px solid var(--line); background:#fff;}
+.type-card .type-emoji{font-size:26px; display:block; margin-bottom:8px;}
+.type-card h3{font-family:'Poppins'; font-weight:700; font-size:13.5px; margin:0 0 6px; color:var(--green-dark);}
+.type-card p{margin:0; font-size:12px; color:var(--ink-soft); line-height:1.5;}
+.type-card.c1{background:var(--mint-light);} .type-card.c2{background:var(--coral-light);} .type-card.c3{background:var(--amber-light);} .type-card.c4{background:var(--sky-light);}
+
+/* photo compare */
+.photo-compare{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:14px;}
+@media (max-width:820px){.photo-compare{grid-template-columns:1fr;}}
+.photo-card{position:relative; border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--shadow); border:1px solid var(--line); background:#fff;}
+.photo-card img{display:block; width:100%; height:210px; object-fit:cover; background:var(--green-light);}
+.photo-label{position:absolute; top:12px; left:12px; padding:5px 14px; border-radius:100px; font-family:'Poppins'; font-weight:700; font-size:11px; color:#fff; letter-spacing:.5px; text-transform:uppercase; box-shadow:0 4px 10px rgba(0,0,0,.2);}
+.photo-label.a{background:var(--sky);}
+.photo-label.b{background:var(--coral);}
+.photo-cap{padding:10px 14px; font-size:12px; color:var(--ink-soft); border-top:1px solid var(--line);}
+
+/* single case study image */
+.case-photo{border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--shadow); border:1px solid var(--line); margin-top:10px;}
+.case-photo img{display:block; width:100%; height:260px; object-fit:cover;}
+.case-photo .cap{padding:10px 16px; font-size:12.5px; color:var(--ink-soft); background:#fff; border-top:1px solid var(--line);}
+
+/* fact rows */
+.fact-row{display:flex; gap:10px; margin:10px 0; align-items:flex-start;}
+.fact-tag{flex:0 0 auto; font-family:'Poppins'; font-weight:700; font-size:11px; color:#fff; background:var(--green); padding:4px 10px; border-radius:100px; letter-spacing:.3px;}
+.fact-tag.cause{background:var(--coral);}
+.fact-tag.evidence{background:var(--sky);}
+.fact-row p{margin:0; font-size:14px;}
+
+/* ===== fill-in-the-blank ===== */
+.fillblank{background:var(--paper); border:1.5px solid var(--line); border-radius:var(--r-lg); padding:22px 24px; box-shadow:var(--shadow); margin-top:6px;}
+.fb-sentence{font-family:'Poppins'; font-size:17px; font-weight:600; color:var(--ink); line-height:1.8; margin:0 0 16px;}
+.fb-blank{display:inline-block; min-width:130px; text-align:center; border-bottom:2.5px solid var(--ink-soft); color:var(--ink-soft); padding:0 6px; font-weight:700;}
+.fb-blank.correct{border-color:var(--mint); color:#1E6B4E;}
+.fb-blank.incorrect{border-color:var(--coral); color:#A8362A;}
+.fb-bank{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;}
+.fb-word{border:1.5px solid var(--green-mid); background:var(--green-light); color:var(--green-dark); font-family:'Poppins'; font-weight:700; font-size:13px; padding:9px 18px; border-radius:100px; cursor:pointer; transition:.2s;}
+.fb-word:hover{background:var(--green); color:#fff;}
+.fb-feedback{font-size:13.5px; padding:10px 16px; border-radius:var(--r-md); display:none;}
+.fb-feedback.show{display:block;}
+.fb-feedback.correct{background:var(--mint-light); color:#1E6B4E;}
+.fb-feedback.incorrect{background:var(--coral-light); color:#A8362A;}
+
+/* ===== mcq ===== */
+.mcq-card{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); padding:22px 24px; box-shadow:var(--shadow); margin-top:6px;}
+.mcq-q{font-family:'Poppins'; font-weight:700; font-size:16px; color:var(--ink); margin:0 0 14px;}
+.mcq-opts{display:flex; gap:12px; flex-wrap:wrap;}
+.mcq-opt{flex:1 1 220px; border:1.5px solid var(--line); background:#fff; border-radius:var(--r-md); padding:14px 16px; cursor:pointer; font-weight:700; font-family:'Poppins'; font-size:13.5px; text-align:left; transition:.2s;}
+.mcq-opt:hover{border-color:var(--green-mid);}
+.mcq-opt.correct{background:var(--mint-light); border-color:var(--mint); color:#1E6B4E;}
+.mcq-opt.wrong{background:var(--coral-light); border-color:var(--coral); color:#A8362A;}
+.mcq-opt[disabled]{cursor:default;}
+.mcq-feedback{margin-top:16px; padding:14px 18px; border-radius:var(--r-md); background:var(--green-light); color:var(--green-dark); font-size:13.5px; display:none;}
+.mcq-feedback.show{display:block;}
+.check-eyebrow{display:inline-flex; align-items:center; gap:8px; font-family:'Poppins'; font-weight:700; font-size:11.5px; letter-spacing:1px; text-transform:uppercase; color:var(--sky); margin-bottom:10px;}
+.check-eyebrow svg{width:16px; height:16px;}
+
+/* ===== factor chips ===== */
+.factor-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:10px;}
+@media (max-width:820px){.factor-grid{grid-template-columns:1fr 1fr;}}
+.factor-card{border:1.5px solid var(--line); background:#fff; border-radius:var(--r-md); padding:14px; text-align:center; cursor:pointer; transition:.2s; box-shadow:var(--shadow);}
+.factor-card:hover{border-color:var(--green-mid);}
+.factor-emoji{font-size:22px; display:block; margin-bottom:6px;}
+.factor-name{font-family:'Poppins'; font-weight:700; font-size:12.5px; color:var(--ink);}
+.factor-reveal{max-height:0; overflow:hidden; transition:max-height .35s ease; font-size:11.5px; color:var(--ink-soft); text-align:left;}
+.factor-card.open .factor-reveal{max-height:120px; margin-top:8px;}
+
+/* ===== simulator ===== */
+.sim-wrap{display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:center; margin-top:14px;}
+@media (max-width:900px){.sim-wrap{grid-template-columns:1fr;}}
+.sim-controls{display:flex; flex-direction:column; gap:20px;}
+.sim-slider label{font-family:'Poppins'; font-weight:700; font-size:13px; color:var(--green-dark); display:block; margin-bottom:8px;}
+.sim-slider input[type=range]{width:100%; accent-color:var(--sky);}
+.sim-slider .sim-labels{display:flex; justify-content:space-between; font-size:11px; color:var(--ink-soft); margin-top:2px;}
+.sim-visual{display:flex; flex-direction:column; align-items:center; gap:12px;}
+.sim-tank{width:150px; height:200px; border:3px solid var(--ink-soft); border-radius:0 0 12px 12px; border-top:none; position:relative; overflow:hidden; background:#fff;}
+.sim-water{position:absolute; bottom:0; left:0; right:0; background:linear-gradient(180deg,var(--sky),#1a5a99); transition:height .3s ease, background .3s ease; height:20%;}
+.sim-risk-label{font-family:'Poppins'; font-weight:800; font-size:16px; padding:8px 20px; border-radius:100px; color:#fff; background:var(--sky);}
+.sim-explain{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:14px 16px; font-size:13.5px; color:var(--ink-soft); box-shadow:var(--shadow); margin-top:14px;}
+
+/* research sheet mock */
+.poster-wrap{display:flex; justify-content:center; margin-top:8px;}
+.poster-mock{border:2.5px dashed var(--green-mid); border-radius:var(--r-lg); background:#fff; box-shadow:var(--shadow); padding:20px; max-width:560px; width:100%;}
+.pm-title{background:var(--green); color:#fff; font-family:'Poppins'; font-weight:700; text-align:center; padding:10px; border-radius:var(--r-md); font-size:13px; margin-bottom:14px; letter-spacing:.3px;}
+.pm-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.pm-field{border:1.5px solid var(--line); border-radius:var(--r-md); padding:10px 12px; background:var(--cream);}
+.pm-field.wide{grid-column:1/-1;}
+.pm-field .pm-label{font-family:'Poppins'; font-weight:700; font-size:11px; color:var(--green-dark); display:block; margin-bottom:6px;}
+.pm-field .pm-line{border-bottom:1.5px dotted #C6C2D6; height:12px;}
+
+/* checklist */
+.step-check{display:flex; flex-direction:column; gap:10px; margin-top:8px;}
+.step-check-item{display:flex; gap:12px; align-items:flex-start; background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:12px 16px; box-shadow:var(--shadow); cursor:pointer;}
+.step-check-box{flex:0 0 auto; width:20px; height:20px; border-radius:5px; border:2px solid var(--line); display:flex; align-items:center; justify-content:center; color:#fff; margin-top:1px;}
+.step-check-item.checked .step-check-box{background:var(--mint); border-color:var(--mint);}
+.step-check-item p{margin:0; font-size:13.5px;}
+
+/* cover */
+.cover{height:100%; display:flex; align-items:center; justify-content:center; position:relative; background:radial-gradient(ellipse at 20% 15%, rgba(255,255,255,.10), transparent 45%), linear-gradient(160deg, var(--green) 0%, var(--green-dark) 62%, #0B2418 100%); overflow:hidden;}
+.cover-leaf{position:absolute; opacity:.13; background:#fff; border-radius:0% 100% 0% 100%;}
+.cover-content{position:relative; z-index:2; text-align:center; color:#fff; max-width:800px; padding:0 30px;}
+.cover-content .unit{font-family:'Poppins'; font-weight:700; letter-spacing:3px; font-size:13px; text-transform:uppercase; color:#CFEBDB; margin-bottom:14px;}
+.cover-content h1{font-size:42px; font-weight:800; margin:0 0 10px; line-height:1.12;}
+.cover-content .sub{font-size:17px; color:#E3F3EA; font-weight:500; margin-bottom:30px;}
+.cover-chip-row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:34px;}
+.cover-chip{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff; padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600; backdrop-filter:blur(4px);}
+.cover-start{background:var(--coral); color:#fff; border:none; font-family:'Poppins'; font-weight:700; font-size:16px; padding:15px 34px; border-radius:100px; cursor:pointer; box-shadow:0 12px 26px rgba(224,86,63,.4); display:inline-flex; align-items:center; gap:10px; transition:.2s;}
+.cover-start:hover{transform:translateY(-2px); box-shadow:0 16px 30px rgba(224,86,63,.5);}
+.cover-note{margin-top:20px; font-size:13px; color:#BFE0CE;}
+.cover-days{display:flex; gap:16px; justify-content:center; margin-top:18px; flex-wrap:wrap;}
+.cover-day{background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.25); border-radius:var(--r-md); padding:10px 18px; font-size:12.5px; color:#E3F3EA;}
+.cover-day strong{display:block; font-family:'Poppins'; color:#fff; font-size:13px; margin-bottom:2px;}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="crumb">
+      <span class="tag">5GP.05</span>
+      <span class="sep">/</span>
+      <span class="current" id="crumbCurrent">Environmental Change &amp; Sustainability</span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="counter" id="counter">1 / 20</div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- 0 : COVER -->
+    <section class="slide" data-day="0">
+      <div class="cover">
+        <div class="cover-leaf" style="width:220px;height:220px; top:-50px; left:-50px;"></div>
+        <div class="cover-leaf" style="width:160px;height:160px; bottom:-30px; right:-20px;"></div>
+        <div class="cover-content">
+          <div class="unit">Year 6C &middot; Geography Inquiry &middot; T1 W14</div>
+          <h1>How Environments Change &mdash; and Why Impacts Differ</h1>
+          <div class="sub">Last week you asked great questions about environmental change. This week we explain how environments change, using real examples &mdash; and investigate why the same change can affect different places very differently.</div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">🌍 Real case studies</span>
+            <span class="cover-chip">⚖️ Compare impacts</span>
+            <span class="cover-chip">🧪 Vulnerability simulator</span>
+            <span class="cover-chip">📊 Comparison poster</span>
+          </div>
+          <button class="cover-start" onclick="goTo(1)">
+            Start the week
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <div class="cover-days">
+            <div class="cover-day"><strong>Day 1</strong>Types &amp; causes of change</div>
+            <div class="cover-day"><strong>Day 2</strong>Comparing impacts</div>
+            <div class="cover-day"><strong>Day 3</strong>Investigate &amp; create</div>
+          </div>
+          <div class="cover-note">5GP.05 &middot; Use examples to explain how environments change &middot; Compare impacts in different places</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DAY 1 ============ -->
+
+    <!-- 1 : Day 1 learning -->
+    <section class="slide" data-day="1">
+      <div class="slide-inner">
+        <div class="day-badge">📅 Day 1</div>
+        <div class="chevron-badge">5GP.05</div>
+        <h1 class="slide-title">We're learning to explain environmental change</h1>
+        <p class="lede"><strong>Learning objective:</strong> use examples to explain how environments change.<br><strong>Success criteria:</strong> I can explain how environments change and identify what causes different types of environmental change, using real examples.</p>
+        <div class="obj-grid" id="objGrid1">
+          <div class="obj-card"><div class="obj-num">1</div><p>I can name four types of environmental change</p></div>
+          <div class="obj-card"><div class="obj-num">2</div><p>I can explain a real example using cause and effect</p></div>
+          <div class="obj-card"><div class="obj-num">3</div><p>I can use evidence to support an explanation</p></div>
+          <div class="obj-card"><div class="obj-num">4</div><p>I can suggest reasons why impacts might differ between places</p></div>
+        </div>
+        <div class="hint" style="margin-top:20px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Key vocabulary: deforestation &middot; pollution &middot; urbanisation &middot; climate-related change &middot; cause &middot; impact &middot; evidence</div>
+        <div class="box green">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M9 3v18M15 3v18M4 8h16M4 16h16"/></svg> Notebooks today</div>
+          <div class="box-body"><p style="margin:0;">Everything you write today goes in your notebook. This screen is for looking, exploring, and thinking.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 : Types of environmental change -->
+    <section class="slide" data-day="1">
+      <div class="slide-inner">
+        <div class="eyebrow">Main teaching &middot; Activity 1</div>
+        <h1 class="slide-title">Four types of environmental change</h1>
+        <p class="lede">Every environmental change has a cause. Here are four types you'll see again and again.</p>
+        <div class="type-grid">
+          <div class="type-card c1"><span class="type-emoji">🌳</span><h3>Deforestation</h3><p>Clearing forests, often for farming, building, or resources</p></div>
+          <div class="type-card c2"><span class="type-emoji">🏭</span><h3>Pollution</h3><p>Harmful substances released into water, air, or land</p></div>
+          <div class="type-card c3"><span class="type-emoji">🏙️</span><h3>Urbanisation</h3><p>Towns and cities growing as population increases</p></div>
+          <div class="type-card c4"><span class="type-emoji">🌊</span><h3>Climate-related</h3><p>Flooding, coral bleaching, drought linked to a warming climate</p></div>
+        </div>
+        <div class="box amber" style="margin-top:20px;">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg> Coming up</div>
+          <div class="box-body"><p style="margin:0;">Next, we'll look at three real places where these changes are happening right now.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 : CHECK 1 fill blank -->
+    <section class="slide" data-day="1">
+      <div class="slide-inner">
+        <div class="check-eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg> Check for understanding</div>
+        <h1 class="slide-title">Fill in the blank</h1>
+        <div class="fillblank" data-answer="Deforestation">
+          <p class="fb-sentence">The clearing of trees to make way for farms, roads, or buildings is called <span class="fb-blank">_____</span>.</p>
+          <div class="fb-bank">
+            <button class="fb-word" data-word="Deforestation">Deforestation</button>
+            <button class="fb-word" data-word="Pollution">Pollution</button>
+            <button class="fb-word" data-word="Urbanisation">Urbanisation</button>
+          </div>
+          <div class="fb-feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 : Case studies -->
+    <section class="slide" data-day="1">
+      <div class="slide-inner">
+        <div class="eyebrow">Main teaching &middot; Activity 2</div>
+        <h1 class="slide-title">Three real places, three real changes</h1>
+        <p class="lede">In pairs, pick one case study. Explain it using: <em>"In [place], the environment has changed because ___. This has caused ___."</em></p>
+        <div class="tabs" id="caseTabs">
+          <button class="tab-btn active" data-tab="amazon">🌳 Amazon Rainforest</button>
+          <button class="tab-btn" data-tab="reef">🪸 Great Barrier Reef</button>
+          <button class="tab-btn" data-tab="aral">🚢 Aral Sea</button>
+        </div>
+        <div class="tab-panel active" id="tab-amazon">
+          <div class="case-photo">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Amazon%20deforestation%202010214.jpg" alt="Satellite image showing fishbone-pattern deforestation in the Amazon rainforest">
+            <div class="cap">Satellite view of deforestation spreading in a &ldquo;fishbone&rdquo; pattern along new roads, Amazon rainforest, Brazil</div>
+          </div>
+          <div class="fact-row"><span class="fact-tag cause">Cause</span><p>Forest is cleared for cattle farming and soy farming, and for roads that open up new land.</p></div>
+          <div class="fact-row"><span class="fact-tag">Impact</span><p>Habitat loss for wildlife, less rainfall in the region, and more carbon released into the air.</p></div>
+          <div class="fact-row"><span class="fact-tag evidence">Evidence</span><p>Satellite images taken years apart show the forest shrinking and the &ldquo;fishbone&rdquo; road pattern spreading.</p></div>
+        </div>
+        <div class="tab-panel" id="tab-reef">
+          <div class="case-photo">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Keppelbleaching.jpg" alt="Bleached white coral next to healthy brown coral at the Great Barrier Reef">
+            <div class="cap">Bleached coral (front) next to healthy coral (back), Keppel Islands, Great Barrier Reef, Australia</div>
+          </div>
+          <div class="fact-row"><span class="fact-tag cause">Cause</span><p>Warmer sea temperatures stress the coral, causing it to lose the colourful algae living inside it.</p></div>
+          <div class="fact-row"><span class="fact-tag">Impact</span><p>Bleached coral turns white and can die, destroying homes for thousands of fish and sea creatures.</p></div>
+          <div class="fact-row"><span class="fact-tag evidence">Evidence</span><p>Scientists compare reef photos over time and measure sea temperature to track bleaching events.</p></div>
+        </div>
+        <div class="tab-panel" id="tab-aral">
+          <div class="case-photo">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Moynaq,%20Aral%20Sea%20(6226842732).jpg" alt="Rusted ships stranded in the desert where the Aral Sea used to be">
+            <div class="cap">Ships stranded in the dried-up seabed, Moynaq, near the Aral Sea, Uzbekistan</div>
+          </div>
+          <div class="fact-row"><span class="fact-tag cause">Cause</span><p>The rivers that fed the Aral Sea were diverted to water cotton farms, so far less water reached the sea.</p></div>
+          <div class="fact-row"><span class="fact-tag">Impact</span><p>The sea shrank by around three-quarters, fishing towns lost their industry, and dust storms now carry salt and chemicals.</p></div>
+          <div class="fact-row"><span class="fact-tag evidence">Evidence</span><p>Satellite images from the 1960s to today show the sea's outline shrinking year after year.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 : CHECK 2 mcq -->
+    <section class="slide" data-day="1">
+      <div class="slide-inner">
+        <div class="check-eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg> Check for understanding</div>
+        <h1 class="slide-title">Which case study is this?</h1>
+        <div class="mcq-card" data-explain="This is the Aral Sea. Its rivers were diverted to grow cotton, so the sea itself shrank, leaving ships stranded in the desert.">
+          <p class="mcq-q">&ldquo;A sea shrank because the rivers that fed it were diverted to water cotton farms.&rdquo;</p>
+          <div class="mcq-opts">
+            <button class="mcq-opt" data-correct="false">Great Barrier Reef</button>
+            <button class="mcq-opt" data-correct="true">Aral Sea</button>
+            <button class="mcq-opt" data-correct="false">Amazon Rainforest</button>
+          </div>
+          <div class="mcq-feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 : Why impacts differ (discussion) -->
+    <section class="slide" data-day="1">
+      <div class="slide-inner">
+        <div class="eyebrow">Main teaching &middot; Activity 3</div>
+        <h1 class="slide-title">Why might the impact be different?</h1>
+        <p class="lede">Two places can experience the <strong>same type</strong> of environmental change &mdash; but end up with very different impacts. Tap each factor to see how.</p>
+        <div class="factor-grid" id="factorGrid"></div>
+      </div>
+    </section>
+
+    <!-- 7 : CHECK 3 fill blank -->
+    <section class="slide" data-day="1">
+      <div class="slide-inner">
+        <div class="check-eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg> Check for understanding</div>
+        <h1 class="slide-title">Fill in the blank</h1>
+        <div class="fillblank" data-answer="impact">
+          <p class="fb-sentence">Two places can experience the same environmental <strong>change</strong>, but the <span class="fb-blank">_____</span> on people and places can be very different.</p>
+          <div class="fb-bank">
+            <button class="fb-word" data-word="cause">cause</button>
+            <button class="fb-word" data-word="impact">impact</button>
+            <button class="fb-word" data-word="evidence">evidence</button>
+          </div>
+          <div class="fb-feedback"></div>
+        </div>
+        <div class="box green" style="margin-top:20px;">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M9 3v18M15 3v18M4 8h16M4 16h16"/></svg> Plenary</div>
+          <div class="box-body"><p style="margin:0;">In your notebook: <em>&ldquo;One environmental change I learned about today is ___, and it happened because ___.&rdquo;</em> Tomorrow, we compare how the same change affects two different places differently.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DAY 2 ============ -->
+
+    <!-- 8 : Day 2 learning -->
+    <section class="slide" data-day="2">
+      <div class="slide-inner">
+        <div class="day-badge">📅 Day 2</div>
+        <div class="chevron-badge">5GP.05</div>
+        <h1 class="slide-title">Comparing impacts in different places</h1>
+        <p class="lede"><strong>Success criteria:</strong> I can compare how the same environmental change affects different places differently, using evidence.</p>
+        <div class="obj-grid" id="objGrid2">
+          <div class="obj-card"><div class="obj-num">1</div><p>I can compare two places affected by the same change</p></div>
+          <div class="obj-card"><div class="obj-num">2</div><p>I can identify similarities and differences in impact</p></div>
+          <div class="obj-card"><div class="obj-num">3</div><p>I can explain why impacts differ using evidence</p></div>
+          <div class="obj-card"><div class="obj-num">4</div><p>I can choose two places to investigate tomorrow</p></div>
+        </div>
+        <div class="hint" style="margin-top:20px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Recap: yesterday we looked at deforestation, coral bleaching, and a shrinking sea.</div>
+      </div>
+    </section>
+
+    <!-- 9 : Modelled comparison + simulator -->
+    <section class="slide" data-day="2">
+      <div class="slide-inner">
+        <div class="eyebrow">Main teaching &middot; Activity 1 &middot; Modelled</div>
+        <h1 class="slide-title">Same flood risk, very different impact</h1>
+        <p class="lede">Both these places face flooding &mdash; but one has far stronger defences than the other.</p>
+        <div class="photo-compare">
+          <div class="photo-card">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pile%20of%20automobiles%20after%20levee%20failure%20flood,%20Lower%209th%20Ward,%20New%20Orleans.jpg" alt="Cars piled up by floodwater after a levee failure in New Orleans">
+            <span class="photo-label a">Place A</span>
+            <div class="photo-cap">New Orleans, USA &mdash; flood damage after a levee (flood wall) failed in 2005</div>
+          </div>
+          <div class="photo-card">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Deltawerken%20-%20Osterschelde%20-%20Zeeland.jpg" alt="A large flood barrier protecting the Netherlands coastline">
+            <span class="photo-label b">Place B</span>
+            <div class="photo-cap">The Netherlands &mdash; the Delta Works, one of the world's largest flood-defence systems</div>
+          </div>
+        </div>
+        <p class="lede" style="margin-top:16px; font-size:14px;">Both places are low-lying and at risk of flooding &mdash; but years of investment in flood barriers means the Netherlands can hold back the same kind of flood that devastated New Orleans.</p>
+        <h3 class="mini-title">🧪 Try it: Flood Vulnerability Simulator</h3>
+        <p style="font-size:13.5px; color:var(--ink-soft); margin-bottom:0;">Drag the sliders to see how elevation and flood defences change the risk for a place.</p>
+        <div class="sim-wrap">
+          <div class="sim-controls">
+            <div class="sim-slider">
+              <label>🏔️ Land elevation</label>
+              <input type="range" id="simElevation" min="0" max="10" value="3">
+              <div class="sim-labels"><span>Very low-lying</span><span>High ground</span></div>
+            </div>
+            <div class="sim-slider">
+              <label>🧱 Money spent on flood defences</label>
+              <input type="range" id="simDefence" min="0" max="10" value="2">
+              <div class="sim-labels"><span>Little to none</span><span>Very well-funded</span></div>
+            </div>
+            <div class="sim-explain" id="simExplain">Try moving the sliders to see how flood risk changes.</div>
+          </div>
+          <div class="sim-visual">
+            <div class="sim-tank"><div class="sim-water" id="simWater"></div></div>
+            <div class="sim-risk-label" id="simRiskLabel">Flood risk: High</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 : CHECK 4 mcq -->
+    <section class="slide" data-day="2">
+      <div class="slide-inner">
+        <div class="check-eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg> Check for understanding</div>
+        <h1 class="slide-title">Why was the impact different?</h1>
+        <div class="mcq-card" data-explain="Both places can flood, but the Netherlands has spent decades and huge amounts of money building flood barriers, so the same kind of flood causes far less damage there.">
+          <p class="mcq-q">New Orleans and the Netherlands are both low-lying and can flood. Why did the flood cause much more damage in New Orleans?</p>
+          <div class="mcq-opts">
+            <button class="mcq-opt" data-correct="false">New Orleans gets far more rain than the Netherlands</button>
+            <button class="mcq-opt" data-correct="true">The Netherlands has invested heavily in flood defences over many years</button>
+            <button class="mcq-opt" data-correct="false">New Orleans is not actually below sea level</button>
+          </div>
+          <div class="mcq-feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 : Guided practice -->
+    <section class="slide" data-day="2">
+      <div class="slide-inner">
+        <div class="eyebrow">Main teaching &middot; Activity 2 &middot; Guided practice</div>
+        <h1 class="slide-title">Now you compare: river pollution</h1>
+        <p class="lede">In pairs, look at these two rivers. In your notebook, complete a comparison chart: cause, impact on people, impact on animals &amp; plants, similarity, difference.</p>
+        <div class="photo-compare">
+          <div class="photo-card">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/1078Garbage-plastic%20pollution%20in%20Marilao%20River%2004.jpg" alt="The Marilao River in the Philippines choked with plastic waste">
+            <span class="photo-label a">Place A</span>
+            <div class="photo-cap">Marilao River, Philippines &mdash; choked with plastic and industrial waste</div>
+          </div>
+          <div class="photo-card">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Rio%20Thames%20com%20Roda-Gigante.jpg" alt="The River Thames in London, clean, with the London Eye in the background">
+            <span class="photo-label b">Place B</span>
+            <div class="photo-cap">River Thames, London, UK &mdash; once badly polluted, now cleaned up over decades</div>
+          </div>
+        </div>
+        <div class="box sky" style="margin-top:20px;">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg> Think about</div>
+          <div class="box-body"><p style="margin:0;">What laws, money, or clean-up projects might explain why one river is far more polluted than the other today?</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12 : CHECK 5 fill blank -->
+    <section class="slide" data-day="2">
+      <div class="slide-inner">
+        <div class="check-eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg> Check for understanding</div>
+        <h1 class="slide-title">Fill in the blank</h1>
+        <div class="fillblank" data-answer="laws">
+          <p class="fb-sentence">The River Thames is much cleaner today partly because of strict <span class="fb-blank">_____</span> that stop factories and cities from dumping waste into it.</p>
+          <div class="fb-bank">
+            <button class="fb-word" data-word="laws">laws</button>
+            <button class="fb-word" data-word="tourists">tourists</button>
+            <button class="fb-word" data-word="fish">fish</button>
+          </div>
+          <div class="fb-feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13 : Choosing places for tomorrow -->
+    <section class="slide" data-day="2">
+      <div class="slide-inner">
+        <div class="eyebrow">Main teaching &middot; Activity 3</div>
+        <h1 class="slide-title">Choosing your places for tomorrow</h1>
+        <p class="lede">Tomorrow, you'll investigate and create a comparison poster of your own. Start thinking now:</p>
+        <div class="step-check">
+          <div class="step-check-item"><div class="step-check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>Pick a type of environmental change you're curious about (deforestation, pollution, urbanisation, or climate-related change)</p></div>
+          <div class="step-check-item"><div class="step-check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>Think of two different places affected by that same type of change</p></div>
+          <div class="step-check-item"><div class="step-check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>If it connects to your inquiry question poster from last week, even better!</p></div>
+        </div>
+        <div class="box green" style="margin-top:22px;">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg> Plenary</div>
+          <div class="box-body"><p style="margin:0;">Share one similarity and one difference you found today. Remember: even the same kind of change can affect places very differently &mdash; that's what we investigate tomorrow.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DAY 3 ============ -->
+
+    <!-- 14 : Day 3 learning / Engage -->
+    <section class="slide" data-day="3">
+      <div class="slide-inner">
+        <div class="day-badge">📅 Day 3</div>
+        <div class="chevron-badge">5GP.05</div>
+        <h1 class="slide-title">Engage: why does impact differ?</h1>
+        <p class="lede"><strong>Scenario:</strong> Two places experience environmental change, but the impacts are different. Why?</p>
+        <p class="lede" style="font-size:14px;">Develop your own inquiry question to investigate today. Here are some examples to get you started:</p>
+        <div class="res-row">
+          <span class="pill">🔎 Why does flooding affect some places more than others?</span>
+          <span class="pill">🔎 How does deforestation affect people and animals?</span>
+          <span class="pill">🔎 Why are coastal communities affected by pollution?</span>
+        </div>
+        <div class="box amber" style="margin-top:20px;">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg> Remember</div>
+          <div class="box-body"><p style="margin:0;">Good inquiry starts with a good question &mdash; make yours <strong>open</strong>, not closed.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15 : CHECK 6 mcq -->
+    <section class="slide" data-day="3">
+      <div class="slide-inner">
+        <div class="check-eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg> Check for understanding</div>
+        <h1 class="slide-title">Which is the strongest inquiry question?</h1>
+        <div class="mcq-card" data-explain="This is the strongest choice: it names a real comparison (two coastal towns), asks 'why', and needs real research and evidence to answer.">
+          <p class="mcq-q">Which question would work best for today's comparison investigation?</p>
+          <div class="mcq-opts">
+            <button class="mcq-opt" data-correct="false">Is pollution bad?</button>
+            <button class="mcq-opt" data-correct="true">Why does pollution affect one coastal town more than another?</button>
+            <button class="mcq-opt" data-correct="false">Do rivers have water in them?</button>
+          </div>
+          <div class="mcq-feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16 : Investigate instructions -->
+    <section class="slide" data-day="3">
+      <div class="slide-inner">
+        <div class="eyebrow">Investigate &middot; 20 minutes</div>
+        <h1 class="slide-title">Research your two places</h1>
+        <p class="lede">Choose two places affected by the same type of environmental change, and complete this research sheet in your notebook using the sources provided.</p>
+        <div class="poster-wrap">
+          <div class="poster-mock">
+            <div class="pm-title">INQUIRY RESEARCH SHEET</div>
+            <div class="pm-grid">
+              <div class="pm-field"><span class="pm-label">📍 Place A</span><div class="pm-line"></div></div>
+              <div class="pm-field"><span class="pm-label">📍 Place B</span><div class="pm-line"></div></div>
+              <div class="pm-field wide"><span class="pm-label">🌍 Environmental change</span><div class="pm-line"></div></div>
+              <div class="pm-field wide"><span class="pm-label">⚡ Cause</span><div class="pm-line"></div></div>
+              <div class="pm-field"><span class="pm-label">🧑‍🤝‍🧑 Impact on people</span><div class="pm-line"></div></div>
+              <div class="pm-field"><span class="pm-label">🐾 Impact on animals &amp; plants</span><div class="pm-line"></div></div>
+              <div class="pm-field"><span class="pm-label">🤝 Similarity</span><div class="pm-line"></div></div>
+              <div class="pm-field"><span class="pm-label">↔️ Difference</span><div class="pm-line"></div></div>
+              <div class="pm-field wide"><span class="pm-label">🔍 Evidence</span><div class="pm-line"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17 : CHECK 7 fill blank -->
+    <section class="slide" data-day="3">
+      <div class="slide-inner">
+        <div class="check-eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg> Check for understanding</div>
+        <h1 class="slide-title">Fill in the blank</h1>
+        <div class="fillblank" data-answer="evidence">
+          <p class="fb-sentence">Good geographers don't just guess &mdash; they back up their ideas with <span class="fb-blank">_____</span>, like photos, data, or facts from a source.</p>
+          <div class="fb-bank">
+            <button class="fb-word" data-word="evidence">evidence</button>
+            <button class="fb-word" data-word="opinions">opinions</button>
+            <button class="fb-word" data-word="guesses">guesses</button>
+          </div>
+          <div class="fb-feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 18 : Create instructions -->
+    <section class="slide" data-day="3">
+      <div class="slide-inner">
+        <div class="eyebrow">Create &middot; 15 minutes</div>
+        <h1 class="slide-title">Turn your research into a comparison poster</h1>
+        <p class="lede">In groups, create a mini-presentation or comparison poster using your A3 paper. It should include:</p>
+        <div class="step-check">
+          <div class="step-check-item"><div class="step-check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>The environmental change you investigated</p></div>
+          <div class="step-check-item"><div class="step-check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>The causes of the change</p></div>
+          <div class="step-check-item"><div class="step-check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>The impacts on each place</p></div>
+          <div class="step-check-item"><div class="step-check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>A clear comparison between the two places</p></div>
+          <div class="step-check-item"><div class="step-check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>The evidence you used</p></div>
+          <div class="step-check-item"><div class="step-check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>A possible solution or action people could take</p></div>
+        </div>
+        <div class="res-row">
+          <span class="res-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> A3 paper</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 19 : Share & Reflect -->
+    <section class="slide" data-day="3">
+      <div class="slide-inner">
+        <div class="eyebrow">Share &amp; Reflect &middot; 5 minutes</div>
+        <h1 class="slide-title">What did we discover this week?</h1>
+        <div class="box green">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg> Reflect in your notebook</div>
+          <div class="box-body">
+            <p>What did I discover about how environmental changes affect different places?</p>
+            <p style="margin:0;">What can people do to reduce the impact?</p>
+          </div>
+        </div>
+        <div class="box coral" style="margin-top:16px;">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M9 3v18M15 3v18M4 8h16M4 16h16"/></svg> Keep your poster</div>
+          <div class="box-body"><p style="margin:0;">Keep your comparison poster safe &mdash; we'll build on this investigation as the unit continues.</p></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <button class="navbtn" id="prevBtn" onclick="prevSlide()" aria-label="Previous">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button class="navbtn" id="nextBtn" onclick="nextSlide()" aria-label="Next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+
+<script>
+/* ============ core slide navigation ============ */
+const slides = document.querySelectorAll(".slide");
+const total = slides.length;
+let idx = 0;
+
+const dotsWrap = document.getElementById("dots");
+const dayNames = {0:"Cover", 1:"Day 1", 2:"Day 2", 3:"Day 3"};
+slides.forEach((s,i)=>{
+  const d = document.createElement("button");
+  d.className = "dot" + (i===0?" active":"");
+  d.onclick = ()=>goTo(i);
+  dotsWrap.appendChild(d);
+});
+
+function render(){
+  slides.forEach((s,i)=> s.classList.toggle("active", i===idx));
+  document.querySelectorAll(".dot").forEach((d,i)=> d.classList.toggle("active", i===idx));
+  document.getElementById("counter").textContent = (idx+1) + " / " + total;
+  document.getElementById("prevBtn").classList.toggle("disabled", idx===0);
+  document.getElementById("nextBtn").classList.toggle("disabled", idx===total-1);
+  const day = slides[idx].dataset.day;
+  const label = day==="0" ? "Environmental Change & Sustainability" : "Day " + day + " · Environmental Change & Sustainability";
+  document.getElementById("crumbCurrent").textContent = label;
+  slides[idx].scrollTop = 0;
+}
+function goTo(i){ idx = Math.max(0, Math.min(total-1, i)); render(); }
+function nextSlide(){ goTo(idx+1); }
+function prevSlide(){ goTo(idx-1); }
+document.addEventListener("keydown", e=>{
+  if(e.key==="ArrowRight") nextSlide();
+  if(e.key==="ArrowLeft") prevSlide();
+});
+render();
+
+/* ============ objectives checklists ============ */
+document.querySelectorAll(".obj-card").forEach(card=>{
+  card.addEventListener("click", ()=> card.classList.toggle("done"));
+});
+
+/* ============ tabs ============ */
+document.querySelectorAll(".tabs").forEach(group=>{
+  const btns = group.querySelectorAll(".tab-btn");
+  btns.forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      btns.forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      const panels = group.parentElement.querySelectorAll(":scope > .tab-panel");
+      panels.forEach(p=>p.classList.remove("active"));
+      const target = group.parentElement.querySelector("#tab-"+btn.dataset.tab);
+      if(target) target.classList.add("active");
+    });
+  });
+});
+
+/* ============ fill in the blank ============ */
+document.querySelectorAll(".fillblank").forEach(card=>{
+  const answer = card.dataset.answer;
+  const blank = card.querySelector(".fb-blank");
+  const feedback = card.querySelector(".fb-feedback");
+  card.querySelectorAll(".fb-word").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      blank.textContent = btn.dataset.word;
+      if(btn.dataset.word === answer){
+        blank.classList.add("correct"); blank.classList.remove("incorrect");
+        feedback.textContent = "Correct! Well done.";
+        feedback.className = "fb-feedback show correct";
+      } else {
+        blank.classList.add("incorrect"); blank.classList.remove("correct");
+        feedback.textContent = "Not quite — have another look and try again.";
+        feedback.className = "fb-feedback show incorrect";
+      }
+    });
+  });
+});
+
+/* ============ mcq ============ */
+document.querySelectorAll(".mcq-card").forEach(card=>{
+  const opts = card.querySelectorAll(".mcq-opt");
+  const feedback = card.querySelector(".mcq-feedback");
+  opts.forEach(opt=>{
+    opt.addEventListener("click", ()=>{
+      opts.forEach(o=>{
+        o.disabled = true;
+        if(o.dataset.correct === "true") o.classList.add("correct");
+      });
+      if(opt.dataset.correct !== "true") opt.classList.add("wrong");
+      feedback.textContent = card.dataset.explain;
+      feedback.classList.add("show");
+    });
+  });
+});
+
+/* ============ factor chips ============ */
+const factors = [
+  {emoji:"💰", name:"Wealth", why:"Richer places can afford stronger buildings, flood barriers, and emergency services."},
+  {emoji:"📍", name:"Location", why:"Being near the coast, on low ground, or in a hot climate can make a place more exposed to change."},
+  {emoji:"🏛️", name:"Government planning", why:"Strong laws, warning systems, and planning can reduce how much damage a change causes."},
+  {emoji:"🌱", name:"Biodiversity", why:"Places with more varied plant and animal life can sometimes recover from change more easily."},
+];
+const factorGrid = document.getElementById("factorGrid");
+factors.forEach(f=>{
+  const card = document.createElement("div");
+  card.className = "factor-card";
+  card.innerHTML = `<span class="factor-emoji">${f.emoji}</span><div class="factor-name">${f.name}</div><div class="factor-reveal"><p style="margin:0;">${f.why}</p></div>`;
+  card.addEventListener("click", ()=> card.classList.toggle("open"));
+  factorGrid.appendChild(card);
+});
+
+/* ============ flood vulnerability simulator ============ */
+const simElevation = document.getElementById("simElevation");
+const simDefence = document.getElementById("simDefence");
+const simWater = document.getElementById("simWater");
+const simRiskLabel = document.getElementById("simRiskLabel");
+const simExplain = document.getElementById("simExplain");
+
+function updateSim(){
+  const elevation = Number(simElevation.value);
+  const defence = Number(simDefence.value);
+  const riskScore = 20 - elevation - defence; // 0 (safe) to 20 (very high risk)
+  const waterPct = Math.max(8, Math.min(92, riskScore * 4.6));
+  simWater.style.height = waterPct + "%";
+
+  let riskText, riskColor, explainText;
+  if(riskScore <= 6){
+    riskText = "Flood risk: Low";
+    riskColor = "var(--mint)";
+    explainText = "High ground and strong flood defences mean this place could handle a big storm with little damage — similar to the Netherlands' flood barriers.";
+  } else if(riskScore <= 13){
+    riskText = "Flood risk: Medium";
+    riskColor = "var(--amber)";
+    explainText = "This place has some protection, but a severe storm could still cause real damage to homes and roads.";
+  } else {
+    riskText = "Flood risk: High";
+    riskColor = "var(--coral)";
+    explainText = "Low elevation and few defences mean flooding here could be severe and hard to control — similar to what happened in New Orleans in 2005.";
+  }
+  simRiskLabel.textContent = riskText;
+  simRiskLabel.style.background = riskColor;
+  simWater.style.background = "linear-gradient(180deg," + riskColor + ",#1a5a99)";
+  simExplain.textContent = explainText;
+}
+simElevation.addEventListener("input", updateSim);
+simDefence.addEventListener("input", updateSim);
+updateSim();
+
+/* ============ step checklists ============ */
+document.querySelectorAll(".step-check-item").forEach(item=>{
+  item.addEventListener("click", ()=> item.classList.toggle("checked"));
+});
+</script>
+</body>
+</html>
