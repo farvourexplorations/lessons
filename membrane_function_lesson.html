@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>7.1 Membrane Structure & Function — Interactive Lesson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#146C7A; --teal-dark:#0D4F5A; --teal-light:#E3F1F2; --teal-mid:#59A6AE;
+  --orange:#DD7A2E; --orange-light:#FBEADB;
+  --purple:#5B3E96; --purple-light:#F0EAFA;
+  --red:#C0392B; --red-light:#FBE7E4;
+  --blue:#2B71C9; --blue-light:#E9F1FC;
+  --green:#3F8F5C; --green-light:#E7F5EC;
+  --ink:#1D2B32; --ink-soft:#4B5B62;
+  --paper:#FFFFFF; --cream:#F6F4EF; --line:#DDE4E3;
+  --r-lg:22px; --r-md:14px; --r-sm:8px;
+  --shadow: 0 10px 30px rgba(13,79,90,.14);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{margin:0; background:var(--cream); color:var(--ink); font-family:'Inter',system-ui,sans-serif; overflow:hidden;}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+#app{position:relative; width:100vw; height:100vh; display:flex; flex-direction:column;}
+.topbar{display:flex; align-items:center; justify-content:space-between; padding:14px 28px; background:var(--paper); border-bottom:1px solid var(--line); flex:0 0 auto; z-index:20;}
+.crumb{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft); font-weight:600;}
+.crumb .tag{background:var(--teal); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12px; padding:5px 12px; border-radius:100px; letter-spacing:.3px;}
+.crumb .sep{color:#B9C4C3;} .crumb .current{color:var(--teal-dark);}
+.dots{display:flex; gap:6px; align-items:center;}
+.dot{width:9px; height:9px; border-radius:50%; background:#D7DEDD; border:none; cursor:pointer; transition:all .25s;}
+.dot.active{background:var(--teal); width:22px; border-radius:6px;}
+.dot:hover{background:var(--teal-mid);}
+.counter{font-size:12px; color:var(--ink-soft); font-weight:600; font-variant-numeric:tabular-nums; min-width:44px; text-align:right;}
+.stage{position:relative; flex:1 1 auto; overflow:hidden;}
+.slide{position:absolute; inset:0; opacity:0; pointer-events:none; transform:translateX(30px) scale(.99); transition:opacity .45s ease, transform .45s ease; overflow-y:auto;}
+.slide.active{opacity:1; pointer-events:auto; transform:translateX(0) scale(1);}
+.slide-inner{max-width:1180px; margin:0 auto; padding:40px 44px 90px; min-height:100%;}
+.navbtn{position:absolute; top:50%; transform:translateY(-50%); z-index:15; width:46px; height:46px; border-radius:50%; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--teal-dark); transition:.2s;}
+.navbtn:hover{background:var(--teal); color:#fff; border-color:var(--teal);}
+.navbtn.disabled{opacity:.25; pointer-events:none;}
+#prevBtn{left:16px;} #nextBtn{right:16px;} .navbtn svg{width:20px; height:20px;}
+.chevron-badge{display:inline-flex; align-items:center; gap:10px; background:var(--teal); color:#fff; padding:9px 20px 9px 16px; font-family:'Poppins'; font-weight:700; font-size:15px; clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%); margin-bottom:16px;}
+.eyebrow{font-family:'Poppins'; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--orange); margin-bottom:8px;}
+h1.slide-title{font-size:36px; font-weight:800; color:var(--teal-dark); margin:0 0 6px; line-height:1.15;}
+h3.mini-title{font-size:17px; font-weight:700; color:var(--ink); margin:0 0 8px;}
+p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
+.lede{font-size:17px; color:var(--ink-soft); margin-bottom:22px; max-width:640px;}
+.term{color:var(--orange); font-weight:700; cursor:help; border-bottom:1.5px dotted var(--orange);}
+.zh{color:var(--purple); font-weight:600;}
+.box{border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow);}
+.box-head{padding:12px 20px; font-family:'Poppins'; font-weight:700; font-size:14px; color:#fff; display:flex; align-items:center; gap:8px;}
+.box-body{padding:20px 22px;}
+.box.blue .box-head{background:var(--blue);} .box.purple .box-head{background:var(--purple);} .box.orange .box-head{background:var(--orange);} .box.green .box-head{background:var(--green);} .box.teal .box-head{background:var(--teal);}
+.two-col{display:grid; grid-template-columns:1.05fr .95fr; gap:36px; align-items:start;}
+@media (max-width:900px){.two-col{grid-template-columns:1fr;}}
+.photo{width:100%; border-radius:var(--r-md); display:block; object-fit:cover; background:#eee; box-shadow:0 6px 18px rgba(20,108,122,.18);}
+.photo-cap{font-size:12px; color:var(--ink-soft); margin-top:8px; font-style:italic;}
+.pill{display:inline-block; padding:4px 12px; border-radius:100px; font-size:12px; font-weight:700; background:var(--teal-light); color:var(--teal-dark); margin:2px 4px 2px 0;}
+.btn{border:none; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:14px; padding:10px 20px; border-radius:100px; background:var(--teal); color:#fff; transition:.2s;}
+.btn:hover{background:var(--teal-dark);} .btn[disabled]{opacity:.45; cursor:default;}
+.btn.ghost{background:transparent; border:1.5px solid var(--teal); color:var(--teal);}
+.btn.ghost:hover{background:var(--teal-light);}
+.hint{font-size:12.5px; color:var(--ink-soft); background:var(--teal-light); border-radius:100px; padding:6px 14px; display:inline-flex; gap:6px; align-items:center; margin-bottom:18px; font-weight:600;}
+.hint svg{width:14px; height:14px;}
+.cover{height:100%; display:flex; align-items:center; justify-content:center; position:relative; background:radial-gradient(ellipse at 20% 15%, rgba(255,255,255,.10), transparent 45%), linear-gradient(160deg, var(--teal) 0%, var(--teal-dark) 62%, #0A3A42 100%); overflow:hidden;}
+.cover-rock{position:absolute; border-radius:38% 62% 55% 45% / 45% 40% 60% 55%; opacity:.16; background:#fff;}
+.cover-content{position:relative; z-index:2; text-align:center; color:#fff; max-width:760px; padding:0 30px;}
+.cover-content .unit{font-family:'Poppins'; font-weight:700; letter-spacing:3px; font-size:13px; text-transform:uppercase; color:#BFE3E6; margin-bottom:14px;}
+.cover-content h1{font-size:50px; font-weight:800; margin:0 0 10px; line-height:1.08;}
+.cover-content .sub{font-size:19px; color:#DCEEEF; font-weight:500; margin-bottom:8px;}
+.cover-content .sub-zh{font-size:15px; color:#BFE3E6; font-weight:500; margin-bottom:34px;}
+.cover-chip-row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:38px;}
+.cover-chip{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff; padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600; backdrop-filter:blur(4px);}
+.cover-start{background:var(--orange); color:#fff; border:none; font-family:'Poppins'; font-weight:700; font-size:16px; padding:15px 34px; border-radius:100px; cursor:pointer; box-shadow:0 12px 26px rgba(221,122,46,.4); display:inline-flex; align-items:center; gap:10px; transition:.2s;}
+.cover-start:hover{transform:translateY(-2px); box-shadow:0 16px 30px rgba(221,122,46,.5);}
+.obj-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 22px; margin-top:6px;}
+.obj-card{display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:var(--r-md); background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.2s;}
+.obj-card:hover{border-color:var(--teal-mid); box-shadow:var(--shadow);}
+.obj-num{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--teal-light); color:var(--teal-dark); font-family:'Poppins'; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;}
+.obj-card.done .obj-num{background:var(--teal); color:#fff;}
+.obj-card.done p{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:#B9C4C3;}
+.obj-card p{margin:0; font-size:13.8px; line-height:1.5;}
+.diagram-card{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow); padding:16px; width:100%;}
+.diagram-card svg{width:100%; height:auto; display:block;}
+.diagram-label{text-align:center; font-family:'Poppins'; font-weight:700; font-size:13px; color:var(--teal-dark); margin-top:8px;}
+.tabs{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+.tab-btn{padding:10px 18px; border-radius:100px; border:1.5px solid var(--line); background:#fff; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:13.5px; color:var(--ink-soft); transition:.2s;}
+.tab-btn.active{background:var(--teal); border-color:var(--teal); color:#fff;}
+.tab-panel{display:none;} .tab-panel.active{display:block; animation:fadein .35s;}
+@keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+.hotspot-photo-wrap{position:relative; display:inline-block; width:100%;}
+.hotspot{position:absolute; width:22px; height:22px; border-radius:50%; background:var(--orange); border:3px solid #fff; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.3); animation:pulse 2s infinite;}
+.hotspot::after{content:'+'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:13px;}
+.hotspot.done{animation:none; background:var(--teal);}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(221,122,46,.45);} 50%{box-shadow:0 0 0 8px rgba(221,122,46,0);}}
+.hotspot-tip{position:absolute; background:var(--ink); color:#fff; padding:8px 12px; border-radius:8px; font-size:12.5px; max-width:220px; z-index:5; display:none; box-shadow:0 8px 18px rgba(0,0,0,.25); line-height:1.4;}
+.hotspot-tip.show{display:block;}
+.match-wrap{display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:10px;}
+.match-col h4{font-family:'Poppins'; font-size:12.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:1px; margin:0 0 10px;}
+.match-card{border:1.5px solid var(--line); background:#fff; border-radius:var(--r-md); padding:14px 16px; margin-bottom:10px; cursor:pointer; font-weight:600; font-size:13.5px; transition:.15s; line-height:1.5;}
+.match-card:hover{border-color:var(--teal-mid);}
+.match-card.selected{border-color:var(--purple); background:var(--purple-light);}
+.match-card.matched{border-color:var(--green); background:var(--green-light); color:#245A38; cursor:default;}
+.match-card.shake{animation:shake .4s;}
+@keyframes shake{0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);}}
+.wordbank{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding:14px; background:var(--purple-light); border-radius:var(--r-md);}
+.word-chip{background:#fff; border:1.5px solid var(--purple); color:var(--purple); font-family:'Poppins'; font-weight:600; font-size:13px; padding:7px 14px; border-radius:100px; cursor:pointer; transition:.15s;}
+.word-chip:hover{background:var(--purple); color:#fff;}
+.word-chip.used{opacity:.3; pointer-events:none; text-decoration:line-through;}
+.fillp{font-size:15.5px; line-height:2.3;}
+.blank{display:inline-flex; align-items:center; justify-content:center; min-width:120px; height:28px; border-bottom:2.5px solid var(--purple); font-family:'Poppins'; font-weight:700; color:var(--purple); cursor:pointer; padding:0 6px; font-size:13.5px; vertical-align:middle;}
+.blank.filled{border-bottom-style:solid;} .blank:empty::after{content:'\00a0';}
+.scenario{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); padding:22px 24px; box-shadow:var(--shadow);}
+.speech{background:var(--teal-light); border-radius:14px; padding:10px 16px; font-size:14px; margin:6px 0; max-width:320px; font-weight:600; color:var(--teal-dark);}
+.speech.right{margin-left:auto; background:var(--orange-light); color:#8A4A16;}
+.quiz-opts{display:flex; gap:12px; margin-top:14px; flex-wrap:wrap;}
+.quiz-opt{flex:1 1 160px; border:1.5px solid var(--line); background:#fff; border-radius:var(--r-md); padding:14px 16px; cursor:pointer; font-weight:700; font-family:'Poppins'; font-size:14px; text-align:left; transition:.2s;}
+.quiz-opt:hover{border-color:var(--teal-mid);}
+.quiz-opt.correct{background:var(--green-light); border-color:var(--green); color:var(--green);}
+.quiz-opt.wrong{background:var(--red-light); border-color:var(--red); color:var(--red);}
+.feedback{margin-top:14px; padding:14px 16px; border-radius:var(--r-md); font-size:14px; display:none; line-height:1.6;}
+.feedback.show{display:block; animation:fadein .3s;}
+.feedback.good{background:var(--green-light); color:#245A38; border:1px solid #BFE2CC;}
+.assess-list{display:flex; flex-direction:column; gap:2px;}
+.assess-item{display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px; cursor:pointer; transition:.15s;}
+.assess-item:hover{background:var(--teal-light);}
+.assess-box{flex:0 0 auto; width:22px; height:22px; border-radius:6px; border:2px solid var(--teal); position:relative;}
+.assess-item.checked .assess-box{background:var(--teal);}
+.assess-box svg{position:absolute; inset:0; margin:auto; width:14px; height:14px; color:#fff; opacity:0;}
+.assess-item.checked .assess-box svg{opacity:1;}
+.assess-item p{margin:0; font-size:14px;} .assess-item.checked p{color:var(--ink-soft);}
+.progress-bar-track{height:10px; background:var(--teal-light); border-radius:100px; overflow:hidden; margin:16px 0 22px;}
+.progress-bar-fill{height:100%; width:0%; background:linear-gradient(90deg,var(--teal),var(--orange)); border-radius:100px; transition:width .4s;}
+.gloss-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px;}
+.gloss-card{background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:14px; cursor:pointer; perspective:800px; height:118px; position:relative;}
+.gloss-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+.gloss-card.flip .gloss-inner{transform:rotateY(180deg);}
+.gloss-face{position:absolute; inset:0; backface-visibility:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:3px;}
+.gloss-face.front{font-family:'Poppins'; font-weight:700; color:var(--teal-dark); font-size:13.5px;}
+.gloss-face.front .zh-term{font-family:'Inter'; font-weight:600; color:var(--purple); font-size:12.5px;}
+.gloss-face.back{transform:rotateY(180deg); font-size:11px; color:var(--ink-soft); padding:4px; line-height:1.4;}
+::-webkit-scrollbar{width:8px;} ::-webkit-scrollbar-thumb{background:#C9D6D5; border-radius:10px;}
+
+/* membrane cross-section */
+.membrane-stage{position:relative; height:220px; border-radius:var(--r-md); background:var(--teal-light); overflow:hidden;}
+.mem-row{position:absolute; left:0; right:0; height:32px; background-repeat:repeat-x;}
+
+/* diffusion box */
+.diff-box{height:170px; border-radius:var(--r-md); background:#DCEEF2; position:relative; overflow:hidden;}
+.diff-dot{position:absolute; width:12px; height:12px; border-radius:50%; background:var(--orange); transition: left 2.2s linear, top 2.2s linear;}
+.diff-wall{position:absolute; top:0; bottom:0; left:50%; width:3px; background:var(--teal-dark); transform:translateX(-50%);}
+
+/* tonicity cell */
+.tonicity-visual{display:flex; align-items:center; justify-content:center; height:220px;}
+.tcell{border-radius:50%; background:radial-gradient(circle at 35% 30%,#8FD1C8,#146C7A); transition:width .6s, height .6s; box-shadow:var(--shadow); border:5px solid var(--teal-dark);}
+
+@media(max-width:760px){
+  .obj-grid{grid-template-columns:1fr;} .two-col{grid-template-columns:1fr;} .gloss-grid{grid-template-columns:repeat(2,1fr);}
+  .cover-content h1{font-size:32px;} h1.slide-title{font-size:26px;} .match-wrap{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="topbar">
+    <div class="crumb">
+      <span class="tag">Unit 2</span>
+      <span>The Cell</span>
+      <span class="sep">/</span>
+      <span class="current">7.1 Membrane Structure &amp; Function</span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="counter" id="counter">1 / 12</div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- SLIDE 0 : COVER -->
+    <section class="slide">
+      <div class="cover">
+        <div class="cover-rock" style="width:260px;height:260px; top:-60px; left:-60px;"></div>
+        <div class="cover-rock" style="width:180px;height:180px; bottom:-40px; right:-30px;"></div>
+        <div class="cover-rock" style="width:120px;height:120px; bottom:60px; left:8%;"></div>
+        <div class="cover-content">
+          <div class="unit">Unit 2 &middot; The Cell</div>
+          <h1>The Cell's Gatekeeper</h1>
+          <div class="sub">How the cell membrane decides what comes in and what goes out</div>
+          <div class="sub-zh">细胞膜的结构与功能 — 细胞的守门人</div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">🧈 Fluid mosaic</span>
+            <span class="cover-chip">🚪 Transport</span>
+            <span class="cover-chip">💧 Osmosis</span>
+            <span class="cover-chip">🗣️ English + 中文</span>
+          </div>
+          <button class="cover-start" onclick="goTo(1)">
+            Start the lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 1 : OBJECTIVES -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">7.1</div>
+        <h1 class="slide-title">We are going to…</h1>
+        <p class="lede">Tap each goal as you meet it. Remember phospholipids from the macromolecules lesson? Here you'll see exactly what they do.</p>
+        <div class="obj-grid" id="objGrid">
+          <div class="obj-card" data-i="1"><div class="obj-num">1</div><p>Describe the fluid mosaic model of the cell membrane</p></div>
+          <div class="obj-card" data-i="2"><div class="obj-num">2</div><p>Explain what "selectively permeable" means</p></div>
+          <div class="obj-card" data-i="3"><div class="obj-num">3</div><p>Compare passive transport and active transport</p></div>
+          <div class="obj-card" data-i="4"><div class="obj-num">4</div><p>Explain diffusion, facilitated diffusion, and osmosis</p></div>
+          <div class="obj-card" data-i="5"><div class="obj-num">5</div><p>Predict what happens to a cell in hypertonic, hypotonic, and isotonic solutions</p></div>
+          <div class="obj-card" data-i="6"><div class="obj-num">6</div><p>Describe endocytosis and exocytosis</p></div>
+          <div class="obj-card" data-i="7"><div class="obj-num">7</div><p>Match each transport type to a real-world example</p></div>
+          <div class="obj-card" data-i="8"><div class="obj-num">8</div><p>Learn 12 new biology words in English, with Chinese translations</p></div>
+        </div>
+        <div style="margin-top:22px;">
+          <span class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Key vocabulary: selectively permeable · diffusion · osmosis · tonicity · active transport · endocytosis · exocytosis</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2 : FLUID MOSAIC MODEL -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Getting started</div>
+        <h1 class="slide-title">A moving mosaic of parts</h1>
+        <p class="lede">The membrane is built from a <span class="term" data-def="A double layer of phospholipids that forms the basic structure of every cell membrane. (磷脂双分子层)">phospholipid bilayer</span> — remember it from the macromolecules lesson? — with proteins floating in it like tiles in a mosaic that can drift around. Click each marker to learn a part.</p>
+        <div class="two-col">
+          <div>
+            <div class="hotspot-photo-wrap">
+              <div class="diagram-card" style="padding:0;">
+                <svg viewBox="0 0 400 200">
+                  <rect x="0" y="0" width="400" height="200" fill="#EAF6F5"/>
+                  <line x1="0" y1="70" x2="400" y2="70" stroke="#146C7A" stroke-width="2"/>
+                  <line x1="0" y1="130" x2="400" y2="130" stroke="#146C7A" stroke-width="2"/>
+                  <g id="headsTop"></g>
+                  <g id="headsBottom"></g>
+                  <rect x="150" y="50" width="30" height="100" rx="12" fill="#DD7A2E"/>
+                  <rect x="260" y="60" width="24" height="80" rx="10" fill="#5B3E96"/>
+                </svg>
+              </div>
+              <div class="hotspot" style="top:15%; left:20%;" data-mineral="Phospholipid head" data-desc="磷脂头部 — Water-loving; always faces outward, toward the watery fluid on both sides of the membrane.">1</div>
+              <div class="hotspot" style="top:45%; left:42%;" data-mineral="Transport protein" data-desc="转运蛋白 — Forms a channel or pump that lets specific substances cross the membrane.">2</div>
+              <div class="hotspot" style="top:45%; left:70%;" data-mineral="Receptor protein" data-desc="受体蛋白 — Recognizes and binds to signal molecules from outside the cell.">3</div>
+              <div class="hotspot" style="top:82%; left:20%;" data-mineral="Phospholipid tail" data-desc="磷脂尾部 — Water-fearing; always faces inward, forming the oily core of the membrane.">4</div>
+              <div class="hotspot-tip" id="hotspotTip"></div>
+            </div>
+          </div>
+          <div class="box teal">
+            <div class="box-head">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
+              Found so far
+            </div>
+            <div class="box-body" id="mineralsFound">
+              <p style="color:var(--ink-soft); margin:0;">Tap the markers to reveal each part (0 / 4 found).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3 : PASSIVE VS ACTIVE TRANSPORT -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Getting substances across</div>
+        <h1 class="slide-title">Passive vs. active transport</h1>
+        <p class="lede">The membrane is <span class="term" data-def="Allowing some substances to cross more easily than others. (选择透过性)">selectively permeable</span> — it lets some things through and blocks others. Watch what happens with no energy spent, versus with energy spent.</p>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="passive">Passive transport</button>
+          <button class="tab-btn" data-tab="active">Active transport</button>
+        </div>
+        <div class="tab-panel active" id="tab-passive">
+          <div class="two-col">
+            <div><h3 class="mini-title">No energy needed <span class="zh">被动运输</span></h3><p><span class="term" data-def="The movement of molecules from a high-concentration area to a low-concentration area. (扩散)">Diffusion</span> is molecules spreading out from where there are <strong>many</strong> of them to where there are <strong>few</strong> — like a drop of dye spreading through water. It happens on its own, with no energy needed.</p></div>
+            <div><div class="diff-box" id="passiveDiff"></div><div style="text-align:center; margin-top:10px;"><button class="btn" onclick="runDiffusion()">▶ Watch diffusion</button></div></div>
+          </div>
+        </div>
+        <div class="tab-panel" id="tab-active">
+          <div class="two-col">
+            <div><h3 class="mini-title">Energy required <span class="zh">主动运输</span></h3><p><span class="term" data-def="Using cell energy (ATP) to move molecules from low concentration to high concentration. (主动运输)">Active transport</span> moves molecules the "wrong" way — from low to high concentration — like pushing water uphill. This always costs the cell <strong>ATP</strong> energy.</p></div>
+            <div class="diagram-card"><svg viewBox="0 0 260 140"><rect x="20" y="55" width="220" height="30" fill="#EFE0CE"/><circle cx="130" cy="70" r="18" fill="#DD7A2E"/><text x="130" y="75" text-anchor="middle" fill="#fff" font-family="Poppins" font-weight="700" font-size="11">Pump</text><circle cx="80" cy="30" r="7" fill="#146C7A"/><circle cx="180" cy="105" r="7" fill="#146C7A"/><text x="215" y="45" font-family="Poppins" font-weight="700" font-size="12" fill="#5B3E96">ATP → ADP</text></svg></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4 : TONICITY SIMULATOR -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Water follows solute</div>
+        <h1 class="slide-title">What happens to a cell in water?</h1>
+        <p class="lede"><span class="term" data-def="The movement of water across a membrane, from an area with more water to an area with less. (渗透)">Osmosis</span> is diffusion of water. Tap each solution to see what happens to a cell placed inside it.</p>
+        <div class="tabs" id="tonTabs">
+          <button class="tab-btn active" data-t="hyper" onclick="selectTonicity('hyper')">Hypertonic 高渗</button>
+          <button class="tab-btn" data-t="iso" onclick="selectTonicity('iso')">Isotonic 等渗</button>
+          <button class="tab-btn" data-t="hypo" onclick="selectTonicity('hypo')">Hypotonic 低渗</button>
+        </div>
+        <div class="two-col">
+          <div class="diagram-card"><div class="tonicity-visual"><div class="tcell" id="tcell"></div></div></div>
+          <div><h3 class="mini-title" id="tonTitle"></h3><p id="tonDesc"></p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5 : ONION OSMOSIS PHOTO -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Real evidence</div>
+        <h1 class="slide-title">Osmosis you can actually see</h1>
+        <p class="lede">This is a real photo of onion cells placed in a strong salt solution (hypertonic). Water left the cells by osmosis, so each cell's contents shrank away from its rigid cell wall — a process called <span class="term" data-def="When a plant cell's contents shrink away from its cell wall as water leaves by osmosis. (质壁分离)">plasmolysis</span>.</p>
+        <div class="two-col">
+          <div><img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Onion%20peel%20under%20a%20microscope(hypertensive%20solution).jpg" alt="Onion cells under a microscope showing plasmolysis in a hypertonic solution"><div class="photo-cap">Onion cells in a hypertonic (salty) solution — notice the shrunken contents pulling away from the cell wall.</div></div>
+          <div>
+            <h3 class="mini-title">A real-world use: the IV drip</h3>
+            <p>This is exactly why hospitals give patients an <strong>isotonic</strong> saline solution through an IV drip, and never pure water. Pure water is hypotonic to blood cells — it would rush into the cells by osmosis and make them swell and burst. An isotonic solution keeps blood cells perfectly safe.</p>
+            <div class="pill">Same idea, real medicine 💉</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6 : FACILITATED DIFFUSION -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">A helping hand</div>
+        <h1 class="slide-title">Facilitated diffusion</h1>
+        <p class="lede">Some molecules (like sugar) are too big or too charged to slip through the membrane's oily core alone. They still move passively — but need a <span class="term" data-def="Passive transport that uses a channel or carrier protein to move molecules across a membrane. (协助扩散)">transport protein</span> to help them across.</p>
+        <div class="two-col">
+          <div class="diagram-card"><svg viewBox="0 0 260 150"><rect x="20" y="60" width="220" height="30" fill="#EFE0CE"/><rect x="115" y="40" width="30" height="70" rx="14" fill="#146C7A"/><circle cx="60" cy="30" r="9" fill="#DD7A2E"/><circle cx="60" cy="45" r="9" fill="#DD7A2E"/><circle cx="200" cy="115" r="9" fill="#DD7A2E"/></svg></div>
+          <div>
+            <h3 class="mini-title">Still passive — still free</h3>
+            <p>Even with a protein's help, facilitated diffusion is still <strong>passive transport</strong>: molecules still move from high to low concentration, and the cell spends <strong>no ATP</strong>. The protein is just a doorway, not a pump.</p>
+            <p style="margin:0;">Compare this to active transport (with its ATP-powered pump) from earlier — same membrane, two very different strategies!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7 : ENDOCYTOSIS & EXOCYTOSIS -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Moving the big stuff</div>
+        <h1 class="slide-title">Swallowing and spitting out</h1>
+        <p class="lede">Some cargo is too big to pass through the membrane at all — even with a protein's help. Instead, the membrane itself moves.</p>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="endo">Endocytosis</button>
+          <button class="tab-btn" data-tab="exo">Exocytosis</button>
+        </div>
+        <div class="tab-panel active" id="tab-endo">
+          <div class="two-col">
+            <div><h3 class="mini-title">Bringing material in <span class="zh">胞吞作用</span></h3><p>The cell membrane wraps around material outside the cell and pinches off inward, forming a vesicle. This is how some white blood cells "eat" bacteria.</p></div>
+            <div class="diagram-card"><svg viewBox="0 0 260 140"><path d="M20 70 Q60 30 130 70 Q200 110 240 70" fill="none" stroke="#146C7A" stroke-width="6"/><circle cx="130" cy="70" r="16" fill="#DD7A2E"/></svg></div>
+          </div>
+        </div>
+        <div class="tab-panel" id="tab-exo">
+          <div class="two-col">
+            <div><h3 class="mini-title">Sending material out <span class="zh">胞吐作用</span></h3><p>A vesicle from inside the cell (remember the endomembrane system?) moves to the membrane, fuses with it, and releases its contents outside. This is how cells release hormones and other signals.</p></div>
+            <div class="diagram-card"><svg viewBox="0 0 260 140"><path d="M20 70 L240 70" stroke="#146C7A" stroke-width="6"/><circle cx="130" cy="40" r="16" fill="#DD7A2E"/><line x1="130" y1="56" x2="130" y2="70" stroke="#DD7A2E" stroke-width="4" stroke-dasharray="4 4"/></svg></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8 : MATCHING GAME -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Activity</div>
+        <h1 class="slide-title">Match the transport to its example</h1>
+        <div class="match-wrap">
+          <div class="match-col">
+            <h4>Transport type</h4>
+            <div class="match-card" data-key="diffusion">💨 <strong>Diffusion</strong> <span class="zh">扩散</span></div>
+            <div class="match-card" data-key="osmosis">💧 <strong>Osmosis</strong> <span class="zh">渗透</span></div>
+            <div class="match-card" data-key="active">🔋 <strong>Active transport</strong> <span class="zh">主动运输</span></div>
+          </div>
+          <div class="match-col">
+            <h4>Example</h4>
+            <div class="match-card example" data-key="pump">A cell uses ATP to pump sodium ions out against their gradient</div>
+            <div class="match-card example" data-key="perfume">Perfume spreading through a room until it's evenly smelled everywhere</div>
+            <div class="match-card example" data-key="raisin">A dried raisin swelling up after soaking in water</div>
+          </div>
+        </div>
+        <p id="matchFeedback" style="text-align:center; margin-top:14px; font-weight:700; color:var(--green);"></p>
+      </div>
+    </section>
+
+    <!-- SLIDE 9 : FILL IN THE BLANKS -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Focus</div>
+        <h1 class="slide-title">Complete the summary</h1>
+        <p class="lede">Tap a word from the bank, then tap the blank you want to fill.</p>
+        <div class="wordbank" id="wordbank"></div>
+        <div class="fillp" id="fillPara"></div>
+        <div id="fillResult" style="margin-top:16px;"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10 : CHALLENGE -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Challenge</div>
+        <h1 class="slide-title">Mei and Tom's fish tank puzzle</h1>
+        <div class="two-col">
+          <div class="scenario">
+            <p style="margin-bottom:14px;">Mei <span class="zh">(美)</span> and Tom have a freshwater fish. Mei suggests adding ocean salt water "to make it healthier."</p>
+            <div class="speech">"Adding salt water can't hurt — water is water," says Mei.</div>
+            <div class="speech right">"No, Mei — that would badly harm the fish's cells," says Tom.</div>
+            <h3 class="mini-title" style="margin-top:18px;">Who is correct?</h3>
+            <div class="quiz-opts">
+              <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false)">Mei — it wouldn't hurt the fish</button>
+              <button class="quiz-opt" data-correct="true" onclick="answerQuiz(this,true)">Tom — it would harm the fish's cells</button>
+            </div>
+            <div class="feedback good" id="quizFeedback">
+              <strong>Tom is correct.</strong> A freshwater fish's cells are adapted to a hypotonic environment. Suddenly adding salt water would make the outside hypertonic to the fish's cells — water would rush <em>out</em> of its cells by osmosis, causing them to shrink and stop working properly. Tonicity really can be a matter of life and death for a cell!
+            </div>
+          </div>
+          <div>
+            <div class="box purple">
+              <div class="box-head">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>
+                Remember
+              </div>
+              <div class="box-body"><p style="margin:0;">Water always follows the solute concentration. Sudden changes in tonicity can be deadly for a cell that isn't adapted to them.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 11 : SELF-CHECK & GLOSSARY -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Look what I can do!</div>
+        <h1 class="slide-title">Self-check &amp; recap</h1>
+        <div class="progress-bar-track"><div class="progress-bar-fill" id="assessFill"></div></div>
+        <div class="assess-list" id="assessList"></div>
+        <h3 class="mini-title" style="margin-top:30px;">Key vocabulary — tap a card to flip it (English 中文)</h3>
+        <div class="gloss-grid" id="glossGrid"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <button class="navbtn" id="prevBtn" onclick="prevSlide()" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <button class="navbtn" id="nextBtn" onclick="nextSlide()" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg></button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let idx = 0;
+const dotsWrap = document.getElementById('dots');
+slides.forEach((s,i)=>{ const d=document.createElement('button'); d.className='dot'+(i===0?' active':''); d.onclick=()=>goTo(i); dotsWrap.appendChild(d); });
+function render(){
+  slides.forEach((s,i)=> s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.dot').forEach((d,i)=> d.classList.toggle('active', i===idx));
+  document.getElementById('counter').textContent = (idx+1)+' / '+total;
+  document.getElementById('prevBtn').classList.toggle('disabled', idx===0);
+  document.getElementById('nextBtn').classList.toggle('disabled', idx===total-1);
+  slides[idx].scrollTop = 0;
+}
+function goTo(i){ idx = Math.max(0, Math.min(total-1, i)); render(); }
+function nextSlide(){ goTo(idx+1); }
+function prevSlide(){ goTo(idx-1); }
+document.addEventListener('keydown', e=>{ if(e.key==='ArrowRight') nextSlide(); if(e.key==='ArrowLeft') prevSlide(); });
+render();
+
+document.querySelectorAll('.obj-card').forEach(card=> card.addEventListener('click', ()=> card.classList.toggle('done')));
+
+/* draw phospholipid heads into the membrane diagram */
+(function(){
+  const top = document.getElementById('headsTop');
+  const bottom = document.getElementById('headsBottom');
+  if(!top || !bottom) return;
+  let html1='', html2='';
+  for(let x=10;x<400;x+=26){
+    html1 += `<circle cx="${x}" cy="70" r="9" fill="#59A6AE"/><line x1="${x}" y1="70" x2="${x}" y2="100" stroke="#DD7A2E" stroke-width="3"/>`;
+    html2 += `<circle cx="${x}" cy="130" r="9" fill="#59A6AE"/><line x1="${x}" y1="130" x2="${x}" y2="100" stroke="#DD7A2E" stroke-width="3"/>`;
+  }
+  top.innerHTML = html1;
+  bottom.innerHTML = html2;
+})();
+
+/* hotspots (generic) */
+const tip = document.getElementById('hotspotTip');
+const foundSet = new Set();
+document.querySelectorAll('.hotspot').forEach(h=>{
+  h.addEventListener('click', ()=>{
+    h.classList.add('done');
+    tip.textContent = h.dataset.mineral + ': ' + h.dataset.desc;
+    tip.style.top = (parseFloat(h.style.top)) + '%';
+    let left = parseFloat(h.style.left);
+    tip.style.left = (left > 55 ? (left-30) : (left+4)) + '%';
+    tip.classList.add('show');
+    foundSet.add(h.dataset.mineral);
+    const box = document.getElementById('mineralsFound');
+    box.innerHTML = [...foundSet].map(m=>'<div class="pill">'+m+'</div>').join('') +
+      `<p style="margin:8px 0 0; color:var(--ink-soft); font-size:12.5px;">${foundSet.size} / 4 parts found</p>`;
+  });
+});
+
+/* tabs (generic, scoped) */
+document.querySelectorAll('.tab-btn[data-tab]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const panelGroup = btn.parentElement;
+    [...panelGroup.querySelectorAll('.tab-btn[data-tab]')].forEach(b=> b.classList.remove('active'));
+    btn.classList.add('active');
+    const relatedIds = [...panelGroup.querySelectorAll('.tab-btn[data-tab]')].map(b=>'tab-'+b.dataset.tab);
+    relatedIds.forEach(rid=>{ const p=document.getElementById(rid); if(p) p.classList.toggle('active', rid==='tab-'+btn.dataset.tab); });
+  });
+});
+
+/* diffusion animation */
+let diffusionRan = false;
+function runDiffusion(){
+  const box = document.getElementById('passiveDiff');
+  box.innerHTML = '';
+  const wall = document.createElement('div'); wall.className='diff-wall'; box.appendChild(wall);
+  const dots = [];
+  for(let i=0;i<14;i++){
+    const d = document.createElement('div'); d.className='diff-dot';
+    d.style.top = (Math.random()*80+5)+'%';
+    d.style.left = (Math.random()*35+5)+'%';
+    box.appendChild(d); dots.push(d);
+  }
+  setTimeout(()=>{
+    dots.forEach(d=>{
+      d.style.left = (Math.random()*85+5)+'%';
+      d.style.top = (Math.random()*80+5)+'%';
+    });
+  }, 200);
+}
+
+/* tonicity simulator */
+const tonicityData = {
+  hyper:{title:'Hypertonic solution 高渗溶液', desc:'The outside has more solute than the cell. Water leaves the cell by osmosis, so the cell shrinks.', size:80},
+  iso:{title:'Isotonic solution 等渗溶液', desc:'The solute concentration is equal inside and outside. Water moves in and out evenly, so the cell stays the same size — this is what an IV saline drip provides.', size:130},
+  hypo:{title:'Hypotonic solution 低渗溶液', desc:'The outside has less solute than the cell. Water enters the cell by osmosis, so the cell swells — and can even burst.', size:180}
+};
+function selectTonicity(key){
+  const d = tonicityData[key];
+  document.getElementById('tonTitle').textContent = d.title;
+  document.getElementById('tonDesc').textContent = d.desc;
+  document.getElementById('tcell').style.width = d.size+'px';
+  document.getElementById('tcell').style.height = d.size+'px';
+  document.querySelectorAll('#tonTabs .tab-btn').forEach(b=> b.classList.toggle('active', b.dataset.t===key));
+}
+selectTonicity('hyper');
+
+/* matching game */
+const transportPairs = {diffusion:'perfume', osmosis:'raisin', active:'pump'};
+let selectedT = null;
+let tMatched = 0;
+document.querySelectorAll('.match-card:not(.example)').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    if(card.classList.contains('matched')) return;
+    document.querySelectorAll('.match-card:not(.example)').forEach(c=>c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedT = card;
+  });
+});
+document.querySelectorAll('.match-card.example').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    if(card.classList.contains('matched') || !selectedT) return;
+    const key = selectedT.dataset.key;
+    if(transportPairs[key] === card.dataset.key){
+      selectedT.classList.add('matched'); selectedT.classList.remove('selected');
+      card.classList.add('matched');
+      tMatched++;
+      selectedT = null;
+      if(tMatched === 3) document.getElementById('matchFeedback').textContent = '🎉 All matched! You know your transport types.';
+    } else {
+      card.classList.add('shake'); selectedT.classList.add('shake');
+      setTimeout(()=>{ card.classList.remove('shake'); if(selectedT){selectedT.classList.remove('shake'); selectedT.classList.remove('selected');} selectedT=null; },400);
+    }
+  });
+});
+
+/* fill in the blanks */
+const paraTemplate = [
+  "The cell membrane is built mostly from a ", 0, ", with proteins floating in it like tiles in a mosaic. The membrane is ", 1,
+  ", letting some substances cross more easily than others. ", 2, " moves molecules from high to low concentration and needs no energy, while ", 3,
+  " moves molecules against their concentration and always requires ", 4, ". ", 5, " is the diffusion of water across a membrane."
+];
+const blankAnswerKey = {0:'phospholipid bilayer',1:'selectively permeable',2:'Diffusion',3:'active transport',4:'ATP',5:'Osmosis'};
+const fullBank = Object.values(blankAnswerKey);
+const bankEl = document.getElementById('wordbank');
+const paraEl = document.getElementById('fillPara');
+let placed = {};
+function shuffle(arr){ return arr.sort(()=>Math.random()-0.5); }
+shuffle([...fullBank]).forEach(w=>{
+  const chip = document.createElement('button');
+  chip.className = 'word-chip'; chip.textContent = w; chip.dataset.word = w;
+  chip.addEventListener('click', ()=>selectWord(chip));
+  bankEl.appendChild(chip);
+});
+let selectedChip = null;
+function selectWord(chip){
+  if(chip.classList.contains('used')) return;
+  document.querySelectorAll('.word-chip').forEach(c=>c.style.outline='none');
+  selectedChip = chip; chip.style.outline = '2.5px solid var(--purple)';
+}
+paraTemplate.forEach(part=>{
+  if(typeof part === 'string'){ paraEl.appendChild(document.createTextNode(part)); }
+  else{ const blank=document.createElement('span'); blank.className='blank'; blank.dataset.idx=part; blank.addEventListener('click', ()=>fillBlank(blank)); paraEl.appendChild(blank); }
+});
+function fillBlank(blank){
+  if(blank.classList.contains('filled')){
+    const word = blank.textContent; blank.textContent=''; blank.classList.remove('filled');
+    const chip = [...document.querySelectorAll('.word-chip')].find(c=>c.dataset.word===word && c.classList.contains('used'));
+    if(chip) chip.classList.remove('used');
+    delete placed[blank.dataset.idx]; return;
+  }
+  if(!selectedChip) return;
+  blank.textContent = selectedChip.dataset.word; blank.classList.add('filled');
+  selectedChip.classList.add('used'); placed[blank.dataset.idx] = selectedChip.dataset.word;
+  selectedChip.style.outline='none'; selectedChip=null;
+  if(Object.keys(placed).length === Object.keys(blankAnswerKey).length) checkFill();
+}
+function checkFill(){
+  let correct=0;
+  Object.keys(blankAnswerKey).forEach(k=>{ if(placed[k]===blankAnswerKey[k]) correct++; });
+  const totalBlanks = Object.keys(blankAnswerKey).length;
+  document.getElementById('fillResult').innerHTML = `<div class="feedback show ${correct===totalBlanks?'good':''}" style="background:${correct===totalBlanks?'var(--green-light)':'var(--orange-light)'};">
+    <strong>${correct} / ${totalBlanks} correct.</strong> ${correct===totalBlanks ? 'Great work — you have got the whole idea right!' : 'Tap a filled blank to swap it and try again.'}</div>`;
+}
+
+/* quiz */
+function answerQuiz(btn, correct){
+  document.querySelectorAll('.quiz-opt').forEach(b=>{ b.disabled=true; if(b.dataset.correct==='true') b.classList.add('correct'); });
+  if(!correct) btn.classList.add('wrong');
+  document.getElementById('quizFeedback').classList.add('show');
+}
+
+/* assessment */
+const assessItems = [
+  'I can describe the fluid mosaic model of the cell membrane.',
+  'I can explain what "selectively permeable" means.',
+  'I can compare passive transport and active transport.',
+  'I can explain diffusion, facilitated diffusion, and osmosis.',
+  'I can predict what happens to a cell in hypertonic, hypotonic, and isotonic solutions.',
+  'I can describe endocytosis and exocytosis.',
+  'I can match transport types to real-world examples.',
+  'I can use 12 new biology words in English.'
+];
+const assessList = document.getElementById('assessList');
+assessItems.forEach(text=>{
+  const item = document.createElement('div'); item.className='assess-item';
+  item.innerHTML = `<div class="assess-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>${text}</p>`;
+  item.addEventListener('click', ()=>{ item.classList.toggle('checked'); updateAssessProgress(); });
+  assessList.appendChild(item);
+});
+function updateAssessProgress(){
+  const checked = document.querySelectorAll('.assess-item.checked').length;
+  document.getElementById('assessFill').style.width = (checked/assessItems.length*100)+'%';
+}
+
+/* glossary */
+const glossary = [
+  {term:'Phospholipid bilayer', zh:'磷脂双分子层', def:'The double layer of phospholipids that forms every cell membrane.'},
+  {term:'Selectively permeable', zh:'选择透过性', def:'Letting some substances cross a membrane more easily than others.'},
+  {term:'Diffusion', zh:'扩散', def:'Movement of molecules from high to low concentration.'},
+  {term:'Facilitated diffusion', zh:'协助扩散', def:'Passive transport using a channel or carrier protein.'},
+  {term:'Osmosis', zh:'渗透', def:'The diffusion of water across a membrane.'},
+  {term:'Tonicity', zh:'渗透压', def:'The relative solute concentration of two solutions.'},
+  {term:'Hypertonic', zh:'高渗', def:'A solution with more solute than the cell — the cell loses water and shrinks.'},
+  {term:'Hypotonic', zh:'低渗', def:'A solution with less solute than the cell — the cell gains water and swells.'},
+  {term:'Isotonic', zh:'等渗', def:'A solution with equal solute concentration — the cell stays the same size.'},
+  {term:'Active transport', zh:'主动运输', def:'Using ATP energy to move molecules against their concentration gradient.'},
+  {term:'Endocytosis', zh:'胞吞作用', def:'The membrane wraps around material to bring it into the cell.'},
+  {term:'Exocytosis', zh:'胞吐作用', def:'A vesicle fuses with the membrane to release material out of the cell.'},
+];
+const glossGrid = document.getElementById('glossGrid');
+glossary.forEach(g=>{
+  const card = document.createElement('div'); card.className='gloss-card';
+  card.innerHTML = `<div class="gloss-inner"><div class="gloss-face front"><div>${g.term}</div><div class="zh-term">${g.zh}</div></div><div class="gloss-face back">${g.def}</div></div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flip'));
+  glossGrid.appendChild(card);
+});
+
+document.querySelectorAll('.term').forEach(t=> t.addEventListener('click', ()=> alert(t.dataset.def)));
+</script>
+</body>
+</html>
