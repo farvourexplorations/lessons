@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6.1 A Tour of the Cell — Interactive Lesson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#146C7A; --teal-dark:#0D4F5A; --teal-light:#E3F1F2; --teal-mid:#59A6AE;
+  --orange:#DD7A2E; --orange-light:#FBEADB;
+  --purple:#5B3E96; --purple-light:#F0EAFA;
+  --red:#C0392B; --red-light:#FBE7E4;
+  --blue:#2B71C9; --blue-light:#E9F1FC;
+  --green:#3F8F5C; --green-light:#E7F5EC;
+  --ink:#1D2B32; --ink-soft:#4B5B62;
+  --paper:#FFFFFF; --cream:#F6F4EF; --line:#DDE4E3;
+  --r-lg:22px; --r-md:14px; --r-sm:8px;
+  --shadow: 0 10px 30px rgba(13,79,90,.14);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{margin:0; background:var(--cream); color:var(--ink); font-family:'Inter',system-ui,sans-serif; overflow:hidden;}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+#app{position:relative; width:100vw; height:100vh; display:flex; flex-direction:column;}
+.topbar{display:flex; align-items:center; justify-content:space-between; padding:14px 28px; background:var(--paper); border-bottom:1px solid var(--line); flex:0 0 auto; z-index:20;}
+.crumb{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft); font-weight:600;}
+.crumb .tag{background:var(--teal); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12px; padding:5px 12px; border-radius:100px; letter-spacing:.3px;}
+.crumb .sep{color:#B9C4C3;} .crumb .current{color:var(--teal-dark);}
+.dots{display:flex; gap:6px; align-items:center;}
+.dot{width:9px; height:9px; border-radius:50%; background:#D7DEDD; border:none; cursor:pointer; transition:all .25s;}
+.dot.active{background:var(--teal); width:22px; border-radius:6px;}
+.dot:hover{background:var(--teal-mid);}
+.counter{font-size:12px; color:var(--ink-soft); font-weight:600; font-variant-numeric:tabular-nums; min-width:44px; text-align:right;}
+.stage{position:relative; flex:1 1 auto; overflow:hidden;}
+.slide{position:absolute; inset:0; opacity:0; pointer-events:none; transform:translateX(30px) scale(.99); transition:opacity .45s ease, transform .45s ease; overflow-y:auto;}
+.slide.active{opacity:1; pointer-events:auto; transform:translateX(0) scale(1);}
+.slide-inner{max-width:1180px; margin:0 auto; padding:40px 44px 90px; min-height:100%;}
+.navbtn{position:absolute; top:50%; transform:translateY(-50%); z-index:15; width:46px; height:46px; border-radius:50%; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--teal-dark); transition:.2s;}
+.navbtn:hover{background:var(--teal); color:#fff; border-color:var(--teal);}
+.navbtn.disabled{opacity:.25; pointer-events:none;}
+#prevBtn{left:16px;} #nextBtn{right:16px;} .navbtn svg{width:20px; height:20px;}
+.chevron-badge{display:inline-flex; align-items:center; gap:10px; background:var(--teal); color:#fff; padding:9px 20px 9px 16px; font-family:'Poppins'; font-weight:700; font-size:15px; clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%); margin-bottom:16px;}
+.eyebrow{font-family:'Poppins'; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--orange); margin-bottom:8px;}
+h1.slide-title{font-size:36px; font-weight:800; color:var(--teal-dark); margin:0 0 6px; line-height:1.15;}
+h3.mini-title{font-size:17px; font-weight:700; color:var(--ink); margin:0 0 8px;}
+p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
+.lede{font-size:17px; color:var(--ink-soft); margin-bottom:22px; max-width:640px;}
+.term{color:var(--orange); font-weight:700; cursor:help; border-bottom:1.5px dotted var(--orange);}
+.zh{color:var(--purple); font-weight:600;}
+.box{border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow);}
+.box-head{padding:12px 20px; font-family:'Poppins'; font-weight:700; font-size:14px; color:#fff; display:flex; align-items:center; gap:8px;}
+.box-body{padding:20px 22px;}
+.box.blue .box-head{background:var(--blue);} .box.purple .box-head{background:var(--purple);} .box.orange .box-head{background:var(--orange);} .box.green .box-head{background:var(--green);} .box.teal .box-head{background:var(--teal);}
+.two-col{display:grid; grid-template-columns:1.05fr .95fr; gap:36px; align-items:start;}
+@media (max-width:900px){.two-col{grid-template-columns:1fr;}}
+.photo{width:100%; border-radius:var(--r-md); display:block; object-fit:cover; background:#eee; box-shadow:0 6px 18px rgba(20,108,122,.18);}
+.photo-cap{font-size:12px; color:var(--ink-soft); margin-top:8px; font-style:italic;}
+.pill{display:inline-block; padding:4px 12px; border-radius:100px; font-size:12px; font-weight:700; background:var(--teal-light); color:var(--teal-dark); margin:2px 4px 2px 0;}
+.btn{border:none; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:14px; padding:10px 20px; border-radius:100px; background:var(--teal); color:#fff; transition:.2s;}
+.btn:hover{background:var(--teal-dark);} .btn[disabled]{opacity:.45; cursor:default;}
+.btn.ghost{background:transparent; border:1.5px solid var(--teal); color:var(--teal);}
+.btn.ghost:hover{background:var(--teal-light);}
+.hint{font-size:12.5px; color:var(--ink-soft); background:var(--teal-light); border-radius:100px; padding:6px 14px; display:inline-flex; gap:6px; align-items:center; margin-bottom:18px; font-weight:600;}
+.hint svg{width:14px; height:14px;}
+.cover{height:100%; display:flex; align-items:center; justify-content:center; position:relative; background:radial-gradient(ellipse at 20% 15%, rgba(255,255,255,.10), transparent 45%), linear-gradient(160deg, var(--teal) 0%, var(--teal-dark) 62%, #0A3A42 100%); overflow:hidden;}
+.cover-rock{position:absolute; border-radius:38% 62% 55% 45% / 45% 40% 60% 55%; opacity:.16; background:#fff;}
+.cover-content{position:relative; z-index:2; text-align:center; color:#fff; max-width:760px; padding:0 30px;}
+.cover-content .unit{font-family:'Poppins'; font-weight:700; letter-spacing:3px; font-size:13px; text-transform:uppercase; color:#BFE3E6; margin-bottom:14px;}
+.cover-content h1{font-size:50px; font-weight:800; margin:0 0 10px; line-height:1.08;}
+.cover-content .sub{font-size:19px; color:#DCEEEF; font-weight:500; margin-bottom:8px;}
+.cover-content .sub-zh{font-size:15px; color:#BFE3E6; font-weight:500; margin-bottom:34px;}
+.cover-chip-row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:38px;}
+.cover-chip{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff; padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600; backdrop-filter:blur(4px);}
+.cover-start{background:var(--orange); color:#fff; border:none; font-family:'Poppins'; font-weight:700; font-size:16px; padding:15px 34px; border-radius:100px; cursor:pointer; box-shadow:0 12px 26px rgba(221,122,46,.4); display:inline-flex; align-items:center; gap:10px; transition:.2s;}
+.cover-start:hover{transform:translateY(-2px); box-shadow:0 16px 30px rgba(221,122,46,.5);}
+.obj-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 22px; margin-top:6px;}
+.obj-card{display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:var(--r-md); background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.2s;}
+.obj-card:hover{border-color:var(--teal-mid); box-shadow:var(--shadow);}
+.obj-num{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--teal-light); color:var(--teal-dark); font-family:'Poppins'; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;}
+.obj-card.done .obj-num{background:var(--teal); color:#fff;}
+.obj-card.done p{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:#B9C4C3;}
+.obj-card p{margin:0; font-size:13.8px; line-height:1.5;}
+.diagram-card{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow); padding:16px; width:100%;}
+.diagram-card svg{width:100%; height:auto; display:block;}
+.diagram-label{text-align:center; font-family:'Poppins'; font-weight:700; font-size:13px; color:var(--teal-dark); margin-top:8px;}
+.tabs{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+.tab-btn{padding:10px 18px; border-radius:100px; border:1.5px solid var(--line); background:#fff; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:13.5px; color:var(--ink-soft); transition:.2s;}
+.tab-btn.active{background:var(--teal); border-color:var(--teal); color:#fff;}
+.tab-panel{display:none;} .tab-panel.active{display:block; animation:fadein .35s;}
+@keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+.hotspot-photo-wrap{position:relative; display:inline-block; width:100%;}
+.hotspot{position:absolute; width:22px; height:22px; border-radius:50%; background:var(--orange); border:3px solid #fff; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.3); animation:pulse 2s infinite;}
+.hotspot::after{content:'+'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:13px;}
+.hotspot.done{animation:none; background:var(--teal);}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(221,122,46,.45);} 50%{box-shadow:0 0 0 8px rgba(221,122,46,0);}}
+.hotspot-tip{position:absolute; background:var(--ink); color:#fff; padding:8px 12px; border-radius:8px; font-size:12.5px; max-width:220px; z-index:5; display:none; box-shadow:0 8px 18px rgba(0,0,0,.25); line-height:1.4;}
+.hotspot-tip.show{display:block;}
+.match-wrap{display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:10px;}
+.match-col h4{font-family:'Poppins'; font-size:12.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:1px; margin:0 0 10px;}
+.match-card{border:1.5px solid var(--line); background:#fff; border-radius:var(--r-md); padding:14px 16px; margin-bottom:10px; cursor:pointer; font-weight:600; font-size:13.5px; transition:.15s; line-height:1.5;}
+.match-card:hover{border-color:var(--teal-mid);}
+.match-card.selected{border-color:var(--purple); background:var(--purple-light);}
+.match-card.matched{border-color:var(--green); background:var(--green-light); color:#245A38; cursor:default;}
+.match-card.shake{animation:shake .4s;}
+@keyframes shake{0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);}}
+.wordbank{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding:14px; background:var(--purple-light); border-radius:var(--r-md);}
+.word-chip{background:#fff; border:1.5px solid var(--purple); color:var(--purple); font-family:'Poppins'; font-weight:600; font-size:13px; padding:7px 14px; border-radius:100px; cursor:pointer; transition:.15s;}
+.word-chip:hover{background:var(--purple); color:#fff;}
+.word-chip.used{opacity:.3; pointer-events:none; text-decoration:line-through;}
+.fillp{font-size:15.5px; line-height:2.3;}
+.blank{display:inline-flex; align-items:center; justify-content:center; min-width:120px; height:28px; border-bottom:2.5px solid var(--purple); font-family:'Poppins'; font-weight:700; color:var(--purple); cursor:pointer; padding:0 6px; font-size:13.5px; vertical-align:middle;}
+.blank.filled{border-bottom-style:solid;} .blank:empty::after{content:'\00a0';}
+.scenario{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); padding:22px 24px; box-shadow:var(--shadow);}
+.speech{background:var(--teal-light); border-radius:14px; padding:10px 16px; font-size:14px; margin:6px 0; max-width:320px; font-weight:600; color:var(--teal-dark);}
+.speech.right{margin-left:auto; background:var(--orange-light); color:#8A4A16;}
+.quiz-opts{display:flex; gap:12px; margin-top:14px; flex-wrap:wrap;}
+.quiz-opt{flex:1 1 160px; border:1.5px solid var(--line); background:#fff; border-radius:var(--r-md); padding:14px 16px; cursor:pointer; font-weight:700; font-family:'Poppins'; font-size:14px; text-align:left; transition:.2s;}
+.quiz-opt:hover{border-color:var(--teal-mid);}
+.quiz-opt.correct{background:var(--green-light); border-color:var(--green); color:var(--green);}
+.quiz-opt.wrong{background:var(--red-light); border-color:var(--red); color:var(--red);}
+.feedback{margin-top:14px; padding:14px 16px; border-radius:var(--r-md); font-size:14px; display:none; line-height:1.6;}
+.feedback.show{display:block; animation:fadein .3s;}
+.feedback.good{background:var(--green-light); color:#245A38; border:1px solid #BFE2CC;}
+.assess-list{display:flex; flex-direction:column; gap:2px;}
+.assess-item{display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px; cursor:pointer; transition:.15s;}
+.assess-item:hover{background:var(--teal-light);}
+.assess-box{flex:0 0 auto; width:22px; height:22px; border-radius:6px; border:2px solid var(--teal); position:relative;}
+.assess-item.checked .assess-box{background:var(--teal);}
+.assess-box svg{position:absolute; inset:0; margin:auto; width:14px; height:14px; color:#fff; opacity:0;}
+.assess-item.checked .assess-box svg{opacity:1;}
+.assess-item p{margin:0; font-size:14px;} .assess-item.checked p{color:var(--ink-soft);}
+.progress-bar-track{height:10px; background:var(--teal-light); border-radius:100px; overflow:hidden; margin:16px 0 22px;}
+.progress-bar-fill{height:100%; width:0%; background:linear-gradient(90deg,var(--teal),var(--orange)); border-radius:100px; transition:width .4s;}
+.gloss-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px;}
+.gloss-card{background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:14px; cursor:pointer; perspective:800px; height:118px; position:relative;}
+.gloss-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+.gloss-card.flip .gloss-inner{transform:rotateY(180deg);}
+.gloss-face{position:absolute; inset:0; backface-visibility:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:3px;}
+.gloss-face.front{font-family:'Poppins'; font-weight:700; color:var(--teal-dark); font-size:13.5px;}
+.gloss-face.front .zh-term{font-family:'Inter'; font-weight:600; color:var(--purple); font-size:12.5px;}
+.gloss-face.back{transform:rotateY(180deg); font-size:11px; color:var(--ink-soft); padding:4px; line-height:1.4;}
+::-webkit-scrollbar{width:8px;} ::-webkit-scrollbar-thumb{background:#C9D6D5; border-radius:10px;}
+
+/* scale stepper */
+.scale-visual{display:flex; align-items:center; justify-content:center; height:220px;}
+.scale-circle{border-radius:50%; background:linear-gradient(160deg,var(--teal-mid),var(--teal-dark)); transition:width .5s, height .5s; box-shadow:var(--shadow);}
+
+@media(max-width:760px){
+  .obj-grid{grid-template-columns:1fr;} .two-col{grid-template-columns:1fr;} .gloss-grid{grid-template-columns:repeat(2,1fr);}
+  .cover-content h1{font-size:32px;} h1.slide-title{font-size:26px;} .match-wrap{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="topbar">
+    <div class="crumb">
+      <span class="tag">Unit 2</span>
+      <span>The Cell</span>
+      <span class="sep">/</span>
+      <span class="current">6.1 A Tour of the Cell</span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="counter" id="counter">1 / 11</div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- SLIDE 0 : COVER -->
+    <section class="slide">
+      <div class="cover">
+        <div class="cover-rock" style="width:260px;height:260px; top:-60px; left:-60px;"></div>
+        <div class="cover-rock" style="width:180px;height:180px; bottom:-40px; right:-30px;"></div>
+        <div class="cover-rock" style="width:120px;height:120px; bottom:60px; left:8%;"></div>
+        <div class="cover-content">
+          <div class="unit">Unit 2 &middot; The Cell</div>
+          <h1>A Tour of the Cell</h1>
+          <div class="sub">Step inside the smallest living unit and meet its tiny working parts</div>
+          <div class="sub-zh">细胞之旅 — 走进最小的生命单位</div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">🔬 Scale</span>
+            <span class="cover-chip">🧫 Organelles</span>
+            <span class="cover-chip">📦 Endomembrane system</span>
+            <span class="cover-chip">🗣️ English + 中文</span>
+          </div>
+          <button class="cover-start" onclick="goTo(1)">
+            Start the lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 1 : OBJECTIVES -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">6.1</div>
+        <h1 class="slide-title">We are going to…</h1>
+        <p class="lede">Tap each goal as you meet it. Cells have many small parts with long names — each one gets a picture, an interactive, and Chinese support.</p>
+        <div class="obj-grid" id="objGrid">
+          <div class="obj-card" data-i="1"><div class="obj-num">1</div><p>Understand how small a cell really is, compared to everyday objects</p></div>
+          <div class="obj-card" data-i="2"><div class="obj-num">2</div><p>Identify the main organelles inside a eukaryotic cell</p></div>
+          <div class="obj-card" data-i="3"><div class="obj-num">3</div><p>Describe the job of the nucleus, ribosomes, ER, Golgi apparatus, and lysosomes</p></div>
+          <div class="obj-card" data-i="4"><div class="obj-num">4</div><p>Trace the path a protein takes through the endomembrane system</p></div>
+          <div class="obj-card" data-i="5"><div class="obj-num">5</div><p>Compare mitochondria and chloroplasts, the cell's "power stations"</p></div>
+          <div class="obj-card" data-i="6"><div class="obj-num">6</div><p>Describe the cytoskeleton and the plant cell wall</p></div>
+          <div class="obj-card" data-i="7"><div class="obj-num">7</div><p>Match each organelle to its job</p></div>
+          <div class="obj-card" data-i="8"><div class="obj-num">8</div><p>Learn 12 new biology words in English, with Chinese translations</p></div>
+        </div>
+        <div style="margin-top:22px;">
+          <span class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Key vocabulary: organelle · nucleus · ribosome · endoplasmic reticulum · Golgi apparatus · mitochondria · lysosome · cytoskeleton</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2 : SCALE STEPPER -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Getting started</div>
+        <h1 class="slide-title">How small is a cell?</h1>
+        <p class="lede">Cells are far too small to see with your eyes alone. Tap each step to zoom in, from something you can hold to something only a powerful microscope can see.</p>
+        <div class="tabs" id="scaleTabs">
+          <button class="tab-btn active" data-sc="0" onclick="selectScale(0)">You (1 m)</button>
+          <button class="tab-btn" data-sc="1" onclick="selectScale(1)">An ant (1 cm)</button>
+          <button class="tab-btn" data-sc="2" onclick="selectScale(2)">Human egg cell (0.1 mm)</button>
+          <button class="tab-btn" data-sc="3" onclick="selectScale(3)">Most cells (10 µm)</button>
+          <button class="tab-btn" data-sc="4" onclick="selectScale(4)">Bacterium (1 µm)</button>
+          <button class="tab-btn" data-sc="5" onclick="selectScale(5)">Virus (100 nm)</button>
+        </div>
+        <div class="two-col">
+          <div class="diagram-card">
+            <div class="scale-visual"><div class="scale-circle" id="scaleCircle"></div></div>
+          </div>
+          <div>
+            <h3 class="mini-title" id="scaleTitle">You — about 1 meter to 1.8 meters tall</h3>
+            <p id="scaleDesc"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3 : ORGANELLE EXPLORER -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Activity</div>
+        <h1 class="slide-title">Explore inside the cell</h1>
+        <p class="lede">Click each orange marker to learn what that <span class="term" data-def="A specialized structure inside a cell that performs a specific job. (细胞器)">organelle</span> does.</p>
+        <div class="two-col">
+          <div>
+            <div class="hotspot-photo-wrap" id="cellWrap">
+              <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Animal%20cell%20structure%20en.svg" alt="Labelled diagram of a typical animal cell showing its organelles" style="background:#fff;">
+              <div class="hotspot" style="top:38%; left:33%;" data-mineral="Nucleus" data-desc="细胞核 — Stores DNA, the cell's instructions. The dark nucleolus inside makes ribosomes.">1</div>
+              <div class="hotspot" style="top:33%; left:52%;" data-mineral="Rough ER" data-desc="粗面内质网 — Studded with ribosomes; folds and processes proteins headed out of the cell.">2</div>
+              <div class="hotspot" style="top:66%; left:47%;" data-mineral="Golgi apparatus" data-desc="高尔基体 — Modifies, sorts, and packages proteins into vesicles, like a post office.">3</div>
+              <div class="hotspot" style="top:60%; left:22%;" data-mineral="Mitochondria" data-desc="线粒体 — The cell's powerhouse; breaks down sugar to produce ATP energy.">4</div>
+              <div class="hotspot" style="top:47%; left:68%;" data-mineral="Ribosomes" data-desc="核糖体 — Tiny protein factories that build proteins by reading RNA instructions.">5</div>
+              <div class="hotspot" style="top:78%; left:66%;" data-mineral="Lysosome" data-desc="溶酶体 — Contains digestive enzymes that break down waste and worn-out parts.">6</div>
+              <div class="hotspot-tip" id="hotspotTip"></div>
+            </div>
+            <div class="photo-cap">A labelled animal cell diagram — click the markers to explore each organelle. (Illustration: LadyofHats, Wikimedia Commons)</div>
+          </div>
+          <div class="box purple">
+            <div class="box-head">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
+              Found so far
+            </div>
+            <div class="box-body" id="mineralsFound">
+              <p style="color:var(--ink-soft); margin:0;">Tap the markers to reveal each organelle (0 / 6 found).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4 : ENDOMEMBRANE SYSTEM -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Follow the cargo</div>
+        <h1 class="slide-title">The endomembrane system</h1>
+        <p class="lede">Many organelles work together as one connected system to build and ship proteins. Press "Next step" to follow a protein's journey out of the cell.</p>
+        <div class="tabs" id="endoTabs">
+          <button class="tab-btn active" data-e="0" onclick="selectEndo(0)">1. Nucleus</button>
+          <button class="tab-btn" data-e="1" onclick="selectEndo(1)">2. Rough ER</button>
+          <button class="tab-btn" data-e="2" onclick="selectEndo(2)">3. Golgi</button>
+          <button class="tab-btn" data-e="3" onclick="selectEndo(3)">4. Vesicle</button>
+          <button class="tab-btn" data-e="4" onclick="selectEndo(4)">5. Cell membrane</button>
+        </div>
+        <div class="two-col">
+          <div class="diagram-card" id="endoStage"></div>
+          <div><h3 class="mini-title" id="endoTitle"></h3><p id="endoDesc"></p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5 : POWERHOUSE VS SOLAR PANEL -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Compare</div>
+        <h1 class="slide-title">Two power stations</h1>
+        <p class="lede">Mitochondria and chloroplasts both make energy for the cell, and both are believed to have once been free-living bacteria — an idea called <span class="term" data-def="The theory that mitochondria and chloroplasts were once free-living bacteria that were engulfed by an early cell. (内共生学说)">endosymbiotic theory</span>.</p>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="mito">⚡ Mitochondria</button>
+          <button class="tab-btn" data-tab="chloro">🌿 Chloroplast</button>
+        </div>
+        <div class="tab-panel active" id="tab-mito">
+          <div class="two-col">
+            <div><h3 class="mini-title">The powerhouse <span class="zh">线粒体</span></h3><p>Found in almost every eukaryotic cell. Mitochondria break down glucose and release its stored energy as <strong>ATP</strong>, the molecule cells spend to power everything they do. Muscle cells, which need lots of energy, are packed with mitochondria.</p></div>
+            <div><img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Animal%20mitochondrion%20diagram%20en.svg" alt="Labelled diagram of a mitochondrion showing its folded inner membrane" style="background:#fff;"><div class="photo-cap">Notice the folded inner membrane (cristae) — more folds means more surface area to make ATP.</div></div>
+          </div>
+        </div>
+        <div class="tab-panel" id="tab-chloro">
+          <div class="two-col">
+            <div><h3 class="mini-title">The solar panel <span class="zh">叶绿体</span></h3><p>Found in plant cells and algae. Chloroplasts capture sunlight and use it to build sugar out of CO₂ and water — the process called photosynthesis. That sugar becomes food for the plant (and for anything that eats the plant!).</p></div>
+            <div><img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Chloroplast%20diagram.svg" alt="Labelled diagram of a chloroplast showing its stacked thylakoid membranes" style="background:#fff;"><div class="photo-cap">The stacked green disks (thylakoids) are where chloroplasts capture sunlight.</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6 : CELL WALL & CYTOSKELETON -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Structure and support</div>
+        <h1 class="slide-title">What holds a cell together?</h1>
+        <div class="two-col">
+          <div><img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Onion%20cells%20under%20a%20microscope.jpg" alt="Onion cells seen under a light microscope, showing rectangular cell walls"><div class="photo-cap">Onion cells under a microscope — the thick rectangular outlines are cell walls.</div></div>
+          <div>
+            <h3 class="mini-title">Two kinds of support</h3>
+            <p>Every eukaryotic cell has a <span class="term" data-def="A network of protein fibers inside a cell that gives it shape and helps it move. (细胞骨架)">cytoskeleton</span> — a network of thin protein fibers that gives the cell its shape, holds organelles in place, and helps the whole cell (or things inside it) move.</p>
+            <p>Plant cells (like these onion cells) also have a rigid <span class="term" data-def="A stiff structure outside a plant cell's membrane that protects the cell and gives it shape. (细胞壁)">cell wall</span> made of cellulose — the same polysaccharide from our carbohydrates lesson! The wall protects the cell and stops it from bursting when full of water. Animal cells never have a cell wall.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7 : MATCHING GAME -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Activity</div>
+        <h1 class="slide-title">Match the organelle to its job</h1>
+        <p class="lede">Click an organelle on the left, then click its job on the right.</p>
+        <div class="match-wrap">
+          <div class="match-col">
+            <h4>Organelle</h4>
+            <div class="match-card" data-key="nucleus">🧬 <strong>Nucleus</strong> <span class="zh">细胞核</span></div>
+            <div class="match-card" data-key="mito">⚡ <strong>Mitochondria</strong> <span class="zh">线粒体</span></div>
+            <div class="match-card" data-key="lyso">♻️ <strong>Lysosome</strong> <span class="zh">溶酶体</span></div>
+          </div>
+          <div class="match-col">
+            <h4>Job</h4>
+            <div class="match-card example" data-key="energy">Breaks down sugar to release ATP energy</div>
+            <div class="match-card example" data-key="dna">Stores the cell's DNA instructions</div>
+            <div class="match-card example" data-key="waste">Digests waste and worn-out cell parts</div>
+          </div>
+        </div>
+        <p id="matchFeedback" style="text-align:center; margin-top:14px; font-weight:700; color:var(--green);"></p>
+      </div>
+    </section>
+
+    <!-- SLIDE 8 : FILL IN THE BLANKS -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Focus</div>
+        <h1 class="slide-title">Complete the summary</h1>
+        <p class="lede">Tap a word from the bank, then tap the blank you want to fill.</p>
+        <div class="wordbank" id="wordbank"></div>
+        <div class="fillp" id="fillPara"></div>
+        <div id="fillResult" style="margin-top:16px;"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9 : CHALLENGE -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Challenge</div>
+        <h1 class="slide-title">Mei and Tom's liver cell puzzle</h1>
+        <div class="two-col">
+          <div class="scenario">
+            <p style="margin-bottom:14px;">Mei <span class="zh">(美)</span> and Tom are looking at a picture of a liver cell packed with an unusually large amount of smooth ER (endoplasmic reticulum with no ribosomes).</p>
+            <div class="speech">"Liver cells must make a huge amount of protein," says Mei.</div>
+            <div class="speech right">"No, Mei — smooth ER isn't mainly about making protein," says Tom.</div>
+            <h3 class="mini-title" style="margin-top:18px;">Who is correct?</h3>
+            <div class="quiz-opts">
+              <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false)">Mei — it's for making lots of protein</button>
+              <button class="quiz-opt" data-correct="true" onclick="answerQuiz(this,true)">Tom — smooth ER has a different job</button>
+            </div>
+            <div class="feedback good" id="quizFeedback">
+              <strong>Tom is correct.</strong> Only <em>rough</em> ER (studded with ribosomes) builds proteins. <em>Smooth</em> ER has no ribosomes — instead it builds lipids and, importantly, helps detoxify drugs and poisons like alcohol. Liver cells are the body's main detox organ, so they are often packed with smooth ER!
+            </div>
+          </div>
+          <div>
+            <div class="box orange">
+              <div class="box-head">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>
+                Remember
+              </div>
+              <div class="box-body"><p style="margin:0;">Same organelle family, different jobs: <strong>rough</strong> ER = protein factory; <strong>smooth</strong> ER = lipid factory and detox center.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10 : SELF-CHECK & GLOSSARY -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Look what I can do!</div>
+        <h1 class="slide-title">Self-check &amp; recap</h1>
+        <div class="progress-bar-track"><div class="progress-bar-fill" id="assessFill"></div></div>
+        <div class="assess-list" id="assessList"></div>
+        <h3 class="mini-title" style="margin-top:30px;">Key vocabulary — tap a card to flip it (English 中文)</h3>
+        <div class="gloss-grid" id="glossGrid"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <button class="navbtn" id="prevBtn" onclick="prevSlide()" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <button class="navbtn" id="nextBtn" onclick="nextSlide()" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg></button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let idx = 0;
+const dotsWrap = document.getElementById('dots');
+slides.forEach((s,i)=>{ const d=document.createElement('button'); d.className='dot'+(i===0?' active':''); d.onclick=()=>goTo(i); dotsWrap.appendChild(d); });
+function render(){
+  slides.forEach((s,i)=> s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.dot').forEach((d,i)=> d.classList.toggle('active', i===idx));
+  document.getElementById('counter').textContent = (idx+1)+' / '+total;
+  document.getElementById('prevBtn').classList.toggle('disabled', idx===0);
+  document.getElementById('nextBtn').classList.toggle('disabled', idx===total-1);
+  slides[idx].scrollTop = 0;
+}
+function goTo(i){ idx = Math.max(0, Math.min(total-1, i)); render(); }
+function nextSlide(){ goTo(idx+1); }
+function prevSlide(){ goTo(idx-1); }
+document.addEventListener('keydown', e=>{ if(e.key==='ArrowRight') nextSlide(); if(e.key==='ArrowLeft') prevSlide(); });
+render();
+
+document.querySelectorAll('.obj-card').forEach(card=> card.addEventListener('click', ()=> card.classList.toggle('done')));
+
+/* scale stepper */
+const scaleData = [
+  {title:'You — about 1 to 1.8 meters tall', desc:'A whole human body. Every part of you is built from trillions of individual cells working together.', size:150},
+  {title:'An ant — about 1 centimeter', desc:'100 times smaller than you, but still visible without any microscope at all.', size:110},
+  {title:'A human egg cell — about 0.1 millimeter', desc:'The largest single human cell — just barely visible as a tiny dot with the naked eye.', size:80},
+  {title:'Most cells — about 10 micrometers (µm)', desc:'Most animal and plant cells are this size — far too small to see without a microscope.', size:55},
+  {title:'A bacterium — about 1 micrometer (µm)', desc:'Prokaryotic cells like bacteria are usually about 10 times smaller than a typical eukaryotic cell.', size:30},
+  {title:'A virus — about 100 nanometers (nm)', desc:'Viruses are so small that only an electron microscope, not a light microscope, can see them.', size:14}
+];
+function selectScale(i){
+  const d = scaleData[i];
+  document.getElementById('scaleTitle').textContent = d.title;
+  document.getElementById('scaleDesc').textContent = d.desc;
+  document.getElementById('scaleCircle').style.width = d.size+'px';
+  document.getElementById('scaleCircle').style.height = d.size+'px';
+  document.querySelectorAll('#scaleTabs .tab-btn').forEach(b=> b.classList.toggle('active', b.dataset.sc==i));
+}
+selectScale(0);
+
+/* organelle hotspots */
+const tip = document.getElementById('hotspotTip');
+const foundSet = new Set();
+document.querySelectorAll('.hotspot').forEach(h=>{
+  h.addEventListener('click', ()=>{
+    h.classList.add('done');
+    tip.textContent = h.dataset.mineral + ': ' + h.dataset.desc;
+    tip.style.top = (parseFloat(h.style.top)) + '%';
+    let left = parseFloat(h.style.left);
+    tip.style.left = (left > 55 ? (left-30) : (left+4)) + '%';
+    tip.classList.add('show');
+    foundSet.add(h.dataset.mineral);
+    const box = document.getElementById('mineralsFound');
+    box.innerHTML = [...foundSet].map(m=>'<div class="pill">'+m+'</div>').join('') +
+      `<p style="margin:8px 0 0; color:var(--ink-soft); font-size:12.5px;">${foundSet.size} / 6 organelles found</p>`;
+  });
+});
+
+/* endomembrane stepper */
+const endoData = [
+  {title:'1. Nucleus', desc:'The instructions for the protein are copied from DNA inside the nucleus and sent out as a message (mRNA).',
+    svg:`<svg viewBox="0 0 260 140"><circle cx="60" cy="70" r="45" fill="#59A6AE" stroke="#0D4F5A" stroke-width="3"/><circle cx="130" cy="70" r="6" fill="#DD7A2E"/><circle cx="150" cy="70" r="6" fill="#EFE0CE"/><circle cx="170" cy="70" r="6" fill="#EFE0CE"/><circle cx="190" cy="70" r="6" fill="#EFE0CE"/><circle cx="210" cy="70" r="6" fill="#EFE0CE"/></svg>`},
+  {title:'2. Rough ER', desc:'Ribosomes on the rough ER read the message and build the protein, folding it inside the ER.',
+    svg:`<svg viewBox="0 0 260 140"><path d="M20 70 Q60 40 100 70 Q140 100 180 70 Q220 40 240 70" fill="none" stroke="#DD7A2E" stroke-width="6"/><circle cx="150" cy="70" r="6" fill="#0D4F5A"/><circle cx="170" cy="70" r="6" fill="#EFE0CE"/><circle cx="190" cy="70" r="6" fill="#EFE0CE"/><circle cx="210" cy="70" r="6" fill="#EFE0CE"/></svg>`},
+  {title:'3. Golgi apparatus', desc:'The Golgi receives the protein, finishes shaping it, tags it with an address label, and packages it into a vesicle.',
+    svg:`<svg viewBox="0 0 260 140"><path d="M40 40 Q140 20 220 40" fill="none" stroke="#5B3E96" stroke-width="6" stroke-linecap="round"/><path d="M40 70 Q140 50 220 70" fill="none" stroke="#5B3E96" stroke-width="6" stroke-linecap="round"/><path d="M40 100 Q140 80 220 100" fill="none" stroke="#5B3E96" stroke-width="6" stroke-linecap="round"/><circle cx="190" cy="70" r="6" fill="#0D4F5A"/><circle cx="210" cy="70" r="6" fill="#EFE0CE"/></svg>`},
+  {title:'4. Vesicle', desc:'A small bubble of membrane called a vesicle buds off the Golgi and travels across the cell, carrying the finished protein.',
+    svg:`<svg viewBox="0 0 260 140"><circle cx="80" cy="70" r="30" fill="#E3F1F2" stroke="#146C7A" stroke-width="4"/><circle cx="80" cy="70" r="8" fill="#0D4F5A"/><path d="M115 70 L220 70" stroke="#8A94A6" stroke-width="3" stroke-dasharray="6 5"/><circle cx="230" cy="70" r="6" fill="#DD7A2E"/></svg>`},
+  {title:'5. Cell membrane', desc:'The vesicle reaches the cell membrane, fuses with it, and releases the protein outside the cell — a process called exocytosis.',
+    svg:`<svg viewBox="0 0 260 140"><path d="M20 20 L20 120" stroke="#146C7A" stroke-width="8"/><path d="M20 40 Q60 25 90 45 Q120 65 90 85" fill="none" stroke="#146C7A" stroke-width="4"/><circle cx="150" cy="60" r="8" fill="#DD7A2E"/><circle cx="180" cy="45" r="8" fill="#DD7A2E"/><circle cx="200" cy="80" r="8" fill="#DD7A2E"/></svg>`}
+];
+function selectEndo(i){
+  const d = endoData[i];
+  document.getElementById('endoStage').innerHTML = d.svg;
+  document.getElementById('endoTitle').textContent = d.title;
+  document.getElementById('endoDesc').textContent = d.desc;
+  document.querySelectorAll('#endoTabs .tab-btn').forEach(b=> b.classList.toggle('active', b.dataset.e==i));
+}
+selectEndo(0);
+
+/* tabs (generic, mitochondria/chloroplast) */
+document.querySelectorAll('.tab-btn[data-tab]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const panelGroup = btn.parentElement;
+    [...panelGroup.querySelectorAll('.tab-btn[data-tab]')].forEach(b=> b.classList.remove('active'));
+    btn.classList.add('active');
+    const relatedIds = [...panelGroup.querySelectorAll('.tab-btn[data-tab]')].map(b=>'tab-'+b.dataset.tab);
+    relatedIds.forEach(rid=>{ const p=document.getElementById(rid); if(p) p.classList.toggle('active', rid==='tab-'+btn.dataset.tab); });
+  });
+});
+
+/* matching game */
+const orgPairs = {nucleus:'dna', mito:'energy', lyso:'waste'};
+let selectedOrg = null;
+let orgMatched = 0;
+document.querySelectorAll('.match-card:not(.example)').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    if(card.classList.contains('matched')) return;
+    document.querySelectorAll('.match-card:not(.example)').forEach(c=>c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedOrg = card;
+  });
+});
+document.querySelectorAll('.match-card.example').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    if(card.classList.contains('matched') || !selectedOrg) return;
+    const key = selectedOrg.dataset.key;
+    if(orgPairs[key] === card.dataset.key){
+      selectedOrg.classList.add('matched'); selectedOrg.classList.remove('selected');
+      card.classList.add('matched');
+      orgMatched++;
+      selectedOrg = null;
+      if(orgMatched === 3) document.getElementById('matchFeedback').textContent = '🎉 All matched! You know your organelles.';
+    } else {
+      card.classList.add('shake'); selectedOrg.classList.add('shake');
+      setTimeout(()=>{ card.classList.remove('shake'); if(selectedOrg){selectedOrg.classList.remove('shake'); selectedOrg.classList.remove('selected');} selectedOrg=null; },400);
+    }
+  });
+});
+
+/* fill in the blanks */
+const paraTemplate = [
+  "The ", 0, " stores the cell's DNA instructions. ", 1, " are tiny factories that build proteins. Proteins built on the rough ER travel to the ", 2,
+  " to be packaged, then leave in a small bubble called a ", 3, ". Mitochondria break down sugar to release ", 4,
+  " energy, while the ", 5, " gives the whole cell its shape and support."
+];
+const blankAnswerKey = {0:'nucleus',1:'Ribosomes',2:'Golgi apparatus',3:'vesicle',4:'ATP',5:'cytoskeleton'};
+const fullBank = Object.values(blankAnswerKey);
+const bankEl = document.getElementById('wordbank');
+const paraEl = document.getElementById('fillPara');
+let placed = {};
+function shuffle(arr){ return arr.sort(()=>Math.random()-0.5); }
+shuffle([...fullBank]).forEach(w=>{
+  const chip = document.createElement('button');
+  chip.className = 'word-chip'; chip.textContent = w; chip.dataset.word = w;
+  chip.addEventListener('click', ()=>selectWord(chip));
+  bankEl.appendChild(chip);
+});
+let selectedChip = null;
+function selectWord(chip){
+  if(chip.classList.contains('used')) return;
+  document.querySelectorAll('.word-chip').forEach(c=>c.style.outline='none');
+  selectedChip = chip; chip.style.outline = '2.5px solid var(--purple)';
+}
+paraTemplate.forEach(part=>{
+  if(typeof part === 'string'){ paraEl.appendChild(document.createTextNode(part)); }
+  else{ const blank=document.createElement('span'); blank.className='blank'; blank.dataset.idx=part; blank.addEventListener('click', ()=>fillBlank(blank)); paraEl.appendChild(blank); }
+});
+function fillBlank(blank){
+  if(blank.classList.contains('filled')){
+    const word = blank.textContent; blank.textContent=''; blank.classList.remove('filled');
+    const chip = [...document.querySelectorAll('.word-chip')].find(c=>c.dataset.word===word && c.classList.contains('used'));
+    if(chip) chip.classList.remove('used');
+    delete placed[blank.dataset.idx]; return;
+  }
+  if(!selectedChip) return;
+  blank.textContent = selectedChip.dataset.word; blank.classList.add('filled');
+  selectedChip.classList.add('used'); placed[blank.dataset.idx] = selectedChip.dataset.word;
+  selectedChip.style.outline='none'; selectedChip=null;
+  if(Object.keys(placed).length === Object.keys(blankAnswerKey).length) checkFill();
+}
+function checkFill(){
+  let correct=0;
+  Object.keys(blankAnswerKey).forEach(k=>{ if(placed[k]===blankAnswerKey[k]) correct++; });
+  const totalBlanks = Object.keys(blankAnswerKey).length;
+  document.getElementById('fillResult').innerHTML = `<div class="feedback show ${correct===totalBlanks?'good':''}" style="background:${correct===totalBlanks?'var(--green-light)':'var(--orange-light)'};">
+    <strong>${correct} / ${totalBlanks} correct.</strong> ${correct===totalBlanks ? 'Great work — you have got the whole idea right!' : 'Tap a filled blank to swap it and try again.'}</div>`;
+}
+
+/* quiz */
+function answerQuiz(btn, correct){
+  document.querySelectorAll('.quiz-opt').forEach(b=>{ b.disabled=true; if(b.dataset.correct==='true') b.classList.add('correct'); });
+  if(!correct) btn.classList.add('wrong');
+  document.getElementById('quizFeedback').classList.add('show');
+}
+
+/* assessment */
+const assessItems = [
+  'I understand how small a cell is compared to everyday objects.',
+  'I can identify the main organelles inside a eukaryotic cell.',
+  'I can describe the job of the nucleus, ribosomes, ER, Golgi, and lysosomes.',
+  'I can trace a protein\u2019s journey through the endomembrane system.',
+  'I can compare mitochondria and chloroplasts.',
+  'I can describe the cytoskeleton and the plant cell wall.',
+  'I can match organelles to their jobs.',
+  'I can use 12 new biology words in English.'
+];
+const assessList = document.getElementById('assessList');
+assessItems.forEach(text=>{
+  const item = document.createElement('div'); item.className='assess-item';
+  item.innerHTML = `<div class="assess-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>${text}</p>`;
+  item.addEventListener('click', ()=>{ item.classList.toggle('checked'); updateAssessProgress(); });
+  assessList.appendChild(item);
+});
+function updateAssessProgress(){
+  const checked = document.querySelectorAll('.assess-item.checked').length;
+  document.getElementById('assessFill').style.width = (checked/assessItems.length*100)+'%';
+}
+
+/* glossary */
+const glossary = [
+  {term:'Organelle', zh:'细胞器', def:'A specialized structure inside a cell that performs a specific job.'},
+  {term:'Nucleus', zh:'细胞核', def:'Stores the cell\u2019s DNA and controls the cell\u2019s activities.'},
+  {term:'Ribosome', zh:'核糖体', def:'A tiny structure that builds proteins.'},
+  {term:'Endoplasmic reticulum', zh:'内质网', def:'A network of membranes that builds proteins (rough) or lipids (smooth).'},
+  {term:'Golgi apparatus', zh:'高尔基体', def:'Modifies, sorts, and packages proteins for shipping.'},
+  {term:'Mitochondria', zh:'线粒体', def:'The organelle that breaks down sugar to release ATP energy.'},
+  {term:'Chloroplast', zh:'叶绿体', def:'The organelle in plants that captures sunlight to make sugar.'},
+  {term:'Lysosome', zh:'溶酶体', def:'An organelle that digests waste and worn-out cell parts.'},
+  {term:'Vesicle', zh:'囊泡', def:'A small membrane bubble that transports material inside a cell.'},
+  {term:'Cytoskeleton', zh:'细胞骨架', def:'A network of protein fibers that gives a cell its shape.'},
+  {term:'Cell wall', zh:'细胞壁', def:'A stiff structure outside a plant cell\u2019s membrane.'},
+  {term:'Endomembrane system', zh:'内膜系统', def:'The group of organelles that work together to build and ship proteins.'},
+];
+const glossGrid = document.getElementById('glossGrid');
+glossary.forEach(g=>{
+  const card = document.createElement('div'); card.className='gloss-card';
+  card.innerHTML = `<div class="gloss-inner"><div class="gloss-face front"><div>${g.term}</div><div class="zh-term">${g.zh}</div></div><div class="gloss-face back">${g.def}</div></div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flip'));
+  glossGrid.appendChild(card);
+});
+
+document.querySelectorAll('.term').forEach(t=> t.addEventListener('click', ()=> alert(t.dataset.def)));
+</script>
+</body>
+</html>
