@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IGCSE Biology 9201/1 — Paper 1 Interactive Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#132A4C; --navy-dark:#0B1C33; --lime:#B7D33D; --lime-dark:#8FAA22;
+  --teal:#1F7A8C; --teal-dark:#145A68; --teal-light:#E4F1F3;
+  --cream:#F6F4EE; --paper:#FFFFFF; --line:#E1E6E5;
+  --ink:#1D2733; --ink-soft:#5B6774;
+  --green:#2E9E5B; --green-light:#E8F7EC;
+  --red:#D64545; --red-light:#FDEAEA;
+  --amber:#C98A1E; --amber-light:#FBF1DE;
+  --purple:#5B3E96; --purple-light:#F0EAFA;
+  --r-lg:20px; --r-md:12px; --r-sm:7px;
+  --shadow:0 8px 26px rgba(19,42,76,.10);
+}
+*{box-sizing:border-box;}
+body{margin:0; background:var(--cream); color:var(--ink); font-family:'Inter',system-ui,sans-serif; line-height:1.6;}
+h1,h2,h3,h4,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+img{max-width:100%; display:block;}
+
+/* ===== header ===== */
+.exam-header{
+  background:linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+  color:#fff; padding:34px 24px 28px;
+  position:relative; overflow:hidden;
+}
+.exam-header::after{
+  content:''; position:absolute; right:-60px; top:-60px; width:260px; height:260px; border-radius:50%;
+  background:radial-gradient(circle, rgba(183,211,61,.16), transparent 70%);
+}
+.exam-header-inner{max-width:900px; margin:0 auto; position:relative; z-index:2;}
+.exam-tag{
+  display:inline-flex; align-items:center; gap:8px; background:var(--lime); color:var(--navy-dark);
+  font-family:'Poppins'; font-weight:800; font-size:12px; letter-spacing:.5px; text-transform:uppercase;
+  padding:6px 14px; border-radius:100px; margin-bottom:14px;
+}
+.exam-header h1{font-size:clamp(26px,4vw,38px); font-weight:800; margin:0 0 8px; line-height:1.15;}
+.exam-header .sub{font-size:15px; color:#C9D6E8; margin-bottom:16px;}
+.exam-meta{display:flex; gap:22px; flex-wrap:wrap; font-size:12.5px; color:#AEC0DA;}
+.exam-meta strong{color:var(--lime); font-weight:700;}
+
+/* ===== sticky scorebar ===== */
+.scorebar{
+  position:sticky; top:0; z-index:50; background:var(--paper); border-bottom:1px solid var(--line);
+  box-shadow:0 2px 10px rgba(0,0,0,.04);
+}
+.scorebar-inner{
+  max-width:900px; margin:0 auto; padding:10px 24px; display:flex; align-items:center; gap:16px;
+}
+.scorebar-label{font-size:12.5px; color:var(--ink-soft); font-weight:600; white-space:nowrap;}
+.scorebar-track{flex:1; height:7px; background:var(--line); border-radius:100px; overflow:hidden;}
+.scorebar-fill{height:100%; width:0%; background:linear-gradient(90deg,var(--teal),var(--lime)); border-radius:100px; transition:width .3s;}
+.scorebar-count{font-size:12.5px; font-weight:700; color:var(--teal-dark); white-space:nowrap; min-width:64px; text-align:right;}
+.scorebar-jump{
+  background:var(--navy); color:#fff; border:none; font-family:'Poppins'; font-weight:700; font-size:12px;
+  padding:8px 16px; border-radius:100px; cursor:pointer; white-space:nowrap; transition:.2s;
+}
+.scorebar-jump:hover{background:var(--teal-dark);}
+
+/* ===== layout ===== */
+.container{max-width:900px; margin:0 auto; padding:28px 20px 100px;}
+.intro-note{
+  background:var(--teal-light); border:1px solid #CFE6E9; border-radius:var(--r-md); padding:16px 18px;
+  font-size:13.5px; color:var(--teal-dark); margin-bottom:26px; display:flex; gap:10px; align-items:flex-start;
+}
+.intro-note svg{flex:0 0 auto; width:18px; height:18px; margin-top:1px;}
+
+/* ===== question card ===== */
+.qcard{
+  background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow);
+  margin-bottom:26px; overflow:hidden; scroll-margin-top:70px;
+}
+.qcard-head{
+  display:flex; align-items:center; gap:14px; padding:18px 24px; border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg, #FBFAF7, #F6F4EE);
+}
+.qnum-badge{
+  flex:0 0 auto; width:40px; height:40px; border-radius:12px; background:var(--navy); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-family:'Poppins'; font-weight:800; font-size:16px;
+}
+.qcard-head-text{flex:1;}
+.qcard-head-text h2{font-size:16.5px; font-weight:700; margin:0 0 2px; color:var(--navy-dark);}
+.qcard-head-text .qmarks{font-size:12px; color:var(--ink-soft); font-weight:600;}
+.qcard-body{padding:22px 24px 8px;}
+.qstem{font-size:14.5px; color:var(--ink); margin:0 0 16px;}
+
+/* figure box */
+.figure-box{
+  background:#FCFBF8; border:1px solid var(--line); border-radius:var(--r-md); padding:16px; margin:0 0 20px;
+  text-align:center;
+}
+.figure-box svg, .figure-box img{max-width:100%; height:auto; margin:0 auto;}
+.figure-cap{font-size:12px; font-weight:700; color:var(--ink-soft); margin-top:8px; letter-spacing:.3px;}
+.figure-cap .num{color:var(--teal-dark);}
+.photo-credit{font-size:10.5px; color:#9AA5AF; margin-top:4px; font-style:italic;}
+
+/* subpart */
+.subpart{border-top:1px dashed var(--line); padding:18px 0;}
+.subpart:first-child{border-top:none;}
+.subpart-head{display:flex; align-items:baseline; gap:10px; margin-bottom:10px; flex-wrap:wrap;}
+.subpart-tag{
+  font-family:'Poppins'; font-weight:800; font-size:12.5px; color:#fff; background:var(--teal);
+  padding:3px 10px; border-radius:6px; letter-spacing:.3px;
+}
+.subpart-marks{font-size:11.5px; color:var(--ink-soft); font-weight:600;}
+.subpart-prompt{font-size:14px; color:var(--ink); margin:0 0 10px;}
+.subpart-prompt .field-label{font-weight:700; color:var(--teal-dark); font-size:12.5px; display:block; margin:8px 0 4px;}
+
+/* inputs */
+.txt-input, .num-input, textarea{
+  width:100%; border:1.5px solid var(--line); border-radius:var(--r-sm); padding:10px 12px; font-size:14px;
+  font-family:'Inter'; color:var(--ink); background:#fff; transition:border-color .15s;
+}
+.txt-input:focus, .num-input:focus, textarea:focus{outline:none; border-color:var(--teal);}
+textarea{resize:vertical; min-height:64px;}
+.num-input{max-width:140px; display:inline-block;}
+.inline-row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+.inline-row .num-input{width:100px;}
+
+.radio-group{display:flex; flex-direction:column; gap:8px;}
+.radio-opt{
+  display:flex; align-items:center; gap:10px; padding:10px 14px; border:1.5px solid var(--line);
+  border-radius:var(--r-sm); cursor:pointer; transition:.15s; font-size:13.8px; background:#fff;
+}
+.radio-opt:hover{border-color:var(--teal);}
+.radio-opt input{accent-color:var(--teal); width:16px; height:16px; flex:0 0 auto;}
+.radio-opt.chosen{border-color:var(--teal); background:var(--teal-light);}
+
+.table-grid{width:100%; border-collapse:collapse; font-size:13px; margin-top:6px;}
+.table-grid th, .table-grid td{border:1px solid var(--line); padding:9px 10px; text-align:center;}
+.table-grid th{background:#F3F1EA; font-family:'Poppins'; font-size:11.5px; color:var(--navy-dark);}
+.table-grid td.rowlabel{text-align:left; font-weight:600; font-size:12.5px;}
+.table-grid input[type=radio]{accent-color:var(--teal); width:16px; height:16px;}
+
+/* reveal */
+.reveal{
+  display:none; margin-top:12px; padding:12px 14px; border-radius:var(--r-sm); font-size:13px;
+  border-left:4px solid var(--teal); background:var(--teal-light);
+}
+.reveal.show{display:block;}
+.reveal.full{border-color:var(--green); background:var(--green-light);}
+.reveal.partial{border-color:var(--amber); background:var(--amber-light);}
+.reveal.none{border-color:var(--red); background:var(--red-light);}
+.reveal-badge{display:inline-flex; align-items:center; gap:6px; font-family:'Poppins'; font-weight:800; font-size:12px; margin-bottom:6px;}
+.reveal.full .reveal-badge{color:var(--green);}
+.reveal.partial .reveal-badge{color:var(--amber);}
+.reveal.none .reveal-badge{color:var(--red);}
+.reveal-scheme{color:var(--ink-soft); font-size:12.8px; line-height:1.55;}
+.reveal-scheme strong{color:var(--ink);}
+
+/* submit / results */
+.submit-panel{
+  text-align:center; padding:30px 20px; background:var(--paper); border:1px solid var(--line);
+  border-radius:var(--r-lg); box-shadow:var(--shadow); margin-bottom:40px;
+}
+.submit-panel p{font-size:13.5px; color:var(--ink-soft); margin:0 0 16px;}
+.btn-mark{
+  background:var(--lime); color:var(--navy-dark); border:none; font-family:'Poppins'; font-weight:800; font-size:16px;
+  padding:15px 36px; border-radius:100px; cursor:pointer; box-shadow:0 10px 24px rgba(183,211,61,.4); transition:.2s;
+}
+.btn-mark:hover{transform:translateY(-2px); box-shadow:0 14px 28px rgba(183,211,61,.5);}
+.btn-reset{
+  background:transparent; border:1.5px solid var(--line); color:var(--ink-soft); font-family:'Poppins'; font-weight:700;
+  font-size:13px; padding:9px 18px; border-radius:100px; cursor:pointer; margin-top:14px; transition:.2s;
+}
+.btn-reset:hover{border-color:var(--red); color:var(--red);}
+
+.results-panel{
+  display:none; background:linear-gradient(135deg,var(--navy),var(--navy-dark)); color:#fff;
+  border-radius:var(--r-lg); padding:30px 26px; margin-bottom:34px; box-shadow:var(--shadow); text-align:center;
+}
+.results-panel.show{display:block;}
+.results-score{font-family:'Poppins'; font-weight:800; font-size:52px; margin:6px 0 2px;}
+.results-score span{font-size:22px; color:#AEC0DA; font-weight:600;}
+.results-pct{font-family:'Poppins'; font-weight:700; font-size:18px; color:var(--lime); margin-bottom:4px;}
+.results-grade{font-size:13.5px; color:#C9D6E8; margin-bottom:20px;}
+.results-bars{display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-top:10px;}
+.results-bar-wrap{width:64px; text-align:center;}
+.results-bar-track{height:70px; width:16px; margin:0 auto; background:rgba(255,255,255,.14); border-radius:100px; display:flex; align-items:flex-end; overflow:hidden;}
+.results-bar-fill{width:100%; background:var(--lime); border-radius:100px; transition:height .5s;}
+.results-bar-label{font-size:10.5px; color:#AEC0DA; margin-top:5px;}
+.results-bar-val{font-size:10px; color:#fff; font-weight:700;}
+
+.hint-chip{
+  display:inline-block; font-size:11px; color:var(--ink-soft); background:#F0EEE7; border-radius:100px;
+  padding:3px 10px; margin-left:6px; font-weight:600;
+}
+footer.credit{text-align:center; font-size:11.5px; color:#9AA5AF; padding:20px 0 40px;}
+</style>
+</head>
+<body>
+
+<div class="exam-header">
+  <div class="exam-header-inner">
+    <span class="exam-tag">Oxford International AQA Examinations</span>
+    <h1>International GCSE Biology — Paper 1</h1>
+    <div class="sub">9201/1 · Specimen material · Interactive self-marking practice paper</div>
+    <div class="exam-meta">
+      <span><strong>90</strong> marks total</span>
+      <span><strong>9</strong> questions</span>
+      <span>Answer every part, then mark your own paper instantly</span>
+    </div>
+  </div>
+</div>
+
+<div class="scorebar">
+  <div class="scorebar-inner">
+    <span class="scorebar-label">Marks entered</span>
+    <div class="scorebar-track"><div class="scorebar-fill" id="progressFill"></div></div>
+    <span class="scorebar-count" id="progressCount">0 / 90 attempted</span>
+    <button class="scorebar-jump" onclick="document.getElementById('submitPanel').scrollIntoView({behavior:'smooth'})">Mark my paper</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="intro-note">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+    <div>Work through the paper as you would in the exam. Short-answer and extended questions are marked automatically against the official mark scheme's key points — the exact wording you need appears next to your answer once you submit, so you can see precisely what earned (or missed) credit.</div>
+  </div>
+
+  <div id="resultsPanel" class="results-panel">
+    <div style="font-family:'Poppins'; font-weight:700; font-size:13px; letter-spacing:1px; text-transform:uppercase; color:#AEC0DA;">Your result</div>
+    <div class="results-score" id="resultsScore">0 <span>/ 90</span></div>
+    <div class="results-pct" id="resultsPct">0%</div>
+    <div class="results-grade" id="resultsGrade">—</div>
+    <div class="results-bars" id="resultsBars"></div>
+  </div>
+
+  <!-- ================= QUESTION 1 ================= -->
+  <div class="qcard" id="q1card">
+    <div class="qcard-head">
+      <div class="qnum-badge">1</div>
+      <div class="qcard-head-text">
+        <h2>Cells</h2>
+        <div class="qmarks">10 marks</div>
+      </div>
+    </div>
+    <div class="qcard-body">
+      <p class="qstem"><strong>Figure 1</strong> shows two cells, a bacterial cell and a plant cell.</p>
+
+      <div class="figure-box">
+        <svg viewBox="0 0 640 330" xmlns="http://www.w3.org/2000/svg">
+          <!-- Bacterial cell -->
+          <rect x="30" y="20" width="210" height="250" rx="55" fill="#FCEFE0" stroke="#8B5E34" stroke-width="3"/>
+          <text x="135" y="14" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="13" fill="#0B1C33">Bacterial cell</text>
+          <!-- nucleoid squiggle -->
+          <path d="M95 90 C70 100,70 120,95 130 C120 140,120 160,95 170 C70 180,70 200,95 210 C115 218,150 210,150 190 C150 170,120 165,130 145 C140 125,165 130,160 105 C155 85,110 80,95 90 Z" fill="none" stroke="#B3874F" stroke-width="2.5" opacity=".8"/>
+          <!-- ribosome dots -->
+          <g fill="#5B3A22">
+            <circle cx="60" cy="45" r="2.4"/><circle cx="75" cy="55" r="2.4"/><circle cx="200" cy="48" r="2.4"/><circle cx="185" cy="60" r="2.4"/>
+            <circle cx="55" cy="80" r="2.4"/><circle cx="210" cy="80" r="2.4"/><circle cx="65" cy="110" r="2.4"/><circle cx="205" cy="115" r="2.4"/>
+            <circle cx="50" cy="140" r="2.4"/><circle cx="215" cy="145" r="2.4"/><circle cx="60" cy="175" r="2.4"/><circle cx="200" cy="180" r="2.4"/>
+            <circle cx="70" cy="205" r="2.4"/><circle cx="190" cy="210" r="2.4"/><circle cx="90" cy="225" r="2.4"/><circle cx="170" cy="230" r="2.4"/>
+            <circle cx="120" cy="240" r="2.4"/><circle cx="150" cy="235" r="2.4"/><circle cx="45" cy="105" r="2.4"/><circle cx="225" cy="105" r="2.4"/>
+            <circle cx="80" cy="40" r="2.4"/><circle cx="165" cy="42" r="2.4"/><circle cx="40" cy="170" r="2.4"/><circle cx="225" cy="170" r="2.4"/>
+          </g>
+          <line x1="80" y1="55" x2="40" y2="35" stroke="#333" stroke-width="1"/>
+          <text x="10" y="30" font-family="Inter" font-size="11.5" fill="#1D2733">Ribosomes</text>
+          <!-- length bracket -->
+          <line x1="255" y1="20" x2="255" y2="270" stroke="#1D2733" stroke-width="1.4"/>
+          <line x1="249" y1="20" x2="261" y2="20" stroke="#1D2733" stroke-width="1.4"/>
+          <line x1="249" y1="270" x2="261" y2="270" stroke="#1D2733" stroke-width="1.4"/>
+          <text x="266" y="140" font-family="Inter" font-size="11.5" fill="#1D2733">Length =</text>
+          <text x="266" y="154" font-family="Inter" font-size="11.5" fill="#1D2733">2 micro-</text>
+          <text x="266" y="168" font-family="Inter" font-size="11.5" fill="#1D2733">metres</text>
+          <text x="135" y="300" text-anchor="middle" font-family="Inter" font-size="12" fill="#5B6774">Magnification &#215;50 000</text>
+
+          <!-- Plant cell -->
+          <rect x="360" y="20" width="250" height="250" rx="34" fill="#EAF4E4" stroke="#3F8F5C" stroke-width="4"/>
+          <text x="485" y="14" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="13" fill="#0B1C33">Plant cell</text>
+          <!-- vacuole -->
+          <ellipse cx="500" cy="150" rx="72" ry="88" fill="#FBFDF9" stroke="#BFE0C7" stroke-width="1.5"/>
+          <!-- nucleus -->
+          <circle cx="415" cy="95" r="22" fill="#4E8F4A" opacity=".85"/>
+          <circle cx="410" cy="90" r="4.5" fill="#22471F"/>
+          <circle cx="422" cy="100" r="3.5" fill="#22471F"/>
+          <!-- mitochondria (dot-filled ellipses) -->
+          <g>
+            <ellipse cx="400" cy="150" rx="14" ry="8" fill="#D98A3D" stroke="#8B4E12" stroke-width="1.2"/>
+            <ellipse cx="392" cy="200" rx="13" ry="8" fill="#D98A3D" stroke="#8B4E12" stroke-width="1.2" transform="rotate(30 392 200)"/>
+            <ellipse cx="430" cy="230" rx="13" ry="7.5" fill="#D98A3D" stroke="#8B4E12" stroke-width="1.2" transform="rotate(-10 430 230)"/>
+            <ellipse cx="575" cy="100" rx="13" ry="7.5" fill="#D98A3D" stroke="#8B4E12" stroke-width="1.2" transform="rotate(20 575 100)"/>
+            <ellipse cx="585" cy="150" rx="13" ry="7.5" fill="#D98A3D" stroke="#8B4E12" stroke-width="1.2"/>
+            <ellipse cx="570" cy="205" rx="13" ry="7.5" fill="#D98A3D" stroke="#8B4E12" stroke-width="1.2" transform="rotate(-25 570 205)"/>
+            <ellipse cx="480" cy="245" rx="12" ry="7" fill="#D98A3D" stroke="#8B4E12" stroke-width="1.2"/>
+          </g>
+          <line x1="392" y1="200" x2="345" y2="205" stroke="#333" stroke-width="1"/>
+          <text x="270" y="210" font-family="Inter" font-size="11.5" fill="#1D2733">Mitochondrion</text>
+          <!-- ribosome dots on plant cell membrane -->
+          <g fill="#2F5D31">
+            <circle cx="375" cy="60" r="2"/><circle cx="500" cy="42" r="2"/><circle cx="595" cy="60" r="2"/>
+            <circle cx="380" cy="255" r="2"/><circle cx="500" cy="262" r="2"/><circle cx="595" cy="250" r="2"/>
+          </g>
+          <line x1="500" y1="42" x2="530" y2="14" stroke="#333" stroke-width="1"/>
+          <text x="500" y="10" text-anchor="middle" font-family="Inter" font-size="11.5" fill="#1D2733">Ribosomes</text>
+          <!-- X bracket -->
+          <line x1="625" y1="20" x2="625" y2="270" stroke="#1D2733" stroke-width="1.4"/>
+          <line x1="619" y1="20" x2="631" y2="20" stroke="#1D2733" stroke-width="1.4"/>
+          <line x1="619" y1="270" x2="631" y2="270" stroke="#1D2733" stroke-width="1.4"/>
+          <text x="622" y="150" font-family="Poppins" font-weight="700" font-size="13" fill="#1D2733">X</text>
+          <text x="485" y="300" text-anchor="middle" font-family="Inter" font-size="12" fill="#5B6774">Magnification &#215;500</text>
+        </svg>
+        <div class="figure-cap"><span class="num">Figure 1</span> — a bacterial cell and a plant cell, drawn the same length but at different magnifications</div>
+      </div>
+
+      <div class="subpart" id="p1_1">
+        <div class="subpart-head"><span class="subpart-tag">01.1</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">Both the bacterial cell and the plant cell contain ribosomes. What is the function of a ribosome?</p>
+        <input type="text" class="txt-input" id="ans1_1" placeholder="Your answer…">
+        <div class="reveal" id="rev1_1"></div>
+      </div>
+
+      <div class="subpart" id="p1_2">
+        <div class="subpart-head"><span class="subpart-tag">01.2</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">The plant cell contains mitochondria but the bacterial cell does not. Give <strong>one</strong> other way in which the plant cell is different from the bacterial cell.</p>
+        <input type="text" class="txt-input" id="ans1_2" placeholder="Your answer…">
+        <div class="reveal" id="rev1_2"></div>
+      </div>
+
+      <div class="subpart" id="p1_3">
+        <div class="subpart-head"><span class="subpart-tag">01.3</span><span class="subpart-marks">2 marks</span></div>
+        <p class="subpart-prompt">Both cells are drawn the same length, but the magnification of each cell is different. The real length of the bacterial cell is 2 micrometres. Calculate the real length, <strong>X</strong>, of the plant cell. Give your answer in micrometres.</p>
+        <span class="field-label">Show your working (optional, not marked)</span>
+        <textarea id="working1_3" placeholder="e.g. 2 × 50 000 ÷ 500 = …" style="min-height:44px;"></textarea>
+        <span class="field-label">X =</span>
+        <div class="inline-row"><input type="number" class="num-input" id="ans1_3" placeholder="?"> <span>micrometres</span></div>
+        <div class="reveal" id="rev1_3"></div>
+      </div>
+
+      <div class="subpart" id="p1_4">
+        <div class="subpart-head"><span class="subpart-tag">01.4</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">Most mitochondria are about 3 micrometres in length. Use your answer to 01.3 and the diagram to suggest why the plant cell contains mitochondria but the bacterial cell does not.</p>
+        <input type="text" class="txt-input" id="ans1_4" placeholder="Your answer…">
+        <div class="reveal" id="rev1_4"></div>
+      </div>
+
+      <div class="subpart" id="p1_5">
+        <div class="subpart-head"><span class="subpart-tag">01.5</span><span class="subpart-marks">4 marks</span></div>
+        <p class="subpart-prompt">Cells can be specialised for a particular job. <strong>Figure 2</strong> shows the structure of a human sperm cell. Describe how the long tail and the mitochondria help the sperm to do its job.</p>
+        <div class="figure-box">
+          <svg viewBox="0 0 420 190" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="90" cy="95" rx="34" ry="22" fill="#E9E4D8" stroke="#6B6154" stroke-width="2.2"/>
+            <g stroke="#B96A2C" stroke-width="2.6" fill="none">
+              <path d="M118 82 q10 -6 18 -2"/><path d="M120 90 q11 -3 20 0"/><path d="M120 98 q11 1 20 5"/><path d="M118 106 q10 6 17 10"/>
+            </g>
+            <path d="M140 95 C210 60, 260 150, 320 95 C355 60, 380 130, 400 100" fill="none" stroke="#6B6154" stroke-width="3"/>
+            <line x1="130" y1="75" x2="150" y2="35" stroke="#333" stroke-width="1"/>
+            <text x="105" y="30" font-family="Inter" font-size="12" fill="#1D2733">Mitochondria</text>
+            <line x1="260" y1="110" x2="290" y2="140" stroke="#333" stroke-width="1"/>
+            <text x="255" y="158" font-family="Inter" font-size="12" fill="#1D2733">Long tail</text>
+          </svg>
+          <div class="figure-cap"><span class="num">Figure 2</span> — structure of a human sperm cell</div>
+        </div>
+        <span class="field-label">Long tail</span>
+        <textarea id="ans1_5_tail" placeholder="Describe how the long tail helps the sperm…"></textarea>
+        <span class="field-label">Mitochondria</span>
+        <textarea id="ans1_5_mito" placeholder="Describe how the mitochondria help the sperm…"></textarea>
+        <div class="reveal" id="rev1_5"></div>
+      </div>
+
+      <div class="subpart" id="p1_6">
+        <div class="subpart-head"><span class="subpart-tag">01.6</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">The nucleus of the sperm cell is different from the nucleus of body cells. Give <strong>one</strong> way in which the nucleus is different.</p>
+        <input type="text" class="txt-input" id="ans1_6" placeholder="Your answer…">
+        <div class="reveal" id="rev1_6"></div>
+      </div>
+
+    </div>
+  </div>
+  <!-- ================= QUESTION 2 ================= -->
+  <div class="qcard" id="q2card">
+    <div class="qcard-head">
+      <div class="qnum-badge">2</div>
+      <div class="qcard-head-text"><h2>Desert food chain &amp; energy flow</h2><div class="qmarks">10 marks</div></div>
+    </div>
+    <div class="qcard-body">
+      <p class="qstem">Scientists investigated a food chain in a desert: <strong>Plant &rarr; Reptile &rarr; Bird</strong></p>
+
+      <div class="subpart" id="p2_1">
+        <div class="subpart-head"><span class="subpart-tag">02.1</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">The reptiles gain energy transferred from the:</p>
+        <div class="radio-group" data-radio="q2_1">
+          <label class="radio-opt"><input type="radio" name="q2_1" value="air"><span>air</span></label>
+          <label class="radio-opt"><input type="radio" name="q2_1" value="birds"><span>food molecules in birds</span></label>
+          <label class="radio-opt"><input type="radio" name="q2_1" value="plants"><span>food molecules in plants</span></label>
+        </div>
+        <div class="reveal" id="rev2_1"></div>
+      </div>
+
+      <div class="subpart" id="p2_2">
+        <div class="subpart-head"><span class="subpart-tag">02.2</span><span class="subpart-marks">2 marks</span></div>
+        <p class="subpart-prompt"><strong>Table 1</strong> shows the data the scientists collected. Complete the table by calculating the total biomass of birds and of reptiles.</p>
+        <table class="table-grid">
+          <thead><tr><th>Organism</th><th>Estimated number</th><th>Biomass of one organism (kg)</th><th>Total biomass (kg)</th></tr></thead>
+          <tbody>
+            <tr><td class="rowlabel">Plant</td><td>40 000</td><td>0.0006</td><td>24.0</td></tr>
+            <tr><td class="rowlabel">Bird</td><td>2</td><td>1.0</td><td><input type="number" class="num-input" id="ans2_2_bird" style="width:80px" placeholder="?"></td></tr>
+            <tr><td class="rowlabel">Reptile</td><td>200</td><td>0.04</td><td><input type="number" class="num-input" id="ans2_2_rep" style="width:80px" placeholder="?"></td></tr>
+          </tbody>
+        </table>
+        <div class="reveal" id="rev2_2"></div>
+      </div>
+
+      <div class="subpart" id="p2_3">
+        <div class="subpart-head"><span class="subpart-tag">02.3</span><span class="subpart-marks">3 marks</span></div>
+        <p class="subpart-prompt">Use the data from Table 1 to build a pyramid of biomass for the food chain. Assign each organism to its layer, and enter each layer's total biomass (kg) — the pyramid will draw itself to scale.</p>
+        <div class="inline-row" style="margin-bottom:8px;">
+          <span class="field-label" style="margin:0;">Top layer:</span>
+          <select id="pyr_top_name" class="txt-input" style="width:auto;"><option value="">choose…</option><option>Plant</option><option>Reptile</option><option>Bird</option></select>
+          <input type="number" class="num-input" id="pyr_top_val" placeholder="kg">
+        </div>
+        <div class="inline-row" style="margin-bottom:8px;">
+          <span class="field-label" style="margin:0;">Middle layer:</span>
+          <select id="pyr_mid_name" class="txt-input" style="width:auto;"><option value="">choose…</option><option>Plant</option><option>Reptile</option><option>Bird</option></select>
+          <input type="number" class="num-input" id="pyr_mid_val" placeholder="kg">
+        </div>
+        <div class="inline-row" style="margin-bottom:14px;">
+          <span class="field-label" style="margin:0;">Bottom layer:</span>
+          <select id="pyr_bot_name" class="txt-input" style="width:auto;"><option value="">choose…</option><option>Plant</option><option>Reptile</option><option>Bird</option></select>
+          <input type="number" class="num-input" id="pyr_bot_val" placeholder="kg">
+        </div>
+        <button class="btn-reset" style="border-color:var(--teal); color:var(--teal-dark); margin-top:0;" onclick="drawPyramid()">Draw my pyramid &darr;</button>
+        <div class="figure-box" style="margin-top:14px;">
+          <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" id="pyramidSvg">
+            <!-- gridlines every 2kg from center (x=200), scale 8px/kg: offsets 16,32,48,...,144 -->
+            <g stroke="#E1E6E5" stroke-width="1">
+              <line x1="56" y1="20" x2="56" y2="210"/><line x1="72" y1="20" x2="72" y2="210"/><line x1="88" y1="20" x2="88" y2="210"/><line x1="104" y1="20" x2="104" y2="210"/>
+              <line x1="120" y1="20" x2="120" y2="210"/><line x1="136" y1="20" x2="136" y2="210"/><line x1="152" y1="20" x2="152" y2="210"/><line x1="168" y1="20" x2="168" y2="210"/><line x1="184" y1="20" x2="184" y2="210"/>
+              <line x1="216" y1="20" x2="216" y2="210"/><line x1="232" y1="20" x2="232" y2="210"/><line x1="248" y1="20" x2="248" y2="210"/><line x1="264" y1="20" x2="264" y2="210"/>
+              <line x1="280" y1="20" x2="280" y2="210"/><line x1="296" y1="20" x2="296" y2="210"/><line x1="312" y1="20" x2="312" y2="210"/><line x1="328" y1="20" x2="328" y2="210"/><line x1="344" y1="20" x2="344" y2="210"/>
+            </g>
+            <line x1="200" y1="20" x2="200" y2="210" stroke="#8A94A0" stroke-width="1.4"/>
+            <line x1="56" y1="210" x2="344" y2="210" stroke="#8A94A0" stroke-width="1.4"/>
+            <g font-family="Inter" font-size="8.5" fill="#8A94A0" text-anchor="middle">
+              <text x="56" y="222">18</text><text x="72" y="222">16</text><text x="88" y="222">14</text><text x="104" y="222">12</text><text x="120" y="222">10</text>
+              <text x="136" y="222">8</text><text x="152" y="222">6</text><text x="168" y="222">4</text><text x="184" y="222">2</text><text x="200" y="222">0</text>
+              <text x="216" y="222">2</text><text x="232" y="222">4</text><text x="248" y="222">6</text><text x="264" y="222">8</text><text x="280" y="222">10</text>
+              <text x="296" y="222">12</text><text x="312" y="222">14</text><text x="328" y="222">16</text><text x="344" y="222">18</text>
+            </g>
+            <text x="200" y="238" text-anchor="middle" font-family="Inter" font-size="10.5" fill="#5B6774">Total biomass for desert area in kg</text>
+            <!-- bars, drawn by JS: top, middle, bottom. scale = 8 px per kg, centred on x=200 -->
+            <rect id="pyrBarTop" x="200" y="40" width="0" height="42" fill="#8FAAD6" stroke="#3F5E8C" stroke-width="1.3"/>
+            <text id="pyrLabelTop" x="200" y="65" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="11" fill="#0B1C33"></text>
+            <rect id="pyrBarMid" x="200" y="90" width="0" height="42" fill="#9BD0A8" stroke="#3F8F5C" stroke-width="1.3"/>
+            <text id="pyrLabelMid" x="200" y="115" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="11" fill="#0B1C33"></text>
+            <rect id="pyrBarBot" x="200" y="140" width="0" height="42" fill="#D9C77E" stroke="#8FAA22" stroke-width="1.3"/>
+            <text id="pyrLabelBot" x="200" y="165" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="11" fill="#0B1C33"></text>
+          </svg>
+          <div class="figure-cap"><span class="num">Figure 3</span> — blank grid for a pyramid of biomass (bars appear once you click "Draw my pyramid")</div>
+        </div>
+        <div class="reveal" id="rev2_3"></div>
+      </div>
+
+      <div class="subpart" id="p2_4">
+        <div class="subpart-head"><span class="subpart-tag">02.4</span><span class="subpart-marks">2 marks</span></div>
+        <p class="subpart-prompt">Give <strong>two</strong> reasons why the total biomass of the bird is less than the total biomass of the reptile.</p>
+        <textarea id="ans2_4" placeholder="1. …&#10;2. …"></textarea>
+        <div class="reveal" id="rev2_4"></div>
+      </div>
+
+      <div class="subpart" id="p2_5">
+        <div class="subpart-head"><span class="subpart-tag">02.5</span><span class="subpart-marks">2 marks</span></div>
+        <p class="subpart-prompt">Suggest <strong>two</strong> reasons why the scientists could not find the exact number of organisms in the desert area.</p>
+        <textarea id="ans2_5" placeholder="1. …&#10;2. …"></textarea>
+        <div class="reveal" id="rev2_5"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= QUESTION 3 ================= -->
+  <div class="qcard" id="q3card">
+    <div class="qcard-head">
+      <div class="qnum-badge">3</div>
+      <div class="qcard-head-text"><h2>Stomata &amp; transpiration</h2><div class="qmarks">10 marks</div></div>
+    </div>
+    <div class="qcard-body">
+      <p class="qstem">The leaves of most plants have stomata.</p>
+
+      <div class="subpart" id="p3_1">
+        <div class="subpart-head"><span class="subpart-tag">03.1</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">Which of the following control the size of the stomata?</p>
+        <div class="radio-group" data-radio="q3_1">
+          <label class="radio-opt"><input type="radio" name="q3_1" value="epidermal"><span>Epidermal cells</span></label>
+          <label class="radio-opt"><input type="radio" name="q3_1" value="guard"><span>Guard cells</span></label>
+          <label class="radio-opt"><input type="radio" name="q3_1" value="palisade"><span>Palisade cells</span></label>
+        </div>
+        <div class="reveal" id="rev3_1"></div>
+      </div>
+
+      <div class="subpart" id="p3_2">
+        <div class="subpart-head"><span class="subpart-tag">03.2</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">State <strong>one</strong> function of stomata.</p>
+        <input type="text" class="txt-input" id="ans3_2" placeholder="Your answer…">
+        <div class="reveal" id="rev3_2"></div>
+      </div>
+
+      <div class="subpart" id="p3_3">
+        <div class="subpart-head"><span class="subpart-tag">03.3</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">Water loss by evaporation from leaves is part of the transpiration stream. A student set up an experiment: took two leaves A and B from a plant, put Vaseline (grease) on both sides of Leaf B and did nothing to Leaf A, weighed each leaf, hung both on a string, left them for 48 hours, then re-weighed and calculated the % change in mass of each.</p>
+        <div class="figure-box">
+          <svg viewBox="0 0 380 200" xmlns="http://www.w3.org/2000/svg">
+            <line x1="20" y1="30" x2="360" y2="30" stroke="#6B6154" stroke-width="2"/>
+            <g transform="translate(110,30)">
+              <path d="M0 0 C-30 20,-38 60,-18 95 C-4 118,22 118,34 95 C50 62,40 20,0 0 Z" fill="#8CC08A" stroke="#3F8F5C" stroke-width="2"/>
+              <path d="M8 4 C5 40,10 80,16 100" fill="none" stroke="#3F8F5C" stroke-width="1.6"/>
+              <path d="M8 25 C0 30,-6 34,-12 38 M8 25 C18 30,24 34,28 38" fill="none" stroke="#3F8F5C" stroke-width="1"/>
+              <path d="M9 50 C0 56,-8 60,-15 65 M9 50 C20 56,26 60,32 65" fill="none" stroke="#3F8F5C" stroke-width="1"/>
+              <path d="M11 75 C3 80,-4 84,-10 88 M11 75 C21 80,26 84,31 88" fill="none" stroke="#3F8F5C" stroke-width="1"/>
+              <circle cx="8" cy="0" r="4" fill="none" stroke="#6B6154" stroke-width="1.6"/>
+            </g>
+            <g transform="translate(260,30)">
+              <path d="M0 0 C-30 20,-38 60,-18 95 C-4 118,22 118,34 95 C50 62,40 20,0 0 Z" fill="#B9D6B0" stroke="#3F8F5C" stroke-width="2"/>
+              <path d="M0 0 C-30 20,-38 60,-18 95 C-4 118,22 118,34 95 C50 62,40 20,0 0 Z" fill="#ffffff" opacity=".35"/>
+              <path d="M8 4 C5 40,10 80,16 100" fill="none" stroke="#3F8F5C" stroke-width="1.6" opacity=".6"/>
+              <circle cx="8" cy="0" r="4" fill="none" stroke="#6B6154" stroke-width="1.6"/>
+              <g opacity=".55" stroke="#ffffff" stroke-width="2">
+                <line x1="-15" y1="20" x2="30" y2="15"/><line x1="-18" y1="45" x2="35" y2="42"/><line x1="-16" y1="70" x2="32" y2="68"/><line x1="-8" y1="95" x2="20" y2="98"/>
+              </g>
+            </g>
+            <text x="118" y="170" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="12" fill="#1D2733">Leaf A</text>
+            <text x="118" y="184" text-anchor="middle" font-family="Inter" font-size="10.5" fill="#5B6774">(no treatment)</text>
+            <text x="268" y="170" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="12" fill="#1D2733">Leaf B</text>
+            <text x="268" y="184" text-anchor="middle" font-family="Inter" font-size="10.5" fill="#5B6774">(both surfaces covered in Vaseline)</text>
+          </svg>
+          <div class="figure-cap"><span class="num">Figure 4</span> — Leaf A and Leaf B hung from a string for the transpiration investigation</div>
+        </div>
+        <p class="subpart-prompt">Give <strong>one</strong> variable that the student controlled in this investigation.</p>
+        <input type="text" class="txt-input" id="ans3_3" placeholder="Your answer…">
+        <div class="reveal" id="rev3_3"></div>
+      </div>
+
+      <div class="subpart" id="p3_4">
+        <div class="subpart-head"><span class="subpart-tag">03.4</span><span class="subpart-marks">2 marks</span></div>
+        <p class="subpart-prompt">The mass of Leaf A was 1.60 g at the start. After 48 hours it was 1.28 g. Calculate the percentage (%) decrease in mass over 48 hours.</p>
+        <div class="inline-row"><span>% decrease =</span><input type="number" class="num-input" id="ans3_4" placeholder="?"><span>%</span></div>
+        <div class="reveal" id="rev3_4"></div>
+      </div>
+
+      <div class="subpart" id="p3_5">
+        <div class="subpart-head"><span class="subpart-tag">03.5</span><span class="subpart-marks">2 marks</span></div>
+        <p class="subpart-prompt">The percentage change in mass of Leaf B was less than Leaf A after 48 hours. Explain why.</p>
+        <textarea id="ans3_5" placeholder="Your answer…"></textarea>
+        <div class="reveal" id="rev3_5"></div>
+      </div>
+
+      <div class="subpart" id="p3_6">
+        <div class="subpart-head"><span class="subpart-tag">03.6</span><span class="subpart-marks">3 marks</span></div>
+        <p class="subpart-prompt">Give <strong>three</strong> environmental conditions that would increase water loss.</p>
+        <textarea id="ans3_6" placeholder="1. …&#10;2. …&#10;3. …"></textarea>
+        <div class="reveal" id="rev3_6"></div>
+      </div>
+
+    </div>
+  </div>
+  <!-- ================= QUESTION 4 ================= -->
+  <div class="qcard" id="q4card">
+    <div class="qcard-head">
+      <div class="qnum-badge">4</div>
+      <div class="qcard-head-text"><h2>Movement into and out of cells</h2><div class="qmarks">10 marks</div></div>
+    </div>
+    <div class="qcard-body">
+      <p class="qstem"><strong>Figure 5</strong> shows four ways in which molecules may move into and out of a cell. The grey clouds show the concentration of molecules outside the cell. The cell is respiring aerobically.</p>
+
+      <div class="figure-box">
+        <svg viewBox="0 0 380 340" xmlns="http://www.w3.org/2000/svg">
+          <rect x="90" y="90" width="200" height="160" rx="36" fill="#EAF4E4" stroke="#3F8F5C" stroke-width="3"/>
+          <circle cx="190" cy="170" r="26" fill="#2C2C2C"/>
+          <!-- A: top-left, dense cloud, arrow INTO cell -->
+          <circle cx="55" cy="60" r="30" fill="#8FAAD6" opacity=".35"/>
+          <g fill="#3F5E8C"><circle cx="45" cy="50" r="2.6"/><circle cx="58" cy="45" r="2.6"/><circle cx="65" cy="60" r="2.6"/><circle cx="50" cy="68" r="2.6"/><circle cx="65" cy="72" r="2.6"/><circle cx="40" cy="65" r="2.6"/></g>
+          <line x1="70" y1="75" x2="105" y2="105" stroke="#1D2733" stroke-width="2.4" marker-end="url(#arrowhead)"/>
+          <text x="30" y="25" font-family="Poppins" font-weight="800" font-size="15" fill="#1D2733">A</text>
+          <!-- B: top-right, sparse cloud, arrow OUT of cell -->
+          <circle cx="325" cy="60" r="26" fill="#D6A98F" opacity=".3"/>
+          <g fill="#8C5E3F"><circle cx="318" cy="55" r="2.4"/><circle cx="332" cy="58" r="2.4"/><circle cx="322" cy="68" r="2.4"/></g>
+          <line x1="275" y1="105" x2="310" y2="75" stroke="#1D2733" stroke-width="2.4" marker-end="url(#arrowhead)"/>
+          <text x="345" y="25" font-family="Poppins" font-weight="800" font-size="15" fill="#1D2733">B</text>
+          <!-- C: bottom-left, sparse cloud, arrow INTO cell (against gradient) -->
+          <circle cx="55" cy="285" r="26" fill="#8FAAD6" opacity=".2"/>
+          <g fill="#3F5E8C"><circle cx="50" cy="280" r="2.2"/><circle cx="62" cy="288" r="2.2"/></g>
+          <line x1="70" y1="270" x2="105" y2="240" stroke="#1D2733" stroke-width="2.4" marker-end="url(#arrowhead)"/>
+          <text x="28" y="320" font-family="Poppins" font-weight="800" font-size="15" fill="#1D2733">C</text>
+          <!-- D: bottom-right, dense cloud, arrow OUT of cell -->
+          <circle cx="325" cy="285" r="30" fill="#D6A98F" opacity=".35"/>
+          <g fill="#8C5E3F"><circle cx="315" cy="278" r="2.6"/><circle cx="330" cy="275" r="2.6"/><circle cx="335" cy="290" r="2.6"/><circle cx="318" cy="295" r="2.6"/><circle cx="332" cy="300" r="2.6"/></g>
+          <line x1="275" y1="240" x2="310" y2="270" stroke="#1D2733" stroke-width="2.4" marker-end="url(#arrowhead)"/>
+          <text x="345" y="320" font-family="Poppins" font-weight="800" font-size="15" fill="#1D2733">D</text>
+          <defs><marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1D2733"/></marker></defs>
+        </svg>
+        <div class="figure-cap"><span class="num">Figure 5</span> — four possible movements of molecules across the cell membrane (cloud shading shows relative concentration outside)</div>
+      </div>
+
+      <div class="subpart" id="p4_1">
+        <div class="subpart-head"><span class="subpart-tag">04.1</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">Which arrow, A, B, C or D, represents movement of oxygen molecules?</p>
+        <div class="radio-group" data-radio="q4_1">
+          <label class="radio-opt"><input type="radio" name="q4_1" value="A"><span>A</span></label>
+          <label class="radio-opt"><input type="radio" name="q4_1" value="B"><span>B</span></label>
+          <label class="radio-opt"><input type="radio" name="q4_1" value="C"><span>C</span></label>
+          <label class="radio-opt"><input type="radio" name="q4_1" value="D"><span>D</span></label>
+        </div>
+        <div class="reveal" id="rev4_1"></div>
+      </div>
+
+      <div class="subpart" id="p4_2">
+        <div class="subpart-head"><span class="subpart-tag">04.2</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">Name the process by which the oxygen moves.</p>
+        <input type="text" class="txt-input" id="ans4_2" placeholder="Your answer…">
+        <div class="reveal" id="rev4_2"></div>
+      </div>
+
+      <div class="subpart" id="p4_3">
+        <div class="subpart-head"><span class="subpart-tag">04.3</span><span class="subpart-marks">2 marks</span></div>
+        <p class="subpart-prompt">Which arrow, A, B, C or D, represents the active transport of sugar molecules by the cell? Explain the reason for your answer.</p>
+        <div class="radio-group" data-radio="q4_3">
+          <label class="radio-opt"><input type="radio" name="q4_3" value="A"><span>A</span></label>
+          <label class="radio-opt"><input type="radio" name="q4_3" value="B"><span>B</span></label>
+          <label class="radio-opt"><input type="radio" name="q4_3" value="C"><span>C</span></label>
+          <label class="radio-opt"><input type="radio" name="q4_3" value="D"><span>D</span></label>
+        </div>
+        <span class="field-label">Explanation</span>
+        <input type="text" class="txt-input" id="ans4_3_exp" placeholder="Your answer…">
+        <div class="reveal" id="rev4_3"></div>
+      </div>
+
+      <div class="subpart" id="p4_4">
+        <div class="subpart-head"><span class="subpart-tag">04.4</span><span class="subpart-marks">6 marks</span></div>
+        <p class="subpart-prompt"><strong>Figure 6</strong> shows a plant cell after one hour in distilled water, and after one hour in strong sugar solution. Explain in detail, using specialist terms, what has happened to the plant cell after an hour in each liquid, and why.</p>
+        <div class="figure-box">
+          <svg viewBox="0 0 380 220" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="10" width="150" height="90" rx="18" fill="#EAF4E4" stroke="#3F8F5C" stroke-width="3"/>
+            <ellipse cx="95" cy="55" rx="62" ry="34" fill="#FBFDF9" stroke="#3F8F5C" stroke-width="2.4"/>
+            <circle cx="45" cy="65" r="9" fill="#2C2C2C"/>
+            <text x="185" y="45" font-family="Inter" font-size="11" fill="#1D2733">After 1 hour in</text>
+            <text x="185" y="60" font-family="Inter" font-size="11" fill="#1D2733">distilled water</text>
+            <text x="185" y="75" font-family="Inter" font-size="10" fill="#5B6774">(turgid)</text>
+
+            <rect x="20" y="120" width="150" height="90" rx="18" fill="none" stroke="#3F8F5C" stroke-width="3"/>
+            <path d="M45 135 C30 150,32 175,50 190 C65 200,110 200,125 188 C142 175,140 150,122 137 C105 128,62 127,45 135 Z" fill="#D9C77E" stroke="#8FAA22" stroke-width="2.2"/>
+            <ellipse cx="83" cy="163" rx="26" ry="16" fill="#FBFDF9" stroke="#8FAA22" stroke-width="1.6"/>
+            <circle cx="58" cy="150" r="7" fill="#2C2C2C"/>
+            <text x="185" y="150" font-family="Inter" font-size="11" fill="#1D2733">After 1 hour in</text>
+            <text x="185" y="165" font-family="Inter" font-size="11" fill="#1D2733">strong sugar solution</text>
+            <text x="185" y="180" font-family="Inter" font-size="10" fill="#5B6774">(plasmolysed)</text>
+          </svg>
+          <div class="figure-cap"><span class="num">Figure 6</span> — a plant cell after one hour in distilled water, and after one hour in strong sugar solution</div>
+        </div>
+        <textarea id="ans4_4" style="min-height:120px;" placeholder="Explain what happens in each liquid, and why (use terms like osmosis, hypotonic/hypertonic, partially permeable membrane, turgid, plasmolysed)…"></textarea>
+        <div class="reveal" id="rev4_4"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= QUESTION 5 ================= -->
+  <div class="qcard" id="q5card">
+    <div class="qcard-head">
+      <div class="qnum-badge">5</div>
+      <div class="qcard-head-text"><h2>Excretion &amp; the kidney</h2><div class="qmarks">10 marks</div></div>
+    </div>
+    <div class="qcard-body">
+      <p class="qstem"><strong>Figure 7</strong> shows some of the organs of the human body.</p>
+      <div class="figure-box">
+        <svg viewBox="0 0 380 320" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="190" cy="30" r="22" fill="#F1DCC0" stroke="#8B5E34" stroke-width="2"/>
+          <path d="M150 55 C120 60,100 90,95 140 L95 260 C95 275,105 285,120 285 L260 285 C275 285,285 275,285 260 L285 140 C280 90,260 60,230 55 Z" fill="#F6E9D4" stroke="#8B5E34" stroke-width="2.4"/>
+          <path d="M95 100 L55 170 L60 200" fill="none" stroke="#8B5E34" stroke-width="10" stroke-linecap="round"/>
+          <path d="M285 100 L325 170 L320 200" fill="none" stroke="#8B5E34" stroke-width="10" stroke-linecap="round"/>
+          <!-- lungs -->
+          <ellipse cx="160" cy="110" rx="24" ry="38" fill="#E7A9A0" stroke="#B5564B" stroke-width="1.8"/>
+          <ellipse cx="222" cy="110" rx="24" ry="38" fill="#E7A9A0" stroke="#B5564B" stroke-width="1.8"/>
+          <!-- heart -->
+          <path d="M190 110 C180 98,160 100,160 118 C160 132,190 150,190 150 C190 150,220 132,220 118 C220 100,200 98,190 110 Z" fill="#C6423A" stroke="#7A241E" stroke-width="1.6"/>
+          <!-- liver -->
+          <path d="M140 150 C120 148,108 160,110 178 C112 195,140 200,160 195 L165 155 Z" fill="#8B4A3A" stroke="#5C2E22" stroke-width="1.6"/>
+          <!-- kidneys -->
+          <path d="M148 205 a12 16 0 1 0 0.1 0 Z" fill="#7A3B45" stroke="#4E1F27" stroke-width="1.4" transform="translate(0,0)"/>
+          <ellipse cx="150" cy="212" rx="11" ry="15" fill="#7A3B45" stroke="#4E1F27" stroke-width="1.4"/>
+          <ellipse cx="232" cy="212" rx="11" ry="15" fill="#7A3B45" stroke="#4E1F27" stroke-width="1.4"/>
+          <!-- large intestine -->
+          <path d="M130 230 C130 250,250 250,250 230 C250 260,130 260,130 245 C130 258,235 258,235 240" fill="none" stroke="#C99A4A" stroke-width="9" stroke-linecap="round"/>
+          <!-- bladder -->
+          <ellipse cx="190" cy="270" rx="16" ry="13" fill="#E8C94A" stroke="#A88A1E" stroke-width="1.6"/>
+
+          <!-- leader lines + labels : left side -->
+          <line x1="150" y1="105" x2="90" y2="90" stroke="#333" stroke-width="1"/><text x="12" y="94" font-family="Inter" font-size="12" fill="#1D2733">Lung</text>
+          <line x1="118" y1="170" x2="60" y2="165" stroke="#333" stroke-width="1"/><text x="10" y="169" font-family="Inter" font-size="12" fill="#1D2733">Liver</text>
+          <!-- right side -->
+          <line x1="240" y1="60" x2="320" y2="45" stroke="#333" stroke-width="1"/><text x="322" y="49" font-family="Inter" font-size="12" fill="#1D2733">Skin</text>
+          <line x1="205" y1="118" x2="320" y2="110" stroke="#333" stroke-width="1"/><text x="322" y="114" font-family="Inter" font-size="12" fill="#1D2733">Heart</text>
+          <line x1="243" y1="212" x2="320" y2="180" stroke="#333" stroke-width="1"/><text x="322" y="184" font-family="Inter" font-size="12" fill="#1D2733">Kidney</text>
+          <line x1="245" y1="240" x2="320" y2="225" stroke="#333" stroke-width="1"/><text x="322" y="229" font-family="Inter" font-size="11" fill="#1D2733">Large intestine</text>
+          <line x1="204" y1="272" x2="320" y2="270" stroke="#333" stroke-width="1"/><text x="322" y="274" font-family="Inter" font-size="12" fill="#1D2733">Bladder</text>
+        </svg>
+        <div class="figure-cap"><span class="num">Figure 7</span> — some of the organs of the human body</div>
+      </div>
+
+      <div class="subpart" id="p5_1">
+        <div class="subpart-head"><span class="subpart-tag">05.1</span><span class="subpart-marks">2 marks</span></div>
+        <p class="subpart-prompt">Which organ labelled on the diagram:</p>
+        <div class="inline-row" style="margin-bottom:8px;"><span style="width:130px; display:inline-block;">stores urine</span><input type="text" class="txt-input" id="ans5_1_a" style="max-width:180px;"></div>
+        <div class="inline-row"><span style="width:130px; display:inline-block;">produces urea</span><input type="text" class="txt-input" id="ans5_1_b" style="max-width:180px;"></div>
+        <div class="reveal" id="rev5_1"></div>
+      </div>
+
+      <div class="subpart" id="p5_2">
+        <div class="subpart-head"><span class="subpart-tag">05.2</span><span class="subpart-marks">2 marks</span></div>
+        <p class="subpart-prompt"><strong>Table 2</strong> shows the composition of a urine sample: Ions 1.4%, Urea 1.9%, Water ?%. Calculate the percentage of water in this sample.</p>
+        <div class="inline-row"><span>Percentage of water =</span><input type="number" class="num-input" id="ans5_2" placeholder="?"><span>%</span></div>
+        <div class="reveal" id="rev5_2"></div>
+      </div>
+
+      <div class="subpart" id="p5_3">
+        <div class="subpart-head"><span class="subpart-tag">05.3</span><span class="subpart-marks">2 marks</span></div>
+        <p class="subpart-prompt"><strong>Table 3</strong> (g per dm&sup3;): Glucose — plasma 1.0, filtrate 1.0, urine 0.0. Explain why: (a) the concentration of glucose in the filtrate is the same as in the blood plasma; (b) there is no glucose present in the urine.</p>
+        <span class="field-label">(a) same in filtrate as plasma</span>
+        <input type="text" class="txt-input" id="ans5_3_a" placeholder="Your answer…">
+        <span class="field-label">(b) no glucose in urine</span>
+        <input type="text" class="txt-input" id="ans5_3_b" placeholder="Your answer…">
+        <div class="reveal" id="rev5_3"></div>
+      </div>
+
+      <div class="subpart" id="p5_4">
+        <div class="subpart-head"><span class="subpart-tag">05.4</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">Suggest why there is no protein present in either the filtrate or the urine (blood plasma protein = 80.0 g/dm&sup3;).</p>
+        <input type="text" class="txt-input" id="ans5_4" placeholder="Your answer…">
+        <div class="reveal" id="rev5_4"></div>
+      </div>
+
+      <div class="subpart" id="p5_5">
+        <div class="subpart-head"><span class="subpart-tag">05.5</span><span class="subpart-marks">3 marks</span></div>
+        <p class="subpart-prompt">The volume of water removed in the urine is variable. Explain how the human body reduces the volume of urine produced when less water is consumed.</p>
+        <textarea id="ans5_5" placeholder="Your answer…"></textarea>
+        <div class="reveal" id="rev5_5"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= QUESTION 6 ================= -->
+  <div class="qcard" id="q6card">
+    <div class="qcard-head">
+      <div class="qnum-badge">6</div>
+      <div class="qcard-head-text"><h2>Hormones &amp; blood glucose control</h2><div class="qmarks">10 marks</div></div>
+    </div>
+    <div class="qcard-body">
+      <p class="qstem">Information is passed to target organs in the body by hormones.</p>
+
+      <div class="subpart" id="p6_1">
+        <div class="subpart-head"><span class="subpart-tag">06.1</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">How do hormones travel around the body?</p>
+        <input type="text" class="txt-input" id="ans6_1" placeholder="Your answer…">
+        <div class="reveal" id="rev6_1"></div>
+      </div>
+
+      <div class="subpart" id="p6_2">
+        <div class="subpart-head"><span class="subpart-tag">06.2</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">What name is given to the organs that secrete hormones?</p>
+        <input type="text" class="txt-input" id="ans6_2" placeholder="Your answer…">
+        <div class="reveal" id="rev6_2"></div>
+      </div>
+
+      <div class="subpart" id="p6_3">
+        <div class="subpart-head"><span class="subpart-tag">06.3</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">In people with diabetes, blood glucose concentrations are sometimes abnormal. Name the organ that monitors the concentration of glucose in the blood.</p>
+        <input type="text" class="txt-input" id="ans6_3" placeholder="Your answer…">
+        <div class="reveal" id="rev6_3"></div>
+      </div>
+
+      <div class="figure-box">
+        <svg viewBox="0 0 420 260" xmlns="http://www.w3.org/2000/svg">
+          <g stroke="#E1E6E5" stroke-width="1">
+            <line x1="60" y1="30" x2="60" y2="210"/><line x1="60" y1="30" x2="400" y2="30"/>
+          </g>
+          <g font-family="Inter" font-size="10" fill="#8A94A0" text-anchor="end">
+            <text x="55" y="34">10</text><text x="55" y="52">9</text><text x="55" y="70">8</text><text x="55" y="88">7</text><text x="55" y="106">6</text>
+            <text x="55" y="124">5</text><text x="55" y="142">4</text><text x="55" y="160">3</text><text x="55" y="178">2</text><text x="55" y="196">1</text><text x="55" y="212">0</text>
+          </g>
+          <text x="30" y="120" font-family="Inter" font-size="10" fill="#5B6774" transform="rotate(-90 30 120)" text-anchor="middle">Blood glucose (mmol/dm&#179;)</text>
+          <!-- before meals: best 5.5, range 4.0-7.2 -->
+          <line x1="150" y1="88" x2="150" y2="141" stroke="#1F7A8C" stroke-width="2" marker-end="url(#ah2)" marker-start="url(#ah2)"/>
+          <line x1="110" y1="122" x2="190" y2="122" stroke="#1D2733" stroke-width="2.4"/>
+          <text x="150" y="228" text-anchor="middle" font-family="Inter" font-size="10.5" fill="#1D2733">Before meals</text>
+          <!-- 2 hrs after: best 7.0, range 4.0-9.7 -->
+          <line x1="230" y1="44" x2="230" y2="141" stroke="#1F7A8C" stroke-width="2" marker-end="url(#ah2)" marker-start="url(#ah2)"/>
+          <line x1="190" y1="88" x2="270" y2="88" stroke="#1D2733" stroke-width="2.4"/>
+          <text x="230" y="228" text-anchor="middle" font-family="Inter" font-size="10.5" fill="#1D2733">2 hrs after meals</text>
+          <!-- before bed: best 8.3, range 6.7-9.7 -->
+          <line x1="330" y1="44" x2="330" y2="83" stroke="#1F7A8C" stroke-width="2" marker-end="url(#ah2)" marker-start="url(#ah2)"/>
+          <line x1="290" y1="63" x2="370" y2="63" stroke="#1D2733" stroke-width="2.4"/>
+          <text x="330" y="228" text-anchor="middle" font-family="Inter" font-size="10.5" fill="#1D2733">Before bed</text>
+          <defs><marker id="ah2" markerWidth="7" markerHeight="7" refX="3.5" refY="6" orient="auto"><path d="M0,6 L3.5,0 L7,6 Z" fill="#1F7A8C"/></marker></defs>
+          <text x="330" y="245" text-anchor="middle" font-family="Inter" font-size="9.5" fill="#8A94A0">&#8212; best concentration &#160; &#8597; acceptable range</text>
+        </svg>
+        <div class="figure-cap"><span class="num">Figure 8</span> — best blood glucose concentration and acceptable range at different times of day</div>
+      </div>
+
+      <div class="subpart" id="p6_4">
+        <div class="subpart-head"><span class="subpart-tag">06.4</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">What is the acceptable range for the blood glucose concentration <strong>before meals</strong>?</p>
+        <div class="inline-row"><span>From</span><input type="number" class="num-input" id="ans6_4_lo" placeholder="?"><span>to</span><input type="number" class="num-input" id="ans6_4_hi" placeholder="?"><span>mmol per dm&sup3;</span></div>
+        <div class="reveal" id="rev6_4"></div>
+      </div>
+
+      <div class="figure-box">
+        <svg viewBox="0 0 420 220" xmlns="http://www.w3.org/2000/svg">
+          <rect x="150" y="70" width="120" height="90" fill="#DDEBEF" stroke="#1F7A8C" stroke-width="2.4"/>
+          <text x="210" y="120" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="12" fill="#0B1C33">Blood glucose</text>
+          <!-- B pipe main source -->
+          <path d="M120 20 L120 60 L150 80" fill="none" stroke="#1D2733" stroke-width="3" marker-end="url(#ah3)"/>
+          <text x="70" y="18" font-family="Poppins" font-weight="700" font-size="12" fill="#1D2733">B</text>
+          <text x="8" y="35" font-family="Inter" font-size="9.5" fill="#1D2733">Main source of</text>
+          <text x="8" y="47" font-family="Inter" font-size="9.5" fill="#1D2733">blood glucose</text>
+          <!-- C pipe protein breakdown -->
+          <path d="M330 20 L330 55 L275 82" fill="none" stroke="#1D2733" stroke-width="3" marker-end="url(#ah3)"/>
+          <text x="335" y="18" font-family="Poppins" font-weight="700" font-size="12" fill="#1D2733">C</text>
+          <text x="290" y="14" font-family="Inter" font-size="9.5" fill="#1D2733">From protein</text>
+          <text x="290" y="26" font-family="Inter" font-size="9.5" fill="#1D2733">breakdown</text>
+          <!-- A pipe excess to storage -->
+          <path d="M150 95 L95 95 L60 65" fill="none" stroke="#1D2733" stroke-width="3" marker-end="url(#ah3)"/>
+          <text x="105" y="88" font-family="Poppins" font-weight="700" font-size="12" fill="#1D2733">A</text>
+          <text x="8" y="70" font-family="Inter" font-size="9" fill="#1D2733">Excess glucose &#8594;</text>
+          <text x="8" y="82" font-family="Inter" font-size="9" fill="#1D2733">another storage compound</text>
+          <!-- D reservoir tank -->
+          <rect x="275" y="120" width="55" height="50" fill="#F0EAD8" stroke="#8FAA22" stroke-width="2"/>
+          <line x1="270" y1="130" x2="275" y2="130" stroke="#1D2733" stroke-width="3"/>
+          <text x="333" y="150" font-family="Poppins" font-weight="700" font-size="12" fill="#1D2733">D</text>
+          <text x="278" y="188" font-family="Inter" font-size="9.5" fill="#1D2733">Reservoir tank</text>
+          <!-- E outflow tissues -->
+          <path d="M210 160 L210 200" fill="none" stroke="#1D2733" stroke-width="3" marker-end="url(#ah3)"/>
+          <text x="216" y="180" font-family="Poppins" font-weight="700" font-size="12" fill="#1D2733">E</text>
+          <text x="175" y="215" font-family="Inter" font-size="9.5" fill="#1D2733">Used in the tissues</text>
+          <defs><marker id="ah3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1D2733"/></marker></defs>
+        </svg>
+        <div class="figure-cap"><span class="num">Figure 9</span> — a model for the control of blood glucose (blood glucose shown as a tank of fluid)</div>
+      </div>
+
+      <div class="subpart" id="p6_5">
+        <div class="subpart-head"><span class="subpart-tag">06.5</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">What is the "main source of blood glucose" entering through <strong>B</strong>?</p>
+        <input type="text" class="txt-input" id="ans6_5" placeholder="Your answer…">
+        <div class="reveal" id="rev6_5"></div>
+      </div>
+
+      <div class="subpart" id="p6_6">
+        <div class="subpart-head"><span class="subpart-tag">06.6</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">Name the carbohydrate stored in reservoir <strong>D</strong>.</p>
+        <input type="text" class="txt-input" id="ans6_6" placeholder="Your answer…">
+        <div class="reveal" id="rev6_6"></div>
+      </div>
+
+      <div class="subpart" id="p6_7">
+        <div class="subpart-head"><span class="subpart-tag">06.7</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">Name the storage compound into which glucose is converted at <strong>A</strong>.</p>
+        <input type="text" class="txt-input" id="ans6_7" placeholder="Your answer…">
+        <div class="reveal" id="rev6_7"></div>
+      </div>
+
+      <div class="subpart" id="p6_8">
+        <div class="subpart-head"><span class="subpart-tag">06.8</span><span class="subpart-marks">3 marks</span></div>
+        <p class="subpart-prompt">Insulin and glucagon are both involved in regulating blood sugar concentration. For each effect, tick whether it is caused by insulin or glucagon.</p>
+        <table class="table-grid">
+          <thead><tr><th style="text-align:left;">Effect</th><th>Insulin</th><th>Glucagon</th></tr></thead>
+          <tbody>
+            <tr><td class="rowlabel">Reduces the amount of storage carbohydrate in reservoir D</td>
+              <td><input type="radio" name="q6_8_r1" value="Insulin"></td><td><input type="radio" name="q6_8_r1" value="Glucagon"></td></tr>
+            <tr><td class="rowlabel">Promotes the loss of blood glucose through A if reservoir D is full</td>
+              <td><input type="radio" name="q6_8_r2" value="Insulin"></td><td><input type="radio" name="q6_8_r2" value="Glucagon"></td></tr>
+            <tr><td class="rowlabel">Increases the rate that glucose is transferred into cells at E</td>
+              <td><input type="radio" name="q6_8_r3" value="Insulin"></td><td><input type="radio" name="q6_8_r3" value="Glucagon"></td></tr>
+          </tbody>
+        </table>
+        <div class="reveal" id="rev6_8"></div>
+      </div>
+
+    </div>
+  </div>
+  <!-- ================= QUESTION 7 ================= -->
+  <div class="qcard" id="q7card">
+    <div class="qcard-head">
+      <div class="qnum-badge">7</div>
+      <div class="qcard-head-text"><h2>Thermoregulation</h2><div class="qmarks">10 marks</div></div>
+    </div>
+    <div class="qcard-body">
+      <p class="qstem">The brain and the skin are involved in monitoring and controlling body temperature.</p>
+
+      <div class="subpart" id="p7_1">
+        <div class="subpart-head"><span class="subpart-tag">07.1</span><span class="subpart-marks">2 marks</span></div>
+        <p class="subpart-prompt">Describe the part played by <strong>the brain</strong> in monitoring body temperature.</p>
+        <textarea id="ans7_1" placeholder="Your answer…"></textarea>
+        <div class="reveal" id="rev7_1"></div>
+      </div>
+
+      <div class="subpart" id="p7_2">
+        <div class="subpart-head"><span class="subpart-tag">07.2</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">Describe the part played by <strong>the skin</strong> in monitoring body temperature.</p>
+        <input type="text" class="txt-input" id="ans7_2" placeholder="Your answer…">
+        <div class="reveal" id="rev7_2"></div>
+      </div>
+
+      <div class="subpart" id="p7_3">
+        <div class="subpart-head"><span class="subpart-tag">07.3</span><span class="subpart-marks">3 marks</span></div>
+        <p class="subpart-prompt">An athlete can run a marathon in 2 hours 15 minutes on a dry day in outside temperatures up to 35&deg;C without overheating. In humid conditions, the same athlete overheats if the temperature goes over just 18&deg;C. Suggest an explanation for the athlete overheating in humid conditions.</p>
+        <textarea id="ans7_3" placeholder="Your answer…"></textarea>
+        <div class="reveal" id="rev7_3"></div>
+      </div>
+
+      <div class="subpart" id="p7_4">
+        <div class="subpart-head"><span class="subpart-tag">07.4</span><span class="subpart-marks">2 marks</span></div>
+        <p class="subpart-prompt">The athlete's skin feels hotter after the marathon than before. Describe what happened to the blood circulation in his skin to cause this change.</p>
+        <textarea id="ans7_4" placeholder="Your answer…"></textarea>
+        <div class="reveal" id="rev7_4"></div>
+      </div>
+
+      <div class="subpart" id="p7_5">
+        <div class="subpart-head"><span class="subpart-tag">07.5</span><span class="subpart-marks">2 marks</span></div>
+        <p class="subpart-prompt">After the race the athlete has a cold shower, which makes him shiver. Shivering helps to stop the core body temperature falling too quickly. Explain how.</p>
+        <textarea id="ans7_5" placeholder="Your answer…"></textarea>
+        <div class="reveal" id="rev7_5"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= QUESTION 8 ================= -->
+  <div class="qcard" id="q8card">
+    <div class="qcard-head">
+      <div class="qnum-badge">8</div>
+      <div class="qcard-head-text"><h2>Immunity &amp; vaccination</h2><div class="qmarks">10 marks</div></div>
+    </div>
+    <div class="qcard-body">
+
+      <div class="subpart" id="p8_1">
+        <div class="subpart-head"><span class="subpart-tag">08.1</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">Which structure is found in a white blood cell but is not found in a red blood cell?</p>
+        <div class="radio-group" data-radio="q8_1">
+          <label class="radio-opt"><input type="radio" name="q8_1" value="plasmid"><span>plasmid</span></label>
+          <label class="radio-opt"><input type="radio" name="q8_1" value="nucleus"><span>nucleus</span></label>
+          <label class="radio-opt"><input type="radio" name="q8_1" value="cellmembrane"><span>cell membrane</span></label>
+          <label class="radio-opt"><input type="radio" name="q8_1" value="cytoplasm"><span>cytoplasm</span></label>
+        </div>
+        <div class="reveal" id="rev8_1"></div>
+      </div>
+
+      <div class="subpart" id="p8_2">
+        <div class="subpart-head"><span class="subpart-tag">08.2</span><span class="subpart-marks">2 marks</span></div>
+        <p class="subpart-prompt">One way white blood cells protect us against pathogens is by making antibodies. Give <strong>two</strong> other ways that white blood cells protect us against pathogens.</p>
+        <textarea id="ans8_2" placeholder="1. …&#10;2. …"></textarea>
+        <div class="reveal" id="rev8_2"></div>
+      </div>
+
+      <div class="subpart" id="p8_3">
+        <div class="subpart-head"><span class="subpart-tag">08.3</span><span class="subpart-marks">2 marks</span></div>
+        <p class="subpart-prompt">Measles is a disease caused by a virus. State what is injected in a measles vaccine.</p>
+        <textarea id="ans8_3" placeholder="Your answer…" style="min-height:50px;"></textarea>
+        <div class="reveal" id="rev8_3"></div>
+      </div>
+
+      <div class="figure-box">
+        <svg viewBox="0 0 380 200" xmlns="http://www.w3.org/2000/svg">
+          <g stroke="#E1E6E5" stroke-width="1"><line x1="40" y1="20" x2="40" y2="160"/><line x1="40" y1="160" x2="360" y2="160"/></g>
+          <path d="M40 155 C60 155,75 150,90 120 C105 90,115 90,125 110 C135 130,145 152,160 155 C185 158,195 156,205 150 C215 40,225 20,240 18 C255 16,265 25,270 40 C275 55,280 60,300 62 C320 64,340 63,355 60"
+            fill="none" stroke="#1F7A8C" stroke-width="2.6"/>
+          <line x1="90" y1="165" x2="90" y2="160" stroke="#1D2733" stroke-width="1.6"/>
+          <path d="M85 175 l5 -12 l5 12 Z" fill="#1D2733"/>
+          <text x="90" y="188" text-anchor="middle" font-family="Inter" font-size="10" fill="#1D2733">Vaccination</text>
+          <line x1="240" y1="165" x2="240" y2="160" stroke="#1D2733" stroke-width="1.6"/>
+          <path d="M235 175 l5 -12 l5 12 Z" fill="#1D2733"/>
+          <text x="240" y="188" text-anchor="middle" font-family="Inter" font-size="10" fill="#1D2733">Infection</text>
+          <text x="10" y="90" font-family="Inter" font-size="9.5" fill="#5B6774" transform="rotate(-90 10 90)" text-anchor="middle">Number of measles antibodies</text>
+          <text x="360" y="60" font-family="Inter" font-size="9" fill="#8A94A0" text-anchor="end">Time &#8594;</text>
+        </svg>
+        <div class="figure-cap"><span class="num">Figure 10</span> — number of measles antibodies in the blood, from before vaccination until after a later infection</div>
+      </div>
+
+      <div class="subpart" id="p8_4">
+        <div class="subpart-head"><span class="subpart-tag">08.4</span><span class="subpart-marks">3 marks</span></div>
+        <p class="subpart-prompt">A person catches measles after being vaccinated. More measles antibodies are produced after the infection than after the vaccination. Describe <strong>other</strong> differences in antibody production after infection compared with after vaccination.</p>
+        <textarea id="ans8_4" placeholder="Your answer…"></textarea>
+        <div class="reveal" id="rev8_4"></div>
+      </div>
+
+      <div class="subpart" id="p8_5">
+        <div class="subpart-head"><span class="subpart-tag">08.5</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">Suggest why the vaccination against the measles virus will not protect the person against the rubella virus.</p>
+        <input type="text" class="txt-input" id="ans8_5" placeholder="Your answer…">
+        <div class="reveal" id="rev8_5"></div>
+      </div>
+
+      <div class="subpart" id="p8_6">
+        <div class="subpart-head"><span class="subpart-tag">08.6</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">State the advantage of vaccinating a large proportion of the population against measles.</p>
+        <input type="text" class="txt-input" id="ans8_6" placeholder="Your answer…">
+        <div class="reveal" id="rev8_6"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= QUESTION 9 ================= -->
+  <div class="qcard" id="q9card">
+    <div class="qcard-head">
+      <div class="qnum-badge">9</div>
+      <div class="qcard-head-text"><h2>Evolution — the giraffe's neck</h2><div class="qmarks">10 marks</div></div>
+    </div>
+    <div class="qcard-body">
+      <p class="qstem">Giraffes feed on the leaves of trees and other plants in areas of Africa. They are adapted, through evolution, to survive in their environment.</p>
+      <div class="figure-box">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Giraffes%20feeding%20(2917670992).jpg" alt="Two giraffes feeding from the leaves of a tall tree">
+        <div class="figure-cap"><span class="num">Figure 11</span> — giraffes feeding on the leaves of a tree</div>
+        <div class="photo-credit">Photo via Wikimedia Commons</div>
+      </div>
+
+      <div class="subpart" id="p9_1">
+        <div class="subpart-head"><span class="subpart-tag">09.1</span><span class="subpart-marks">1 mark</span></div>
+        <p class="subpart-prompt">Use the information in Figure 11 to give <strong>one</strong> way in which the giraffe is adapted to its environment.</p>
+        <input type="text" class="txt-input" id="ans9_1" placeholder="Your answer…">
+        <div class="reveal" id="rev9_1"></div>
+      </div>
+
+      <div class="subpart" id="p9_2">
+        <div class="subpart-head"><span class="subpart-tag">09.2</span><span class="subpart-marks">3 marks</span></div>
+        <p class="subpart-prompt">Explain how Jean-Baptiste Lamarck (1744&ndash;1829) accounted for the evolution of the long neck in giraffes.</p>
+        <textarea id="ans9_2" placeholder="Your answer…"></textarea>
+        <div class="reveal" id="rev9_2"></div>
+      </div>
+
+      <div class="subpart" id="p9_3">
+        <div class="subpart-head"><span class="subpart-tag">09.3</span><span class="subpart-marks">2 marks</span></div>
+        <p class="subpart-prompt">Another scientist, August Weismann (1834&ndash;1914), wanted to check Lamarck's explanation. He cut off the tails of a number of generations of mice and looked at the offspring. Suggest why his results did not support Lamarck's theory.</p>
+        <textarea id="ans9_3" placeholder="Your answer…"></textarea>
+        <div class="reveal" id="rev9_3"></div>
+      </div>
+
+      <div class="subpart" id="p9_4">
+        <div class="subpart-head"><span class="subpart-tag">09.4</span><span class="subpart-marks">4 marks</span></div>
+        <p class="subpart-prompt">Explain how Charles Darwin (1809&ndash;1882) accounted for the evolution of the long neck in giraffes.</p>
+        <textarea id="ans9_4" placeholder="Your answer…"></textarea>
+        <div class="reveal" id="rev9_4"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="submit-panel" id="submitPanel">
+    <h3 style="margin:0 0 8px; font-size:19px; color:var(--navy-dark);">Finished?</h3>
+    <p>Mark your paper to see your score out of 90, the percentage, and exactly which mark-scheme points each answer earned.</p>
+    <button class="btn-mark" onclick="markPaper()">Mark my paper</button><br>
+    <button class="btn-reset" onclick="resetPaper()">Reset paper</button>
+  </div>
+
+</div>
+
+<footer class="credit">International GCSE Biology 9201/1 &middot; Specimen material &middot; Oxford International AQA Examinations &middot; Interactive revision tool</footer>
+
+<script>
+/* ============================================================
+   IGCSE Biology 9201/1 — interactive marking engine
+   ============================================================ */
+
+function val(id){ var el = document.getElementById(id); return el ? (el.value || '').trim() : ''; }
+function norm(s){ return (s || '').toLowerCase(); }
+function hasAny(text, words){ text = norm(text); return words.some(function(w){ return text.indexOf(w) !== -1; }); }
+function radioVal(name){ var el = document.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : null; }
+function numOf(id){ var v = val(id); if(v === '') return NaN; return parseFloat(v.replace('%','')); }
+function near(a, b, tol){ return !isNaN(a) && Math.abs(a - b) <= tol; }
+
+function reveal(id, earned, max, schemeHtml){
+  var el = document.getElementById(id);
+  if(!el) return earned;
+  el.classList.remove('full','partial','none');
+  var cls = earned >= max ? 'full' : (earned > 0 ? 'partial' : 'none');
+  el.classList.add('show', cls);
+  var label = earned >= max ? 'Full marks' : (earned > 0 ? 'Partial credit' : 'No marks awarded');
+  el.innerHTML = '<div class="reveal-badge">' + label + ' — ' + earned + ' / ' + max + '</div>' +
+                 '<div class="reveal-scheme">' + schemeHtml + '</div>';
+  return earned;
+}
+
+function markMCQ(groupName, correctVal, revealId, max, schemeHtml){
+  var chosen = radioVal(groupName);
+  var earned = (chosen === correctVal) ? max : 0;
+  var labels = document.querySelectorAll('input[name="' + groupName + '"]');
+  labels.forEach(function(inp){
+    var wrap = inp.closest('.radio-opt');
+    if(!wrap) return;
+    if(inp.value === correctVal){ wrap.style.borderColor = '#2E9E5B'; wrap.style.background = '#E8F7EC'; }
+    else if(inp.checked){ wrap.style.borderColor = '#D64545'; wrap.style.background = '#FDEAEA'; }
+  });
+  return reveal(revealId, earned, max, schemeHtml);
+}
+
+/* keyword-category marking: each category is an array of trigger words; text earns 1 mark per matched category (OR-logic within category), capped at cats.length or optional cap */
+function markCategories(text, cats, cap){
+  var earned = 0;
+  cats.forEach(function(c){ if(hasAny(text, c)) earned++; });
+  if(cap !== undefined && earned > cap) earned = cap;
+  return earned;
+}
+
+var totalScore = 0, maxTotal = 90;
+var qSubtotals = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
+var qMax = {1:10,2:10,3:10,4:10,5:10,6:10,7:10,8:10,9:10};
+
+function add(qnum, n){ qSubtotals[qnum] += n; totalScore += n; }
+
+/* ---------------- pyramid drawing (Q2.3) ---------------- */
+function drawPyramid(){
+  var scale = 8; // px per kg
+  function place(nameId, valId, rectId, labelId){
+    var name = val(nameId);
+    var v = numOf(valId);
+    var rect = document.getElementById(rectId);
+    var label = document.getElementById(labelId);
+    if(isNaN(v) || v < 0) v = 0;
+    var half = (v/2) * scale;
+    if(half > 144) half = 144;
+    rect.setAttribute('x', 200 - half);
+    rect.setAttribute('width', half * 2);
+    label.textContent = name ? (name + (v ? ' (' + v + ' kg)' : '')) : '';
+  }
+  place('pyr_top_name','pyr_top_val','pyrBarTop','pyrLabelTop');
+  place('pyr_mid_name','pyr_mid_val','pyrBarMid','pyrLabelMid');
+  place('pyr_bot_name','pyr_bot_val','pyrBarBot','pyrLabelBot');
+}
+
+/* ---------------- progress bar (fields attempted, weighted by marks) ---------------- */
+var PROGRESS_FIELDS = [
+  {ids:['ans1_1'], m:1},{ids:['ans1_2'], m:1},{ids:['ans1_3'], m:2},{ids:['ans1_4'], m:1},
+  {ids:['ans1_5_tail','ans1_5_mito'], m:4},{ids:['ans1_6'], m:1},
+  {radio:'q2_1', m:1},{ids:['ans2_2_bird','ans2_2_rep'], m:2},
+  {ids:['pyr_top_val','pyr_mid_val','pyr_bot_val'], m:3},
+  {ids:['ans2_4'], m:2},{ids:['ans2_5'], m:2},
+  {radio:'q3_1', m:1},{ids:['ans3_2'], m:1},{ids:['ans3_3'], m:1},{ids:['ans3_4'], m:2},{ids:['ans3_5'], m:2},{ids:['ans3_6'], m:3},
+  {radio:'q4_1', m:1},{ids:['ans4_2'], m:1},{radio:'q4_3', m:2},{ids:['ans4_4'], m:6},
+  {ids:['ans5_1_a','ans5_1_b'], m:2},{ids:['ans5_2'], m:2},{ids:['ans5_3_a','ans5_3_b'], m:2},{ids:['ans5_4'], m:1},{ids:['ans5_5'], m:3},
+  {ids:['ans6_1'], m:1},{ids:['ans6_2'], m:1},{ids:['ans6_3'], m:1},{ids:['ans6_4_lo','ans6_4_hi'], m:1},{ids:['ans6_5'], m:1},{ids:['ans6_6'], m:1},{ids:['ans6_7'], m:1},
+  {radio:'q6_8_r1', m:1},{radio:'q6_8_r2', m:1},{radio:'q6_8_r3', m:1},
+  {ids:['ans7_1'], m:2},{ids:['ans7_2'], m:1},{ids:['ans7_3'], m:3},{ids:['ans7_4'], m:2},{ids:['ans7_5'], m:2},
+  {radio:'q8_1', m:1},{ids:['ans8_2'], m:2},{ids:['ans8_3'], m:2},{ids:['ans8_4'], m:3},{ids:['ans8_5'], m:1},{ids:['ans8_6'], m:1},
+  {ids:['ans9_1'], m:1},{ids:['ans9_2'], m:3},{ids:['ans9_3'], m:2},{ids:['ans9_4'], m:4}
+];
+
+function updateProgress(){
+  var attempted = 0;
+  PROGRESS_FIELDS.forEach(function(f){
+    var filled = false;
+    if(f.radio){ filled = !!radioVal(f.radio); }
+    else { filled = f.ids.some(function(id){ return val(id) !== ''; }); }
+    if(filled) attempted += f.m;
+  });
+  document.getElementById('progressFill').style.width = (attempted/90*100) + '%';
+  document.getElementById('progressCount').textContent = attempted + ' / 90 attempted';
+}
+
+document.addEventListener('input', updateProgress);
+document.addEventListener('change', updateProgress);
+document.querySelectorAll('.radio-opt').forEach(function(opt){
+  opt.addEventListener('click', function(){
+    var group = opt.querySelector('input[type=radio]');
+    if(!group) return;
+    document.querySelectorAll('input[name="' + group.name + '"]').forEach(function(r){
+      r.closest('.radio-opt').classList.remove('chosen');
+    });
+    opt.classList.add('chosen');
+  });
+});
+
+/* ============================================================
+   Per-question marking functions
+   ============================================================ */
+
+function markQ1(){
+  var e;
+  e = (hasAny(val('ans1_1'),['make','produc','synthesis','synthesize']) && hasAny(val('ans1_1'),['protein','enzyme'])) ? 1 : 0;
+  reveal('rev1_1', e, 1, 'Makes / produces / synthesises protein (or enzyme).'); add(1,e);
+
+  e = hasAny(val('ans1_2'), ['nucleus','vacuole','chloroplast','chlorophyll','larger','cellulose','cell wall','chromosome','dna','fewer ribosome']) ? 1 : 0;
+  reveal('rev1_2', e, 1, 'Any one: the plant cell has a nucleus / vacuole / chloroplasts / chlorophyll (or correct reference to DNA/chromosomes, a cellulose cell wall, or fewer ribosomes) — or the plant cell is much larger.'); add(1,e);
+
+  var x = numOf('ans1_3');
+  e = near(x, 200, 0.5) ? 2 : 0;
+  reveal('rev1_3', e, 2, '<strong>X = 200 micrometres.</strong> Image length = 2 &times; 50 000 = 100 000 (&micro;m). Actual plant cell length = 100 000 &divide; 500 = 200 &micro;m.'); add(1,e);
+
+  e = hasAny(val('ans1_4'), ['too small','same size','no room','not big enough','not enough room']) ? 1 : 0;
+  reveal('rev1_4', e, 1, 'The bacterial cell is too small — it is about the same size as a single mitochondrion, so there is "no room" for one inside it.'); add(1,e);
+
+  var tailE = markCategories(val('ans1_5_tail'), [['move','swim'], ['egg','female reproductive','oviduct','fallopian']], 2);
+  var mitoE = markCategories(val('ans1_5_mito'), [['energy'], ['respiration']], 2);
+  e = tailE + mitoE;
+  reveal('rev1_5', e, 4, '<strong>Long tail:</strong> moves the sperm / allows it to swim (1) &mdash; towards the egg (1). <strong>Mitochondria:</strong> release energy (1) &mdash; in respiration (1).'); add(1,e);
+
+  e = hasAny(val('ans1_6'), ['half','haploid','23','one set']) ? 1 : 0;
+  reveal('rev1_6', e, 1, 'Contains half the number of chromosomes (one set / haploid — e.g. 23 chromosomes instead of 46).'); add(1,e);
+}
+
+function markQ2(){
+  var e = markMCQ('q2_1', 'plants', 'rev2_1', 1, 'Reptiles gain energy transferred from <strong>food molecules in plants</strong>.'); add(2,e);
+
+  var b = numOf('ans2_2_bird'), r = numOf('ans2_2_rep');
+  var eb = near(b, 2.0, 0.05) ? 1 : 0, er = near(r, 8.0, 0.05) ? 1 : 0;
+  e = eb + er;
+  reveal('rev2_2', e, 2, 'Bird: 2 &times; 1.0 = <strong>2.0 kg</strong>. Reptile: 200 &times; 0.04 = <strong>8.0 kg</strong>.'); add(2,e);
+
+  var topN = norm(val('pyr_top_name')), midN = norm(val('pyr_mid_name')), botN = norm(val('pyr_bot_name'));
+  var topV = numOf('pyr_top_val'), midV = numOf('pyr_mid_val'), botV = numOf('pyr_bot_val');
+  var orderOK = (topN === 'bird' && midN === 'reptile' && botN === 'plant') ? 1 : 0;
+  var plantReptileOK = (near(botV, 24, 1) && near(midV, 8, 0.5)) ? 1 : 0;
+  var birdOK = near(topV, 2, 0.3) ? 1 : 0;
+  e = orderOK + plantReptileOK + birdOK;
+  reveal('rev2_3', e, 3, 'Three layers, decreasing in size going up, labelled in order of the food chain: <strong>Plant (24.0 kg)</strong> at the bottom &rarr; <strong>Reptile (8.0 kg)</strong> in the middle &rarr; <strong>Bird (2.0 kg)</strong> at the top. Each bar is centred on the axis, showing half its width on each side.'); add(2,e);
+
+  e = markCategories(val('ans2_4'), [
+    ['not all the reptiles','not all reptiles','some reptiles not eaten'],
+    ['faeces','not absorbed','waste','excretion','urea','uric acid'],
+    ['respiration','co2','carbon dioxide','energy lost','energy used']
+  ], 2);
+  reveal('rev2_4', e, 2, 'Any two: not all the reptiles are eaten; not all parts of eaten reptiles are absorbed (some pass out as faeces); energy is lost through respiration/CO&#8322; production (a bare reference to waste/excretion is worth 1 mark).'); add(2,e);
+
+  e = markCategories(val('ans2_5'), [
+    ['too many','cannot find all',"can't find all",'hard to count'],
+    ['hiding','under rocks','under shrub','camouflage'],
+    ['move','come and go','migrate','counted twice','counted more than once']
+  ], 2);
+  reveal('rev2_5', e, 2, 'Any two: cannot find/count all the plants (there are too many); reptiles may be hiding under shrubs or rocks; birds/reptiles come and go all the time, so may be counted more than once.'); add(2,e);
+}
+
+function markQ3(){
+  var e = markMCQ('q3_1', 'guard', 'rev3_1', 1, '<strong>Guard cells</strong> control the size (opening and closing) of the stomata.'); add(3,e);
+
+  e = hasAny(val('ans3_2'), ['carbon dioxide','co2','oxygen','gas exchange','gaseous exchange','transpiration','water loss','evaporat']) ? 1 : 0;
+  reveal('rev3_2', e, 1, 'Any one: allow carbon dioxide to enter; allow oxygen to leave (gas exchange); or control the loss of water/transpiration rate.'); add(3,e);
+
+  e = hasAny(val('ans3_3'), ['species','same plant','type of plant','length of time','duration','time period','same time']) ? 1 : 0;
+  reveal('rev3_3', e, 1, 'Any one: the species/type of plant used; the length of time the leaves were left. (Temperature and leaf size are ignored by the mark scheme here.)'); add(3,e);
+
+  var v = numOf('ans3_4');
+  e = near(v, 20, 0.5) ? 2 : 0;
+  reveal('rev3_4', e, 2, '(1.60 &minus; 1.28) &divide; 1.60 &times; 100 = <strong>20 %</strong>.'); add(3,e);
+
+  e = markCategories(val('ans3_5'), [
+    ['most stomata','covered','blocked','grease','vaseline'],
+    ['cannot escape','cannot evaporate','stop','prevent water loss','stops evaporation','no evaporation']
+  ]);
+  reveal('rev3_5', e, 2, 'The lower surface has most of the stomata, and these were covered/blocked by the Vaseline &mdash; so water could not escape/evaporate from the stomata.'); add(3,e);
+
+  e = markCategories(val('ans3_6'), [
+    ['hot','warm','high temperature'],
+    ['dry','low humidity','humidity'],
+    ['wind','windy','air movement']
+  ], 3);
+  reveal('rev3_6', e, 3, 'Any three: hot / high temperature; dry / low humidity; windy conditions.'); add(3,e);
+}
+
+function markQ4(){
+  var e = markMCQ('q4_1', 'A', 'rev4_1', 1, '<strong>Arrow A.</strong> Oxygen is used up in aerobic respiration, so its concentration inside the cell is lower — oxygen diffuses in.'); add(4,e);
+
+  e = hasAny(val('ans4_2'), ['diffus']) ? 1 : 0;
+  reveal('rev4_2', e, 1, '<strong>Diffusion</strong> (do not accept osmosis).'); add(4,e);
+
+  var mcChosen = radioVal('q4_3');
+  var mcE = (mcChosen === 'C') ? 1 : 0;
+  document.querySelectorAll('input[name="q4_3"]').forEach(function(inp){
+    var wrap = inp.closest('.radio-opt');
+    if(!wrap) return;
+    if(inp.value === 'C'){ wrap.style.borderColor = '#2E9E5B'; wrap.style.background = '#E8F7EC'; }
+    else if(inp.checked){ wrap.style.borderColor = '#D64545'; wrap.style.background = '#FDEAEA'; }
+  });
+  var expE = (hasAny(val('ans4_3_exp'), ['against']) && hasAny(val('ans4_3_exp'), ['gradient','concentration'])) ? 1 : 0;
+  add(4, mcE + expE);
+  reveal('rev4_3', mcE + expE, 2, 'Arrow <strong>C</strong> (1 mark) &mdash; it represents movement of molecules against a concentration gradient, i.e. active transport (1 mark).');
+
+  e = markCategories(val('ans4_4'), [
+    ['hypotonic'],
+    ['water entered','water moved in','absorbed water','gained water','took up water','water in'],
+    ['turgid'],
+    ['hypertonic'],
+    ['water left','lost water','moved out','left the cell','water out'],
+    ['plasmolys','shrank','shrunk','pulled away'],
+    ['osmosis'],
+    ['partially permeable','selectively permeable']
+  ], 6);
+  reveal('rev4_4', e, 6, '<strong>Distilled water (hypotonic):</strong> water entered the cell by osmosis, from a dilute (weaker) solution outside to a more concentrated solution inside, through the partially permeable membrane — the cell became <strong>turgid</strong>.<br><strong>Strong sugar solution (hypertonic):</strong> water left the cells by osmosis, from a dilute solution inside to a more concentrated solution outside — the cell membrane pulled away from the cell wall and the cell became <strong>plasmolysed</strong>.'); add(4,e);
+}
+
+function markQ5(){
+  var e = hasAny(val('ans5_1_a'), ['bladder']) ? 1 : 0;
+  var e2 = hasAny(val('ans5_1_b'), ['liver']) ? 1 : 0;
+  reveal('rev5_1', e+e2, 2, 'Stores urine: <strong>bladder</strong>. Produces urea: <strong>liver</strong>.'); add(5, e+e2);
+
+  var v = numOf('ans5_2');
+  var e5_2 = near(v, 96.7, 0.05) ? 2 : (near(v, 96.7, 1) ? 1 : 0);
+  reveal('rev5_2', e5_2, 2, '100 &minus; (1.9 + 1.4) = <strong>96.7 %</strong>.'); add(5, e5_2);
+
+  var a = hasAny(val('ans5_3_a'), ['filter','pass through','passes through']) ? 1 : 0;
+  var b = hasAny(val('ans5_3_b'), ['reabsorb']) ? 1 : 0;
+  reveal('rev5_3', a+b, 2, '(a) Glucose is a small molecule that passes/is filtered through into the filtrate, from the plasma. (b) All of the glucose is reabsorbed back into the blood (in the tubules), so none remains in the urine.'); add(5, a+b);
+
+  e = hasAny(val('ans5_4'), ['large','too big','big to pass','cannot fit']) ? 1 : 0;
+  reveal('rev5_4', e, 1, 'Protein molecules are too large to pass through the filter.'); add(5,e);
+
+  e = markCategories(val('ans5_5'), [
+    ['concentrated','low water potential','less water in the blood','too little water'],
+    ['hypothalamus'],
+    ['adh','pituitary'],
+    ['reabsorption','reabsorb']
+  ], 3);
+  reveal('rev5_5', e, 3, 'Any three: the blood becomes more concentrated (lower water potential); the hypothalamus detects this; ADH is released by the pituitary gland; this increases reabsorption of water in the kidney, reducing urine volume.'); add(5,e);
+}
+
+function markQ6(){
+  var e = hasAny(val('ans6_1'), ['blood','circulat','plasma']) ? 1 : 0;
+  reveal('rev6_1', e, 1, 'In the blood / via the circulation (in the plasma).'); add(6,e);
+
+  e = hasAny(val('ans6_2'), ['gland']) ? 1 : 0;
+  reveal('rev6_2', e, 1, 'Glands (endocrine glands).'); add(6,e);
+
+  e = hasAny(val('ans6_3'), ['pancrea']) ? 1 : 0;
+  reveal('rev6_3', e, 1, 'Pancreas.'); add(6,e);
+
+  var lo = numOf('ans6_4_lo'), hi = numOf('ans6_4_hi');
+  var okA = near(lo,4.0,0.3) && near(hi,7.2,0.3);
+  var okB = near(hi,4.0,0.3) && near(lo,7.2,0.3);
+  e = (okA || okB) ? 1 : 0;
+  reveal('rev6_4', e, 1, '<strong>4.0 to 7.2</strong> mmol per dm&sup3;.'); add(6,e);
+
+  e = hasAny(val('ans6_5'), ['carbohydrate','digestion','absorption','small intestine']) ? 1 : 0;
+  reveal('rev6_5', e, 1, 'Digestion of carbohydrates (in food) / absorption of glucose from the small intestine.'); add(6,e);
+
+  e = hasAny(val('ans6_6'), ['glycogen']) ? 1 : 0;
+  reveal('rev6_6', e, 1, 'Glycogen.'); add(6,e);
+
+  e = hasAny(val('ans6_7'), ['lipid','fat']) ? 1 : 0;
+  reveal('rev6_7', e, 1, 'Lipid / fat.'); add(6,e);
+
+  var r1 = radioVal('q6_8_r1'), r2 = radioVal('q6_8_r2'), r3 = radioVal('q6_8_r3');
+  var e1 = (r1 === 'Glucagon') ? 1 : 0, e2b = (r2 === 'Insulin') ? 1 : 0, e3 = (r3 === 'Insulin') ? 1 : 0;
+  [['q6_8_r1','Glucagon'],['q6_8_r2','Insulin'],['q6_8_r3','Insulin']].forEach(function(pair){
+    document.querySelectorAll('input[name="'+pair[0]+'"]').forEach(function(inp){
+      var td = inp.closest('td');
+      if(inp.value === pair[1]){ td.style.background = '#E8F7EC'; }
+      else if(inp.checked){ td.style.background = '#FDEAEA'; }
+    });
+  });
+  e = e1 + e2b + e3;
+  reveal('rev6_8', e, 3, 'Reduces storage carbohydrate in D: <strong>Glucagon</strong>. Promotes loss of glucose through A when D is full: <strong>Insulin</strong>. Increases glucose uptake into cells at E: <strong>Insulin</strong>.'); add(6,e);
+}
+
+function markQ7(){
+  var e = markCategories(val('ans7_1'), [
+    ['receptor','hypothalamus','thermoregulatory'],
+    ['temperature of the blood','blood temperature','monitors temperature','measures temperature']
+  ], 2);
+  reveal('rev7_1', e, 2, 'Receptors in the brain (hypothalamus / thermoregulatory centre) are sensitive to, and measure, the temperature of the blood.'); add(7,e);
+
+  e = (hasAny(val('ans7_2'), ['receptor']) && hasAny(val('ans7_2'), ['send','impulse','signal','message'])) ? 1 : 0;
+  reveal('rev7_2', e, 1, 'Receptors in the skin send information/impulses/messages to the brain (thermoregulatory centre).'); add(7,e);
+
+  e = markCategories(val('ans7_3'), [
+    ['sweat'],
+    ['humid','evaporat'],
+    ['less heat lost','less cooling','cools the body','less cool',"can't cool",'cannot cool']
+  ], 3);
+  reveal('rev7_3', e, 3, 'Sweat is released but cannot evaporate because of the high humidity (the air is already full of water vapour) &mdash; so less heat is lost / less cooling occurs (it is the evaporation of sweat that cools the body).'); add(7,e);
+
+  e = markCategories(val('ans7_4'), [
+    ['blood vessel','capillar','arteriole','artery'],
+    ['dilat','widen']
+  ]);
+  reveal('rev7_4', e, 2, 'The blood vessels supplying the skin capillaries (arteries/arterioles) dilate/widen (vasodilation), bringing more blood near the surface of the skin.'); add(7,e);
+
+  e = markCategories(val('ans7_5'), [
+    ['muscle','shiver'],
+    ['respiration','heat']
+  ]);
+  reveal('rev7_5', e, 2, 'Muscles contract rapidly (shivering) &mdash; this increases respiration, releasing more heat, which helps stop the core body temperature falling too quickly.'); add(7,e);
+}
+
+function markQ8(){
+  var e = markMCQ('q8_1', 'nucleus', 'rev8_1', 1, '<strong>Nucleus</strong> — present in white blood cells, absent in mature red blood cells.'); add(8,e);
+
+  e = markCategories(val('ans8_2'), [
+    ['engulf','ingest','phagocyt','digest'],
+    ['antitoxin']
+  ]);
+  reveal('rev8_2', e, 2, 'Any two other ways: engulf/ingest/digest pathogens (phagocytosis); produce antitoxins.'); add(8,e);
+
+  e = markCategories(val('ans8_3'), [
+    ['dead','inactive','weaken','attenuat'],
+    ['virus','pathogen','antigen','measles']
+  ]);
+  reveal('rev8_3', e, 2, 'A dead / inactive / weakened form of the measles virus (pathogen/antigen).'); add(8,e);
+
+  e = markCategories(val('ans8_4'), [
+    ['sooner','less lag','quicker start','faster start'],
+    ['steeper','faster rise','quicker rise','rises faster'],
+    ['longer','doesn\'t drop','does not drop','stays high','lasts longer','last longer']
+  ], 3);
+  reveal('rev8_4', e, 3, 'After infection: the rise in antibodies begins sooner (less lag time); it is steeper/faster; and the higher level lasts longer (doesn\'t drop away as quickly).'); add(8,e);
+
+  e = hasAny(val('ans8_5'), ['specific','different']) ? 1 : 0;
+  reveal('rev8_5', e, 1, 'Antibodies (and memory cells) are specific to measles antigens — rubella has different antigens, so the immune system doesn\'t recognise or protect against it.'); add(8,e);
+
+  e = hasAny(val('ans8_6'), ['spread','herd','epidemic','eradicat']) ? 1 : 0;
+  reveal('rev8_6', e, 1, 'It reduces the spread of infection, making an epidemic much less likely (and can help eradicate measles altogether).'); add(8,e);
+}
+
+function markQ9(){
+  var e = hasAny(val('ans9_1'), ['long neck','long legs','neck','legs']) ? 1 : 0;
+  reveal('rev9_1', e, 1, 'The giraffe has a long neck (and long legs), letting it reach leaves high in trees that other animals cannot.'); add(9,e);
+
+  e = markCategories(val('ans9_2'), [
+    ['stretch','reach','use of the neck','more use','used their neck'],
+    ['acquired','during','lifetime','increase in size'],
+    ['passed to','offspring','inherited','pass on to their young']
+  ], 3);
+  reveal('rev9_2', e, 3, 'Lamarck: reaching/stretching for food led to more use of the neck (and legs); this use caused the neck to increase in size during the animal\'s lifetime (an acquired characteristic); this acquired characteristic was then passed on to the offspring.'); add(9,e);
+
+  e = markCategories(val('ans9_3'), [
+    ['genotype','genes','dna','not affected','not change'],
+    ['not passed','not inherited','born with tails','not transmit']
+  ]);
+  reveal('rev9_3', e, 2, 'Phenotypic changes (cutting off the tail) do not affect the genotype/genes — acquired characteristics are not passed to offspring, so every generation of mice was still born with a tail.'); add(9,e);
+
+  e = markCategories(val('ans9_4'), [
+    ['variation','mutation'],
+    ['advantage','better adapted','survival of the fittest','more likely to survive'],
+    ['breed more','more offspring','more successful','reproduce more'],
+    ['genes','dna','alleles','passed on','inherited']
+  ], 4);
+  reveal('rev9_4', e, 4, 'Darwin: variation exists within a population (may arise from mutation); some individuals — e.g. with longer necks — have an advantage / are better adapted (survival of the fittest); these individuals survive and breed more / are more reproductively successful; their genes (units of heredity/DNA) are passed on, so the characteristic becomes more common over generations.'); add(9,e);
+}
+
+function markPaper(){
+  totalScore = 0;
+  for(var k in qSubtotals){ qSubtotals[k] = 0; }
+
+  markQ1(); markQ2(); markQ3(); markQ4(); markQ5(); markQ6(); markQ7(); markQ8(); markQ9();
+
+  var pct = Math.round(totalScore / maxTotal * 100);
+  var grade;
+  if(pct >= 90) grade = 'Exceptional — A*';
+  else if(pct >= 80) grade = 'Excellent — A';
+  else if(pct >= 70) grade = 'Strong — B';
+  else if(pct >= 60) grade = 'Good — C';
+  else if(pct >= 50) grade = 'Satisfactory — D';
+  else grade = 'Keep revising — E/U';
+
+  document.getElementById('resultsScore').innerHTML = totalScore + ' <span>/ 90</span>';
+  document.getElementById('resultsPct').textContent = pct + '%';
+  document.getElementById('resultsGrade').textContent = grade;
+
+  var barsEl = document.getElementById('resultsBars');
+  barsEl.innerHTML = '';
+  for(var q = 1; q <= 9; q++){
+    var s = qSubtotals[q];
+    var h = Math.max(4, (s/10*70));
+    barsEl.innerHTML += '<div class="results-bar-wrap"><div class="results-bar-val">'+s+'/10</div>' +
+      '<div class="results-bar-track"><div class="results-bar-fill" style="height:'+h+'px;"></div></div>' +
+      '<div class="results-bar-label">Q'+q+'</div></div>';
+  }
+
+  var panel = document.getElementById('resultsPanel');
+  panel.classList.add('show');
+  if(typeof panel.scrollIntoView === 'function'){ panel.scrollIntoView({behavior:'smooth', block:'start'}); }
+  updateProgress();
+}
+
+function resetPaper(){
+  document.querySelectorAll('.txt-input, .num-input, textarea').forEach(function(el){ el.value = ''; });
+  document.querySelectorAll('input[type=radio]').forEach(function(el){ el.checked = false; });
+  document.querySelectorAll('.radio-opt').forEach(function(el){ el.classList.remove('chosen'); el.style.borderColor = ''; el.style.background = ''; });
+  document.querySelectorAll('.table-grid td').forEach(function(el){ el.style.background = ''; });
+  document.querySelectorAll('.reveal').forEach(function(el){ el.classList.remove('show','full','partial','none'); el.innerHTML=''; });
+  document.getElementById('resultsPanel').classList.remove('show');
+  ['pyrBarTop','pyrBarMid','pyrBarBot'].forEach(function(id){ document.getElementById(id).setAttribute('width','0'); });
+  ['pyrLabelTop','pyrLabelMid','pyrLabelBot'].forEach(function(id){ document.getElementById(id).textContent=''; });
+  updateProgress();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+updateProgress();
+</script>
+</body>
+</html>
