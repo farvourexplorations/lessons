@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.3 Metamorphic Rocks and the Rock Cycle — Interactive Lesson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#146C7A; --teal-dark:#0D4F5A; --teal-light:#E3F1F2; --teal-mid:#59A6AE;
+  --orange:#DD7A2E; --orange-light:#FBEADB;
+  --purple:#5B3E96; --purple-light:#F0EAFA;
+  --red:#C0392B; --red-light:#FBE7E4;
+  --blue:#2B71C9; --blue-light:#E9F1FC;
+  --green:#3F8F5C; --green-light:#E7F5EC;
+  --sand:#B08252; --sand-light:#F3E7D8;
+  --ink:#1D2B32; --ink-soft:#4B5B62;
+  --paper:#FFFFFF; --cream:#F6F4EF; --line:#DDE4E3;
+  --r-lg:22px; --r-md:14px; --r-sm:8px;
+  --shadow: 0 10px 30px rgba(13,79,90,.14);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0; background:var(--cream); color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;
+  overflow:hidden;
+}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+
+/* ===== App shell ===== */
+#app{position:relative; width:100vw; height:100vh; display:flex; flex-direction:column;}
+
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 28px; background:var(--paper); border-bottom:1px solid var(--line);
+  flex:0 0 auto; z-index:20;
+}
+.crumb{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft); font-weight:600;}
+.crumb .tag{
+  background:var(--teal); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12px;
+  padding:5px 12px; border-radius:100px; letter-spacing:.3px;
+}
+.crumb .sep{color:#B9C4C3;}
+.crumb .current{color:var(--teal-dark);}
+
+.dots{display:flex; gap:6px; align-items:center; flex-wrap:wrap; max-width:44vw;}
+.dot{
+  width:9px; height:9px; border-radius:50%; background:#D7DEDD; border:none; cursor:pointer;
+  transition:all .25s;
+}
+.dot.active{ background:var(--teal); width:22px; border-radius:6px;}
+.dot:hover{background:var(--teal-mid);}
+
+.counter{font-size:12px; color:var(--ink-soft); font-weight:600; font-variant-numeric:tabular-nums; min-width:44px; text-align:right;}
+
+/* ===== Stage ===== */
+.stage{position:relative; flex:1 1 auto; overflow:hidden;}
+.slide{
+  position:absolute; inset:0; opacity:0; pointer-events:none;
+  transform:translateX(30px) scale(.99);
+  transition:opacity .45s ease, transform .45s ease;
+  overflow-y:auto;
+}
+.slide.active{opacity:1; pointer-events:auto; transform:translateX(0) scale(1);}
+.slide.prev{transform:translateX(-30px) scale(.99);}
+
+.slide-inner{
+  max-width:1180px; margin:0 auto; padding:40px 44px 90px;
+  min-height:100%;
+}
+
+/* nav arrows */
+.navbtn{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:15;
+  width:46px; height:46px; border-radius:50%; border:1px solid var(--line);
+  background:var(--paper); box-shadow:var(--shadow); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; color:var(--teal-dark);
+  transition:.2s;
+}
+.navbtn:hover{background:var(--teal); color:#fff; border-color:var(--teal);}
+.navbtn.disabled{opacity:.25; pointer-events:none;}
+#prevBtn{left:16px;} #nextBtn{right:16px;}
+.navbtn svg{width:20px; height:20px;}
+
+/* ===== shared components ===== */
+.chevron-badge{
+  display:inline-flex; align-items:center; gap:10px; background:var(--teal); color:#fff;
+  padding:9px 20px 9px 16px; font-family:'Poppins'; font-weight:700; font-size:15px;
+  clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%); margin-bottom:16px;
+}
+.eyebrow{
+  font-family:'Poppins'; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--orange); margin-bottom:8px;
+}
+h1.slide-title{font-size:34px; font-weight:800; color:var(--teal-dark); margin:0 0 6px; line-height:1.15;}
+h2.section-title{font-size:26px; font-weight:700; color:var(--teal-dark); margin:0 0 14px;}
+h3.mini-title{font-size:17px; font-weight:700; color:var(--ink); margin:0 0 8px;}
+p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
+.lede{font-size:17px; color:var(--ink-soft); margin-bottom:22px; max-width:680px;}
+.term{color:var(--orange); font-weight:700; cursor:help; border-bottom:1.5px dotted var(--orange);}
+
+.box{
+  border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--paper);
+  box-shadow:var(--shadow);
+}
+.box-head{
+  padding:12px 20px; font-family:'Poppins'; font-weight:700; font-size:14px; color:#fff;
+  display:flex; align-items:center; gap:8px;
+}
+.box-body{padding:20px 22px;}
+.box.blue .box-head{background:var(--blue);}
+.box.purple .box-head{background:var(--purple);}
+.box.red .box-head{background:var(--red);}
+.box.orange .box-head{background:var(--orange);}
+.box.green .box-head{background:var(--green);}
+.box.teal .box-head{background:var(--teal);}
+.box.sand .box-head{background:var(--sand);}
+
+.two-col{display:grid; grid-template-columns:1.05fr .95fr; gap:36px; align-items:start;}
+@media (max-width:900px){.two-col{grid-template-columns:1fr;}}
+
+.photo{
+  width:100%; border-radius:var(--r-md); display:block; object-fit:cover; background:#eee;
+  box-shadow:0 6px 18px rgba(20,108,122,.18);
+}
+.photo-cap{font-size:12px; color:var(--ink-soft); margin-top:8px; font-style:italic;}
+
+.pill{
+  display:inline-block; padding:4px 12px; border-radius:100px; font-size:12px; font-weight:700;
+  background:var(--teal-light); color:var(--teal-dark); margin:2px 4px 2px 0;
+}
+
+.btn{
+  border:none; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:14px;
+  padding:10px 20px; border-radius:100px; background:var(--teal); color:#fff; transition:.2s;
+}
+.btn:hover{background:var(--teal-dark);}
+.btn.ghost{background:transparent; border:1.5px solid var(--teal); color:var(--teal);}
+.btn.ghost:hover{background:var(--teal-light);}
+.btn[disabled]{opacity:.45; cursor:default;}
+
+/* workbook badge */
+.wb-badge{
+  display:inline-flex; align-items:center; gap:7px; background:var(--purple-light); color:var(--purple);
+  font-family:'Poppins'; font-weight:700; font-size:11.5px; letter-spacing:.3px; text-transform:uppercase;
+  padding:5px 12px; border-radius:100px; margin-bottom:12px;
+}
+.wb-badge svg{width:13px; height:13px;}
+.wb-panel{
+  border:1.5px dashed var(--purple); background:var(--purple-light); border-radius:var(--r-lg);
+  padding:20px 22px; margin-top:8px;
+}
+
+.hint{
+  font-size:12.5px; color:var(--ink-soft); background:var(--teal-light); border-radius:100px;
+  padding:6px 14px; display:inline-flex; gap:6px; align-items:center; margin-bottom:18px; font-weight:600;
+}
+.hint svg{width:14px; height:14px;}
+
+/* ============ SLIDE 0 : COVER ============ */
+.cover{
+  height:100%; display:flex; align-items:center; justify-content:center; position:relative;
+  background:
+    radial-gradient(ellipse at 20% 15%, rgba(255,255,255,.10), transparent 45%),
+    linear-gradient(160deg, var(--purple) 0%, #3C2A69 62%, #241A42 100%);
+  overflow:hidden;
+}
+.cover-rock{position:absolute; border-radius:38% 62% 55% 45% / 45% 40% 60% 55%; opacity:.16; background:#fff;}
+.cover-band{position:absolute; left:-8%; right:-8%; height:8%; background:#fff; opacity:.10; transform:skewY(-4deg);}
+.cover-content{position:relative; z-index:2; text-align:center; color:#fff; max-width:780px; padding:0 30px;}
+.cover-content .unit{font-family:'Poppins'; font-weight:700; letter-spacing:3px; font-size:13px; text-transform:uppercase; color:#DCCCF5; margin-bottom:14px;}
+.cover-content h1{font-size:48px; font-weight:800; margin:0 0 10px; line-height:1.08;}
+.cover-content .sub{font-size:19px; color:#E8DFF7; font-weight:500; margin-bottom:34px;}
+.cover-chip-row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:38px;}
+.cover-chip{
+  background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff;
+  padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600; backdrop-filter:blur(4px);
+}
+.cover-start{
+  background:var(--orange); color:#fff; border:none; font-family:'Poppins'; font-weight:700; font-size:16px;
+  padding:15px 34px; border-radius:100px; cursor:pointer; box-shadow:0 12px 26px rgba(221,122,46,.4);
+  display:inline-flex; align-items:center; gap:10px; transition:.2s;
+}
+.cover-start:hover{transform:translateY(-2px); box-shadow:0 16px 30px rgba(221,122,46,.5);}
+
+/* ============ objectives slide ============ */
+.obj-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 22px; margin-top:6px;}
+.obj-card{
+  display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:var(--r-md);
+  background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.2s;
+}
+.obj-card:hover{border-color:var(--teal-mid); box-shadow:var(--shadow);}
+.obj-num{
+  flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--teal-light); color:var(--teal-dark);
+  font-family:'Poppins'; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;
+}
+.obj-card.done .obj-num{background:var(--teal); color:#fff;}
+.obj-card.done p{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:#B9C4C3;}
+.obj-card p{margin:0; font-size:13.8px; line-height:1.5;}
+
+/* ============ MCQ workbook component (Focus 1a-c) ============ */
+.mcq-item{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:16px 18px; margin-bottom:12px;}
+.mcq-q{font-size:15px; margin:0 0 10px; font-weight:600;}
+.mcq-opts{display:flex; flex-direction:column; gap:8px;}
+.mcq-opt{
+  text-align:left; border:1.5px solid var(--purple); background:#fff; color:var(--ink); font-family:'Inter'; font-weight:500;
+  font-size:14px; padding:10px 16px; border-radius:10px; cursor:pointer; transition:.15s;
+}
+.mcq-opt:hover{background:var(--purple-light);}
+.mcq-opt.correct{background:var(--green-light); border-color:var(--green); color:#245A38; font-weight:700;}
+.mcq-opt.wrong{background:var(--red-light); border-color:var(--red); color:var(--red);}
+.mcq-opt[disabled]{cursor:default;}
+.mcq-fb{display:none; margin-top:10px; font-size:13.5px; color:var(--ink-soft); background:var(--teal-light); border-radius:10px; padding:10px 14px;}
+.mcq-fb.show{display:block; animation:fadein .3s;}
+@keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+/* ============ choose-word component ============ */
+.choose-item{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:16px 18px; margin-bottom:12px;}
+.choose-q{font-size:15px; margin:0 0 10px; font-weight:600;}
+.choose-blank{color:var(--purple); font-weight:700;}
+.choose-row{display:flex; gap:10px; flex-wrap:wrap;}
+.choose-btn{
+  border:1.5px solid var(--purple); background:#fff; color:var(--purple); font-family:'Poppins'; font-weight:600;
+  font-size:13.5px; padding:8px 18px; border-radius:100px; cursor:pointer; transition:.15s;
+}
+.choose-btn:hover{background:var(--purple-light);}
+.choose-btn.correct{background:var(--green-light); border-color:var(--green); color:var(--green);}
+.choose-btn.wrong{background:var(--red-light); border-color:var(--red); color:var(--red);}
+.choose-btn[disabled]{cursor:default;}
+.choose-fb{display:none; margin-top:10px; font-size:13.5px; color:var(--ink-soft); background:var(--teal-light); border-radius:10px; padding:10px 14px;}
+.choose-fb.show{display:block; animation:fadein .3s;}
+
+/* ============ tabs ============ */
+.tabs{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+.tab-btn{
+  padding:10px 18px; border-radius:100px; border:1.5px solid var(--line); background:#fff; cursor:pointer;
+  font-family:'Poppins'; font-weight:600; font-size:13.5px; color:var(--ink-soft); transition:.2s;
+}
+.tab-btn.active{background:var(--teal); border-color:var(--teal); color:#fff;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block; animation:fadein .35s;}
+
+/* ============ matching game (Focus Q2) ============ */
+.match-wrap{display:flex; gap:60px; justify-content:center; flex-wrap:wrap; margin-top:10px;}
+.match-col{display:flex; flex-direction:column; gap:12px; width:220px;}
+.match-col-label{font-family:'Poppins'; font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:.5px; color:var(--ink-soft); margin-bottom:2px; text-align:center;}
+.match-card{
+  display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:var(--r-md);
+  border:1.5px solid var(--line); background:#fff; cursor:pointer; transition:.2s;
+}
+.match-card:hover{border-color:var(--teal-mid); box-shadow:var(--shadow);}
+.match-card.selected{border-color:var(--orange); background:var(--orange-light);}
+.match-card.correct{border-color:var(--green); background:var(--green-light); cursor:default; pointer-events:none;}
+.match-card.wrong{border-color:var(--red); background:var(--red-light);}
+.match-card img{width:40px; height:40px; border-radius:8px; object-fit:cover; flex:0 0 auto;}
+.match-card span{font-family:'Poppins'; font-weight:700; font-size:13px;}
+.match-progress{text-align:center; margin-top:16px; font-size:13.5px; color:var(--ink-soft); font-weight:600;}
+
+/* ============ identification key (Practice Q3) ============ */
+.key-flow{display:flex; flex-direction:column; align-items:center; gap:6px;}
+.key-node{
+  background:var(--teal-light); color:var(--teal-dark); font-family:'Poppins'; font-weight:700; font-size:13.5px;
+  padding:12px 22px; border-radius:10px; text-align:center;
+}
+.key-q{font-size:13px; color:var(--ink-soft); margin:4px 0; text-align:center;}
+.key-branches{display:flex; gap:50px; margin-top:6px; flex-wrap:wrap; justify-content:center;}
+.key-branch{display:flex; flex-direction:column; align-items:center; gap:8px;}
+.key-branch-label{font-size:12px; font-weight:700; color:var(--ink-soft);}
+.key-opt{
+  border:2px dashed var(--line); background:#fff; border-radius:12px; padding:14px 18px; cursor:pointer;
+  font-family:'Poppins'; font-weight:600; font-size:13px; text-align:center; min-width:160px; transition:.2s;
+}
+.key-opt:hover{border-color:var(--teal-mid);}
+.key-opt.correct{border-style:solid; border-color:var(--green); background:var(--green-light); color:var(--green);}
+.key-stage{display:none; margin-top:22px; width:100%;}
+.key-stage.show{display:flex; flex-direction:column; align-items:center; animation:fadein .35s;}
+.key-outcome{
+  margin-top:16px; padding:14px 18px; border-radius:var(--r-md); font-size:14px; max-width:460px; text-align:center;
+  background:var(--green-light); color:#245A38; display:none;
+}
+.key-outcome.show{display:block; animation:fadein .3s;}
+
+/* ============ rock cycle flow (Focus 1c + Q4) ============ */
+.cycle-flow{display:flex; align-items:center; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:10px;}
+.cycle-stage{
+  font-family:'Poppins'; font-weight:700; font-size:13.5px; color:#fff; padding:14px 18px; border-radius:var(--r-md);
+  text-align:center; min-width:140px; box-shadow:var(--shadow);
+}
+.cycle-stage.surface{background:var(--sand);}
+.cycle-stage.sediment{background:var(--orange);}
+.cycle-stage.sedrock{background:#B5601F;}
+.cycle-stage.metarock{background:var(--purple);}
+.cycle-stage.magma{background:var(--red);}
+.cycle-stage.igneousrock{background:var(--teal);}
+.cycle-arrow-wrap{display:flex; flex-direction:column; align-items:center; gap:6px; max-width:230px;}
+.cycle-arrow{color:var(--ink-soft); font-size:22px; line-height:1;}
+.cycle-loop{
+  width:100%; margin-top:20px; padding:16px 20px; border-radius:var(--r-md); background:var(--teal-light);
+  color:var(--teal-dark); font-weight:700; text-align:center; font-family:'Poppins'; font-size:14px;
+}
+
+/* ============ story flip cards (Challenge) ============ */
+.story-row{display:flex; flex-wrap:wrap; gap:14px; align-items:center; justify-content:center; margin-top:10px;}
+.story-card{
+  background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:14px; cursor:pointer;
+  perspective:900px; width:150px; height:130px; position:relative; box-shadow:var(--shadow);
+}
+.story-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+.story-card.flip .story-inner{transform:rotateY(180deg);}
+.story-face{position:absolute; inset:0; backface-visibility:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:6px;}
+.story-face.front{font-family:'Poppins'; font-weight:700; color:var(--teal-dark); font-size:13.5px;}
+.story-face.front .story-num{font-size:11px; color:var(--orange); font-weight:800;}
+.story-face.back{transform:rotateY(180deg); font-size:11px; color:var(--ink-soft); padding:6px; line-height:1.4;}
+.story-arrow{color:var(--ink-soft); font-size:20px;}
+.wordbank-strip{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 22px; padding:14px; background:var(--purple-light); border-radius:var(--r-md);}
+.wordbank-chip{
+  background:#fff; border:1.5px solid var(--purple); color:var(--purple); font-family:'Poppins'; font-weight:600;
+  font-size:12.5px; padding:6px 13px; border-radius:100px;
+}
+
+/* ============ checklist ============ */
+.assess-list{display:flex; flex-direction:column; gap:2px;}
+.assess-item{display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px; cursor:pointer; transition:.15s;}
+.assess-item:hover{background:var(--teal-light);}
+.assess-box{flex:0 0 auto; width:22px; height:22px; border-radius:6px; border:2px solid var(--teal); position:relative;}
+.assess-item.checked .assess-box{background:var(--teal);}
+.assess-box svg{position:absolute; inset:0; margin:auto; width:14px; height:14px; color:#fff; opacity:0;}
+.assess-item.checked .assess-box svg{opacity:1;}
+.assess-item p{margin:0; font-size:14px;}
+.assess-item.checked p{color:var(--ink-soft);}
+.progress-bar-track{height:10px; background:var(--teal-light); border-radius:100px; overflow:hidden; margin:16px 0 22px;}
+.progress-bar-fill{height:100%; width:0%; background:linear-gradient(90deg,var(--teal),var(--orange)); border-radius:100px; transition:width .4s;}
+
+/* glossary cards */
+.gloss-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px;}
+.gloss-card{background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:14px; cursor:pointer; perspective:800px; height:104px; position:relative;}
+.gloss-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+.gloss-card.flip .gloss-inner{transform:rotateY(180deg);}
+.gloss-face{position:absolute; inset:0; backface-visibility:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;}
+.gloss-face.front{font-family:'Poppins'; font-weight:700; color:var(--teal-dark); font-size:14px;}
+.gloss-face.back{transform:rotateY(180deg); font-size:11.5px; color:var(--ink-soft); padding:4px; line-height:1.4;}
+
+::-webkit-scrollbar{width:8px;}
+::-webkit-scrollbar-thumb{background:#C9D6D5; border-radius:10px;}
+
+@media(max-width:760px){
+  .obj-grid{grid-template-columns:1fr;}
+  .two-col{grid-template-columns:1fr;}
+  .gloss-grid{grid-template-columns:repeat(2,1fr);}
+  .cover-content h1{font-size:30px;}
+  h1.slide-title{font-size:24px;}
+  .match-wrap{gap:24px;}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="topbar">
+    <div class="crumb">
+      <span class="tag">Unit 3</span>
+      <span>Rocks, the rock cycle and soil</span>
+      <span class="sep">/</span>
+      <span class="current">3.3 Metamorphic rocks and the rock cycle</span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="counter" id="counter">1 / 9</div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- ================= SLIDE 0 : COVER ================= -->
+    <section class="slide">
+      <div class="cover">
+        <div class="cover-rock" style="width:220px;height:220px; top:-50px; left:-50px;"></div>
+        <div class="cover-rock" style="width:160px;height:160px; bottom:-40px; right:-30px;"></div>
+        <div class="cover-band" style="top:30%;"></div>
+        <div class="cover-band" style="top:46%;"></div>
+        <div class="cover-band" style="top:62%;"></div>
+        <div class="cover-content">
+          <div class="unit">Unit 3 &middot; Rocks, the rock cycle and soil</div>
+          <h1>Metamorphic Rocks &amp; the Rock Cycle</h1>
+          <div class="sub">No melting required — how heat and pressure squeeze old rock into something new, and how every rock is part of an endless cycle</div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">🔥 Heat &amp; pressure</span>
+            <span class="cover-chip">🪨 Marble, slate, quartzite, gneiss</span>
+            <span class="cover-chip">🔁 The rock cycle</span>
+            <span class="cover-chip">🧪 Workbook activities</span>
+          </div>
+          <button class="cover-start" onclick="goTo(1)">
+            Start the lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 1 : OBJECTIVES ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">3.3</div>
+        <h1 class="slide-title">We are going to…</h1>
+        <p class="lede">Tap each goal as you meet it during the lesson. By the end, every card should be ticked off.</p>
+        <div class="obj-grid" id="objGrid">
+          <div class="obj-card" data-i="1"><div class="obj-num">1</div><p>Describe how metamorphic rocks form from existing rock through heat and pressure</p></div>
+          <div class="obj-card" data-i="2"><div class="obj-num">2</div><p>Describe the properties of metamorphic rocks, including banding</p></div>
+          <div class="obj-card" data-i="3"><div class="obj-num">3</div><p>Match common metamorphic rocks to the rock they formed from</p></div>
+          <div class="obj-card" data-i="4"><div class="obj-num">4</div><p>Use a key to identify igneous, sedimentary and metamorphic rocks</p></div>
+          <div class="obj-card" data-i="5"><div class="obj-num">5</div><p>Describe the rock cycle using the correct scientific vocabulary</p></div>
+          <div class="obj-card" data-i="6"><div class="obj-num">6</div><p>Explain how arrows and labels are used to show processes in the rock cycle</p></div>
+          <div class="obj-card" data-i="7"><div class="obj-num">7</div><p>Trace the history of a single rock through several stages of the rock cycle</p></div>
+          <div class="obj-card" data-i="8"><div class="obj-num">8</div><p>Interpret diagrams and use scientific vocabulary accurately</p></div>
+        </div>
+        <div style="margin-top:22px;">
+          <span class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Key vocabulary: metamorphic rock · heat · pressure · banding · marble · slate · quartzite · gneiss · rock cycle · melting · burial · magma</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 2 : WHAT MAKES A ROCK METAMORPHIC ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">No melting required</div>
+        <h1 class="slide-title">Squeezed, not melted</h1>
+        <p class="lede">A <span class="term" data-def="A rock formed when an existing rock is changed by heat and pressure, without melting completely.">metamorphic rock</span> starts life as an entirely different rock — igneous, sedimentary, or even another metamorphic rock. Buried deep underground, it is squeezed by huge pressure and baked by intense heat. This changes its minerals and structure completely, but — unlike in the formation of igneous rock — the rock never fully melts.</p>
+
+        <div class="two-col">
+          <div>
+            <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Skagit-gneiss-Cascades.jpg" alt="Folded, banded gneiss rock showing swirling light and dark layers">
+            <div class="photo-cap">Folded, banded gneiss — the swirling pattern records the immense heat and pressure this rock survived deep in the crust.</div>
+          </div>
+          <div>
+            <h3 class="mini-title">Existing rock + heat + pressure = new rock</h3>
+            <p>The word "metamorphic" comes from Greek words meaning "changed form". The minerals inside the original rock recrystallise into new patterns without the rock ever becoming liquid. This is what separates metamorphic rocks from igneous rocks, which form by cooling from a molten state.</p>
+            <span class="pill">No melting</span><span class="pill">Deep underground</span><span class="pill">New minerals form</span>
+          </div>
+        </div>
+
+        <div class="wb-badge" style="margin-top:26px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.3 Focus, question 1a</div>
+        <div class="wb-panel">
+          <div class="mcq-item" data-answer="B">
+            <p class="mcq-q">Metamorphic rocks are formed when:</p>
+            <div class="mcq-opts">
+              <button class="mcq-opt" data-val="A">A &nbsp; magma cools and becomes rock</button>
+              <button class="mcq-opt" data-val="B">B &nbsp; existing rocks are changed by heat and pressure</button>
+              <button class="mcq-opt" data-val="C">C &nbsp; sediments build up on the sea bed</button>
+            </div>
+            <div class="mcq-fb">Correct answer: <strong>B</strong>. Option A describes igneous rock forming, and option C describes the start of sedimentary rock forming — metamorphic rock is neither of those; it forms when heat and pressure transform rock that already exists.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 3 : PROPERTIES OF METAMORPHIC ROCK ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">What do metamorphic rocks look like?</div>
+        <h1 class="slide-title">Hard, and often banded</h1>
+        <p class="lede">Because their minerals have recrystallised under such intense heat and pressure, metamorphic rocks are usually very hard and tough. Many also show <span class="term" data-def="A striped or layered pattern in a rock, caused by minerals lining up under pressure.">banding</span> — stripes of light and dark minerals that have been squeezed and lined up in the same direction, a little like a stack of books pushed sideways.</p>
+
+        <div class="two-col">
+          <div>
+            <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Gneiss.jpg" alt="A sample of gneiss showing clear banding of light and dark minerals">
+            <div class="photo-cap">Gneiss — strong banding formed as pressure lined up its minerals into stripes.</div>
+          </div>
+          <div>
+            <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Vietnamese%20white%20marble.JPG" alt="A sample of white marble with no visible banding">
+            <div class="photo-cap">Marble — hard and crystalline, but with little or no banding.</div>
+          </div>
+        </div>
+        <p style="margin-top:18px;">Not every metamorphic rock is banded — it depends on the minerals in the original rock and how much pressure it experienced. But almost all metamorphic rocks share one property: they are very hard, because their crystals have been packed tightly together.</p>
+
+        <div class="wb-badge" style="margin-top:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.3 Focus, question 1b</div>
+        <div class="wb-panel">
+          <div class="mcq-item" data-answer="C">
+            <p class="mcq-q">Metamorphic rocks are:</p>
+            <div class="mcq-opts">
+              <button class="mcq-opt" data-val="A">A &nbsp; very soft</button>
+              <button class="mcq-opt" data-val="B">B &nbsp; in layers</button>
+              <button class="mcq-opt" data-val="C">C &nbsp; very hard and in layers</button>
+            </div>
+            <div class="mcq-fb">Correct answer: <strong>C</strong>. Option B alone is not specific enough — the best description combines both properties you have just seen: metamorphic rocks are very hard, and many (though not all) show banded layers.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 4 : MATCHING GAME (Focus Q2) ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="wb-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.3 Focus, question 2</div>
+        <h1 class="slide-title">Match each rock to what it becomes</h1>
+        <p class="lede">Tap a rock on the left, then tap the metamorphic rock on the right it changes into. Matched pairs turn green.</p>
+
+        <div class="match-wrap">
+          <div class="match-col">
+            <div class="match-col-label">Starting rock</div>
+            <div class="match-card" data-pair="limestone">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Limestone%20a%20type%20of%20Sedimentary%20Rock.jpg" alt="Limestone">
+              <span>Limestone</span>
+            </div>
+            <div class="match-card" data-pair="sandstone">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Sandstone.jpg" alt="Sandstone">
+              <span>Sandstone</span>
+            </div>
+            <div class="match-card" data-pair="shale">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Mudcracks%20in%20gray%20shale.jpg" alt="Shale">
+              <span>Shale</span>
+            </div>
+            <div class="match-card" data-pair="granite">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Granite.jpg" alt="Granite">
+              <span>Granite</span>
+            </div>
+          </div>
+          <div class="match-col">
+            <div class="match-col-label">Becomes…</div>
+            <div class="match-card" data-pair="gneiss">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Gneiss.jpg" alt="Gneiss">
+              <span>Gneiss</span>
+            </div>
+            <div class="match-card" data-pair="slate">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Outcrop%20of%20slate%20-%20geograph.org.uk%20-%201323556.jpg" alt="Slate">
+              <span>Slate</span>
+            </div>
+            <div class="match-card" data-pair="marble">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Vietnamese%20white%20marble.JPG" alt="Marble">
+              <span>Marble</span>
+            </div>
+            <div class="match-card" data-pair="quartzite">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Quartzite.jpg" alt="Quartzite">
+              <span>Quartzite</span>
+            </div>
+          </div>
+        </div>
+        <div class="match-progress" id="matchProgress">0 of 4 matched</div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 5 : IDENTIFICATION KEY (Practice Q3) ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="wb-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.3 Practice, question 3</div>
+        <h1 class="slide-title">Build the identification key</h1>
+        <p class="lede">You are handed a rock to identify. Answer each branching question to work out what type of rock it is — exactly as the workbook key describes.</p>
+
+        <div class="key-flow">
+          <div class="key-node">Unknown rock</div>
+          <div class="key-q">Is the rock crystalline?</div>
+          <div class="key-branches" id="keyStage1">
+            <div class="key-branch">
+              <div class="key-branch-label">NO</div>
+              <div class="key-opt" onclick="pickKeyStage1(this,'no')">Rock is sedimentary</div>
+            </div>
+            <div class="key-branch">
+              <div class="key-branch-label">YES</div>
+              <div class="key-opt" onclick="pickKeyStage1(this,'yes')">Continue &rarr;</div>
+            </div>
+          </div>
+
+          <div class="key-stage" id="keyStage2">
+            <div class="key-node" style="margin-top:10px;">Crystalline rock</div>
+            <div class="key-q">Does the rock have a banded appearance?</div>
+            <div class="key-branches">
+              <div class="key-branch">
+                <div class="key-branch-label">YES</div>
+                <div class="key-opt" onclick="pickKeyStage2(this,'yes')">Rock is metamorphic</div>
+              </div>
+              <div class="key-branch">
+                <div class="key-branch-label">NO</div>
+                <div class="key-opt" onclick="pickKeyStage2(this,'no')">Rock is igneous</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="key-outcome" id="keyOutcome"></div>
+        </div>
+        <div style="text-align:center; margin-top:18px;">
+          <button class="btn ghost" onclick="resetKey()">↺ Try again with a different path</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 6 : THE ROCK CYCLE ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Nothing is ever really "finished"</div>
+        <h1 class="slide-title">The rock cycle</h1>
+        <p class="lede">Every rock on Earth is part of an endless cycle. Follow the stages below, filling in each blank as you go.</p>
+
+        <div class="wb-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.3 Focus, question 1c</div>
+        <div class="wb-panel" style="margin-bottom:26px;">
+          <div class="mcq-item" data-answer="A">
+            <p class="mcq-q">In the rock cycle, different processes are shown by:</p>
+            <div class="mcq-opts">
+              <button class="mcq-opt" data-val="A">A &nbsp; arrows and labels</button>
+              <button class="mcq-opt" data-val="B">B &nbsp; pictures</button>
+              <button class="mcq-opt" data-val="C">C &nbsp; lines</button>
+            </div>
+            <div class="mcq-fb">Correct answer: <strong>A</strong>. Every arrow on the diagram below stands for a process — the label on it tells you exactly what is happening to the rock at that point.</div>
+          </div>
+        </div>
+
+        <div class="wb-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.3 Practice, question 4 — fill in blanks A–E</div>
+        <div class="cycle-flow">
+          <div class="cycle-stage surface">Rocks on<br>surface</div>
+          <div class="cycle-arrow-wrap">
+            <div class="cycle-arrow">➜</div>
+            <div class="choose-item" data-answer="erosion" style="margin:0;">
+              <p class="choose-q" style="font-size:12.5px; margin-bottom:8px;">weathering, <span class="choose-blank">A</span>, transportation and deposition</p>
+              <div class="choose-row">
+                <button class="choose-btn" data-val="erosion">erosion</button>
+                <button class="choose-btn" data-val="evaporation">evaporation</button>
+              </div>
+              <div class="choose-fb">A = <strong>erosion</strong>. Moving water, wind or ice wears rock away and carries the fragments off.</div>
+            </div>
+          </div>
+          <div class="cycle-stage sediment">Sediment</div>
+          <div class="cycle-arrow-wrap">
+            <div class="cycle-arrow">➜</div>
+            <div class="choose-item" data-answer="compaction" style="margin:0;">
+              <p class="choose-q" style="font-size:12.5px; margin-bottom:8px;">burial and <span class="choose-blank">B</span></p>
+              <div class="choose-row">
+                <button class="choose-btn" data-val="compaction">compaction</button>
+                <button class="choose-btn" data-val="crystallisation">crystallisation</button>
+              </div>
+              <div class="choose-fb">B = <strong>compaction</strong> (and cementation). The weight of layers above squeezes out water and minerals glue the grains together.</div>
+            </div>
+          </div>
+          <div class="cycle-stage sedrock">Sedimentary<br>rock</div>
+          <div class="cycle-arrow-wrap">
+            <div class="cycle-arrow">➜</div>
+            <div class="choose-item" data-answer="pressure" style="margin:0;">
+              <p class="choose-q" style="font-size:12.5px; margin-bottom:8px;">deeper burial, heat and <span class="choose-blank">C</span></p>
+              <div class="choose-row">
+                <button class="choose-btn" data-val="pressure">pressure</button>
+                <button class="choose-btn" data-val="colour">colour</button>
+              </div>
+              <div class="choose-fb">C = <strong>pressure</strong>. Deeper burial means greater heat and pressure, which changes the rock without melting it.</div>
+            </div>
+          </div>
+          <div class="cycle-arrow-wrap">
+            <div class="choose-item" data-answer="metamorphic" style="margin:0;">
+              <p class="choose-q" style="font-size:12.5px; margin-bottom:8px;"><span class="choose-blank">D</span> rock</p>
+              <div class="choose-row">
+                <button class="choose-btn" data-val="metamorphic">metamorphic</button>
+                <button class="choose-btn" data-val="sedimentary">sedimentary</button>
+              </div>
+              <div class="choose-fb">D = <strong>metamorphic</strong>. Heat and pressure have now transformed the sedimentary rock into metamorphic rock.</div>
+            </div>
+          </div>
+          <div class="cycle-stage metarock">Metamorphic<br>rock</div>
+          <div class="cycle-arrow-wrap">
+            <div class="cycle-arrow">➜</div>
+            <div class="hint" style="margin:0;">burial (deeper still, until the rock melts completely)</div>
+          </div>
+          <div class="cycle-stage magma">Magma</div>
+          <div class="cycle-arrow-wrap">
+            <div class="cycle-arrow">➜</div>
+            <div class="hint" style="margin:0;">cooling</div>
+          </div>
+          <div class="cycle-arrow-wrap">
+            <div class="choose-item" data-answer="intrusive" style="margin:0;">
+              <p class="choose-q" style="font-size:12.5px; margin-bottom:8px;"><span class="choose-blank">E</span> igneous rock</p>
+              <div class="choose-row">
+                <button class="choose-btn" data-val="intrusive">intrusive</button>
+                <button class="choose-btn" data-val="extrusive">extrusive</button>
+              </div>
+              <div class="choose-fb">E = <strong>intrusive</strong>. This branch of the diagram shows magma cooling slowly underground, which forms intrusive igneous rock (such as granite).</div>
+            </div>
+          </div>
+          <div class="cycle-stage igneousrock">Igneous<br>rock</div>
+        </div>
+        <div class="cycle-loop">🔁 Weathering then attacks this rock at the surface, and the whole cycle begins again — nothing is ever the final product!</div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 7 : CHALLENGE — 350 MILLION YEARS OF ONE ROCK ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="wb-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.3 Challenge, question 5</div>
+        <h1 class="slide-title">350 million years in the life of a rock</h1>
+        <p class="lede">The workbook challenge asks you to draw a rock cycle for a piece of rock that begins <em>and</em> ends as granite. Tap each card below, in order, to reveal the story — it uses every word from the workbook's word list.</p>
+
+        <div class="wordbank-strip">
+          <span class="wordbank-chip">granite</span><span class="wordbank-chip">weathering</span><span class="wordbank-chip">erosion</span>
+          <span class="wordbank-chip">transportation</span><span class="wordbank-chip">deposition</span><span class="wordbank-chip">sedimentation</span>
+          <span class="wordbank-chip">sandstone</span><span class="wordbank-chip">sedimentary rock</span><span class="wordbank-chip">burial</span>
+          <span class="wordbank-chip">heat</span><span class="wordbank-chip">pressure</span><span class="wordbank-chip">quartzite</span>
+          <span class="wordbank-chip">metamorphic rock</span><span class="wordbank-chip">melting</span><span class="wordbank-chip">cooling</span>
+          <span class="wordbank-chip">igneous rock</span>
+        </div>
+
+        <div class="story-row" id="storyRow"></div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 8 : SELF-CHECK & RECAP ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Look what I can do!</div>
+        <h1 class="slide-title">Self-check &amp; recap</h1>
+        <div class="progress-bar-track"><div class="progress-bar-fill" id="assessFill"></div></div>
+        <div class="assess-list" id="assessList"></div>
+
+        <h3 class="mini-title" style="margin-top:30px;">Key vocabulary — tap a card to flip it</h3>
+        <div class="gloss-grid" id="glossGrid"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <button class="navbtn" id="prevBtn" onclick="prevSlide()" aria-label="Previous">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button class="navbtn" id="nextBtn" onclick="nextSlide()" aria-label="Next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+
+<script>
+/* ============ core slide navigation ============ */
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let idx = 0;
+
+const dotsWrap = document.getElementById('dots');
+slides.forEach((s,i)=>{
+  const d = document.createElement('button');
+  d.className = 'dot' + (i===0?' active':'');
+  d.onclick = ()=>goTo(i);
+  dotsWrap.appendChild(d);
+});
+
+function render(){
+  slides.forEach((s,i)=> s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.dot').forEach((d,i)=> d.classList.toggle('active', i===idx));
+  document.getElementById('counter').textContent = (idx+1) + ' / ' + total;
+  document.getElementById('prevBtn').classList.toggle('disabled', idx===0);
+  document.getElementById('nextBtn').classList.toggle('disabled', idx===total-1);
+  slides[idx].scrollTop = 0;
+}
+function goTo(i){ idx = Math.max(0, Math.min(total-1, i)); render(); }
+function nextSlide(){ goTo(idx+1); }
+function prevSlide(){ goTo(idx-1); }
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight') nextSlide();
+  if(e.key==='ArrowLeft') prevSlide();
+});
+render();
+
+/* ============ objectives checklist ============ */
+document.querySelectorAll('.obj-card').forEach(card=>{
+  card.addEventListener('click', ()=> card.classList.toggle('done'));
+});
+
+/* ============ MCQ workbook items (Focus 1a-c) ============ */
+document.querySelectorAll('.mcq-item').forEach(item=>{
+  const ans = item.dataset.answer;
+  item.querySelectorAll('.mcq-opt').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      item.querySelectorAll('.mcq-opt').forEach(b=>{
+        b.disabled = true;
+        if(b.dataset.val === ans) b.classList.add('correct');
+      });
+      if(btn.dataset.val !== ans) btn.classList.add('wrong');
+      item.querySelector('.mcq-fb').classList.add('show');
+    });
+  });
+});
+
+/* ============ choose-word items (rock cycle blanks) ============ */
+document.querySelectorAll('.choose-item').forEach(item=>{
+  const ans = item.dataset.answer;
+  item.querySelectorAll('.choose-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      item.querySelectorAll('.choose-btn').forEach(b=>{
+        b.disabled = true;
+        if(b.dataset.val === ans) b.classList.add('correct');
+      });
+      if(btn.dataset.val !== ans) btn.classList.add('wrong');
+      item.querySelector('.choose-fb').classList.add('show');
+    });
+  });
+});
+
+/* ============ matching game (Focus Q2) ============ */
+const correctPairs = {limestone:'marble', sandstone:'quartzite', shale:'slate', granite:'gneiss'};
+let selectedMatch = null;
+let matchedCount = 0;
+document.querySelectorAll('.match-card').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    if(card.classList.contains('correct')) return;
+    const key = card.dataset.pair;
+    const isLeft = Object.prototype.hasOwnProperty.call(correctPairs, key);
+
+    if(!selectedMatch){
+      document.querySelectorAll('.match-card').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedMatch = card;
+      return;
+    }
+
+    if(selectedMatch === card){
+      card.classList.remove('selected');
+      selectedMatch = null;
+      return;
+    }
+
+    const otherKey = selectedMatch.dataset.pair;
+    const otherIsLeft = Object.prototype.hasOwnProperty.call(correctPairs, otherKey);
+    if(isLeft === otherIsLeft){
+      document.querySelectorAll('.match-card').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedMatch = card;
+      return;
+    }
+
+    const leftKey = otherIsLeft ? otherKey : key;
+    const rightKey = otherIsLeft ? key : otherKey;
+    const leftCard = otherIsLeft ? selectedMatch : card;
+    const rightCard = otherIsLeft ? card : selectedMatch;
+
+    if(correctPairs[leftKey] === rightKey){
+      leftCard.classList.remove('selected'); rightCard.classList.remove('selected');
+      leftCard.classList.add('correct'); rightCard.classList.add('correct');
+      matchedCount++;
+      document.getElementById('matchProgress').textContent = matchedCount + ' of 4 matched' + (matchedCount===4 ? ' — well done!' : '');
+      selectedMatch = null;
+    } else {
+      leftCard.classList.add('wrong'); rightCard.classList.add('wrong');
+      setTimeout(()=>{
+        leftCard.classList.remove('selected','wrong'); rightCard.classList.remove('selected','wrong');
+      }, 700);
+      selectedMatch = null;
+    }
+  });
+});
+
+/* ============ identification key (Practice Q3) ============ */
+function pickKeyStage1(el, which){
+  document.querySelectorAll('#keyStage1 .key-opt').forEach(o=>o.classList.remove('correct'));
+  el.classList.add('correct');
+  const outcome = document.getElementById('keyOutcome');
+  const stage2 = document.getElementById('keyStage2');
+  if(which === 'no'){
+    stage2.classList.remove('show');
+    outcome.textContent = 'Rock is sedimentary — it is not crystalline, so it must be made of grains or fragments cemented together, like sandstone or limestone.';
+    outcome.classList.add('show');
+  } else {
+    outcome.classList.remove('show');
+    stage2.classList.add('show');
+  }
+}
+function pickKeyStage2(el, which){
+  document.querySelectorAll('#keyStage2 .key-opt').forEach(o=>o.classList.remove('correct'));
+  el.classList.add('correct');
+  const outcome = document.getElementById('keyOutcome');
+  if(which === 'yes'){
+    outcome.textContent = 'Rock is metamorphic — it is crystalline and banded, which tells you heat and pressure lined up its minerals into stripes, like gneiss or slate.';
+  } else {
+    outcome.textContent = 'Rock is igneous — it is crystalline but not banded, which tells you it formed from magma or lava cooling into interlocking crystals, like granite or basalt.';
+  }
+  outcome.classList.add('show');
+}
+function resetKey(){
+  document.querySelectorAll('.key-opt').forEach(o=>o.classList.remove('correct'));
+  document.getElementById('keyStage2').classList.remove('show');
+  document.getElementById('keyOutcome').classList.remove('show');
+}
+
+/* ============ challenge story flip cards ============ */
+const storySteps = [
+  {n:1, label:'Granite', icon:'🪨', text:'The story begins as granite — an igneous rock, formed long ago by magma cooling slowly underground.'},
+  {n:2, label:'Weathering', icon:'☀️', text:'Millions of years later the granite is exposed at the surface. Sun, rain and ice weather it, breaking it into loose grains.'},
+  {n:3, label:'Erosion &amp; transportation', icon:'🌊', text:'Rivers erode the loose fragments and transport them downstream toward the sea.'},
+  {n:4, label:'Deposition &amp; sedimentation', icon:'🏖️', text:'The grains are deposited on the sea bed, where sedimentation builds them up in layers over time.'},
+  {n:5, label:'Sandstone forms', icon:'🧱', text:'Burial, compaction and cementation turn the layers of sand grains into sandstone — a sedimentary rock.'},
+  {n:6, label:'Deeper burial', icon:'⬇️', text:'New rock forms above the sandstone, burying it deeper and deeper, where heat and pressure begin to build.'},
+  {n:7, label:'Quartzite forms', icon:'💎', text:'Intense heat and pressure recrystallise the sandstone into quartzite — a very hard metamorphic rock.'},
+  {n:8, label:'Melting', icon:'🔥', text:'Even deeper burial brings even greater heat. Eventually the quartzite melts completely into magma.'},
+  {n:9, label:'Cooling', icon:'🌋', text:'The magma rises through the crust and slowly begins cooling far underground.'},
+  {n:10, label:'Granite again!', icon:'🔁', text:'Slow cooling allows large crystals to grow once more, forming granite — an igneous rock. The story has come full circle!'}
+];
+const storyRow = document.getElementById('storyRow');
+storySteps.forEach((s,i)=>{
+  const card = document.createElement('div');
+  card.className = 'story-card';
+  card.innerHTML = `<div class="story-inner">
+      <div class="story-face front"><span class="story-num">STEP ${s.n}</span><span style="font-size:22px;">${s.icon}</span>${s.label}</div>
+      <div class="story-face back">${s.text}</div>
+    </div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flip'));
+  storyRow.appendChild(card);
+  if(i < storySteps.length - 1){
+    const arrow = document.createElement('div');
+    arrow.className = 'story-arrow';
+    arrow.textContent = '→';
+    storyRow.appendChild(arrow);
+  }
+});
+
+/* ============ assessment checklist ============ */
+const assessItems = [
+  'I can describe how metamorphic rocks form from existing rock through heat and pressure.',
+  'I can describe the properties of metamorphic rocks, including banding.',
+  'I can match common metamorphic rocks to the rock they formed from.',
+  'I can use a key to identify igneous, sedimentary and metamorphic rocks.',
+  'I can describe the rock cycle using the correct scientific vocabulary.',
+  'I can explain how arrows and labels are used to show processes in the rock cycle.',
+  'I can trace the history of a single rock through several stages of the rock cycle.',
+  'I can interpret diagrams and use scientific vocabulary accurately.'
+];
+const assessList = document.getElementById('assessList');
+assessItems.forEach(text=>{
+  const item = document.createElement('div');
+  item.className = 'assess-item';
+  item.innerHTML = `<div class="assess-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>${text}</p>`;
+  item.addEventListener('click', ()=>{
+    item.classList.toggle('checked');
+    updateAssessProgress();
+  });
+  assessList.appendChild(item);
+});
+function updateAssessProgress(){
+  const checked = document.querySelectorAll('.assess-item.checked').length;
+  const pct = (checked/assessItems.length)*100;
+  document.getElementById('assessFill').style.width = pct+'%';
+}
+
+/* ============ glossary flip cards ============ */
+const glossary = [
+  {term:'Metamorphic rock', def:'A rock formed when an existing rock is changed by heat and pressure, without melting.'},
+  {term:'Heat', def:'One of the two main causes of metamorphism, along with pressure.'},
+  {term:'Pressure', def:'The squeezing force from rock above that helps transform buried rock.'},
+  {term:'Banding', def:'Stripes of light and dark minerals formed when pressure lines up crystals.'},
+  {term:'Marble', def:'A metamorphic rock formed when limestone is changed by heat and pressure.'},
+  {term:'Slate', def:'A metamorphic rock formed when shale is changed by heat and pressure.'},
+  {term:'Quartzite', def:'A metamorphic rock formed when sandstone is changed by heat and pressure.'},
+  {term:'Gneiss', def:'A metamorphic rock formed when granite is changed by heat and pressure.'},
+  {term:'Rock cycle', def:'The continuous process by which rock changes between igneous, sedimentary and metamorphic forms.'},
+  {term:'Melting', def:'When a rock is heated so much it turns completely into liquid magma.'},
+  {term:'Burial', def:'Rock being covered by more and more layers, increasing heat and pressure on it.'},
+  {term:'Crystalline', def:'Made up of interlocking or visible crystals, rather than loose grains.'}
+];
+const glossGrid = document.getElementById('glossGrid');
+glossary.forEach(g=>{
+  const card = document.createElement('div');
+  card.className = 'gloss-card';
+  card.innerHTML = `<div class="gloss-inner">
+      <div class="gloss-face front">${g.term}</div>
+      <div class="gloss-face back">${g.def}</div>
+    </div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flip'));
+  glossGrid.appendChild(card);
+});
+
+/* ============ tooltip terms ============ */
+document.querySelectorAll('.term').forEach(t=>{
+  t.addEventListener('click', (e)=>{
+    alert(t.dataset.def);
+  });
+});
+</script>
+</body>
+</html>
