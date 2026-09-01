@@ -46,7 +46,7 @@ button{font-family:inherit;}
 .crumb .sep{color:#B9C4C3;}
 .crumb .current{color:var(--teal-dark);}
 
-.dots{display:flex; gap:6px; align-items:center; flex-wrap:wrap; max-width:44vw;}
+.dots{display:flex; gap:6px; align-items:center; flex-wrap:wrap; max-width:40vw;}
 .dot{
   width:9px; height:9px; border-radius:50%; background:#D7DEDD; border:none; cursor:pointer;
   transition:all .25s;
@@ -95,21 +95,15 @@ button{font-family:inherit;}
   font-family:'Poppins'; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase;
   color:var(--orange); margin-bottom:8px;
 }
-h1.slide-title{font-size:34px; font-weight:800; color:var(--teal-dark); margin:0 0 6px; line-height:1.15;}
+h1.slide-title{font-size:33px; font-weight:800; color:var(--teal-dark); margin:0 0 6px; line-height:1.15;}
 h2.section-title{font-size:26px; font-weight:700; color:var(--teal-dark); margin:0 0 14px;}
 h3.mini-title{font-size:17px; font-weight:700; color:var(--ink); margin:0 0 8px;}
 p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
-.lede{font-size:17px; color:var(--ink-soft); margin-bottom:22px; max-width:680px;}
+.lede{font-size:17px; color:var(--ink-soft); margin-bottom:22px; max-width:700px;}
 .term{color:var(--orange); font-weight:700; cursor:help; border-bottom:1.5px dotted var(--orange);}
 
-.box{
-  border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--paper);
-  box-shadow:var(--shadow);
-}
-.box-head{
-  padding:12px 20px; font-family:'Poppins'; font-weight:700; font-size:14px; color:#fff;
-  display:flex; align-items:center; gap:8px;
-}
+.box{border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow);}
+.box-head{padding:12px 20px; font-family:'Poppins'; font-weight:700; font-size:14px; color:#fff; display:flex; align-items:center; gap:8px;}
 .box-body{padding:20px 22px;}
 .box.blue .box-head{background:var(--blue);}
 .box.purple .box-head{background:var(--purple);}
@@ -122,21 +116,14 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
 .two-col{display:grid; grid-template-columns:1.05fr .95fr; gap:36px; align-items:start;}
 @media (max-width:900px){.two-col{grid-template-columns:1fr;}}
 
-.photo{
-  width:100%; border-radius:var(--r-md); display:block; object-fit:cover; background:#eee;
-  box-shadow:0 6px 18px rgba(20,108,122,.18);
-}
+.photo{width:100%; border-radius:var(--r-md); display:block; object-fit:cover; background:#eee; box-shadow:0 6px 18px rgba(20,108,122,.18);}
 .photo-cap{font-size:12px; color:var(--ink-soft); margin-top:8px; font-style:italic;}
 
-.pill{
-  display:inline-block; padding:4px 12px; border-radius:100px; font-size:12px; font-weight:700;
-  background:var(--teal-light); color:var(--teal-dark); margin:2px 4px 2px 0;
-}
+.pill{display:inline-block; padding:4px 12px; border-radius:100px; font-size:12px; font-weight:700; background:var(--teal-light); color:var(--teal-dark); margin:2px 4px 2px 0;}
+.pill.orange{background:var(--orange-light); color:#8A4A16;}
+.pill.purple{background:var(--purple-light); color:var(--purple);}
 
-.btn{
-  border:none; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:14px;
-  padding:10px 20px; border-radius:100px; background:var(--teal); color:#fff; transition:.2s;
-}
+.btn{border:none; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:14px; padding:10px 20px; border-radius:100px; background:var(--teal); color:#fff; transition:.2s;}
 .btn:hover{background:var(--teal-dark);}
 .btn.ghost{background:transparent; border:1.5px solid var(--teal); color:var(--teal);}
 .btn.ghost:hover{background:var(--teal-light);}
@@ -149,15 +136,9 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
   padding:5px 12px; border-radius:100px; margin-bottom:12px;
 }
 .wb-badge svg{width:13px; height:13px;}
-.wb-panel{
-  border:1.5px dashed var(--purple); background:var(--purple-light); border-radius:var(--r-lg);
-  padding:20px 22px; margin-top:8px;
-}
+.wb-panel{border:1.5px dashed var(--purple); background:var(--purple-light); border-radius:var(--r-lg); padding:20px 22px; margin-top:8px;}
 
-.hint{
-  font-size:12.5px; color:var(--ink-soft); background:var(--teal-light); border-radius:100px;
-  padding:6px 14px; display:inline-flex; gap:6px; align-items:center; margin-bottom:18px; font-weight:600;
-}
+.hint{font-size:12.5px; color:var(--ink-soft); background:var(--teal-light); border-radius:100px; padding:6px 14px; display:inline-flex; gap:6px; align-items:center; margin-bottom:18px; font-weight:600;}
 .hint svg{width:14px; height:14px;}
 
 /* ============ SLIDE 0 : COVER ============ */
@@ -172,13 +153,10 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
 .cover-band{position:absolute; left:-8%; right:-8%; height:8%; background:#fff; opacity:.10; transform:skewY(-4deg);}
 .cover-content{position:relative; z-index:2; text-align:center; color:#fff; max-width:780px; padding:0 30px;}
 .cover-content .unit{font-family:'Poppins'; font-weight:700; letter-spacing:3px; font-size:13px; text-transform:uppercase; color:#DCCCF5; margin-bottom:14px;}
-.cover-content h1{font-size:48px; font-weight:800; margin:0 0 10px; line-height:1.08;}
+.cover-content h1{font-size:46px; font-weight:800; margin:0 0 10px; line-height:1.08;}
 .cover-content .sub{font-size:19px; color:#E8DFF7; font-weight:500; margin-bottom:34px;}
 .cover-chip-row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:38px;}
-.cover-chip{
-  background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff;
-  padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600; backdrop-filter:blur(4px);
-}
+.cover-chip{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff; padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600; backdrop-filter:blur(4px);}
 .cover-start{
   background:var(--orange); color:#fff; border:none; font-family:'Poppins'; font-weight:700; font-size:16px;
   padding:15px 34px; border-radius:100px; cursor:pointer; box-shadow:0 12px 26px rgba(221,122,46,.4);
@@ -188,27 +166,18 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
 
 /* ============ objectives slide ============ */
 .obj-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 22px; margin-top:6px;}
-.obj-card{
-  display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:var(--r-md);
-  background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.2s;
-}
+.obj-card{display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:var(--r-md); background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.2s;}
 .obj-card:hover{border-color:var(--teal-mid); box-shadow:var(--shadow);}
-.obj-num{
-  flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--teal-light); color:var(--teal-dark);
-  font-family:'Poppins'; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;
-}
+.obj-num{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--teal-light); color:var(--teal-dark); font-family:'Poppins'; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;}
 .obj-card.done .obj-num{background:var(--teal); color:#fff;}
 .obj-card.done p{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:#B9C4C3;}
 .obj-card p{margin:0; font-size:13.8px; line-height:1.5;}
 
-/* ============ MCQ workbook component (Focus 1a-c) ============ */
+/* ============ MCQ workbook component ============ */
 .mcq-item{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:16px 18px; margin-bottom:12px;}
 .mcq-q{font-size:15px; margin:0 0 10px; font-weight:600;}
 .mcq-opts{display:flex; flex-direction:column; gap:8px;}
-.mcq-opt{
-  text-align:left; border:1.5px solid var(--purple); background:#fff; color:var(--ink); font-family:'Inter'; font-weight:500;
-  font-size:14px; padding:10px 16px; border-radius:10px; cursor:pointer; transition:.15s;
-}
+.mcq-opt{text-align:left; border:1.5px solid var(--purple); background:#fff; color:var(--ink); font-family:'Inter'; font-weight:500; font-size:14px; padding:10px 16px; border-radius:10px; cursor:pointer; transition:.15s;}
 .mcq-opt:hover{background:var(--purple-light);}
 .mcq-opt.correct{background:var(--green-light); border-color:var(--green); color:#245A38; font-weight:700;}
 .mcq-opt.wrong{background:var(--red-light); border-color:var(--red); color:var(--red);}
@@ -222,10 +191,7 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
 .choose-q{font-size:15px; margin:0 0 10px; font-weight:600;}
 .choose-blank{color:var(--purple); font-weight:700;}
 .choose-row{display:flex; gap:10px; flex-wrap:wrap;}
-.choose-btn{
-  border:1.5px solid var(--purple); background:#fff; color:var(--purple); font-family:'Poppins'; font-weight:600;
-  font-size:13.5px; padding:8px 18px; border-radius:100px; cursor:pointer; transition:.15s;
-}
+.choose-btn{border:1.5px solid var(--purple); background:#fff; color:var(--purple); font-family:'Poppins'; font-weight:600; font-size:13.5px; padding:8px 18px; border-radius:100px; cursor:pointer; transition:.15s;}
 .choose-btn:hover{background:var(--purple-light);}
 .choose-btn.correct{background:var(--green-light); border-color:var(--green); color:var(--green);}
 .choose-btn.wrong{background:var(--red-light); border-color:var(--red); color:var(--red);}
@@ -235,22 +201,25 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
 
 /* ============ tabs ============ */
 .tabs{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
-.tab-btn{
-  padding:10px 18px; border-radius:100px; border:1.5px solid var(--line); background:#fff; cursor:pointer;
-  font-family:'Poppins'; font-weight:600; font-size:13.5px; color:var(--ink-soft); transition:.2s;
-}
+.tab-btn{padding:10px 18px; border-radius:100px; border:1.5px solid var(--line); background:#fff; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:13.5px; color:var(--ink-soft); transition:.2s;}
 .tab-btn.active{background:var(--teal); border-color:var(--teal); color:#fff;}
 .tab-panel{display:none;}
 .tab-panel.active{display:block; animation:fadein .35s;}
 
-/* ============ matching game (Focus Q2) ============ */
+/* ============ before/after transformation pair ============ */
+.transform-pair{display:grid; grid-template-columns:1fr auto 1fr; gap:18px; align-items:center; margin-bottom:20px;}
+@media(max-width:760px){.transform-pair{grid-template-columns:1fr;}}
+.transform-card{text-align:center;}
+.transform-card img{width:100%; height:170px; object-fit:cover; border-radius:var(--r-md); box-shadow:0 6px 18px rgba(20,108,122,.18);}
+.transform-card .t-label{font-family:'Poppins'; font-weight:700; font-size:15px; margin-top:10px; color:var(--teal-dark);}
+.transform-arrow{display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--orange); font-size:26px; font-weight:800;}
+.transform-arrow span{font-family:'Poppins'; font-size:10px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.5px; max-width:80px; text-align:center; line-height:1.3;}
+
+/* ============ matching game ============ */
 .match-wrap{display:flex; gap:60px; justify-content:center; flex-wrap:wrap; margin-top:10px;}
 .match-col{display:flex; flex-direction:column; gap:12px; width:220px;}
 .match-col-label{font-family:'Poppins'; font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:.5px; color:var(--ink-soft); margin-bottom:2px; text-align:center;}
-.match-card{
-  display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:var(--r-md);
-  border:1.5px solid var(--line); background:#fff; cursor:pointer; transition:.2s;
-}
+.match-card{display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:var(--r-md); border:1.5px solid var(--line); background:#fff; cursor:pointer; transition:.2s;}
 .match-card:hover{border-color:var(--teal-mid); box-shadow:var(--shadow);}
 .match-card.selected{border-color:var(--orange); background:var(--orange-light);}
 .match-card.correct{border-color:var(--green); background:var(--green-light); cursor:default; pointer-events:none;}
@@ -259,36 +228,49 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
 .match-card span{font-family:'Poppins'; font-weight:700; font-size:13px;}
 .match-progress{text-align:center; margin-top:16px; font-size:13.5px; color:var(--ink-soft); font-weight:600;}
 
-/* ============ identification key (Practice Q3) ============ */
+/* ============ identification key ============ */
+.key-intro-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:26px;}
+@media(max-width:760px){.key-intro-grid{grid-template-columns:1fr;}}
+.key-def-card{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:16px 18px;}
+.key-def-card h4{margin:0 0 6px; font-family:'Poppins'; font-size:14px; color:var(--teal-dark);}
+.key-def-card p{margin:0; font-size:13.5px; color:var(--ink-soft);}
 .key-flow{display:flex; flex-direction:column; align-items:center; gap:6px;}
-.key-node{
-  background:var(--teal-light); color:var(--teal-dark); font-family:'Poppins'; font-weight:700; font-size:13.5px;
-  padding:12px 22px; border-radius:10px; text-align:center;
-}
-.key-q{font-size:13px; color:var(--ink-soft); margin:4px 0; text-align:center;}
+.key-node{background:var(--teal-light); color:var(--teal-dark); font-family:'Poppins'; font-weight:700; font-size:13.5px; padding:12px 22px; border-radius:10px; text-align:center;}
+.key-q{font-size:13.5px; color:var(--ink-soft); margin:6px 0; text-align:center; max-width:420px;}
 .key-branches{display:flex; gap:50px; margin-top:6px; flex-wrap:wrap; justify-content:center;}
 .key-branch{display:flex; flex-direction:column; align-items:center; gap:8px;}
 .key-branch-label{font-size:12px; font-weight:700; color:var(--ink-soft);}
-.key-opt{
-  border:2px dashed var(--line); background:#fff; border-radius:12px; padding:14px 18px; cursor:pointer;
-  font-family:'Poppins'; font-weight:600; font-size:13px; text-align:center; min-width:160px; transition:.2s;
-}
+.key-opt{border:2px dashed var(--line); background:#fff; border-radius:12px; padding:14px 18px; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:13px; text-align:center; min-width:170px; transition:.2s;}
 .key-opt:hover{border-color:var(--teal-mid);}
 .key-opt.correct{border-style:solid; border-color:var(--green); background:var(--green-light); color:var(--green);}
 .key-stage{display:none; margin-top:22px; width:100%;}
 .key-stage.show{display:flex; flex-direction:column; align-items:center; animation:fadein .35s;}
-.key-outcome{
-  margin-top:16px; padding:14px 18px; border-radius:var(--r-md); font-size:14px; max-width:460px; text-align:center;
-  background:var(--green-light); color:#245A38; display:none;
-}
-.key-outcome.show{display:block; animation:fadein .3s;}
+.key-outcome{margin-top:18px; padding:16px 18px; border-radius:var(--r-md); font-size:14px; max-width:520px; text-align:center; background:var(--green-light); color:#245A38; display:none;}
+.key-outcome.show{display:flex; flex-direction:column; align-items:center; gap:10px; animation:fadein .3s;}
+.key-outcome img{width:110px; height:80px; object-fit:cover; border-radius:10px; box-shadow:var(--shadow);}
 
-/* ============ rock cycle flow (Focus 1c + Q4) ============ */
-.cycle-flow{display:flex; align-items:center; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:10px;}
-.cycle-stage{
-  font-family:'Poppins'; font-weight:700; font-size:13.5px; color:#fff; padding:14px 18px; border-radius:var(--r-md);
-  text-align:center; min-width:140px; box-shadow:var(--shadow);
+/* ============ circular rock-cycle diagram ============ */
+.rc-wrap{display:flex; gap:34px; align-items:center; flex-wrap:wrap;}
+.rc-diagram{position:relative; width:460px; max-width:100%; aspect-ratio:440/400; flex:0 0 auto;}
+.rc-diagram svg{width:100%; height:100%; display:block;}
+.rc-hot{
+  position:absolute; width:0; height:0; transform:translate(-50%,-50%);
 }
+.rc-hot-dot{
+  position:absolute; width:18px; height:18px; border-radius:50%; border:3px solid #fff; cursor:pointer;
+  box-shadow:0 3px 8px rgba(0,0,0,.3); transition:.2s;
+}
+.rc-hot-dot:hover{transform:scale(1.2);}
+.rc-hot-dot.revealed{outline:3px solid var(--orange); outline-offset:2px;}
+.rc-info{flex:1 1 280px; min-width:260px;}
+.rc-card{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:14px 16px; margin-bottom:10px; opacity:.4; transition:.3s; border-left:4px solid #D7DEDD;}
+.rc-card.active{opacity:1; border-left-color:var(--orange); box-shadow:var(--shadow);}
+.rc-card h4{margin:0 0 4px; font-family:'Poppins'; font-size:14.5px; color:var(--teal-dark);}
+.rc-card p{margin:0; font-size:13.5px;}
+
+/* ============ rock cycle practice flow (fill blanks) ============ */
+.cycle-flow{display:flex; align-items:center; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:10px;}
+.cycle-stage{font-family:'Poppins'; font-weight:700; font-size:13.5px; color:#fff; padding:14px 18px; border-radius:var(--r-md); text-align:center; min-width:140px; box-shadow:var(--shadow);}
 .cycle-stage.surface{background:var(--sand);}
 .cycle-stage.sediment{background:var(--orange);}
 .cycle-stage.sedrock{background:#B5601F;}
@@ -297,17 +279,11 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
 .cycle-stage.igneousrock{background:var(--teal);}
 .cycle-arrow-wrap{display:flex; flex-direction:column; align-items:center; gap:6px; max-width:230px;}
 .cycle-arrow{color:var(--ink-soft); font-size:22px; line-height:1;}
-.cycle-loop{
-  width:100%; margin-top:20px; padding:16px 20px; border-radius:var(--r-md); background:var(--teal-light);
-  color:var(--teal-dark); font-weight:700; text-align:center; font-family:'Poppins'; font-size:14px;
-}
+.cycle-loop{width:100%; margin-top:20px; padding:16px 20px; border-radius:var(--r-md); background:var(--teal-light); color:var(--teal-dark); font-weight:700; text-align:center; font-family:'Poppins'; font-size:14px;}
 
 /* ============ story flip cards (Challenge) ============ */
 .story-row{display:flex; flex-wrap:wrap; gap:14px; align-items:center; justify-content:center; margin-top:10px;}
-.story-card{
-  background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:14px; cursor:pointer;
-  perspective:900px; width:150px; height:130px; position:relative; box-shadow:var(--shadow);
-}
+.story-card{background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:14px; cursor:pointer; perspective:900px; width:150px; height:130px; position:relative; box-shadow:var(--shadow);}
 .story-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
 .story-card.flip .story-inner{transform:rotateY(180deg);}
 .story-face{position:absolute; inset:0; backface-visibility:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:6px;}
@@ -316,10 +292,7 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
 .story-face.back{transform:rotateY(180deg); font-size:11px; color:var(--ink-soft); padding:6px; line-height:1.4;}
 .story-arrow{color:var(--ink-soft); font-size:20px;}
 .wordbank-strip{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 22px; padding:14px; background:var(--purple-light); border-radius:var(--r-md);}
-.wordbank-chip{
-  background:#fff; border:1.5px solid var(--purple); color:var(--purple); font-family:'Poppins'; font-weight:600;
-  font-size:12.5px; padding:6px 13px; border-radius:100px;
-}
+.wordbank-chip{background:#fff; border:1.5px solid var(--purple); color:var(--purple); font-family:'Poppins'; font-weight:600; font-size:12.5px; padding:6px 13px; border-radius:100px;}
 
 /* ============ checklist ============ */
 .assess-list{display:flex; flex-direction:column; gap:2px;}
@@ -350,9 +323,10 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
   .obj-grid{grid-template-columns:1fr;}
   .two-col{grid-template-columns:1fr;}
   .gloss-grid{grid-template-columns:repeat(2,1fr);}
-  .cover-content h1{font-size:30px;}
-  h1.slide-title{font-size:24px;}
+  .cover-content h1{font-size:28px;}
+  h1.slide-title{font-size:23px;}
   .match-wrap{gap:24px;}
+  .rc-diagram{width:100%;}
 }
 </style>
 </head>
@@ -367,7 +341,7 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
       <span class="current">3.3 Metamorphic rocks and the rock cycle</span>
     </div>
     <div class="dots" id="dots"></div>
-    <div class="counter" id="counter">1 / 9</div>
+    <div class="counter" id="counter">1 / 11</div>
   </div>
 
   <div class="stage" id="stage">
@@ -407,10 +381,10 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
         <div class="obj-grid" id="objGrid">
           <div class="obj-card" data-i="1"><div class="obj-num">1</div><p>Describe how metamorphic rocks form from existing rock through heat and pressure</p></div>
           <div class="obj-card" data-i="2"><div class="obj-num">2</div><p>Describe the properties of metamorphic rocks, including banding</p></div>
-          <div class="obj-card" data-i="3"><div class="obj-num">3</div><p>Match common metamorphic rocks to the rock they formed from</p></div>
-          <div class="obj-card" data-i="4"><div class="obj-num">4</div><p>Use a key to identify igneous, sedimentary and metamorphic rocks</p></div>
-          <div class="obj-card" data-i="5"><div class="obj-num">5</div><p>Describe the rock cycle using the correct scientific vocabulary</p></div>
-          <div class="obj-card" data-i="6"><div class="obj-num">6</div><p>Explain how arrows and labels are used to show processes in the rock cycle</p></div>
+          <div class="obj-card" data-i="3"><div class="obj-num">3</div><p>Explain in detail how shale, sandstone, limestone and granite each change into a metamorphic rock</p></div>
+          <div class="obj-card" data-i="4"><div class="obj-num">4</div><p>Match common metamorphic rocks to the rock they formed from</p></div>
+          <div class="obj-card" data-i="5"><div class="obj-num">5</div><p>Use a key to identify igneous, sedimentary and metamorphic rocks</p></div>
+          <div class="obj-card" data-i="6"><div class="obj-num">6</div><p>Describe the rock cycle using the correct scientific vocabulary</p></div>
           <div class="obj-card" data-i="7"><div class="obj-num">7</div><p>Trace the history of a single rock through several stages of the rock cycle</p></div>
           <div class="obj-card" data-i="8"><div class="obj-num">8</div><p>Interpret diagrams and use scientific vocabulary accurately</p></div>
         </div>
@@ -488,12 +462,90 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
       </div>
     </section>
 
-    <!-- ================= SLIDE 4 : MATCHING GAME (Focus Q2) ================= -->
+    <!-- ================= SLIDE 4 : FOUR FAMOUS TRANSFORMATIONS ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Before the matching activity</div>
+        <h1 class="slide-title">Four famous transformations</h1>
+        <p class="lede">The same story — burial, heat and pressure — plays out differently depending on the starting rock. Explore each pair below to see exactly what changes.</p>
+
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="t1">📄 Shale &rarr; Slate</button>
+          <button class="tab-btn" data-tab="t2">🏜️ Sandstone &rarr; Quartzite</button>
+          <button class="tab-btn" data-tab="t3">🐚 Limestone &rarr; Marble</button>
+          <button class="tab-btn" data-tab="t4">💎 Granite &rarr; Gneiss</button>
+        </div>
+
+        <div class="tab-panel active" id="tab-t1">
+          <div class="transform-pair">
+            <div class="transform-card">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Mudcracks%20in%20gray%20shale.jpg" alt="Shale">
+              <div class="t-label">Shale <span class="pill orange">Sedimentary</span></div>
+            </div>
+            <div class="transform-arrow">➜<span>Low–moderate heat &amp; pressure</span></div>
+            <div class="transform-card">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Outcrop%20of%20slate%20-%20geograph.org.uk%20-%201323556.jpg" alt="Slate">
+              <div class="t-label">Slate <span class="pill purple">Metamorphic</span></div>
+            </div>
+          </div>
+          <p>Shale is a soft rock made of tightly packed clay and mud particles. When it is buried and squeezed, the tiny flat clay minerals inside it recrystallise and line up at right angles to the squeezing force. This gives slate <strong>slaty cleavage</strong> — the ability to split cleanly into thin, flat sheets — and makes it much harder than the shale it came from.</p>
+        </div>
+
+        <div class="tab-panel" id="tab-t2">
+          <div class="transform-pair">
+            <div class="transform-card">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Sandstone.jpg" alt="Sandstone">
+              <div class="t-label">Sandstone <span class="pill orange">Sedimentary</span></div>
+            </div>
+            <div class="transform-arrow">➜<span>High heat &amp; pressure</span></div>
+            <div class="transform-card">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Quartzite.jpg" alt="Quartzite">
+              <div class="t-label">Quartzite <span class="pill purple">Metamorphic</span></div>
+            </div>
+          </div>
+          <p>Sandstone is made of separate sand grains held together by cement. Intense heat and pressure make the quartz grains and the cement between them recrystallise into one continuous, interlocking mass of quartz crystals. The individual grain boundaries disappear — which is why quartzite is so much harder than sandstone that a break runs straight <em>through</em> the crystals instead of crumbling around them.</p>
+        </div>
+
+        <div class="tab-panel" id="tab-t3">
+          <div class="transform-pair">
+            <div class="transform-card">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Limestone%20a%20type%20of%20Sedimentary%20Rock.jpg" alt="Limestone">
+              <div class="t-label">Limestone <span class="pill orange">Sedimentary</span></div>
+            </div>
+            <div class="transform-arrow">➜<span>Heat &amp; pressure</span></div>
+            <div class="transform-card">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Vietnamese%20white%20marble.JPG" alt="Marble">
+              <div class="t-label">Marble <span class="pill purple">Metamorphic</span></div>
+            </div>
+          </div>
+          <p>Limestone is built from crushed shells and coral fragments made of calcium carbonate. Heat and pressure cause these calcite crystals to recrystallise into larger crystals that interlock tightly together, erasing the original shell shapes completely. This gives marble its smooth, sugary texture — and lets it take a brilliant polish, which is why it is prized for statues and buildings.</p>
+        </div>
+
+        <div class="tab-panel" id="tab-t4">
+          <div class="transform-pair">
+            <div class="transform-card">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Granite.jpg" alt="Granite">
+              <div class="t-label">Granite <span class="pill" style="background:var(--teal-light); color:var(--teal-dark);">Igneous</span></div>
+            </div>
+            <div class="transform-arrow">➜<span>Extreme heat &amp; pressure</span></div>
+            <div class="transform-card">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Gneiss.jpg" alt="Gneiss">
+              <div class="t-label">Gneiss <span class="pill purple">Metamorphic</span></div>
+            </div>
+          </div>
+          <p>Granite already has large, randomly arranged crystals of quartz, feldspar and mica. Under extreme heat and pressure, these minerals recrystallise and separate out into alternating light and dark stripes — <strong>gneissic banding</strong> — lined up at right angles to the pressure. Gneiss keeps granite's large crystals, but gains this new striped, banded pattern.</p>
+        </div>
+
+        <div class="hint" style="margin-top:8px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Remember these four pairs — you will need them for the matching activity next.</div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 5 : MATCHING GAME (Focus Q2) ================= -->
     <section class="slide">
       <div class="slide-inner">
         <div class="wb-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.3 Focus, question 2</div>
         <h1 class="slide-title">Match each rock to what it becomes</h1>
-        <p class="lede">Tap a rock on the left, then tap the metamorphic rock on the right it changes into. Matched pairs turn green.</p>
+        <p class="lede">Now put the four transformations to the test. Tap a rock on the left, then tap the metamorphic rock on the right it changes into. Matched pairs turn green.</p>
 
         <div class="match-wrap">
           <div class="match-col">
@@ -539,16 +591,27 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
       </div>
     </section>
 
-    <!-- ================= SLIDE 5 : IDENTIFICATION KEY (Practice Q3) ================= -->
+    <!-- ================= SLIDE 6 : IDENTIFICATION KEY (Practice Q3) ================= -->
     <section class="slide">
       <div class="slide-inner">
         <div class="wb-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.3 Practice, question 3</div>
         <h1 class="slide-title">Build the identification key</h1>
-        <p class="lede">You are handed a rock to identify. Answer each branching question to work out what type of rock it is — exactly as the workbook key describes.</p>
+        <p class="lede">You are handed a rock to identify. A key works by asking one yes/no question at a time until only one answer is left. Before you start, make sure these two words are clear:</p>
+
+        <div class="key-intro-grid">
+          <div class="key-def-card">
+            <h4>Crystalline?</h4>
+            <p>Made of crystals that grew together and interlock — either large and visible (like granite) or too small to see (like basalt). A rock that is <strong>not</strong> crystalline is instead made of separate grains or fragments cemented together, like sandstone.</p>
+          </div>
+          <div class="key-def-card">
+            <h4>Banded?</h4>
+            <p>Shows stripes of alternating light and dark minerals, lined up in the same direction because pressure squeezed them that way. A rock with random, unaligned crystals is <strong>not</strong> banded.</p>
+          </div>
+        </div>
 
         <div class="key-flow">
           <div class="key-node">Unknown rock</div>
-          <div class="key-q">Is the rock crystalline?</div>
+          <div class="key-q">Question 1 — Is the rock crystalline?</div>
           <div class="key-branches" id="keyStage1">
             <div class="key-branch">
               <div class="key-branch-label">NO</div>
@@ -562,7 +625,7 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
 
           <div class="key-stage" id="keyStage2">
             <div class="key-node" style="margin-top:10px;">Crystalline rock</div>
-            <div class="key-q">Does the rock have a banded appearance?</div>
+            <div class="key-q">Question 2 — Does the rock have a banded appearance?</div>
             <div class="key-branches">
               <div class="key-branch">
                 <div class="key-branch-label">YES</div>
@@ -583,12 +646,90 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
       </div>
     </section>
 
-    <!-- ================= SLIDE 6 : THE ROCK CYCLE ================= -->
+    <!-- ================= SLIDE 7 : THE ROCK CYCLE — BIG PICTURE DIAGRAM ================= -->
     <section class="slide">
       <div class="slide-inner">
         <div class="eyebrow">Nothing is ever really "finished"</div>
         <h1 class="slide-title">The rock cycle</h1>
-        <p class="lede">Every rock on Earth is part of an endless cycle. Follow the stages below, filling in each blank as you go.</p>
+        <p class="lede">Every rock on Earth is part of an endless cycle with no true beginning or end. Tap each stage on the diagram, just as it appears in your Learner's Book, to read what happens there.</p>
+
+        <div class="rc-wrap">
+          <div class="rc-diagram">
+            <svg viewBox="-10 -10 460 420" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker id="arrowhead" markerWidth="9" markerHeight="9" refX="6" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 Z" fill="#4B5B62"/>
+                </marker>
+              </defs>
+              <!-- cycle arrows -->
+              <path d="M240.9,66.1 A140,140 0 0,1 295.5,97.6" fill="none" stroke="#4B5B62" stroke-width="2.5" marker-end="url(#arrowhead)"/>
+              <path d="M336.4,168.5 A140,140 0 0,1 336.4,231.5" fill="none" stroke="#4B5B62" stroke-width="2.5" marker-end="url(#arrowhead)"/>
+              <path d="M295.5,302.4 A140,140 0 0,1 240.9,333.9" fill="none" stroke="#4B5B62" stroke-width="2.5" marker-end="url(#arrowhead)"/>
+              <path d="M159.1,333.9 A140,140 0 0,1 104.5,302.4" fill="none" stroke="#4B5B62" stroke-width="2.5" marker-end="url(#arrowhead)"/>
+              <path d="M63.6,231.5 A140,140 0 0,1 63.6,168.5" fill="none" stroke="#4B5B62" stroke-width="2.5" marker-end="url(#arrowhead)"/>
+              <path d="M104.5,97.6 A140,140 0 0,1 159.1,66.1" fill="none" stroke="#4B5B62" stroke-width="2.5" marker-end="url(#arrowhead)"/>
+
+              <!-- arrow labels -->
+              <text x="307" y="45" text-anchor="middle" font-family="Inter" font-size="11" fill="#4B5B62">weathering,</text>
+              <text x="307" y="58" text-anchor="middle" font-family="Inter" font-size="11" fill="#4B5B62">erosion &amp; deposition</text>
+              <text x="393" y="196" text-anchor="middle" font-family="Inter" font-size="11" fill="#4B5B62">burial &amp;</text>
+              <text x="393" y="209" text-anchor="middle" font-family="Inter" font-size="11" fill="#4B5B62">compaction</text>
+              <text x="307" y="348" text-anchor="middle" font-family="Inter" font-size="11" fill="#4B5B62">heat &amp;</text>
+              <text x="307" y="361" text-anchor="middle" font-family="Inter" font-size="11" fill="#4B5B62">pressure</text>
+              <text x="132" y="361" text-anchor="middle" font-family="Inter" font-size="11" fill="#4B5B62">melting</text>
+              <text x="45" y="196" text-anchor="middle" font-family="Inter" font-size="11" fill="#4B5B62">cooling</text>
+              <text x="132" y="45" text-anchor="middle" font-family="Inter" font-size="11" fill="#4B5B62">weathering</text>
+
+              <!-- nodes -->
+              <circle cx="220" cy="70" r="44" fill="#B08252"/>
+              <text x="220" y="66" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="11.5" fill="#fff">Rocks on</text>
+              <text x="220" y="79" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="11.5" fill="#fff">surface</text>
+
+              <circle cx="332.6" cy="135" r="44" fill="#DD7A2E"/>
+              <text x="332.6" y="139" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="12" fill="#fff">Sediment</text>
+
+              <circle cx="332.6" cy="265" r="44" fill="#B5601F"/>
+              <text x="332.6" y="261" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="10.5" fill="#fff">Sedimentary</text>
+              <text x="332.6" y="274" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="10.5" fill="#fff">rock</text>
+
+              <circle cx="220" cy="330" r="44" fill="#5B3E96"/>
+              <text x="220" y="326" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="10.5" fill="#fff">Metamorphic</text>
+              <text x="220" y="339" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="10.5" fill="#fff">rock</text>
+
+              <circle cx="107.4" cy="265" r="44" fill="#C0392B"/>
+              <text x="107.4" y="269" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="12" fill="#fff">Magma</text>
+
+              <circle cx="107.4" cy="135" r="44" fill="#146C7A"/>
+              <text x="107.4" y="131" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="10.5" fill="#fff">Igneous</text>
+              <text x="107.4" y="144" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="10.5" fill="#fff">rock</text>
+            </svg>
+
+            <div class="rc-hot" style="left:50%; top:17.5%;"><div class="rc-hot-dot" style="background:#B08252; margin-left:-9px; margin-top:-9px;" data-layer="surface"></div></div>
+            <div class="rc-hot" style="left:75.6%; top:33.75%;"><div class="rc-hot-dot" style="background:#DD7A2E; margin-left:-9px; margin-top:-9px;" data-layer="sediment"></div></div>
+            <div class="rc-hot" style="left:75.6%; top:66.25%;"><div class="rc-hot-dot" style="background:#B5601F; margin-left:-9px; margin-top:-9px;" data-layer="sedrock"></div></div>
+            <div class="rc-hot" style="left:50%; top:82.5%;"><div class="rc-hot-dot" style="background:#5B3E96; margin-left:-9px; margin-top:-9px;" data-layer="metarock"></div></div>
+            <div class="rc-hot" style="left:24.4%; top:66.25%;"><div class="rc-hot-dot" style="background:#C0392B; margin-left:-9px; margin-top:-9px;" data-layer="magma"></div></div>
+            <div class="rc-hot" style="left:24.4%; top:33.75%;"><div class="rc-hot-dot" style="background:#146C7A; margin-left:-9px; margin-top:-9px;" data-layer="igneousrock"></div></div>
+          </div>
+
+          <div class="rc-info">
+            <div class="rc-card" data-card="surface"><h4>Rocks on the surface</h4><p>Any rock exposed at the surface — igneous, sedimentary or metamorphic — is attacked by weathering, starting the cycle over again.</p></div>
+            <div class="rc-card" data-card="sediment"><h4>Sediment</h4><p>Weathered fragments are eroded, transported by rivers, wind or ice, and finally deposited — often on a sea or lake bed.</p></div>
+            <div class="rc-card" data-card="sedrock"><h4>Sedimentary rock</h4><p>Burial, compaction and cementation squeeze and glue the layers of sediment together into solid sedimentary rock.</p></div>
+            <div class="rc-card" data-card="metarock"><h4>Metamorphic rock</h4><p>Deeper burial brings greater heat and pressure, changing the sedimentary (or any other) rock into metamorphic rock — without melting it.</p></div>
+            <div class="rc-card" data-card="magma"><h4>Magma</h4><p>If burial continues and the temperature rises high enough, the rock finally melts completely into liquid magma.</p></div>
+            <div class="rc-card" data-card="igneousrock"><h4>Igneous rock</h4><p>As magma cools — slowly underground or quickly at the surface as lava — it solidifies into igneous rock, ready to be weathered all over again.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 8 : ROCK CYCLE PRACTICE (Focus 1c + Practice 4) ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Now test yourself</div>
+        <h1 class="slide-title">Complete the rock cycle</h1>
+        <p class="lede">Using the diagram you just explored, fill in each missing word below — exactly as in the workbook.</p>
 
         <div class="wb-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.3 Focus, question 1c</div>
         <div class="wb-panel" style="margin-bottom:26px;">
@@ -599,7 +740,7 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
               <button class="mcq-opt" data-val="B">B &nbsp; pictures</button>
               <button class="mcq-opt" data-val="C">C &nbsp; lines</button>
             </div>
-            <div class="mcq-fb">Correct answer: <strong>A</strong>. Every arrow on the diagram below stands for a process — the label on it tells you exactly what is happening to the rock at that point.</div>
+            <div class="mcq-fb">Correct answer: <strong>A</strong>. Every arrow on the diagram stands for a process — the label on it tells you exactly what is happening to the rock at that point.</div>
           </div>
         </div>
 
@@ -677,7 +818,7 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
       </div>
     </section>
 
-    <!-- ================= SLIDE 7 : CHALLENGE — 350 MILLION YEARS OF ONE ROCK ================= -->
+    <!-- ================= SLIDE 9 : CHALLENGE — 350 MILLION YEARS OF ONE ROCK ================= -->
     <section class="slide">
       <div class="slide-inner">
         <div class="wb-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.3 Challenge, question 5</div>
@@ -697,7 +838,7 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
       </div>
     </section>
 
-    <!-- ================= SLIDE 8 : SELF-CHECK & RECAP ================= -->
+    <!-- ================= SLIDE 10 : SELF-CHECK & RECAP ================= -->
     <section class="slide">
       <div class="slide-inner">
         <div class="eyebrow">Look what I can do!</div>
@@ -756,7 +897,7 @@ document.querySelectorAll('.obj-card').forEach(card=>{
   card.addEventListener('click', ()=> card.classList.toggle('done'));
 });
 
-/* ============ MCQ workbook items (Focus 1a-c) ============ */
+/* ============ MCQ workbook items ============ */
 document.querySelectorAll('.mcq-item').forEach(item=>{
   const ans = item.dataset.answer;
   item.querySelectorAll('.mcq-opt').forEach(btn=>{
@@ -782,6 +923,21 @@ document.querySelectorAll('.choose-item').forEach(item=>{
       });
       if(btn.dataset.val !== ans) btn.classList.add('wrong');
       item.querySelector('.choose-fb').classList.add('show');
+    });
+  });
+});
+
+/* ============ tabs (transformations) ============ */
+document.querySelectorAll('.tabs').forEach(tabGroup=>{
+  const buttons = tabGroup.querySelectorAll('.tab-btn');
+  buttons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      buttons.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const panels = tabGroup.parentElement.querySelectorAll('.tab-panel');
+      panels.forEach(p=>p.classList.remove('active'));
+      const target = tabGroup.parentElement.querySelector('#tab-'+btn.dataset.tab);
+      if(target) target.classList.add('active');
     });
   });
 });
@@ -840,6 +996,11 @@ document.querySelectorAll('.match-card').forEach(card=>{
 });
 
 /* ============ identification key (Practice Q3) ============ */
+const keyOutcomePhotos = {
+  sedimentary: 'https://commons.wikimedia.org/wiki/Special:FilePath/Sandstone.jpg',
+  metamorphic: 'https://commons.wikimedia.org/wiki/Special:FilePath/Gneiss.jpg',
+  igneous: 'https://commons.wikimedia.org/wiki/Special:FilePath/Granite.jpg'
+};
 function pickKeyStage1(el, which){
   document.querySelectorAll('#keyStage1 .key-opt').forEach(o=>o.classList.remove('correct'));
   el.classList.add('correct');
@@ -847,7 +1008,7 @@ function pickKeyStage1(el, which){
   const stage2 = document.getElementById('keyStage2');
   if(which === 'no'){
     stage2.classList.remove('show');
-    outcome.textContent = 'Rock is sedimentary — it is not crystalline, so it must be made of grains or fragments cemented together, like sandstone or limestone.';
+    outcome.innerHTML = `<img src="${keyOutcomePhotos.sedimentary}" alt="Sandstone example"><span>Rock is <strong>sedimentary</strong> — it is not crystalline, so it must be made of grains or fragments cemented together, like sandstone or limestone.</span>`;
     outcome.classList.add('show');
   } else {
     outcome.classList.remove('show');
@@ -859,9 +1020,9 @@ function pickKeyStage2(el, which){
   el.classList.add('correct');
   const outcome = document.getElementById('keyOutcome');
   if(which === 'yes'){
-    outcome.textContent = 'Rock is metamorphic — it is crystalline and banded, which tells you heat and pressure lined up its minerals into stripes, like gneiss or slate.';
+    outcome.innerHTML = `<img src="${keyOutcomePhotos.metamorphic}" alt="Gneiss example"><span>Rock is <strong>metamorphic</strong> — it is crystalline and banded, which tells you heat and pressure lined up its minerals into stripes, like gneiss or slate.</span>`;
   } else {
-    outcome.textContent = 'Rock is igneous — it is crystalline but not banded, which tells you it formed from magma or lava cooling into interlocking crystals, like granite or basalt.';
+    outcome.innerHTML = `<img src="${keyOutcomePhotos.igneous}" alt="Granite example"><span>Rock is <strong>igneous</strong> — it is crystalline but not banded, which tells you it formed from magma or lava cooling into interlocking crystals, like granite or basalt.</span>`;
   }
   outcome.classList.add('show');
 }
@@ -870,6 +1031,16 @@ function resetKey(){
   document.getElementById('keyStage2').classList.remove('show');
   document.getElementById('keyOutcome').classList.remove('show');
 }
+
+/* ============ circular rock-cycle diagram hotspots ============ */
+document.querySelectorAll('.rc-hot-dot').forEach(hot=>{
+  hot.addEventListener('click', ()=>{
+    document.querySelectorAll('.rc-hot-dot').forEach(h=>h.classList.remove('revealed'));
+    hot.classList.add('revealed');
+    document.querySelectorAll('.rc-card').forEach(c=>c.classList.remove('active'));
+    document.querySelector('.rc-card[data-card="'+hot.dataset.layer+'"]').classList.add('active');
+  });
+});
 
 /* ============ challenge story flip cards ============ */
 const storySteps = [
@@ -906,10 +1077,10 @@ storySteps.forEach((s,i)=>{
 const assessItems = [
   'I can describe how metamorphic rocks form from existing rock through heat and pressure.',
   'I can describe the properties of metamorphic rocks, including banding.',
+  'I can explain in detail how shale, sandstone, limestone and granite each change into a metamorphic rock.',
   'I can match common metamorphic rocks to the rock they formed from.',
   'I can use a key to identify igneous, sedimentary and metamorphic rocks.',
   'I can describe the rock cycle using the correct scientific vocabulary.',
-  'I can explain how arrows and labels are used to show processes in the rock cycle.',
   'I can trace the history of a single rock through several stages of the rock cycle.',
   'I can interpret diagrams and use scientific vocabulary accurately.'
 ];
