@@ -156,6 +156,24 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
 .puzzle-card.matched{border-color:var(--green); background:var(--green-light);}
 .puzzle-card.shake{animation:shake .4s;}
 
+/* quick check component (distributed comprehension checks) */
+.quickcheck{background:var(--blue-light); border:1.5px dashed var(--blue); border-radius:var(--r-md); padding:16px 18px; margin:22px 0;}
+.quickcheck-label{font-family:'Poppins'; font-weight:700; font-size:11.5px; color:var(--blue); text-transform:uppercase; letter-spacing:.6px; margin-bottom:10px; display:flex; align-items:center; gap:6px;}
+.quickcheck-label svg{width:14px; height:14px;}
+.quickcheck p.qc-question{font-weight:600; margin-bottom:10px;}
+.qc-opts{display:flex; gap:8px; flex-wrap:wrap;}
+.qc-opt{border:1.5px solid var(--line); background:#fff; border-radius:100px; padding:8px 16px; cursor:pointer; font-weight:600; font-size:13px; transition:.15s; font-family:'Poppins';}
+.qc-opt:hover{border-color:var(--blue);}
+.qc-opt.correct{background:var(--green-light); border-color:var(--green); color:var(--green);}
+.qc-opt.wrong{background:var(--red-light); border-color:var(--red); color:var(--red);}
+.qc-opt[disabled]{cursor:default;}
+.qc-feedback{margin-top:10px; font-size:13.5px; font-weight:600; display:none; line-height:1.5;}
+.qc-feedback.show{display:block;}
+.qc-short{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+.qc-short input{border:1.5px solid var(--line); border-radius:100px; padding:9px 16px; font-size:13.5px; width:100%; max-width:260px; font-family:'Inter'; flex:1 1 200px;}
+.qc-short input:focus{outline:none; border-color:var(--blue);}
+.qc-short .btn{padding:9px 18px; font-size:13px; flex:0 0 auto;}
+
 /* activity slider bar */
 .activity-track{height:20px; background:var(--teal-light); border-radius:100px; overflow:hidden; margin:14px 0;}
 .activity-fill{height:100%; background:linear-gradient(90deg,var(--orange),var(--teal)); border-radius:100px; transition:width .5s;}
@@ -241,15 +259,24 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
         </div>
         <div class="tab-panel active" id="tab-catabolic">
           <div class="two-col">
-            <div><h3 class="mini-title">Breaking down, releasing energy <span class="zh">分解代谢</span></h3><p>A <span class="term" data-def="A metabolic pathway that breaks large molecules into smaller ones, releasing energy. (分解代谢)">catabolic pathway</span> breaks large molecules into smaller ones — like hydrolysis breaking a polymer apart. This usually <strong>releases</strong> energy the cell can capture and use. Digesting your lunch and cellular respiration are both catabolic.</p></div>
+            <div><h3 class="mini-title">Breaking down, releasing energy <span class="zh">分解代谢</span></h3><p>A <span class="term" data-def="A metabolic pathway that breaks large molecules into smaller ones, releasing energy. (分解代谢)">catabolic pathway</span> breaks large molecules into smaller ones — like hydrolysis breaking a polymer apart. This usually <strong>releases</strong> energy the cell can capture and use. Digesting your lunch and cellular respiration are both catabolic.</p><p>Think of a catabolic pathway like taking apart a wooden tower built from blocks: as each block comes loose, the tower's stored "potential" collapses into motion — in a cell, that released energy doesn't just vanish, it gets captured and stored in a useful form so the cell can spend it later.</p></div>
             <div class="diagram-card"><svg viewBox="0 0 260 100"><circle cx="60" cy="50" r="34" fill="#59A6AE"/><path d="M120 50 L150 50" stroke="#8A94A6" stroke-width="4" marker-end="url(#arrow1)"/><circle cx="185" cy="35" r="16" fill="#DD7A2E"/><circle cx="215" cy="65" r="16" fill="#DD7A2E"/><defs><marker id="arrow1" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#8A94A6"/></marker></defs></svg></div>
           </div>
         </div>
         <div class="tab-panel" id="tab-anabolic">
           <div class="two-col">
-            <div><h3 class="mini-title">Building up, requiring energy <span class="zh">合成代谢</span></h3><p>An <span class="term" data-def="A metabolic pathway that builds larger molecules from smaller ones, requiring energy. (合成代谢)">anabolic pathway</span> builds larger molecules from smaller ones — like dehydration synthesis linking monomers into a polymer. This always <strong>requires</strong> energy input. Building muscle protein and photosynthesis are both anabolic.</p></div>
+            <div><h3 class="mini-title">Building up, requiring energy <span class="zh">合成代谢</span></h3><p>An <span class="term" data-def="A metabolic pathway that builds larger molecules from smaller ones, requiring energy. (合成代谢)">anabolic pathway</span> builds larger molecules from smaller ones — like dehydration synthesis linking monomers into a polymer. This always <strong>requires</strong> energy input. Building muscle protein and photosynthesis are both anabolic.</p><p>An anabolic pathway is the opposite direction: like stacking those same blocks back into a tower. Lifting each block up against gravity costs energy — nothing gets built for free. This is why anabolic pathways in your body, like building new muscle after exercise, always draw on the cell's ATP supply.</p></div>
             <div class="diagram-card"><svg viewBox="0 0 260 100"><circle cx="60" cy="35" r="16" fill="#DD7A2E"/><circle cx="60" cy="65" r="16" fill="#DD7A2E"/><path d="M110 50 L140 50" stroke="#8A94A6" stroke-width="4" marker-end="url(#arrow2)"/><circle cx="200" cy="50" r="34" fill="#59A6AE"/><defs><marker id="arrow2" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#8A94A6"/></marker></defs></svg></div>
           </div>
+        </div>
+        <div class="quickcheck">
+          <div class="quickcheck-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M12 22c5.5-1 9-5.5 9-11V5l-9-3-9 3v6c0 5.5 3.5 10 9 11z"/></svg>Quick check</div>
+          <p class="qc-question">Digesting a meal breaks large food molecules into small ones. Which type of pathway is this?</p>
+          <div class="qc-opts">
+            <button class="qc-opt" data-correct="true" onclick="qcAnswer(this,true,'qc1fb','Correct! Digestion breaks molecules apart, so it is catabolic.','')">Catabolic</button>
+            <button class="qc-opt" data-correct="false" onclick="qcAnswer(this,false,'qc1fb','','Not quite — digestion breaks molecules apart, so it is catabolic, not anabolic.')">Anabolic</button>
+          </div>
+          <p class="qc-feedback" id="qc1fb"></p>
         </div>
       </div>
     </section>
@@ -261,22 +288,26 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
         <h1 class="slide-title">Spending ATP</h1>
         <p class="lede"><span class="term" data-def="Adenosine triphosphate; the molecule cells use to store and spend usable energy. (三磷酸腺苷)">ATP</span> holds three phosphate groups — remember phosphate groups from the functional groups lesson? Click to break one off and see energy released.</p>
         <div class="two-col">
-          <div class="diagram-card">
-            <div class="atp-stage" id="atpStage">
-              <div class="adenosine-c">Adenosine</div>
-              <div class="atp-link"></div>
-              <div class="phosphate-c" id="p1">P</div>
-              <div class="atp-link"></div>
-              <div class="phosphate-c" id="p2">P</div>
-              <div class="atp-link"></div>
-              <div class="phosphate-c" id="p3">P</div>
+          <div>
+            <div class="diagram-card">
+              <div class="atp-stage" id="atpStage">
+                <div class="adenosine-c">Adenosine</div>
+                <div class="atp-link"></div>
+                <div class="phosphate-c" id="p1">P</div>
+                <div class="atp-link"></div>
+                <div class="phosphate-c" id="p2">P</div>
+                <div class="atp-link"></div>
+                <div class="phosphate-c" id="p3">P</div>
+              </div>
+              <div class="energy-msg" id="energyMsg"></div>
+              <div style="text-align:center;"><button class="btn" onclick="breakPhosphate()">💥 Break off a phosphate (hydrolysis)</button></div>
             </div>
-            <div class="energy-msg" id="energyMsg"></div>
-            <div style="text-align:center;"><button class="btn" onclick="breakPhosphate()">💥 Break off a phosphate (hydrolysis)</button></div>
+            <div style="margin-top:16px;"><img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/ATP%20chemical%20structure.png" alt="The real chemical structure of ATP, showing adenine, ribose, and three phosphate groups" style="background:#fff;"><div class="photo-cap">The real chemical structure of ATP — adenine (top), ribose (the sugar ring), and the chain of three phosphates (right).</div></div>
           </div>
           <div>
             <h3 class="mini-title">ADP + energy</h3>
             <p>Breaking the bond to the last phosphate is a <strong>hydrolysis</strong> reaction — the same reaction that breaks any polymer apart! This releases energy the cell can use immediately, and leaves behind <strong>ADP</strong> (adenosine <em>di</em>phosphate). Cells constantly rebuild ADP back into ATP using energy from food.</p>
+            <p>The negatively charged phosphate groups in ATP repel each other, like three magnets forced together with the same poles facing. That built-up tension is exactly why breaking off a phosphate group releases a useful burst of energy — it's a little like letting go of a tightly compressed spring. A typical cell recycles its entire ATP supply roughly once every minute during active work, so this reaction happens constantly, everywhere in your body.</p>
             <div class="pill">ATP → ADP + phosphate + energy</div>
           </div>
         </div>
@@ -288,7 +319,18 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
       <div class="slide-inner">
         <div class="eyebrow">Getting a reaction started</div>
         <h1 class="slide-title">Every reaction needs a push</h1>
-        <p class="lede">Even reactions that release energy overall need a small energy "push" to start, called <span class="term" data-def="The minimum energy needed to start a chemical reaction. (活化能)">activation energy</span>. An enzyme lowers this hill.</p>
+        <p class="lede">Even reactions that release energy overall need a small energy "push" to start, called <span class="term" data-def="The minimum energy needed to start a chemical reaction. (活化能)">activation energy</span>. Think of it like needing to push a boulder over a small bump before it can roll downhill on its own — even though the boulder ends up lower (releasing energy overall), that first push still takes effort. An enzyme's job is to make that bump smaller.</p>
+
+        <div class="quickcheck">
+          <div class="quickcheck-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M12 22c5.5-1 9-5.5 9-11V5l-9-3-9 3v6c0 5.5 3.5 10 9 11z"/></svg>Predict first</div>
+          <p class="qc-question">Before you press play below: will an enzyme change how much total energy the reaction releases?</p>
+          <div class="qc-opts">
+            <button class="qc-opt" data-correct="true" onclick="qcAnswer(this,true,'qc2fb','Correct! An enzyme only lowers the activation energy hill — it does not change the total energy released or required.','')">No — only the hill height changes</button>
+            <button class="qc-opt" data-correct="false" onclick="qcAnswer(this,false,'qc2fb','','Not quite — an enzyme speeds up the reaction, but it does not add or remove overall energy from the reaction itself.')">Yes — the enzyme adds energy</button>
+          </div>
+          <p class="qc-feedback" id="qc2fb"></p>
+        </div>
+
         <div class="diagram-card">
           <svg viewBox="0 0 400 200" id="hillSvg">
             <path d="M20 160 Q120 40 200 100 Q280 160 380 60" id="hillPath" fill="none" stroke="#146C7A" stroke-width="4"/>
@@ -311,8 +353,26 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
         <div class="eyebrow">Activity</div>
         <h1 class="slide-title">Match the substrate to its enzyme</h1>
         <p class="lede">An <span class="term" data-def="A protein that speeds up a chemical reaction without being used up. (酶)">enzyme</span>'s <span class="term" data-def="The pocket on an enzyme where the substrate binds. (活性位点)">active site</span> only fits one specific <span class="term" data-def="The molecule an enzyme acts on. (底物)">substrate</span> shape — like a lock and key. Click a substrate, then click the enzyme that fits it.</p>
-        <div class="puzzle-wrap" id="puzzleWrap"></div>
-        <p id="puzzleFeedback" style="text-align:center; margin-top:14px; font-weight:700; color:var(--green);"></p>
+        <div class="two-col">
+          <div>
+            <div class="puzzle-wrap" id="puzzleWrap"></div>
+            <p id="puzzleFeedback" style="text-align:center; margin-top:14px; font-weight:700; color:var(--green);"></p>
+          </div>
+          <div>
+            <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Induced%20fit%20diagram.svg" alt="Diagram showing the induced fit model of enzyme-substrate binding" style="background:#fff;">
+            <div class="photo-cap">The real "induced fit" model: the substrate and active site adjust their shape slightly as they bind, like a handshake rather than a rigid lock and key.</div>
+            <p style="margin-top:10px; font-size:14px;">Scientists once pictured this as a completely rigid lock-and-key fit, but modern research shows the active site actually flexes a little as the substrate arrives, gripping it more snugly. Either way, the core idea holds: <strong>each enzyme is shaped for one job</strong>, which is why your body needs thousands of different enzymes.</p>
+          </div>
+        </div>
+        <div class="quickcheck">
+          <div class="quickcheck-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M12 22c5.5-1 9-5.5 9-11V5l-9-3-9 3v6c0 5.5 3.5 10 9 11z"/></svg>Short answer</div>
+          <p class="qc-question">In your own words: why can't one enzyme break down every kind of substrate?</p>
+          <div class="qc-short">
+            <input type="text" id="qc3input" placeholder="Type a short answer...">
+            <button class="btn" onclick="qcCheckShort('qc3input', ['shape','fit','active site','specific'], 'qc3fb', 'Good thinking! Because the active site has one specific shape, only a matching substrate can bind there — this is called enzyme specificity.', 'Hint: think about the shape of the active site. Try including a word like \'shape\' or \'fit\'.')">Check</button>
+          </div>
+          <p class="qc-feedback" id="qc3fb"></p>
+        </div>
       </div>
     </section>
 
@@ -321,7 +381,7 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
       <div class="slide-inner">
         <div class="eyebrow">Cause and effect</div>
         <h1 class="slide-title">Enzymes have a favourite condition</h1>
-        <p class="lede">Every enzyme works best at a certain temperature and pH. Move too far from that optimum, and activity drops — remember denaturation from the macromolecules lesson?</p>
+        <p class="lede">Every enzyme works best at a certain temperature and pH. Move too far from that optimum, and activity drops — remember denaturation from the macromolecules lesson? The same weak bonds that hold an enzyme's 3D shape together can be disrupted by heat or extreme pH, and once that precise shape is lost, the active site no longer fits its substrate.</p>
         <div class="tabs" id="factorTabs">
           <button class="tab-btn active" data-f="cold" onclick="selectFactor('cold')">Too cold</button>
           <button class="tab-btn" data-f="optimum" onclick="selectFactor('optimum')">Optimum</button>
@@ -329,6 +389,17 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
         </div>
         <div class="activity-track"><div class="activity-fill" id="activityFill"></div></div>
         <p id="factorDesc" style="text-align:center; color:var(--ink-soft);"></p>
+        <p style="text-align:center; font-size:14px; color:var(--ink-soft); margin-top:6px;">This is exactly why your body works hard to keep its internal temperature and pH steady — most human enzymes are finely tuned to work best around 37°C, and even a few degrees of fever can measurably slow some of them down.</p>
+
+        <div class="quickcheck">
+          <div class="quickcheck-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M12 22c5.5-1 9-5.5 9-11V5l-9-3-9 3v6c0 5.5 3.5 10 9 11z"/></svg>Quick check</div>
+          <p class="qc-question">A stomach enzyme works best in strong acid (low pH). What would happen if you moved it into a neutral pH environment, like the small intestine?</p>
+          <div class="qc-opts">
+            <button class="qc-opt" data-correct="true" onclick="qcAnswer(this,true,'qc4fb','Correct! Away from its optimum pH, the enzyme\'s activity would drop sharply, even without extreme heat.','')">Its activity would drop</button>
+            <button class="qc-opt" data-correct="false" onclick="qcAnswer(this,false,'qc4fb','','Not quite — moving away from an enzyme\'s optimum pH almost always lowers its activity, even if the new pH seems mild.')">Its activity would stay the same</button>
+          </div>
+          <p class="qc-feedback" id="qc4fb"></p>
+        </div>
       </div>
     </section>
 
@@ -337,20 +408,33 @@ p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
       <div class="slide-inner">
         <div class="eyebrow">Blocking the reaction</div>
         <h1 class="slide-title">Two ways to jam an enzyme</h1>
+        <p class="lede">Not every molecule that binds to an enzyme helps it work — some are <span class="term" data-def="A molecule that reduces or blocks an enzyme's activity. (抑制剂)">inhibitors</span> that jam it, on purpose or otherwise. Doctors and drug designers use this idea constantly: many medicines work by carefully inhibiting one specific enzyme.</p>
         <div class="tabs">
           <button class="tab-btn active" data-tab="comp">Competitive inhibitor</button>
           <button class="tab-btn" data-tab="noncomp">Noncompetitive inhibitor</button>
         </div>
         <div class="tab-panel active" id="tab-comp">
           <div class="two-col">
-            <div><h3 class="mini-title">Blocking the active site <span class="zh">竞争性抑制剂</span></h3><p>A competitive inhibitor has a shape similar to the real substrate, so it competes for the same active site. Adding more substrate can outcompete it and restore activity.</p></div>
+            <div><h3 class="mini-title">Blocking the active site <span class="zh">竞争性抑制剂</span></h3><p>A competitive inhibitor has a shape similar to the real substrate, so it competes for the same active site. Adding more substrate can outcompete it and restore activity, since the inhibitor and substrate are quite literally racing for the same parking spot.</p></div>
             <div class="diagram-card"><svg viewBox="0 0 260 130"><ellipse cx="130" cy="80" rx="90" ry="40" fill="#E3F1F2" stroke="#146C7A" stroke-width="4"/><path d="M100 80 Q130 60 160 80" fill="none" stroke="#146C7A" stroke-width="4"/><rect x="112" y="45" width="36" height="24" rx="6" fill="#C0392B"/></svg></div>
           </div>
         </div>
         <div class="tab-panel" id="tab-noncomp">
           <div class="two-col">
-            <div><h3 class="mini-title">Changing the enzyme's shape <span class="zh">非竞争性抑制剂</span></h3><p>A noncompetitive inhibitor binds somewhere else on the enzyme entirely, distorting the active site's shape. Adding more substrate doesn't help — the enzyme itself has changed shape.</p></div>
+            <div><h3 class="mini-title">Changing the enzyme's shape <span class="zh">非竞争性抑制剂</span></h3><p>A noncompetitive inhibitor binds somewhere else on the enzyme entirely — a spot called an allosteric site — distorting the active site's shape from a distance. Adding more substrate doesn't help this time, because the problem isn't competition, it's that the enzyme itself has changed shape.</p></div>
             <div class="diagram-card"><svg viewBox="0 0 260 130"><ellipse cx="130" cy="80" rx="90" ry="40" fill="#E3F1F2" stroke="#146C7A" stroke-width="4"/><rect x="195" y="60" width="30" height="24" rx="6" fill="#C0392B"/></svg></div>
+          </div>
+        </div>
+        <div class="two-col" style="margin-top:20px;">
+          <div><img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/The%20three%20types%20of%20enzyme%20inhibition%20of%20non-competitive%20inhibition%2C%20competitive%20inhibition%2C%20and%20end-product%20inhibition.svg" alt="Diagram comparing competitive, noncompetitive, and end-product enzyme inhibition" style="background:#fff;"><div class="photo-cap">A real biochemistry diagram comparing the two kinds of inhibition you just read about, plus a third type called end-product (feedback) inhibition.</div></div>
+          <div class="box red">
+            <div class="box-head">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>
+              Real-life example
+            </div>
+            <div class="box-body">
+              <p style="margin:0;">Many pesticides and nerve gases work as noncompetitive inhibitors — they permanently jam an enzyme your nerve cells need, which is exactly why they are so dangerous. On the safer side, some blood pressure medicines are carefully designed competitive inhibitors that gently dial down one specific enzyme's activity.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -439,6 +523,29 @@ document.addEventListener('keydown', e=>{ if(e.key==='ArrowRight') nextSlide(); 
 render();
 
 document.querySelectorAll('.obj-card').forEach(card=> card.addEventListener('click', ()=> card.classList.toggle('done')));
+
+/* quick check handlers (distributed comprehension checks) */
+function qcAnswer(btn, isCorrect, fbId, correctMsg, wrongMsg){
+  const group = btn.closest('.quickcheck');
+  group.querySelectorAll('.qc-opt').forEach(b=> b.disabled = true);
+  btn.classList.add(isCorrect ? 'correct' : 'wrong');
+  if(!isCorrect){
+    const correctBtn = [...group.querySelectorAll('.qc-opt')].find(b=> b.dataset.correct === 'true');
+    if(correctBtn) correctBtn.classList.add('correct');
+  }
+  const fb = document.getElementById(fbId);
+  fb.textContent = isCorrect ? correctMsg : wrongMsg;
+  fb.style.color = isCorrect ? 'var(--green)' : 'var(--red)';
+  fb.classList.add('show');
+}
+function qcCheckShort(inputId, acceptedWords, fbId, correctMsg, hintMsg){
+  const val = document.getElementById(inputId).value.trim().toLowerCase();
+  const fb = document.getElementById(fbId);
+  const isCorrect = acceptedWords.some(w=> val.includes(w.toLowerCase()));
+  fb.textContent = isCorrect ? correctMsg : hintMsg;
+  fb.style.color = isCorrect ? 'var(--green)' : 'var(--orange)';
+  fb.classList.add('show');
+}
 
 /* tabs (generic, scoped) */
 document.querySelectorAll('.tab-btn[data-tab]').forEach(btn=>{
