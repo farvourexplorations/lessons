@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Back to the Future | Key Skills Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#0d9488; --teal-dark:#0f766e; --teal-light:#ccfbf1;
+    --orange:#f97316; --orange-light:#ffedd5;
+    --purple:#7c3aed; --purple-light:#ede9fe;
+    --ink:#1e293b; --slate:#64748b; --paper:#ffffff; --bg:#f4f6f8;
+    --radius:20px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{margin:0; font-family:'Inter',sans-serif; background:var(--bg); color:var(--ink); overflow:hidden;}
+  h1,h2,h3{font-family:'Poppins',sans-serif;}
+  #app{display:flex; flex-direction:column; height:100vh; width:100vw;}
+  #topbar{display:flex; align-items:center; justify-content:space-between; padding:12px 22px; background:var(--paper); border-bottom:1px solid #e6eaee; flex-shrink:0; gap:12px;}
+  .breadcrumb{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--slate); font-weight:600; white-space:nowrap; overflow:hidden;}
+  .breadcrumb .unit{color:var(--teal-dark);}
+  .breadcrumb .sep{color:#c7ced6;}
+  .breadcrumb .current{color:var(--ink);}
+  #dots{display:flex; gap:5px; flex-wrap:wrap; max-width:44%; justify-content:center;}
+  .dot{width:7px; height:7px; border-radius:50%; background:#dbe2e8; cursor:pointer; transition:all .2s ease; flex-shrink:0;}
+  .dot.active{background:var(--teal); width:20px; border-radius:5px;}
+  .dot.section-start{margin-left:6px;}
+  #counter{font-size:12px; font-weight:700; color:var(--slate); white-space:nowrap; font-variant-numeric: tabular-nums;}
+  #stage{flex:1; position:relative; overflow:hidden;}
+  .slide{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:26px 5vw 90px; opacity:0; transform:translateX(40px); transition:opacity .35s ease, transform .35s ease; pointer-events:none; overflow-y:auto;}
+  .slide.active{opacity:1; transform:translateX(0); pointer-events:auto;}
+  .card{width:100%; max-width:1000px; margin:auto;}
+  .badge{display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px; font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-bottom:16px;}
+  .badge::before{content:""; width:7px; height:7px; border-radius:50%; background:currentColor;}
+  .badge.reading{background:var(--teal-light); color:var(--teal-dark);}
+  .badge.writing{background:#fce7f3; color:#be185d;}
+  .badge.concept{background:var(--purple-light); color:var(--purple);}
+  .chip{display:inline-block; background:#eef2f6; color:var(--slate); font-size:12px; font-weight:700; padding:4px 10px; border-radius:8px; margin-left:8px;}
+  .cover-slide{background:radial-gradient(ellipse at top, #164e63 0%, #0f172a 55%, #0b1120 100%); color:#fff; padding:0;}
+  .cover-slide .card{text-align:center; color:#fff; max-width:760px;}
+  .stars{position:absolute; inset:0; background-image: radial-gradient(1.5px 1.5px at 20% 30%, #fff, transparent), radial-gradient(1.5px 1.5px at 75% 20%, #fff, transparent), radial-gradient(1px 1px at 50% 60%, #fff, transparent), radial-gradient(2px 2px at 85% 70%, #fff, transparent), radial-gradient(1px 1px at 10% 80%, #fff, transparent), radial-gradient(1.5px 1.5px at 65% 45%, #fff, transparent), radial-gradient(1px 1px at 35% 15%, #fff, transparent), radial-gradient(1.5px 1.5px at 92% 40%, #fff, transparent); opacity:.7;}
+  .cover-eyebrow{font-size:13px; letter-spacing:.18em; text-transform:uppercase; color:#5eead4; font-weight:700; margin-bottom:14px;}
+  .cover-slide h1{font-size:clamp(26px,4.4vw,46px); line-height:1.1; margin:0 0 14px; background:linear-gradient(90deg,#5eead4,#fb923c,#c4b5fd); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .cover-slide p{font-size:16px; color:#cbd5e1; max-width:580px; margin:0 auto 26px;}
+  .cover-pills{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .cover-pill{background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); padding:10px 18px; border-radius:14px; font-size:13px; font-weight:600; color:#e2e8f0;}
+  .section-slide .card{text-align:center;}
+  .section-num{font-family:'Poppins',sans-serif; font-size:14px; font-weight:700; color:var(--teal); letter-spacing:.1em; text-transform:uppercase; margin-bottom:6px;}
+  .section-slide h2{font-size:clamp(22px,3.6vw,34px); margin:0 0 18px; color:var(--ink);}
+  .section-sub{color:var(--slate); font-size:15px; max-width:620px; margin:0 auto;}
+  .concept-box{background:var(--paper); border-radius:var(--radius); padding:28px 32px; box-shadow:0 10px 30px rgba(15,23,42,.06); border:1px solid #eef1f4;}
+  h2.q-title{font-size:clamp(18px,2.6vw,24px); margin:0 0 12px; color:var(--ink);}
+  .concept-body{font-size:15px; line-height:1.7; color:#334155;}
+  .concept-body strong{color:var(--teal-dark);}
+  .q-eyebrow{display:flex; align-items:center; flex-wrap:wrap; gap:2px; margin-bottom:10px;}
+  .q-prompt{font-size:clamp(16px,2.3vw,19.5px); font-weight:600; color:var(--ink); line-height:1.6; margin:6px 0 22px;}
+  .q-prompt em{font-style:italic; color:var(--teal-dark);}
+  .reveal-btn{display:inline-flex; align-items:center; gap:8px; background:var(--ink); color:#fff; border:none; padding:12px 22px; border-radius:12px; font-family:'Inter',sans-serif; font-size:14px; font-weight:700; cursor:pointer; transition:transform .15s ease, background .15s ease;}
+  .reveal-btn:hover{background:#334155; transform:translateY(-1px);}
+  .reveal-btn svg{width:16px; height:16px;}
+  .answer-panel{margin-top:16px; max-height:0; opacity:0; overflow:hidden; transition:max-height .4s ease, opacity .3s ease, margin .3s ease; border-radius:14px;}
+  .answer-panel.open{max-height:1400px; opacity:1;}
+  .answer-inner{background:#ecfdf5; border:1.5px solid #6ee7b7; border-radius:14px; padding:16px 20px; font-size:15px; color:#065f46; line-height:1.75;}
+  .answer-inner .lab{font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#059669; margin-bottom:8px; display:flex; align-items:center; gap:6px;}
+  .passage{font-size:14.5px; line-height:1.85; color:#334155; background:#fbfcfd; border:1px solid #eef1f4; border-radius:14px; padding:18px 20px;}
+  .passage .pnum{color:var(--purple); font-weight:800; margin-right:6px;}
+  .passage .hi{background:#fef3c7; padding:0 3px; border-radius:4px; font-weight:700; color:#92400e;}
+  .passage .it{font-style:italic; background:#e0e7ff; padding:0 3px; border-radius:4px;}
+  .checklist{margin-top:14px; display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:10px;}
+  .check-item{background:#fff; border:1.5px solid #e2e8f0; border-radius:12px; padding:11px 14px; font-size:13.5px; color:#334155; display:flex; gap:10px; align-items:flex-start;}
+  .check-item .ico{color:var(--teal); font-weight:900; flex-shrink:0;}
+  .recap-grid{display:grid; grid-template-columns:1fr; gap:8px; margin-top:6px;}
+  .recap-row{background:#fff; border:1.5px solid #e2e8f0; border-radius:12px; padding:10px 16px; font-size:13.5px; display:flex; gap:10px;}
+  .recap-row .rn{flex-shrink:0; width:26px; height:26px; border-radius:50%; background:var(--teal); color:#fff; font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center;}
+  .closing-slide .card{text-align:center;}
+  .closing-slide h2{font-size:clamp(22px,3.6vw,32px); margin-bottom:10px;}
+  .wb-ref{display:inline-flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:20px;}
+  .wb-ref .pg{background:var(--paper); border:1.5px solid #e2e8f0; border-radius:12px; padding:10px 16px; font-size:13px; font-weight:700; color:var(--ink); box-shadow:0 4px 10px rgba(15,23,42,.04);}
+  .wb-ref .pg span{display:block; font-size:11px; font-weight:600; color:var(--slate); text-transform:uppercase; letter-spacing:.04em;}
+  #footer{position:absolute; bottom:0; left:0; right:0; display:flex; align-items:center; justify-content:center; gap:18px; padding:16px; pointer-events:none;}
+  .navbtn{pointer-events:auto; width:52px; height:52px; border-radius:50%; border:none; background:var(--paper); box-shadow:0 6px 18px rgba(15,23,42,.12); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform .15s ease, background .15s ease; color:var(--ink);}
+  .navbtn:hover{transform:translateY(-2px); background:var(--teal); color:#fff;}
+  .navbtn:disabled{opacity:.3; cursor:not-allowed; transform:none; background:var(--paper); color:var(--ink);}
+  .navbtn svg{width:20px; height:20px;}
+  .navlabel{pointer-events:auto; font-size:12px; font-weight:700; color:var(--slate); background:var(--paper); padding:8px 16px; border-radius:999px; box-shadow:0 6px 18px rgba(15,23,42,.08);}
+  @media (max-width: 640px){ .concept-box{padding:20px 16px;} .slide{padding:16px 4vw 96px;} #dots{display:none;} }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="topbar">
+    <div class="breadcrumb"><span class="unit">Unit 4 · Back to the Future</span><span class="sep">›</span><span class="current" id="crumbCurrent">Cover</span></div>
+    <div id="dots"></div>
+    <div id="counter">1 / 1</div>
+  </div>
+  <div id="stage"></div>
+  <div id="footer">
+    <button class="navbtn" id="prevBtn" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="navlabel" id="navLabel">Tap to begin</div>
+    <button class="navbtn" id="nextBtn" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+  </div>
+</div>
+
+<script>
+const S = [];
+function badge(kind, extra){
+  const label = kind==='reading'?'Reading':kind==='writing'?'Writing':'Concept';
+  return `<span class="badge ${kind}">${label}${extra?' · '+extra:''}</span>`;
+}
+function questionSlide({exercise, prompt, answerHtml}){
+  const idBase = 'ans-' + Math.random().toString(36).slice(2,9);
+  return `
+    <div class="card">
+      <div class="q-eyebrow">${badge('reading')} <span class="chip">${exercise}</span></div>
+      <div class="q-prompt">${prompt}</div>
+      <button class="reveal-btn" onclick="toggleAnswer('${idBase}', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Reveal answer
+      </button>
+      <div class="answer-panel" id="${idBase}"><div class="answer-inner">${answerHtml}</div></div>
+    </div>`;
+}
+
+/* ---------- COVER ---------- */
+S.push({crumb:'Cover', section:true, html:`
+  <div class="slide cover-slide"><div class="stars"></div>
+    <div class="card">
+      <div class="cover-eyebrow">Cambridge Primary English 6 · Unit 4</div>
+      <h1>Back to the Future</h1>
+      <p>A review of the key reading and writing skills from this unit &mdash; The Green Book and The Hitchhiker's Guide to the Galaxy.</p>
+      <div class="cover-pills"><div class="cover-pill">The Green Book</div><div class="cover-pill">The Hitchhiker's Guide</div><div class="cover-pill">Writing a Guide Entry</div></div>
+    </div>
+  </div>`});
+
+/* ---------- GREEN BOOK SECTION ---------- */
+S.push({crumb:'Green Book', section:true, html:`
+  <div class="slide section-slide">
+    <div class="card">
+      <div class="section-num">Session 4.1</div>
+      <h2>The Green Book, Part 1</h2>
+      <p class="section-sub">Let's look closely at this extract again &mdash; narrative voice, tricky vocabulary, and reading between the lines.</p>
+    </div>
+  </div>`});
+
+S.push({crumb:'Green Book Text (1/2)', html:`
+  <div class="slide"><div class="card concept-box">
+    ${badge('reading')} <span class="chip">The Green Book, Part 1</span>
+    <h2 class="q-title">Paragraphs 1&ndash;5</h2>
+    <div class="passage">
+      <span class="pnum">[1]</span> Father said, "We can take very little with us." The list was in his hand. "Spade, saw, file, ax, for each family. Seeds, etc., will be provided. <span class="hi">Iron rations</span> will be provided. For each voyager a change of clothing, a pair of boots, one or two personal items only; e.g., a favorite cooking pan, a musical instrument (small and light), a picture (unframed). Nothing under this heading will be taken if it is bulky or heavy, fragile or perishable. One book per voyager."<br><br>
+      <span class="pnum">[2]</span> It was easy to pack. We were allowed so little, and we didn't have to bother about leaving anything tidy behind us. Only the books caused a little delay. Father said, "I must take this." He showed us an ugly big volume called <em>A Dictionary of Intermediate Technology</em>. "But you must choose yourselves," he said. "It wouldn't be fair of me to choose for you. Think carefully."<br><br>
+      <span class="pnum">[3]</span> We didn't think. We were excited, disturbed, and we hadn't really understood that everything else would be left behind. Father looked <span class="hi">wistfully</span> at the shelves. He picked up <em>The Oxford Complete Shakespeare</em>. "Have you all chosen your books?" he asked.<br><br>
+      <span class="pnum">[4]</span> "Yes," we told him. He put the Shakespeare back.<br><br>
+      <span class="pnum">[5]</span> We had time to waste at the end. We ate everything we could find.
+    </div>
+  </div></div>`});
+
+S.push({crumb:'Green Book Text (2/2)', html:`
+  <div class="slide"><div class="card concept-box">
+    ${badge('reading')} <span class="chip">The Green Book, Part 1</span>
+    <h2 class="q-title">Paragraphs 6&ndash;10</h2>
+    <div class="passage">
+      <span class="pnum">[6]</span> "I don't want to eat iron," Pattie said, but nobody knew what she meant.<br><br>
+      <span class="pnum">[7]</span> Then Father got out the slide projector, and showed us pictures of holidays we had once had. We didn't think much of them.<br><br>
+      <span class="pnum">[8]</span> "Have they all gone brownish with age, Dad?" said Joe, our brother, the eldest of us.<br><br>
+      <span class="pnum">[9]</span> "No," said Father. "The pictures are all right. It's the light that has changed. It's been getting colder and bluer now for years&hellip; but when I was young it was this lovely golden color, just like this &ndash; look."<br><br>
+      <span class="pnum">[10]</span> But what he showed us &ndash; a beach, with a blue sea, and the mother we couldn't remember lying on a towel, reading a book &ndash; looked a funny hue, as though someone had brushed it over with a layer of treacle.
+      <div style="text-align:right; margin-top:10px; font-style:italic; color:#64748b;">Jill Paton Walsh</div>
+    </div>
+  </div></div>`});
+
+/* Q1 */
+S.push({crumb:'Question 1', html:`<div class="slide">${questionSlide({
+  exercise:'Question 1',
+  prompt:'Give three examples of words or phrases that show the extract is written in first-person narrative.',
+  answerHtml:`<div class="lab">Answer</div>
+    Any three first-person pronouns or possessive adjectives: <strong>we</strong>, <strong>our</strong>, <strong>us</strong>, etc. (e.g. "We were allowed so little", "showed us", "our brother").`
+})}</div>`});
+
+/* Q2 */
+S.push({crumb:'Question 2', html:`<div class="slide">${questionSlide({
+  exercise:'Question 2',
+  prompt:'What are iron rations, and why was everyone given them?',
+  answerHtml:`<div class="lab">Answer</div>
+    A health supplement or something similar, to keep them healthy on the long space journey.`
+})}</div>`});
+
+/* Q3 */
+S.push({crumb:'Question 3', html:`<div class="slide">${questionSlide({
+  exercise:'Question 3',
+  prompt:'Give two synonyms for <em>wistfully</em> in Paragraph 3.',
+  answerHtml:`<div class="lab">Answer</div>
+    Any sensible example, such as: pensively, thoughtfully, longingly, regretfully, sadly.`
+})}</div>`});
+
+/* Q4 */
+S.push({crumb:'Question 4', html:`<div class="slide">${questionSlide({
+  exercise:'Question 4',
+  prompt:'What two things did they do when they had time to waste at the end?',
+  answerHtml:`<div class="lab">Answer</div>
+    Ate up all the food, and looked at old pictures.`
+})}</div>`});
+
+/* Q5 */
+S.push({crumb:'Question 5', html:`<div class="slide">${questionSlide({
+  exercise:'Question 5',
+  prompt:'In your own words, explain why the children think the pictures have gone brown with age.',
+  answerHtml:`<div class="lab">Answer</div>
+    The children have only known the cold blue light, so they think that is normal, and the colours in the pictures therefore look wrong to them.`
+})}</div>`});
+
+/* ---------- HITCHHIKER'S GUIDE SECTION ---------- */
+S.push({crumb:'Hitchhiker\u2019s Guide', section:true, html:`
+  <div class="slide section-slide">
+    <div class="card">
+      <div class="section-num">Session 4.9</div>
+      <h2>The Hitchhiker's Guide to the Galaxy</h2>
+      <p class="section-sub">Let's look closely at this extract again &mdash; irony, colloquial language, prefixes and register.</p>
+    </div>
+  </div>`});
+
+S.push({crumb:'Extract 1', html:`
+  <div class="slide"><div class="card concept-box">
+    ${badge('reading')} <span class="chip">The Hitchhiker's Guide to the Galaxy</span>
+    <h2 class="q-title">Extract, part 1</h2>
+    <div class="passage">
+      Arthur Dent and his friend Ford Prefect (an alien, although Arthur doesn't know it) have just escaped Earth's destruction.<br><br>
+      [Para 1] Ford stood up. "We're safe," he said.<br>
+      [Para 2] "Oh good," said Arthur.<br>
+      [Para 3] "We're in a small galley cabin," said Ford, "in one of the spaceships of the Vogon Constructor Fleet."<br>
+      [Para 4] "Ah," said Arthur, "this is obviously some strange usage of the word <span class="hi it">safe</span> that I wasn't previously aware of."
+    </div>
+  </div></div>`});
+
+/* Q6 */
+S.push({crumb:'Question 6', html:`<div class="slide">${questionSlide({
+  exercise:'Question 6',
+  prompt:'Explain the use of italics for the word <em>safe</em> in Paragraph 4.',
+  answerHtml:`<div class="lab">Answer</div>
+    <em>Safe</em> is emphasised because Arthur thinks they are the opposite of safe (he uses sarcasm).`
+})}</div>`});
+
+S.push({crumb:'Extract 2', html:`
+  <div class="slide"><div class="card concept-box">
+    ${badge('reading')} <span class="chip">The Hitchhiker's Guide to the Galaxy</span>
+    <h2 class="q-title">Extract, part 2</h2>
+    <div class="passage">
+      "How did we get here?" he asked, shivering slightly.<br>
+      "We hitched a lift," said Ford.<br>
+      "Excuse me?" said Arthur. "Are you trying to tell me that <span class="hi">we just stuck out our thumbs</span> and some green bug-eyed monster stuck his head out and said, Hi fellas, hop right in, I can take you as far as the Basingstoke roundabout?"<br>
+      "Well," said Ford, "the Thumb's an electronic <strong>sub-ether</strong> signalling device, the roundabout's at Barnard's Star six light-years away, but otherwise, that's more or less right."
+    </div>
+  </div></div>`});
+
+/* Q7 */
+S.push({crumb:'Question 7', html:`<div class="slide">${questionSlide({
+  exercise:'Question 7',
+  prompt:'Explain the colloquial phrase <em>we just stuck out our thumbs</em> in the middle of the extract.',
+  answerHtml:`<div class="lab">Answer</div>
+    Something like: we made a sign to say we wanted to get a lift (we hitchhiked).`
+})}</div>`});
+
+/* Q8 */
+S.push({crumb:'Question 8', html:`<div class="slide">${questionSlide({
+  exercise:'Question 8',
+  prompt:'Explain the meaning of the prefix <em>sub-</em> in <em>sub-ether</em> and then give two more words that use the same prefix with the same meaning.',
+  answerHtml:`<div class="lab">Answer</div>
+    Under/beneath, followed by any two words, e.g. submarine, substandard, subway, etc.`
+})}</div>`});
+
+/* Q9 */
+S.push({crumb:'Question 9', html:`<div class="slide">${questionSlide({
+  exercise:'Question 9',
+  prompt:'Give a modern equivalent of <em>The Hitchhiker\\u2019s Guide to the Galaxy</em>.',
+  answerHtml:`<div class="lab">Answer</div>
+    Something along the lines of a tablet, smartphone or computer &ndash; the internet.`
+})}</div>`});
+
+/* Q10 */
+S.push({crumb:'Question 10', html:`<div class="slide">${questionSlide({
+  exercise:'Question 10',
+  prompt:'What register is the extract mainly written in? Give two examples to support your answer.',
+  answerHtml:`<div class="lab">Answer</div>
+    Informal or colloquial, supported by any two sensible examples (e.g. contractions like "We're safe", or slang like "fellas", "hop right in").`
+})}</div>`});
+
+/* ---------- WRITING SECTION ---------- */
+S.push({crumb:'Writing Task', section:true, html:`
+  <div class="slide section-slide">
+    <div class="card">
+      <div class="section-num">Writing</div>
+      <h2>An entry for the Dentrassi</h2>
+      <p class="section-sub">Imagine an entry in <em>The Hitchhiker's Guide</em> for the Dentrassi.</p>
+    </div>
+  </div>`});
+
+S.push({crumb:'Writing Prompt', html:`
+  <div class="slide"><div class="card concept-box">
+    ${badge('writing')}
+    <h2 class="q-title">The task</h2>
+    <div class="concept-body">
+      <p>Imagine an entry in <em>The Hitchhiker's Guide</em> for the Dentrassi.</p>
+      <ul>
+        <li>What do they look like?</li>
+        <li>Where do they come from?</li>
+        <li>What are they like?</li>
+      </ul>
+      <p>Plan three or four paragraphs for an entry into the guide for the Dentrassi.</p>
+      <ul>
+        <li>Write factually, but use your imagination.</li>
+        <li>Use organising features such as headings, numbering or bullets suitable for a factual entry in a reference book.</li>
+        <li>Use text effects for emphasis.</li>
+      </ul>
+    </div>
+    <div class="checklist">
+      <div class="check-item"><span class="ico">✓</span>Pay special attention to spelling, punctuation and grammar (standard English required)</div>
+      <div class="check-item"><span class="ico">✓</span>Choose descriptive words and phrases to paint an accurate picture</div>
+      <div class="check-item"><span class="ico">✓</span>Check your writing for flow and sense</div>
+      <div class="check-item"><span class="ico">✓</span>Think carefully about a clear layout suitable for the purpose</div>
+    </div>
+  </div></div>`});
+
+S.push({crumb:'What Makes It Strong', html:`
+  <div class="slide"><div class="card concept-box">
+    ${badge('writing')}
+    <h2 class="q-title">What makes a strong entry?</h2>
+    <div class="checklist">
+      <div class="check-item"><span class="ico">✓</span>Imaginative, well-developed content describing the Dentrassi as a species</div>
+      <div class="check-item"><span class="ico">✓</span>A factual, objective style &ndash; like a real reference book</div>
+      <div class="check-item"><span class="ico">✓</span>Third person, mostly present tense</div>
+      <div class="check-item"><span class="ico">✓</span>Careful spelling and punctuation</div>
+      <div class="check-item"><span class="ico">✓</span>Clear layout and organisational features &ndash; headings, bullets etc.</div>
+    </div>
+  </div></div>`});
+
+/* ---------- RECAP ---------- */
+S.push({crumb:'Recap', html:`
+  <div class="slide"><div class="card concept-box">
+    ${badge('concept')}
+    <h2 class="q-title">Quick recap</h2>
+    <div class="recap-grid">
+      <div class="recap-row"><span class="rn">1</span>First-person pronouns/possessives: we, our, us (any three)</div>
+      <div class="recap-row"><span class="rn">2</span>Iron rations = a health supplement to keep them healthy on the journey</div>
+      <div class="recap-row"><span class="rn">3</span>Wistfully &rarr; pensively / thoughtfully / longingly / regretfully / sadly</div>
+      <div class="recap-row"><span class="rn">4</span>Ate up all the food; looked at old pictures</div>
+      <div class="recap-row"><span class="rn">5</span>Children only know cold blue light, so it's "normal" &ndash; old golden-toned photos look wrong by comparison</div>
+      <div class="recap-row"><span class="rn">6</span><em>Safe</em> italicised for sarcasm &ndash; opposite of safe</div>
+      <div class="recap-row"><span class="rn">7</span>"Stuck out our thumbs" = made a sign for a lift (hitchhiked)</div>
+      <div class="recap-row"><span class="rn">8</span>Sub- = under/beneath (submarine, substandard, subway...)</div>
+      <div class="recap-row"><span class="rn">9</span>Modern equivalent = tablet/smartphone/computer &ndash; the internet</div>
+      <div class="recap-row"><span class="rn">10</span>Register = informal/colloquial, with two supporting examples</div>
+    </div>
+  </div></div>`});
+
+/* ---------- CLOSING ---------- */
+S.push({crumb:'Ready', section:true, html:`
+  <div class="slide closing-slide"><div class="card">
+    <div class="badge reading" style="margin:0 auto 16px;">Well done!</div>
+    <h2>You've covered every skill in this unit</h2>
+    <p class="section-sub">The Green Book, The Hitchhiker's Guide, and writing your own guide entry &mdash; all reviewed and ready.</p>
+    <div class="wb-ref"><div class="pg"><span>Reading</span>The Green Book + The Hitchhiker's Guide</div><div class="pg"><span>Writing</span>A Guide entry for the Dentrassi</div></div>
+  </div></div>`});
+
+/* RENDER + NAV */
+const stage = document.getElementById('stage');
+const dotsEl = document.getElementById('dots');
+const counterEl = document.getElementById('counter');
+const crumbEl = document.getElementById('crumbCurrent');
+const navLabel = document.getElementById('navLabel');
+let current = 0;
+S.forEach((s, i)=>{
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = s.html.trim();
+  const el = wrapper.firstChild;
+  el.dataset.index = i;
+  stage.appendChild(el);
+  const dot = document.createElement('div');
+  dot.className = 'dot' + (s.section ? ' section-start' : '');
+  dot.addEventListener('click', ()=>goTo(i));
+  dotsEl.appendChild(dot);
+});
+function render(){
+  document.querySelectorAll('.slide').forEach((el,i)=>{ el.classList.toggle('active', i===current); });
+  document.querySelectorAll('.dot').forEach((el,i)=>{ el.classList.toggle('active', i===current); });
+  counterEl.textContent = `${current+1} / ${S.length}`;
+  crumbEl.textContent = S[current].crumb;
+  document.getElementById('prevBtn').disabled = current===0;
+  document.getElementById('nextBtn').disabled = current===S.length-1;
+  navLabel.textContent = current===S.length-1 ? 'The end 🎉' : (current===0 ? 'Tap to begin' : 'Swipe or tap arrows');
+  document.querySelectorAll('.dot').forEach((el,i)=>{ if(i===current) el.scrollIntoView({inline:'center', block:'nearest', behavior:'smooth'}); });
+}
+function goTo(i){ if(i<0 || i>=S.length) return; current = i; render(); }
+document.getElementById('prevBtn').addEventListener('click', ()=>goTo(current-1));
+document.getElementById('nextBtn').addEventListener('click', ()=>goTo(current+1));
+document.addEventListener('keydown', (e)=>{ if(e.key==='ArrowRight') goTo(current+1); if(e.key==='ArrowLeft') goTo(current-1); });
+let touchStartX = null;
+stage.addEventListener('touchstart', e=>{touchStartX = e.touches[0].clientX;});
+stage.addEventListener('touchend', e=>{
+  if(touchStartX===null) return;
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if(Math.abs(dx) > 50){ dx<0 ? goTo(current+1) : goTo(current-1); }
+  touchStartX = null;
+});
+function toggleAnswer(id, btn){
+  const panel = document.getElementById(id);
+  const opening = !panel.classList.contains('open');
+  panel.classList.toggle('open');
+  btn.innerHTML = opening
+    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg> Hide answer`
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Reveal answer`;
+}
+render();
+</script>
+</body>
+</html>
