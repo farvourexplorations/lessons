@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.4 Soil — Interactive Lesson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#146C7A; --teal-dark:#0D4F5A; --teal-light:#E3F1F2; --teal-mid:#59A6AE;
+  --orange:#DD7A2E; --orange-light:#FBEADB;
+  --purple:#5B3E96; --purple-light:#F0EAFA;
+  --red:#C0392B; --red-light:#FBE7E4;
+  --blue:#2B71C9; --blue-light:#E9F1FC;
+  --green:#3F8F5C; --green-light:#E7F5EC;
+  --sand:#B08252; --sand-light:#F3E7D8;
+  --humus:#4A3820;
+  --ink:#1D2B32; --ink-soft:#4B5B62;
+  --paper:#FFFFFF; --cream:#F6F4EF; --line:#DDE4E3;
+  --r-lg:22px; --r-md:14px; --r-sm:8px;
+  --shadow: 0 10px 30px rgba(13,79,90,.14);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0; background:var(--cream); color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;
+  overflow:hidden;
+}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+
+/* ===== App shell ===== */
+#app{position:relative; width:100vw; height:100vh; display:flex; flex-direction:column;}
+
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 28px; background:var(--paper); border-bottom:1px solid var(--line);
+  flex:0 0 auto; z-index:20;
+}
+.crumb{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft); font-weight:600;}
+.crumb .tag{
+  background:var(--teal); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12px;
+  padding:5px 12px; border-radius:100px; letter-spacing:.3px;
+}
+.crumb .sep{color:#B9C4C3;}
+.crumb .current{color:var(--teal-dark);}
+
+.dots{display:flex; gap:6px; align-items:center; flex-wrap:wrap; max-width:40vw;}
+.dot{
+  width:9px; height:9px; border-radius:50%; background:#D7DEDD; border:none; cursor:pointer;
+  transition:all .25s;
+}
+.dot.active{ background:var(--teal); width:22px; border-radius:6px;}
+.dot:hover{background:var(--teal-mid);}
+
+.counter{font-size:12px; color:var(--ink-soft); font-weight:600; font-variant-numeric:tabular-nums; min-width:44px; text-align:right;}
+
+/* ===== Stage ===== */
+.stage{position:relative; flex:1 1 auto; overflow:hidden;}
+.slide{
+  position:absolute; inset:0; opacity:0; pointer-events:none;
+  transform:translateX(30px) scale(.99);
+  transition:opacity .45s ease, transform .45s ease;
+  overflow-y:auto;
+}
+.slide.active{opacity:1; pointer-events:auto; transform:translateX(0) scale(1);}
+.slide.prev{transform:translateX(-30px) scale(.99);}
+
+.slide-inner{
+  max-width:1180px; margin:0 auto; padding:40px 44px 90px;
+  min-height:100%;
+}
+
+/* nav arrows */
+.navbtn{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:15;
+  width:46px; height:46px; border-radius:50%; border:1px solid var(--line);
+  background:var(--paper); box-shadow:var(--shadow); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; color:var(--teal-dark);
+  transition:.2s;
+}
+.navbtn:hover{background:var(--teal); color:#fff; border-color:var(--teal);}
+.navbtn.disabled{opacity:.25; pointer-events:none;}
+#prevBtn{left:16px;} #nextBtn{right:16px;}
+.navbtn svg{width:20px; height:20px;}
+
+/* ===== shared components ===== */
+.chevron-badge{
+  display:inline-flex; align-items:center; gap:10px; background:var(--teal); color:#fff;
+  padding:9px 20px 9px 16px; font-family:'Poppins'; font-weight:700; font-size:15px;
+  clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%); margin-bottom:16px;
+}
+.eyebrow{
+  font-family:'Poppins'; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--orange); margin-bottom:8px;
+}
+h1.slide-title{font-size:34px; font-weight:800; color:var(--teal-dark); margin:0 0 6px; line-height:1.15;}
+h2.section-title{font-size:26px; font-weight:700; color:var(--teal-dark); margin:0 0 14px;}
+h3.mini-title{font-size:17px; font-weight:700; color:var(--ink); margin:0 0 8px;}
+p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
+.lede{font-size:17px; color:var(--ink-soft); margin-bottom:22px; max-width:700px;}
+.term{color:var(--orange); font-weight:700; cursor:help; border-bottom:1.5px dotted var(--orange);}
+
+.box{border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow);}
+.box-head{padding:12px 20px; font-family:'Poppins'; font-weight:700; font-size:14px; color:#fff; display:flex; align-items:center; gap:8px;}
+.box-body{padding:20px 22px;}
+.box.blue .box-head{background:var(--blue);}
+.box.purple .box-head{background:var(--purple);}
+.box.red .box-head{background:var(--red);}
+.box.orange .box-head{background:var(--orange);}
+.box.green .box-head{background:var(--green);}
+.box.teal .box-head{background:var(--teal);}
+.box.sand .box-head{background:var(--sand);}
+
+.two-col{display:grid; grid-template-columns:1.05fr .95fr; gap:36px; align-items:start;}
+@media (max-width:900px){.two-col{grid-template-columns:1fr;}}
+
+.photo{width:100%; border-radius:var(--r-md); display:block; object-fit:cover; background:#eee; box-shadow:0 6px 18px rgba(20,108,122,.18);}
+.photo-cap{font-size:12px; color:var(--ink-soft); margin-top:8px; font-style:italic;}
+
+.pill{display:inline-block; padding:4px 12px; border-radius:100px; font-size:12px; font-weight:700; background:var(--teal-light); color:var(--teal-dark); margin:2px 4px 2px 0;}
+.pill.orange{background:var(--orange-light); color:#8A4A16;}
+.pill.purple{background:var(--purple-light); color:var(--purple);}
+.pill.sand{background:var(--sand-light); color:#6B4A24;}
+
+.btn{border:none; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:14px; padding:10px 20px; border-radius:100px; background:var(--teal); color:#fff; transition:.2s;}
+.btn:hover{background:var(--teal-dark);}
+.btn.ghost{background:transparent; border:1.5px solid var(--teal); color:var(--teal);}
+.btn.ghost:hover{background:var(--teal-light);}
+.btn[disabled]{opacity:.45; cursor:default;}
+
+/* workbook badge */
+.wb-badge{
+  display:inline-flex; align-items:center; gap:7px; background:var(--purple-light); color:var(--purple);
+  font-family:'Poppins'; font-weight:700; font-size:11.5px; letter-spacing:.3px; text-transform:uppercase;
+  padding:5px 12px; border-radius:100px; margin-bottom:12px;
+}
+.wb-badge svg{width:13px; height:13px;}
+.wb-panel{border:1.5px dashed var(--purple); background:var(--purple-light); border-radius:var(--r-lg); padding:20px 22px; margin-top:8px;}
+
+.hint{font-size:12.5px; color:var(--ink-soft); background:var(--teal-light); border-radius:100px; padding:6px 14px; display:inline-flex; gap:6px; align-items:center; margin-bottom:18px; font-weight:600;}
+.hint svg{width:14px; height:14px;}
+
+/* ============ SLIDE 0 : COVER ============ */
+.cover{
+  height:100%; display:flex; align-items:center; justify-content:center; position:relative;
+  background:
+    radial-gradient(ellipse at 20% 15%, rgba(255,255,255,.10), transparent 45%),
+    linear-gradient(160deg, var(--sand) 0%, #6B4A24 62%, #3A280F 100%);
+  overflow:hidden;
+}
+.cover-rock{position:absolute; border-radius:38% 62% 55% 45% / 45% 40% 60% 55%; opacity:.16; background:#fff;}
+.cover-content{position:relative; z-index:2; text-align:center; color:#fff; max-width:760px; padding:0 30px;}
+.cover-content .unit{font-family:'Poppins'; font-weight:700; letter-spacing:3px; font-size:13px; text-transform:uppercase; color:#F3E7D8; margin-bottom:14px;}
+.cover-content h1{font-size:52px; font-weight:800; margin:0 0 10px; line-height:1.08;}
+.cover-content .sub{font-size:19px; color:#F8EFE2; font-weight:500; margin-bottom:34px;}
+.cover-chip-row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:38px;}
+.cover-chip{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff; padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600; backdrop-filter:blur(4px);}
+.cover-start{
+  background:var(--teal); color:#fff; border:none; font-family:'Poppins'; font-weight:700; font-size:16px;
+  padding:15px 34px; border-radius:100px; cursor:pointer; box-shadow:0 12px 26px rgba(20,108,122,.4);
+  display:inline-flex; align-items:center; gap:10px; transition:.2s;
+}
+.cover-start:hover{transform:translateY(-2px); box-shadow:0 16px 30px rgba(20,108,122,.5);}
+
+/* ============ objectives slide ============ */
+.obj-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 22px; margin-top:6px;}
+.obj-card{display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:var(--r-md); background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.2s;}
+.obj-card:hover{border-color:var(--teal-mid); box-shadow:var(--shadow);}
+.obj-num{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--teal-light); color:var(--teal-dark); font-family:'Poppins'; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;}
+.obj-card.done .obj-num{background:var(--teal); color:#fff;}
+.obj-card.done p{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:#B9C4C3;}
+.obj-card p{margin:0; font-size:13.8px; line-height:1.5;}
+
+/* ============ choose-word workbook component ============ */
+.choose-item{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:16px 18px; margin-bottom:12px;}
+.choose-q{font-size:15px; margin:0 0 10px; font-weight:600;}
+.choose-blank{color:var(--purple); font-weight:700;}
+.choose-row{display:flex; gap:10px; flex-wrap:wrap;}
+.choose-btn{border:1.5px solid var(--purple); background:#fff; color:var(--purple); font-family:'Poppins'; font-weight:600; font-size:13.5px; padding:8px 18px; border-radius:100px; cursor:pointer; transition:.15s;}
+.choose-btn:hover{background:var(--purple-light);}
+.choose-btn.correct{background:var(--green-light); border-color:var(--green); color:var(--green);}
+.choose-btn.wrong{background:var(--red-light); border-color:var(--red); color:var(--red);}
+.choose-btn[disabled]{cursor:default;}
+.choose-fb{display:none; margin-top:10px; font-size:13.5px; color:var(--ink-soft); background:var(--teal-light); border-radius:10px; padding:10px 14px;}
+.choose-fb.show{display:block; animation:fadein .3s;}
+@keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+/* ============ soil composition donut hotspot ============ */
+.soil-wrap{display:flex; gap:34px; align-items:center; flex-wrap:wrap;}
+.soil-diagram{position:relative; width:300px; max-width:100%; aspect-ratio:1/1; flex:0 0 auto;}
+.soil-diagram svg{width:100%; height:100%; display:block; border-radius:50%; box-shadow:var(--shadow);}
+.soil-hot{
+  position:absolute; width:24px; height:24px; border-radius:50%; border:3px solid #fff; transform:translate(-50%,-50%);
+  cursor:pointer; font-family:'Poppins'; font-weight:800; color:#fff; font-size:11px;
+  display:flex; align-items:center; justify-content:center; box-shadow:0 3px 8px rgba(0,0,0,.25); transition:.2s;
+}
+.soil-hot:hover{transform:translate(-50%,-50%) scale(1.15);}
+.soil-hot.revealed{outline:3px solid var(--orange); outline-offset:2px;}
+.soil-info{flex:1 1 280px; min-width:260px;}
+.soil-card{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:14px 16px; margin-bottom:10px; opacity:.4; transition:.3s; border-left:4px solid #D7DEDD;}
+.soil-card.active{opacity:1; border-left-color:var(--orange); box-shadow:var(--shadow);}
+.soil-card h4{margin:0 0 4px; font-family:'Poppins'; font-size:14.5px; color:var(--teal-dark);}
+.soil-card p{margin:0; font-size:13.5px;}
+
+/* ============ living-things callout ============ */
+.living-callout{display:flex; gap:18px; align-items:center; background:var(--green-light); border-radius:var(--r-lg); padding:18px 20px; margin-top:24px; flex-wrap:wrap;}
+.living-callout img{width:130px; height:100px; object-fit:cover; border-radius:var(--r-md); flex:0 0 auto; box-shadow:var(--shadow);}
+.living-callout div{flex:1 1 260px;}
+.living-callout h4{margin:0 0 6px; font-family:'Poppins'; color:#245A38; font-size:14.5px;}
+.living-callout p{margin:0; color:#245A38; font-size:14px;}
+
+/* ============ reveal answer component ============ */
+.reveal-card{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:16px 18px; margin-bottom:14px;}
+.reveal-q{font-size:14.5px; font-weight:700; margin:0 0 10px; color:var(--ink);}
+.reveal-btn{
+  border:1.5px solid var(--orange); background:#fff; color:var(--orange); font-family:'Poppins'; font-weight:600;
+  font-size:12.5px; padding:7px 16px; border-radius:100px; cursor:pointer; transition:.15s;
+}
+.reveal-btn:hover{background:var(--orange-light);}
+.reveal-btn.shown{background:var(--orange); color:#fff;}
+.reveal-answer{display:none; margin-top:12px; padding:12px 14px; background:var(--green-light); border-radius:10px; font-size:14px; color:#245A38; line-height:1.6;}
+.reveal-answer.show{display:block; animation:fadein .3s;}
+
+/* ============ tabs (soil types) ============ */
+.tabs{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+.tab-btn{padding:10px 18px; border-radius:100px; border:1.5px solid var(--line); background:#fff; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:13.5px; color:var(--ink-soft); transition:.2s;}
+.tab-btn.active{background:var(--teal); border-color:var(--teal); color:#fff;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block; animation:fadein .35s;}
+
+/* ============ recall pills (Focus Q3) ============ */
+.recall-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:6px;}
+.recall-pill{
+  display:flex; align-items:center; gap:8px; border:1.5px solid var(--teal); background:#fff; color:var(--teal-dark);
+  font-family:'Poppins'; font-weight:700; font-size:14px; padding:10px 20px; border-radius:100px; cursor:pointer; transition:.2s;
+}
+.recall-pill:hover{background:var(--teal-light);}
+.recall-pill.done{background:var(--green-light); border-color:var(--green); color:#245A38;}
+.recall-pill svg{width:15px; height:15px; opacity:0;}
+.recall-pill.done svg{opacity:1;}
+
+/* ============ sedimentation jar simulation ============ */
+.jar-wrap{display:flex; gap:34px; align-items:flex-start; flex-wrap:wrap; margin-top:10px;}
+.jar-outer{display:flex; flex-direction:column; align-items:center; gap:14px;}
+.jar{
+  width:150px; height:260px; border:3px solid var(--ink-soft); border-top:none; border-radius:0 0 18px 18px;
+  position:relative; overflow:hidden; background:linear-gradient(180deg,#CDE7F0,#A9D2E4);
+}
+.jar-rim{width:164px; height:16px; border:3px solid var(--ink-soft); border-radius:8px 8px 0 0; background:#CDE7F0; margin-bottom:-3px;}
+.jar-inner{position:absolute; left:0; right:0; bottom:0; top:0; display:flex; flex-direction:column-reverse;}
+.jar-layer{width:100%; height:0%; transition:height 1.1s cubic-bezier(.4,0,.2,1);}
+.jar-layer.sand{background:#B08252;}
+.jar-layer.silt{background:#C9A46B;}
+.jar-layer.clay{background:#8C6C42;}
+.jar-organic{position:absolute; left:0; right:0; top:0; height:0; background:var(--humus); opacity:.85; transition:height .8s ease .3s;}
+.jar-caption{font-size:13px; color:var(--ink-soft); font-weight:600; text-align:center; min-height:18px;}
+.jar-legend{flex:1 1 260px; min-width:240px;}
+.jar-legend-item{display:flex; align-items:center; gap:10px; margin-bottom:8px; font-size:13.5px;}
+.jar-legend-swatch{width:16px; height:16px; border-radius:4px; flex:0 0 auto;}
+
+/* ============ accordion (challenge Q&A) ============ */
+.accordion-item{border:1px solid var(--line); border-radius:var(--r-md); background:var(--paper); margin-bottom:10px; overflow:hidden;}
+.accordion-head{display:flex; align-items:center; justify-content:space-between; padding:14px 18px; cursor:pointer; font-weight:700; font-size:14.5px; gap:12px;}
+.accordion-head:hover{background:var(--teal-light);}
+.accordion-head svg{flex:0 0 auto; width:16px; height:16px; color:var(--teal); transition:.25s;}
+.accordion-item.open .accordion-head svg{transform:rotate(180deg);}
+.accordion-body{max-height:0; overflow:hidden; transition:max-height .35s ease;}
+.accordion-item.open .accordion-body{max-height:400px;}
+.accordion-body-inner{padding:0 18px 16px; font-size:14px; color:var(--ink-soft); line-height:1.65;}
+
+.scenario{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); padding:22px 24px; box-shadow:var(--shadow);}
+
+/* ============ checklist ============ */
+.assess-list{display:flex; flex-direction:column; gap:2px;}
+.assess-item{display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px; cursor:pointer; transition:.15s;}
+.assess-item:hover{background:var(--teal-light);}
+.assess-box{flex:0 0 auto; width:22px; height:22px; border-radius:6px; border:2px solid var(--teal); position:relative;}
+.assess-item.checked .assess-box{background:var(--teal);}
+.assess-box svg{position:absolute; inset:0; margin:auto; width:14px; height:14px; color:#fff; opacity:0;}
+.assess-item.checked .assess-box svg{opacity:1;}
+.assess-item p{margin:0; font-size:14px;}
+.assess-item.checked p{color:var(--ink-soft);}
+.progress-bar-track{height:10px; background:var(--teal-light); border-radius:100px; overflow:hidden; margin:16px 0 22px;}
+.progress-bar-fill{height:100%; width:0%; background:linear-gradient(90deg,var(--teal),var(--orange)); border-radius:100px; transition:width .4s;}
+
+/* glossary cards */
+.gloss-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px;}
+.gloss-card{background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:14px; cursor:pointer; perspective:800px; height:104px; position:relative;}
+.gloss-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+.gloss-card.flip .gloss-inner{transform:rotateY(180deg);}
+.gloss-face{position:absolute; inset:0; backface-visibility:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;}
+.gloss-face.front{font-family:'Poppins'; font-weight:700; color:var(--teal-dark); font-size:14px;}
+.gloss-face.back{transform:rotateY(180deg); font-size:11.5px; color:var(--ink-soft); padding:4px; line-height:1.4;}
+
+::-webkit-scrollbar{width:8px;}
+::-webkit-scrollbar-thumb{background:#C9D6D5; border-radius:10px;}
+
+@media(max-width:760px){
+  .obj-grid{grid-template-columns:1fr;}
+  .two-col{grid-template-columns:1fr;}
+  .gloss-grid{grid-template-columns:repeat(2,1fr);}
+  .cover-content h1{font-size:34px;}
+  h1.slide-title{font-size:24px;}
+  .soil-diagram{width:100%;}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="topbar">
+    <div class="crumb">
+      <span class="tag">Unit 3</span>
+      <span>Rocks, the rock cycle and soil</span>
+      <span class="sep">/</span>
+      <span class="current">3.4 Soil</span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="counter" id="counter">1 / 9</div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- ================= SLIDE 0 : COVER ================= -->
+    <section class="slide">
+      <div class="cover">
+        <div class="cover-rock" style="width:220px;height:220px; top:-50px; left:-50px;"></div>
+        <div class="cover-rock" style="width:160px;height:160px; bottom:-40px; right:-30px;"></div>
+        <div class="cover-content">
+          <div class="unit">Unit 3 &middot; Rocks, the rock cycle and soil</div>
+          <h1>Soil</h1>
+          <div class="sub">The thin living layer beneath our feet — where weathered rock, decaying life and countless tiny creatures combine to grow everything we eat</div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">🪨 Rock to soil</span>
+            <span class="cover-chip">🏖️ Sandy, clay &amp; loam</span>
+            <span class="cover-chip">🪱 Living soil</span>
+            <span class="cover-chip">🧪 Workbook activities</span>
+          </div>
+          <button class="cover-start" onclick="goTo(1)">
+            Start the lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 1 : OBJECTIVES ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">3.4</div>
+        <h1 class="slide-title">We are going to…</h1>
+        <p class="lede">Tap each goal as you meet it during the lesson. By the end, every card should be ticked off.</p>
+        <div class="obj-grid" id="objGrid">
+          <div class="obj-card" data-i="1"><div class="obj-num">1</div><p>Describe how soil forms from weathered rock and organic matter</p></div>
+          <div class="obj-card" data-i="2"><div class="obj-num">2</div><p>Describe the main components of soil: mineral particles, organic matter, water, air and living organisms</p></div>
+          <div class="obj-card" data-i="3"><div class="obj-num">3</div><p>Investigate and describe soil using observable properties such as colour, texture and drainage</p></div>
+          <div class="obj-card" data-i="4"><div class="obj-num">4</div><p>Compare the properties of sandy, clay and loam soils</p></div>
+          <div class="obj-card" data-i="5"><div class="obj-num">5</div><p>Use a sedimentation test to separate and identify the particles in a soil sample</p></div>
+          <div class="obj-card" data-i="6"><div class="obj-num">6</div><p>Decide whether a soil sample is suitable for growing plants, and suggest how to improve it</p></div>
+          <div class="obj-card" data-i="7"><div class="obj-num">7</div><p>Describe how organic farmers maintain healthy soil, including crop rotation and biological pest control</p></div>
+          <div class="obj-card" data-i="8"><div class="obj-num">8</div><p>Interpret information from diagrams, photographs and passages about soil</p></div>
+        </div>
+        <div style="margin-top:22px;">
+          <span class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Key vocabulary: weathering · soil · mineral particles · organic matter · humus · sedimentation · sandy soil · clay soil · loam soil · drainage · crop rotation · biological pest control</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 2 : FROM ROCK TO SOIL ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Where does soil come from?</div>
+        <h1 class="slide-title">From solid rock to soft soil</h1>
+        <p class="lede">The Earth's crust is made almost entirely of rock. <span class="term" data-def="The breaking down of rock into smaller pieces where it stands, by sun, rain, ice or plant roots.">Weathering</span> slowly breaks that rock down into tiny mineral particles. Mixed together with the remains of dead plants and animals, those particles become <span class="term" data-def="A loose mixture of weathered rock particles and organic matter that covers much of the Earth's land surface.">soil</span> — a process that can take hundreds or even thousands of years.</p>
+
+        <div class="two-col">
+          <div>
+            <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Frost%20Shattered%20Rocks%20on%20the%20Summit%20of%20Glyder%20Fawr%20-%20geograph.org.uk%20-%20246416.jpg" alt="Rock shattered into small angular fragments by frost weathering">
+            <div class="photo-cap">Frost-shattered rock — the very beginning of the long journey from solid rock to soil.</div>
+          </div>
+          <div>
+            <h3 class="mini-title">Rock + time + life = soil</h3>
+            <p>As weathered rock fragments build up, plants begin to take root among them. As those plants — and the animals that feed on them — die and decay, their remains mix in with the mineral particles. Over a very long time, this mixture deepens and matures into the soil that covers most of the land around us.</p>
+            <span class="pill sand">Mineral particles</span><span class="pill green">Decayed plants &amp; animals</span>
+          </div>
+        </div>
+
+        <div class="wb-badge" style="margin-top:26px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.4 Focus, question 1</div>
+        <div class="wb-panel">
+          <p style="margin:0 0 14px; font-size:14px; color:var(--ink-soft);">Complete the sentences by tapping the correct word each time.</p>
+          <div class="choose-item" data-answer="rocks">
+            <p class="choose-q">The Earth's crust consists of <span class="choose-blank">___</span>.</p>
+            <div class="choose-row">
+              <button class="choose-btn" data-val="rocks">rocks</button>
+              <button class="choose-btn" data-val="water">water</button>
+            </div>
+            <div class="choose-fb">Correct answer: <strong>rocks</strong>. The crust — the Earth's outer layer — is made almost entirely of rock.</div>
+          </div>
+          <div class="choose-item" data-answer="break">
+            <p class="choose-q">Rain and ice <span class="choose-blank">___</span> up the rocks.</p>
+            <div class="choose-row">
+              <button class="choose-btn" data-val="break">break</button>
+              <button class="choose-btn" data-val="dissolve">dissolve</button>
+            </div>
+            <div class="choose-fb">Correct answer: <strong>break</strong>. This is weathering — rain, ice, sun and plant roots physically break rock into smaller pieces.</div>
+          </div>
+          <div class="choose-item" data-answer="soil">
+            <p class="choose-q">The small rock particles become <span class="choose-blank">___</span>.</p>
+            <div class="choose-row">
+              <button class="choose-btn" data-val="soil">soil</button>
+              <button class="choose-btn" data-val="sand">sand</button>
+            </div>
+            <div class="choose-fb">Correct answer: <strong>soil</strong>. Mixed with decayed plant and animal matter, the weathered particles form soil — sand is just one possible particle size found within it.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 3 : WHAT'S IN A HANDFUL OF SOIL ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Under the microscope</div>
+        <h1 class="slide-title">What's in a handful of soil?</h1>
+        <p class="lede">Soil is not just crushed-up rock. Tap each slice of this diagram to discover the four ingredients that make up healthy soil.</p>
+
+        <div class="soil-wrap">
+          <div class="soil-diagram">
+            <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+              <path d="M150,150 L150,30 A120,120 0 0,1 187.1,264.1 Z" fill="#B08252"/>
+              <path d="M150,150 L187.1,264.1 A120,120 0 0,1 35.9,187.1 Z" fill="#2B71C9"/>
+              <path d="M150,150 L35.9,187.1 A120,120 0 0,1 112.9,35.9 Z" fill="#9FD8E0"/>
+              <path d="M150,150 L112.9,35.9 A120,120 0 0,1 150,30 Z" fill="#4A3820"/>
+              <circle cx="150" cy="150" r="46" fill="#F6F4EF"/>
+              <text x="150" y="146" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="12" fill="#1D2B32">Healthy</text>
+              <text x="150" y="161" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="12" fill="#1D2B32">soil</text>
+            </svg>
+            <div class="soil-hot" style="background:#B08252; left:76.3%; top:45.8%;" data-layer="mineral">1</div>
+            <div class="soil-hot" style="background:#2B71C9; left:37.9%; top:73.8%;" data-layer="water">2</div>
+            <div class="soil-hot" style="background:#9FD8E0; left:26.2%; top:37.9%;" data-layer="air">3</div>
+            <div class="soil-hot" style="background:#4A3820; left:45.8%; top:23.7%;" data-layer="organic">4</div>
+          </div>
+
+          <div class="soil-info">
+            <div class="soil-card" data-card="mineral"><h4>1 — Mineral particles (about 45%)</h4><p>Tiny weathered fragments of rock — sand, silt and clay — that make up almost half of most soils.</p></div>
+            <div class="soil-card" data-card="water"><h4>2 — Water (about 25%)</h4><p>Water fills many of the gaps between particles, carrying dissolved nutrients that plant roots absorb.</p></div>
+            <div class="soil-card" data-card="air"><h4>3 — Air (about 25%)</h4><p>Air fills the remaining gaps between particles — plant roots and soil organisms need this air to respire.</p></div>
+            <div class="soil-card" data-card="organic"><h4>4 — Organic matter / humus (about 5%)</h4><p>Decayed remains of plants and animals. Even in a small amount, humus is packed with the nutrients plants need to grow.</p></div>
+          </div>
+        </div>
+
+        <div class="living-callout">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Earthworm%20on%20the%20ground.jpg" alt="An earthworm on soil">
+          <div>
+            <h4>Also living in the soil…</h4>
+            <p>Earthworms, insects, fungi and countless bacteria live throughout these four ingredients. Earthworms burrow through soil, mixing and aerating it, while bacteria and fungi break down dead matter into the humus that feeds new plants.</p>
+          </div>
+        </div>
+
+        <div class="wb-badge" style="margin-top:26px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.4 Focus, question 2</div>
+        <div class="wb-panel">
+          <p style="margin:0 0 14px; font-size:14px; color:var(--ink-soft);">If a geologist gave you a pile of soil on a newspaper to describe, what could you investigate? <strong>Colour</strong> is done for you — tap the other three cards to reveal more ideas.</p>
+          <div class="reveal-card">
+            <p class="reveal-q">a &nbsp; Colour</p>
+            <div class="reveal-answer show" style="display:block;">You can see straightaway whether soil is pale, yellowish, reddish, brown or almost black — colour often hints at how much organic matter or iron the soil contains.</div>
+          </div>
+          <div class="reveal-card">
+            <p class="reveal-q">b &nbsp; Texture</p>
+            <button class="reveal-btn" onclick="toggleReveal(this)">Show idea</button>
+            <div class="reveal-answer">How gritty, smooth or sticky the soil feels between your fingers tells you about the size of its particles — sandy soils feel gritty, clay soils feel smooth and sticky.</div>
+          </div>
+          <div class="reveal-card">
+            <p class="reveal-q">c &nbsp; Living things &amp; organic matter</p>
+            <button class="reveal-btn" onclick="toggleReveal(this)">Show idea</button>
+            <div class="reveal-answer">Look closely for bits of dead leaves, roots, insects or worms — these show how much organic matter (humus) the soil contains.</div>
+          </div>
+          <div class="reveal-card">
+            <p class="reveal-q">d &nbsp; Drainage</p>
+            <button class="reveal-btn" onclick="toggleReveal(this)">Show idea</button>
+            <div class="reveal-answer">Pour water onto a soil sample and time how quickly it drains away — this tells you how well the soil lets water pass through it.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 4 : THREE TYPES OF SOIL ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Not all soil is the same</div>
+        <h1 class="slide-title">Three main types of soil</h1>
+        <p class="lede">The size and mix of the mineral particles in a soil completely changes how it behaves. Explore the three main types below.</p>
+
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="sandy">🏖️ Sandy soil</button>
+          <button class="tab-btn" data-tab="clay">🧱 Clay soil</button>
+          <button class="tab-btn" data-tab="loam">🌱 Loam soil</button>
+        </div>
+
+        <div class="tab-panel active" id="tab-sandy">
+          <div class="two-col">
+            <div>
+              <h3 class="mini-title">Large particles, big gaps</h3>
+              <p>Sandy soil is made of large, gritty mineral particles with big air gaps between them. Water drains through very quickly, so sandy soil dries out fast and does not hold onto nutrients well. It is light, easy to dig, and warms up quickly in the sun.</p>
+              <span class="pill sand">Large particles</span><span class="pill sand">Fast drainage</span><span class="pill sand">Dries out quickly</span>
+            </div>
+            <div>
+              <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Sandy%20soil%20-%20geograph.org.uk%20-%201214933.jpg" alt="Sandy soil with visible loose grains">
+              <div class="photo-cap">Sandy soil — loose, gritty and free-draining.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-clay">
+          <div class="two-col">
+            <div>
+              <h3 class="mini-title">Tiny particles, packed tight</h3>
+              <p>Clay soil is made of extremely tiny particles packed closely together with almost no air gaps. Water drains through very slowly, so clay soil can become waterlogged — but when it dries out, it becomes hard and cracks. It is heavy and difficult to dig.</p>
+              <span class="pill purple">Tiny particles</span><span class="pill purple">Very slow drainage</span><span class="pill purple">Hard when dry</span>
+            </div>
+            <div>
+              <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Clay%20Soil.jpg" alt="Dense clay soil">
+              <div class="photo-cap">Clay soil — dense, sticky when wet, and rock-hard when dry.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-loam">
+          <div class="two-col">
+            <div>
+              <h3 class="mini-title">The best of both worlds</h3>
+              <p>Loam soil is a balanced mixture of sand, silt and clay particles, together with plenty of organic matter. It drains well enough to avoid waterlogging, yet still holds enough water and nutrients for plants. This makes loam the soil most gardeners and farmers want for growing healthy crops.</p>
+              <span class="pill green">Balanced mixture</span><span class="pill green">Good drainage</span><span class="pill green">Best for plants</span>
+            </div>
+            <div>
+              <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Texture%20of%20a%20fertile%20soil.jpg" alt="Rich, dark, crumbly loam soil">
+              <div class="photo-cap">Loam soil — dark, crumbly and rich in organic matter.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wb-badge" style="margin-top:26px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.4 Focus, question 3</div>
+        <div class="wb-panel">
+          <p style="margin:0 0 12px; font-size:14px; color:var(--ink-soft);">List the three main types of soil — tap each one to check it off.</p>
+          <div class="recall-row" id="recallRow">
+            <button class="recall-pill" data-soil="sandy">Sandy soil <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></button>
+            <button class="recall-pill" data-soil="clay">Clay soil <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></button>
+            <button class="recall-pill" data-soil="loam">Loam soil <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 5 : SEDIMENTATION JAR SIMULATION ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Try it yourself</div>
+        <h1 class="slide-title">The soil sedimentation test</h1>
+        <p class="lede">Scientists and gardeners find out what a soil is made of by shaking a sample with water in a jar and letting it settle. Press the button to run the test — watch which particles sink first.</p>
+
+        <div class="jar-wrap">
+          <div class="jar-outer">
+            <div class="jar-rim"></div>
+            <div class="jar">
+              <div class="jar-organic" id="jarOrganic"></div>
+              <div class="jar-inner">
+                <div class="jar-layer sand" id="jarSand"></div>
+                <div class="jar-layer silt" id="jarSilt"></div>
+                <div class="jar-layer clay" id="jarClay"></div>
+              </div>
+            </div>
+            <div class="jar-caption" id="jarCaption">Soil and water, freshly shaken</div>
+            <div style="display:flex; gap:10px; margin-top:6px;">
+              <button class="btn" onclick="shakeSettle()">🫙 Shake &amp; let it settle</button>
+              <button class="btn ghost" onclick="resetJar()">↺ Reset</button>
+            </div>
+          </div>
+
+          <div class="jar-legend">
+            <h3 class="mini-title">Why do the layers separate like this?</h3>
+            <p>When you shake soil up with water, every particle is briefly mixed together. As the jar settles, gravity pulls the heaviest, largest particles down first — the rest settle in order of size, lightest last.</p>
+            <div class="jar-legend-item"><span class="jar-legend-swatch" style="background:#B08252;"></span> Sand — largest, heaviest particles, settles first at the bottom</div>
+            <div class="jar-legend-item"><span class="jar-legend-swatch" style="background:#C9A46B;"></span> Silt — medium-sized particles, settles next</div>
+            <div class="jar-legend-item"><span class="jar-legend-swatch" style="background:#8C6C42;"></span> Clay — tiny particles, settles last as a fine top layer</div>
+            <div class="jar-legend-item"><span class="jar-legend-swatch" style="background:#4A3820;"></span> Organic matter — lightest of all, often floats on the water's surface</div>
+            <p style="margin-top:10px;">By measuring the thickness of each layer, you can work out roughly how much sand, silt and clay a soil sample contains — and whether it is closer to a sandy, clay or loam soil.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 6 : PRACTICE 4 — SOFIA AND ZARA'S PLOT ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="wb-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.4 Practice, question 4</div>
+        <h1 class="slide-title">Sofia and Zara's vegetable plot</h1>
+        <div class="scenario">
+          <p style="margin:0;">Sofia and Zara want to plant vegetables on a small plot of ground. The soil is <strong>hard and dry</strong>. The soil is <strong>yellowish in colour</strong>. There are <strong>no bits of dead leaves or animals</strong> in it.</p>
+        </div>
+
+        <div style="margin-top:22px;">
+          <div class="reveal-card">
+            <p class="reveal-q">a &nbsp; Describe the texture and colour of the soil.</p>
+            <button class="reveal-btn" onclick="toggleReveal(this)">Show model answer</button>
+            <div class="reveal-answer">The soil is hard and dry in texture, and yellowish (pale) in colour.</div>
+          </div>
+          <div class="reveal-card">
+            <p class="reveal-q">b &nbsp; Does the soil contain organic matter? How do you know this?</p>
+            <button class="reveal-btn" onclick="toggleReveal(this)">Show model answer</button>
+            <div class="reveal-answer">No. There are no bits of dead leaves or animals in it, and organic matter is exactly what those remains would be — so this soil has little or no organic matter (humus).</div>
+          </div>
+          <div class="reveal-card">
+            <p class="reveal-q">c &nbsp; Is this a sandy soil, a clay soil or a loam soil?</p>
+            <button class="reveal-btn" onclick="toggleReveal(this)">Show model answer</button>
+            <div class="reveal-answer">This sounds like a clay soil. Clay is made of very fine, tightly packed particles that become hard and can crack as they dry out — unlike sandy soil, which stays loose and crumbly even when dry.</div>
+          </div>
+          <div class="reveal-card">
+            <p class="reveal-q">d &nbsp; Do you think the soil is suitable for growing vegetables? Explain why or why not.</p>
+            <button class="reveal-btn" onclick="toggleReveal(this)">Show model answer</button>
+            <div class="reveal-answer">Not as it is. Clay soil like this drains poorly when wet and becomes rock-hard when dry, making it difficult for roots to grow through. With no organic matter present, it also lacks the nutrients vegetables need to grow well.</div>
+          </div>
+          <div class="reveal-card">
+            <p class="reveal-q">e &nbsp; Write down three ways that Sofia and Zara can change the composition of the soil to make it more suitable for growing vegetables.</p>
+            <button class="reveal-btn" onclick="toggleReveal(this)">Show model answer</button>
+            <div class="reveal-answer">1) Dig in plenty of compost or well-rotted manure to add organic matter and nutrients. 2) Mix in some sand or grit to open up the structure and improve drainage. 3) Add a mulch on top and turn the soil regularly to improve air flow and stop it compacting again.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 7 : CHALLENGE — ORGANIC FARMING ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="wb-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 3.4 Challenge, question 5</div>
+        <h1 class="slide-title">Organic farming &amp; biological pest control</h1>
+        <div class="two-col">
+          <div class="scenario">
+            <p style="margin-bottom:12px;"><strong>Organic farming</strong> uses environmentally friendly methods that improve the soil and keep people healthy, because no chemicals end up in the food produced. Organic farmers always rotate their crops — they never plant the same crop on the same soil year after year — and use compost instead of artificial fertilisers.</p>
+            <p style="margin-bottom:0;"><strong>Biological pest control</strong> means using a pest's natural predators, rather than chemicals, to protect crops. Natural predators can be insects such as ladybirds, bees and spiders, or lizards, frogs and birds. Organic farmers plant flowers near their crops and hedges at the edges of fields to attract these predators. Aphids, for example, are a common pest that eat leaves, stems and fruit — so if a farmer makes sure there are always ladybirds nearby, the ladybirds will eat the aphids. It is even possible to buy ladybirds for this purpose!</p>
+          </div>
+          <div>
+            <img class="photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Aphid-attack.jpg" alt="A ladybird larva eating an aphid">
+            <div class="photo-cap">A ladybird larva eating an aphid — biological pest control in action.</div>
+            <img class="photo" style="margin-top:14px;" src="https://commons.wikimedia.org/wiki/Special:FilePath/Vegetable%20garden%20at%20Ham%20House%20Estate%20-%20geograph.org.uk%20-%204530.jpg" alt="Rows of vegetables growing in a garden">
+            <div class="photo-cap">A vegetable garden — the kind of plot organic growers tend using these methods.</div>
+          </div>
+        </div>
+
+        <h3 class="mini-title" style="margin-top:26px;">Answer the questions — tap each one to reveal the model answer</h3>
+        <div class="accordion" id="accordion">
+          <div class="accordion-item">
+            <div class="accordion-head">a &nbsp; Describe two ways organic farmers maintain the composition of their soil.
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="accordion-body"><div class="accordion-body-inner">1) They rotate their crops, so the same crop is never grown in the same soil year after year — this stops nutrients being used up and pests or diseases building up. 2) They use compost instead of artificial fertilisers, which adds organic matter and nutrients back into the soil naturally.</div></div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-head">b &nbsp; What is biological pest control?
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="accordion-body"><div class="accordion-body-inner">Using a pest's natural predators — such as ladybirds, bees, spiders, lizards, frogs or birds — to control its numbers, instead of using chemical pesticides.</div></div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-head">c &nbsp; How do organic farmers use biological pest control?
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="accordion-body"><div class="accordion-body-inner">They plant flowers near their crops and grow hedges at the edges of fields to attract natural predators such as ladybirds. Some farmers even buy ladybirds and release them onto the farm so they eat pests like aphids.</div></div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-head">d &nbsp; Find out the names of two birds and two animals that are natural predators of snails.
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="accordion-body"><div class="accordion-body-inner">Birds: thrushes and ducks (owls and starlings are also known to eat snails). Animals: hedgehogs and frogs or toads (some beetles are natural predators too).</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 8 : SELF-CHECK & RECAP ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Look what I can do!</div>
+        <h1 class="slide-title">Self-check &amp; recap</h1>
+        <div class="progress-bar-track"><div class="progress-bar-fill" id="assessFill"></div></div>
+        <div class="assess-list" id="assessList"></div>
+
+        <h3 class="mini-title" style="margin-top:30px;">Key vocabulary — tap a card to flip it</h3>
+        <div class="gloss-grid" id="glossGrid"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <button class="navbtn" id="prevBtn" onclick="prevSlide()" aria-label="Previous">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button class="navbtn" id="nextBtn" onclick="nextSlide()" aria-label="Next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+
+<script>
+/* ============ core slide navigation ============ */
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let idx = 0;
+
+const dotsWrap = document.getElementById('dots');
+slides.forEach((s,i)=>{
+  const d = document.createElement('button');
+  d.className = 'dot' + (i===0?' active':'');
+  d.onclick = ()=>goTo(i);
+  dotsWrap.appendChild(d);
+});
+
+function render(){
+  slides.forEach((s,i)=> s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.dot').forEach((d,i)=> d.classList.toggle('active', i===idx));
+  document.getElementById('counter').textContent = (idx+1) + ' / ' + total;
+  document.getElementById('prevBtn').classList.toggle('disabled', idx===0);
+  document.getElementById('nextBtn').classList.toggle('disabled', idx===total-1);
+  slides[idx].scrollTop = 0;
+}
+function goTo(i){ idx = Math.max(0, Math.min(total-1, i)); render(); }
+function nextSlide(){ goTo(idx+1); }
+function prevSlide(){ goTo(idx-1); }
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight') nextSlide();
+  if(e.key==='ArrowLeft') prevSlide();
+});
+render();
+
+/* ============ objectives checklist ============ */
+document.querySelectorAll('.obj-card').forEach(card=>{
+  card.addEventListener('click', ()=> card.classList.toggle('done'));
+});
+
+/* ============ choose-word workbook items (Focus 1) ============ */
+document.querySelectorAll('.choose-item').forEach(item=>{
+  const ans = item.dataset.answer;
+  item.querySelectorAll('.choose-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      item.querySelectorAll('.choose-btn').forEach(b=>{
+        b.disabled = true;
+        if(b.dataset.val === ans) b.classList.add('correct');
+      });
+      if(btn.dataset.val !== ans) btn.classList.add('wrong');
+      item.querySelector('.choose-fb').classList.add('show');
+    });
+  });
+});
+
+/* ============ soil composition hotspots ============ */
+document.querySelectorAll('.soil-hot').forEach(hot=>{
+  hot.addEventListener('click', ()=>{
+    document.querySelectorAll('.soil-hot').forEach(h=>h.classList.remove('revealed'));
+    hot.classList.add('revealed');
+    document.querySelectorAll('.soil-card').forEach(c=>c.classList.remove('active'));
+    document.querySelector('.soil-card[data-card="'+hot.dataset.layer+'"]').classList.add('active');
+  });
+});
+
+/* ============ reveal-answer components ============ */
+function toggleReveal(btn){
+  const card = btn.closest('.reveal-card');
+  const ans = card.querySelector('.reveal-answer');
+  const showing = ans.classList.toggle('show');
+  btn.classList.toggle('shown', showing);
+  btn.textContent = showing ? 'Hide model answer' : 'Show model answer';
+}
+
+/* ============ tabs (soil types) ============ */
+document.querySelectorAll('.tabs').forEach(tabGroup=>{
+  const buttons = tabGroup.querySelectorAll('.tab-btn');
+  buttons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      buttons.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const panels = tabGroup.parentElement.querySelectorAll('.tab-panel');
+      panels.forEach(p=>p.classList.remove('active'));
+      const target = tabGroup.parentElement.querySelector('#tab-'+btn.dataset.tab);
+      if(target) target.classList.add('active');
+    });
+  });
+});
+
+/* ============ recall pills (Focus Q3) ============ */
+document.querySelectorAll('.recall-pill').forEach(pill=>{
+  pill.addEventListener('click', ()=> pill.classList.toggle('done'));
+});
+
+/* ============ sedimentation jar simulation ============ */
+function resetJar(){
+  document.getElementById('jarSand').style.height = '0%';
+  document.getElementById('jarSilt').style.height = '0%';
+  document.getElementById('jarClay').style.height = '0%';
+  document.getElementById('jarOrganic').style.height = '0px';
+  document.getElementById('jarCaption').textContent = 'Soil and water, freshly shaken';
+}
+function shakeSettle(){
+  resetJar();
+  document.getElementById('jarCaption').textContent = 'Shaking… the water is cloudy with mixed particles';
+  setTimeout(()=>{
+    document.getElementById('jarSand').style.height = '34%';
+    document.getElementById('jarCaption').textContent = 'The heaviest particles — sand — sink first';
+  }, 500);
+  setTimeout(()=>{
+    document.getElementById('jarSilt').style.height = '22%';
+    document.getElementById('jarCaption').textContent = 'Medium-sized silt particles settle next';
+  }, 1600);
+  setTimeout(()=>{
+    document.getElementById('jarClay').style.height = '16%';
+    document.getElementById('jarCaption').textContent = 'The finest clay particles settle last';
+  }, 2700);
+  setTimeout(()=>{
+    document.getElementById('jarOrganic').style.height = '7px';
+    document.getElementById('jarCaption').textContent = 'Settled! Organic matter floats on top of the water';
+  }, 3700);
+}
+
+/* ============ accordion (Challenge Q5) ============ */
+document.querySelectorAll('.accordion-head').forEach(head=>{
+  head.addEventListener('click', ()=>{
+    head.parentElement.classList.toggle('open');
+  });
+});
+
+/* ============ assessment checklist ============ */
+const assessItems = [
+  'I can describe how soil forms from weathered rock and organic matter.',
+  'I can describe the main components of soil: mineral particles, organic matter, water, air and living organisms.',
+  'I can investigate and describe soil using properties such as colour, texture and drainage.',
+  'I can compare the properties of sandy, clay and loam soils.',
+  'I can use a sedimentation test to separate and identify the particles in a soil sample.',
+  'I can decide whether a soil sample is suitable for growing plants, and suggest how to improve it.',
+  'I can describe how organic farmers maintain healthy soil, including crop rotation and biological pest control.',
+  'I can interpret information from diagrams, photographs and passages about soil.'
+];
+const assessList = document.getElementById('assessList');
+assessItems.forEach(text=>{
+  const item = document.createElement('div');
+  item.className = 'assess-item';
+  item.innerHTML = `<div class="assess-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>${text}</p>`;
+  item.addEventListener('click', ()=>{
+    item.classList.toggle('checked');
+    updateAssessProgress();
+  });
+  assessList.appendChild(item);
+});
+function updateAssessProgress(){
+  const checked = document.querySelectorAll('.assess-item.checked').length;
+  const pct = (checked/assessItems.length)*100;
+  document.getElementById('assessFill').style.width = pct+'%';
+}
+
+/* ============ glossary flip cards ============ */
+const glossary = [
+  {term:'Weathering', def:'The breaking down of rock into smaller pieces by sun, rain, ice or plant roots.'},
+  {term:'Soil', def:'A mixture of weathered rock particles and organic matter that covers much of the land.'},
+  {term:'Mineral particles', def:'Tiny weathered fragments of rock, such as sand, silt and clay, found in soil.'},
+  {term:'Organic matter', def:'The decayed remains of plants and animals found in soil.'},
+  {term:'Humus', def:'Dark, nutrient-rich organic matter formed as dead plants and animals decay.'},
+  {term:'Sedimentation', def:'Particles settling out of water in layers, largest and heaviest first.'},
+  {term:'Sandy soil', def:'Soil with large, gritty particles and big gaps — drains very quickly.'},
+  {term:'Clay soil', def:'Soil with tiny, tightly packed particles — drains very slowly and hardens when dry.'},
+  {term:'Loam soil', def:'A balanced mix of sand, silt, clay and organic matter — ideal for growing plants.'},
+  {term:'Drainage', def:'How quickly water passes through a soil.'},
+  {term:'Crop rotation', def:"Changing which crop is grown in a field each year, so the soil isn't exhausted."},
+  {term:'Biological pest control', def:"Using a pest's natural predators, instead of chemicals, to protect crops."}
+];
+const glossGrid = document.getElementById('glossGrid');
+glossary.forEach(g=>{
+  const card = document.createElement('div');
+  card.className = 'gloss-card';
+  card.innerHTML = `<div class="gloss-inner">
+      <div class="gloss-face front">${g.term}</div>
+      <div class="gloss-face back">${g.def}</div>
+    </div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flip'));
+  glossGrid.appendChild(card);
+});
+
+/* ============ tooltip terms ============ */
+document.querySelectorAll('.term').forEach(t=>{
+  t.addEventListener('click', (e)=>{
+    alert(t.dataset.def);
+  });
+});
+</script>
+</body>
+</html>
