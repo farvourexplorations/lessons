@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>T1/W16 Environmental Change &amp; Sustainability — 3-Day Interactive Lesson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#1F7A4D; --green-dark:#123D28; --green-light:#E1F3EA; --green-mid:#4FA974;
+  --coral:#E0563F; --coral-light:#FCE9E5;
+  --amber:#CE9526; --amber-light:#FAF1DC;
+  --mint:#2E9E76; --mint-light:#E3F5EC;
+  --sky:#2B79C9; --sky-light:#E8F1FB;
+  --ink:#20232B; --ink-soft:#585E6C;
+  --paper:#FFFFFF; --cream:#F7F5F1; --line:#E1DFEA;
+  --r-lg:22px; --r-md:14px; --r-sm:8px;
+  --shadow: 0 10px 30px rgba(18,61,40,.14);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0; background:var(--cream); color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;
+  overflow:hidden;
+}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+
+/* ===== App shell ===== */
+#app{position:relative; width:100vw; height:100vh; display:flex; flex-direction:column;}
+
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 28px; background:var(--paper); border-bottom:1px solid var(--line);
+  flex:0 0 auto; z-index:20; gap:14px;
+}
+.crumb{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft); font-weight:600; flex:0 0 auto;}
+.crumb .tag{
+  background:var(--green); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12px;
+  padding:5px 12px; border-radius:100px; letter-spacing:.3px;
+}
+.day-chip{background:var(--coral); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12px; padding:5px 12px; border-radius:100px; letter-spacing:.3px;}
+.crumb .sep{color:#C6C2D6;}
+.crumb .current{color:var(--green-dark);}
+
+.dots{display:flex; gap:5px; align-items:center; flex-wrap:wrap; max-width:38vw;}
+.dot{
+  width:8px; height:8px; border-radius:50%; background:#DCE6DF; border:none; cursor:pointer;
+  transition:all .25s;
+}
+.dot.active{ background:var(--green); width:20px; border-radius:6px;}
+.dot:hover{background:var(--green-mid);}
+
+.counter{font-size:12px; color:var(--ink-soft); font-weight:600; font-variant-numeric:tabular-nums; min-width:56px; text-align:right;}
+
+/* ===== Stage ===== */
+.stage{position:relative; flex:1 1 auto; overflow:hidden;}
+.slide{
+  position:absolute; inset:0; opacity:0; pointer-events:none;
+  transform:translateX(30px) scale(.99);
+  transition:opacity .45s ease, transform .45s ease;
+  overflow-y:auto;
+}
+.slide.active{opacity:1; pointer-events:auto; transform:translateX(0) scale(1);}
+
+.slide-inner{
+  max-width:1180px; margin:0 auto; padding:40px 44px 90px;
+  min-height:100%;
+}
+
+.navbtn{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:15;
+  width:46px; height:46px; border-radius:50%; border:1px solid var(--line);
+  background:var(--paper); box-shadow:var(--shadow); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; color:var(--green-dark);
+  transition:.2s;
+}
+.navbtn:hover{background:var(--green); color:#fff; border-color:var(--green);}
+.navbtn.disabled{opacity:.25; pointer-events:none;}
+#prevBtn{left:16px;} #nextBtn{right:16px;}
+.navbtn svg{width:20px; height:20px;}
+
+/* ===== shared components ===== */
+.chevron-badge{
+  display:inline-flex; align-items:center; gap:10px; background:var(--green); color:#fff;
+  padding:9px 20px 9px 16px; font-family:'Poppins'; font-weight:700; font-size:15px;
+  clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%); margin-bottom:16px;
+}
+.eyebrow{
+  font-family:'Poppins'; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--coral); margin-bottom:8px;
+}
+h1.slide-title{font-size:32px; font-weight:800; color:var(--green-dark); margin:0 0 6px; line-height:1.15;}
+h2.section-title{font-size:25px; font-weight:700; color:var(--green-dark); margin:0 0 14px;}
+h3.mini-title{font-size:17px; font-weight:700; color:var(--ink); margin:0 0 8px;}
+p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
+.lede{font-size:17px; color:var(--ink-soft); margin-bottom:22px; max-width:740px;}
+
+.box{
+  border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--paper);
+  box-shadow:var(--shadow);
+}
+.box-head{
+  padding:12px 20px; font-family:'Poppins'; font-weight:700; font-size:14px; color:#fff;
+  display:flex; align-items:center; gap:8px;
+}
+.box-body{padding:20px 22px;}
+.box.green .box-head{background:var(--green);}
+.box.coral .box-head{background:var(--coral);}
+.box.amber .box-head{background:var(--amber);}
+.box.mint .box-head{background:var(--mint);}
+.box.sky .box-head{background:var(--sky);}
+
+.pill{
+  display:inline-block; padding:5px 13px; border-radius:100px; font-size:12.5px; font-weight:700;
+  background:var(--green-light); color:var(--green-dark); margin:3px 5px 3px 0;
+}
+
+.check-item{display:flex; gap:10px; align-items:flex-start; margin-bottom:10px; font-size:14.5px;}
+.check-item svg{flex:0 0 auto; margin-top:2px; width:16px; height:16px; color:var(--green);}
+
+.btn{
+  border:none; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:14px;
+  padding:10px 20px; border-radius:100px; background:var(--green); color:#fff; transition:.2s;
+}
+.btn:hover{background:var(--green-dark);}
+.btn.ghost{background:transparent; border:1.5px solid var(--green); color:var(--green);}
+.btn.ghost:hover{background:var(--green-light);}
+.btn[disabled]{opacity:.45; cursor:default;}
+
+.hint{
+  font-size:12.5px; color:var(--ink-soft); background:var(--green-light); border-radius:100px;
+  padding:6px 14px; display:inline-flex; gap:6px; align-items:center; margin-bottom:18px; font-weight:600;
+}
+.hint svg{width:14px; height:14px; flex:0 0 auto;}
+
+/* ============ COVER ============ */
+.cover{
+  height:100%; display:flex; align-items:center; justify-content:center; position:relative;
+  background:
+    radial-gradient(ellipse at 20% 15%, rgba(255,255,255,.10), transparent 45%),
+    linear-gradient(160deg, var(--green) 0%, var(--green-dark) 62%, #0B2418 100%);
+  overflow:hidden;
+}
+.cover-leaf{position:absolute; opacity:.13; background:#fff; border-radius:0% 100% 0% 100%;}
+.cover-content{position:relative; z-index:2; text-align:center; color:#fff; max-width:800px; padding:0 30px;}
+.cover-content .unit{font-family:'Poppins'; font-weight:700; letter-spacing:3px; font-size:13px; text-transform:uppercase; color:#CFEBDB; margin-bottom:14px;}
+.cover-content h1{font-size:44px; font-weight:800; margin:0 0 10px; line-height:1.1;}
+.cover-content .sub{font-size:17px; color:#E3F3EA; font-weight:500; margin-bottom:34px;}
+.cover-chip-row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:38px;}
+.cover-chip{
+  background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff;
+  padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600; backdrop-filter:blur(4px);
+}
+.cover-start{
+  background:var(--coral); color:#fff; border:none; font-family:'Poppins'; font-weight:700; font-size:16px;
+  padding:15px 34px; border-radius:100px; cursor:pointer; box-shadow:0 12px 26px rgba(224,86,63,.4);
+  display:inline-flex; align-items:center; gap:10px; transition:.2s;
+}
+.cover-start:hover{transform:translateY(-2px); box-shadow:0 16px 30px rgba(224,86,63,.5);}
+.cover-note{margin-top:22px; font-size:13px; color:#BFE0CE;}
+
+/* ============ objectives ============ */
+.obj-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 22px; margin-top:6px;}
+@media (max-width:800px){.obj-grid{grid-template-columns:1fr;}}
+.obj-card{
+  display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:var(--r-md);
+  background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.2s;
+}
+.obj-card:hover{border-color:var(--green-mid); box-shadow:var(--shadow);}
+.obj-num{
+  flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--green-light); color:var(--green-dark);
+  font-family:'Poppins'; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;
+}
+.obj-card.done .obj-num{background:var(--green); color:#fff;}
+.obj-card.done p{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:#C6C2D6;}
+.obj-card p{margin:0; font-size:13.8px; line-height:1.5;}
+
+/* ============ tabs ============ */
+.tabs{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+.tab-btn{
+  padding:10px 18px; border-radius:100px; border:1.5px solid var(--line); background:#fff; cursor:pointer;
+  font-family:'Poppins'; font-weight:600; font-size:13.5px; color:var(--ink-soft); transition:.2s;
+}
+.tab-btn.active{background:var(--green); border-color:var(--green); color:#fff;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block; animation:fadein .35s;}
+@keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+/* ============ photo ============ */
+.photo-single{border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--shadow); border:1px solid var(--line); background:#fff; max-width:640px; margin:16px 0;}
+.photo-single img{display:block; width:100%; height:320px; object-fit:cover; background:var(--green-light);}
+.photo-single .photo-cap{padding:12px 16px; font-size:12.5px; color:var(--ink-soft); border-top:1px solid var(--line);}
+
+/* ============ 4-quadrant Impact Wheel diagram ============ */
+.quad-wheel{display:grid; grid-template-columns:96px 1fr 1fr; gap:10px; margin:18px 0 8px; max-width:720px;}
+.quad-wheel .qw-blank{}
+.quad-wheel .qw-colhead{font-family:'Poppins'; font-weight:700; font-size:12px; text-align:center; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.5px; align-self:end; padding-bottom:2px;}
+.quad-wheel .qw-rowhead{font-family:'Poppins'; font-weight:700; font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.5px; display:flex; align-items:center; justify-content:flex-end; text-align:right;}
+.quad-card{border-radius:var(--r-md); padding:14px 16px; box-shadow:var(--shadow); border:1.5px solid var(--line); font-size:13.5px; color:var(--ink); line-height:1.45;}
+.quad-tag-mini{display:block; font-family:'Poppins'; font-weight:800; font-size:10.5px; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; opacity:.8;}
+.quad-card p{margin:0; font-size:13.5px;}
+.quad-card.pp{background:var(--mint-light); border-color:var(--mint); color:#1E6B4E;}
+.quad-card.pn{background:var(--coral-light); border-color:var(--coral); color:#A8362A;}
+.quad-card.ep{background:var(--sky-light); border-color:var(--sky); color:#1D5A94;}
+.quad-card.en{background:var(--amber-light); border-color:var(--amber); color:#8A6317;}
+@media (max-width:700px){
+  .quad-wheel{grid-template-columns:1fr 1fr; grid-template-rows:auto auto auto auto auto;}
+  .quad-wheel .qw-rowhead{display:none;}
+}
+
+/* ============ sort / quadrant cards ============ */
+.sort-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:10px;}
+@media (max-width:820px){.sort-grid{grid-template-columns:1fr;}}
+.sort-card{
+  border:1.5px solid var(--line); background:#fff; border-radius:var(--r-md); padding:16px 18px;
+  cursor:pointer; transition:.2s; box-shadow:var(--shadow);
+}
+.sort-card:hover{border-color:var(--green-mid);}
+.sort-q{font-family:'Poppins'; font-weight:700; font-size:14.5px; color:var(--ink); margin:0;}
+.sort-reveal{max-height:0; overflow:hidden; transition:max-height .35s ease;}
+.sort-card.open .sort-reveal{max-height:140px; margin-top:12px;}
+.sort-tag{display:inline-block; padding:4px 12px; border-radius:100px; font-size:11.5px; font-weight:700; font-family:'Poppins'; margin-bottom:6px;}
+.sort-tag.pp{background:var(--mint-light); color:#1E6B4E;}
+.sort-tag.pn{background:var(--coral-light); color:#A8362A;}
+.sort-tag.ep{background:var(--sky-light); color:#1D5A94;}
+.sort-tag.en{background:var(--amber-light); color:#8A6317;}
+.sort-explain{font-size:13px; color:var(--ink-soft); margin:0;}
+.sort-hint{font-size:11.5px; color:var(--ink-soft); margin-top:2px;}
+
+/* ============ quiz ============ */
+.scenario{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); padding:22px 24px; box-shadow:var(--shadow);}
+.quiz-opts{display:flex; gap:12px; margin-top:14px; flex-wrap:wrap;}
+.quiz-opt{
+  flex:1 1 220px; border:1.5px solid var(--line); background:#fff; border-radius:var(--r-md); padding:14px 16px;
+  cursor:pointer; font-weight:700; font-family:'Poppins'; font-size:13.5px; text-align:left; transition:.2s;
+}
+.quiz-opt:hover{border-color:var(--green-mid);}
+.quiz-opt.correct{background:var(--mint-light); border-color:var(--mint); color:#1E6B4E;}
+.quiz-opt.wrong{background:var(--coral-light); border-color:var(--coral); color:#A8362A;}
+.quiz-opt[disabled]{cursor:default;}
+.quiz-feedback{margin-top:16px; padding:14px 18px; border-radius:var(--r-md); background:var(--green-light); color:var(--green-dark); font-size:14px; display:none;}
+.quiz-feedback.show{display:block;}
+
+/* ============ glossary flip cards ============ */
+.gloss-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:10px;}
+@media (max-width:900px){.gloss-grid{grid-template-columns:repeat(2,1fr);}}
+.gloss-card{height:126px; perspective:800px; cursor:pointer;}
+.gloss-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+.gloss-card.flip .gloss-inner{transform:rotateY(180deg);}
+.gloss-face{
+  position:absolute; inset:0; backface-visibility:hidden; border-radius:var(--r-md); display:flex;
+  align-items:center; justify-content:center; text-align:center; padding:12px; font-size:13.5px;
+}
+.gloss-face.front{background:var(--green); color:#fff; font-family:'Poppins'; font-weight:700; font-size:14px;}
+.gloss-face.back{background:var(--paper); border:1.5px solid var(--green-light); color:var(--ink); transform:rotateY(180deg); font-size:12.5px; line-height:1.5;}
+
+/* ============ plenary sentence frame ============ */
+.frame-card{
+  background:linear-gradient(135deg,var(--green-light),#fff); border:1.5px dashed var(--green-mid); border-radius:var(--r-lg);
+  padding:30px 32px; text-align:center; margin-top:10px;
+}
+.frame-card .frame-text{font-family:'Poppins'; font-weight:700; font-size:22px; color:var(--green-dark); line-height:1.6;}
+.frame-blank{display:inline-block; min-width:150px; border-bottom:2.5px solid var(--coral); color:var(--coral); padding:0 8px;}
+.example-box{margin-top:18px; padding:14px 18px; border-radius:var(--r-md); background:#fff; border:1px solid var(--line); font-size:14.5px; color:var(--ink-soft); font-style:italic; min-height:26px;}
+
+/* ============ notebook checklist ============ */
+.assess-list{margin-top:10px;}
+.assess-item{display:flex; gap:12px; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--line); cursor:pointer;}
+.assess-box{
+  flex:0 0 auto; width:22px; height:22px; border-radius:6px; border:2px solid var(--line); display:flex;
+  align-items:center; justify-content:center; color:#fff; margin-top:1px; transition:.2s;
+}
+.assess-item.checked .assess-box{background:var(--mint); border-color:var(--mint);}
+.assess-item p{margin:0; font-size:14.5px;}
+.assess-progress{height:8px; background:var(--green-light); border-radius:100px; overflow:hidden; margin-top:16px;}
+.assess-fill{height:100%; width:0%; background:var(--mint); transition:.35s;}
+
+/* ============ resources chip ============ */
+.res-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:10px;}
+.res-chip{display:flex; align-items:center; gap:8px; padding:9px 16px; border-radius:100px; background:var(--sky-light); color:var(--sky); font-family:'Poppins'; font-weight:700; font-size:12.5px;}
+.res-chip svg{width:15px; height:15px;}
+
+/* ============ flow diagram (problem -> solution -> why) ============ */
+.flow-row{display:flex; align-items:stretch; gap:12px; margin-top:16px; flex-wrap:wrap;}
+.flow-step{flex:1 1 220px; border-radius:var(--r-lg); padding:20px 18px; box-shadow:var(--shadow); border:1px solid var(--line); background:#fff;}
+.flow-step .flow-label{font-family:'Poppins'; font-weight:700; font-size:11.5px; text-transform:uppercase; letter-spacing:.8px; margin-bottom:10px; display:inline-block; padding:4px 12px; border-radius:100px; color:#fff;}
+.flow-step.problem .flow-label{background:var(--coral);}
+.flow-step.solution .flow-label{background:var(--green);}
+.flow-step.why .flow-label{background:var(--sky);}
+.flow-step p{margin:0; font-size:14px;}
+.flow-arrow{display:flex; align-items:center; justify-content:center; color:var(--ink-soft); flex:0 0 auto;}
+.flow-arrow svg{width:26px; height:26px;}
+@media (max-width:860px){.flow-arrow svg{transform:rotate(90deg);}}
+
+/* ============ solution / issue picker cards ============ */
+.format-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px;}
+@media (max-width:820px){.format-grid{grid-template-columns:1fr 1fr;}}
+@media (max-width:560px){.format-grid{grid-template-columns:1fr;}}
+.format-card{border:1.5px solid var(--line); background:#fff; border-radius:var(--r-md); padding:16px 16px; cursor:pointer; transition:.2s; box-shadow:var(--shadow); text-align:center;}
+.format-card:hover{border-color:var(--green-mid);}
+.format-card.chosen{background:var(--green-light); border-color:var(--green);}
+.format-card .f-emoji{font-size:26px; display:block; margin-bottom:8px;}
+.format-card h3{margin:0 0 4px; font-family:'Poppins'; font-weight:700; font-size:14px; color:var(--green-dark);}
+.format-card p{margin:0; font-size:12px; color:var(--ink-soft);}
+
+/* ============ steps list ============ */
+.step-list{margin-top:8px;}
+.step-item{display:flex; gap:14px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--line);}
+.step-num{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--green); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12.5px; display:flex; align-items:center; justify-content:center;}
+.step-item p{margin:0; font-size:14.5px;}
+
+/* ============ definition callout ============ */
+.def-callout{
+  background:linear-gradient(135deg,var(--sky-light),#fff); border:1.5px solid var(--sky); border-radius:var(--r-lg);
+  padding:26px 28px; margin:10px 0 20px;
+}
+.def-callout .def-word{font-family:'Poppins'; font-weight:800; font-size:14px; color:var(--sky); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;}
+.def-callout p{font-size:19px; font-weight:600; color:var(--green-dark); margin:0; line-height:1.5; font-family:'Poppins';}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="crumb">
+      <span class="tag">T1/W16</span>
+      <span class="day-chip" id="dayChip">Day 1</span>
+      <span class="sep">/</span>
+      <span class="current">Environmental Change &amp; Sustainability</span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="counter" id="counter">1 / 25</div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- ================================================================ -->
+    <!-- ============================ DAY 1 ============================ -->
+    <!-- ================================================================ -->
+
+    <!-- SLIDE 0 : DAY 1 COVER -->
+    <section class="slide">
+      <div class="cover">
+        <div class="cover-leaf" style="width:220px;height:220px; top:-50px; left:-50px;"></div>
+        <div class="cover-leaf" style="width:160px;height:160px; bottom:-30px; right:-20px;"></div>
+        <div class="cover-leaf" style="width:100px;height:100px; bottom:70px; left:10%;"></div>
+        <div class="cover-content">
+          <div class="unit">Year 6C &middot; Geography Inquiry &middot; T1 W16 Day 1</div>
+          <h1>Effects of Environmental Change</h1>
+          <div class="sub">Every environmental change affects people, animals, and ecosystems — and it&rsquo;s rarely all good or all bad. Today we weigh up the positive and negative impacts, using evidence.</div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">&#128101; People</span>
+            <span class="cover-chip">&#128062; Animals &amp; Ecosystems</span>
+            <span class="cover-chip">&#9878;&#65039; Positive &amp; Negative</span>
+            <span class="cover-chip">&#128269; Evidence</span>
+          </div>
+          <button class="cover-start" onclick="goTo(1)">
+            Start the lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <div class="cover-note">5GP.06&ndash;5GP.08 &middot; Describe, identify, and explain the effects of environmental change</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 1 : DAY 1 OBJECTIVES -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">5GP.06&ndash;08</div>
+        <h1 class="slide-title">We're learning to weigh up environmental impacts</h1>
+        <p class="lede"><strong>Learning intention:</strong> describe the effects of environmental change on people, animals, and ecosystems, and explain both the positive and negative impacts, using evidence.<br><strong>Success criteria:</strong> tap each goal as you meet it today.</p>
+        <div class="obj-grid" id="objGrid1">
+          <div class="obj-card" data-i="1"><div class="obj-num">1</div><p>I can name an environmental change and describe one impact</p></div>
+          <div class="obj-card" data-i="2"><div class="obj-num">2</div><p>I can sort impacts into positive and negative</p></div>
+          <div class="obj-card" data-i="3"><div class="obj-num">3</div><p>I can tell the difference between an impact on people and an impact on animals or ecosystems</p></div>
+          <div class="obj-card" data-i="4"><div class="obj-num">4</div><p>I can complete an Impact Wheel for a case study, using evidence</p></div>
+          <div class="obj-card" data-i="5"><div class="obj-num">5</div><p>I can explain that most environmental changes have both positive and negative impacts</p></div>
+        </div>
+        <div style="margin-top:22px;">
+          <span class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Key vocabulary: environmental change &middot; impact &middot; positive impact &middot; negative impact &middot; ecosystem &middot; evidence &middot; case study</span>
+        </div>
+        <div class="box green">
+          <div class="box-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M9 3v18M15 3v18M4 8h16M4 16h16"/></svg>
+            Notebooks today
+          </div>
+          <div class="box-body">
+            <p style="margin:0;">Your 4-quadrant <strong>Impact Wheel</strong> is completed on the template your teacher gives you — not on this screen. Use your <strong>notebook</strong> for anything marked &#128218;.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2 : STARTER RECAP -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Starter &middot; 5 minutes</div>
+        <h1 class="slide-title">Quick recap</h1>
+        <p class="lede">We've already studied several environmental changes: deforestation, pollution, urbanisation, and climate change. Let's warm up before today's investigation.</p>
+        <div class="box coral">
+          <div class="box-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M9 3v18M15 3v18M4 8h16M4 16h16"/></svg>
+            &#128218; In your notebook
+          </div>
+          <div class="box-body">
+            <p style="margin:0;">Write down: <strong>1)</strong> name one environmental change we've studied so far, and <strong>2)</strong> one impact you remember from it.</p>
+          </div>
+        </div>
+        <div style="margin-top:18px;">
+          <button class="btn ghost" onclick="showRecapExample()">&#128161; Need a reminder? Show me an example</button>
+        </div>
+        <div class="example-box" id="recapExampleBox">Tap the button for an example.</div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3 : MODELLED EXAMPLE - THE BIG DAM -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Modelled example</div>
+        <h1 class="slide-title">One change, many impacts: the big dam</h1>
+        <p class="lede">Building a large dam changes a whole river system. It brings real benefits — but also real costs. Good geographers look for <strong>both</strong> sides before making a judgement.</p>
+        <div class="photo-single">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Three%20Gorges%20Dam%2C%20Yangtze%20River%2C%20China.jpg" alt="A large hydroelectric dam across a wide river">
+          <div class="photo-cap">A large hydroelectric dam — one change, with impacts on people, animals, and ecosystems</div>
+        </div>
+        <div class="tabs" id="damTabs">
+          <button class="tab-btn active" data-tab="d1pos">&#9989; Positive impacts</button>
+          <button class="tab-btn" data-tab="d1neg">&#10060; Negative impacts</button>
+        </div>
+        <div class="tab-panel active" id="tab-d1pos">
+          <p>&#8226; Produces <strong>renewable energy</strong> for homes and businesses<br>&#8226; Gives <strong>flood control</strong> — protecting towns downstream during heavy rain<br>&#8226; Provides a reliable <strong>water supply</strong> for farming and drinking</p>
+        </div>
+        <div class="tab-panel" id="tab-d1neg">
+          <p>&#8226; Destroys <strong>habitats</strong> when land is flooded<br>&#8226; <strong>Communities are displaced</strong> — families lose homes and farmland<br>&#8226; <strong>River ecosystems are disrupted</strong> — fish can't migrate, water flow changes</p>
+        </div>
+        <h3 class="mini-title" style="margin-top:24px;">What's a 4-quadrant Impact Wheel?</h3>
+        <p>It's a simple tool that sorts impacts two ways at once: <strong>Positive (+)</strong> or <strong>Negative (&minus;)</strong>, and affecting <strong>People</strong> or affecting <strong>Ecosystems/Animals &amp; Plants</strong>. That makes four boxes — and a strong case study usually has evidence in all four.</p>
+        <div class="quad-wheel">
+          <div class="qw-blank"></div>
+          <div class="qw-colhead">People</div>
+          <div class="qw-colhead">Ecosystems / Animals &amp; Plants</div>
+
+          <div class="qw-rowhead">Positive (+)</div>
+          <div class="quad-card pp"><span class="quad-tag-mini">People (+)</span><p>The dam provides a reliable water supply for nearby towns.</p></div>
+          <div class="quad-card ep"><span class="quad-tag-mini">Ecosystem (+)</span><p>The dam helps control flooding, protecting habitats downstream.</p></div>
+
+          <div class="qw-rowhead">Negative (&minus;)</div>
+          <div class="quad-card pn"><span class="quad-tag-mini">People (&minus;)</span><p>Villages upstream are flooded and families lose their homes.</p></div>
+          <div class="quad-card en"><span class="quad-tag-mini">Ecosystem (&minus;)</span><p>Fish can no longer swim upstream to reach their breeding grounds.</p></div>
+        </div>
+        <div class="hint" style="margin-top:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Notice how some impacts affect <strong>people</strong> and others affect <strong>animals &amp; ecosystems</strong> — next, you'll sort more statements like these yourself.</div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4 : SORT INTO 4-QUADRANT IMPACT WHEEL -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Guided practice &middot; Impact Wheel</div>
+        <h1 class="slide-title">Sort these impacts into the 4-quadrant wheel</h1>
+        <p class="lede">A 4-quadrant Impact Wheel splits impacts two ways: <strong>People</strong> vs <strong>Ecosystems/Animals &amp; Plants</strong>, and <strong>Positive (+)</strong> vs <strong>Negative (&minus;)</strong>. Tap each statement to reveal where it belongs.</p>
+        <div class="sort-grid" id="quadGrid"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5 : CHECK FOR UNDERSTANDING -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Check your understanding</div>
+        <h1 class="slide-title">Spot the ecosystem impact</h1>
+        <div class="scenario">
+          <p><strong>Scenario:</strong> a new highway is built through a rainforest to connect two cities.</p>
+          <h3 class="mini-title" style="margin-top:14px;">Which statement below shows a NEGATIVE impact on ecosystems (not people)?</h3>
+          <div class="quiz-opts">
+            <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false,'quiz1Feedback','Best answer: the highway splitting the forest and blocking animals from food and mates is a negative ecosystem impact — the other options all describe impacts on people.')">Drivers can now travel between the cities much faster</button>
+            <button class="quiz-opt" data-correct="true" onclick="answerQuiz(this,true,'quiz1Feedback','Correct! Splitting the forest stops animals reaching food and mates — that's a negative impact on the ecosystem, not on people.')">The highway splits the forest, stopping animals from reaching food and mates</button>
+            <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false,'quiz1Feedback','Best answer: the highway splitting the forest and blocking animals from food and mates is a negative ecosystem impact — the other options all describe impacts on people.')">Local businesses along the highway get more customers</button>
+            <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false,'quiz1Feedback','Best answer: the highway splitting the forest and blocking animals from food and mates is a negative ecosystem impact — the other options all describe impacts on people.')">Some residents are unhappy about the noise from traffic</button>
+          </div>
+          <div class="quiz-feedback" id="quiz1Feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6 : GUIDED PRACTICE - CHOOSE CASE STUDY -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Guided practice &middot; Impact Wheel</div>
+        <h1 class="slide-title">Choose a case study for your Impact Wheel</h1>
+        <p class="lede">In small groups, pick one of the changes below and build your own 4-quadrant Impact Wheel about it.</p>
+        <div class="tabs" id="caseTabs">
+          <button class="tab-btn active" data-tab="d1def">&#127795; Deforestation</button>
+          <button class="tab-btn" data-tab="d1pol">&#128167; Pollution</button>
+          <button class="tab-btn" data-tab="d1urb">&#127961;&#65039; Urbanisation</button>
+          <button class="tab-btn" data-tab="d1clim">&#127777;&#65039; Climate change</button>
+        </div>
+        <div class="tab-panel active" id="tab-d1def"><p>Trees are cleared for farming, building, or resources. Think: who benefits from the cleared land, and what happens to the animals and plants that lived there?</p></div>
+        <div class="tab-panel" id="tab-d1pol"><p>Harmful substances enter water, air, or land. Think: who is harmed by breathing or drinking pollution, and how does it affect wildlife?</p></div>
+        <div class="tab-panel" id="tab-d1urb"><p>Towns and cities grow as more people and buildings move in. Think: who gains new opportunities, and what natural habitat is lost?</p></div>
+        <div class="tab-panel" id="tab-d1clim"><p>Rising temperatures and extreme weather affect the whole planet. Think: who is most affected, and how are animals and ecosystems adapting or struggling?</p></div>
+        <div class="box mint" style="margin-top:20px;">
+          <div class="box-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M9 3v18M15 3v18M4 8h16M4 16h16"/></svg>
+            &#128218; On your Impact Wheel template
+          </div>
+          <div class="box-body">
+            <p style="margin:0;">Complete all four quadrants — <strong>People (+)</strong>, <strong>People (&minus;)</strong>, <strong>Ecosystems/Animals &amp; Plants (+)</strong>, <strong>Ecosystems/Animals &amp; Plants (&minus;)</strong> — and cite evidence for every box.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7 : GLOSSARY DAY 1 -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Reference</div>
+        <h1 class="slide-title">Glossary — tap a card to flip it</h1>
+        <div class="gloss-grid" id="glossGrid1"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8 : PLENARY + NOTEBOOK CHECKLIST DAY 1 -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Plenary &middot; Wrap-up</div>
+        <h1 class="slide-title">One positive, one negative</h1>
+        <p class="lede">Share your Impact Wheel with the class: give <strong>one positive</strong> and <strong>one negative</strong> impact from your case study. Notice how almost every group found both.</p>
+        <h3 class="mini-title">What should be true today</h3>
+        <div class="assess-list" id="assessList1"></div>
+        <div class="assess-progress"><div class="assess-fill" id="assessFill1"></div></div>
+        <div class="box green" style="margin-top:24px;">
+          <div class="box-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>
+            What comes next
+          </div>
+          <div class="box-body">
+            <p style="margin:0;">Tomorrow, we look at why <strong>sustainability</strong> matters and start finding solutions to the impacts you found today.</p>
+          </div>
+        </div>
+        <div class="res-row">
+          <span class="res-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> A3 Impact Wheel template</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- ============================ DAY 2 ============================ -->
+    <!-- ================================================================ -->
+
+    <!-- SLIDE 9 : DAY 2 COVER -->
+    <section class="slide">
+      <div class="cover">
+        <div class="cover-leaf" style="width:220px;height:220px; top:-50px; left:-50px;"></div>
+        <div class="cover-leaf" style="width:160px;height:160px; bottom:-30px; right:-20px;"></div>
+        <div class="cover-content">
+          <div class="unit">Year 6C &middot; Geography Inquiry &middot; T1 W16 Day 2</div>
+          <h1>Sustainability &amp; Solutions</h1>
+          <div class="sub">Yesterday we found that environmental changes have mixed impacts. Today we ask: why does sustainability matter, and what solutions actually work? We'll also launch our big project.</div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">&#127793; Sustainability</span>
+            <span class="cover-chip">&#128161; Problem &rarr; Solution</span>
+            <span class="cover-chip">&#128640; Showcase launch</span>
+            <span class="cover-chip">&#128101; Group project</span>
+          </div>
+          <button class="cover-start" onclick="goTo(10)">
+            Start the lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <div class="cover-note">5GP.11&ndash;5GP.13 &middot; Sustainability and solutions</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10 : DAY 2 OBJECTIVES -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">5GP.11&ndash;13</div>
+        <h1 class="slide-title">We're learning why sustainability matters</h1>
+        <p class="lede"><strong>Learning intention:</strong> explain why sustainability matters and suggest practical solutions to protect the environment.<br><strong>Success criteria:</strong> tap each goal as you meet it today.</p>
+        <div class="obj-grid" id="objGrid2">
+          <div class="obj-card" data-i="1"><div class="obj-num">1</div><p>I can explain what sustainability means, in my own words</p></div>
+          <div class="obj-card" data-i="2"><div class="obj-num">2</div><p>I can explain why sustainability matters for the future</p></div>
+          <div class="obj-card" data-i="3"><div class="obj-num">3</div><p>I can match an environmental problem to a solution and explain why it works</p></div>
+          <div class="obj-card" data-i="4"><div class="obj-num">4</div><p>I can research solutions and complete a Problem &rarr; Solution &rarr; Why chart</p></div>
+          <div class="obj-card" data-i="5"><div class="obj-num">5</div><p>I can explain what my Sustainability Showcase project will involve</p></div>
+        </div>
+        <div style="margin-top:22px;">
+          <span class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Key vocabulary: sustainability &middot; renewable energy &middot; reforestation &middot; conservation &middot; policy &middot; reduce &middot; reuse &middot; recycle</span>
+        </div>
+        <div class="box green">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M9 3v18M15 3v18M4 8h16M4 16h16"/></svg> Notebooks today</div>
+          <div class="box-body"><p style="margin:0;">Your <strong>Problem &rarr; Solution &rarr; Why it works</strong> chart is completed on paper with your group — keep it safe, you'll need it for the Showcase.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 11 : STARTER - WHAT IS SUSTAINABILITY -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Starter &middot; 5 minutes</div>
+        <h1 class="slide-title">What does "sustainability" really mean?</h1>
+        <p class="lede">Let's define it together, then think about why it actually matters.</p>
+        <div class="def-callout">
+          <div class="def-word">Sustainability</div>
+          <p>Meeting our needs today, without harming the ability of future generations to meet theirs.</p>
+        </div>
+        <button class="btn ghost" onclick="showSustainReason()">&#128161; Why does this matter? Show me a reason</button>
+        <div class="example-box" id="sustainReasonBox">Tap the button for a reason.</div>
+        <div class="hint" style="margin-top:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Keep this definition in mind — you'll use it all lesson.</div>
+      </div>
+    </section>
+
+    <!-- SLIDE 12 : MODELLED EXAMPLE - PROBLEM/SOLUTION/WHY -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Modelled example</div>
+        <h1 class="slide-title">From problem to solution: deforestation</h1>
+        <p class="lede">A strong solution doesn't just fix a problem — it explains <strong>why</strong> it works. Here's the model we'll use all lesson.</p>
+        <div class="flow-row">
+          <div class="flow-step problem">
+            <span class="flow-label">Problem</span>
+            <p>Deforestation is destroying rainforest habitats and increasing CO&#8322; in the atmosphere.</p>
+          </div>
+          <div class="flow-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-step solution">
+            <span class="flow-label">Solution</span>
+            <p>Reforestation and protected forest areas.</p>
+          </div>
+          <div class="flow-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-step why">
+            <span class="flow-label">Why it works</span>
+            <p>New trees restore habitat for animals and absorb CO&#8322; from the air.</p>
+          </div>
+        </div>
+        <div class="hint" style="margin-top:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Notice: the "why it works" links directly back to the problem.</div>
+      </div>
+    </section>
+
+    <!-- SLIDE 13 : SOLUTIONS EXPLORER -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Guided research</div>
+        <h1 class="slide-title">Explore solutions to environmental problems</h1>
+        <p class="lede">Tap through these five solution types, then research solutions for your own chosen issue.</p>
+        <div class="tabs" id="solTabs">
+          <button class="tab-btn active" data-tab="s-energy">&#9728;&#65039; Renewable energy</button>
+          <button class="tab-btn" data-tab="s-reforest">&#127795; Reforestation &amp; conservation</button>
+          <button class="tab-btn" data-tab="s-policy">&#9878;&#65039; Laws &amp; policy</button>
+          <button class="tab-btn" data-tab="s-cleanup">&#129504; Community clean-up</button>
+          <button class="tab-btn" data-tab="s-rrr">&#9851;&#65039; Reduce, reuse, recycle</button>
+        </div>
+        <div class="tab-panel active" id="tab-s-energy"><p>Using solar, wind, or hydro power instead of fossil fuels. <em>Why it works:</em> it produces energy without releasing greenhouse gases into the air.</p></div>
+        <div class="tab-panel" id="tab-s-reforest"><p>Planting new trees and protecting existing forests from being cut down. <em>Why it works:</em> it restores lost habitats and absorbs carbon dioxide.</p></div>
+        <div class="tab-panel" id="tab-s-policy"><p>Governments making laws that limit pollution, protect land, or regulate industries. <em>Why it works:</em> it stops harmful actions before they happen, for everyone at once.</p></div>
+        <div class="tab-panel" id="tab-s-cleanup"><p>Groups of volunteers removing rubbish from rivers, beaches, or parks. <em>Why it works:</em> it removes existing pollution and raises awareness in the community.</p></div>
+        <div class="tab-panel" id="tab-s-rrr"><p>Using less, reusing items, and recycling materials instead of throwing them away. <em>Why it works:</em> it reduces waste and the demand for new raw materials.</p></div>
+        <div class="box mint" style="margin-top:20px;">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M9 3v18M15 3v18M4 8h16M4 16h16"/></svg> &#128218; With your group</div>
+          <div class="box-body"><p style="margin:0;">Using the source cards, research solutions for your chosen environmental issue and complete your <strong>Problem &rarr; Solution &rarr; Why it works</strong> chart.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 14 : CHECK FOR UNDERSTANDING DAY 2 -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Check your understanding</div>
+        <h1 class="slide-title">Spot the strongest solution</h1>
+        <div class="scenario">
+          <p><strong>Scenario:</strong> a community's river is badly polluted with plastic and chemical waste.</p>
+          <h3 class="mini-title" style="margin-top:14px;">Which solution is most likely to work, and explains why?</h3>
+          <div class="quiz-opts">
+            <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false,'quiz2Feedback','Best answer: a clean-up combined with laws against dumping tackles both the existing pollution and future pollution — and explains why it works.')">Ignore it — the river will clean itself over time</button>
+            <button class="quiz-opt" data-correct="true" onclick="answerQuiz(this,true,'quiz2Feedback','Correct! This solution removes existing rubbish AND stops new pollution — and it explains why it works, not just what to do.')">Organise a community clean-up and introduce laws against dumping waste, because it removes existing rubbish and stops new pollution</button>
+            <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false,'quiz2Feedback','Best answer: a clean-up combined with laws against dumping tackles both the existing pollution and future pollution — and explains why it works.')">Ask everyone to stop using the river completely</button>
+            <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false,'quiz2Feedback','Best answer: a clean-up combined with laws against dumping tackles both the existing pollution and future pollution — and explains why it works.')">Wait for the government to fix it eventually</button>
+          </div>
+          <div class="quiz-feedback" id="quiz2Feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 15 : LAUNCH SUSTAINABILITY SHOWCASE -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Summative task launch</div>
+        <h1 class="slide-title">Introducing: Sustainability Showcase</h1>
+        <p class="lede"><strong>"Taking Action for Our World"</strong> — your group will become experts on one environmental issue and design an interactive station to teach others about it.</p>
+        <div class="assess-list" style="margin-top:6px;">
+          <div class="check-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> Investigate a specific environmental issue</div>
+          <div class="check-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> Explain causes (human and natural) and how the environment has changed over time</div>
+          <div class="check-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> Present impacts on people, animals, and ecosystems</div>
+          <div class="check-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> Develop and share sustainable solutions</div>
+          <div class="check-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> Design an interactive station for visitors</div>
+        </div>
+        <h3 class="mini-title" style="margin-top:22px;">Choose your group's environmental issue</h3>
+        <div class="format-grid" id="issueGrid">
+          <div class="format-card" data-f="pollution"><span class="f-emoji">&#128167;</span><h3>Pollution</h3><p>Water, air, or land pollution</p></div>
+          <div class="format-card" data-f="deforestation"><span class="f-emoji">&#127795;</span><h3>Deforestation</h3><p>Loss of forests and habitats</p></div>
+          <div class="format-card" data-f="climate"><span class="f-emoji">&#127777;&#65039;</span><h3>Climate change</h3><p>Rising temperatures &amp; extreme weather</p></div>
+          <div class="format-card" data-f="other"><span class="f-emoji">&#128269;</span><h3>A similar issue</h3><p>Another environmental issue your teacher approves</p></div>
+        </div>
+        <div class="box mint" style="margin-top:22px;">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg> Now</div>
+          <div class="box-body"><p style="margin:0;">Form your group and choose your environmental issue today — you'll start investigating it properly next lesson.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 16 : GLOSSARY DAY 2 -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Reference</div>
+        <h1 class="slide-title">Glossary — tap a card to flip it</h1>
+        <div class="gloss-grid" id="glossGrid2"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 17 : PLENARY / WRAP-UP DAY 2 -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Plenary &middot; Wrap-up</div>
+        <h1 class="slide-title">Sustainability check-in</h1>
+        <p class="lede">Go through the list honestly before you finish today.</p>
+        <div class="assess-list" id="assessList2"></div>
+        <div class="assess-progress"><div class="assess-fill" id="assessFill2"></div></div>
+        <div class="box green" style="margin-top:24px;">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg> What comes next</div>
+          <div class="box-body"><p style="margin:0;">Tomorrow your group begins investigating your chosen issue in depth — causes, impacts, solutions, and your interactive station idea.</p></div>
+        </div>
+        <div class="res-row">
+          <span class="res-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> A3 paper</span>
+          <span class="res-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/></svg> Solutions source cards</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- ============================ DAY 3 ============================ -->
+    <!-- ================================================================ -->
+
+    <!-- SLIDE 18 : DAY 3 COVER -->
+    <section class="slide">
+      <div class="cover">
+        <div class="cover-leaf" style="width:220px;height:220px; top:-50px; left:-50px;"></div>
+        <div class="cover-leaf" style="width:160px;height:160px; bottom:-30px; right:-20px;"></div>
+        <div class="cover-leaf" style="width:100px;height:100px; bottom:70px; left:10%;"></div>
+        <div class="cover-content">
+          <div class="unit">Year 6C &middot; Geography Inquiry &middot; T1 W16 Day 3</div>
+          <h1>Launching Our Sustainability Showcase</h1>
+          <div class="sub">Today your group begins investigating your issue: its causes, impacts, and possible solutions. You'll also reflect on how you, personally, can make a difference.</div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">&#128269; Investigate</span>
+            <span class="cover-chip">&#128203; Planning sheet</span>
+            <span class="cover-chip">&#128587; Personal action</span>
+            <span class="cover-chip">&#127912; Station design</span>
+          </div>
+          <button class="cover-start" onclick="goTo(19)">
+            Start the lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <div class="cover-note">5GP.13&ndash;5GP.14 &middot; Investigating our issue and taking action</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 19 : DAY 3 OBJECTIVES -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">5GP.13&ndash;14</div>
+        <h1 class="slide-title">We're learning to investigate and take action</h1>
+        <p class="lede"><strong>Learning intention:</strong> begin investigating my group's environmental issue — its causes, impacts, and possible solutions — and explain how individuals can make a difference.<br><strong>Success criteria:</strong> tap each goal as you meet it today.</p>
+        <div class="obj-grid" id="objGrid3">
+          <div class="obj-card" data-i="1"><div class="obj-num">1</div><p>I can recap what the Sustainability Showcase requires</p></div>
+          <div class="obj-card" data-i="2"><div class="obj-num">2</div><p>I can research my group's issue using source packs</p></div>
+          <div class="obj-card" data-i="3"><div class="obj-num">3</div><p>I can complete a Showcase Planning Sheet with my group</p></div>
+          <div class="obj-card" data-i="4"><div class="obj-num">4</div><p>I can reflect on one action I can personally take</p></div>
+          <div class="obj-card" data-i="5"><div class="obj-num">5</div><p>I can share my group's issue and one planned solution</p></div>
+        </div>
+        <div class="box green" style="margin-top:22px;">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M9 3v18M15 3v18M4 8h16M4 16h16"/></svg> Notebooks today</div>
+          <div class="box-body"><p style="margin:0;">Your personal reflection sentence goes in your <strong>notebook</strong>. Your group's Planning Sheet is completed together on <strong>A3 / chart paper</strong>.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 20 : ENGAGE - RECAP SHOWCASE BRIEF -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Engage</div>
+        <h1 class="slide-title">Remember what your Showcase needs</h1>
+        <p class="lede">Before you start researching, make sure your group remembers every part of the brief.</p>
+        <div style="margin-top:6px;">
+          <div class="check-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> Investigate a specific environmental issue</div>
+          <div class="check-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> Explain causes (human and natural) and how the environment has changed over time</div>
+          <div class="check-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> Present impacts on people, animals, and ecosystems</div>
+          <div class="check-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> Develop and share sustainable solutions</div>
+          <div class="check-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> Design an interactive station for visitors</div>
+        </div>
+        <div class="box amber" style="margin-top:20px;">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg> Keep all five parts in mind</div>
+          <div class="box-body"><p style="margin:0;">You won't finish everything today — the aim is to make a strong start on research and planning.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 21 : INVESTIGATE - SOURCE PACKS + PLANNING SHEET -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Investigate</div>
+        <h1 class="slide-title">Research your group's issue</h1>
+        <p class="lede">Tap through the source pack summaries below to see the kind of information you'll be researching for your own issue.</p>
+        <div class="tabs" id="packTabs">
+          <button class="tab-btn active" data-tab="p-pol">&#128167; Pollution</button>
+          <button class="tab-btn" data-tab="p-def">&#127795; Deforestation</button>
+          <button class="tab-btn" data-tab="p-clim">&#127777;&#65039; Climate change</button>
+          <button class="tab-btn" data-tab="p-urb">&#127961;&#65039; Urbanisation</button>
+        </div>
+        <div class="tab-panel active" id="tab-p-pol"><p><strong>Causes:</strong> rubbish, chemicals, and waste entering water, air, or land.<br><strong>Impact:</strong> harms human health and destroys habitats for fish and wildlife.<br><strong>Solution idea:</strong> community clean-ups combined with anti-dumping laws.</p></div>
+        <div class="tab-panel" id="tab-p-def"><p><strong>Causes:</strong> land cleared for farming, cattle, and building.<br><strong>Impact:</strong> animals lose their homes and CO&#8322; levels rise.<br><strong>Solution idea:</strong> reforestation and protected forest areas.</p></div>
+        <div class="tab-panel" id="tab-p-clim"><p><strong>Causes:</strong> burning fossil fuels releases greenhouse gases.<br><strong>Impact:</strong> rising temperatures, melting ice, and extreme weather.<br><strong>Solution idea:</strong> switching to renewable energy sources.</p></div>
+        <div class="tab-panel" id="tab-p-urb"><p><strong>Causes:</strong> more people and buildings moving into an area.<br><strong>Impact:</strong> loss of green space and rising local temperatures.<br><strong>Solution idea:</strong> protecting green spaces and planning sustainable cities.</p></div>
+        <div class="box mint" style="margin-top:20px;">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M9 3v18M15 3v18M4 8h16M4 16h16"/></svg> &#128218; With your group</div>
+          <div class="box-body"><p style="margin:0;">Using your research source pack, complete your <strong>Showcase Planning Sheet</strong>: issue, causes, environmental changes over time, impacts (people / animals &amp; ecosystems), evidence still needed, solution ideas, and interactive station idea.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 22 : CHECK FOR UNDERSTANDING DAY 3 -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Check your understanding</div>
+        <h1 class="slide-title">Sort it into the right section</h1>
+        <div class="scenario">
+          <p><strong>Scenario:</strong> your group is investigating deforestation for the Sustainability Showcase.</p>
+          <h3 class="mini-title" style="margin-top:14px;">Which piece of information belongs in the "causes" section of your Planning Sheet?</h3>
+          <div class="quiz-opts">
+            <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false,'quiz3Feedback','Best answer: land being cleared for cattle farming and palm oil is a cause. The others are an impact, a solution, and a station idea.')">Animals lose their homes when trees are cut down</button>
+            <button class="quiz-opt" data-correct="true" onclick="answerQuiz(this,true,'quiz3Feedback','Correct! This describes why deforestation is happening — that's a cause, not an impact or a solution.')">Land is cleared for cattle farming and palm oil plantations</button>
+            <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false,'quiz3Feedback','Best answer: land being cleared for cattle farming and palm oil is a cause. The others are an impact, a solution, and a station idea.')">Planting new trees can help forests recover</button>
+            <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false,'quiz3Feedback','Best answer: land being cleared for cattle farming and palm oil is a cause. The others are an impact, a solution, and a station idea.')">We will build a mini rainforest diorama for our station</button>
+          </div>
+          <div class="quiz-feedback" id="quiz3Feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE : GLOSSARY DAY 3 -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Reference</div>
+        <h1 class="slide-title">Glossary — tap a card to flip it</h1>
+        <div class="gloss-grid" id="glossGrid3"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE : REFLECT - PERSONAL ACTION -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Reflect &middot; Individually</div>
+        <h1 class="slide-title">One action I can take</h1>
+        <p class="lede">Investigating a big issue can feel overwhelming — but individuals really can make a difference. Complete this sentence in your notebook.</p>
+        <div class="frame-card">
+          <div class="frame-text">"One action I can personally take is <span class="frame-blank">______</span> because <span class="frame-blank">______</span>."</div>
+          <div style="margin-top:18px;">
+            <button class="btn ghost" onclick="showActionExample()">&#128161; Show me an example</button>
+          </div>
+          <div class="example-box" id="actionExampleBox">Tap the button for an example sentence.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 24 : SHARE & PLENARY + WRAP-UP DAY 3 -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Share &amp; Plenary</div>
+        <h1 class="slide-title">Share your issue and next steps</h1>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num">1</div><p>Share your group's chosen issue and one planned solution with another group.</p></div>
+          <div class="step-item"><div class="step-num">2</div><p>Remember: every environmental change has causes, impacts, and possible solutions.</p></div>
+          <div class="step-item"><div class="step-num">3</div><p>Keep researching — you'll need strong evidence for your Showcase.</p></div>
+        </div>
+        <h3 class="mini-title" style="margin-top:22px;">Before you finish today</h3>
+        <div class="assess-list" id="assessList3"></div>
+        <div class="assess-progress"><div class="assess-fill" id="assessFill3"></div></div>
+        <div class="box green" style="margin-top:24px;">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg> What comes next</div>
+          <div class="box-body"><p style="margin:0;">Keep building your Showcase station — gathering evidence, refining your solutions, and preparing to present to visitors.</p></div>
+        </div>
+        <div class="res-row">
+          <span class="res-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> A3 / chart paper for station design</span>
+          <span class="res-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/></svg> Research source packs</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <button class="navbtn" id="prevBtn" onclick="prevSlide()" aria-label="Previous">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button class="navbtn" id="nextBtn" onclick="nextSlide()" aria-label="Next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+
+<script>
+/* ============ core slide navigation ============ */
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let idx = 0;
+const dayStarts = [0, 9, 18];
+const dayLabels = ['Day 1', 'Day 2', 'Day 3'];
+
+const dotsWrap = document.getElementById('dots');
+slides.forEach((s,i)=>{
+  const d = document.createElement('button');
+  d.className = 'dot' + (i===0?' active':'');
+  d.onclick = ()=>goTo(i);
+  dotsWrap.appendChild(d);
+});
+
+function currentDayLabel(i){
+  let label = dayLabels[0];
+  for(let k=0;k<dayStarts.length;k++){
+    if(i >= dayStarts[k]) label = dayLabels[k];
+  }
+  return label;
+}
+
+function render(){
+  slides.forEach((s,i)=> s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.dot').forEach((d,i)=> d.classList.toggle('active', i===idx));
+  document.getElementById('counter').textContent = (idx+1) + ' / ' + total;
+  document.getElementById('prevBtn').classList.toggle('disabled', idx===0);
+  document.getElementById('nextBtn').classList.toggle('disabled', idx===total-1);
+  document.getElementById('dayChip').textContent = currentDayLabel(idx);
+  slides[idx].scrollTop = 0;
+}
+function goTo(i){ idx = Math.max(0, Math.min(total-1, i)); render(); }
+function nextSlide(){ goTo(idx+1); }
+function prevSlide(){ goTo(idx-1); }
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight') nextSlide();
+  if(e.key==='ArrowLeft') prevSlide();
+});
+render();
+
+/* ============ objectives checklist (shared across all obj-grids) ============ */
+document.querySelectorAll('.obj-card').forEach(card=>{
+  card.addEventListener('click', ()=> card.classList.toggle('done'));
+});
+
+/* ============ tabs (shared by all tab groups) ============ */
+document.querySelectorAll('.tabs').forEach(group=>{
+  const btns = group.querySelectorAll('.tab-btn');
+  btns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      btns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const panels = group.parentElement.querySelectorAll(':scope > .tab-panel');
+      panels.forEach(p=>p.classList.remove('active'));
+      const target = group.parentElement.querySelector('#tab-'+btn.dataset.tab);
+      if(target) target.classList.add('active');
+    });
+  });
+});
+
+/* ============ DAY 1 : quadrant impact sort ============ */
+const quadItems = [
+  {q:'The dam provides a reliable water supply for nearby towns.', type:'pp', label:'People (+)', why:'This helps people directly — a benefit to human communities.'},
+  {q:'Villages upstream are flooded and families lose their homes.', type:'pn', label:'People (\u2212)', why:'Families are displaced and lose their homes — a harm to people.'},
+  {q:'The dam helps control flooding, protecting habitats downstream.', type:'ep', label:'Ecosystem (+)', why:'Flood control protects natural habitats — a benefit to ecosystems.'},
+  {q:'Fish can no longer swim upstream to reach their breeding grounds.', type:'en', label:'Ecosystem (\u2212)', why:'This disrupts a natural process for wildlife — a harm to the ecosystem.'},
+  {q:'New jobs are created during construction and operation.', type:'pp', label:'People (+)', why:'Employment is a direct benefit to people in the community.'},
+  {q:'Fishing communities downstream catch fewer fish than before.', type:'pn', label:'People (\u2212)', why:'This harms the livelihoods of people who depend on fishing.'},
+  {q:'Clean hydroelectric power reduces the need to burn fossil fuels.', type:'ep', label:'Ecosystem (+)', why:'Less fossil fuel use means less pollution damaging ecosystems.'},
+  {q:'Flooded land destroys forests and wildlife habitats.', type:'en', label:'Ecosystem (\u2212)', why:'Habitats are lost, harming the plants and animals that lived there.'}
+];
+const quadGrid = document.getElementById('quadGrid');
+quadItems.forEach(item=>{
+  const card = document.createElement('div');
+  card.className = 'sort-card';
+  card.innerHTML = '<p class="sort-q">"' + item.q + '"</p>' +
+    '<div class="sort-hint">Tap to reveal</div>' +
+    '<div class="sort-reveal">' +
+    '<span class="sort-tag ' + item.type + '">' + item.label + '</span>' +
+    '<p class="sort-explain">' + item.why + '</p>' +
+    '</div>';
+  card.addEventListener('click', ()=> card.classList.toggle('open'));
+  quadGrid.appendChild(card);
+});
+
+/* ============ quiz (shared, scoped to the clicked scenario) ============ */
+function answerQuiz(btn, correct, feedbackId, message){
+  const scenario = btn.closest('.scenario');
+  scenario.querySelectorAll('.quiz-opt').forEach(b=>{
+    b.disabled = true;
+    if(b.dataset.correct === 'true') b.classList.add('correct');
+  });
+  if(!correct) btn.classList.add('wrong');
+  const fb = document.getElementById(feedbackId);
+  fb.textContent = message;
+  fb.classList.add('show');
+}
+
+/* ============ recap example cycler (Day 1 starter) ============ */
+const recapExamples = [
+  'Deforestation \u2014 clearing trees for farmland means animals lose their homes.',
+  'Pollution \u2014 plastic in rivers and oceans harms fish and other wildlife.',
+  'Urbanisation \u2014 towns growing bigger means less green space for nature.',
+  'Climate change \u2014 rising temperatures are melting ice and changing habitats.'
+];
+let recapIdx = 0;
+function showRecapExample(){
+  document.getElementById('recapExampleBox').textContent = recapExamples[recapIdx % recapExamples.length];
+  recapIdx++;
+}
+
+/* ============ sustainability reason cycler (Day 2 starter) ============ */
+const sustainReasons = [
+  'It protects resources like clean water, food, and energy for our children and grandchildren.',
+  'It keeps ecosystems healthy, so plants and animals can keep thriving alongside us.',
+  'It helps prevent shortages of things we all rely on, like food, water, and energy.',
+  'It keeps the planet a safe and liveable place for everyone, not just people today.'
+];
+let sustainIdx = 0;
+function showSustainReason(){
+  document.getElementById('sustainReasonBox').textContent = sustainReasons[sustainIdx % sustainReasons.length];
+  sustainIdx++;
+}
+
+/* ============ personal action example cycler (Day 3 reflect) ============ */
+const actionExamples = [
+  'One action I can personally take is using less single-use plastic, because it stops so much rubbish ending up in rivers and oceans.',
+  'One action I can personally take is walking or cycling short trips instead of using the car, because it produces fewer greenhouse gases.',
+  'One action I can personally take is recycling more carefully at home, because it reduces the amount of new raw materials we need.',
+  'One action I can personally take is telling my family what I\u2019ve learned about sustainability, because more people making small changes adds up to a big difference.',
+  'One action I can personally take is saving water when I brush my teeth or shower, because clean water is a limited resource.'
+];
+let actionIdx = 0;
+function showActionExample(){
+  document.getElementById('actionExampleBox').textContent = actionExamples[actionIdx % actionExamples.length];
+  actionIdx++;
+}
+
+/* ============ Day 2 issue picker ============ */
+document.querySelectorAll('#issueGrid .format-card').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    document.querySelectorAll('#issueGrid .format-card').forEach(c=> c.classList.remove('chosen'));
+    card.classList.add('chosen');
+  });
+});
+
+/* ============ glossary flip cards (3 separate grids) ============ */
+function buildGlossary(gridId, terms){
+  const grid = document.getElementById(gridId);
+  terms.forEach(g=>{
+    const card = document.createElement('div');
+    card.className = 'gloss-card';
+    card.innerHTML = '<div class="gloss-inner">' +
+      '<div class="gloss-face front">' + g.term + '</div>' +
+      '<div class="gloss-face back">' + g.def + '</div>' +
+      '</div>';
+    card.addEventListener('click', ()=> card.classList.toggle('flip'));
+    grid.appendChild(card);
+  });
+}
+buildGlossary('glossGrid1', [
+  {term:'Environmental change', def:'A change to the natural or built environment, such as deforestation, pollution, or urban growth.'},
+  {term:'Impact', def:'A result or effect that a change has on people, animals, plants, or places.'},
+  {term:'Positive impact', def:'A helpful or beneficial effect of a change.'},
+  {term:'Negative impact', def:'A harmful effect of a change.'},
+  {term:'Ecosystem', def:'A community of living things and their environment, interacting together.'},
+  {term:'Evidence', def:'Facts or examples that support an idea or a claim.'},
+  {term:'Case study', def:'A real example investigated in detail.'},
+  {term:'Displaced', def:'Forced to leave your home or usual location.'},
+  {term:'Habitat', def:'The natural home of a plant or animal.'}
+]);
+buildGlossary('glossGrid2', [
+  {term:'Sustainability', def:'Meeting our needs today without harming the ability of future generations to meet theirs.'},
+  {term:'Renewable energy', def:'Energy from sources that don\u2019t run out, like sunlight, wind, or moving water.'},
+  {term:'Reforestation', def:'Planting new trees in an area where forest was previously cleared.'},
+  {term:'Conservation', def:'Protecting and looking after natural resources, habitats, and wildlife.'},
+  {term:'Policy', def:'An official rule or law made by a government or organisation.'},
+  {term:'Community clean-up', def:'Volunteers working together to remove rubbish from a shared space.'},
+  {term:'Reduce, reuse, recycle', def:'Using less, using things again, and turning waste into new materials instead of throwing it away.'},
+  {term:'Problem \u2192 Solution \u2192 Why', def:'A model for explaining an issue, a fix for it, and the reason the fix works.'},
+  {term:'Showcase', def:'An event or display where you present your project and ideas to an audience.'}
+]);
+buildGlossary('glossGrid3', [
+  {term:'Cause', def:'The reason something happens \u2014 what makes an environmental change occur.'},
+  {term:'Investigate', def:'To research and find out detailed information about a topic.'},
+  {term:'Planning sheet', def:'A document used to organise research and ideas before creating a final project.'},
+  {term:'Interactive station', def:'A hands-on display that visitors can explore, touch, or take part in.'},
+  {term:'Individual action', def:'A choice or change made by one person that contributes to a bigger solution.'},
+  {term:'Source pack', def:'A collection of information gathered to help research a specific topic.'}
+]);
+
+/* ============ notebook checklist builder (3 separate lists) ============ */
+function buildAssess(listId, fillId, items){
+  const list = document.getElementById(listId);
+  items.forEach(text=>{
+    const item = document.createElement('div');
+    item.className = 'assess-item';
+    item.innerHTML = '<div class="assess-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>' + text + '</p>';
+    item.addEventListener('click', ()=>{
+      item.classList.toggle('checked');
+      const checked = list.querySelectorAll('.assess-item.checked').length;
+      const pct = (checked/items.length)*100;
+      document.getElementById(fillId).style.width = pct+'%';
+    });
+    list.appendChild(item);
+  });
+}
+buildAssess('assessList1', 'assessFill1', [
+  'I named one environmental change and one impact in the starter',
+  'I helped sort impacts into the 4-quadrant Impact Wheel',
+  'I completed my own Impact Wheel for my chosen case study, with evidence',
+  'I can explain that most changes have both positive and negative impacts',
+  'I shared one positive and one negative impact with the class'
+]);
+buildAssess('assessList2', 'assessFill2', [
+  'I can explain what sustainability means',
+  'I can explain why sustainability matters for the future',
+  'I completed a Problem \u2192 Solution \u2192 Why chart with my group',
+  'I know which environmental issue my Showcase group has chosen',
+  'I understand what the Sustainability Showcase project will involve'
+]);
+buildAssess('assessList3', 'assessFill3', [
+  'I helped recap what the Showcase requires',
+  'I researched my group\u2019s issue using the source pack',
+  'My group completed our Showcase Planning Sheet',
+  'I reflected on one personal action I can take',
+  'I shared our issue and a planned solution with another group'
+]);
+</script>
+</body>
+</html>
