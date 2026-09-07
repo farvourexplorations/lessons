@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Unit 5 · The Facts of the Matter | Session 5.1 Poles Apart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#0d9488; --teal-dark:#0f766e; --teal-light:#ccfbf1;
+    --orange:#f97316; --orange-light:#ffedd5;
+    --purple:#7c3aed; --purple-light:#ede9fe;
+    --ink:#1e293b; --slate:#64748b; --paper:#ffffff; --bg:#f4f6f8;
+    --radius:20px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{margin:0; font-family:'Inter',sans-serif; background:var(--bg); color:var(--ink); overflow:hidden;}
+  h1,h2,h3{font-family:'Poppins',sans-serif;}
+  #app{display:flex; flex-direction:column; height:100vh; width:100vw;}
+  #topbar{display:flex; align-items:center; justify-content:space-between; padding:12px 22px; background:var(--paper); border-bottom:1px solid #e6eaee; flex-shrink:0; gap:12px;}
+  .breadcrumb{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--slate); font-weight:600; white-space:nowrap; overflow:hidden;}
+  .breadcrumb .unit{color:var(--teal-dark);}
+  .breadcrumb .sep{color:#c7ced6;}
+  .breadcrumb .current{color:var(--ink);}
+  #dots{display:flex; gap:5px; flex-wrap:wrap; max-width:44%; justify-content:center;}
+  .dot{width:7px; height:7px; border-radius:50%; background:#dbe2e8; cursor:pointer; transition:all .2s ease; flex-shrink:0;}
+  .dot.active{background:var(--teal); width:20px; border-radius:5px;}
+  .dot.section-start{margin-left:6px;}
+  #counter{font-size:12px; font-weight:700; color:var(--slate); white-space:nowrap; font-variant-numeric: tabular-nums;}
+  #stage{flex:1; position:relative; overflow:hidden;}
+  .slide{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:26px 5vw 90px; opacity:0; transform:translateX(40px); transition:opacity .35s ease, transform .35s ease; pointer-events:none; overflow-y:auto;}
+  .slide.active{opacity:1; transform:translateX(0); pointer-events:auto;}
+  .card{width:100%; max-width:1000px; margin:auto;}
+  .badge{display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px; font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-bottom:16px;}
+  .badge::before{content:""; width:7px; height:7px; border-radius:50%; background:currentColor;}
+  .badge.focus{background:var(--teal-light); color:var(--teal-dark);}
+  .badge.practice{background:var(--orange-light); color:#c2410c;}
+  .badge.challenge{background:var(--purple-light); color:var(--purple);}
+  .badge.concept{background:#e0f2fe; color:#0369a1;}
+  .badge.write{background:#fce7f3; color:#be185d;}
+  .chip{display:inline-block; background:#eef2f6; color:var(--slate); font-size:12px; font-weight:700; padding:4px 10px; border-radius:8px; margin-left:8px;}
+  .cover-slide{background:radial-gradient(ellipse at top, #164e63 0%, #0f172a 55%, #0b1120 100%); color:#fff; padding:0;}
+  .cover-slide .card{text-align:center; color:#fff; max-width:760px;}
+  .stars{position:absolute; inset:0; background-image: radial-gradient(1.5px 1.5px at 20% 30%, #fff, transparent), radial-gradient(1.5px 1.5px at 75% 20%, #fff, transparent), radial-gradient(1px 1px at 50% 60%, #fff, transparent), radial-gradient(2px 2px at 85% 70%, #fff, transparent), radial-gradient(1px 1px at 10% 80%, #fff, transparent), radial-gradient(1.5px 1.5px at 65% 45%, #fff, transparent), radial-gradient(1px 1px at 35% 15%, #fff, transparent), radial-gradient(1.5px 1.5px at 92% 40%, #fff, transparent); opacity:.7;}
+  .cover-eyebrow{font-size:13px; letter-spacing:.18em; text-transform:uppercase; color:#5eead4; font-weight:700; margin-bottom:14px;}
+  .cover-slide h1{font-size:clamp(26px,4.4vw,46px); line-height:1.1; margin:0 0 14px; background:linear-gradient(90deg,#5eead4,#fb923c,#c4b5fd); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .cover-slide p{font-size:16px; color:#cbd5e1; max-width:580px; margin:0 auto 26px;}
+  .cover-pills{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .cover-pill{background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); padding:10px 18px; border-radius:14px; font-size:13px; font-weight:600; color:#e2e8f0;}
+  .section-slide .card{text-align:center;}
+  .section-num{font-family:'Poppins',sans-serif; font-size:14px; font-weight:700; color:var(--teal); letter-spacing:.1em; text-transform:uppercase; margin-bottom:6px;}
+  .section-slide h2{font-size:clamp(22px,3.6vw,34px); margin:0 0 18px; color:var(--ink);}
+  .section-sub{color:var(--slate); font-size:15px; max-width:620px; margin:0 auto;}
+  .goal-box{background:var(--paper); border-radius:16px; padding:18px 22px; box-shadow:0 8px 22px rgba(15,23,42,.06); border:1px solid #eef1f4; text-align:left; margin-top:22px;}
+  .goal-box .glab{font-weight:800; font-size:12.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--teal-dark); margin-bottom:6px;}
+  .goal-box p{margin:0; font-size:14.5px; color:#334155;}
+  .start-box{background:#fff1f2; border:1.5px solid #fecdd3; border-radius:16px; padding:16px 20px; text-align:left; margin-top:14px;}
+  .start-box .slab{font-weight:800; font-size:12.5px; text-transform:uppercase; letter-spacing:.06em; color:#be123c; margin-bottom:8px;}
+  .start-box ol{margin:0; padding-left:20px; font-size:14px; color:#334155; line-height:1.6;}
+  .concept-box{background:var(--paper); border-radius:var(--radius); padding:28px 32px; box-shadow:0 10px 30px rgba(15,23,42,.06); border:1px solid #eef1f4;}
+  h2.q-title{font-size:clamp(18px,2.6vw,24px); margin:0 0 12px; color:var(--ink);}
+  .concept-body{font-size:15px; line-height:1.7; color:#334155;}
+  .concept-body strong{color:var(--teal-dark);}
+  .concept-body p{margin:0 0 10px;}
+  .example-block{margin-top:14px; background:var(--teal-light); border-left:4px solid var(--teal); border-radius:12px; padding:12px 16px; font-size:14px; color:#134e4a;}
+  .example-block .lab{font-weight:700; text-transform:uppercase; font-size:11px; letter-spacing:.06em; color:var(--teal-dark); margin-bottom:4px;}
+  .q-eyebrow{display:flex; align-items:center; flex-wrap:wrap; gap:2px; margin-bottom:10px;}
+  .q-prompt{font-size:clamp(15px,2.1vw,18px); font-weight:500; color:var(--ink); line-height:1.65; margin:6px 0 20px;}
+  .instruction-text{font-size:14.5px; color:var(--slate); margin-bottom:14px; line-height:1.6;}
+  .reveal-btn{display:inline-flex; align-items:center; gap:8px; background:var(--ink); color:#fff; border:none; padding:12px 22px; border-radius:12px; font-family:'Inter',sans-serif; font-size:14px; font-weight:700; cursor:pointer; transition:transform .15s ease, background .15s ease;}
+  .reveal-btn:hover{background:#334155; transform:translateY(-1px);}
+  .reveal-btn svg{width:16px; height:16px;}
+  .answer-panel{margin-top:16px; max-height:0; opacity:0; overflow:hidden; transition:max-height .4s ease, opacity .3s ease, margin .3s ease; border-radius:14px;}
+  .answer-panel.open{max-height:1400px; opacity:1;}
+  .answer-inner{background:#ecfdf5; border:1.5px solid #6ee7b7; border-radius:14px; padding:16px 20px; font-size:15px; color:#065f46; line-height:1.75;}
+  .answer-inner .lab{font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#059669; margin-bottom:8px; display:flex; align-items:center; gap:6px;}
+  .answer-inner .note{display:block; margin-top:10px; font-size:12.5px; color:#0f766e; font-style:italic;}
+  .tip-box{margin-top:14px; background:var(--orange-light); border-radius:12px; padding:10px 14px; font-size:13px; color:#9a3412; display:flex; gap:10px; align-items:flex-start;}
+  .glossary-box{margin-top:14px; background:#fff7ed; border-radius:12px; padding:10px 14px; font-size:13px; color:#7c2d12;}
+  .glossary-box b{color:#c2410c;}
+  .compare-table{width:100%; border-collapse:separate; border-spacing:0; margin-top:14px; font-size:13.5px;}
+  .compare-table th{text-align:left; padding:9px 14px; font-size:11.5px; text-transform:uppercase; letter-spacing:.05em; background:var(--ink); color:#fff;}
+  .compare-table th:first-child{border-radius:10px 0 0 0;}
+  .compare-table th:last-child{border-radius:0 10px 0 0;}
+  .compare-table td{padding:8px 14px; border-bottom:1px solid #eef1f4; vertical-align:top; line-height:1.5;}
+  .compare-table tr:nth-child(even) td{background:#fbfcfd;}
+  .compare-table .col-a{color:var(--teal-dark); font-weight:700;}
+  .compare-table .col-b{color:var(--purple); font-weight:700;}
+  .item-list{margin-top:4px;}
+  .item-row{background:#fff; border:1px solid #eef1f4; border-radius:12px; padding:10px 16px; margin-bottom:8px; font-size:14.5px; color:var(--ink);}
+  .item-row .letter{display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:var(--ink); color:#fff; font-size:11px; font-weight:700; margin-right:8px;}
+  .item-row .blank{display:inline-block; min-width:80px; border-bottom:2px dashed #94a3b8; margin:0 3px;}
+  .photo-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:16px; margin-top:16px;}
+  .photo-card{border-radius:16px; padding:16px 18px 14px; color:#fff; position:relative; min-height:130px; display:flex; flex-direction:column; justify-content:flex-end;}
+  .photo-card.np{background:linear-gradient(160deg,#1e3a8a 0%, #2563eb 45%, #dbeafe 100%);}
+  .photo-card.sp{background:linear-gradient(160deg,#0c4a6e 0%, #0ea5e9 45%, #e0f2fe 100%);}
+  .photo-card .plabel{position:absolute; top:12px; left:14px; font-weight:800; font-size:12.5px; background:rgba(255,255,255,.22); border:1.5px solid rgba(255,255,255,.55); padding:4px 10px; border-radius:999px; text-transform:uppercase; letter-spacing:.04em;}
+  .photo-card .pdesc{font-size:13px; line-height:1.5; text-shadow:0 1px 4px rgba(0,0,0,.35); font-weight:600;}
+  .fact-check{display:flex; gap:10px; margin-top:4px; flex-wrap:wrap;}
+  .fc-tag{padding:5px 12px; border-radius:999px; font-size:12px; font-weight:800; letter-spacing:.03em;}
+  .fc-tag.fact{background:var(--teal-light); color:var(--teal-dark);}
+  .plan-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px; margin-top:14px;}
+  .plan-card{background:#fff; border:1.5px solid #e2e8f0; border-radius:14px; padding:14px 16px;}
+  .plan-card .ptitle{font-weight:800; color:var(--ink); font-size:14.5px; margin-bottom:6px;}
+  .plan-card .pex{font-size:13px; color:var(--slate); line-height:1.6;}
+  .lines{margin-top:10px;}
+  .lineitem{border-bottom:1.5px dashed #cbd5e1; height:26px; margin-bottom:4px;}
+  .checklist{margin-top:14px; display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:10px;}
+  .check-item{background:#fff; border:1.5px solid #e2e8f0; border-radius:12px; padding:11px 14px; font-size:13.5px; color:#334155; display:flex; gap:10px; align-items:flex-start;}
+  .check-item .ico{color:var(--teal); font-weight:900; flex-shrink:0;}
+  .selfcheck-box{background:var(--purple-light); border-radius:16px; padding:18px 22px; margin-top:16px;}
+  .selfcheck-box .slab{font-weight:800; font-size:12.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--purple); margin-bottom:10px;}
+  .selfcheck-box .sq{font-size:14.5px; color:#3b0764; margin-bottom:6px; display:flex; gap:8px; align-items:flex-start;}
+  .closing-slide .card{text-align:center;}
+  .closing-slide h2{font-size:clamp(22px,3.6vw,32px); margin-bottom:10px;}
+  .wb-ref{display:inline-flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:20px;}
+  .wb-ref .pg{background:var(--paper); border:1.5px solid #e2e8f0; border-radius:12px; padding:10px 16px; font-size:13px; font-weight:700; color:var(--ink); box-shadow:0 4px 10px rgba(15,23,42,.04);}
+  .wb-ref .pg span{display:block; font-size:11px; font-weight:600; color:var(--slate); text-transform:uppercase; letter-spacing:.04em;}
+  #footer{position:absolute; bottom:0; left:0; right:0; display:flex; align-items:center; justify-content:center; gap:18px; padding:16px; pointer-events:none;}
+  .navbtn{pointer-events:auto; width:52px; height:52px; border-radius:50%; border:none; background:var(--paper); box-shadow:0 6px 18px rgba(15,23,42,.12); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform .15s ease, background .15s ease; color:var(--ink);}
+  .navbtn:hover{transform:translateY(-2px); background:var(--teal); color:#fff;}
+  .navbtn:disabled{opacity:.3; cursor:not-allowed; transform:none; background:var(--paper); color:var(--ink);}
+  .navbtn svg{width:20px; height:20px;}
+  .navlabel{pointer-events:auto; font-size:12px; font-weight:700; color:var(--slate); background:var(--paper); padding:8px 16px; border-radius:999px; box-shadow:0 6px 18px rgba(15,23,42,.08);}
+  @media (max-width: 640px){ .concept-box{padding:20px 16px;} .slide{padding:16px 4vw 96px;} #dots{display:none;} }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="topbar">
+    <div class="breadcrumb"><span class="unit">Unit 5 · The Facts of the Matter</span><span class="sep">›</span><span class="current" id="crumbCurrent">Cover</span></div>
+    <div id="dots"></div>
+    <div id="counter">1 / 1</div>
+  </div>
+  <div id="stage"></div>
+  <div id="footer">
+    <button class="navbtn" id="prevBtn" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="navlabel" id="navLabel">Tap to begin</div>
+    <button class="navbtn" id="nextBtn" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+  </div>
+</div>
+
+<script>
+const S = [];
+function badge(kind, extra){
+  const label = kind==='focus'?'Focus':kind==='practice'?'Practice':kind==='challenge'?'Challenge':kind==='write'?'Writing Practice':'Concept';
+  return `<span class="badge ${kind}">${label}${extra?' · '+extra:''}</span>`;
+}
+function questionSlide({kind, exercise, letter, instruction, prompt, answerHtml}){
+  const idBase = 'ans-' + Math.random().toString(36).slice(2,9);
+  return `
+    <div class="card">
+      <div class="q-eyebrow">${badge(kind)} <span class="chip">${exercise}${letter?' &middot; '+letter:''}</span></div>
+      ${instruction? `<div class="instruction-text">${instruction}</div>`:''}
+      <div class="q-prompt">${prompt}</div>
+      <button class="reveal-btn" onclick="toggleAnswer('${idBase}', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Reveal answer
+      </button>
+      <div class="answer-panel" id="${idBase}"><div class="answer-inner">${answerHtml}</div></div>
+    </div>`;
+}
+
+/* ---------- COVER ---------- */
+S.push({crumb:'Cover', section:true, html:`
+  <div class="slide cover-slide"><div class="stars"></div>
+    <div class="card">
+      <div class="cover-eyebrow">Cambridge Primary English 6 · Unit 5</div>
+      <h1>The Facts of the Matter</h1>
+      <p>Session 5.1 &mdash; Poles Apart: comparing the North and South Poles using facts, opinions and connectives.</p>
+      <div class="cover-pills"><div class="cover-pill">5.1 Poles Apart</div><div class="cover-pill">Learner's Book pages 128&ndash;131</div></div>
+    </div>
+  </div>`});
+
+/* ---------- SESSION TITLE + WE ARE GOING TO + GETTING STARTED ---------- */
+S.push({crumb:'5.1 Title', section:true, html:`
+  <div class="slide section-slide">
+    <div class="card">
+      <div class="section-num">Session 5.1</div>
+      <h2>Poles apart</h2>
+      <div class="goal-box"><div class="glab">We are going to&hellip;</div><p>discuss and compare two places using facts, opinions and connectives.</p></div>
+      <div class="start-box"><div class="slab">Getting started</div>
+        <ol>
+          <li>In small groups, discuss these questions: Do you live in a hot or a cold place? Which do you prefer?</li>
+          <li>Explain the difference between a fact and an opinion.</li>
+        </ol>
+      </div>
+    </div>
+  </div>`});
+
+/* ---------- CONCEPT: SIMILARITIES & DIFFERENCES ---------- */
+S.push({crumb:'Similarities/Differences', html:`
+  <div class="slide"><div class="card concept-box">
+    ${badge('concept')}
+    <h2 class="q-title">Similarities and differences</h2>
+    <div class="concept-body">
+      <p>A <strong>similarity</strong> is a way that two things are alike. A <strong>difference</strong> is a way that two things are not alike. When you compare two places, you look at both &mdash; what they share, and what sets them apart.</p>
+    </div>
+    <div class="example-block"><div class="lab">Example</div>Similarity: both the Arctic and the Antarctic are extremely cold. Difference: the Arctic is an ocean surrounded by land, while the Antarctic is land surrounded by ocean.</div>
+  </div></div>`});
+
+/* ---------- FOCUS 1a: COMPARE PHOTOS ---------- */
+S.push({crumb:'Focus 1a', html:`
+  <div class="slide"><div class="card concept-box">
+    ${badge('focus')} <span class="chip">Activity 1a</span>
+    <h2 class="q-title">Describe the similarities and differences</h2>
+    <div class="instruction-text">Work in pairs. Compare the pictures of the North and South Poles. In your notebook, describe what you see.</div>
+    <div class="photo-grid">
+      <div class="photo-card np"><span class="plabel">North Pole</span><div class="pdesc">A polar bear walks across sea ice; snow-covered mountains with a small red house on the shore.</div></div>
+      <div class="photo-card sp"><span class="plabel">South Pole</span><div class="pdesc">Adult penguins feeding their chicks; a boat carrying people in bright orange survival suits weaving through ice.</div></div>
+    </div>
+  </div></div>`});
+
+/* ---------- CONCEPT: FACTS & OPINIONS ---------- */
+S.push({crumb:'Facts/Opinions', html:`
+  <div class="slide"><div class="card concept-box">
+    ${badge('concept')}
+    <h2 class="q-title">Facts and opinions</h2>
+    <div class="concept-body">
+      <p>A <strong>fact</strong> is a statement that can be checked and proven true or false. An <strong>opinion</strong> is a personal feeling, belief or judgement &mdash; it can't be proven, only agreed or disagreed with.</p>
+    </div>
+    <table class="compare-table">
+      <tr><th>Fact</th><th>Opinion</th></tr>
+      <tr><td class="col-a">Antarctica is the coldest continent on Earth.</td><td class="col-b">Antarctica sounds like the most boring place to visit.</td></tr>
+    </table>
+    <div class="tip-box">💡 Look out for opinion clues like "I think," "best," "worst," "boring," or "amazing."</div>
+  </div></div>`});
+
+/* ---------- FOCUS 1b: FACT OR OPINION (1-4) ---------- */
+S.push({crumb:'Focus 1b (1/2)', html:`<div class="slide">${questionSlide({
+  kind:'focus', exercise:'Activity 1b', letter:'1&ndash;4',
+  instruction:'Read each statement. Decide if it is a fact or an opinion. How can you tell?',
+  prompt:`<div class="item-list">
+      <div class="item-row"><span class="letter">1</span>The North Pole is known as the Arctic and the South Pole is known as the Antarctic.</div>
+      <div class="item-row"><span class="letter">2</span>The Antarctic is a continent while the Arctic is an ocean.</div>
+      <div class="item-row"><span class="letter">3</span>One has penguins whereas the other has polar bears.</div>
+      <div class="item-row"><span class="letter">4</span>The Arctic has a permanent human population but Antarctica does not.</div>
+    </div>`,
+  answerHtml:`<div class="lab">All four are facts</div>
+    Each statement can be checked and proven true or false against real information &mdash; none of them state a personal feeling or judgement. Notice that joining two ideas with a connective (while, whereas, but) doesn't turn a statement into an opinion &mdash; it's still a fact as long as both halves are true and verifiable.
+    <span class="note">You can tell it's a fact because you could look it up and confirm it; an opinion would use words like "I think," "best," or "worst."</span>`
+})}</div>`});
+
+/* ---------- FOCUS 1b: FACT OR OPINION (5-7) ---------- */
+S.push({crumb:'Focus 1b (2/2)', html:`<div class="slide">${questionSlide({
+  kind:'focus', exercise:'Activity 1b', letter:'5&ndash;7',
+  instruction:'Decide if these last three statements are facts or opinions.',
+  prompt:`<div class="item-list">
+      <div class="item-row"><span class="letter">5</span>Both are cold; however, the Antarctic is colder.</div>
+      <div class="item-row"><span class="letter">6</span>Both are desert regions although Antarctica is the largest desert on Earth.</div>
+      <div class="item-row"><span class="letter">7</span>Antarctica is the name of a continent.</div>
+    </div>`,
+  answerHtml:`<div class="lab">All three are facts</div>
+    Every statement in this activity is a fact &mdash; even the ones that sound surprising, like Antarctica being a desert. That's because "desert" means a place that gets very little precipitation, not necessarily a hot, sandy place &mdash; and this is checkable, verifiable information rather than a feeling or judgement.
+    <div class="fact-check">${['1 Fact','2 Fact','3 Fact','4 Fact','5 Fact','6 Fact','7 Fact'].map(t=>`<span class="fc-tag fact">${t}</span>`).join('')}</div>`
+})}</div>`});
+
+/* ---------- CONCEPT: LITERAL & FIGURATIVE ---------- */
+S.push({crumb:'Literal/Figurative', html:`
+  <div class="slide"><div class="card concept-box">
+    ${badge('concept')}
+    <h2 class="q-title">Literal and figurative language</h2>
+    <div class="concept-body">
+      <p><strong>Literal</strong> language means exactly what it says, word for word. <strong>Figurative</strong> language means something different from the literal words &mdash; it paints a picture or creates an effect instead of stating a plain fact.</p>
+    </div>
+    <table class="compare-table">
+      <tr><th>Literal</th><th>Figurative</th></tr>
+      <tr><td class="col-a">The North and South Poles are thousands of kilometres apart.</td><td class="col-b">"Poles apart" &mdash; meaning two things are completely different.</td></tr>
+    </table>
+  </div></div>`});
+
+/* ---------- FOCUS 1c-e: POLES APART + FIGURATIVE LANGUAGE ---------- */
+S.push({crumb:'Focus 1c-e', html:`
+  <div class="slide"><div class="card concept-box">
+    ${badge('focus')} <span class="chip">Activity 1c&ndash;e</span>
+    <h2 class="q-title">Poles apart &mdash; literal or figurative?</h2>
+    <div class="item-list">
+      <div class="item-row"><span class="letter">c</span>Is the expression <em>poles apart</em> literal or figurative? What does it mean?</div>
+      <div class="item-row"><span class="letter">d</span>What other figurative expressions can you think of that describe cold or hot places?</div>
+      <div class="item-row"><span class="letter">e</span>Is it better to use facts or figurative language to give information?</div>
+    </div>
+    <button class="reveal-btn" style="margin-top:16px;" id="btn1ce" onclick="toggleAnswer('ans1ce', document.getElementById('btn1ce'))">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      Reveal discussion answers
+    </button>
+    <div class="answer-panel" id="ans1ce"><div class="answer-inner">
+      <div class="lab">c &ndash; Literal or figurative?</div>
+      <em>Poles apart</em> is <strong>figurative</strong>. Literally, the North and South Poles are the two most distant points on Earth &mdash; so figuratively, the phrase means two things (or people) are completely different or hold opposite views.<br><br>
+      <div class="lab">d &ndash; Other figurative expressions</div>
+      Cold: "freezing my socks off," "cold as ice," "in the dead of winter." Hot: "boiling hot," "dog days of summer," "hot as an oven."<br><br>
+      <div class="lab">e &ndash; Facts or figurative language?</div>
+      Facts are more reliable and precise for giving accurate information; figurative language is more useful for creating a vivid impression or feeling. A good informative report usually leans on facts, saving figurative language for emphasis.
+      <span class="note">Accept any sensible figurative expressions and a reasoned answer to part e.</span>
+    </div></div>
+  </div></div>`});
+
+/* ---------- WORD ORIGINS: ARCTIC / ANTARCTIC ---------- */
+S.push({crumb:'Word Origins', html:`
+  <div class="slide"><div class="card concept-box">
+    ${badge('concept')}
+    <h2 class="q-title">Where do the words Arctic and Antarctic come from?</h2>
+    <div class="concept-body">
+      <p>The word <strong>Arctic</strong> comes from the Greek word <em>arktos</em>, meaning "bear" &mdash; referring to the Great Bear <strong>constellation</strong> in the northern sky.</p>
+      <p><strong>Antarctic</strong> has the prefix <em>ant-</em> (or <em>anti-</em>), meaning "opposite." So <strong>Ant</strong>arctic means "opposite to the north."</p>
+    </div>
+    <div class="glossary-box"><b>Glossary &ndash; constellation:</b> a group of stars in the sky that seem, from Earth, to form a pattern and have been given a name.</div>
+    <div class="tip-box">✍️ Writing tip: You can form opposites by adding a prefix to root words &mdash; like <strong>anti</strong>clockwise, <strong>un</strong>clear, <strong>de</strong>stress.</div>
+  </div></div>`});
+
+/* ---------- CONCEPT: CONNECTIVES ---------- */
+S.push({crumb:'Connectives Concept', html:`
+  <div class="slide"><div class="card concept-box">
+    ${badge('concept')}
+    <h2 class="q-title">Language focus: connectives</h2>
+    <div class="concept-body">
+      <p>We use <strong>connectives</strong> to link sentences and paragraphs. We also use them in the following ways.</p>
+    </div>
+    <table class="compare-table">
+      <tr><th>To introduce similar points</th><th>To introduce opposing points</th></tr>
+      <tr><td class="col-a">similarly, in addition, as well as&hellip;</td><td class="col-b">but, although, yet, since, alternatively, however, while, whereas, on the other hand&hellip;</td></tr>
+    </table>
+    <div class="example-block"><div class="lab">Paired connectives</div>
+      Some connectives work in pairs to link ideas of equal importance: <strong>both&hellip;and</strong>, <strong>whether&hellip;or</strong>, <strong>not only&hellip;but also</strong>, <strong>neither&hellip;nor</strong>, <strong>either&hellip;or</strong>, <strong>rather&hellip;or</strong>.
+    </div>
+  </div></div>`});
+
+/* ---------- PRACTICE 2a ---------- */
+S.push({crumb:'Practice 2a', html:`<div class="slide">${questionSlide({
+  kind:'practice', exercise:'Activity 2a',
+  instruction:'Go back to the statements from Activity 1b.',
+  prompt:`Identify the connective in each statement. Can you change the connectives without changing the meaning? Give an example.`,
+  answerHtml:`<div class="lab">Model answer</div>
+    The connectives used are: <strong>while</strong> (statement 2), <strong>whereas</strong> (statement 3), <strong>but</strong> (statement 4), <strong>however</strong> (statement 5), <strong>although</strong> (statement 6).<br><br>
+    Yes &mdash; most of these opposing connectives can swap for one another without changing the meaning. For example, "The Antarctic is a continent <em>while</em> the Arctic is an ocean" could equally read "The Antarctic is a continent, <em>whereas</em> the Arctic is an ocean" or "&hellip;<em>but</em> the Arctic is an ocean."
+    <span class="note">Accept any correctly identified connective and a sensible substitution that keeps the same contrasting meaning.</span>`
+})}</div>`});
+
+/* ---------- PRACTICE 2b (first three) ---------- */
+S.push({crumb:'Practice 2b (1/2)', html:`<div class="slide">${questionSlide({
+  kind:'practice', exercise:'Activity 2b', letter:'1&ndash;3',
+  instruction:'Complete each sentence with a connective pair (both&hellip;and, whether&hellip;or, not only&hellip;but also, neither&hellip;nor, either&hellip;or, rather&hellip;or).',
+  prompt:`<div class="example-block"><div class="lab">Example</div>Would you <strong>rather</strong> visit the Arctic <strong>or</strong> the Antarctic?</div>
+    <div class="item-list" style="margin-top:12px;">
+      <div class="item-row"><span class="letter">1</span>They can't decide<span class="blank"></span>to travel north<span class="blank"></span>south.</div>
+      <div class="item-row"><span class="letter">2</span>I enjoy<span class="blank"></span>cold places<span class="blank"></span>hot places.</div>
+      <div class="item-row"><span class="letter">3</span>I am<span class="blank"></span>keen<span class="blank"></span>excited about visiting Antarctica.</div>
+    </div>`,
+  answerHtml:`<div class="lab">Answers</div>
+    1) They can't decide <strong>whether</strong> to travel north <strong>or</strong> south.<br>
+    2) I enjoy <strong>both</strong> cold places <strong>and</strong> hot places.<br>
+    3) I am <strong>not only</strong> keen <strong>but also</strong> excited about visiting Antarctica.`
+})}</div>`});
+
+/* ---------- PRACTICE 2b (last two) ---------- */
+S.push({crumb:'Practice 2b (2/2)', html:`<div class="slide">${questionSlide({
+  kind:'practice', exercise:'Activity 2b', letter:'4&ndash;5',
+  instruction:'Complete the last two sentences with a connective pair.',
+  prompt:`<div class="item-list">
+      <div class="item-row"><span class="letter">4</span>I'd like to visit<span class="blank"></span>the Arctic<span class="blank"></span>the Antarctic.</div>
+      <div class="item-row"><span class="letter">5</span><span class="blank"></span>is it cold<span class="blank"></span>deserted.</div>
+    </div>`,
+  answerHtml:`<div class="lab">Answers</div>
+    4) I'd like to visit <strong>either</strong> the Arctic <strong>or</strong> the Antarctic.<br>
+    5) <strong>Neither</strong> is it cold <strong>nor</strong> deserted.`
+})}</div>`});
+
+/* ========================================================
+   WRITING PRACTICE: 2c
+   ======================================================== */
+S.push({crumb:'Writing Practice', section:true, html:`
+  <div class="slide section-slide"><div class="card">
+    <div class="section-num">Activity 2c</div>
+    <h2>Describe the polar regions</h2>
+    <p class="section-sub">Describe the polar regions to someone trying to decide which region to visit. Write five of your own sentences &mdash; include facts, opinions and some figurative expressions, and use connectives to link and compare your ideas.</p>
+  </div></div>`});
+
+S.push({crumb:'Writing Checklist', html:`
+  <div class="slide"><div class="card concept-box">
+    ${badge('write')} <span class="chip">Before you write</span>
+    <h2 class="q-title">Success checklist</h2>
+    <div class="checklist">
+      <div class="check-item"><span class="ico">✓</span>Include facts (checkable information) about each region</div>
+      <div class="check-item"><span class="ico">✓</span>Include at least one opinion (how you feel, what you'd prefer)</div>
+      <div class="check-item"><span class="ico">✓</span>Use at least one figurative expression</div>
+      <div class="check-item"><span class="ico">✓</span>Use connectives to link and compare ideas</div>
+      <div class="check-item"><span class="ico">✓</span>Try a paired connective (both&hellip;and, either&hellip;or&hellip;)</div>
+      <div class="check-item"><span class="ico">✓</span>Write five full, well-punctuated sentences</div>
+    </div>
+    <div class="example-block" style="margin-top:16px;"><div class="lab">Example answer</div>The Antarctic is colder than the Arctic, but I think it is more interesting.</div>
+  </div></div>`});
+
+/* ---------- HOW AM I DOING? ---------- */
+S.push({crumb:'How am I doing?', html:`
+  <div class="slide"><div class="card concept-box">
+    ${badge('concept')}
+    <h2 class="q-title">How am I doing?</h2>
+    <div class="selfcheck-box">
+      <div class="slab">Self-check</div>
+      <div class="sq">☐ Can you compare two things using facts and opinions?</div>
+      <div class="sq">☐ Can you use connectives to link and compare ideas?</div>
+    </div>
+  </div></div>`});
+
+/* ---------- CLOSING ---------- */
+S.push({crumb:'Session complete', section:true, html:`
+  <div class="slide closing-slide"><div class="card">
+    <div class="badge focus" style="margin:0 auto 16px;">Session complete</div>
+    <h2>Nicely done!</h2>
+    <p class="section-sub">You've compared facts and opinions, explored the figurative expression "poles apart," learned about the ant- prefix, and practised connectives &mdash; including connective pairs.</p>
+    <div class="wb-ref"><div class="pg"><span>Source</span>Learner's Book Session 5.1</div><div class="pg"><span>Pages</span>128&ndash;131</div></div>
+  </div></div>`});
+
+/* RENDER + NAV */
+const stage = document.getElementById('stage');
+const dotsEl = document.getElementById('dots');
+const counterEl = document.getElementById('counter');
+const crumbEl = document.getElementById('crumbCurrent');
+const navLabel = document.getElementById('navLabel');
+let current = 0;
+S.forEach((s, i)=>{
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = s.html.trim();
+  const el = wrapper.firstChild;
+  el.dataset.index = i;
+  stage.appendChild(el);
+  const dot = document.createElement('div');
+  dot.className = 'dot' + (s.section ? ' section-start' : '');
+  dot.addEventListener('click', ()=>goTo(i));
+  dotsEl.appendChild(dot);
+});
+function render(){
+  document.querySelectorAll('.slide').forEach((el,i)=>{ el.classList.toggle('active', i===current); });
+  document.querySelectorAll('.dot').forEach((el,i)=>{ el.classList.toggle('active', i===current); });
+  counterEl.textContent = `${current+1} / ${S.length}`;
+  crumbEl.textContent = S[current].crumb;
+  document.getElementById('prevBtn').disabled = current===0;
+  document.getElementById('nextBtn').disabled = current===S.length-1;
+  navLabel.textContent = current===S.length-1 ? 'The end 🎉' : (current===0 ? 'Tap to begin' : 'Swipe or tap arrows');
+  document.querySelectorAll('.dot').forEach((el,i)=>{ if(i===current) el.scrollIntoView({inline:'center', block:'nearest', behavior:'smooth'}); });
+}
+function goTo(i){ if(i<0 || i>=S.length) return; current = i; render(); }
+document.getElementById('prevBtn').addEventListener('click', ()=>goTo(current-1));
+document.getElementById('nextBtn').addEventListener('click', ()=>goTo(current+1));
+document.addEventListener('keydown', (e)=>{ if(e.key==='ArrowRight') goTo(current+1); if(e.key==='ArrowLeft') goTo(current-1); });
+let touchStartX = null;
+stage.addEventListener('touchstart', e=>{touchStartX = e.touches[0].clientX;});
+stage.addEventListener('touchend', e=>{
+  if(touchStartX===null) return;
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if(Math.abs(dx) > 50){ dx<0 ? goTo(current+1) : goTo(current-1); }
+  touchStartX = null;
+});
+function toggleAnswer(id, btn){
+  const panel = document.getElementById(id);
+  const opening = !panel.classList.contains('open');
+  panel.classList.toggle('open');
+  btn.innerHTML = opening
+    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg> Hide answer`
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Reveal answer`;
+}
+render();
+</script>
+</body>
+</html>
