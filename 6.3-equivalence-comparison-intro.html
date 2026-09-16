@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6.3 Equivalence & Comparison 🎭</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #1e3a5f;
+    --sky-mid: #2d5282;
+    --sun: #f6c343;
+    --sun-pale: #fef9e7;
+    --coral: #e8603c;
+    --coral-pale: #fdf0ec;
+    --mint: #3aaf85;
+    --mint-pale: #e8f8f2;
+    --lavender: #7c6fcd;
+    --lavender-pale: #f0eefb;
+    --paper: #fffef9;
+    --ink: #1a2332;
+    --muted: #7a8899;
+    --border: rgba(0,0,0,0.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: linear-gradient(160deg, #0f2540 0%, #1e3a5f 40%, #2d5282 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 45% 8%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(2px 2px at 65% 22%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 5%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 92% 35%, rgba(255,255,255,0.4) 0%, transparent 100%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .hero { position: relative; z-index: 1; text-align: center; padding: 3rem 2rem 1.6rem; color: white; }
+  .hero-badge { display: inline-block; background: var(--sun); color: var(--sky); font-family: 'Fredoka One', cursive; font-size: 0.85rem; letter-spacing: 0.05em; padding: 0.35rem 1.2rem; border-radius: 20px; margin-bottom: 1.1rem; box-shadow: 0 2px 12px rgba(246,195,67,0.4); }
+  .hero h1 { font-family: 'Fredoka One', cursive; font-size: clamp(2.1rem, 5.5vw, 3.4rem); line-height: 1.1; margin-bottom: 0.7rem; text-shadow: 0 2px 20px rgba(0,0,0,0.3); }
+  .hero h1 .accent { color: var(--sun); }
+  .hero p.intro { font-size: 1rem; line-height: 1.65; opacity: 0.88; max-width: 540px; margin: 0 auto 1.6rem; }
+
+  .progress-wrap { display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+  .prog-step { display: flex; align-items: center; gap: 0.4rem; background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 0.35rem 0.9rem; font-size: 0.78rem; font-weight: 700; color: rgba(255,255,255,0.7); cursor: pointer; transition: all 0.2s; }
+  .prog-step:hover, .prog-step.done { background: rgba(255,255,255,0.22); color: white; border-color: rgba(255,255,255,0.4); }
+  .prog-step.active { background: var(--sun); color: var(--sky); border-color: var(--sun); box-shadow: 0 2px 12px rgba(246,195,67,0.4); }
+
+  .sheet { position: relative; z-index: 1; background: var(--paper); border-radius: 24px 24px 0 0; margin-top: 1rem; padding: 0 0 3rem; min-height: 60vh; box-shadow: 0 -8px 40px rgba(0,0,0,0.25); }
+
+  .section { padding: 2.6rem 2rem 0; max-width: 820px; margin: 0 auto; display: none; }
+  .section.active { display: block; }
+  .section-eyebrow { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1rem; }
+  .eyebrow-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Fredoka One', cursive; font-size: 1rem; color: white; flex-shrink: 0; }
+  .num-coral { background: var(--coral); } .num-mint { background: var(--mint); }
+  .num-sun { background: var(--sun); color: var(--sky); } .num-lav { background: var(--lavender); }
+  .eyebrow-label { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .section h2 { font-family: 'Fredoka One', cursive; font-size: clamp(1.5rem, 3.2vw, 2rem); color: var(--sky); margin-bottom: 0.6rem; line-height: 1.2; }
+  .section .lead { font-size: 1rem; line-height: 1.7; color: #3a4a5a; margin-bottom: 1.5rem; }
+  .section .lead strong { color: var(--coral); }
+
+  .wonder-box { background: linear-gradient(135deg, var(--sky) 0%, var(--sky-mid) 100%); color: white; border-radius: 16px; padding: 1.6rem 1.8rem; margin-bottom: 1.6rem; position: relative; overflow: hidden; }
+  .wonder-box::after { content: '🎭'; position: absolute; right: 1.3rem; top: 50%; transform: translateY(-50%); font-size: 2.8rem; opacity: 0.3; }
+  .wonder-box p { font-size: 0.98rem; line-height: 1.65; max-width: 85%; }
+  .wonder-box strong { color: var(--sun); }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.2rem; }
+  .chip { padding: 0.45rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; }
+  .chip.coral { background: var(--coral-pale); color: var(--coral); border-color: #f8c5b8; }
+  .chip.mint  { background: var(--mint-pale);  color: var(--mint);  border-color: #b8ebd8; }
+  .chip.sun   { background: var(--sun-pale);   color: #b8860b;      border-color: #f8e0a0; }
+  .chip.lav   { background: var(--lavender-pale); color: var(--lavender); border-color: #d0caef; }
+  .chip:hover { transform: scale(1.05); }
+  .concept-reveal { background: var(--paper); border-left: 4px solid var(--coral); border-radius: 0 10px 10px 0; padding: 1rem 1.2rem; font-size: 0.9rem; line-height: 1.7; margin-top: 0.5rem; display: none; animation: fadeIn 0.3s ease; }
+  .concept-reveal.show { display: block; }
+  .concept-reveal.mint-border { border-color: var(--mint); }
+  .concept-reveal.sun-border  { border-color: var(--sun); }
+  .concept-reveal.lav-border  { border-color: var(--lavender); }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+
+  .demo-zone { background: white; border: 2px solid var(--border); border-radius: 16px; padding: 1.6rem; margin-bottom: 1.5rem; }
+  .demo-zone h3 { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: var(--sky); margin-bottom: 0.3rem; }
+  .demo-zone .hint { font-size: 0.76rem; color: var(--muted); font-family: 'DM Mono', monospace; margin-bottom: 1.1rem; }
+
+  .btn { border: none; border-radius: 10px; padding: 0.65rem 1.3rem; font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 800; cursor: pointer; transition: all 0.15s; letter-spacing: 0.02em; }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
+  .btn:active { transform: translateY(0); }
+  .btn-coral { background: var(--coral); color: white; }
+  .btn-mint  { background: var(--mint);  color: white; }
+  .btn-sun   { background: var(--sun);   color: var(--sky); }
+  .btn-lav   { background: var(--lavender); color: white; }
+  .btn-ghost { background: #f0f2f5; color: var(--muted); }
+
+  .choice-row { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .choice-btn { flex: 1; min-width: 140px; background: #f5f7fa; border: 2px solid var(--border); border-radius: 12px; padding: 0.9rem; font-family: 'Fredoka One', cursive; font-size: 1rem; color: var(--sky); cursor: pointer; transition: all 0.15s; text-align: center; }
+  .choice-btn:hover { border-color: var(--lavender); transform: translateY(-2px); }
+  .choice-btn.correct { background: var(--mint-pale); border-color: var(--mint); color: #1b6b4d; }
+  .choice-btn.wrong { background: var(--coral-pale); border-color: var(--coral); color: #a8391f; }
+  .choice-feedback { font-size: 0.9rem; line-height: 1.7; color: #3a4a5a; background: #f5f7fa; border-radius: 10px; padding: 1rem 1.2rem; display: none; }
+  .choice-feedback.show { display: block; animation: fadeIn 0.3s ease; }
+
+  .shortcut-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .shortcut-panel { border-radius: 12px; padding: 1.1rem; }
+  .shortcut-panel.slow { background: var(--coral-pale); border: 2px solid #f8c5b8; }
+  .shortcut-panel.fast { background: var(--mint-pale); border: 2px solid #b8ebd8; }
+  .shortcut-panel .sp-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem; }
+  .shortcut-panel .sp-step { font-family: 'DM Mono', monospace; font-size: 0.9rem; color: var(--sky); line-height: 2; }
+
+  .book-callout { background: var(--sun-pale); border: 2px dashed var(--sun); border-radius: 14px; padding: 1.4rem 1.6rem; margin-top: 1.8rem; margin-bottom: 1rem; display: flex; gap: 1rem; align-items: flex-start; }
+  .book-callout .bc-icon { font-size: 1.8rem; flex-shrink: 0; }
+  .book-callout h4 { font-family: 'Fredoka One', cursive; font-size: 1.05rem; color: #b8860b; margin-bottom: 0.4rem; }
+  .book-callout p { font-size: 0.9rem; line-height: 1.6; color: #5a4a1a; }
+  .book-callout p strong { color: var(--coral); }
+
+  .checklist { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1rem; }
+  .check-item { display: flex; align-items: center; gap: 0.8rem; background: white; border: 2px solid var(--border); border-radius: 10px; padding: 0.7rem 1rem; cursor: pointer; transition: all 0.15s; }
+  .check-item:hover { border-color: var(--mint); }
+  .check-item.checked { background: var(--mint-pale); border-color: var(--mint); }
+  .check-box { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--muted); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: white; }
+  .check-item.checked .check-box { background: var(--mint); border-color: var(--mint); }
+  .check-item span.txt { font-size: 0.9rem; color: var(--ink); font-weight: 600; }
+
+  .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 1.5rem 0; }
+
+  .nav-row { display: flex; justify-content: space-between; align-items: center; padding: 2rem 2rem 0; max-width: 820px; margin: 0 auto; }
+  .btn-next { background: var(--sky); color: white; border: none; border-radius: 50px; padding: 0.85rem 1.8rem; font-family: 'Fredoka One', cursive; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 0.6rem; transition: all 0.2s; box-shadow: 0 4px 16px rgba(30,58,95,0.25); }
+  .btn-next:hover { background: var(--sky-mid); transform: translateY(-2px); }
+  .btn-prev { background: transparent; color: var(--muted); border: 2px solid var(--border); border-radius: 50px; padding: 0.85rem 1.5rem; font-family: 'Fredoka One', cursive; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; }
+  .btn-prev:hover { border-color: var(--muted); color: var(--ink); }
+  .btn-prev:disabled, .btn-next:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+  @media (max-width: 560px) {
+    .hero { padding: 2.2rem 1.2rem 1.2rem; }
+    .section { padding: 2rem 1.2rem 0; }
+    .nav-row { padding: 1.6rem 1.2rem 0; }
+    .shortcut-grid { grid-template-columns: 1fr; }
+    .choice-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="hero-badge">UNIT 6 · 6.3</div>
+    <h1>Equivalence &amp; <span class="accent">Comparison</span> 🎭</h1>
+    <p class="intro">Same value, three different outfits — a fraction, a decimal, and a percentage. Let's warm up before you open your workbook.</p>
+    <div class="progress-wrap">
+      <div class="prog-step active" onclick="showSection(0)">1 · Quick Recall</div>
+      <div class="prog-step" onclick="showSection(1)">2 · Same Value, Different Outfit</div>
+      <div class="prog-step" onclick="showSection(2)">3 · Exit Ticket</div>
+    </div>
+  </div>
+
+  <div class="sheet">
+
+    <!-- ══ SECTION 0: QUICK RECALL ══ -->
+    <div class="section active" id="sec-0">
+      <div class="section-eyebrow">
+        <div class="eyebrow-num num-lav">1</div>
+        <span class="eyebrow-label">Before we start</span>
+      </div>
+      <h2>🔑 Two skills you already have</h2>
+      <p class="lead">Tap each word. You met all of these already — <strong>this lesson just puts them to work.</strong></p>
+
+      <div class="chip-row">
+        <span class="chip coral" onclick="revealTerm('factor')">Common factor</span>
+        <span class="chip lav" onclick="revealTerm('hcf')">Highest common factor (HCF)</span>
+        <span class="chip mint" onclick="revealTerm('simplify')">Simplify</span>
+        <span class="chip sun" onclick="revealTerm('equivalent')">Equivalent</span>
+      </div>
+
+      <div class="concept-reveal" id="cr-factor">
+        <strong>Common factor</strong> — a number that divides evenly into two other numbers. You found these back in Unit 2.3.<br><br>
+        <em>Common factors of 12 and 18: 1, 2, 3, 6</em>
+      </div>
+      <div class="concept-reveal lav-border" id="cr-hcf">
+        <strong>Highest common factor (HCF)</strong> — the biggest number from that list.<br><br>
+        <em>HCF of 12 and 18 is 6 — the same number you'll use today to simplify fractions in one step.</em>
+      </div>
+      <div class="concept-reveal mint-border" id="cr-simplify">
+        <strong>Simplify</strong> — write a fraction using the smallest possible numbers, without changing its value.<br><br>
+        <em>12/18 simplifies to 2/3.</em>
+      </div>
+      <div class="concept-reveal sun-border" id="cr-equivalent">
+        <strong>Equivalent</strong> — equal in value, even though it looks different.<br><br>
+        <em>1/2, 0.5, and 50% are all equivalent — three outfits, one value.</em>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="demo-zone">
+        <h3>⚡ The shortcut</h3>
+        <div class="hint">SAME FRACTION · TWO WAYS TO SIMPLIFY IT</div>
+        <div class="shortcut-grid">
+          <div class="shortcut-panel slow">
+            <div class="sp-label">The slow way</div>
+            <div class="sp-step">18/24</div>
+            <div class="sp-step">÷2 → 9/12</div>
+            <div class="sp-step">÷3 → 3/4</div>
+          </div>
+          <div class="shortcut-panel fast">
+            <div class="sp-label">The HCF way</div>
+            <div class="sp-step">18/24</div>
+            <div class="sp-step">HCF of 18 &amp; 24 is 6</div>
+            <div class="sp-step">÷6 → 3/4</div>
+          </div>
+        </div>
+        <button class="btn btn-lav" onclick="askHCF()">Ask the class: HCF of 20 and 24?</button>
+        <div id="hcfAnswer" class="choice-feedback" style="margin-top:0.9rem;"></div>
+      </div>
+    </div>
+
+    <!-- ══ SECTION 1: SAME VALUE, DIFFERENT OUTFIT ══ -->
+    <div class="section" id="sec-1">
+      <div class="section-eyebrow">
+        <div class="eyebrow-num num-coral">2</div>
+        <span class="eyebrow-label">Fractions · Decimals · Percentages</span>
+      </div>
+      <h2>🎭 Same value, different outfit</h2>
+      <p class="lead">To compare or order these three, you first have to <strong>put them in the same outfit</strong> — usually decimals.</p>
+
+      <div class="wonder-box">
+        <p>Zara says <strong>3/10</strong> is the same as <strong>3.10</strong>. Miko says it's the same as <strong>0.3</strong>. Who's right?</p>
+      </div>
+
+      <div class="choice-row">
+        <button class="choice-btn" onclick="checkMisconception('zara', this)">Zara is right</button>
+        <button class="choice-btn" onclick="checkMisconception('miko', this)">Miko is right</button>
+      </div>
+      <div class="choice-feedback" id="misconceptionFb"></div>
+
+      <div class="divider"></div>
+
+      <div class="demo-zone">
+        <h3>⚖️ Which is bigger?</h3>
+        <div class="hint">60% OR 3/5 — CONVERT BEFORE YOU DECIDE</div>
+        <div class="choice-row">
+          <button class="choice-btn" onclick="checkCompare('a', this)">60% is bigger</button>
+          <button class="choice-btn" onclick="checkCompare('b', this)">3/5 is bigger</button>
+          <button class="choice-btn" onclick="checkCompare('c', this)">They're equal</button>
+        </div>
+        <div class="choice-feedback" id="compareFb"></div>
+      </div>
+
+      <div class="book-callout">
+        <div class="bc-icon">📖</div>
+        <div>
+          <h4>Open your Workbook — page 92, Exercise 6.3</h4>
+          <p>Start with <strong>Focus questions 1–4</strong>, then move on to <strong>Practice 5–7</strong> if you have time. Use the HCF shortcut and the "convert to decimals" strategy from today.</p>
+        </div>
+      </div>
+
+      <div class="checklist">
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box">✓</div>
+          <span class="txt">I can simplify a fraction using the HCF</span>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box">✓</div>
+          <span class="txt">I know a fraction, decimal, and percentage can be equal</span>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box">✓</div>
+          <span class="txt">I can convert to compare mixed sets</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SECTION 2: EXIT TICKET ══ -->
+    <div class="section" id="sec-2">
+      <div class="section-eyebrow">
+        <div class="eyebrow-num num-sun">3</div>
+        <span class="eyebrow-label">After workbook time</span>
+      </div>
+      <h2>🎟️ Exit Ticket</h2>
+      <p class="lead">Three quick checks before you pack away — no workbook needed. Hands up or whiteboards for each one, then we'll reveal.</p>
+
+      <div class="demo-zone">
+        <h3>1. Simplify</h3>
+        <div class="hint">WRITE 16/20 IN ITS SIMPLEST FORM</div>
+        <div class="choice-row" id="et1-row">
+          <button class="choice-btn" onclick="etCheck(1,'a',this,false)">8/10</button>
+          <button class="choice-btn" onclick="etCheck(1,'b',this,true)">4/5</button>
+          <button class="choice-btn" onclick="etCheck(1,'c',this,false)">2/5</button>
+          <button class="choice-btn" onclick="etCheck(1,'d',this,false)">1/4</button>
+        </div>
+        <div class="choice-feedback" id="et1-fb"></div>
+      </div>
+
+      <div class="demo-zone">
+        <h3>2. Spot the odd one out</h3>
+        <div class="hint">WHICH ONE IS <em>NOT</em> EQUIVALENT TO 0.4?</div>
+        <div class="choice-row" id="et2-row">
+          <button class="choice-btn" onclick="etCheck(2,'a',this,false)">2/5</button>
+          <button class="choice-btn" onclick="etCheck(2,'b',this,false)">40%</button>
+          <button class="choice-btn" onclick="etCheck(2,'c',this,false)">4/10</button>
+          <button class="choice-btn" onclick="etCheck(2,'d',this,true)">4/5</button>
+        </div>
+        <div class="choice-feedback" id="et2-fb"></div>
+      </div>
+
+      <div class="demo-zone">
+        <h3>3. Order them</h3>
+        <div class="hint">SMALLEST FIRST: 0.55 &nbsp;·&nbsp; 60% &nbsp;·&nbsp; 1/2</div>
+        <div class="choice-row" id="et3-row">
+          <button class="choice-btn" onclick="etCheck(3,'a',this,false)">0.55, 1/2, 60%</button>
+          <button class="choice-btn" onclick="etCheck(3,'b',this,true)">1/2, 0.55, 60%</button>
+          <button class="choice-btn" onclick="etCheck(3,'c',this,false)">60%, 0.55, 1/2</button>
+        </div>
+        <div class="choice-feedback" id="et3-fb"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="wonder-box" style="background:linear-gradient(135deg, var(--lavender) 0%, #5f4fae 100%);">
+        <p>Before you go — how confident do you feel with today's work? Show me on your fingers: <strong>1</strong> (still shaky), <strong>3</strong> (getting there), <strong>5</strong> (I've got this).</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" id="prevBtn" onclick="prevSection()" disabled>← Back</button>
+    <button class="btn-next" id="nextBtn" onclick="nextSection()">Next →</button>
+  </div>
+
+<script>
+let current = 0;
+const total = 3;
+
+function showSection(i) {
+  document.querySelectorAll('.section').forEach((s, idx) => s.classList.toggle('active', idx === i));
+  document.querySelectorAll('.prog-step').forEach((d, idx) => {
+    d.classList.toggle('active', idx === i);
+    d.classList.toggle('done', idx < i);
+  });
+  document.getElementById('prevBtn').disabled = (i === 0);
+  document.getElementById('nextBtn').innerHTML = (i === total - 1) ? "Done 🎉" : "Next →";
+  current = i;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+function nextSection() { if (current < total - 1) showSection(current + 1); }
+function prevSection() { if (current > 0) showSection(current - 1); }
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight') nextSection();
+  if (e.key === 'ArrowLeft') prevSection();
+});
+
+function revealTerm(id) {
+  const el = document.getElementById('cr-' + id);
+  el.classList.toggle('show');
+}
+
+function askHCF() {
+  const el = document.getElementById('hcfAnswer');
+  el.classList.add('show');
+  el.innerHTML = "Factors of 20: 1, 2, 4, 5, 10, 20 &nbsp;·&nbsp; Factors of 24: 1, 2, 3, 4, 6, 8, 12, 24<br><strong style='color:var(--mint);'>HCF = 4</strong> — so 20/24 simplifies straight to 5/6.";
+}
+
+function checkMisconception(choice, btn) {
+  document.querySelectorAll('#sec-1 .choice-row:nth-of-type(1) .choice-btn').forEach(b => b.classList.remove('correct','wrong'));
+  const fb = document.getElementById('misconceptionFb');
+  fb.classList.add('show');
+  if (choice === 'miko') {
+    btn.classList.add('correct');
+    fb.innerHTML = "<strong style='color:var(--mint);'>Miko is right.</strong> The 3 in 3/10 is in the tenths place, so 3/10 = 0.3. Zara added a whole number by mistake — 3.10 means 3 whole ones and one tenth, which is much bigger.";
+  } else {
+    btn.classList.add('wrong');
+    fb.innerHTML = "Not quite — 3.10 means <em>three whole ones</em> plus one tenth, which is far bigger than 3/10. Check the place value: 3/10 belongs in the tenths column, so it's 0.3. Miko is right.";
+  }
+}
+
+function checkCompare(choice, btn) {
+  document.querySelectorAll('#sec-1 .demo-zone .choice-row .choice-btn').forEach(b => b.classList.remove('correct','wrong'));
+  const fb = document.getElementById('compareFb');
+  fb.classList.add('show');
+  if (choice === 'c') {
+    btn.classList.add('correct');
+    fb.innerHTML = "<strong style='color:var(--mint);'>They're equal!</strong> 60% = 0.6, and 3/5 = 3 ÷ 5 = 0.6. Same outfit, same value.";
+  } else {
+    btn.classList.add('wrong');
+    fb.innerHTML = "Convert both to decimals first: 60% = 0.6, and 3/5 = 3 ÷ 5 = 0.6. They're actually equal — a good reminder to always convert before comparing.";
+  }
+}
+
+function toggleCheck(el) { el.classList.toggle('checked'); }
+
+const etExplain = {
+  1: { correct: "4/5", text: "16/20 — HCF of 16 and 20 is 4. Divide both by 4: <strong style='color:var(--mint);'>4/5</strong>. (8/10 is equivalent but not simplest form.)" },
+  2: { correct: "4/5", text: "2/5, 40%, and 4/10 are all equal to 0.4. <strong style='color:var(--mint);'>4/5</strong> = 0.8 — that's the odd one out." },
+  3: { correct: "1/2, 0.55, 60%", text: "Convert first: 1/2 = 0.5, 0.55 stays as is, 60% = 0.6. Smallest to largest: <strong style='color:var(--mint);'>1/2, 0.55, 60%</strong>." }
+};
+
+function etCheck(qNum, choice, btn, isCorrect) {
+  document.querySelectorAll('#et' + qNum + '-row .choice-btn').forEach(b => b.classList.remove('correct','wrong'));
+  btn.classList.add(isCorrect ? 'correct' : 'wrong');
+  const fb = document.getElementById('et' + qNum + '-fb');
+  fb.classList.add('show');
+  fb.innerHTML = etExplain[qNum].text;
+}
+</script>
+</body>
+</html>
