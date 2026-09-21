@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5GP.03 How Environments Change Over Time — Interactive Lesson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#1F7A4D; --green-dark:#123D28; --green-light:#E1F3EA; --green-mid:#4FA974;
+  --coral:#E0563F; --coral-light:#FCE9E5;
+  --amber:#CE9526; --amber-light:#FAF1DC;
+  --mint:#2E9E76; --mint-light:#E3F5EC;
+  --sky:#2B79C9; --sky-light:#E8F1FB;
+  --ink:#20232B; --ink-soft:#585E6C;
+  --paper:#FFFFFF; --cream:#F7F5F1; --line:#E1DFEA;
+  --r-lg:22px; --r-md:14px; --r-sm:8px;
+  --shadow: 0 10px 30px rgba(18,61,40,.14);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0; background:var(--cream); color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;
+  overflow:hidden;
+}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+
+#app{position:relative; width:100vw; height:100vh; display:flex; flex-direction:column;}
+
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 28px; background:var(--paper); border-bottom:1px solid var(--line);
+  flex:0 0 auto; z-index:20;
+}
+.crumb{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft); font-weight:600;}
+.crumb .tag{
+  background:var(--green); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12px;
+  padding:5px 12px; border-radius:100px; letter-spacing:.3px;
+}
+.crumb .sep{color:#C6C2D6;}
+.crumb .current{color:var(--green-dark);}
+
+.dots{display:flex; gap:6px; align-items:center; flex-wrap:wrap; max-width:40vw;}
+.dot{width:9px; height:9px; border-radius:50%; background:#DCE6DF; border:none; cursor:pointer; transition:all .25s;}
+.dot.active{ background:var(--green); width:22px; border-radius:6px;}
+.dot:hover{background:var(--green-mid);}
+.counter{font-size:12px; color:var(--ink-soft); font-weight:600; font-variant-numeric:tabular-nums; min-width:50px; text-align:right;}
+
+.stage{position:relative; flex:1 1 auto; overflow:hidden;}
+.slide{
+  position:absolute; inset:0; opacity:0; pointer-events:none;
+  transform:translateX(30px) scale(.99);
+  transition:opacity .45s ease, transform .45s ease;
+  overflow-y:auto;
+}
+.slide.active{opacity:1; pointer-events:auto; transform:translateX(0) scale(1);}
+.slide-inner{max-width:1180px; margin:0 auto; padding:40px 44px 90px; min-height:100%;}
+
+.navbtn{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:15;
+  width:46px; height:46px; border-radius:50%; border:1px solid var(--line);
+  background:var(--paper); box-shadow:var(--shadow); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; color:var(--green-dark);
+  transition:.2s;
+}
+.navbtn:hover{background:var(--green); color:#fff; border-color:var(--green);}
+.navbtn.disabled{opacity:.25; pointer-events:none;}
+#prevBtn{left:16px;} #nextBtn{right:16px;}
+.navbtn svg{width:20px; height:20px;}
+
+.chevron-badge{
+  display:inline-flex; align-items:center; gap:10px; background:var(--green); color:#fff;
+  padding:9px 20px 9px 16px; font-family:'Poppins'; font-weight:700; font-size:15px;
+  clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%); margin-bottom:16px;
+}
+.eyebrow{
+  font-family:'Poppins'; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--coral); margin-bottom:8px;
+}
+h1.slide-title{font-size:32px; font-weight:800; color:var(--green-dark); margin:0 0 6px; line-height:1.15;}
+h2.section-title{font-size:25px; font-weight:700; color:var(--green-dark); margin:0 0 14px;}
+h3.mini-title{font-size:17px; font-weight:700; color:var(--ink); margin:0 0 8px;}
+p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
+.lede{font-size:17px; color:var(--ink-soft); margin-bottom:22px; max-width:740px;}
+.term{color:var(--coral); font-weight:700; cursor:help; border-bottom:1.5px dotted var(--coral);}
+
+.box{
+  border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--paper);
+  box-shadow:var(--shadow);
+}
+.box-head{
+  padding:12px 20px; font-family:'Poppins'; font-weight:700; font-size:14px; color:#fff;
+  display:flex; align-items:center; gap:8px;
+}
+.box-body{padding:20px 22px;}
+.box.green .box-head{background:var(--green);}
+.box.coral .box-head{background:var(--coral);}
+.box.amber .box-head{background:var(--amber);}
+.box.mint .box-head{background:var(--mint);}
+.box.sky .box-head{background:var(--sky);}
+
+.pill{
+  display:inline-block; padding:5px 13px; border-radius:100px; font-size:12.5px; font-weight:700;
+  background:var(--green-light); color:var(--green-dark); margin:3px 5px 3px 0;
+}
+
+.hint{
+  font-size:12.5px; color:var(--ink-soft); background:var(--green-light); border-radius:100px;
+  padding:6px 14px; display:inline-flex; gap:6px; align-items:center; margin-bottom:18px; font-weight:600;
+}
+.hint svg{width:14px; height:14px; flex:0 0 auto;}
+
+.res-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:14px;}
+.res-chip{display:flex; align-items:center; gap:8px; padding:9px 16px; border-radius:100px; background:var(--sky-light); color:var(--sky); font-family:'Poppins'; font-weight:700; font-size:12.5px;}
+.res-chip svg{width:15px; height:15px;}
+
+/* ============ SLIDE 0 : COVER ============ */
+.cover{
+  height:100%; display:flex; align-items:center; justify-content:center; position:relative;
+  background:
+    radial-gradient(ellipse at 20% 15%, rgba(255,255,255,.10), transparent 45%),
+    linear-gradient(160deg, var(--green) 0%, var(--green-dark) 62%, #0B2418 100%);
+  overflow:hidden;
+}
+.cover-leaf{position:absolute; opacity:.13; background:#fff; border-radius:0% 100% 0% 100%;}
+.cover-content{position:relative; z-index:2; text-align:center; color:#fff; max-width:800px; padding:0 30px;}
+.cover-content .unit{font-family:'Poppins'; font-weight:700; letter-spacing:3px; font-size:13px; text-transform:uppercase; color:#CFEBDB; margin-bottom:14px;}
+.cover-content h1{font-size:44px; font-weight:800; margin:0 0 10px; line-height:1.1;}
+.cover-content .sub{font-size:17px; color:#E3F3EA; font-weight:500; margin-bottom:34px;}
+.cover-chip-row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:38px;}
+.cover-chip{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff; padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600; backdrop-filter:blur(4px);}
+.cover-start{
+  background:var(--coral); color:#fff; border:none; font-family:'Poppins'; font-weight:700; font-size:16px;
+  padding:15px 34px; border-radius:100px; cursor:pointer; box-shadow:0 12px 26px rgba(224,86,63,.4);
+  display:inline-flex; align-items:center; gap:10px; transition:.2s;
+}
+.cover-start:hover{transform:translateY(-2px); box-shadow:0 16px 30px rgba(224,86,63,.5);}
+.cover-note{margin-top:22px; font-size:13px; color:#BFE0CE;}
+
+/* ============ objectives ============ */
+.obj-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 22px; margin-top:6px;}
+@media (max-width:800px){.obj-grid{grid-template-columns:1fr;}}
+.obj-card{display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:var(--r-md); background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.2s;}
+.obj-card:hover{border-color:var(--green-mid); box-shadow:var(--shadow);}
+.obj-num{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--green-light); color:var(--green-dark); font-family:'Poppins'; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;}
+.obj-card.done .obj-num{background:var(--green); color:#fff;}
+.obj-card.done p{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:#C6C2D6;}
+.obj-card p{margin:0; font-size:13.8px; line-height:1.5;}
+
+/* ============ photo compare / timeline ============ */
+.photo-compare{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:16px;}
+@media (max-width:820px){.photo-compare{grid-template-columns:1fr;}}
+.photo-card{position:relative; border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--shadow); border:1px solid var(--line); background:#fff;}
+.photo-card img{display:block; width:100%; height:230px; object-fit:cover; background:var(--green-light);}
+.photo-label{position:absolute; top:12px; left:12px; padding:5px 14px; border-radius:100px; font-family:'Poppins'; font-weight:700; font-size:11.5px; color:#fff; letter-spacing:.6px; text-transform:uppercase; box-shadow:0 4px 10px rgba(0,0,0,.2);}
+.photo-label.before{background:var(--mint);}
+.photo-label.after{background:var(--coral);}
+.photo-cap{padding:10px 14px; font-size:12.5px; color:var(--ink-soft); border-top:1px solid var(--line);}
+
+/* ============ modelled sentence frame ============ */
+.frame-card{
+  background:linear-gradient(135deg,var(--green-light),#fff); border:1.5px dashed var(--green-mid); border-radius:var(--r-lg);
+  padding:26px 28px; margin-top:18px;
+}
+.frame-card .frame-text{font-family:'Poppins'; font-weight:700; font-size:19px; color:var(--green-dark); line-height:1.7;}
+.frame-blank{display:inline-block; min-width:110px; border-bottom:2.5px solid var(--coral); color:var(--coral); padding:0 8px;}
+.frame-blank.filled{border-bottom-style:solid; font-weight:600;}
+.example-box{margin-top:16px; padding:14px 18px; border-radius:var(--r-md); background:#fff; border:1px solid var(--line); font-size:14.5px; color:var(--ink-soft); font-style:italic;}
+
+/* ============ tabs ============ */
+.tabs{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+.tab-btn{
+  padding:10px 18px; border-radius:100px; border:1.5px solid var(--line); background:#fff; cursor:pointer;
+  font-family:'Poppins'; font-weight:600; font-size:13.5px; color:var(--ink-soft); transition:.2s;
+}
+.tab-btn.active{background:var(--green); border-color:var(--green); color:#fff;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block; animation:fadein .35s;}
+@keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+/* ============ A3 task box ============ */
+.check-item{display:flex; gap:10px; align-items:flex-start; margin-bottom:10px; font-size:14.5px;}
+.check-item svg{flex:0 0 auto; margin-top:2px; width:16px; height:16px; color:var(--green);}
+
+/* ============ quiz ============ */
+.scenario{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); padding:22px 24px; box-shadow:var(--shadow);}
+.quiz-opts{display:flex; gap:12px; margin-top:14px; flex-wrap:wrap;}
+.quiz-opt{
+  flex:1 1 220px; border:1.5px solid var(--line); background:#fff; border-radius:var(--r-md); padding:14px 16px;
+  cursor:pointer; font-weight:700; font-family:'Poppins'; font-size:13.5px; text-align:left; transition:.2s;
+}
+.quiz-opt:hover{border-color:var(--green-mid);}
+.quiz-opt.correct{background:var(--mint-light); border-color:var(--mint); color:#1E6B4E;}
+.quiz-opt.wrong{background:var(--coral-light); border-color:var(--coral); color:#A8362A;}
+.quiz-opt[disabled]{cursor:default;}
+#quizFeedback{margin-top:16px; padding:14px 18px; border-radius:var(--r-md); background:var(--green-light); color:var(--green-dark); font-size:14px; display:none;}
+#quizFeedback.show{display:block;}
+
+/* ============ glossary flip cards ============ */
+.gloss-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:10px;}
+@media (max-width:900px){.gloss-grid{grid-template-columns:repeat(2,1fr);}}
+.gloss-card{height:126px; perspective:800px; cursor:pointer;}
+.gloss-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+.gloss-card.flip .gloss-inner{transform:rotateY(180deg);}
+.gloss-face{
+  position:absolute; inset:0; backface-visibility:hidden; border-radius:var(--r-md); display:flex;
+  align-items:center; justify-content:center; text-align:center; padding:12px; font-size:13.5px;
+}
+.gloss-face.front{background:var(--green); color:#fff; font-family:'Poppins'; font-weight:700; font-size:14.5px;}
+.gloss-face.back{background:var(--paper); border:1.5px solid var(--green-light); color:var(--ink); transform:rotateY(180deg); font-size:12.5px; line-height:1.5;}
+
+/* ============ notebook/A3 checklist ============ */
+.assess-list{margin-top:10px;}
+.assess-item{display:flex; gap:12px; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--line); cursor:pointer;}
+.assess-box{
+  flex:0 0 auto; width:22px; height:22px; border-radius:6px; border:2px solid var(--line); display:flex;
+  align-items:center; justify-content:center; color:#fff; margin-top:1px; transition:.2s;
+}
+.assess-item.checked .assess-box{background:var(--mint); border-color:var(--mint);}
+.assess-item p{margin:0; font-size:14.5px;}
+.assess-progress{height:8px; background:var(--green-light); border-radius:100px; overflow:hidden; margin-top:16px;}
+.assess-fill{height:100%; width:0%; background:var(--mint); transition:.35s;}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="crumb">
+      <span class="tag">5GP.03</span>
+      <span class="sep">/</span>
+      <span class="current">How Environments Change Over Time</span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="counter" id="counter">1 / 8</div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- ================= SLIDE 0 : COVER ================= -->
+    <section class="slide">
+      <div class="cover">
+        <div class="cover-leaf" style="width:220px;height:220px; top:-50px; left:-50px;"></div>
+        <div class="cover-leaf" style="width:160px;height:160px; bottom:-30px; right:-20px;"></div>
+        <div class="cover-leaf" style="width:100px;height:100px; bottom:70px; left:10%;"></div>
+        <div class="cover-content">
+          <div class="unit">Year 6C &middot; Geography Inquiry &middot; Environmental Change Unit</div>
+          <h1>How Environments Change Over Time</h1>
+          <div class="sub">Every place has a story written across years of photos. Today you'll learn to read that story — spotting patterns of change, telling gradual change from sudden change, and explaining what might have caused it.</div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">📷 Timeline evidence</span>
+            <span class="cover-chip">🐢⚡ Gradual vs sudden</span>
+            <span class="cover-chip">🔍 Explain the pattern</span>
+            <span class="cover-chip">✍️ A3 investigation</span>
+          </div>
+          <button class="cover-start" onclick="goTo(1)">
+            Start the lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <div class="cover-note">5GP.03 &middot; Explain how an environment has changed over time</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 1 : TODAY'S LEARNING ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">5GP.03</div>
+        <h1 class="slide-title">We're learning to explain change over time</h1>
+        <p class="lede"><strong>Learning objective:</strong> explain how an environment has changed over time.<br><strong>Success criteria:</strong> I can explain how an environment has changed over time, using photo evidence from different points in time. Tap each goal as you meet it today.</p>
+        <div class="obj-grid" id="objGrid">
+          <div class="obj-card" data-i="1"><div class="obj-num">1</div><p>I can describe exactly what I notice in photos taken at different points in time</p></div>
+          <div class="obj-card" data-i="2"><div class="obj-num">2</div><p>I can use a sentence frame to explain how a place has changed</p></div>
+          <div class="obj-card" data-i="3"><div class="obj-num">3</div><p>I can tell the difference between gradual change and sudden change</p></div>
+          <div class="obj-card" data-i="4"><div class="obj-num">4</div><p>I can look at a new timeline set and explain the pattern of change I see</p></div>
+          <div class="obj-card" data-i="5"><div class="obj-num">5</div><p>I can suggest a possible cause for the change I've identified</p></div>
+        </div>
+        <div style="margin-top:22px;">
+          <span class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Key vocabulary: timeline evidence &middot; gradual change &middot; sudden change &middot; pattern of change &middot; urbanisation &middot; erosion &middot; evidence</span>
+        </div>
+        <div class="box green">
+          <div class="box-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            A3 paper today
+          </div>
+          <div class="box-body">
+            <p style="margin:0;">Today's writing goes on your <strong>A3 paper</strong>, not in your notebook — this screen is for looking, discussing, and thinking.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 2 : TIMELINE EVIDENCE — MODELLED EXAMPLE ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Main teaching</div>
+        <h1 class="slide-title">What is timeline evidence?</h1>
+        <p class="lede">A single photo only shows one moment. <span class="term" data-def="A set of photos of the same kind of place, taken at different points in time, used to show how it has changed.">Timeline evidence</span> means looking at photos from <strong>different points in time</strong> so you can see a genuine pattern of change — and start to explain it.</p>
+
+        <div class="photo-compare">
+          <div class="photo-card">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Aral%20sea%201985%20from%20STS.jpg" alt="The Aral Sea photographed from space in 1985, showing a large inland sea">
+            <span class="photo-label before">1985</span>
+            <div class="photo-cap">The Aral Sea — once one of the largest lakes in the world</div>
+          </div>
+          <div class="photo-card">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Aral%20Sea%201989-2008.jpg" alt="Satellite comparison of the Aral Sea in 1989 and 2008, showing it has shrunk dramatically">
+            <span class="photo-label after">2008</span>
+            <div class="photo-cap">By 2008, the sea had shrunk to a fraction of its former size</div>
+          </div>
+        </div>
+
+        <div class="frame-card">
+          <div class="frame-text">Between <span class="frame-blank filled">1985</span> and <span class="frame-blank filled">2008</span>, this place changed from <span class="frame-blank filled">a huge inland sea</span> to <span class="frame-blank filled">a much smaller lake with dry, cracked seabed</span> because <span class="frame-blank filled">the rivers that fed it were diverted for irrigation</span>.</div>
+          <div class="example-box">This is how a geographer models the pattern of change — always naming the two points in time, describing what's different, and suggesting a cause.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 3 : GRADUAL vs SUDDEN ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Skill focus</div>
+        <h1 class="slide-title">Gradual change or sudden change?</h1>
+        <p class="lede">Not every environment changes at the same speed. Knowing which kind of change you're looking at helps you explain it properly.</p>
+
+        <div class="tabs" id="speedTabs">
+          <button class="tab-btn active" data-tab="gradual">🐢 Gradual change</button>
+          <button class="tab-btn" data-tab="sudden">⚡ Sudden change</button>
+        </div>
+
+        <div class="tab-panel active" id="tab-gradual">
+          <p><span class="term" data-def="A change that happens slowly, often over many years or decades.">Gradual change</span> happens slowly, often over years or decades — like the Aral Sea shrinking, a city growing outward, or land being worn away by <strong>erosion</strong>. You usually need photos taken <strong>years apart</strong> to notice it clearly.</p>
+          <div class="hint" style="margin-top:2px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> The Aral Sea example is gradual change — it took decades.</div>
+        </div>
+
+        <div class="tab-panel" id="tab-sudden">
+          <p><span class="term" data-def="A change that happens quickly, in days or even hours.">Sudden change</span> happens fast — in days, hours, or even minutes — like a wildfire, flood, or landslide. Timeline evidence can be just as useful here, but the gap between photos is much shorter.</p>
+          <div class="photo-compare">
+            <div class="photo-card">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Khao%20Sok%20primary%20tropical%20rainforest,%20southern%20Thailand.jpg" alt="A healthy, dense tropical rainforest canopy before a wildfire">
+              <span class="photo-label before">Before</span>
+              <div class="photo-cap">A healthy forest — full canopy, layers of life</div>
+            </div>
+            <div class="photo-card">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Burnt%20Forest%20at%20Rocky%20Point%20Trail%20of%20Glacier%20National%20Park%20USA.jpg" alt="A burnt forest after a wildfire, with blackened tree trunks">
+              <span class="photo-label after">After</span>
+              <div class="photo-cap">The same kind of forest after a wildfire</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 4 : GUIDED PRACTICE ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Guided practice &middot; New timeline set</div>
+        <h1 class="slide-title">Your turn: explain this pattern of change</h1>
+        <p class="lede">In pairs, look at this new timeline set — a different place and a different type of change to the ones we've just modelled.</p>
+
+        <div class="photo-compare">
+          <div class="photo-card">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Small%20town%20aerial.jpg" alt="Aerial view of a small quiet town surrounded by open land">
+            <span class="photo-label before">Earlier</span>
+            <div class="photo-cap">A small town surrounded by open land</div>
+          </div>
+          <div class="photo-card">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Toronto%20urban%20sprawl.jpg" alt="Aerial view of dense urban development and sprawl">
+            <span class="photo-label after">Later</span>
+            <div class="photo-cap">The same kind of area after urban growth</div>
+          </div>
+        </div>
+
+        <div class="frame-card">
+          <div class="frame-text">Between <span class="frame-blank">______</span> and <span class="frame-blank">______</span>, this place changed from <span class="frame-blank">______</span> to <span class="frame-blank">______</span> because <span class="frame-blank">______</span>.</div>
+        </div>
+
+        <div class="box mint" style="margin-top:20px;">
+          <div class="box-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            On your A3 paper
+          </div>
+          <div class="box-body">
+            <div class="check-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Name what has changed between the two photos</div>
+            <div class="check-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Decide: is this gradual change or sudden change? Explain why</div>
+            <div class="check-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Complete the sentence frame in full</div>
+            <div class="check-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Suggest a possible cause for the change</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 5 : CHECK UNDERSTANDING ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Check your understanding</div>
+        <h1 class="slide-title">Spot the problem with this evidence</h1>
+        <div class="scenario">
+          <p><strong>Scenario:</strong> a student looks at just <strong>one</strong> photo of a dried-up riverbed and says: <em>"This place changed suddenly, all in one day."</em></p>
+          <h3 class="mini-title" style="margin-top:14px;">What's the problem with this conclusion?</h3>
+          <div class="quiz-opts">
+            <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false)">Nothing — one photo is always enough proof of sudden change</button>
+            <button class="quiz-opt" data-correct="true" onclick="answerQuiz(this,true)">One photo alone can't show a pattern — you need photos from more than one point in time to tell if a change was gradual or sudden</button>
+            <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false)">Riverbeds can only ever change gradually, never suddenly</button>
+            <button class="quiz-opt" data-correct="false" onclick="answerQuiz(this,false)">The student should have taken the photo themselves for it to count</button>
+          </div>
+          <div id="quizFeedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 6 : GLOSSARY ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Reference</div>
+        <h1 class="slide-title">Glossary — tap a card to flip it</h1>
+        <div class="gloss-grid" id="glossGrid"></div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 7 : PLENARY / A3 CHECKLIST ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Plenary</div>
+        <h1 class="slide-title">What should be on your A3 today</h1>
+        <p class="lede">Compare your timeline explanation with a partner's before you finish — did you spot the same pattern of change?</p>
+        <div class="assess-list" id="assessList"></div>
+        <div class="assess-progress"><div class="assess-fill" id="assessFill"></div></div>
+        <div class="box green" style="margin-top:24px;">
+          <div class="box-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>
+            What comes next
+          </div>
+          <div class="box-body">
+            <p style="margin:0;">Next lesson, we'll start pulling together everything we've learned across the unit — causes, effects, and the actions people can take — ready for our final review.</p>
+          </div>
+        </div>
+        <div class="res-row">
+          <span class="res-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> A3 paper</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <button class="navbtn" id="prevBtn" onclick="prevSlide()" aria-label="Previous">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button class="navbtn" id="nextBtn" onclick="nextSlide()" aria-label="Next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+
+<script>
+/* ============ core slide navigation ============ */
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let idx = 0;
+
+const dotsWrap = document.getElementById('dots');
+slides.forEach((s,i)=>{
+  const d = document.createElement('button');
+  d.className = 'dot' + (i===0?' active':'');
+  d.onclick = ()=>goTo(i);
+  dotsWrap.appendChild(d);
+});
+
+function render(){
+  slides.forEach((s,i)=> s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.dot').forEach((d,i)=> d.classList.toggle('active', i===idx));
+  document.getElementById('counter').textContent = (idx+1) + ' / ' + total;
+  document.getElementById('prevBtn').classList.toggle('disabled', idx===0);
+  document.getElementById('nextBtn').classList.toggle('disabled', idx===total-1);
+  slides[idx].scrollTop = 0;
+}
+function goTo(i){ idx = Math.max(0, Math.min(total-1, i)); render(); }
+function nextSlide(){ goTo(idx+1); }
+function prevSlide(){ goTo(idx-1); }
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight') nextSlide();
+  if(e.key==='ArrowLeft') prevSlide();
+});
+render();
+
+/* ============ objectives checklist ============ */
+document.querySelectorAll('.obj-card').forEach(card=>{
+  card.addEventListener('click', ()=> card.classList.toggle('done'));
+});
+
+/* ============ tabs (shared by all tab groups) ============ */
+document.querySelectorAll('.tabs').forEach(group=>{
+  const btns = group.querySelectorAll('.tab-btn');
+  btns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      btns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const panels = group.parentElement.querySelectorAll(':scope > .tab-panel');
+      panels.forEach(p=>p.classList.remove('active'));
+      const target = group.parentElement.querySelector('#tab-'+btn.dataset.tab);
+      if(target) target.classList.add('active');
+    });
+  });
+});
+
+/* ============ quiz ============ */
+function answerQuiz(btn, correct){
+  document.querySelectorAll('.quiz-opt').forEach(b=>{
+    b.disabled = true;
+    if(b.dataset.correct === 'true') b.classList.add('correct');
+  });
+  if(!correct) btn.classList.add('wrong');
+  const fb = document.getElementById('quizFeedback');
+  fb.textContent = 'Best answer: one photo alone can\'t show a pattern. You need photos from more than one point in time to say how a place has changed, and whether that change was gradual or sudden.';
+  fb.classList.add('show');
+}
+
+/* ============ glossary flip cards ============ */
+const glossary = [
+  {term:'Timeline evidence', def:'A set of photos of the same kind of place, taken at different points in time, used to show how it has changed.'},
+  {term:'Gradual change', def:'A change that happens slowly, often over many years or decades — like erosion or a city growing.'},
+  {term:'Sudden change', def:'A change that happens quickly, in days or even hours — like a flood, wildfire, or landslide.'},
+  {term:'Pattern of change', def:'The overall trend you can see when you compare photos from different points in time.'},
+  {term:'Urbanisation', def:'The growth of towns and cities as more people and buildings move into an area.'},
+  {term:'Erosion', def:'The gradual wearing away of land by wind, water, or ice.'},
+  {term:'Drought', def:'A long period of unusually low rainfall, which can dry out land and water sources.'},
+  {term:'Evidence', def:'Facts or details you can point to that support an explanation or claim.'},
+  {term:'Cause', def:'The reason something happens — what makes a change take place.'},
+];
+const glossGrid = document.getElementById('glossGrid');
+glossary.forEach(g=>{
+  const card = document.createElement('div');
+  card.className = 'gloss-card';
+  card.innerHTML = `<div class="gloss-inner">
+      <div class="gloss-face front">${g.term}</div>
+      <div class="gloss-face back">${g.def}</div>
+    </div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flip'));
+  glossGrid.appendChild(card);
+});
+
+/* ============ tooltip terms ============ */
+document.querySelectorAll('.term').forEach(t=>{
+  t.addEventListener('click', (e)=>{
+    alert(t.dataset.def);
+  });
+});
+
+/* ============ A3 checklist ============ */
+const assessItems = [
+  'I sequenced my timeline set from earliest to most recent',
+  'I described what changed, using the sentence frame',
+  'I identified whether my example was gradual or sudden change',
+  'I suggested a possible cause for the change',
+  'I compared my findings with a partner',
+];
+const assessList = document.getElementById('assessList');
+assessItems.forEach(text=>{
+  const item = document.createElement('div');
+  item.className = 'assess-item';
+  item.innerHTML = `<div class="assess-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>${text}</p>`;
+  item.addEventListener('click', ()=>{
+    item.classList.toggle('checked');
+    updateAssessProgress();
+  });
+  assessList.appendChild(item);
+});
+function updateAssessProgress(){
+  const checked = document.querySelectorAll('.assess-item.checked').length;
+  const pct = (checked/assessItems.length)*100;
+  document.getElementById('assessFill').style.width = pct+'%';
+}
+</script>
+</body>
+</html>
