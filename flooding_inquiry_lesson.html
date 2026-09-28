@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geography AOI — Why Are We Flooding? — Online Inquiry Lesson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#1F7A4D; --green-dark:#123D28; --green-light:#E1F3EA; --green-mid:#4FA974;
+  --coral:#E0563F; --coral-light:#FCE9E5;
+  --amber:#CE9526; --amber-light:#FAF1DC;
+  --mint:#2E9E76; --mint-light:#E3F5EC;
+  --sky:#2B79C9; --sky-light:#E8F1FB;
+  --ink:#20232B; --ink-soft:#585E6C;
+  --paper:#FFFFFF; --cream:#F7F5F1; --line:#E1DFEA;
+  --r-lg:22px; --r-md:14px; --r-sm:8px;
+  --shadow: 0 10px 30px rgba(18,61,40,.14);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{margin:0; background:var(--cream); color:var(--ink); font-family:'Inter',system-ui,sans-serif; overflow:hidden;}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+
+/* ===== App shell ===== */
+#app{position:relative; width:100vw; height:100vh; display:flex; flex-direction:column;}
+.topbar{display:flex; align-items:center; justify-content:space-between; padding:14px 28px; background:var(--paper); border-bottom:1px solid var(--line); flex:0 0 auto; z-index:20;}
+.crumb{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft); font-weight:600;}
+.crumb .tag{background:var(--green); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12px; padding:5px 12px; border-radius:100px; letter-spacing:.3px;}
+.crumb .sep{color:#C6C2D6;}
+.crumb .current{color:var(--green-dark);}
+.crumb .live{background:var(--coral-light); color:var(--coral); font-family:'Poppins'; font-weight:700; font-size:11px; padding:4px 10px; border-radius:100px; display:inline-flex; align-items:center; gap:6px;}
+.crumb .live i{width:7px; height:7px; border-radius:50%; background:var(--coral); display:inline-block; animation:pulse 1.4s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.dots{display:flex; gap:6px; align-items:center; flex-wrap:wrap; max-width:34vw;}
+.dot{width:9px; height:9px; border-radius:50%; background:#DCE6DF; border:none; cursor:pointer; transition:all .25s;}
+.dot.active{background:var(--green); width:22px; border-radius:6px;}
+.dot:hover{background:var(--green-mid);}
+.counter{font-size:12px; color:var(--ink-soft); font-weight:600; font-variant-numeric:tabular-nums; min-width:50px; text-align:right;}
+
+.stage{position:relative; flex:1 1 auto; overflow:hidden;}
+.slide{position:absolute; inset:0; opacity:0; pointer-events:none; transform:translateX(30px) scale(.99); transition:opacity .45s ease, transform .45s ease; overflow-y:auto;}
+.slide.active{opacity:1; pointer-events:auto; transform:translateX(0) scale(1);}
+.slide-inner{max-width:1180px; margin:0 auto; padding:40px 44px 90px; min-height:100%;}
+
+.navbtn{position:absolute; top:50%; transform:translateY(-50%); z-index:15; width:46px; height:46px; border-radius:50%; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--green-dark); transition:.2s;}
+.navbtn:hover{background:var(--green); color:#fff; border-color:var(--green);}
+.navbtn.disabled{opacity:.25; pointer-events:none;}
+#prevBtn{left:16px;} #nextBtn{right:16px;}
+.navbtn svg{width:20px; height:20px;}
+
+/* ===== shared components ===== */
+.chevron-badge{display:inline-flex; align-items:center; gap:10px; background:var(--green); color:#fff; padding:9px 20px 9px 16px; font-family:'Poppins'; font-weight:700; font-size:15px; clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%); margin-bottom:16px;}
+.eyebrow{font-family:'Poppins'; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--coral); margin-bottom:8px;}
+h1.slide-title{font-size:32px; font-weight:800; color:var(--green-dark); margin:0 0 6px; line-height:1.15;}
+h3.mini-title{font-size:17px; font-weight:700; color:var(--ink); margin:0 0 8px;}
+p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
+.lede{font-size:17px; color:var(--ink-soft); margin-bottom:22px; max-width:780px;}
+
+.box{border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow);}
+.box-head{padding:12px 20px; font-family:'Poppins'; font-weight:700; font-size:14px; color:#fff; display:flex; align-items:center; gap:8px;}
+.box-body{padding:20px 22px;}
+.box.green .box-head{background:var(--green);}
+.box.coral .box-head{background:var(--coral);}
+.box.amber .box-head{background:var(--amber);}
+.box.mint .box-head{background:var(--mint);}
+.box.sky .box-head{background:var(--sky);}
+
+.two-col{display:grid; grid-template-columns:1.05fr .95fr; gap:30px; align-items:start;}
+@media (max-width:900px){.two-col{grid-template-columns:1fr;}}
+
+.pill{display:inline-block; padding:5px 13px; border-radius:100px; font-size:12.5px; font-weight:700; background:var(--green-light); color:var(--green-dark); margin:3px 5px 3px 0;}
+.hint{font-size:12.5px; color:var(--ink-soft); background:var(--green-light); border-radius:100px; padding:6px 14px; display:inline-flex; gap:6px; align-items:center; margin-bottom:18px; font-weight:600;}
+.hint svg{width:14px; height:14px; flex:0 0 auto;}
+
+.btn{border:none; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:14px; padding:10px 20px; border-radius:100px; background:var(--green); color:#fff; transition:.2s;}
+.btn:hover{background:var(--green-dark);}
+.btn.ghost{background:transparent; border:1.5px solid var(--green); color:var(--green);}
+.btn.ghost:hover{background:var(--green-light);}
+
+/* Google Meet moment callout */
+.meet{display:flex; gap:12px; align-items:flex-start; background:var(--sky-light); border:1.5px solid #C9DDF3; border-radius:var(--r-md); padding:12px 16px; margin:14px 0;}
+.meet .meet-ico{flex:0 0 auto; width:34px; height:34px; border-radius:10px; background:var(--sky); color:#fff; display:flex; align-items:center; justify-content:center;}
+.meet .meet-ico svg{width:18px; height:18px;}
+.meet .meet-label{font-family:'Poppins'; font-weight:700; font-size:11.5px; letter-spacing:1px; text-transform:uppercase; color:var(--sky); margin-bottom:2px;}
+.meet p{margin:0; font-size:14px; line-height:1.55;}
+
+/* notebook prompt */
+.nb{display:flex; gap:12px; align-items:flex-start; background:var(--amber-light); border:1.5px dashed var(--amber); border-radius:var(--r-md); padding:14px 16px; margin:14px 0;}
+.nb .nb-ico{font-size:22px; line-height:1;}
+.nb p{margin:0; font-size:14.5px;}
+
+.res-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:14px;}
+.res-chip{display:flex; align-items:center; gap:8px; padding:9px 16px; border-radius:100px; background:var(--sky-light); color:var(--sky); font-family:'Poppins'; font-weight:700; font-size:12.5px;}
+.res-chip svg{width:15px; height:15px;}
+
+/* ============ COVER ============ */
+.cover{height:100%; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;
+  background: radial-gradient(ellipse at 20% 15%, rgba(255,255,255,.10), transparent 45%), linear-gradient(160deg, var(--green) 0%, var(--green-dark) 62%, #0B2418 100%);}
+.cover-leaf{position:absolute; opacity:.13; background:#fff; border-radius:0% 100% 0% 100%;}
+.cover-wave{position:absolute; left:0; right:0; bottom:0; height:120px; opacity:.18;}
+.cover-content{position:relative; z-index:2; text-align:center; color:#fff; max-width:820px; padding:0 30px;}
+.cover-content .unit{font-family:'Poppins'; font-weight:700; letter-spacing:3px; font-size:13px; text-transform:uppercase; color:#CFEBDB; margin-bottom:14px;}
+.cover-content h1{font-size:46px; font-weight:800; margin:0 0 10px; line-height:1.1;}
+.cover-content .sub{font-size:17px; color:#E3F3EA; font-weight:500; margin-bottom:34px;}
+.cover-chip-row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:38px;}
+.cover-chip{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff; padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600; backdrop-filter:blur(4px);}
+.cover-start{background:var(--coral); color:#fff; border:none; font-family:'Poppins'; font-weight:700; font-size:16px; padding:15px 34px; border-radius:100px; cursor:pointer; box-shadow:0 12px 26px rgba(224,86,63,.4); display:inline-flex; align-items:center; gap:10px; transition:.2s;}
+.cover-start:hover{transform:translateY(-2px); box-shadow:0 16px 30px rgba(224,86,63,.5);}
+.cover-note{margin-top:22px; font-size:13px; color:#BFE0CE;}
+
+/* ============ check-in ============ */
+.feel-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:8px;}
+@media (max-width:820px){.feel-grid{grid-template-columns:1fr 1fr;}}
+.feel-card{background:var(--paper); border:1.5px solid var(--line); border-radius:var(--r-md); padding:16px 12px; text-align:center; box-shadow:var(--shadow); cursor:pointer; transition:.2s;}
+.feel-card:hover{border-color:var(--green-mid);}
+.feel-card.chosen{background:var(--green-light); border-color:var(--green);}
+.feel-card .fe{font-size:30px; display:block; margin-bottom:6px;}
+.feel-card h3{margin:0 0 3px; font-size:14px; color:var(--green-dark);}
+.feel-card p{margin:0; font-size:12px; color:var(--ink-soft); line-height:1.45;}
+.norm-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:6px;}
+@media (max-width:820px){.norm-grid{grid-template-columns:1fr 1fr;}}
+.norm{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:12px 12px; display:flex; gap:10px; align-items:center; font-size:13px; font-weight:600;}
+.norm span{font-size:20px;}
+
+/* ============ objectives ============ */
+.obj-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 22px; margin-top:6px;}
+@media (max-width:800px){.obj-grid{grid-template-columns:1fr;}}
+.obj-card{display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:var(--r-md); background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.2s;}
+.obj-card:hover{border-color:var(--green-mid); box-shadow:var(--shadow);}
+.obj-num{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--green-light); color:var(--green-dark); font-family:'Poppins'; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;}
+.obj-card.done .obj-num{background:var(--green); color:#fff;}
+.obj-card.done p{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:#C6C2D6;}
+.obj-card p{margin:0; font-size:13.8px; line-height:1.5;}
+
+/* ============ agenda ============ */
+.agenda{display:flex; flex-direction:column; gap:12px; margin-top:10px;}
+.agenda-item{display:flex; gap:16px; align-items:center;}
+.agenda-time{flex:0 0 auto; width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-direction:column; color:#fff; font-family:'Poppins'; font-weight:800; box-shadow:var(--shadow);}
+.agenda-time span{font-size:10px; font-weight:600; opacity:.9;}
+.agenda-body{flex:1 1 auto; background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:12px 18px; box-shadow:var(--shadow);}
+.agenda-body h3{margin:0 0 3px; font-size:15px;}
+.agenda-body p{margin:0; font-size:13.3px; color:var(--ink-soft);}
+
+/* ============ news desk ============ */
+.news-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:6px;}
+@media (max-width:900px){.news-grid{grid-template-columns:1fr 1fr;}}
+@media (max-width:600px){.news-grid{grid-template-columns:1fr;}}
+.news-card{border-radius:var(--r-md); background:var(--paper); border:1px solid var(--line); box-shadow:var(--shadow); cursor:pointer; overflow:hidden; transition:.2s;}
+.news-card:hover{transform:translateY(-2px);}
+.news-top{padding:16px 16px 12px; color:#fff; min-height:96px;}
+.news-top .big{font-family:'Poppins'; font-weight:800; font-size:26px; line-height:1.1;}
+.news-top .lbl{font-size:12.5px; font-weight:600; opacity:.95; margin-top:4px;}
+.news-more{max-height:0; overflow:hidden; transition:max-height .35s ease, padding .35s; padding:0 16px; font-size:13px; color:var(--ink-soft); line-height:1.55;}
+.news-card.open .news-more{max-height:180px; padding:12px 16px 14px;}
+.news-tap{font-size:11px; color:var(--ink-soft); padding:8px 16px; border-top:1px solid var(--line); font-weight:600;}
+.news-card.open .news-tap{display:none;}
+.source-line{font-size:11.5px; color:var(--ink-soft); margin-top:14px;}
+
+/* ============ water journey model ============ */
+.journey-wrap{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow); padding:10px 10px 4px;}
+.journey-wrap svg{width:100%; height:auto; display:block;}
+.hot{cursor:pointer;}
+.hot circle.ring{transition:.2s;}
+.hot:hover circle.ring, .hot.active circle.ring{stroke-width:5;}
+.step-panel{margin-top:16px; border-radius:var(--r-lg); border:1px solid var(--line); background:#fff; box-shadow:var(--shadow); overflow:hidden;}
+.step-head{padding:12px 20px; color:#fff; font-family:'Poppins'; font-weight:700; font-size:15px; display:flex; align-items:center; gap:10px;}
+.step-body{padding:16px 20px;}
+.step-body p{margin:0 0 8px; font-size:14.5px;}
+.cause-tag{display:inline-block; padding:4px 12px; border-radius:100px; font-size:11.5px; font-weight:700; font-family:'Poppins';}
+.cause-tag.nat{background:var(--sky-light); color:var(--sky);}
+.cause-tag.hum{background:var(--amber-light); color:#8C6212;}
+.cause-tag.both{background:var(--mint-light); color:#1E6B4E;}
+.key-row{display:flex; gap:10px; flex-wrap:wrap; margin:12px 0 0;}
+
+/* ============ sort cards ============ */
+.sort-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-top:10px;}
+@media (max-width:900px){.sort-grid{grid-template-columns:1fr 1fr;}}
+@media (max-width:600px){.sort-grid{grid-template-columns:1fr;}}
+.sort-card{border:1.5px solid var(--line); background:#fff; border-radius:var(--r-md); padding:14px 16px; cursor:pointer; transition:.2s; box-shadow:var(--shadow);}
+.sort-card:hover{border-color:var(--green-mid);}
+.sort-card .se{font-size:22px; display:block; margin-bottom:4px;}
+.sort-q{font-family:'Poppins'; font-weight:700; font-size:14px; color:var(--ink); margin:0;}
+.sort-reveal{max-height:0; overflow:hidden; transition:max-height .35s ease;}
+.sort-card.open .sort-reveal{max-height:170px; margin-top:10px;}
+.sort-explain{font-size:12.8px; color:var(--ink-soft); margin:6px 0 0; line-height:1.5;}
+.sort-hint{font-size:11.5px; color:var(--ink-soft); margin-top:3px;}
+.sort-card.open .sort-hint{display:none;}
+.sort-tag{display:inline-block; padding:4px 12px; border-radius:100px; font-size:11.5px; font-weight:700; font-family:'Poppins';}
+.sort-tag.safe{background:var(--mint-light); color:#1E6B4E;}
+.sort-tag.unsafe{background:var(--coral-light); color:#A8362A;}
+.tally{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;}
+
+/* ============ quiz ============ */
+.scenario{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); padding:22px 24px; box-shadow:var(--shadow);}
+.quiz-opts{display:flex; gap:12px; margin-top:14px; flex-wrap:wrap;}
+.quiz-opt{flex:1 1 220px; border:1.5px solid var(--line); background:#fff; border-radius:var(--r-md); padding:14px 16px; cursor:pointer; font-weight:700; font-family:'Poppins'; font-size:13.5px; text-align:left; transition:.2s;}
+.quiz-opt:hover{border-color:var(--green-mid);}
+.quiz-opt.correct{background:var(--mint-light); border-color:var(--mint); color:#1E6B4E;}
+.quiz-opt.wrong{background:var(--coral-light); border-color:var(--coral); color:#A8362A;}
+.quiz-opt[disabled]{cursor:default;}
+.quiz-feedback{margin-top:16px; padding:14px 18px; border-radius:var(--r-md); background:var(--green-light); color:var(--green-dark); font-size:14px; display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-letter{display:inline-flex; width:22px; height:22px; border-radius:50%; background:var(--green-light); color:var(--green-dark); align-items:center; justify-content:center; font-size:11px; margin-right:8px;}
+
+/* ============ flood lab ============ */
+.lab-grid{display:grid; grid-template-columns:1.55fr 1fr; gap:20px; align-items:start;}
+@media (max-width:980px){.lab-grid{grid-template-columns:1fr;}}
+.sim-card{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow); overflow:hidden;}
+.sim-card svg{display:block; width:100%; height:auto;}
+.sim-readout{display:flex; gap:10px; flex-wrap:wrap; align-items:center; padding:12px 16px; border-top:1px solid var(--line);}
+.status-pill{font-family:'Poppins'; font-weight:800; font-size:13px; padding:7px 14px; border-radius:100px; color:#fff;}
+.status-pill.safe{background:var(--mint);}
+.status-pill.watch{background:var(--amber);}
+.status-pill.red{background:var(--coral);}
+.readout-num{font-family:'Poppins'; font-weight:700; font-size:14px; color:var(--ink);}
+.biggest{font-size:13px; color:var(--ink-soft); flex-basis:100%;}
+.biggest strong{color:var(--ink);}
+.ctrl-card{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow); padding:16px 18px;}
+.ctrl{margin-bottom:14px;}
+.ctrl:last-child{margin-bottom:0;}
+.ctrl-label{font-family:'Poppins'; font-weight:700; font-size:12.5px; color:var(--green-dark); margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;}
+.ctrl-label .ct{font-weight:600; font-size:10.5px; padding:2px 8px; border-radius:100px;}
+.seg{display:flex; gap:6px; flex-wrap:wrap;}
+.seg button{flex:1 1 auto; border:1.5px solid var(--line); background:var(--cream); border-radius:100px; padding:6px 10px; font-size:12px; font-weight:700; cursor:pointer; color:var(--ink-soft); transition:.15s;}
+.seg button.on{background:var(--sky); border-color:var(--sky); color:#fff;}
+.seg.human button.on{background:var(--amber); border-color:var(--amber);}
+.seg.fix button.on{background:var(--mint); border-color:var(--mint);}
+input[type=range]{width:100%; accent-color:var(--amber);}
+.ctrl-divider{border-top:1px dashed var(--line); margin:14px 0 12px; font-family:'Poppins'; font-size:11px; font-weight:700; letter-spacing:1px; color:var(--mint); text-transform:uppercase; padding-top:10px;}
+.missions{margin-top:18px; display:grid; grid-template-columns:repeat(3,1fr); gap:12px;}
+@media (max-width:900px){.missions{grid-template-columns:1fr;}}
+.mission{background:var(--paper); border:1.5px solid var(--line); border-radius:var(--r-md); padding:14px 16px; box-shadow:var(--shadow); position:relative; transition:.3s;}
+.mission .mnum{font-family:'Poppins'; font-weight:800; font-size:11px; letter-spacing:1px; color:var(--coral); text-transform:uppercase;}
+.mission h3{margin:3px 0 4px; font-size:14px; color:var(--green-dark);}
+.mission p{margin:0; font-size:12.5px; color:var(--ink-soft); line-height:1.5;}
+.mission .mtick{position:absolute; top:12px; right:12px; width:24px; height:24px; border-radius:50%; border:2px solid var(--line); display:flex; align-items:center; justify-content:center; color:#fff;}
+.mission.done{border-color:var(--mint); background:var(--mint-light);}
+.mission.done .mtick{background:var(--mint); border-color:var(--mint);}
+.timer-row{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+.timer{font-family:'Poppins'; font-weight:800; font-size:18px; color:var(--green-dark); background:var(--paper); border:1px solid var(--line); padding:6px 14px; border-radius:100px; font-variant-numeric:tabular-nums; min-width:84px; text-align:center;}
+.timer.low{color:var(--coral); border-color:var(--coral);}
+@keyframes fall{from{transform:translateY(-30px);} to{transform:translateY(200px);}}
+.drop{animation:fall .9s linear infinite;}
+
+/* ============ plenary frame ============ */
+.frame-card{background:linear-gradient(135deg,var(--green-light),#fff); border:1.5px dashed var(--green-mid); border-radius:var(--r-lg); padding:24px 28px; margin-top:6px;}
+.frame-line{font-family:'Poppins'; font-weight:600; font-size:17px; color:var(--green-dark); line-height:1.7; margin-bottom:8px; display:flex; gap:10px; align-items:baseline;}
+.frame-line .fn{flex:0 0 auto; width:24px; height:24px; border-radius:50%; background:var(--green); color:#fff; font-size:11.5px; font-weight:800; display:inline-flex; align-items:center; justify-content:center; transform:translateY(-2px);}
+.frame-blank{display:inline-block; min-width:120px; border-bottom:2.5px solid var(--coral); color:var(--coral); padding:0 6px;}
+.example-box{margin-top:14px; padding:14px 18px; border-radius:var(--r-md); background:#fff; border:1px solid var(--line); font-size:14.5px; color:var(--ink-soft); font-style:italic; min-height:26px;}
+.challenge{display:inline-block; margin-top:6px; font-size:13px; color:var(--ink-soft);}
+
+/* ============ glossary flip cards ============ */
+.gloss-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:10px;}
+@media (max-width:1000px){.gloss-grid{grid-template-columns:repeat(3,1fr);}}
+@media (max-width:700px){.gloss-grid{grid-template-columns:repeat(2,1fr);}}
+.gloss-card{height:126px; perspective:800px; cursor:pointer;}
+.gloss-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+.gloss-card.flip .gloss-inner{transform:rotateY(180deg);}
+.gloss-face{position:absolute; inset:0; backface-visibility:hidden; border-radius:var(--r-md); display:flex; align-items:center; justify-content:center; text-align:center; padding:12px; font-size:13.5px;}
+.gloss-face.front{background:var(--green); color:#fff; font-family:'Poppins'; font-weight:700; font-size:14.5px;}
+.gloss-face.back{background:var(--paper); border:1.5px solid var(--green-light); color:var(--ink); transform:rotateY(180deg); font-size:12.3px; line-height:1.5;}
+
+/* ============ checklist ============ */
+.assess-list{margin-top:10px;}
+.assess-item{display:flex; gap:12px; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--line); cursor:pointer;}
+.assess-box{flex:0 0 auto; width:22px; height:22px; border-radius:6px; border:2px solid var(--line); display:flex; align-items:center; justify-content:center; color:#fff; margin-top:1px; transition:.2s;}
+.assess-item.checked .assess-box{background:var(--mint); border-color:var(--mint);}
+.assess-item p{margin:0; font-size:14.5px;}
+.assess-progress{height:8px; background:var(--green-light); border-radius:100px; overflow:hidden; margin-top:16px;}
+.assess-fill{height:100%; width:0%; background:var(--mint); transition:.35s;}
+
+/* ============ class reflection footer ============ */
+.reflect{margin-top:26px; border-top:1px solid var(--line); padding-top:14px; display:grid; grid-template-columns:auto 1fr 1fr 1fr; gap:10px; align-items:start;}
+@media (max-width:760px){.reflect{grid-template-columns:1fr;}}
+.reflect .rl{font-family:'Poppins'; font-weight:800; font-size:12px; color:var(--green); letter-spacing:1px; padding-top:6px;}
+.reflect .rf{border:1px dashed var(--line); border-radius:var(--r-sm); padding:6px 10px; font-size:11.5px; color:var(--ink-soft); min-height:44px; background:var(--paper);}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="crumb">
+      <span class="tag">Geography AOI</span>
+      <span class="sep">/</span>
+      <span class="current">Why Are We Flooding?</span>
+      <span class="live"><i></i> Online via Google Meet</span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="counter" id="counter">1 / 14</div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- ================= SLIDE 0 : COVER ================= -->
+    <section class="slide">
+      <div class="cover">
+        <div class="cover-leaf" style="width:220px;height:220px; top:-50px; left:-50px;"></div>
+        <div class="cover-leaf" style="width:160px;height:160px; top:40px; right:-30px;"></div>
+        <svg class="cover-wave" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0,60 C150,20 300,100 450,60 C600,20 750,100 900,60 C1050,20 1150,80 1200,60 L1200,120 L0,120 Z" fill="#fff"/></svg>
+        <div class="cover-content">
+          <div class="unit">Year 6C &middot; Geography Inquiry &middot; Online Lesson</div>
+          <h1>Why Are We Flooding?</h1>
+          <div class="sub">This week, heavy rain and rising canals have flooded parts of Bangkok and Pathum Thani, and it's the reason we're learning from home today. Let's use our geography skills to understand what's happening right where we live.</div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">🌧️ Real event, right now</span>
+            <span class="cover-chip">🗺️ The water's journey</span>
+            <span class="cover-chip">🧪 Flood Lab</span>
+            <span class="cover-chip">🦺 Staying safe</span>
+          </div>
+          <button class="cover-start" onclick="goTo(1)">
+            Start the lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <div class="cover-note">SBS Rangsit &middot; Pathum Thani &middot; 45-minute online inquiry</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 1 : CHECK-IN ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Welcome &middot; Check-in</div>
+        <h1 class="slide-title">Good morning from home! How are you today?</h1>
+        <p class="lede">Some of us have water in our streets this week, and some of us are completely dry. Everyone's week has been a bit different, and <strong>every feeling is okay</strong>.</p>
+        <div class="feel-grid" id="feelGrid">
+          <div class="feel-card"><span class="fe">😊</span><h3>All good</h3><p>Dry and comfy at home</p></div>
+          <div class="feel-card"><span class="fe">🤔</span><h3>Curious</h3><p>I have lots of questions about the flood</p></div>
+          <div class="feel-card"><span class="fe">😟</span><h3>A bit worried</h3><p>The water or the news worries me</p></div>
+          <div class="feel-card"><span class="fe">😴</span><h3>Tired</h3><p>This week has felt long</p></div>
+        </div>
+        <div class="meet">
+          <div class="meet-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 10l5-3v10l-5-3z"/><rect x="3" y="6" width="12" height="12" rx="2"/></svg></div>
+          <div><div class="meet-label">Google Meet moment</div><p>Use a <strong>Meet reaction</strong> to show how you feel: 👍 all good &middot; 😮 curious &middot; 💙 a bit worried &middot; 😂 need cheering up. If the flood is affecting your home and you want to talk, tell your teacher at the end of the Meet or send a message on Seesaw.</p></div>
+        </div>
+        <h3 class="mini-title" style="margin-top:22px;">Our online learning agreements</h3>
+        <div class="norm-grid">
+          <div class="norm"><span>🎙️</span>Mic off unless it's your turn</div>
+          <div class="norm"><span>✋</span>Use the raise-hand button</div>
+          <div class="norm"><span>📓</span>Notebook and pencil ready</div>
+          <div class="norm"><span>🎥</span>Camera on to show your work</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 2 : OBJECTIVES ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">Geography AOI</div>
+        <h1 class="slide-title">We're learning to explain why places flood</h1>
+        <p class="lede"><strong>Learning intention:</strong> explain the natural and human causes of the flooding in Pathum Thani and Bangkok.<br><strong>Success criteria:</strong> I can use geography words to explain at least one natural cause, one human cause, and one way to reduce flooding. Tap each goal as you meet it today.</p>
+        <div class="obj-grid" id="objGrid">
+          <div class="obj-card"><div class="obj-num">1</div><p>I can describe what is happening with the flooding near our school this week</p></div>
+          <div class="obj-card"><div class="obj-num">2</div><p>I can follow the water's journey from northern Thailand to the sea</p></div>
+          <div class="obj-card"><div class="obj-num">3</div><p>I can sort flood causes into natural and human causes</p></div>
+          <div class="obj-card"><div class="obj-num">4</div><p>I can test flood causes and solutions in the Flood Lab and record what I find</p></div>
+          <div class="obj-card"><div class="obj-num">5</div><p>I can explain how to stay safe during a flood</p></div>
+          <div class="obj-card"><div class="obj-num">6</div><p>I can write a short explanation of why our area flooded</p></div>
+        </div>
+        <div style="margin-top:22px;">
+          <span class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Key vocabulary: flood &middot; monsoon &middot; runoff &middot; drainage &middot; khlong (canal) &middot; high tide &middot; impermeable &middot; monkey cheek</span>
+        </div>
+        <div class="box green">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M9 3v18M15 3v18M4 8h16M4 16h16"/></svg> Notebooks today</div>
+          <div class="box-body"><p style="margin:0;">Even though we're online, all writing goes in your <strong>notebook</strong>. Look for the 📓 prompts. At the end, you'll take a photo of your page and post it on <strong>Seesaw</strong>.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 3 : TODAY'S PLAN ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Today's plan &middot; 45 minutes</div>
+        <h1 class="slide-title">From rain clouds to our own street</h1>
+        <p class="lede">Here's how today's Meet will run, from what's in the news to explaining it in your own words.</p>
+        <div class="agenda">
+          <div class="agenda-item"><div class="agenda-time" style="background:var(--green);">5<span>min</span></div><div class="agenda-body"><h3>Welcome &middot; Check-in</h3><p>Reactions, learning agreements, today's goals</p></div></div>
+          <div class="agenda-item"><div class="agenda-time" style="background:var(--coral);">5<span>min</span></div><div class="agenda-body"><h3>Starter &middot; Flood News Desk</h3><p>What's really happening in Pathum Thani and Bangkok this week?</p></div></div>
+          <div class="agenda-item"><div class="agenda-time" style="background:var(--sky);">12<span>min</span></div><div class="agenda-body"><h3>Explore &middot; The water's journey + cause sort</h3><p>Follow the water from the north, then sort natural and human causes</p></div></div>
+          <div class="agenda-item"><div class="agenda-time" style="background:var(--amber);">12<span>min</span></div><div class="agenda-body"><h3>Flood Lab &middot; Test it yourself</h3><p>Change the rain, the river, the tide and the land. Can you flood Rangsit, and then save it?</p></div></div>
+          <div class="agenda-item"><div class="agenda-time" style="background:var(--mint);">11<span>min</span></div><div class="agenda-body"><h3>Stay safe + Plenary</h3><p>Flood safety check, write your explanation, post to Seesaw</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 4 : NEWS DESK ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Starter &middot; 5 minutes</div>
+        <h1 class="slide-title">Flood News Desk: what's happening this week?</h1>
+        <p class="lede">Geographers start with the facts. Tap each news card to find out more about the flooding around us.</p>
+        <div class="news-grid" id="newsGrid"></div>
+        <div class="source-line">Facts from Thai and international news reports, 24–28 September 2026 (Khaosod English, Nation Thailand, Thairath, Al Jazeera, Thai Enquirer).</div>
+        <div class="nb"><span class="nb-ico">📓</span><p><strong>In your notebook:</strong> write today's date and the title <em>Why Are We Flooding?</em> Then write <strong>one fact that surprised you</strong> and <strong>one question you wonder about</strong>. <em>I noticed… / I wonder why…</em></p></div>
+        <div class="meet">
+          <div class="meet-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+          <div><div class="meet-label">Google Meet moment &middot; Chat waterfall</div><p>Type your <strong>wonder question</strong> in the Meet chat, but <strong>don't press Enter</strong> until your teacher says "Go!" Then we'll all read them together.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 5 : WATER JOURNEY MODEL ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Explore &middot; Modelled example</div>
+        <h1 class="slide-title">The water's journey to our school</h1>
+        <p class="lede">Pathum Thani sits on low, flat land along the <strong>Chao Phraya River</strong>, between the north of Thailand and the sea. Tap the numbered stops to follow the water and see what makes it build up here. Watch the colours: <span class="cause-tag nat">🌧️ Natural</span> and <span class="cause-tag hum">🏗️ Human</span>.</p>
+        <div class="journey-wrap">
+          <svg viewBox="0 0 980 330" id="journeySvg" role="img" aria-label="Diagram of water flowing from northern Thailand down the Chao Phraya River through Pathum Thani and Bangkok to the Gulf of Thailand">
+            <defs>
+              <linearGradient id="jSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E8F1FB"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+              <marker id="jArrow" markerWidth="10" markerHeight="10" refX="6" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#2B79C9"/></marker>
+            </defs>
+            <rect x="0" y="0" width="980" height="330" fill="url(#jSky)"/>
+            <!-- land slope: high in north (left) to low at sea (right) -->
+            <path d="M0,120 L120,110 L200,170 L330,215 L520,238 L720,246 L860,252 L980,252 L980,330 L0,330 Z" fill="#E1F3EA"/>
+            <path d="M0,120 L120,110 L200,170 L330,215 L520,238 L720,246 L860,252" fill="none" stroke="#4FA974" stroke-width="3"/>
+            <!-- mountains -->
+            <path d="M10,125 L60,55 L110,118 Z" fill="#4FA974"/>
+            <path d="M70,118 L120,40 L175,150 Z" fill="#1F7A4D"/>
+            <!-- rain cloud north -->
+            <g>
+              <ellipse cx="95" cy="28" rx="56" ry="18" fill="#9FB4C8"/>
+              <ellipse cx="130" cy="22" rx="36" ry="15" fill="#B5C6D6"/>
+              <line x1="70" y1="48" x2="64" y2="64" stroke="#2B79C9" stroke-width="2.5"/>
+              <line x1="92" y1="48" x2="86" y2="64" stroke="#2B79C9" stroke-width="2.5"/>
+              <line x1="114" y1="48" x2="108" y2="64" stroke="#2B79C9" stroke-width="2.5"/>
+              <line x1="136" y1="44" x2="130" y2="60" stroke="#2B79C9" stroke-width="2.5"/>
+            </g>
+            <!-- rain cloud over Pathum/BKK -->
+            <g>
+              <ellipse cx="560" cy="60" rx="80" ry="22" fill="#8EA3B8"/>
+              <ellipse cx="610" cy="50" rx="50" ry="18" fill="#A8BACB"/>
+              <line x1="520" y1="84" x2="512" y2="104" stroke="#2B79C9" stroke-width="2.5"/>
+              <line x1="545" y1="84" x2="537" y2="104" stroke="#2B79C9" stroke-width="2.5"/>
+              <line x1="570" y1="84" x2="562" y2="104" stroke="#2B79C9" stroke-width="2.5"/>
+              <line x1="595" y1="84" x2="587" y2="104" stroke="#2B79C9" stroke-width="2.5"/>
+              <line x1="620" y1="80" x2="612" y2="100" stroke="#2B79C9" stroke-width="2.5"/>
+            </g>
+            <!-- river -->
+            <path d="M150,132 C210,176 260,196 330,212 C420,230 470,236 520,240 C620,246 700,248 860,256" fill="none" stroke="#2B79C9" stroke-width="9" stroke-linecap="round" opacity=".85"/>
+            <path d="M200,150 L250,178" stroke="#2B79C9" stroke-width="2" marker-end="url(#jArrow)"/>
+            <!-- dam -->
+            <rect x="270" y="186" width="16" height="32" rx="3" fill="#585E6C"/>
+            <text x="278" y="180" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="11" fill="#20232B">Dam</text>
+            <!-- rice fields -->
+            <g fill="#CE9526" opacity=".55">
+              <rect x="350" y="222" width="30" height="6" rx="2"/><rect x="386" y="224" width="30" height="6" rx="2"/>
+            </g>
+            <!-- Pathum Thani town + school -->
+            <g>
+              <rect x="470" y="210" width="22" height="26" fill="#FFFFFF" stroke="#585E6C"/>
+              <rect x="496" y="202" width="18" height="34" fill="#FFFFFF" stroke="#585E6C"/>
+              <rect x="430" y="218" width="30" height="18" fill="#FFFFFF" stroke="#585E6C"/>
+              <polygon points="430,218 445,208 460,218" fill="#E0563F"/>
+              <!-- khlong -->
+              <path d="M455,242 C470,262 488,270 500,300" stroke="#2B79C9" stroke-width="4" fill="none"/>
+              <text x="506" y="296" font-family="Inter" font-weight="600" font-size="10.5" fill="#2B79C9">khlong</text>
+              <polygon points="500,176 504,187 516,187 506,194 510,205 500,198 490,205 494,194 484,187 496,187" fill="#E0563F"/>
+              <text x="500" y="170" text-anchor="middle" font-family="Poppins" font-weight="800" font-size="11.5" fill="#E0563F">SBS Rangsit</text>
+            </g>
+            <!-- Bangkok -->
+            <g fill="#FFFFFF" stroke="#585E6C">
+              <rect x="650" y="190" width="18" height="52"/><rect x="672" y="172" width="20" height="70"/><rect x="696" y="200" width="16" height="42"/><rect x="716" y="184" width="18" height="58"/>
+            </g>
+            <text x="692" y="164" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="12" fill="#20232B">Bangkok</text>
+            <!-- sea -->
+            <path d="M860,252 L980,244 L980,330 L860,330 Z" fill="#2B79C9" opacity=".75"/>
+            <path d="M880,240 C900,232 920,248 940,240 C955,234 968,242 980,238" stroke="#2B79C9" stroke-width="3" fill="none"/>
+            <text x="920" y="290" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="12" fill="#fff">Gulf of</text>
+            <text x="920" y="305" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="12" fill="#fff">Thailand</text>
+            <!-- labels -->
+            <text x="60" y="160" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="12" fill="#123D28">North</text>
+            <text x="60" y="175" text-anchor="middle" font-family="Inter" font-size="10.5" fill="#585E6C">high land</text>
+            <text x="760" y="275" text-anchor="middle" font-family="Inter" font-size="10.5" fill="#585E6C">only 1–2 m above sea level</text>
+            <!-- hotspots -->
+            <g class="hot" data-step="0"><circle class="ring" cx="160" cy="80" r="16" fill="#2B79C9" stroke="#fff" stroke-width="3"/><text x="160" y="85" text-anchor="middle" fill="#fff" font-family="Poppins" font-weight="800" font-size="14">1</text></g>
+            <g class="hot" data-step="1"><circle class="ring" cx="312" cy="178" r="16" fill="#CE9526" stroke="#fff" stroke-width="3"/><text x="312" y="183" text-anchor="middle" fill="#fff" font-family="Poppins" font-weight="800" font-size="14">2</text></g>
+            <g class="hot" data-step="2"><circle class="ring" cx="640" cy="112" r="16" fill="#2B79C9" stroke="#fff" stroke-width="3"/><text x="640" y="117" text-anchor="middle" fill="#fff" font-family="Poppins" font-weight="800" font-size="14">3</text></g>
+            <g class="hot" data-step="3"><circle class="ring" cx="440" cy="270" r="16" fill="#CE9526" stroke="#fff" stroke-width="3"/><text x="440" y="275" text-anchor="middle" fill="#fff" font-family="Poppins" font-weight="800" font-size="14">4</text></g>
+            <g class="hot" data-step="4"><circle class="ring" cx="760" cy="215" r="16" fill="#CE9526" stroke="#fff" stroke-width="3"/><text x="760" y="220" text-anchor="middle" fill="#fff" font-family="Poppins" font-weight="800" font-size="14">5</text></g>
+            <g class="hot" data-step="5"><circle class="ring" cx="880" cy="215" r="16" fill="#2B79C9" stroke="#fff" stroke-width="3"/><text x="880" y="220" text-anchor="middle" fill="#fff" font-family="Poppins" font-weight="800" font-size="14">6</text></g>
+          </svg>
+        </div>
+        <div class="step-panel" id="stepPanel">
+          <div class="step-head" id="stepHead" style="background:var(--green);">👆 Tap stop 1 to begin the journey</div>
+          <div class="step-body" id="stepBody"><p>Each stop shows one reason water builds up around Pathum Thani and Bangkok. Your teacher will model stop 1; then you can explore the rest.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 6 : CAUSE SORT ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Explore &middot; Guided practice</div>
+        <h1 class="slide-title">Natural or human? Sort the flood causes</h1>
+        <p class="lede">Just like the water's journey, each cause is either <span class="cause-tag nat">🌧️ Natural</span>, <span class="cause-tag hum">🏗️ Human</span>, or a bit of <span class="cause-tag both">🔁 Both</span>. Decide first, then tap the card to check.</p>
+        <div class="meet">
+          <div class="meet-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 00-6 0v4M5 9h14l-1 11H6z"/></svg></div>
+          <div><div class="meet-label">Google Meet moment &middot; Vote with reactions</div><p>Before each card is revealed, vote: 👍 = <strong>natural</strong> &middot; 🎉 = <strong>human</strong> &middot; 💙 = <strong>both</strong>.</p></div>
+        </div>
+        <div class="sort-grid" id="causeGrid"></div>
+        <div class="tally" id="causeTally"></div>
+        <div class="nb"><span class="nb-ico">📓</span><p>Draw a T-chart in your notebook: <strong>Natural causes | Human causes</strong>. Write at least <strong>two</strong> causes in each column.</p></div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 7 : CFU QUIZ 1 ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Check your understanding</div>
+        <h1 class="slide-title">Why did the water have nowhere to go?</h1>
+        <div class="scenario">
+          <p><strong>Scenario:</strong> Nong Mint lives near Khlong Rangsit. It rained very heavily for three days. Her dad says, "The rain stopped hours ago, so why is the water in our soi still getting higher?"</p>
+          <h3 class="mini-title" style="margin-top:14px;">Which is the best explanation?</h3>
+          <div class="quiz-opts" data-feedback="Best answer: B. Rainwater from the whole area, plus water flowing down the Chao Phraya from the north, keeps arriving after the rain stops. The khlong is already full, so the water spills into the streets. That's why floods can get worse even on a sunny day.">
+            <button class="quiz-opt" data-correct="false"><span class="quiz-letter">A</span>The rain is still falling but we just can't see it</button>
+            <button class="quiz-opt" data-correct="true"><span class="quiz-letter">B</span>Water is still flowing in from upstream and the full khlong can't drain it away</button>
+            <button class="quiz-opt" data-correct="false"><span class="quiz-letter">C</span>Floodwater grows by itself once it starts</button>
+            <button class="quiz-opt" data-correct="false"><span class="quiz-letter">D</span>The sea is flowing uphill into Pathum Thani</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        <div class="meet">
+          <div class="meet-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+          <div><div class="meet-label">Google Meet moment</div><p>Type just the letter <strong>A, B, C or D</strong> in the chat when your teacher says "Go!"</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 8 : FLOOD LAB ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Flood Lab &middot; 12 minutes</div>
+        <h1 class="slide-title">Can you flood Rangsit, and then save it?</h1>
+        <p class="lede">This is a <strong>model</strong> of a neighbourhood next to Khlong Rangsit. Change one thing at a time and watch the canal gauge. When the water reaches the <strong style="color:var(--coral);">red line (1.80 m)</strong>, it spills into the streets, just like this week.</p>
+        <div class="timer-row">
+          <button class="btn ghost" id="timerBtn">⏱️ Start 12-minute lab timer</button>
+          <span class="timer" id="timerDisplay">12:00</span>
+          <button class="btn ghost" id="resetLabBtn">↺ Reset the model</button>
+        </div>
+        <div class="lab-grid">
+          <div>
+            <div class="sim-card">
+              <svg viewBox="0 0 960 400" id="simSvg" role="img" aria-label="Flood model of a Rangsit neighbourhood with a canal, houses, a water gauge and the sea"></svg>
+              <div class="sim-readout">
+                <span class="status-pill safe" id="statusPill">✅ SAFE</span>
+                <span class="readout-num" id="levelNum">Canal level: 0.00 m</span>
+                <span class="biggest" id="biggest"></span>
+              </div>
+            </div>
+            <div class="missions" id="missions"></div>
+          </div>
+          <div class="ctrl-card">
+            <div class="ctrl"><div class="ctrl-label">🌧️ Rain in Pathum Thani <span class="ct cause-tag nat">Natural</span></div>
+              <div class="seg" data-key="rain"><button data-v="0" class="on">Light</button><button data-v="1">Heavy</button><button data-v="2">3 days non-stop</button></div></div>
+            <div class="ctrl"><div class="ctrl-label">⛰️ Water from the north <span class="ct cause-tag nat">Natural</span></div>
+              <div class="seg" data-key="north"><button data-v="0" class="on">Low</button><button data-v="1">Medium</button><button data-v="2">High</button></div></div>
+            <div class="ctrl"><div class="ctrl-label">🌊 Sea tide <span class="ct cause-tag nat">Natural</span></div>
+              <div class="seg" data-key="tide"><button data-v="0" class="on">Low tide</button><button data-v="1">High tide</button></div></div>
+            <div class="ctrl"><div class="ctrl-label">🏗️ Land covered by concrete <span class="ct cause-tag hum">Human</span></div>
+              <input type="range" id="concrete" min="20" max="90" step="10" value="50">
+              <div style="display:flex; justify-content:space-between; font-size:11.5px; color:var(--ink-soft); font-weight:600;"><span>🌳 more fields</span><span id="concreteVal">50%</span><span>🏙️ more concrete</span></div></div>
+            <div class="ctrl"><div class="ctrl-label">🗑️ Drains and khlong <span class="ct cause-tag hum">Human</span></div>
+              <div class="seg human" data-key="blocked"><button data-v="0" class="on">Clear</button><button data-v="1">Blocked with rubbish</button></div></div>
+            <div class="ctrl-divider">Solutions</div>
+            <div class="ctrl"><div class="ctrl-label">🚰 Water pumps</div>
+              <div class="seg fix" data-key="pumps"><button data-v="0" class="on">Off</button><button data-v="1">On</button></div></div>
+            <div class="ctrl"><div class="ctrl-label">🐒 Monkey cheek pond (แก้มลิง)</div>
+              <div class="seg fix" data-key="ponds"><button data-v="0" class="on">None</button><button data-v="1">Built</button></div></div>
+          </div>
+        </div>
+        <div class="nb"><span class="nb-ico">📓</span><p>Record your results in your notebook: <em>"When I changed ______, the canal level went from ____ m to ____ m. The biggest cause of flooding in my model was ______. The best solution was ______."</em></p></div>
+        <div class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Scientists call this a fair test: change <strong>one</strong> thing, keep everything else the same. This model is simplified. It's not a real forecast!</div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 9 : CFU QUIZ 2 ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Check your understanding</div>
+        <h1 class="slide-title">What did the Flood Lab teach us?</h1>
+        <div class="scenario">
+          <p><strong>Scenario:</strong> In Mission 3, Nong Top managed to flood Rangsit even though the rain was only <em>light</em>.</p>
+          <h3 class="mini-title" style="margin-top:14px;">How was that possible?</h3>
+          <div class="quiz-opts" data-feedback="Best answer: C. Floods usually have more than one cause working together. When the river is already full from the north, the sea tide is high, and drains are blocked, even a little extra rain can push the khlong over the red line.">
+            <button class="quiz-opt" data-correct="false"><span class="quiz-letter">A</span>The model is broken, because floods only happen with heavy rain</button>
+            <button class="quiz-opt" data-correct="false"><span class="quiz-letter">B</span>Light rain is actually more dangerous than heavy rain</button>
+            <button class="quiz-opt" data-correct="true"><span class="quiz-letter">C</span>Lots of causes added together: high water from the north, high tide, blocked drains and lots of concrete</button>
+            <button class="quiz-opt" data-correct="false"><span class="quiz-letter">D</span>The pumps made the water go up</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        <div class="box sky" style="margin-top:20px;">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg> Did you know? 2011 vs 2026</div>
+          <div class="box-body"><p style="margin:0;">In 2011, Thailand had a much bigger flood. The dam upstream released about <strong>3,700 m³ of water every second</strong>, around twice as much as this week (about 1,950 m³ per second). Rangsit was badly flooded for weeks. After 2011, Thailand built more flood walls, pumps and water storage areas, and many of those are working hard right now.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 10 : STAY SAFE ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Staying safe &middot; 3 minutes</div>
+        <h1 class="slide-title">Safe or not safe?</h1>
+        <p class="lede">Geographers don't just study floods. They help people stay safe in them. Decide first, then tap to check. These are real tips for this week at home.</p>
+        <div class="sort-grid" id="safeGrid"></div>
+        <div class="box coral" style="margin-top:20px;">
+          <div class="box-head">🦺 The three big rules</div>
+          <div class="box-body"><p style="margin:0;"><strong>1.</strong> Don't walk, play or ride in floodwater. &nbsp;<strong>2.</strong> Stay far away from electricity near water. &nbsp;<strong>3.</strong> Listen to the adults at home and official news. In an emergency, an adult can call <strong>1669</strong>.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 11 : PLENARY WRITING ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Plenary &middot; 7 minutes</div>
+        <h1 class="slide-title">Explain it: why did our area flood?</h1>
+        <p class="lede">Use your T-chart and your Flood Lab results to write a short explanation in your notebook. Use the sentence starters to help you.</p>
+        <div class="frame-card">
+          <div class="frame-line"><span class="fn">1</span><span>In September 2026, Pathum Thani and Bangkok flooded because <span class="frame-blank">______</span>.</span></div>
+          <div class="frame-line"><span class="fn">2</span><span>One <strong>natural</strong> cause was <span class="frame-blank">______</span>.</span></div>
+          <div class="frame-line"><span class="fn">3</span><span>One <strong>human</strong> cause was <span class="frame-blank">______</span>.</span></div>
+          <div class="frame-line"><span class="fn">4</span><span>In the Flood Lab, I found that <span class="frame-blank">______</span> made the water rise the most.</span></div>
+          <div class="frame-line"><span class="fn">5</span><span>One way to reduce flooding is <span class="frame-blank">______</span> because <span class="frame-blank">______</span>.</span></div>
+          <div style="margin-top:14px;"><button class="btn ghost" id="exampleBtn">💡 Show me an example</button></div>
+          <div class="example-box" id="exampleBox">Tap the button to see an example sentence.</div>
+          <div class="challenge">⭐ <strong>Challenge:</strong> use at least three words from the glossary: <em>runoff, impermeable, drainage, monsoon, high tide, monkey cheek</em>.</div>
+        </div>
+        <div class="meet">
+          <div class="meet-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 10l5-3v10l-5-3z"/><rect x="3" y="6" width="12" height="12" rx="2"/></svg></div>
+          <div><div class="meet-label">Google Meet moment &middot; Show me</div><p>When you're finished, hold your notebook up to your camera. Your teacher will invite 2–3 people to unmute and read their explanation.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 12 : GLOSSARY ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Reference</div>
+        <h1 class="slide-title">Glossary: tap a card to flip it</h1>
+        <div class="gloss-grid" id="glossGrid"></div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 13 : WRAP-UP ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Wrap-up</div>
+        <h1 class="slide-title">What should be in your notebook today</h1>
+        <p class="lede">Go through the list honestly before you leave the Meet.</p>
+        <div class="assess-list" id="assessList"></div>
+        <div class="assess-progress"><div class="assess-fill" id="assessFill"></div></div>
+        <div class="meet">
+          <div class="meet-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+          <div><div class="meet-label">Exit ticket &middot; Meet chat</div><p>Before you leave, type <strong>one cause</strong> of this week's flood and <strong>one way</strong> to reduce flooding in the chat. Then take a photo of your notebook page and post it to <strong>Seesaw</strong>.</p></div>
+        </div>
+        <div class="box green" style="margin-top:10px;">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg> What comes next</div>
+          <div class="box-body"><p style="margin:0;">This flood links straight to our Sustainability work: <strong>SDG 11 (Sustainable Cities)</strong> and <strong>SDG 13 (Climate Action)</strong>. Keep noticing: what do you see people doing in your area to cope with the water? Bring one observation to our next lesson. Stay dry and stay safe! 💙</p></div>
+        </div>
+        <div class="res-row">
+          <span class="res-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> Notebook</span>
+          <span class="res-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 10l5-3v10l-5-3z"/><rect x="3" y="6" width="12" height="12" rx="2"/></svg> Google Meet</span>
+          <span class="res-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><circle cx="12" cy="12" r="3"/></svg> Seesaw photo upload</span>
+        </div>
+        <div class="reflect">
+          <div class="rl">SBSX<br>Reflection</div>
+          <div class="rf"><strong>Class A:</strong></div>
+          <div class="rf"><strong>Class B:</strong></div>
+          <div class="rf"><strong>Class C:</strong></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <button class="navbtn" id="prevBtn" onclick="prevSlide()" aria-label="Previous">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button class="navbtn" id="nextBtn" onclick="nextSlide()" aria-label="Next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+
+<script>
+/* ============ core slide navigation ============ */
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let idx = 0;
+const dotsWrap = document.getElementById('dots');
+slides.forEach((s,i)=>{
+  const d = document.createElement('button');
+  d.className = 'dot' + (i===0?' active':'');
+  d.setAttribute('aria-label','Go to slide '+(i+1));
+  d.onclick = ()=>goTo(i);
+  dotsWrap.appendChild(d);
+});
+function render(){
+  slides.forEach((s,i)=> s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.dot').forEach((d,i)=> d.classList.toggle('active', i===idx));
+  document.getElementById('counter').textContent = (idx+1) + ' / ' + total;
+  document.getElementById('prevBtn').classList.toggle('disabled', idx===0);
+  document.getElementById('nextBtn').classList.toggle('disabled', idx===total-1);
+  slides[idx].scrollTop = 0;
+}
+function goTo(i){ idx = Math.max(0, Math.min(total-1, i)); render(); }
+function nextSlide(){ goTo(idx+1); }
+function prevSlide(){ goTo(idx-1); }
+document.addEventListener('keydown', e=>{
+  if(e.target && e.target.tagName === 'INPUT') return;
+  if(e.key==='ArrowRight') nextSlide();
+  if(e.key==='ArrowLeft') prevSlide();
+});
+
+/* ============ check-in + objectives ============ */
+document.querySelectorAll('.feel-card').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    document.querySelectorAll('.feel-card').forEach(c=>c.classList.remove('chosen'));
+    card.classList.add('chosen');
+  });
+});
+document.querySelectorAll('.obj-card').forEach(card=>{
+  card.addEventListener('click', ()=> card.classList.toggle('done'));
+});
+
+/* ============ news desk ============ */
+const news = [
+  {big:'~300 mm', lbl:'of rain on Bangkok in 3 days', color:'var(--sky)', more:'From 24–26 September, rain fell almost non-stop. That\'s close to a whole month\'s rain in just three days. The ground and canals couldn\'t soak it up fast enough.'},
+  {big:'1.80 m', lbl:'Khlong Rangsit hit RED ALERT', color:'var(--coral)', more:'The Rangsit canal near our school rose to its red-alert level. In parts of Khlong Luang and Rangsit, water spilled over into homes and streets.'},
+  {big:'50 / 50', lbl:'Bangkok districts declared a disaster zone', color:'var(--amber)', more:'On 26 September, all 50 districts of Bangkok were declared a disaster zone. This lets local leaders act quickly to help people.'},
+  {big:'~1 pool / sec', lbl:'water coming down from the north', color:'var(--mint)', more:'The Chao Phraya Dam upstream was releasing about 1,750–1,950 cubic metres of water every second. That\'s almost one Olympic swimming pool every second, all flowing towards Pathum Thani and Bangkok.'},
+  {big:'174,000+', lbl:'families affected across Thailand', color:'var(--green)', more:'Flooding has affected families in 25 provinces, including Pathum Thani, Nonthaburi and Samut Prakan, as well as Bangkok.'},
+  {big:'28–29 Sept', lbl:'special holiday in Pathum Thani', color:'var(--sky)', more:'Pathum Thani declared special holidays to keep people off flooded roads. That\'s why SBS Rangsit is learning online today!'}
+];
+const newsGrid = document.getElementById('newsGrid');
+news.forEach(n=>{
+  const c = document.createElement('div');
+  c.className = 'news-card';
+  c.innerHTML = `<div class="news-top" style="background:${n.color};"><div class="big">${n.big}</div><div class="lbl">${n.lbl}</div></div>
+    <div class="news-more">${n.more}</div><div class="news-tap">Tap to read more ▸</div>`;
+  c.addEventListener('click', ()=> c.classList.toggle('open'));
+  newsGrid.appendChild(c);
+});
+
+/* ============ water journey (modelled example) ============ */
+const journey = [
+  {title:'Stop 1 · Monsoon rain in the north', type:'nat', color:'var(--sky)', text:'September is the peak of the <strong>monsoon</strong> (rainy season). Heavy rain falls on the mountains and hills of northern Thailand. Water always flows <strong>downhill</strong>, so it runs into rivers that join together to make the Chao Phraya River.'},
+  {title:'Stop 2 · The dam releases water', type:'hum', color:'var(--amber)', text:'Dams store water. When they get too full, people have to <strong>release</strong> water to keep the dam safe. This week, the Chao Phraya Dam was letting out almost an Olympic pool of water every second, and all of it flows south towards us.'},
+  {title:'Stop 3 · Heavy rain right on top of us', type:'nat', color:'var(--sky)', text:'At the same time, around 300 mm of rain fell on Bangkok and nearby provinces in three days. Scientists say a warmer climate means the air can hold more water, so rainstorms can become heavier. That part is <strong>both</strong> natural and human.'},
+  {title:'Stop 4 · Pathum Thani: low land, full khlongs, lots of concrete', type:'hum', color:'var(--amber)', text:'Pathum Thani is very <strong>flat and low</strong>. Its khlongs (canals) were dug over 120 years ago for <strong>rice farms</strong>. Today many of those fields are now roads, houses, factories and malls. Concrete is <strong>impermeable</strong>: rain can\'t soak in, so it rushes straight into drains and khlongs as <strong>runoff</strong>. Rubbish can block the drains too.'},
+  {title:'Stop 5 · Bangkok: a low, sinking city', type:'hum', color:'var(--amber)', text:'Bangkok is only about <strong>1–2 metres above sea level</strong>. For many years, people pumped water out from under the ground, which made parts of the city slowly <strong>sink</strong>. Some areas that never flooded before flooded this week because their drains couldn\'t cope.'},
+  {title:'Stop 6 · The sea pushes back: high tide', type:'nat', color:'var(--sky)', text:'All this water has to reach the Gulf of Thailand. But twice a day the <strong>tide</strong> rises. At high tide, the sea pushes back up the river, so river water can\'t drain out quickly. It\'s like trying to pour water into a bottle that\'s already full.'}
+];
+const tagHTML = t => t==='nat' ? '<span class="cause-tag nat">🌧️ Natural cause</span>' : '<span class="cause-tag hum">🏗️ Human cause</span>';
+document.querySelectorAll('#journeySvg .hot').forEach(h=>{
+  h.addEventListener('click', ()=>{
+    const s = journey[+h.dataset.step];
+    document.querySelectorAll('#journeySvg .hot').forEach(x=>x.classList.remove('active'));
+    h.classList.add('active');
+    const head = document.getElementById('stepHead');
+    head.style.background = s.color;
+    head.textContent = s.title;
+    const next = +h.dataset.step < journey.length-1 ? `<p style="font-size:13px; color:var(--ink-soft);">Next: tap stop ${+h.dataset.step+2}.</p>` : `<p style="font-size:13px; color:var(--ink-soft);">That's the whole journey! Next, you'll sort these causes yourself.</p>`;
+    document.getElementById('stepBody').innerHTML = `<div class="key-row" style="margin:0 0 10px;">${tagHTML(s.type)}</div><p>${s.text}</p>${next}`;
+  });
+});
+
+/* ============ natural vs human sort ============ */
+const causes = [
+  {e:'🌧️', q:'Monsoon rain falling for days', t:'nat', why:'Rain is part of the natural water cycle. September is the peak of Thailand\'s rainy season.'},
+  {e:'🏙️', q:'Rice fields replaced by roads, malls and housing estates', t:'hum', why:'People built over land that used to soak up and store water. Concrete is impermeable, so rain becomes runoff.'},
+  {e:'🌊', q:'High tide pushing up the Chao Phraya River', t:'nat', why:'Tides are caused by the Moon\'s pull on the sea. At high tide, river water can\'t drain out as fast.'},
+  {e:'🗑️', q:'Plastic bags and rubbish blocking drains', t:'hum', why:'Litter clogs drains and canal gates, so water gets stuck in the streets.'},
+  {e:'⛰️', q:'Water flowing downhill from northern Thailand', t:'nat', why:'Gravity always moves water from high land to low land, and Pathum Thani is low land.'},
+  {e:'🚰', q:'Pumping groundwater, making land sink', t:'hum', why:'Taking too much water from under the ground made parts of Bangkok sink, so they sit even lower.'},
+  {e:'🌡️', q:'Heavier storms in a warmer climate', t:'both', why:'Rain is natural, but human pollution is warming the planet. Warmer air holds more water, so storms can be heavier.'},
+  {e:'🏞️', q:'Very flat land close to sea level', t:'nat', why:'The Chao Phraya plain was made naturally by river mud over thousands of years. Flat land drains slowly.'},
+  {e:'🧱', q:'Filling in old khlongs to build roads', t:'hum', why:'Fewer canals means fewer paths for water to escape, so the rest overflow faster.'}
+];
+const causeGrid = document.getElementById('causeGrid');
+const tagFull = {nat:'<span class="cause-tag nat">🌧️ Natural</span>', hum:'<span class="cause-tag hum">🏗️ Human</span>', both:'<span class="cause-tag both">🔁 Both</span>'};
+causes.forEach(c=>{
+  const card = document.createElement('div');
+  card.className = 'sort-card';
+  card.dataset.t = c.t;
+  card.innerHTML = `<span class="se">${c.e}</span><p class="sort-q">${c.q}</p><div class="sort-hint">Decide, then tap to reveal</div>
+    <div class="sort-reveal">${tagFull[c.t]}<p class="sort-explain">${c.why}</p></div>`;
+  card.addEventListener('click', ()=>{ card.classList.toggle('open'); updateTally(); });
+  causeGrid.appendChild(card);
+});
+function updateTally(){
+  const open = document.querySelectorAll('#causeGrid .sort-card.open');
+  const n = {nat:0, hum:0, both:0};
+  open.forEach(c=> n[c.dataset.t]++);
+  document.getElementById('causeTally').innerHTML =
+    `<span class="pill">Revealed: ${open.length} / ${causes.length}</span>` +
+    `<span class="cause-tag nat">🌧️ Natural: ${n.nat}</span>` +
+    `<span class="cause-tag hum">🏗️ Human: ${n.hum}</span>` +
+    `<span class="cause-tag both">🔁 Both: ${n.both}</span>`;
+}
+updateTally();
+
+/* ============ quizzes (scoped per slide) ============ */
+document.querySelectorAll('.quiz-opts').forEach(group=>{
+  const fb = group.parentElement.querySelector('.quiz-feedback');
+  group.querySelectorAll('.quiz-opt').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      group.querySelectorAll('.quiz-opt').forEach(b=>{
+        b.disabled = true;
+        if(b.dataset.correct === 'true') b.classList.add('correct');
+      });
+      if(btn.dataset.correct !== 'true') btn.classList.add('wrong');
+      fb.textContent = (btn.dataset.correct === 'true' ? '✅ Well done! ' : '🤔 Not quite. ') + group.dataset.feedback;
+      fb.classList.add('show');
+    });
+  });
+});
+
+/* ============ FLOOD LAB simulator ============ */
+const NS = 'http://www.w3.org/2000/svg';
+const sim = document.getElementById('simSvg');
+function el(tag, attrs, parent){
+  const e = document.createElementNS(NS, tag);
+  for(const k in attrs) e.setAttribute(k, attrs[k]);
+  (parent||sim).appendChild(e);
+  return e;
+}
+function txt(x,y,s,attrs,parent){
+  const t = el('text', Object.assign({x:x, y:y, 'font-family':'Poppins', 'font-weight':'700', 'font-size':'12', fill:'#20232B'}, attrs||{}), parent);
+  t.textContent = s;
+  return t;
+}
+// geometry: gauge 0 m at y=360, 40 px per metre; red line 1.8 m at y=288 = bank height
+const Y0 = 360, PPM = 40, BANK = Y0 - 1.8*PPM;
+const defsEl = el('defs', {});
+const skyGrad = el('linearGradient', {id:'simSky', x1:0, y1:0, x2:0, y2:1}, defsEl);
+el('stop', {offset:0, 'stop-color':'#DCE8F4'}, skyGrad);
+el('stop', {offset:1, 'stop-color':'#F7F5F1'}, skyGrad);
+const sky = el('rect', {x:0, y:0, width:960, height:400, fill:'url(#simSky)'});
+// clouds
+const cloudG = el('g', {});
+[[160,40,70],[300,30,60],[470,44,80],[640,34,64]].forEach(c=>{
+  el('ellipse', {cx:c[0], cy:c[1], rx:c[2], ry:20, fill:'#9FB4C8'}, cloudG);
+  el('ellipse', {cx:c[0]+c[2]*.45, cy:c[1]-8, rx:c[2]*.55, ry:16, fill:'#B5C6D6'}, cloudG);
+});
+// rain drops
+const rainG = el('g', {});
+const drops = [];
+for(let i=0;i<90;i++){
+  const x = 30 + ((i*97) % 700);
+  const y = 55 + ((i*37) % 60);
+  const d = el('line', {x1:x, y1:y, x2:x-4, y2:y+12, stroke:'#2B79C9', 'stroke-width':2, 'stroke-linecap':'round', class:'drop', style:`animation-delay:${((i*13)%90)/100}s`}, rainG);
+  drops.push(d);
+}
+// river from north (left)
+txt(70, 190, 'Chao Phraya', {'text-anchor':'middle', fill:'#2B79C9', 'font-size':'12'});
+txt(70, 205, 'from the north', {'text-anchor':'middle', fill:'#2B79C9', 'font-size':'10.5', 'font-weight':'600'});
+el('rect', {x:20, y:216, width:100, height:144, fill:'#EFE7D6', stroke:'#C9BFA8'});
+const riverWater = el('rect', {x:20, y:320, width:100, height:40, fill:'#2B79C9', opacity:.8});
+el('path', {d:'M40,240 L100,240', stroke:'#fff', 'stroke-width':0});
+// ground
+el('rect', {x:120, y:BANK, width:690, height:400-BANK, fill:'#C9B98F'});
+// concrete / grass tiles along the surface
+const tiles = [];
+for(let i=0;i<10;i++){
+  const t = el('rect', {x:130 + i*33, y:BANK-6, width:31, height:6, rx:2, fill:'#4FA974'});
+  tiles.push(t);
+}
+for(let i=0;i<4;i++){
+  const t = el('rect', {x:620 + i*33, y:BANK-6, width:31, height:6, rx:2, fill:'#4FA974'});
+  tiles.push(t);
+}
+// houses
+function house(x, w, h, roof){
+  el('rect', {x:x, y:BANK-6-h, width:w, height:h, fill:'#FFFFFF', stroke:'#585E6C', 'stroke-width':1.5});
+  el('polygon', {points:`${x-6},${BANK-6-h} ${x+w/2},${BANK-6-h-22} ${x+w+6},${BANK-6-h}`, fill:roof});
+  el('rect', {x:x+w/2-6, y:BANK-6-20, width:12, height:20, fill:'#CE9526'});
+}
+house(140, 50, 40, '#E0563F');
+house(210, 44, 34, '#2B79C9');
+// school
+el('rect', {x:280, y:BANK-6-58, width:110, height:58, fill:'#FFFFFF', stroke:'#585E6C', 'stroke-width':1.5});
+el('rect', {x:280, y:BANK-6-70, width:110, height:14, fill:'#1F7A4D'});
+txt(335, BANK-6-59, 'SCHOOL', {'text-anchor':'middle', fill:'#fff', 'font-size':'10'});
+for(let i=0;i<4;i++){ el('rect', {x:290+i*25, y:BANK-6-44, width:16, height:12, fill:'#E8F1FB', stroke:'#585E6C'}); }
+el('rect', {x:326, y:BANK-6-24, width:18, height:24, fill:'#CE9526'});
+// canal cut
+const canalX = 420, canalW = 90;
+el('rect', {x:canalX, y:BANK-6, width:canalW, height:Y0-BANK+6, fill:'#EFE7D6'});
+const canalWater = el('rect', {x:canalX, y:Y0-20, width:canalW, height:20, fill:'#2B79C9', opacity:.85});
+txt(canalX+canalW/2, Y0+22, 'Khlong Rangsit', {'text-anchor':'middle', fill:'#2B79C9', 'font-size':'11.5'});
+// rubbish in canal (blocked)
+const rubbishG = el('g', {});
+[[432,0],[452,1],[476,0],[494,1]].forEach((r,i)=>{
+  el('rect', {x:r[0], y:Y0-10-r[1]*6, width:10, height:8, rx:2, fill:['#E0563F','#CE9526','#585E6C','#E0563F'][i], transform:`rotate(${i*25} ${r[0]+5} ${Y0-6})`}, rubbishG);
+});
+// houses right of canal
+house(540, 46, 36, '#CE9526');
+house(610, 50, 40, '#2E9E76');
+// gauge
+const gx = 522;
+el('rect', {x:gx, y:Y0-2.5*PPM, width:8, height:2.5*PPM, fill:'#FFFFFF', stroke:'#585E6C'});
+for(let m=0;m<=2.5;m+=0.5){
+  el('line', {x1:gx-4, y1:Y0-m*PPM, x2:gx+12, y2:Y0-m*PPM, stroke:'#585E6C', 'stroke-width':1});
+  txt(gx+16, Y0-m*PPM+4, m.toFixed(1)+' m', {'font-size':'9.5', fill:'#585E6C', 'font-weight':'600'});
+}
+el('line', {x1:canalX-4, y1:BANK, x2:gx+12, y2:BANK, stroke:'#E0563F', 'stroke-width':2.5, 'stroke-dasharray':'6 4'});
+txt(canalX-8, BANK+14, 'RED LINE 1.80 m', {'text-anchor':'end', fill:'#E0563F', 'font-size':'10'});
+// street flood water (drawn over houses)
+const streetWater = el('rect', {x:120, y:BANK, width:690, height:0, fill:'#2B79C9', opacity:.55});
+// pumps + pond area
+const pumpG = el('g', {});
+el('rect', {x:700, y:BANK-40, width:34, height:34, rx:6, fill:'#2E9E76'}, pumpG);
+txt(717, BANK-18, 'PUMP', {'text-anchor':'middle', fill:'#fff', 'font-size':'8.5'}, pumpG);
+el('path', {d:`M734,${BANK-30} C770,${BANK-60} 800,${BANK-40} 830,${BANK-20}`, stroke:'#2B79C9', 'stroke-width':4, fill:'none', 'stroke-dasharray':'8 5'}, pumpG);
+const pondG = el('g', {});
+el('ellipse', {cx:745, cy:BANK+34, rx:52, ry:18, fill:'#2B79C9', opacity:.8}, pondG);
+txt(745, BANK+38, '🐒 monkey cheek', {'text-anchor':'middle', fill:'#fff', 'font-size':'10'}, pondG);
+// sea on right
+el('rect', {x:810, y:BANK-6, width:150, height:400-BANK+6, fill:'#EFE7D6'});
+const seaWater = el('rect', {x:810, y:330, width:150, height:70, fill:'#2B79C9', opacity:.8});
+txt(885, 392, 'Gulf of Thailand', {'text-anchor':'middle', fill:'#fff', 'font-size':'11'});
+// flood banner
+const banner = el('g', {});
+el('rect', {x:250, y:120, width:460, height:44, rx:22, fill:'#E0563F'}, banner);
+txt(480, 148, '⚠️ RED ALERT: water is spilling into the streets!', {'text-anchor':'middle', fill:'#fff', 'font-size':'14'}, banner);
+
+// model state + maths
+const state = {rain:0, north:0, tide:0, concrete:50, blocked:0, pumps:0, ponds:0};
+const RAIN = [0.2, 0.55, 0.95], NORTH = [0, 0.25, 0.5], TIDE = [0, 0.25];
+function computeLevel(s){
+  const runoff = 0.4 + 0.8*(s.concrete/100);
+  const parts = {
+    'the rain': RAIN[s.rain]*runoff,
+    'water from the north': NORTH[s.north],
+    'the high tide': TIDE[s.tide],
+    'blocked drains': s.blocked ? 0.35 : 0,
+    'concrete (extra runoff)': RAIN[s.rain]*(runoff-0.56)
+  };
+  let level = 0.5 + parts['the rain'] + parts['water from the north'] + parts['the high tide'] + parts['blocked drains'];
+  level -= (s.pumps ? 0.3 : 0) + (s.ponds ? 0.35 : 0);
+  level = Math.max(0.3, Math.min(2.6, level));
+  return {level, parts};
+}
+function statusOf(level){ return level >= 1.8 ? 'red' : (level >= 1.4 ? 'watch' : 'safe'); }
+
+const missionsData = [
+  {t:'Recreate this week', d:'Set 3 days of non-stop rain, high water from the north and a high tide. Did Rangsit reach red alert?', test:s=> s.rain===2 && s.north===2 && s.tide===1 && statusOf(computeLevel(s).level)==='red'},
+  {t:'Save Rangsit', d:'Keep the 3-day rain, high north water and high tide, but get the canal back below the red line. Which solutions work best?', test:s=> s.rain===2 && s.north===2 && s.tide===1 && statusOf(computeLevel(s).level)!=='red'},
+  {t:'Sneaky flood', d:'Can you cause a red alert with only LIGHT rain? What else has to be true?', test:s=> s.rain===0 && statusOf(computeLevel(s).level)==='red'}
+];
+const missionDone = [false,false,false];
+const missionsWrap = document.getElementById('missions');
+missionsData.forEach((m,i)=>{
+  const c = document.createElement('div');
+  c.className = 'mission';
+  c.id = 'mission'+i;
+  c.innerHTML = `<div class="mtick"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><div class="mnum">Mission ${i+1}</div><h3>${m.t}</h3><p>${m.d}</p>`;
+  missionsWrap.appendChild(c);
+});
+
+function updateSim(){
+  const {level, parts} = computeLevel(state);
+  const st = statusOf(level);
+  // rain drops
+  const nDrops = [15, 45, 90][state.rain];
+  drops.forEach((d,i)=> d.style.display = i < nDrops ? '' : 'none');
+  cloudG.setAttribute('opacity', [0.55, 0.8, 1][state.rain]);
+  // river from north
+  const rh = [40, 80, 120][state.north];
+  riverWater.setAttribute('y', Y0 - rh); riverWater.setAttribute('height', rh);
+  // sea
+  const seaTop = state.tide ? BANK+2 : 332;
+  seaWater.setAttribute('y', seaTop); seaWater.setAttribute('height', 400-seaTop);
+  // concrete tiles
+  const grey = Math.round(state.concrete/100 * tiles.length);
+  tiles.forEach((t,i)=> t.setAttribute('fill', i < grey ? '#9AA0A9' : '#4FA974'));
+  document.getElementById('concreteVal').textContent = state.concrete + '% concrete';
+  // rubbish, pumps, ponds
+  rubbishG.style.display = state.blocked ? '' : 'none';
+  pumpG.style.opacity = state.pumps ? 1 : 0.18;
+  pondG.style.opacity = state.ponds ? 1 : 0.12;
+  // canal water (cap at bank)
+  const canalLvl = Math.min(level, 1.8);
+  canalWater.setAttribute('y', Y0 - canalLvl*PPM);
+  canalWater.setAttribute('height', canalLvl*PPM);
+  // street flooding
+  const depth = Math.max(0, level-1.8) * PPM * 3;
+  streetWater.setAttribute('y', BANK - depth);
+  streetWater.setAttribute('height', depth);
+  banner.style.display = st==='red' ? '' : 'none';
+  // readout
+  const pill = document.getElementById('statusPill');
+  pill.className = 'status-pill ' + st;
+  pill.textContent = st==='red' ? '🚨 RED ALERT: FLOODING' : (st==='watch' ? '⚠️ WATCH: getting high' : '✅ SAFE');
+  document.getElementById('levelNum').textContent = 'Canal level: ' + level.toFixed(2) + ' m';
+  // biggest cause
+  let best = null, bestV = 0;
+  Object.keys(parts).forEach(k=>{ if(parts[k] > bestV){ bestV = parts[k]; best = k; } });
+  const fixes = (state.pumps||state.ponds) ? ` Solutions are lowering the water by <strong>${((state.pumps?0.3:0)+(state.ponds?0.35:0)).toFixed(2)} m</strong>.` : '';
+  document.getElementById('biggest').innerHTML = `Biggest cause right now: <strong>${best}</strong> (+${bestV.toFixed(2)} m).${fixes}`;
+  // missions
+  missionsData.forEach((m,i)=>{
+    if(!missionDone[i] && m.test(state)){ missionDone[i] = true; }
+    document.getElementById('mission'+i).classList.toggle('done', missionDone[i]);
+  });
+}
+document.querySelectorAll('.seg').forEach(seg=>{
+  seg.querySelectorAll('button').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      seg.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      state[seg.dataset.key] = +b.dataset.v;
+      updateSim();
+    });
+  });
+});
+const concreteInput = document.getElementById('concrete');
+concreteInput.addEventListener('input', ()=>{ state.concrete = +concreteInput.value; updateSim(); });
+document.getElementById('resetLabBtn').addEventListener('click', ()=>{
+  Object.assign(state, {rain:0, north:0, tide:0, concrete:50, blocked:0, pumps:0, ponds:0});
+  concreteInput.value = 50;
+  document.querySelectorAll('.seg').forEach(seg=>{
+    seg.querySelectorAll('button').forEach(b=> b.classList.toggle('on', b.dataset.v==='0'));
+  });
+  updateSim();
+});
+updateSim();
+
+/* lab timer */
+let timerLeft = 12*60, timerId = null;
+function drawTimer(){
+  const m = Math.floor(timerLeft/60), s = timerLeft%60;
+  const d = document.getElementById('timerDisplay');
+  d.textContent = m + ':' + String(s).padStart(2,'0');
+  d.classList.toggle('low', timerLeft <= 60);
+}
+document.getElementById('timerBtn').addEventListener('click', ()=>{
+  const btn = document.getElementById('timerBtn');
+  if(timerId){ clearInterval(timerId); timerId = null; btn.textContent = '▶️ Resume timer'; return; }
+  if(timerLeft <= 0){ timerLeft = 12*60; }
+  btn.textContent = '⏸️ Pause timer';
+  timerId = setInterval(()=>{
+    timerLeft--; drawTimer();
+    if(timerLeft <= 0){ clearInterval(timerId); timerId = null; btn.textContent = '⏱️ Restart 12-minute timer'; }
+  }, 1000);
+});
+drawTimer();
+
+/* ============ safe / not safe ============ */
+const safety = [
+  {e:'🚶', q:'Walking through floodwater to see how deep it is', safe:false, why:'Floodwater can hide open drains, holes and sharp objects, and it can carry electricity and germs. Stay out!'},
+  {e:'📦', q:'Helping move books, toys and devices to a higher shelf or upstairs', safe:true, why:'Moving things up high protects them if water comes inside. Great way to help your family.'},
+  {e:'🔌', q:'Touching a light switch or plug with wet hands', safe:false, why:'Water and electricity are a dangerous mix. Dry your hands first and keep away from sockets near water.'},
+  {e:'🧼', q:'Washing hands with soap after touching floodwater', safe:true, why:'Floodwater is dirty and can carry germs from drains and sewers.'},
+  {e:'🚲', q:'Riding a bike through a flooded soi for fun', safe:false, why:'Even shallow moving water can knock you over, and you can\'t see what\'s under the surface.'},
+  {e:'📻', q:'Listening to adults and official news updates', safe:true, why:'Official updates tell families when water is rising and which roads to avoid.'},
+  {e:'🏊', q:'Swimming in the khlong because it\'s so full', safe:false, why:'Full canals have strong currents and dirty water. Never swim in floodwater or canals.'},
+  {e:'🔦', q:'Keeping a torch, drinking water and a charged phone ready', safe:true, why:'If the power goes off, your family will be prepared.'},
+  {e:'🐍', q:'Poking at a snake or animal you see in the water', safe:false, why:'Floods push snakes and other animals out of their homes. Stay away and tell an adult.'}
+];
+const safeGrid = document.getElementById('safeGrid');
+safety.forEach(s=>{
+  const card = document.createElement('div');
+  card.className = 'sort-card';
+  card.innerHTML = `<span class="se">${s.e}</span><p class="sort-q">${s.q}</p><div class="sort-hint">Safe or not? Tap to check</div>
+    <div class="sort-reveal"><span class="sort-tag ${s.safe?'safe':'unsafe'}">${s.safe?'✅ Safe':'⛔ Not safe'}</span><p class="sort-explain">${s.why}</p></div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('open'));
+  safeGrid.appendChild(card);
+});
+
+/* ============ plenary example cycler ============ */
+const examples = [
+  'In September 2026, Pathum Thani and Bangkok flooded because about 300 mm of rain fell in three days and extra water was flowing down the Chao Phraya from the north.',
+  'One natural cause was the high tide, which pushed the sea back up the river so the water couldn\'t drain away.',
+  'One human cause was building roads and houses on old rice fields. Concrete is impermeable, so the rain turned into runoff instead of soaking in.',
+  'In the Flood Lab, I found that water from the north made the water rise the most when the rain was light.',
+  'One way to reduce flooding is building monkey cheek ponds, because they store extra water until the tide goes down.'
+];
+let exampleIdx = 0;
+document.getElementById('exampleBtn').addEventListener('click', ()=>{
+  document.getElementById('exampleBox').textContent = '"' + examples[exampleIdx % examples.length] + '"';
+  exampleIdx++;
+});
+
+/* ============ glossary ============ */
+const glossary = [
+  {term:'Flood', def:'When water covers land that is usually dry.'},
+  {term:'Monsoon', def:'A season of very heavy rain. In Thailand it lasts from about May to October, with the most rain in September.'},
+  {term:'Runoff', def:'Rainwater that flows over the ground instead of soaking into it.'},
+  {term:'Impermeable', def:'A surface water can\'t soak through, like concrete, roads and roofs.'},
+  {term:'Drainage', def:'The way water is carried away from an area, through drains, pipes, canals and rivers.'},
+  {term:'Khlong', def:'The Thai word for a canal. Pathum Thani has many khlongs first dug for rice farming.'},
+  {term:'High tide', def:'When the sea rises twice a day. It can push water back up rivers and slow drainage.'},
+  {term:'Monkey cheek (แก้มลิง)', def:'A pond or low area that stores floodwater, like a monkey storing food in its cheeks, then lets it out slowly.'},
+  {term:'Dam', def:'A wall built across a river to store water. Water is released when the dam is too full.'},
+  {term:'Red alert', def:'A warning that water has reached a dangerous level and flooding is likely.'},
+  {term:'Subsidence', def:'When land slowly sinks, for example after too much water is pumped from underground.'},
+  {term:'Natural vs human cause', def:'A natural cause comes from nature (rain, tides). A human cause comes from what people do (building, litter).'}
+];
+const glossGrid = document.getElementById('glossGrid');
+glossary.forEach(g=>{
+  const card = document.createElement('div');
+  card.className = 'gloss-card';
+  card.innerHTML = `<div class="gloss-inner"><div class="gloss-face front">${g.term}</div><div class="gloss-face back">${g.def}</div></div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flip'));
+  glossGrid.appendChild(card);
+});
+
+/* ============ wrap-up checklist ============ */
+const assessItems = [
+  'I wrote the date, title, one surprising fact and one wonder question',
+  'I drew a T-chart with at least two natural and two human causes',
+  'I recorded my Flood Lab results (what I changed and what happened)',
+  'I completed at least two Flood Lab missions',
+  'I wrote my 5-sentence explanation using the sentence starters',
+  'I used at least three glossary words',
+  'I photographed my notebook page and posted it to Seesaw'
+];
+const assessList = document.getElementById('assessList');
+assessItems.forEach(text=>{
+  const item = document.createElement('div');
+  item.className = 'assess-item';
+  item.innerHTML = `<div class="assess-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>${text}</p>`;
+  item.addEventListener('click', ()=>{ item.classList.toggle('checked'); updateAssessProgress(); });
+  assessList.appendChild(item);
+});
+function updateAssessProgress(){
+  const checked = document.querySelectorAll('.assess-item.checked').length;
+  document.getElementById('assessFill').style.width = (checked/assessItems.length*100)+'%';
+}
+
+/* ============ initial render ============ */
+render();
+</script>
+</body>
+</html>
