@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maths 7.2 — Time — Online Lesson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#1F7A4D; --green-dark:#123D28; --green-light:#E1F3EA; --green-mid:#4FA974;
+  --coral:#E0563F; --coral-light:#FCE9E5;
+  --amber:#CE9526; --amber-light:#FAF1DC;
+  --mint:#2E9E76; --mint-light:#E3F5EC;
+  --sky:#2B79C9; --sky-light:#E8F1FB;
+  --ink:#20232B; --ink-soft:#585E6C;
+  --paper:#FFFFFF; --cream:#F7F5F1; --line:#E1DFEA;
+  --r-lg:22px; --r-md:14px; --r-sm:8px;
+  --shadow: 0 10px 30px rgba(18,61,40,.14);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{margin:0; background:var(--cream); color:var(--ink); font-family:'Inter',system-ui,sans-serif; overflow:hidden;}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+
+/* ===== App shell ===== */
+#app{position:relative; width:100vw; height:100vh; display:flex; flex-direction:column;}
+.topbar{display:flex; align-items:center; justify-content:space-between; padding:14px 28px; background:var(--paper); border-bottom:1px solid var(--line); flex:0 0 auto; z-index:20; gap:12px;}
+.crumb{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft); font-weight:600; flex-wrap:wrap;}
+.crumb .tag{background:var(--green); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12px; padding:5px 12px; border-radius:100px; letter-spacing:.3px;}
+.crumb .sep{color:#C6C2D6;}
+.crumb .current{color:var(--green-dark);}
+.crumb .live{background:var(--coral-light); color:var(--coral); font-family:'Poppins'; font-weight:700; font-size:11px; padding:4px 10px; border-radius:100px; display:inline-flex; align-items:center; gap:6px;}
+.crumb .live i{width:7px; height:7px; border-radius:50%; background:var(--coral); display:inline-block; animation:pulse 1.4s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.dots{display:flex; gap:6px; align-items:center; flex-wrap:wrap; max-width:34vw;}
+.dot{width:9px; height:9px; border-radius:50%; background:#DCE6DF; border:none; cursor:pointer; transition:all .25s; padding:0;}
+.dot.active{background:var(--green); width:22px; border-radius:6px;}
+.dot:hover{background:var(--green-mid);}
+.counter{font-size:12px; color:var(--ink-soft); font-weight:600; font-variant-numeric:tabular-nums; min-width:50px; text-align:right;}
+
+.stage{position:relative; flex:1 1 auto; overflow:hidden;}
+.slide{position:absolute; inset:0; opacity:0; pointer-events:none; transform:translateX(30px) scale(.99); transition:opacity .45s ease, transform .45s ease; overflow-y:auto;}
+.slide.active{opacity:1; pointer-events:auto; transform:translateX(0) scale(1);}
+.slide-inner{max-width:1180px; margin:0 auto; padding:40px 44px 90px; min-height:100%;}
+
+.navbtn{position:absolute; top:50%; transform:translateY(-50%); z-index:15; width:46px; height:46px; border-radius:50%; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--green-dark); transition:.2s;}
+.navbtn:hover{background:var(--green); color:#fff; border-color:var(--green);}
+.navbtn.disabled{opacity:.25; pointer-events:none;}
+#prevBtn{left:16px;} #nextBtn{right:16px;}
+.navbtn svg{width:20px; height:20px;}
+
+/* ===== shared components ===== */
+.chevron-badge{display:inline-flex; align-items:center; gap:10px; background:var(--green); color:#fff; padding:9px 20px 9px 16px; font-family:'Poppins'; font-weight:700; font-size:15px; clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%); margin-bottom:16px;}
+.eyebrow{font-family:'Poppins'; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--coral); margin-bottom:8px;}
+h1.slide-title{font-size:32px; font-weight:800; color:var(--green-dark); margin:0 0 6px; line-height:1.15;}
+h3.mini-title{font-size:17px; font-weight:700; color:var(--ink); margin:0 0 8px;}
+p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
+.lede{font-size:17px; color:var(--ink-soft); margin-bottom:22px; max-width:800px;}
+
+.box{border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow);}
+.box-head{padding:12px 20px; font-family:'Poppins'; font-weight:700; font-size:14px; color:#fff; display:flex; align-items:center; gap:8px;}
+.box-body{padding:20px 22px;}
+.box.green .box-head{background:var(--green);}
+.box.coral .box-head{background:var(--coral);}
+.box.amber .box-head{background:var(--amber);}
+.box.mint .box-head{background:var(--mint);}
+.box.sky .box-head{background:var(--sky);}
+
+.two-col{display:grid; grid-template-columns:1.05fr .95fr; gap:30px; align-items:start;}
+@media (max-width:900px){.two-col{grid-template-columns:1fr;}}
+
+.pill{display:inline-block; padding:5px 13px; border-radius:100px; font-size:12.5px; font-weight:700; background:var(--green-light); color:var(--green-dark); margin:3px 5px 3px 0;}
+.hint{font-size:12.5px; color:var(--ink-soft); background:var(--green-light); border-radius:100px; padding:6px 14px; display:inline-flex; gap:6px; align-items:center; margin-bottom:18px; font-weight:600;}
+.hint svg{width:14px; height:14px; flex:0 0 auto;}
+
+.btn{border:none; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:14px; padding:10px 20px; border-radius:100px; background:var(--green); color:#fff; transition:.2s;}
+.btn:hover{background:var(--green-dark);}
+.btn.ghost{background:transparent; border:1.5px solid var(--green); color:var(--green);}
+.btn.ghost:hover{background:var(--green-light);}
+.btn.coral{background:var(--coral);}
+.btn.coral:hover{background:#B9402C;}
+
+/* Google Meet moment callout */
+.meet{display:flex; gap:12px; align-items:flex-start; background:var(--sky-light); border:1.5px solid #C9DDF3; border-radius:var(--r-md); padding:12px 16px; margin:14px 0;}
+.meet .meet-ico{flex:0 0 auto; width:34px; height:34px; border-radius:10px; background:var(--sky); color:#fff; display:flex; align-items:center; justify-content:center;}
+.meet .meet-ico svg{width:18px; height:18px;}
+.meet .meet-label{font-family:'Poppins'; font-weight:700; font-size:11.5px; letter-spacing:1px; text-transform:uppercase; color:var(--sky); margin-bottom:2px;}
+.meet p{margin:0; font-size:14px; line-height:1.55;}
+
+/* notebook prompt */
+.nb{display:flex; gap:12px; align-items:flex-start; background:var(--amber-light); border:1.5px dashed var(--amber); border-radius:var(--r-md); padding:14px 16px; margin:14px 0;}
+.nb .nb-ico{font-size:22px; line-height:1;}
+.nb p{margin:0; font-size:14.5px;}
+
+/* Open your book callout */
+.book{display:flex; gap:14px; align-items:center; background:var(--amber-light); border:2px solid var(--amber); border-radius:var(--r-md); padding:14px 18px; margin:16px 0;}
+.book .book-ico{flex:0 0 auto; width:46px; height:46px; border-radius:12px; background:var(--amber); color:#fff; display:flex; align-items:center; justify-content:center; font-size:22px;}
+.book .book-label{font-family:'Poppins'; font-weight:800; font-size:11.5px; letter-spacing:1.2px; text-transform:uppercase; color:#8C6212; margin-bottom:2px;}
+.book .book-where{font-family:'Poppins'; font-weight:700; font-size:17px; color:var(--ink); margin-bottom:2px;}
+.book p{margin:0; font-size:14px; color:var(--ink-soft); line-height:1.5;}
+
+.res-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:14px;}
+.res-chip{display:flex; align-items:center; gap:8px; padding:9px 16px; border-radius:100px; background:var(--sky-light); color:var(--sky); font-family:'Poppins'; font-weight:700; font-size:12.5px;}
+.res-chip svg{width:15px; height:15px;}
+
+/* ============ COVER ============ */
+.cover{height:100%; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;
+  background: radial-gradient(ellipse at 20% 15%, rgba(255,255,255,.10), transparent 45%), linear-gradient(160deg, var(--green) 0%, var(--green-dark) 62%, #0B2418 100%);}
+.cover-clock{position:absolute; opacity:.12;}
+.cover-content{position:relative; z-index:2; text-align:center; color:#fff; max-width:820px; padding:0 30px;}
+.cover-content .unit{font-family:'Poppins'; font-weight:700; letter-spacing:3px; font-size:13px; text-transform:uppercase; color:#CFEBDB; margin-bottom:14px;}
+.cover-content h1{font-size:46px; font-weight:800; margin:0 0 10px; line-height:1.1;}
+.cover-content .sub{font-size:17px; color:#E3F3EA; font-weight:500; margin-bottom:34px;}
+.cover-chip-row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:38px;}
+.cover-chip{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff; padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600; backdrop-filter:blur(4px);}
+.cover-start{background:var(--coral); color:#fff; border:none; font-family:'Poppins'; font-weight:700; font-size:16px; padding:15px 34px; border-radius:100px; cursor:pointer; box-shadow:0 12px 26px rgba(224,86,63,.4); display:inline-flex; align-items:center; gap:10px; transition:.2s;}
+.cover-start:hover{transform:translateY(-2px); box-shadow:0 16px 30px rgba(224,86,63,.5);}
+.cover-note{margin-top:22px; font-size:13px; color:#BFE0CE;}
+
+/* ============ check-in ============ */
+.feel-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:8px;}
+@media (max-width:820px){.feel-grid{grid-template-columns:1fr 1fr;}}
+.feel-card{background:var(--paper); border:1.5px solid var(--line); border-radius:var(--r-md); padding:16px 12px; text-align:center; box-shadow:var(--shadow); cursor:pointer; transition:.2s;}
+.feel-card:hover{border-color:var(--green-mid);}
+.feel-card.chosen{background:var(--green-light); border-color:var(--green);}
+.feel-card .fe{font-size:30px; display:block; margin-bottom:6px;}
+.feel-card h3{margin:0 0 3px; font-size:14px; color:var(--green-dark);}
+.feel-card p{margin:0; font-size:12px; color:var(--ink-soft); line-height:1.45;}
+.norm-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:6px;}
+@media (max-width:820px){.norm-grid{grid-template-columns:1fr 1fr;}}
+.norm{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:12px 12px; display:flex; gap:10px; align-items:center; font-size:13px; font-weight:600;}
+.norm span{font-size:20px;}
+
+/* ============ objectives ============ */
+.obj-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 22px; margin-top:6px;}
+@media (max-width:800px){.obj-grid{grid-template-columns:1fr;}}
+.obj-card{display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:var(--r-md); background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.2s;}
+.obj-card:hover{border-color:var(--green-mid); box-shadow:var(--shadow);}
+.obj-num{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--green-light); color:var(--green-dark); font-family:'Poppins'; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;}
+.obj-card.done .obj-num{background:var(--green); color:#fff;}
+.obj-card.done p{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:#C6C2D6;}
+.obj-card p{margin:0; font-size:13.8px; line-height:1.5;}
+
+/* ============ agenda ============ */
+.agenda{display:flex; flex-direction:column; gap:12px; margin-top:10px;}
+.agenda-item{display:flex; gap:16px; align-items:center;}
+.agenda-time{flex:0 0 auto; width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-direction:column; color:#fff; font-family:'Poppins'; font-weight:800; box-shadow:var(--shadow);}
+.agenda-time span{font-size:10px; font-weight:600; opacity:.9;}
+.agenda-body{flex:1 1 auto; background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:12px 18px; box-shadow:var(--shadow);}
+.agenda-body h3{margin:0 0 3px; font-size:15px;}
+.agenda-body p{margin:0; font-size:13.3px; color:var(--ink-soft);}
+
+/* ============ number detective cards ============ */
+.news-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:6px;}
+@media (max-width:900px){.news-grid{grid-template-columns:1fr 1fr;}}
+.news-card{border-radius:var(--r-md); background:var(--paper); border:1px solid var(--line); box-shadow:var(--shadow); cursor:pointer; overflow:hidden; transition:.2s;}
+.news-card:hover{transform:translateY(-2px);}
+.news-top{padding:16px 16px 12px; color:#fff; min-height:84px; display:flex; flex-direction:column; justify-content:center;}
+.news-top .big{font-family:'Poppins'; font-weight:800; font-size:34px; line-height:1;}
+.news-top .lbl{font-size:12px; font-weight:600; opacity:.95; margin-top:4px;}
+.news-more{max-height:0; overflow:hidden; transition:max-height .35s ease, padding .35s; padding:0 16px; font-size:13px; color:var(--ink-soft); line-height:1.55;}
+.news-card.open .news-more{max-height:180px; padding:12px 16px 14px;}
+.news-tap{font-size:11px; color:var(--ink-soft); padding:8px 16px; border-top:1px solid var(--line); font-weight:600;}
+.news-card.open .news-tap{display:none;}
+
+/* ============ base 10 vs base 60 ============ */
+.compare{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:4px 0 18px;}
+@media (max-width:760px){.compare{grid-template-columns:1fr;}}
+.compare-card{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:14px 18px; box-shadow:var(--shadow);}
+.compare-card h3{margin:0 0 4px; font-size:15px;}
+.compare-card p{margin:0; font-size:13.5px; color:var(--ink-soft);}
+.compare-card .big{font-family:'Poppins'; font-weight:800; font-size:22px;}
+
+/* ============ clock + tenths bar ============ */
+.clock-grid{display:grid; grid-template-columns:300px 1fr; gap:26px; align-items:center;}
+@media (max-width:900px){.clock-grid{grid-template-columns:1fr;}}
+.clock-card{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow); padding:14px;}
+.clock-card svg{width:100%; height:auto; display:block;}
+.seg{display:flex; gap:6px; flex-wrap:wrap;}
+.seg button{flex:1 1 auto; border:1.5px solid var(--line); background:var(--cream); border-radius:100px; padding:7px 10px; font-size:13px; font-weight:700; cursor:pointer; color:var(--ink-soft); transition:.15s; font-family:'Poppins';}
+.seg button.on{background:var(--green); border-color:var(--green); color:#fff;}
+.seg.sky button.on{background:var(--sky); border-color:var(--sky);}
+.seg.amber button.on{background:var(--amber); border-color:var(--amber);}
+.tenth-bar{display:grid; grid-template-columns:repeat(10,1fr); gap:4px; margin:16px 0 8px;}
+.bar-cell{height:46px; border-radius:8px; background:var(--green-light); border:1.5px solid #CFE6D9; display:flex; align-items:center; justify-content:center; font-family:'Poppins'; font-weight:700; font-size:11.5px; color:var(--green-dark); transition:.25s;}
+.bar-cell.on{background:var(--green); color:#fff; border-color:var(--green);}
+.bar-scale{display:flex; justify-content:space-between; font-size:11.5px; color:var(--ink-soft); font-weight:600;}
+.big-readout{font-family:'Poppins'; font-weight:800; font-size:30px; color:var(--green-dark); line-height:1.2; margin:10px 0 4px;}
+.big-readout .eq{color:var(--coral);}
+.work-line{font-size:15px; color:var(--ink-soft); font-weight:600;}
+.work-line strong{color:var(--ink);}
+
+/* ============ worked example steps ============ */
+.we{border-left:4px solid var(--coral); background:var(--paper); border-radius:0 var(--r-md) var(--r-md) 0; box-shadow:var(--shadow); padding:0; overflow:hidden;}
+.we-head{background:var(--coral); color:#fff; font-family:'Poppins'; font-weight:700; font-size:14px; padding:10px 18px; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;}
+.we-body{padding:14px 20px 16px;}
+.we-step{display:flex; gap:12px; align-items:flex-start; padding:10px 0; border-bottom:1px dashed var(--line); opacity:.0; max-height:0; overflow:hidden; transition:opacity .35s, max-height .35s, padding .35s; padding:0;}
+.we-step.show{opacity:1; max-height:420px; padding:10px 0;}
+.we-step:last-child{border-bottom:none;}
+.we-n{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--coral-light); color:var(--coral); font-family:'Poppins'; font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center;}
+.we-step .math{font-family:'Poppins'; font-weight:700; font-size:17px; color:var(--ink);}
+.we-step .why{font-size:13.5px; color:var(--ink-soft); margin-top:2px; line-height:1.5;}
+.we-step.final .math{color:var(--green);}
+.method-split{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:4px;}
+@media (max-width:700px){.method-split{grid-template-columns:1fr;}}
+.method{border:1.5px solid var(--line); border-radius:var(--r-sm); padding:8px 12px; background:var(--cream);}
+.method b{font-family:'Poppins'; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--coral);}
+
+/* ============ quiz ============ */
+.scenario{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); padding:22px 24px; box-shadow:var(--shadow);}
+.quiz-opts{display:flex; gap:12px; margin-top:14px; flex-wrap:wrap;}
+.quiz-opt{flex:1 1 220px; border:1.5px solid var(--line); background:#fff; border-radius:var(--r-md); padding:14px 16px; cursor:pointer; font-weight:700; font-family:'Poppins'; font-size:13.5px; text-align:left; transition:.2s;}
+.quiz-opt:hover{border-color:var(--green-mid);}
+.quiz-opt.correct{background:var(--mint-light); border-color:var(--mint); color:#1E6B4E;}
+.quiz-opt.wrong{background:var(--coral-light); border-color:var(--coral); color:#A8362A;}
+.quiz-opt[disabled]{cursor:default;}
+.quiz-feedback{margin-top:16px; padding:14px 18px; border-radius:var(--r-md); background:var(--green-light); color:var(--green-dark); font-size:14px; display:none; line-height:1.55;}
+.quiz-feedback.show{display:block;}
+.quiz-letter{display:inline-flex; width:22px; height:22px; border-radius:50%; background:var(--green-light); color:var(--green-dark); align-items:center; justify-content:center; font-size:11px; margin-right:8px;}
+
+/* ============ converter lab ============ */
+.lab-grid{display:grid; grid-template-columns:1.35fr 1fr; gap:20px; align-items:start;}
+@media (max-width:980px){.lab-grid{grid-template-columns:1fr;}}
+.sim-card{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow); overflow:hidden;}
+.sim-top{display:grid; grid-template-columns:220px 1fr; gap:18px; padding:16px 18px; align-items:center;}
+@media (max-width:640px){.sim-top{grid-template-columns:1fr;}}
+.sim-top svg{width:100%; height:auto; display:block;}
+.sim-readout{display:flex; gap:10px; flex-wrap:wrap; align-items:center; padding:12px 16px; border-top:1px solid var(--line); background:var(--cream);}
+.lab-in{font-family:'Poppins'; font-weight:800; font-size:26px; color:var(--sky); line-height:1.15;}
+.lab-arrow{font-size:13px; font-weight:700; color:var(--ink-soft); margin:6px 0; font-family:'Poppins'; letter-spacing:1px; text-transform:uppercase;}
+.lab-out{font-family:'Poppins'; font-weight:800; font-size:26px; color:var(--green-dark); line-height:1.15;}
+.lab-work{font-size:13.5px; color:var(--ink-soft); line-height:1.6; margin-top:10px;}
+.lab-work strong{color:var(--ink);}
+.ctrl-card{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow); padding:16px 18px;}
+.ctrl{margin-bottom:14px;}
+.ctrl:last-child{margin-bottom:0;}
+.ctrl-label{font-family:'Poppins'; font-weight:700; font-size:12.5px; color:var(--green-dark); margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;}
+.stepper{display:flex; align-items:center; gap:10px;}
+.stepper button{width:40px; height:40px; border-radius:50%; border:1.5px solid var(--line); background:var(--cream); font-family:'Poppins'; font-weight:800; font-size:18px; color:var(--green-dark); cursor:pointer; transition:.15s;}
+.stepper button:hover{background:var(--green); color:#fff; border-color:var(--green);}
+.stepper .val{min-width:56px; text-align:center; font-family:'Poppins'; font-weight:800; font-size:22px; color:var(--ink); font-variant-numeric:tabular-nums;}
+.stepper .unit{font-size:12.5px; font-weight:600; color:var(--ink-soft);}
+.quick{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;}
+.quick button{border:1.5px dashed var(--green-mid); background:#fff; color:var(--green-dark); border-radius:100px; padding:4px 11px; font-size:12px; font-weight:700; cursor:pointer; font-family:'Poppins';}
+.quick button:hover{background:var(--green-light);}
+.ctrl-divider{border-top:1px dashed var(--line); margin:14px 0 12px; font-family:'Poppins'; font-size:11px; font-weight:700; letter-spacing:1px; color:var(--mint); text-transform:uppercase; padding-top:10px;}
+.missions{margin-top:18px; display:grid; grid-template-columns:repeat(3,1fr); gap:12px;}
+@media (max-width:900px){.missions{grid-template-columns:1fr;}}
+.mission{background:var(--paper); border:1.5px solid var(--line); border-radius:var(--r-md); padding:14px 16px; box-shadow:var(--shadow); position:relative; transition:.3s;}
+.mission .mnum{font-family:'Poppins'; font-weight:800; font-size:11px; letter-spacing:1px; color:var(--coral); text-transform:uppercase;}
+.mission h3{margin:3px 0 4px; font-size:14px; color:var(--green-dark); padding-right:26px;}
+.mission p{margin:0; font-size:12.5px; color:var(--ink-soft); line-height:1.5;}
+.mission .mtick{position:absolute; top:12px; right:12px; width:24px; height:24px; border-radius:50%; border:2px solid var(--line); display:flex; align-items:center; justify-content:center; color:#fff;}
+.mission.done{border-color:var(--mint); background:var(--mint-light);}
+.mission.done .mtick{background:var(--mint); border-color:var(--mint);}
+.timer-row{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+.timer{font-family:'Poppins'; font-weight:800; font-size:18px; color:var(--green-dark); background:var(--paper); border:1px solid var(--line); padding:6px 14px; border-radius:100px; font-variant-numeric:tabular-nums; min-width:84px; text-align:center;}
+.timer.low{color:var(--coral); border-color:var(--coral);}
+
+/* speed round */
+.speed{background:linear-gradient(135deg,var(--sky-light),#fff); border:1.5px solid #C9DDF3; border-radius:var(--r-lg); padding:18px 22px; margin-top:20px;}
+.speed-top{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:12px;}
+.speed-q{font-family:'Poppins'; font-weight:800; font-size:30px; color:var(--ink); text-align:center; padding:16px 10px 6px;}
+.speed-q .qmark{color:var(--coral);}
+.speed-a{font-family:'Poppins'; font-weight:700; font-size:18px; color:var(--green-dark); text-align:center; min-height:54px; padding:6px 10px; opacity:0; transition:.3s;}
+.speed-a.show{opacity:1;}
+.speed-a small{display:block; font-family:'Inter',system-ui,sans-serif; font-weight:600; font-size:13px; color:var(--ink-soft); margin-top:2px;}
+.speed-btns{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:6px;}
+.qcount{font-family:'Poppins'; font-weight:700; font-size:12.5px; color:var(--sky);}
+
+/* benchmarks */
+.bench{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:6px 0 4px;}
+@media (max-width:760px){.bench{grid-template-columns:1fr 1fr;}}
+.bench div{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:10px 12px; text-align:center; box-shadow:var(--shadow);}
+.bench b{display:block; font-family:'Poppins'; font-weight:800; font-size:18px; color:var(--green-dark);}
+.bench span{font-size:12.5px; color:var(--ink-soft); font-weight:600;}
+
+/* ============ plenary frame ============ */
+.frame-card{background:linear-gradient(135deg,var(--green-light),#fff); border:1.5px dashed var(--green-mid); border-radius:var(--r-lg); padding:24px 28px; margin-top:6px;}
+.frame-line{font-family:'Poppins'; font-weight:600; font-size:17px; color:var(--green-dark); line-height:1.7; margin-bottom:8px; display:flex; gap:10px; align-items:baseline;}
+.frame-line .fn{flex:0 0 auto; width:24px; height:24px; border-radius:50%; background:var(--green); color:#fff; font-size:11.5px; font-weight:800; display:inline-flex; align-items:center; justify-content:center; transform:translateY(-2px);}
+.frame-blank{display:inline-block; min-width:90px; border-bottom:2.5px solid var(--coral); color:var(--coral); padding:0 6px;}
+.example-box{margin-top:14px; padding:14px 18px; border-radius:var(--r-md); background:#fff; border:1px solid var(--line); font-size:14.5px; color:var(--ink-soft); font-style:italic; min-height:26px;}
+.challenge{display:inline-block; margin-top:6px; font-size:13px; color:var(--ink-soft);}
+
+/* ============ glossary flip cards ============ */
+.gloss-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:10px;}
+@media (max-width:1000px){.gloss-grid{grid-template-columns:repeat(3,1fr);}}
+@media (max-width:700px){.gloss-grid{grid-template-columns:repeat(2,1fr);}}
+.gloss-card{height:126px; perspective:800px; cursor:pointer;}
+.gloss-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+.gloss-card.flip .gloss-inner{transform:rotateY(180deg);}
+.gloss-face{position:absolute; inset:0; backface-visibility:hidden; border-radius:var(--r-md); display:flex; align-items:center; justify-content:center; text-align:center; padding:12px; font-size:13.5px;}
+.gloss-face.front{background:var(--green); color:#fff; font-family:'Poppins'; font-weight:700; font-size:14.5px;}
+.gloss-face.back{background:var(--paper); border:1.5px solid var(--green-light); color:var(--ink); transform:rotateY(180deg); font-size:12.3px; line-height:1.5;}
+
+/* ============ checklist ============ */
+.assess-list{margin-top:10px;}
+.assess-item{display:flex; gap:12px; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--line); cursor:pointer;}
+.assess-box{flex:0 0 auto; width:22px; height:22px; border-radius:6px; border:2px solid var(--line); display:flex; align-items:center; justify-content:center; color:#fff; margin-top:1px; transition:.2s;}
+.assess-item.checked .assess-box{background:var(--mint); border-color:var(--mint);}
+.assess-item p{margin:0; font-size:14.5px;}
+.assess-progress{height:8px; background:var(--green-light); border-radius:100px; overflow:hidden; margin-top:16px;}
+.assess-fill{height:100%; width:0%; background:var(--mint); transition:.35s;}
+
+/* ============ class reflection footer ============ */
+.reflect{margin-top:26px; border-top:1px solid var(--line); padding-top:14px; display:grid; grid-template-columns:auto 1fr 1fr 1fr; gap:10px; align-items:start;}
+@media (max-width:760px){.reflect{grid-template-columns:1fr;}}
+.reflect .rl{font-family:'Poppins'; font-weight:800; font-size:12px; color:var(--green); letter-spacing:1px; padding-top:6px;}
+.reflect .rf{border:1px dashed var(--line); border-radius:var(--r-sm); padding:6px 10px; font-size:11.5px; color:var(--ink-soft); min-height:44px; background:var(--paper);}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="crumb">
+      <span class="tag">Maths &middot; Unit 7</span>
+      <span class="sep">/</span>
+      <span class="current">7.2 Time</span>
+      <span class="live"><i></i> Online via Google Meet</span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="counter" id="counter">1 / 14</div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- ================= SLIDE 0 : COVER ================= -->
+    <section class="slide">
+      <div class="cover">
+        <svg class="cover-clock" style="width:300px; top:-60px; left:-70px;" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="none" stroke="#fff" stroke-width="5"/><path d="M50 50 L50 18 M50 50 L72 60" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg>
+        <svg class="cover-clock" style="width:200px; bottom:-40px; right:-30px;" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="none" stroke="#fff" stroke-width="5"/><path d="M50 50 L50 14 M50 50 L30 64" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg>
+        <div class="cover-content">
+          <div class="unit">Year 6C &middot; Cambridge Primary Maths &middot; Online Lesson</div>
+          <h1>7.2 Time</h1>
+          <div class="sub">Why is 2.5 hours <em>not</em> 2 hours and 50 minutes? Today we learn to change times written as decimals into hours, minutes and seconds, and back again.</div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">🔢 Time number detectives</span>
+            <span class="cover-chip">🕒 Tenths of an hour</span>
+            <span class="cover-chip">🧪 Converter Lab</span>
+            <span class="cover-chip">🏃 Marathon challenge</span>
+          </div>
+          <button class="cover-start" onclick="goTo(1)">
+            Start the lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <div class="cover-note">SBS Rangsit &middot; Learner's Book pages 107–110 &middot; 45-minute online lesson</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 1 : CHECK-IN ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Welcome &middot; Check-in</div>
+        <h1 class="slide-title">Good morning from home! How are you today?</h1>
+        <p class="lede">We're learning online again today. Before we start, let your teacher know how you're feeling. <strong>Every feeling is okay.</strong></p>
+        <div class="feel-grid" id="feelGrid">
+          <div class="feel-card"><span class="fe">😊</span><h3>Ready to go</h3><p>I'm comfy and ready to learn</p></div>
+          <div class="feel-card"><span class="fe">🤔</span><h3>Curious</h3><p>I want to know why time is tricky</p></div>
+          <div class="feel-card"><span class="fe">😟</span><h3>A bit worried</h3><p>Something is on my mind today</p></div>
+          <div class="feel-card"><span class="fe">😴</span><h3>Sleepy</h3><p>I need a minute to wake up</p></div>
+        </div>
+        <div class="meet">
+          <div class="meet-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 10l5-3v10l-5-3z"/><rect x="3" y="6" width="12" height="12" rx="2"/></svg></div>
+          <div><div class="meet-label">Google Meet moment</div><p>Use a <strong>Meet reaction</strong> to show how you feel: 👍 ready &middot; 😮 curious &middot; 💙 a bit worried &middot; 😂 sleepy. If you'd like to talk, stay back at the end of the Meet or send a message on Seesaw.</p></div>
+        </div>
+        <h3 class="mini-title" style="margin-top:22px;">Have these ready</h3>
+        <div class="norm-grid">
+          <div class="norm"><span>📖</span>Learner's Book open (Cambridge GO)</div>
+          <div class="norm"><span>📓</span>Maths notebook and pencil</div>
+          <div class="norm"><span>🎙️</span>Mic off unless it's your turn</div>
+          <div class="norm"><span>🎥</span>Camera on to show your work</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 2 : OBJECTIVES ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">7.2 Time</div>
+        <h1 class="slide-title">We are going to convert times with decimals</h1>
+        <p class="lede"><strong>Learning intention:</strong> convert between time intervals written as a decimal (like 3.7 hours) and in mixed units (like 3 hours and 42 minutes).<br><strong>Success criteria:</strong> tap each goal as you meet it today.</p>
+        <div class="obj-grid" id="objGrid">
+          <div class="obj-card"><div class="obj-num">1</div><p>I can explain why time is harder to calculate than numbers that go in 10s and 100s</p></div>
+          <div class="obj-card"><div class="obj-num">2</div><p>I know that 0.1 of an hour is 6 minutes</p></div>
+          <div class="obj-card"><div class="obj-num">3</div><p>I can convert decimal hours into hours and minutes</p></div>
+          <div class="obj-card"><div class="obj-num">4</div><p>I can convert hours and minutes back into decimal hours</p></div>
+          <div class="obj-card"><div class="obj-num">5</div><p>I can convert decimal minutes into hours, minutes and seconds</p></div>
+          <div class="obj-card"><div class="obj-num">6</div><p>I can spot and explain the "12.5 hours = 12 hours 5 minutes" mistake</p></div>
+        </div>
+        <div style="margin-top:22px;">
+          <span class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Key vocabulary: time interval &middot; decimal &middot; tenth &middot; hundredth &middot; mixed units &middot; convert</span>
+        </div>
+        <div class="box green">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M9 3v18M15 3v18M4 8h16M4 16h16"/></svg> Books and notebooks today</div>
+          <div class="box-body"><p style="margin:0;">Your practice today happens in your <strong>Learner's Book</strong> (Exercise 7.2). Write your answers in your <strong>notebook</strong>. Look for the 📖 <strong>Open your book</strong> boxes. At the end, take a photo of your page and post it on <strong>Seesaw</strong>.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 3 : TODAY'S PLAN ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Today's plan &middot; 45 minutes</div>
+        <h1 class="slide-title">From 60 minutes to marathon times</h1>
+        <p class="lede">Here's how today's Meet will run.</p>
+        <div class="agenda">
+          <div class="agenda-item"><div class="agenda-time" style="background:var(--green);">4<span>min</span></div><div class="agenda-body"><h3>Welcome &middot; Check-in</h3><p>Reactions, what to have ready, today's goals</p></div></div>
+          <div class="agenda-item"><div class="agenda-time" style="background:var(--coral);">5<span>min</span></div><div class="agenda-body"><h3>Starter &middot; Time number detectives</h3><p>What do 60, 12, 365, 24 and friends have to do with time?</p></div></div>
+          <div class="agenda-item"><div class="agenda-time" style="background:var(--sky);">12<span>min</span></div><div class="agenda-body"><h3>Learn &middot; Tenths of an hour + worked example</h3><p>Why 0.1 hours = 6 minutes, then Learner's Book Question 1</p></div></div>
+          <div class="agenda-item"><div class="agenda-time" style="background:var(--amber);">10<span>min</span></div><div class="agenda-body"><h3>Converter Lab + Speed round</h3><p>Test any time, beat the missions, then Question 2 (Tom's mistake)</p></div></div>
+          <div class="agenda-item"><div class="agenda-time" style="background:var(--mint);">14<span>min</span></div><div class="agenda-body"><h3>Marathon challenge + Plenary</h3><p>Minutes into hours, minutes and seconds (Question 3), then explain it</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 4 : STARTER ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Starter &middot; 5 minutes</div>
+        <h1 class="slide-title">Time number detectives</h1>
+        <p class="lede">Each of these numbers has something to do with time. Think first: what could it mean? Then tap the card to check. Some have more than one answer!</p>
+        <div class="news-grid" id="newsGrid"></div>
+        <div class="meet">
+          <div class="meet-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+          <div><div class="meet-label">Google Meet moment &middot; Chat waterfall</div><p>Your teacher will say a number. Type what it means in the chat, but <strong>don't press Enter</strong> until your teacher says "Go!"</p></div>
+        </div>
+        <div class="nb"><span class="nb-ico">📓</span><p><strong>In your notebook:</strong> write today's date and the title <em>7.2 Time</em>. Then answer the big question from the book: <strong>Why do the different units of time make it trickier to calculate with time?</strong> <em>It is tricky because…</em></p></div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 5 : TENTHS OF AN HOUR ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Learn &middot; Modelled example</div>
+        <h1 class="slide-title">Tenths of an hour</h1>
+        <p class="lede">Decimals are built on <strong>10s</strong>. An hour is built on <strong>60</strong>. So what happens when we cut one hour into 10 equal pieces?</p>
+        <div class="compare">
+          <div class="compare-card"><h3>💵 1 dollar = <span class="big" style="color:var(--sky);">100</span> cents</h3><p>0.5 dollars = 50 cents. The digits match because money goes in 100s.</p></div>
+          <div class="compare-card"><h3>🕒 1 hour = <span class="big" style="color:var(--coral);">60</span> minutes</h3><p>0.5 hours is <strong>not</strong> 50 minutes. Half of 60 is 30, so 0.5 hours = 30 minutes.</p></div>
+        </div>
+        <div class="clock-grid">
+          <div class="clock-card"><svg id="clockA" viewBox="0 0 240 240" role="img" aria-label="Clock face split into ten equal parts of six minutes"></svg></div>
+          <div>
+            <h3 class="mini-title">Choose how many tenths of an hour:</h3>
+            <div class="seg" id="tenthSeg"></div>
+            <div class="tenth-bar" id="tenthBar"></div>
+            <div class="bar-scale"><span>0 min</span><span>30 min</span><span>60 min</span></div>
+            <div class="big-readout" id="tenthReadout">0.0 hours <span class="eq">=</span> 0 minutes</div>
+            <div class="work-line" id="tenthWork">60 minutes ÷ 10 = <strong>6 minutes</strong> in each tenth</div>
+            <div style="margin-top:14px;"><button class="btn ghost" id="countBtn">▶️ Count up in tenths</button></div>
+          </div>
+        </div>
+        <div class="meet">
+          <div class="meet-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 00-6 0v4M5 9h14l-1 11H6z"/></svg></div>
+          <div><div class="meet-label">Google Meet moment &middot; Chant it</div><p>Unmute together and count in 6s as the clock fills up: <strong>6, 12, 18, 24, 30…</strong> all the way to 60!</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 6 : WORKED EXAMPLE ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Learn &middot; Worked example</div>
+        <h1 class="slide-title">Convert 3.7 hours into hours and minutes</h1>
+        <p class="lede">Split the time into <strong>whole hours</strong> and <strong>part of an hour</strong>. The whole hours stay the same. Only the decimal part needs changing into minutes.</p>
+        <div class="we">
+          <div class="we-head"><span>Worked example</span><span><button class="btn" style="background:#fff; color:var(--coral); padding:6px 16px; font-size:13px;" id="weNext">Next step ▸</button> <button class="btn" style="background:rgba(255,255,255,.2); padding:6px 14px; font-size:13px;" id="weReset">↺</button></span></div>
+          <div class="we-body" id="weBody">
+            <div class="we-step show"><div class="we-n">1</div><div><div class="math">3.7 hours = 3 whole hours + 0.7 of an hour</div><div class="why">Separate the whole number from the decimal part.</div></div></div>
+            <div class="we-step"><div class="we-n">2</div><div><div class="math">Change 0.7 of an hour into minutes</div>
+              <div class="method-split">
+                <div class="method"><b>Method A &middot; multiply by 60</b><div class="math" style="font-size:16px;">0.7 × 60 = 42</div><div class="why">There are 60 minutes in 1 hour.</div></div>
+                <div class="method"><b>Method B &middot; tenths × 6</b><div class="math" style="font-size:16px;">7 × 6 = 42</div><div class="why">0.1 of an hour = 6 minutes, so 7 tenths = 7 × 6 minutes.</div></div>
+              </div></div></div>
+            <div class="we-step final"><div class="we-n">3</div><div><div class="math">3.7 hours = 3 hours and 42 minutes ✅</div><div class="why">Check: 42 minutes is a bit less than 45 minutes (¾ hour), and 0.7 is a bit less than 0.75. That makes sense!</div></div></div>
+            <div class="we-step"><div class="we-n">!</div><div><div class="math" style="color:var(--coral);">⚠️ Trap: 3.7 hours is NOT 3 hours and 7 minutes</div><div class="why">The digit 7 means 7 <strong>tenths</strong> of an hour, not 7 minutes.</div></div></div>
+          </div>
+        </div>
+        <div class="meet">
+          <div class="meet-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+          <div><div class="meet-label">Google Meet moment &middot; Quick try</div><p>Type in the chat: <strong>1.5 hours = ? hours and ? minutes</strong>. Wait for "Go!"</p></div>
+        </div>
+        <div class="book">
+          <div class="book-ico">📖</div>
+          <div><div class="book-label">Open your book</div><div class="book-where">Learner's Book page 108 &middot; Exercise 7.2 &middot; Question 1</div><p>Copy the table into your notebook and complete it. Use the pattern: each tenth adds <strong>6 more minutes</strong>. For the right-hand side, remember to keep the whole hours!</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 7 : QUIZ 1 ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Check your understanding</div>
+        <h1 class="slide-title">Spot the mistake</h1>
+        <div class="scenario">
+          <p><strong>Scenario:</strong> Ploy's swimming lesson lasts <strong>1.5 hours</strong>. She tells her mum, "My lesson is 1 hour and 50 minutes long."</p>
+          <h3 class="mini-title" style="margin-top:14px;">How long is the lesson really?</h3>
+          <div class="quiz-opts" data-feedback="The answer is B. 1.5 hours = 1 whole hour + 0.5 of an hour. 0.5 × 60 = 30 minutes (or 5 tenths × 6 = 30). Ploy read the 5 after the decimal point as 50 minutes, but decimals are in tenths, and an hour has 60 minutes, not 100.">
+            <button class="quiz-opt" data-correct="false"><span class="quiz-letter">A</span>Ploy is right: 1 hour and 50 minutes</button>
+            <button class="quiz-opt" data-correct="true"><span class="quiz-letter">B</span>1 hour and 30 minutes</button>
+            <button class="quiz-opt" data-correct="false"><span class="quiz-letter">C</span>1 hour and 5 minutes</button>
+            <button class="quiz-opt" data-correct="false"><span class="quiz-letter">D</span>150 minutes</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        <div class="meet">
+          <div class="meet-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+          <div><div class="meet-label">Google Meet moment</div><p>Type just the letter <strong>A, B, C or D</strong> in the chat when your teacher says "Go!" Then one person unmutes to explain <strong>why</strong> Ploy made her mistake.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 8 : CONVERTER LAB ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Converter Lab &middot; 10 minutes</div>
+        <h1 class="slide-title">Test any time you like</h1>
+        <p class="lede">Build a time with the controls and watch it convert. Try the <strong>hundredths</strong> too: 0.25 of an hour is a quarter of an hour. Can you complete all three missions?</p>
+        <div class="bench">
+          <div><b>0.1 h</b><span>6 minutes</span></div>
+          <div><b>0.25 h</b><span>15 minutes (¼)</span></div>
+          <div><b>0.5 h</b><span>30 minutes (½)</span></div>
+          <div><b>0.75 h</b><span>45 minutes (¾)</span></div>
+        </div>
+        <div class="timer-row" style="margin-top:14px;">
+          <div class="seg" id="modeSeg" style="flex:0 0 auto;"><button data-m="A" class="on">Decimal → hours &amp; minutes</button><button data-m="B">Hours &amp; minutes → decimal</button></div>
+        </div>
+        <div class="lab-grid">
+          <div>
+            <div class="sim-card">
+              <div class="sim-top">
+                <svg id="clockB" viewBox="0 0 240 240" role="img" aria-label="Clock showing the part of an hour"></svg>
+                <div>
+                  <div class="lab-in" id="labIn">3.7 hours</div>
+                  <div class="lab-arrow">is the same as</div>
+                  <div class="lab-out" id="labOut">3 hours and 42 minutes</div>
+                  <div class="lab-work" id="labWork"></div>
+                </div>
+              </div>
+              <div class="sim-readout"><span class="pill" id="labPill">Shaded: the part of an hour</span></div>
+            </div>
+            <div class="missions" id="missions"></div>
+          </div>
+          <div class="ctrl-card">
+            <div id="ctrlA">
+              <div class="ctrl"><div class="ctrl-label">Whole hours</div>
+                <div class="stepper" data-k="H"><button data-d="-1">−</button><span class="val">3</span><button data-d="1">+</button></div></div>
+              <div class="ctrl"><div class="ctrl-label">Tenths (1st decimal place)</div>
+                <div class="stepper" data-k="t"><button data-d="-1">−</button><span class="val">7</span><button data-d="1">+</button></div></div>
+              <div class="ctrl"><div class="ctrl-label">Hundredths (2nd decimal place)</div>
+                <div class="stepper" data-k="u"><button data-d="-1">−</button><span class="val">0</span><button data-d="1">+</button></div></div>
+              <div class="ctrl-divider">Quick picks</div>
+              <div class="quick" id="quickA"><button data-v="0.25">0.25</button><button data-v="0.5">0.5</button><button data-v="0.75">0.75</button><button data-v="1.2">1.2</button><button data-v="2.45">2.45</button><button data-v="4.05">4.05</button></div>
+            </div>
+            <div id="ctrlB" style="display:none;">
+              <div class="ctrl"><div class="ctrl-label">Hours</div>
+                <div class="stepper" data-k="bh"><button data-d="-1">−</button><span class="val">2</span><button data-d="1">+</button><span class="unit">hours</span></div></div>
+              <div class="ctrl"><div class="ctrl-label">Minutes</div>
+                <div class="stepper" data-k="bm"><button data-d="-1">−</button><span class="val">24</span><button data-d="1">+</button><span class="unit">minutes</span></div>
+                <div class="quick" id="quickB"><button data-v="6">6</button><button data-v="12">12</button><button data-v="15">15</button><button data-v="30">30</button><button data-v="45">45</button><button data-v="54">54</button></div></div>
+              <div class="hint" style="margin:6px 0 0;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Try minutes that are in the 6 times table.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="speed">
+          <div class="speed-top">
+            <div><h3 class="mini-title" style="margin:0;">⚡ Speed round</h3><span class="qcount" id="qCount">Question 1</span></div>
+            <div class="seg sky" id="levelSeg"><button data-l="tenths" class="on">Tenths</button><button data-l="quarters">Quarters</button><button data-l="hundredths">Hundredths</button><button data-l="reverse">Backwards</button><button data-l="mix">Mix</button></div>
+          </div>
+          <div class="speed-q" id="speedQ"></div>
+          <div class="speed-a" id="speedA"></div>
+          <div class="speed-btns"><button class="btn coral" id="revealBtn">Reveal answer</button><button class="btn ghost" id="nextQBtn">Next question ▸</button></div>
+        </div>
+        <div class="meet">
+          <div class="meet-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+          <div><div class="meet-label">Google Meet moment &middot; Speed round</div><p>Your teacher shares a question. Write the answer on paper and <strong>hold it up to your camera</strong> on "3, 2, 1, show me!" Then we reveal it.</p></div>
+        </div>
+        <div class="book">
+          <div class="book-ico">📖</div>
+          <div><div class="book-label">Open your book</div><div class="book-where">Learner's Book page 109 &middot; Exercise 7.2 &middot; Question 2 (a and b)</div><p>Read about the games console carefully. For part b, write a sentence explaining <strong>why</strong> Tom is wrong, not just the correct answer. Then read the green <strong>Reflect</strong> box and answer it in your notebook.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 9 : MARATHON ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Marathon challenge &middot; Smaller units</div>
+        <h1 class="slide-title">Minutes into hours, minutes and seconds</h1>
+        <p class="lede">It's the same idea with smaller units. <strong>1 minute = 60 seconds</strong>, so <strong>0.1 of a minute = 6 seconds</strong>. And every <strong>60 minutes</strong> makes one whole hour.</p>
+        <div class="bench">
+          <div><b>0.05 min</b><span>3 seconds</span></div>
+          <div><b>0.1 min</b><span>6 seconds</span></div>
+          <div><b>0.25 min</b><span>15 seconds</span></div>
+          <div><b>0.5 min</b><span>30 seconds</span></div>
+        </div>
+        <div class="timer-row" style="margin-top:16px;">
+          <div class="seg amber" id="marSeg"><button data-e="0" class="on">Example 1 &middot; 147.4 minutes</button><button data-e="1">Example 2 &middot; 132.35 minutes</button></div>
+        </div>
+        <div class="we">
+          <div class="we-head"><span id="marTitle">Convert 147.4 minutes into hours, minutes and seconds</span><span><button class="btn" style="background:#fff; color:var(--coral); padding:6px 16px; font-size:13px;" id="marNext">Next step ▸</button></span></div>
+          <div class="we-body" id="marBody"></div>
+        </div>
+        <div class="box green" style="margin-top:18px;">
+          <div class="box-head">🏃 Top tips for the marathon</div>
+          <div class="box-body"><p style="margin:0;"><strong>1.</strong> The <strong>fastest</strong> runner has the <strong>smallest</strong> time. Order the times first. &nbsp;<strong>2.</strong> Take away 60 minutes for each whole hour: 120 minutes = 2 hours, 180 minutes = 3 hours. Check which one fits! &nbsp;<strong>3.</strong> Change the decimal part of a minute into seconds (× 60).</p></div>
+        </div>
+        <div class="timer-row" style="margin-top:18px;">
+          <button class="btn ghost timer-btn" data-min="9" data-target="marTimer">⏱️ Start 9-minute work timer</button>
+          <span class="timer" id="marTimer">9:00</span>
+        </div>
+        <div class="book">
+          <div class="book-ico">📖</div>
+          <div><div class="book-label">Open your book</div><div class="book-where">Learner's Book page 110 &middot; Exercise 7.2 &middot; Question 3</div><p>Copy the table. List the runners from fastest to slowest, then convert each time. <strong>Aim for at least 5 runners.</strong> ⭐ Finished? Try all 10.</p></div>
+        </div>
+        <div class="meet">
+          <div class="meet-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 10l5-3v10l-5-3z"/><rect x="3" y="6" width="12" height="12" rx="2"/></svg></div>
+          <div><div class="meet-label">Google Meet moment &middot; Work time</div><p>Cameras on, mics off while you work. Stuck? Use the <strong>raise-hand</strong> button and your teacher will help. Type <strong>"Done ✅"</strong> in the chat when you finish 5 runners.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 10 : QUIZ 2 ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Check your understanding</div>
+        <h1 class="slide-title">One more race time</h1>
+        <div class="scenario">
+          <p><strong>Scenario:</strong> Nong Pim finished a charity fun run in <strong>96.5 minutes</strong>.</p>
+          <h3 class="mini-title" style="margin-top:14px;">What is her time in hours, minutes and seconds?</h3>
+          <div class="quiz-opts" data-feedback="The answer is A. 96 minutes = 60 minutes + 36 minutes, so that's 1 hour and 36 minutes. Then 0.5 of a minute = 0.5 × 60 = 30 seconds. So 96.5 minutes = 1 hour, 36 minutes and 30 seconds.">
+            <button class="quiz-opt" data-correct="true"><span class="quiz-letter">A</span>1 hour, 36 minutes and 30 seconds</button>
+            <button class="quiz-opt" data-correct="false"><span class="quiz-letter">B</span>1 hour, 36 minutes and 50 seconds</button>
+            <button class="quiz-opt" data-correct="false"><span class="quiz-letter">C</span>9 hours, 6 minutes and 5 seconds</button>
+            <button class="quiz-opt" data-correct="false"><span class="quiz-letter">D</span>1 hour, 65 minutes</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        <div class="meet">
+          <div class="meet-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 00-6 0v4M5 9h14l-1 11H6z"/></svg></div>
+          <div><div class="meet-label">Google Meet moment &middot; Vote with reactions</div><p>Vote before we reveal: 👍 = <strong>A</strong> &middot; 🎉 = <strong>B</strong> &middot; 💙 = <strong>C</strong> &middot; 😮 = <strong>D</strong>. Which wrong answer made the "50 seconds" mistake?</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 11 : PLENARY ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Plenary &middot; 5 minutes</div>
+        <h1 class="slide-title">Explain it: why is time tricky with decimals?</h1>
+        <p class="lede">Write a short explanation in your notebook. Use the sentence starters to help you.</p>
+        <div class="frame-card">
+          <div class="frame-line"><span class="fn">1</span><span>2.5 hours is not 2 hours and 50 minutes because <span class="frame-blank">…</span>.</span></div>
+          <div class="frame-line"><span class="fn">2</span><span>One tenth of an hour is <span class="frame-blank">…</span> minutes because <span class="frame-blank">…</span>.</span></div>
+          <div class="frame-line"><span class="fn">3</span><span>To change the decimal part of an hour into minutes, I <span class="frame-blank">…</span>.</span></div>
+          <div class="frame-line"><span class="fn">4</span><span>To change decimal minutes into seconds, I <span class="frame-blank">…</span>.</span></div>
+          <div style="margin-top:14px;"><button class="btn ghost" id="exampleBtn">💡 Show me an example</button></div>
+          <div class="example-box" id="exampleBox">Tap the button to see an example sentence.</div>
+          <div class="challenge">⭐ <strong>Challenge:</strong> use the words <em>tenth, decimal, convert</em> and <em>mixed units</em>.</div>
+        </div>
+        <div class="book">
+          <div class="book-ico">🧠</div>
+          <div><div class="book-label">Open your book &middot; Think like a mathematician</div><div class="book-where">Learner's Book &middot; straight after Question 3</div><p>Finished early? Try the <strong>Think like a mathematician</strong> investigation. <strong>Specialise</strong> by testing lots of times, then <strong>generalise</strong> by writing a rule. Tip: the Converter Lab can help you test.</p></div>
+        </div>
+        <div class="meet">
+          <div class="meet-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 10l5-3v10l-5-3z"/><rect x="3" y="6" width="12" height="12" rx="2"/></svg></div>
+          <div><div class="meet-label">Google Meet moment &middot; Show me</div><p>Hold your notebook up to your camera. Your teacher will invite 2–3 people to unmute and read their explanation.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 12 : GLOSSARY ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Reference</div>
+        <h1 class="slide-title">Glossary: tap a card to flip it</h1>
+        <div class="gloss-grid" id="glossGrid"></div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 13 : WRAP-UP ================= -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Wrap-up</div>
+        <h1 class="slide-title">What should be in your notebook today</h1>
+        <p class="lede">Go through the list honestly before you leave the Meet.</p>
+        <div class="assess-list" id="assessList"></div>
+        <div class="assess-progress"><div class="assess-fill" id="assessFill"></div></div>
+        <div class="meet">
+          <div class="meet-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+          <div><div class="meet-label">Exit ticket &middot; Meet chat</div><p>Before you leave, type your answer to this in the chat: <strong>4.2 hours = ? hours and ? minutes</strong>. Then take a photo of your notebook page and post it to <strong>Seesaw</strong>.</p></div>
+        </div>
+        <div class="box green" style="margin-top:10px;">
+          <div class="box-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg> Extra practice</div>
+          <div class="box-body"><p style="margin:0;">If you have your <strong>Workbook</strong> at home, try <strong>Exercise 7.2, pages 83–84</strong>: Focus Questions 1–2 and Practice Question 3. Keep noticing: where do you see decimal times in real life? (Hint: sports results, phone screen time, train journeys.)</p></div>
+        </div>
+        <div class="res-row">
+          <span class="res-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20V3H6.5A2.5 2.5 0 004 5.5z"/></svg> Learner's Book pp. 107–110</span>
+          <span class="res-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> Notebook</span>
+          <span class="res-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 10l5-3v10l-5-3z"/><rect x="3" y="6" width="12" height="12" rx="2"/></svg> Google Meet</span>
+          <span class="res-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><circle cx="12" cy="12" r="3"/></svg> Seesaw photo upload</span>
+        </div>
+        <div class="reflect">
+          <div class="rl">SBSX<br>Reflection</div>
+          <div class="rf"><strong>Class A:</strong></div>
+          <div class="rf"><strong>Class B:</strong></div>
+          <div class="rf"><strong>Class C:</strong></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <button class="navbtn" id="prevBtn" onclick="prevSlide()" aria-label="Previous">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button class="navbtn" id="nextBtn" onclick="nextSlide()" aria-label="Next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+
+<script>
+/* ============ core slide navigation ============ */
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let idx = 0;
+const dotsWrap = document.getElementById('dots');
+slides.forEach((s,i)=>{
+  const d = document.createElement('button');
+  d.className = 'dot' + (i===0?' active':'');
+  d.setAttribute('aria-label','Go to slide '+(i+1));
+  d.onclick = ()=>goTo(i);
+  dotsWrap.appendChild(d);
+});
+function render(){
+  slides.forEach((s,i)=> s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.dot').forEach((d,i)=> d.classList.toggle('active', i===idx));
+  document.getElementById('counter').textContent = (idx+1) + ' / ' + total;
+  document.getElementById('prevBtn').classList.toggle('disabled', idx===0);
+  document.getElementById('nextBtn').classList.toggle('disabled', idx===total-1);
+  slides[idx].scrollTop = 0;
+}
+function goTo(i){ idx = Math.max(0, Math.min(total-1, i)); render(); }
+function nextSlide(){ goTo(idx+1); }
+function prevSlide(){ goTo(idx-1); }
+document.addEventListener('keydown', e=>{
+  if(e.target && e.target.tagName === 'INPUT') return;
+  if(e.key==='ArrowRight') nextSlide();
+  if(e.key==='ArrowLeft') prevSlide();
+});
+
+/* ============ check-in + objectives ============ */
+document.querySelectorAll('.feel-card').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    document.querySelectorAll('.feel-card').forEach(c=>c.classList.remove('chosen'));
+    card.classList.add('chosen');
+  });
+});
+document.querySelectorAll('.obj-card').forEach(card=>{
+  card.addEventListener('click', ()=> card.classList.toggle('done'));
+});
+
+/* ============ starter: time number detectives ============ */
+const numbers = [
+  {big:'60', color:'var(--coral)', more:'<strong>60 seconds</strong> in a minute AND <strong>60 minutes</strong> in an hour. This is the big one for today!'},
+  {big:'12', color:'var(--green)', more:'<strong>12 months</strong> in a year, and <strong>12 hours</strong> on a clock face (twice a day).'},
+  {big:'365', color:'var(--sky)', more:'<strong>365 days</strong> in a normal year.'},
+  {big:'30', color:'#C73A3A', more:'<strong>30 days</strong> in April, June, September and November. Also <strong>30 minutes</strong> in half an hour.'},
+  {big:'100', color:'#1D2A6B', more:'<strong>100 years</strong> in a century. It\'s one of the only times we use 100 with time!'},
+  {big:'7', color:'#3558B5', more:'<strong>7 days</strong> in a week.'},
+  {big:'366', color:'#7A1F1F', more:'<strong>366 days</strong> in a leap year. We get an extra day, 29 February, every 4 years. The next one is 2028.'},
+  {big:'24', color:'#5B3A9E', more:'<strong>24 hours</strong> in a day.'}
+];
+const newsGrid = document.getElementById('newsGrid');
+numbers.forEach(n=>{
+  const c = document.createElement('div');
+  c.className = 'news-card';
+  c.innerHTML = `<div class="news-top" style="background:${n.color};"><div class="big">${n.big}</div><div class="lbl">What could it mean?</div></div>
+    <div class="news-more">${n.more}</div><div class="news-tap">Think, then tap to check ▸</div>`;
+  c.addEventListener('click', ()=> c.classList.toggle('open'));
+  newsGrid.appendChild(c);
+});
+
+/* ============ reusable clock ============ */
+const NS = 'http://www.w3.org/2000/svg';
+function mk(tag, attrs, parent){
+  const e = document.createElementNS(NS, tag);
+  for(const k in attrs) e.setAttribute(k, attrs[k]);
+  if(parent) parent.appendChild(e);
+  return e;
+}
+function makeClock(svg){
+  const C = 120, R = 104;
+  mk('circle', {cx:C, cy:C, r:R+8, fill:'#FFFFFF', stroke:'#123D28', 'stroke-width':4}, svg);
+  const sector = mk('path', {d:'', fill:'#4FA974', opacity:.45}, svg);
+  const full = mk('circle', {cx:C, cy:C, r:R, fill:'#4FA974', opacity:0}, svg);
+  // tenth dividers
+  for(let k=0;k<10;k++){
+    const a = k*36*Math.PI/180;
+    mk('line', {x1:C, y1:C, x2:C+R*Math.sin(a), y2:C-R*Math.cos(a), stroke:'#E0563F', 'stroke-width':1.6, 'stroke-dasharray':'4 4', opacity:.8}, svg);
+    const am = (k*36+18)*Math.PI/180;
+    const t = mk('text', {x:C+R*0.55*Math.sin(am), y:C-R*0.55*Math.cos(am)+4, 'text-anchor':'middle', 'font-family':'Poppins', 'font-weight':'700', 'font-size':'11', fill:'#E0563F'}, svg);
+    t.textContent = '6';
+  }
+  // minute ticks
+  for(let i=0;i<60;i++){
+    const a = i*6*Math.PI/180, big = i%5===0;
+    const r1 = big ? R-11 : R-6;
+    mk('line', {x1:C+r1*Math.sin(a), y1:C-r1*Math.cos(a), x2:C+R*Math.sin(a), y2:C-R*Math.cos(a), stroke:'#20232B', 'stroke-width':big?2.4:1}, svg);
+  }
+  for(let h=1;h<=12;h++){
+    const a = h*30*Math.PI/180;
+    const t = mk('text', {x:C+(R-24)*Math.sin(a), y:C-(R-24)*Math.cos(a)+5, 'text-anchor':'middle', 'font-family':'Poppins', 'font-weight':'700', 'font-size':'14', fill:'#123D28'}, svg);
+    t.textContent = h;
+  }
+  const hand = mk('line', {x1:C, y1:C, x2:C, y2:C-R+18, stroke:'#20232B', 'stroke-width':4, 'stroke-linecap':'round'}, svg);
+  mk('circle', {cx:C, cy:C, r:6, fill:'#E0563F'}, svg);
+  return function(frac){
+    frac = Math.max(0, Math.min(1, frac));
+    if(frac <= 0){ sector.setAttribute('d',''); full.setAttribute('opacity',0); }
+    else if(frac >= 0.9999){ sector.setAttribute('d',''); full.setAttribute('opacity',.45); }
+    else{
+      full.setAttribute('opacity',0);
+      const a = frac*2*Math.PI;
+      const x = C + R*Math.sin(a), y = C - R*Math.cos(a);
+      sector.setAttribute('d', `M${C},${C} L${C},${C-R} A${R},${R} 0 ${frac>0.5?1:0} 1 ${x},${y} Z`);
+    }
+    const a = frac*2*Math.PI;
+    hand.setAttribute('x2', C + (R-18)*Math.sin(a));
+    hand.setAttribute('y2', C - (R-18)*Math.cos(a));
+  };
+}
+
+/* ============ slide 5: tenths of an hour ============ */
+const setClockA = makeClock(document.getElementById('clockA'));
+const tenthSeg = document.getElementById('tenthSeg');
+const tenthBar = document.getElementById('tenthBar');
+for(let i=0;i<10;i++){ const c = document.createElement('div'); c.className='bar-cell'; c.textContent='6 min'; tenthBar.appendChild(c); }
+for(let n=0;n<=10;n++){
+  const b = document.createElement('button');
+  b.textContent = n===10 ? '1.0' : '0.'+n;
+  b.dataset.n = n;
+  if(n===0) b.classList.add('on');
+  b.addEventListener('click', ()=>{ stopCount(); setTenths(n); });
+  tenthSeg.appendChild(b);
+}
+function setTenths(n){
+  tenthSeg.querySelectorAll('button').forEach(b=> b.classList.toggle('on', +b.dataset.n===n));
+  tenthBar.querySelectorAll('.bar-cell').forEach((c,i)=> c.classList.toggle('on', i<n));
+  setClockA(n/10);
+  const dec = n===10 ? '1.0' : '0.'+n;
+  document.getElementById('tenthReadout').innerHTML = n===10 ? `1.0 hours <span class="eq">=</span> 60 minutes` : `${dec} hours <span class="eq">=</span> ${n*6} minutes`;
+  document.getElementById('tenthWork').innerHTML = n===0 ? '60 minutes ÷ 10 = <strong>6 minutes</strong> in each tenth' : `${n} tenth${n>1?'s':''} × 6 minutes = <strong>${n*6} minutes</strong>`;
+}
+let countId = null;
+function stopCount(){ if(countId){ clearInterval(countId); countId=null; document.getElementById('countBtn').textContent='▶️ Count up in tenths'; } }
+document.getElementById('countBtn').addEventListener('click', ()=>{
+  if(countId){ stopCount(); return; }
+  let n = 0; setTenths(0);
+  document.getElementById('countBtn').textContent = '⏸️ Pause';
+  countId = setInterval(()=>{ n++; setTenths(n); if(n>=10) stopCount(); }, 1300);
+});
+setTenths(0);
+
+/* ============ slide 6: worked example stepper ============ */
+const weSteps = document.querySelectorAll('#weBody .we-step');
+let weShown = 1;
+document.getElementById('weNext').addEventListener('click', ()=>{
+  if(weShown < weSteps.length){ weSteps[weShown].classList.add('show'); weShown++; }
+});
+document.getElementById('weReset').addEventListener('click', ()=>{
+  weSteps.forEach((s,i)=> s.classList.toggle('show', i===0)); weShown = 1;
+});
+
+/* ============ quizzes (scoped per slide) ============ */
+document.querySelectorAll('.quiz-opts').forEach(group=>{
+  const fb = group.parentElement.querySelector('.quiz-feedback');
+  group.querySelectorAll('.quiz-opt').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      group.querySelectorAll('.quiz-opt').forEach(b=>{
+        b.disabled = true;
+        if(b.dataset.correct === 'true') b.classList.add('correct');
+      });
+      if(btn.dataset.correct !== 'true') btn.classList.add('wrong');
+      fb.textContent = (btn.dataset.correct === 'true' ? '✅ Well done! ' : '🤔 Not quite. ') + group.dataset.feedback;
+      fb.classList.add('show');
+    });
+  });
+});
+
+/* ============ slide 8: converter lab ============ */
+const setClockB = makeClock(document.getElementById('clockB'));
+const lab = {mode:'A', H:3, t:7, u:0, bh:2, bm:24};
+const LIMITS = {H:[0,12], t:[0,9], u:[0,9], bh:[0,12], bm:[0,59]};
+function plural(n, word){ return n + ' ' + word + (n===1 ? '' : 's'); }
+function mixedText(h, m, s){
+  let parts = [plural(h,'hour')];
+  if(s){ parts.push(plural(m,'minute')); parts.push(plural(s,'second')); return parts[0] + ', ' + parts[1] + ' and ' + parts[2]; }
+  return parts[0] + ' and ' + plural(m,'minute');
+}
+function labSeconds(){ // seconds in the part-of-an-hour, plus whole hours
+  if(lab.mode==='A') return {h:lab.H, sec: lab.t*360 + lab.u*36};
+  return {h:lab.bh, sec: lab.bm*60};
+}
+function decStr(t,u){ return u ? `0.${t}${u}` : `0.${t}`; }
+function updateLab(){
+  document.querySelectorAll('.stepper').forEach(s=>{ if(s.dataset.k in lab) s.querySelector('.val').textContent = lab[s.dataset.k]; });
+  const {h, sec} = labSeconds();
+  setClockB(sec/3600);
+  const m = Math.floor(sec/60), s = sec%60;
+  if(lab.mode==='A'){
+    const d = decStr(lab.t, lab.u);
+    const whole = lab.H + (lab.u ? `.${lab.t}${lab.u}` : `.${lab.t}`);
+    document.getElementById('labIn').textContent = whole + ' hours';
+    document.getElementById('labOut').textContent = mixedText(h, m, s);
+    let work = `<strong>${whole} hours</strong> = ${plural(lab.H,'whole hour')} + ${d} of an hour<br>${d} × 60 = <strong>${(sec/60).toString()} minutes</strong>`;
+    if(!lab.u && lab.t) work += ` &nbsp;(or ${lab.t} × 6 = ${lab.t*6})`;
+    if(s) work += `<br>0.${String(s/60*10).replace('.','')} of a minute × 60 = <strong>${s} seconds</strong>`;
+    document.getElementById('labWork').innerHTML = work;
+  } else {
+    const val = lab.bm/60;
+    const exact = (lab.bm % 3 === 0);
+    let decPart = exact ? (Math.round(val*100)/100).toString() : (Math.round(val*100)/100).toFixed(2);
+    let total = exact ? (lab.bh + Math.round(val*100)/100).toString() : (lab.bh + val).toFixed(2);
+    if(lab.bm===0){ decPart='0'; total = lab.bh.toString(); }
+    document.getElementById('labIn').textContent = mixedText(lab.bh, lab.bm, 0);
+    document.getElementById('labOut').textContent = (exact ? '' : '≈ ') + total + ' hours';
+    let work = `${lab.bm} minutes ÷ 60 = <strong>${exact?'':'≈ '}${decPart}</strong> of an hour`;
+    if(lab.bm % 6 === 0 && lab.bm) work += ` &nbsp;(or ${lab.bm} ÷ 6 = ${lab.bm/6} tenths)`;
+    if(!exact) work += `<br><em>This one doesn't make a neat decimal, so we round it.</em>`;
+    document.getElementById('labWork').innerHTML = work;
+  }
+  // pill
+  document.getElementById('labPill').textContent = `Shaded: ${m} of 60 minutes${s?` and ${s} seconds`:''} of the next hour`;
+  // missions
+  missionsData.forEach((mi,i)=>{
+    if(!missionDone[i] && mi.test()) missionDone[i] = true;
+    document.getElementById('mission'+i).classList.toggle('done', missionDone[i]);
+  });
+}
+const missionsData = [
+  {t:'Quarter past', d:'Make exactly 1 hour and 15 minutes. What is it as a decimal?', test:()=>{ const x=labSeconds(); return x.h===1 && x.sec===900; }},
+  {t:'Worked example', d:'Show that 3 hours and 42 minutes and 3.7 hours are the same. Try it in BOTH modes.', test:()=> lab.mode==='B' && lab.bh===3 && lab.bm===42 && labA37seen},
+  {t:'Round-number hunt', d:'Find a decimal with only ONE decimal place (not .0) that makes a whole number of minutes ending in 0. How many can you find?', test:()=> lab.mode==='A' && lab.u===0 && lab.t===5}
+];
+let labA37seen = false;
+const missionDone = [false,false,false];
+const missionsWrap = document.getElementById('missions');
+missionsData.forEach((m,i)=>{
+  const c = document.createElement('div');
+  c.className = 'mission'; c.id = 'mission'+i;
+  c.innerHTML = `<div class="mtick"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><div class="mnum">Mission ${i+1}</div><h3>${m.t}</h3><p>${m.d}</p>`;
+  missionsWrap.appendChild(c);
+});
+function track37(){ if(lab.mode==='A' && lab.H===3 && lab.t===7 && lab.u===0) labA37seen = true; }
+document.querySelectorAll('.stepper').forEach(s=>{
+  s.querySelectorAll('button').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const k = s.dataset.k, [lo,hi] = LIMITS[k];
+      let v = lab[k] + (+b.dataset.d);
+      if(k==='t' || k==='u' || k==='bm'){ v = v>hi ? lo : (v<lo ? hi : v); } else { v = Math.max(lo, Math.min(hi, v)); }
+      lab[k] = v; track37(); updateLab();
+    });
+  });
+});
+document.querySelectorAll('#quickA button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    const v = b.dataset.v, [w, d=''] = v.split('.');
+    lab.H = +w; lab.t = +(d[0]||0); lab.u = +(d[1]||0); track37(); updateLab();
+  });
+});
+document.querySelectorAll('#quickB button').forEach(b=>{
+  b.addEventListener('click', ()=>{ lab.bm = +b.dataset.v; updateLab(); });
+});
+document.querySelectorAll('#modeSeg button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    document.querySelectorAll('#modeSeg button').forEach(x=>x.classList.toggle('on', x===b));
+    lab.mode = b.dataset.m;
+    document.getElementById('ctrlA').style.display = lab.mode==='A' ? '' : 'none';
+    document.getElementById('ctrlB').style.display = lab.mode==='B' ? '' : 'none';
+    track37(); updateLab();
+  });
+});
+track37(); updateLab();
+
+/* speed round */
+let level = 'tenths', qNum = 1, curQ = null;
+const rnd = (a,b)=> a + Math.floor(Math.random()*(b-a+1));
+function makeQ(lv){
+  if(lv==='mix') lv = ['tenths','quarters','hundredths','reverse'][rnd(0,3)];
+  const H = rnd(0,6);
+  if(lv==='tenths'){ const t = rnd(1,9); return {q:`${H}.${t} hours = <span class="qmark">?</span> h <span class="qmark">?</span> min`, a:`${mixedText(H, t*6, 0)}`, w:`0.${t} × 60 = ${t*6}  (or ${t} × 6 = ${t*6})`}; }
+  if(lv==='quarters'){ const f = [[25,15,'¼'],[5,30,'½'],[75,45,'¾']][rnd(0,2)]; return {q:`${H}.${f[0]} hours = <span class="qmark">?</span> h <span class="qmark">?</span> min`, a:mixedText(H, f[1], 0), w:`0.${f[0]} is ${f[2]} of an hour, and ${f[2]} of 60 = ${f[1]}`}; }
+  if(lv==='hundredths'){ const k = [5,15,35,45,55,65,85,95][rnd(0,7)]; const d = (k<10?'0':'')+k; const m = k*6/10; return {q:`${H}.${d} hours = <span class="qmark">?</span> h <span class="qmark">?</span> min`, a:mixedText(H, m, 0), w:`0.${d} × 60 = ${m}`}; }
+  // reverse
+  const m = [6,12,15,18,24,30,36,42,45,48,54][rnd(0,10)];
+  const dec = (Math.round(m/60*100)/100).toString().replace(/^0/,'');
+  return {q:`${mixedText(H, m, 0)} = <span class="qmark">?</span> hours`, a:`${H}${dec} hours`, w:`${m} ÷ 60 = 0${dec}`};
+}
+function newQ(){
+  curQ = makeQ(level);
+  document.getElementById('speedQ').innerHTML = curQ.q;
+  const a = document.getElementById('speedA');
+  a.classList.remove('show');
+  a.innerHTML = `${curQ.a}<small>${curQ.w}</small>`;
+  document.getElementById('qCount').textContent = 'Question ' + qNum;
+}
+document.getElementById('revealBtn').addEventListener('click', ()=> document.getElementById('speedA').classList.add('show'));
+document.getElementById('nextQBtn').addEventListener('click', ()=>{ qNum++; newQ(); });
+document.querySelectorAll('#levelSeg button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    document.querySelectorAll('#levelSeg button').forEach(x=>x.classList.toggle('on', x===b));
+    level = b.dataset.l; qNum = 1; newQ();
+  });
+});
+newQ();
+
+/* ============ slide 9: marathon examples ============ */
+const marEx = [
+  {title:'Convert 147.4 minutes into hours, minutes and seconds', steps:[
+    {m:'147.4 minutes = 147 whole minutes + 0.4 of a minute', w:'Split off the decimal part, just like before.'},
+    {m:'147 minutes − 120 minutes = 27 minutes', w:'120 minutes = 2 hours (2 × 60). So 147 minutes = 2 hours and 27 minutes.'},
+    {m:'0.4 × 60 = 24 seconds', w:'Or use tenths: 0.1 of a minute = 6 seconds, so 4 × 6 = 24.'},
+    {m:'147.4 minutes = 2 hours, 27 minutes and 24 seconds ✅', w:'Hours: 2 · Minutes: 27 · Seconds: 24', final:true}
+  ]},
+  {title:'Convert 132.35 minutes into hours, minutes and seconds', steps:[
+    {m:'132.35 minutes = 132 whole minutes + 0.35 of a minute', w:'This decimal has hundredths. Don\'t panic, the method is the same!'},
+    {m:'132 minutes − 120 minutes = 12 minutes', w:'So 132 minutes = 2 hours and 12 minutes.'},
+    {m:'0.35 × 60 = 21 seconds', w:'Think: 0.3 of a minute = 18 seconds, and 0.05 of a minute = 3 seconds. 18 + 3 = 21.'},
+    {m:'132.35 minutes = 2 hours, 12 minutes and 21 seconds ✅', w:'Hours: 2 · Minutes: 12 · Seconds: 21', final:true}
+  ]}
+];
+let marIdx = 0, marShown = 1;
+function drawMar(){
+  const ex = marEx[marIdx];
+  document.getElementById('marTitle').textContent = ex.title;
+  document.getElementById('marBody').innerHTML = ex.steps.map((s,i)=>
+    `<div class="we-step${s.final?' final':''}${i<marShown?' show':''}"><div class="we-n">${i+1}</div><div><div class="math">${s.m}</div><div class="why">${s.w}</div></div></div>`).join('');
+  document.getElementById('marNext').textContent = marShown < ex.steps.length ? 'Next step ▸' : '↺ Start again';
+}
+document.getElementById('marNext').addEventListener('click', ()=>{
+  if(marShown < marEx[marIdx].steps.length) marShown++; else marShown = 1;
+  drawMar();
+});
+document.querySelectorAll('#marSeg button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    document.querySelectorAll('#marSeg button').forEach(x=>x.classList.toggle('on', x===b));
+    marIdx = +b.dataset.e; marShown = 1; drawMar();
+  });
+});
+drawMar();
+
+/* ============ generic timers ============ */
+document.querySelectorAll('.timer-btn').forEach(btn=>{
+  const mins = +btn.dataset.min, disp = document.getElementById(btn.dataset.target);
+  let left = mins*60, id = null;
+  const label = btn.textContent;
+  function draw(){ disp.textContent = Math.floor(left/60) + ':' + String(left%60).padStart(2,'0'); disp.classList.toggle('low', left<=60); }
+  btn.addEventListener('click', ()=>{
+    if(id){ clearInterval(id); id=null; btn.textContent='▶️ Resume timer'; return; }
+    if(left<=0) left = mins*60;
+    btn.textContent = '⏸️ Pause timer';
+    id = setInterval(()=>{ left--; draw(); if(left<=0){ clearInterval(id); id=null; btn.textContent = label.replace('Start','Restart'); } }, 1000);
+  });
+  draw();
+});
+
+/* ============ plenary example cycler ============ */
+const examples = [
+  '2.5 hours is not 2 hours and 50 minutes because the 5 means 5 tenths of an hour, and 5 tenths of 60 minutes is 30 minutes. So 2.5 hours = 2 hours and 30 minutes.',
+  'One tenth of an hour is 6 minutes because there are 60 minutes in an hour, and 60 ÷ 10 = 6.',
+  'To change the decimal part of an hour into minutes, I multiply it by 60. For example, 0.7 × 60 = 42 minutes.',
+  'To change decimal minutes into seconds, I multiply the decimal part by 60, because there are 60 seconds in a minute. For example, 0.4 minutes = 24 seconds.'
+];
+let exampleIdx = 0;
+document.getElementById('exampleBtn').addEventListener('click', ()=>{
+  document.getElementById('exampleBox').textContent = '"' + examples[exampleIdx % examples.length] + '"';
+  exampleIdx++;
+});
+
+/* ============ glossary ============ */
+const glossary = [
+  {term:'Time interval', def:'An amount of time between two moments, like 3 hours and 42 minutes.'},
+  {term:'Decimal', def:'A number with a decimal point, like 3.7. Each place is 10 times smaller than the one before.'},
+  {term:'Tenth', def:'One of 10 equal parts. 0.1 of an hour = 6 minutes. 0.1 of a minute = 6 seconds.'},
+  {term:'Hundredth', def:'One of 100 equal parts. 0.05 of an hour = 3 minutes.'},
+  {term:'Mixed units', def:'A time written with more than one unit, like 2 hours, 27 minutes and 24 seconds.'},
+  {term:'Convert', def:'Change a measurement into a different unit or form without changing its size.'},
+  {term:'Minute', def:'60 seconds. There are 60 minutes in 1 hour.'},
+  {term:'Hour', def:'60 minutes, or 3600 seconds. There are 24 hours in 1 day.'},
+  {term:'Quarter of an hour', def:'15 minutes. As a decimal: 0.25 hours. Three quarters = 0.75 hours = 45 minutes.'},
+  {term:'Leap year', def:'A year with 366 days instead of 365. It happens every 4 years.'},
+  {term:'Century', def:'100 years. One of the few times we count time in 100s.'},
+  {term:'Specialise & generalise', def:'Specialise: test particular examples. Generalise: write a rule that works for all of them.'}
+];
+const glossGrid = document.getElementById('glossGrid');
+glossary.forEach(g=>{
+  const card = document.createElement('div');
+  card.className = 'gloss-card';
+  card.innerHTML = `<div class="gloss-inner"><div class="gloss-face front">${g.term}</div><div class="gloss-face back">${g.def}</div></div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flip'));
+  glossGrid.appendChild(card);
+});
+
+/* ============ wrap-up checklist ============ */
+const assessItems = [
+  'I wrote the date, the title 7.2 Time and my answer to the starter question',
+  'I can explain why 0.1 of an hour is 6 minutes',
+  'I completed Learner\'s Book page 108, Question 1 (the full table)',
+  'I completed page 109, Question 2 a and b, and explained Tom\'s mistake',
+  'I converted at least 5 marathon times on page 110, Question 3',
+  'I wrote my plenary explanation using the sentence starters',
+  'I photographed my notebook page and posted it to Seesaw'
+];
+const assessList = document.getElementById('assessList');
+assessItems.forEach(text=>{
+  const item = document.createElement('div');
+  item.className = 'assess-item';
+  item.innerHTML = `<div class="assess-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>${text}</p>`;
+  item.addEventListener('click', ()=>{ item.classList.toggle('checked'); updateAssessProgress(); });
+  assessList.appendChild(item);
+});
+function updateAssessProgress(){
+  const checked = document.querySelectorAll('.assess-item.checked').length;
+  document.getElementById('assessFill').style.width = (checked/assessItems.length*100)+'%';
+}
+
+/* ============ initial render ============ */
+render();
+</script>
+</body>
+</html>
