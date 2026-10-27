@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4.1 Food Chains, Food Webs and Energy Transfers — Interactive Lesson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#146C7A; --teal-dark:#0D4F5A; --teal-light:#E3F1F2; --teal-mid:#59A6AE;
+  --orange:#DD7A2E; --orange-light:#FBEADB;
+  --purple:#5B3E96; --purple-light:#F0EAFA;
+  --red:#C0392B; --red-light:#FBE7E4;
+  --blue:#2B71C9; --blue-light:#E9F1FC;
+  --green:#3F8F5C; --green-light:#E7F5EC;
+  --sun:#E9B323; --sun-light:#FCF3D9;
+  --ink:#1D2B32; --ink-soft:#4B5B62;
+  --paper:#FFFFFF; --cream:#F6F4EF; --line:#DDE4E3;
+  --r-lg:22px; --r-md:14px; --r-sm:8px;
+  --shadow:0 10px 30px rgba(13,79,90,.14);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{margin:0; background:var(--cream); color:var(--ink); font-family:'Inter',system-ui,sans-serif; overflow:hidden;}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+
+#app{position:relative; width:100vw; height:100vh; display:flex; flex-direction:column;}
+.topbar{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 28px; background:var(--paper); border-bottom:1px solid var(--line); flex:0 0 auto; z-index:20;}
+.crumb{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft); font-weight:600;}
+.crumb .tag{background:var(--teal); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12px; padding:5px 12px; border-radius:100px; letter-spacing:.3px;}
+.crumb .sep{color:#B9C4C3;}
+.crumb .current{color:var(--teal-dark);}
+.dots{display:flex; gap:6px; align-items:center; flex-wrap:wrap; max-width:40vw;}
+.dot{width:9px; height:9px; border-radius:50%; background:#D7DEDD; border:none; cursor:pointer; transition:all .25s;}
+.dot.active{background:var(--teal); width:22px; border-radius:6px;}
+.dot:hover{background:var(--teal-mid);}
+.counter{font-size:12px; color:var(--ink-soft); font-weight:600; font-variant-numeric:tabular-nums; min-width:44px; text-align:right;}
+
+.stage{position:relative; flex:1 1 auto; overflow:hidden;}
+.slide{position:absolute; inset:0; opacity:0; pointer-events:none; transform:translateX(30px) scale(.99); transition:opacity .45s ease, transform .45s ease; overflow-y:auto;}
+.slide.active{opacity:1; pointer-events:auto; transform:translateX(0) scale(1);}
+.slide-inner{max-width:1180px; margin:0 auto; padding:40px 44px 90px; min-height:100%;}
+
+.navbtn{position:absolute; top:50%; transform:translateY(-50%); z-index:15; width:46px; height:46px; border-radius:50%; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--teal-dark); transition:.2s;}
+.navbtn:hover{background:var(--teal); color:#fff; border-color:var(--teal);}
+.navbtn.disabled{opacity:.25; pointer-events:none;}
+#prevBtn{left:16px;} #nextBtn{right:16px;}
+.navbtn svg{width:20px; height:20px;}
+
+.chevron-badge{display:inline-flex; align-items:center; gap:10px; background:var(--teal); color:#fff; padding:9px 20px 9px 16px; font-family:'Poppins'; font-weight:700; font-size:15px; clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%); margin-bottom:16px;}
+.eyebrow{font-family:'Poppins'; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--orange); margin-bottom:8px;}
+h1.slide-title{font-size:33px; font-weight:800; color:var(--teal-dark); margin:0 0 6px; line-height:1.15;}
+h3.mini-title{font-size:17px; font-weight:700; color:var(--ink); margin:0 0 8px;}
+p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
+.lede{font-size:17px; color:var(--ink-soft); margin-bottom:22px; max-width:760px;}
+.term{color:var(--orange); font-weight:700; cursor:help; border-bottom:1.5px dotted var(--orange); position:relative;}
+.term-pop{position:fixed; z-index:100; max-width:280px; background:var(--ink); color:#fff; font-size:13px; line-height:1.45; padding:10px 14px; border-radius:10px; box-shadow:var(--shadow); display:none;}
+.term-pop.show{display:block; animation:fadein .2s;}
+
+.box{border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow);}
+.box-head{padding:12px 20px; font-family:'Poppins'; font-weight:700; font-size:14px; color:#fff; display:flex; align-items:center; gap:8px;}
+.box-body{padding:18px 20px;}
+.box.green .box-head{background:var(--green);} .box.teal .box-head{background:var(--teal);} .box.orange .box-head{background:var(--orange);} .box.red .box-head{background:var(--red);} .box.purple .box-head{background:var(--purple);} .box.sun .box-head{background:#C7951A;}
+
+.two-col{display:grid; grid-template-columns:1.05fr .95fr; gap:36px; align-items:start;}
+.pill{display:inline-block; padding:4px 12px; border-radius:100px; font-size:12px; font-weight:700; background:var(--teal-light); color:var(--teal-dark); margin:2px 4px 2px 0;}
+.pill.orange{background:var(--orange-light); color:#8A4A16;}
+.pill.purple{background:var(--purple-light); color:var(--purple);}
+.pill.green{background:var(--green-light); color:#245A38;}
+.pill.red{background:var(--red-light); color:var(--red);}
+
+.btn{border:none; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:14px; padding:10px 20px; border-radius:100px; background:var(--teal); color:#fff; transition:.2s;}
+.btn:hover{background:var(--teal-dark);}
+.btn.ghost{background:transparent; border:1.5px solid var(--teal); color:var(--teal);}
+.btn.ghost:hover{background:var(--teal-light);}
+.btn.orange{background:var(--orange);} .btn.orange:hover{background:#B9611F;}
+.btn[disabled]{opacity:.45; cursor:default;}
+
+.wb-badge{display:inline-flex; align-items:center; gap:7px; background:var(--purple-light); color:var(--purple); font-family:'Poppins'; font-weight:700; font-size:11.5px; letter-spacing:.3px; text-transform:uppercase; padding:5px 12px; border-radius:100px; margin-bottom:12px;}
+.wb-badge svg{width:13px; height:13px;}
+.wb-panel{border:1.5px dashed var(--purple); background:var(--purple-light); border-radius:var(--r-lg); padding:20px 22px; margin-top:8px; margin-bottom:22px;}
+.lb-badge{display:inline-flex; align-items:center; gap:7px; background:var(--teal-light); color:var(--teal-dark); font-family:'Poppins'; font-weight:700; font-size:11.5px; letter-spacing:.3px; text-transform:uppercase; padding:5px 12px; border-radius:100px; margin-bottom:12px;}
+.hint{font-size:12.5px; color:var(--ink-soft); background:var(--teal-light); border-radius:100px; padding:6px 14px; display:inline-flex; gap:6px; align-items:center; margin-bottom:18px; font-weight:600;}
+.hint svg{width:14px; height:14px;}
+
+/* cover */
+.cover{height:100%; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;
+  background:radial-gradient(ellipse at 80% 10%, rgba(255,214,90,.35), transparent 40%), linear-gradient(160deg, #2F7D4F 0%, var(--teal-dark) 65%, #0A3840 100%);}
+.cover-leaf{position:absolute; border-radius:0 70% 0 70%; opacity:.12; background:#fff;}
+.cover-content{position:relative; z-index:2; text-align:center; color:#fff; max-width:800px; padding:0 30px;}
+.cover-content .unit{font-family:'Poppins'; font-weight:700; letter-spacing:3px; font-size:13px; text-transform:uppercase; color:#CDEBD8; margin-bottom:14px;}
+.cover-content h1{font-size:46px; font-weight:800; margin:0 0 10px; line-height:1.08;}
+.cover-content .sub{font-size:19px; color:#E1F2EA; font-weight:500; margin-bottom:30px;}
+.cover-chain{display:flex; justify-content:center; align-items:center; gap:10px; font-size:40px; margin-bottom:26px; flex-wrap:wrap;}
+.cover-chain .arr{font-size:24px; color:#FFD65A; font-weight:800;}
+.cover-chip-row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:34px;}
+.cover-chip{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff; padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600;}
+.cover-start{background:var(--orange); color:#fff; border:none; font-family:'Poppins'; font-weight:700; font-size:16px; padding:15px 34px; border-radius:100px; cursor:pointer; box-shadow:0 12px 26px rgba(221,122,46,.4); display:inline-flex; align-items:center; gap:10px; transition:.2s;}
+.cover-start:hover{transform:translateY(-2px);}
+
+/* objectives */
+.obj-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 22px; margin-top:6px;}
+.obj-card{display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:var(--r-md); background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.2s;}
+.obj-card:hover{border-color:var(--teal-mid); box-shadow:var(--shadow);}
+.obj-num{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--teal-light); color:var(--teal-dark); font-family:'Poppins'; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;}
+.obj-card.done .obj-num{background:var(--teal); color:#fff;}
+.obj-card.done p{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:#B9C4C3;}
+.obj-card p{margin:0; font-size:14px; line-height:1.5;}
+
+/* MCQ */
+.mcq-item{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:16px 18px; margin-bottom:12px;}
+.mcq-q{font-size:15px; margin:0 0 10px; font-weight:600;}
+.mcq-opts{display:flex; flex-direction:column; gap:8px;}
+.mcq-opt{text-align:left; border:1.5px solid var(--purple); background:#fff; color:var(--ink); font-family:'Inter'; font-weight:500; font-size:14px; padding:10px 16px; border-radius:10px; cursor:pointer; transition:.15s;}
+.mcq-opt:hover{background:var(--purple-light);}
+.mcq-opt.correct{background:var(--green-light); border-color:var(--green); color:#245A38; font-weight:700;}
+.mcq-opt.wrong{background:var(--red-light); border-color:var(--red); color:var(--red);}
+.mcq-opt[disabled]{cursor:default;}
+.mcq-fb,.reveal-ans{display:none; margin-top:10px; font-size:13.8px; color:var(--ink); background:var(--teal-light); border-radius:10px; padding:10px 14px; line-height:1.55;}
+.mcq-fb.show,.reveal-ans.show{display:block; animation:fadein .3s;}
+@keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+/* written question with model answer */
+.wq{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:14px 18px; margin-bottom:10px;}
+.wq-q{font-size:15px; font-weight:600; margin:0 0 8px;}
+.wq-row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+.wq textarea{flex:1 1 300px; min-height:44px; border:1.5px solid var(--line); border-radius:10px; padding:9px 12px; font-family:'Inter'; font-size:14px; resize:vertical;}
+.wq textarea:focus{outline:none; border-color:var(--purple);}
+.show-btn{border:1.5px solid var(--purple); background:#fff; color:var(--purple); font-family:'Poppins'; font-weight:600; font-size:12.5px; padding:8px 14px; border-radius:100px; cursor:pointer;}
+.show-btn:hover{background:var(--purple-light);}
+.reveal-ans strong{color:var(--teal-dark);}
+
+/* sorting game */
+.sort-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(205px,1fr)); gap:12px;}
+.sort-card{background:#fff; border:1.5px solid var(--line); border-radius:var(--r-md); padding:12px; text-align:center; transition:.2s;}
+.sort-card .emo{font-size:36px; line-height:1.1;}
+.sort-card .nm{font-family:'Poppins'; font-weight:700; font-size:14px; margin:4px 0 2px;}
+.sort-card .diet{font-size:11.5px; color:var(--ink-soft); min-height:30px; line-height:1.35;}
+.sort-btns{display:flex; flex-wrap:wrap; gap:5px; justify-content:center; margin-top:8px;}
+.sort-btn{border:1.5px solid var(--line); background:#fff; border-radius:100px; font-size:11.5px; font-weight:700; padding:5px 9px; cursor:pointer; color:var(--ink-soft);}
+.sort-btn:hover{border-color:var(--teal-mid);}
+.sort-card.correct{border-color:var(--green); background:var(--green-light);}
+.sort-card.correct .sort-btn{pointer-events:none;}
+.sort-btn.right{background:var(--green); border-color:var(--green); color:#fff;}
+.sort-btn.wrong{background:var(--red-light); border-color:var(--red); color:var(--red);}
+.score-line{margin-top:14px; font-weight:700; color:var(--ink-soft); font-size:14px;}
+
+/* venn */
+.venn-wrap{display:flex; justify-content:center; margin-top:18px;}
+.venn{position:relative; width:560px; max-width:100%; aspect-ratio:560/330;}
+.venn svg{position:absolute; inset:0; width:100%; height:100%;}
+.venn-slot{position:absolute; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:2px; font-size:12px; font-weight:700; text-align:center;}
+.venn-slot .vi{font-size:22px; opacity:.15; transition:.3s;}
+.venn-slot .vl{opacity:.15; transition:.3s;}
+.venn-slot.on .vi,.venn-slot.on .vl{opacity:1;}
+
+/* arrow explainer */
+.chain-demo{display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; margin:12px 0 6px;}
+.cd-node{background:#fff; border:1.5px solid var(--line); border-radius:var(--r-md); padding:10px 14px; text-align:center; min-width:100px; box-shadow:0 4px 12px rgba(13,79,90,.08);}
+.cd-node .emo{font-size:32px;}
+.cd-node .nm{font-family:'Poppins'; font-weight:700; font-size:13px;}
+.cd-node .role{font-size:11px; color:var(--ink-soft); font-weight:600;}
+.cd-arrow{display:flex; flex-direction:column; align-items:center; color:var(--orange); font-weight:800; font-size:26px;}
+.cd-arrow span{font-size:10px; color:var(--ink-soft); font-family:'Poppins'; text-transform:uppercase; letter-spacing:.4px;}
+.cd-arrow.pulse{animation:pulse 1.6s infinite;}
+@keyframes pulse{0%,100%{transform:translateX(0);} 50%{transform:translateX(6px);}}
+
+/* chain builder */
+.builder{background:#fff; border:1px solid var(--line); border-radius:var(--r-lg); padding:18px 20px; margin-bottom:16px; box-shadow:var(--shadow);}
+.builder h4{margin:0 0 10px; font-family:'Poppins'; font-size:15px; color:var(--teal-dark);}
+.b-pool{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;}
+.b-chip{border:1.5px solid var(--teal); background:#fff; border-radius:12px; padding:8px 12px; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:'Poppins'; font-weight:600; font-size:13.5px; color:var(--teal-dark); transition:.15s;}
+.b-chip .emo{font-size:22px;}
+.b-chip:hover{background:var(--teal-light);}
+.b-chip.used{opacity:.25; pointer-events:none;}
+.b-slots{display:flex; align-items:center; gap:6px; flex-wrap:wrap; min-height:56px; padding:10px; border-radius:12px; background:var(--cream); border:1.5px dashed var(--line);}
+.b-slot{display:flex; align-items:center; gap:6px; background:#fff; border:1.5px solid var(--teal-mid); border-radius:10px; padding:6px 10px; font-family:'Poppins'; font-weight:600; font-size:13px;}
+.b-slot .emo{font-size:20px;}
+.b-arr{color:var(--orange); font-weight:800; font-size:20px;}
+.b-empty{color:#9AA8A6; font-size:13px; font-style:italic;}
+.b-actions{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; align-items:center;}
+.b-fb{font-size:13.8px; padding:8px 12px; border-radius:10px; display:none;}
+.b-fb.ok{display:block; background:var(--green-light); color:#245A38;}
+.b-fb.no{display:block; background:var(--red-light); color:var(--red);}
+.b-slots.done{border-style:solid; border-color:var(--green); background:var(--green-light);}
+
+/* food web */
+.web-layout{display:grid; grid-template-columns:1.25fr .75fr; gap:24px; align-items:start;}
+.web-box{background:#fff; border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow); padding:10px; position:relative;}
+.web-box svg{width:100%; height:auto; display:block; touch-action:manipulation;}
+.web-node{cursor:pointer;}
+.web-node circle{transition:.2s;}
+.web-node text.e{font-size:26px; pointer-events:none;}
+.web-node text.l{font-family:'Poppins'; font-weight:700; font-size:11px; fill:#1D2B32; pointer-events:none;}
+.web-link{stroke:#9AA8A6; stroke-width:2; fill:none; transition:.2s;}
+.web-link.food{stroke:var(--green); stroke-width:3.5;}
+.web-link.eaten{stroke:var(--red); stroke-width:3.5;}
+.web-link.trace{stroke:var(--orange); stroke-width:4.5;}
+.web-link.found{stroke:var(--teal); stroke-width:2.6;}
+.web-link.hidden{opacity:0;}
+.web-node.dim{opacity:.3;}
+.web-node.sel circle{stroke:var(--orange); stroke-width:4;}
+.web-node.inpath circle{stroke:var(--orange); stroke-width:4;}
+.web-side{display:flex; flex-direction:column; gap:12px;}
+.info-card{background:#fff; border:1px solid var(--line); border-left:4px solid var(--orange); border-radius:var(--r-md); padding:14px 16px; min-height:120px;}
+.info-card h4{margin:0 0 6px; font-family:'Poppins'; font-size:15px; color:var(--teal-dark);}
+.info-card p{font-size:13.8px; margin:0 0 6px;}
+.legend{display:flex; gap:12px; flex-wrap:wrap; font-size:12px; color:var(--ink-soft); font-weight:600;}
+.legend i{display:inline-block; width:18px; height:4px; border-radius:2px; vertical-align:middle; margin-right:4px;}
+.mode-row{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;}
+.mode-btn{padding:8px 14px; border-radius:100px; border:1.5px solid var(--line); background:#fff; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:12.5px; color:var(--ink-soft);}
+.mode-btn.active{background:var(--teal); border-color:var(--teal); color:#fff;}
+.trace-bar{background:var(--cream); border-radius:12px; padding:10px 12px; font-size:13.5px; min-height:44px; display:flex; flex-wrap:wrap; gap:4px; align-items:center;}
+.chain-list{display:flex; flex-direction:column; gap:6px; max-height:260px; overflow-y:auto;}
+.chain-li{background:var(--teal-light); border-radius:10px; padding:7px 10px; font-size:13px; font-weight:600; color:var(--teal-dark);}
+.chain-li.six{background:var(--orange-light); color:#8A4A16;}
+.target-li{display:flex; gap:8px; align-items:flex-start; font-size:13.5px; padding:8px 10px; border-radius:10px; background:#fff; border:1.5px solid var(--line);}
+.target-li .tick{flex:0 0 auto; width:20px; height:20px; border-radius:50%; border:2px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:12px; color:#fff;}
+.target-li.hit{border-color:var(--green); background:var(--green-light);}
+.target-li.hit .tick{background:var(--green); border-color:var(--green);}
+.msg{font-size:13.5px; padding:8px 12px; border-radius:10px; display:none; margin-top:6px;}
+.msg.ok{display:block; background:var(--green-light); color:#245A38;}
+.msg.no{display:block; background:var(--red-light); color:var(--red);}
+.msg.info{display:block; background:var(--sun-light); color:#7A5A0E;}
+
+/* tap select (multi) */
+.tapset{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 4px;}
+.tap{border:1.5px solid var(--purple); background:#fff; color:var(--purple); font-family:'Poppins'; font-weight:600; font-size:13px; padding:7px 14px; border-radius:100px; cursor:pointer;}
+.tap.on{background:var(--purple); color:#fff;}
+.tap.good{background:var(--green); border-color:var(--green); color:#fff;}
+.tap.bad{background:var(--red-light); border-color:var(--red); color:var(--red);}
+.tap.missed{border-style:dashed; border-color:var(--green); color:var(--green);}
+
+/* energy simulation */
+.energy-wrap{background:#fff; border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow); padding:20px;}
+.e-row{display:grid; grid-template-columns:repeat(5,1fr); gap:10px; align-items:end;}
+.e-col{display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center;}
+.e-emo{font-size:38px; transition:.3s;}
+.e-name{font-family:'Poppins'; font-weight:700; font-size:13px;}
+.e-role{font-size:11px; color:var(--ink-soft); font-weight:600;}
+.e-barbox{width:58px; height:180px; background:var(--cream); border-radius:10px; position:relative; overflow:hidden; border:1px solid var(--line);}
+.e-bar{position:absolute; left:0; right:0; bottom:0; height:0; background:linear-gradient(0deg,#E9B323,#F6D66B); transition:height .8s ease;}
+.e-val{font-family:'Poppins'; font-weight:800; font-size:15px; color:#8A6410; min-height:22px;}
+.e-col.dimmed{opacity:.35;}
+.e-split{margin-top:16px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+.e-split div{border-radius:12px; padding:10px 12px; font-size:13px; line-height:1.4;}
+.e-split .used{background:var(--blue-light); color:#1E4F8F;}
+.e-split .heat{background:var(--red-light); color:var(--red);}
+.e-split .stored{background:var(--green-light); color:#245A38;}
+.e-split b{display:block; font-family:'Poppins'; font-size:18px;}
+.e-controls{display:flex; gap:10px; margin-top:16px; align-items:center; flex-wrap:wrap;}
+.e-caption{font-size:14px; color:var(--ink); background:var(--sun-light); border-radius:12px; padding:10px 14px; margin-top:12px; min-height:46px;}
+
+/* passage */
+.passage{background:#FFFDF6; border:1px solid #EADFC2; border-radius:var(--r-md); padding:16px 18px; font-size:14.5px; line-height:1.65; margin-bottom:16px;}
+.passage h4{margin:0 0 6px; font-family:'Poppins'; color:#8A6410; font-size:14px;}
+
+/* checklist + glossary */
+.assess-list{display:flex; flex-direction:column; gap:2px;}
+.assess-item{display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px; cursor:pointer; transition:.15s;}
+.assess-item:hover{background:var(--teal-light);}
+.assess-box{flex:0 0 auto; width:22px; height:22px; border-radius:6px; border:2px solid var(--teal); position:relative;}
+.assess-item.checked .assess-box{background:var(--teal);}
+.assess-box svg{position:absolute; inset:0; margin:auto; width:14px; height:14px; color:#fff; opacity:0;}
+.assess-item.checked .assess-box svg{opacity:1;}
+.assess-item p{margin:0; font-size:14px;}
+.progress-bar-track{height:10px; background:var(--teal-light); border-radius:100px; overflow:hidden; margin:16px 0 22px;}
+.progress-bar-fill{height:100%; width:0%; background:linear-gradient(90deg,var(--teal),var(--orange)); border-radius:100px; transition:width .4s;}
+.reflect-row{display:flex; gap:8px; flex-wrap:wrap; margin:4px 0 12px;}
+.reflect-btn{border:1.5px solid var(--line); background:#fff; border-radius:100px; padding:6px 14px; font-size:12.5px; font-weight:700; cursor:pointer; color:var(--ink-soft);}
+.reflect-btn.on.r1{background:var(--green); border-color:var(--green); color:#fff;}
+.reflect-btn.on.r2{background:var(--sun); border-color:var(--sun); color:#fff;}
+.reflect-btn.on.r3{background:var(--red); border-color:var(--red); color:#fff;}
+.gloss-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:16px;}
+.gloss-card{background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:14px; cursor:pointer; perspective:800px; height:110px; position:relative;}
+.gloss-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+.gloss-card.flip .gloss-inner{transform:rotateY(180deg);}
+.gloss-face{position:absolute; inset:0; backface-visibility:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;}
+.gloss-face.front{font-family:'Poppins'; font-weight:700; color:var(--teal-dark); font-size:14px;}
+.gloss-face.back{transform:rotateY(180deg); font-size:12px; color:var(--ink-soft); padding:4px; line-height:1.4;}
+
+::-webkit-scrollbar{width:8px;}
+::-webkit-scrollbar-thumb{background:#C9D6D5; border-radius:10px;}
+@media(max-width:900px){.two-col,.web-layout{grid-template-columns:1fr;} .gloss-grid{grid-template-columns:repeat(2,1fr);} }
+@media(max-width:760px){
+  .obj-grid{grid-template-columns:1fr;}
+  .cover-content h1{font-size:28px;}
+  h1.slide-title{font-size:23px;}
+  .slide-inner{padding:26px 18px 90px;}
+  .e-barbox{width:40px;}
+  .dots{display:none;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="crumb">
+      <span class="tag">Unit 4</span>
+      <span>Food chains and food webs</span>
+      <span class="sep">/</span>
+      <span class="current">4.1 Food chains, food webs and energy transfers</span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="counter" id="counter">1 / 12</div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- ===== SLIDE 0 : COVER ===== -->
+    <section class="slide">
+      <div class="cover">
+        <div class="cover-leaf" style="width:240px;height:240px; top:-60px; left:-60px;"></div>
+        <div class="cover-leaf" style="width:180px;height:180px; bottom:-50px; right:-40px;"></div>
+        <div class="cover-leaf" style="width:90px;height:90px; top:20%; right:12%;"></div>
+        <div class="cover-content">
+          <div class="unit">Unit 4 &middot; Food chains and food webs</div>
+          <h1>Food Chains, Food Webs &amp; Energy Transfers</h1>
+          <div class="sub">Who eats what? Follow the energy from the Sun, through plants, all the way to the top hunter.</div>
+          <div class="cover-chain"><span>☀️</span><span class="arr">➜</span><span>🌱</span><span class="arr">➜</span><span>🦗</span><span class="arr">➜</span><span>🦎</span><span class="arr">➜</span><span>🦅</span></div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">🌿 Producers &amp; consumers</span>
+            <span class="cover-chip">🔗 Food chains</span>
+            <span class="cover-chip">🕸️ Food webs</span>
+            <span class="cover-chip">⚡ Energy transfers</span>
+            <span class="cover-chip">📘 Workbook activities</span>
+          </div>
+          <button class="cover-start" onclick="goTo(1)">Start the lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 1 : OBJECTIVES ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">4.1</div>
+        <h1 class="slide-title">We are going to…</h1>
+        <p class="lede">Tap each goal when you have met it in the lesson. At the end, every card should be ticked.</p>
+        <div class="obj-grid">
+          <div class="obj-card"><div class="obj-num">1</div><p>Draw food chains</p></div>
+          <div class="obj-card"><div class="obj-num">2</div><p>Explain a food web and find the food chains in a food web</p></div>
+          <div class="obj-card"><div class="obj-num">3</div><p>Explain how a food web shows feeding relationships in nature</p></div>
+          <div class="obj-card"><div class="obj-num">4</div><p>Name the source of energy in food chains and food webs</p></div>
+          <div class="obj-card"><div class="obj-num">5</div><p>Describe how energy is transferred (passed on) in food chains and food webs</p></div>
+        </div>
+        <div style="margin-top:22px;">
+          <span class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Key words: producer · consumer · herbivore · carnivore · omnivore · food chain · food web · represent · accurate · energy transfer</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 2 : PRODUCERS & CONSUMERS (Getting started) ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="lb-badge">Learner's Book · Getting started, p. 98</div>
+        <h1 class="slide-title">Producers and consumers</h1>
+        <p class="lede">All living things need energy. We can sort them by <strong>how they get their energy</strong>.</p>
+        <div class="two-col" style="margin-bottom:22px;">
+          <div class="box green"><div class="box-head">🌱 Producers</div><div class="box-body">
+            <p style="margin:0">A <span class="term" data-def="A living thing that makes its own food using energy from sunlight. All plants are producers.">producer</span> makes its <strong>own food</strong>. Plants use light from the Sun to make food in their leaves. All plants are producers.</p>
+          </div></div>
+          <div class="box orange"><div class="box-head">🐾 Consumers</div><div class="box-body">
+            <p>A <span class="term" data-def="A living thing that cannot make its own food. It eats other living things to get energy.">consumer</span> cannot make its own food. It must <strong>eat</strong> other living things. There are three kinds:</p>
+            <span class="pill green">Herbivore — eats only plants</span><span class="pill red">Carnivore — eats only animals</span><span class="pill orange">Omnivore — eats plants and animals</span>
+          </div></div>
+        </div>
+
+        <h3 class="mini-title">Sort the living things from the Learner's Book</h3>
+        <p style="font-size:14px; color:var(--ink-soft);">Read what each one eats, then tap the right group. A wrong answer turns red — try again!</p>
+        <div class="sort-grid" id="sortGrid"></div>
+        <div class="score-line" id="sortScore">0 of 11 sorted</div>
+
+        <h3 class="mini-title" style="margin-top:26px;">Your consumers in a Venn diagram (Getting started 2b)</h3>
+        <p style="font-size:14px; color:var(--ink-soft);">Each consumer appears in the diagram when you sort it correctly. Omnivores go in the middle, because they eat plants <em>and</em> animals.</p>
+        <div class="venn-wrap"><div class="venn" id="venn">
+          <svg viewBox="0 0 560 330"><circle cx="200" cy="165" r="150" fill="#3F8F5C" fill-opacity=".12" stroke="#3F8F5C" stroke-width="2"/><circle cx="360" cy="165" r="150" fill="#C0392B" fill-opacity=".10" stroke="#C0392B" stroke-width="2"/>
+          <text x="120" y="32" font-family="Poppins" font-weight="700" font-size="15" fill="#3F8F5C">Herbivores</text><text x="380" y="32" font-family="Poppins" font-weight="700" font-size="15" fill="#C0392B">Carnivores</text><text x="280" y="320" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="13" fill="#DD7A2E">Omnivores (both)</text></svg>
+        </div></div>
+
+        <div class="wb-panel" style="margin-top:22px; background:var(--teal-light); border-color:var(--teal);">
+          <div class="wq"><p class="wq-q">1a What is a producer?</p><div class="wq-row"><textarea placeholder="Write your answer…"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">A producer is a living thing that <strong>makes its own food</strong> using energy from the Sun. Plants are producers.</div></div>
+          <div class="wq"><p class="wq-q">2a What is a consumer?</p><div class="wq-row"><textarea placeholder="Write your answer…"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">A consumer is a living thing that <strong>cannot make its own food</strong>. It gets energy by eating other living things (plants and/or animals).</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 3 : FOOD CHAINS ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Who eats what?</div>
+        <h1 class="slide-title">Food chains</h1>
+        <p class="lede">A <span class="term" data-def="A diagram that shows the order in which living things eat each other to get energy.">food chain</span> is a diagram that shows the order in which animals eat plants and other animals to get energy. We use pictures or words to <span class="term" data-def="To show or stand for something. In a food chain, a picture or a word stands for a living thing.">represent</span> (stand for) each living thing, joined by arrows.</p>
+
+        <div class="chain-demo">
+          <div class="cd-node"><div class="emo">🌽</div><div class="nm">corn plant</div><div class="role">producer</div></div>
+          <div class="cd-arrow pulse">➜<span>is eaten by</span></div>
+          <div class="cd-node"><div class="emo">🐭</div><div class="nm">mouse</div><div class="role">consumer</div></div>
+          <div class="cd-arrow pulse">➜<span>is eaten by</span></div>
+          <div class="cd-node"><div class="emo">🐍</div><div class="nm">snake</div><div class="role">consumer</div></div>
+        </div>
+
+        <div class="two-col" style="margin-top:22px;">
+          <div class="box teal"><div class="box-head">➜ What does the arrow mean?</div><div class="box-body">
+            <p>The arrow points <strong>from the food to the animal that eats it</strong>. It shows the direction the food moves.</p>
+            <p style="margin:0">Food has energy in it, so the arrow <strong>also shows the direction the energy moves</strong>. Read each arrow as “<em>is eaten by</em>”.</p>
+          </div></div>
+          <div class="box orange"><div class="box-head">📏 Rules for every food chain</div><div class="box-body">
+            <p>✅ It always <strong>starts with a producer</strong> (a plant).</p>
+            <p>✅ It has <strong>at least one consumer</strong>. Most have more than one.</p>
+            <p style="margin:0">✅ The order is always: <strong>producer → consumer</strong>, because the consumer eats the producer.</p>
+          </div></div>
+        </div>
+
+        <div class="wb-badge" style="margin-top:26px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 4.1 Focus, question 1b</div>
+        <div class="wb-panel">
+          <div class="mcq-item" data-answer="B">
+            <p class="mcq-q">What do the arrows in the food chains show?</p>
+            <div class="mcq-opts">
+              <button class="mcq-opt" data-val="A">A &nbsp; Which animal is the biggest</button>
+              <button class="mcq-opt" data-val="B">B &nbsp; The direction the food and energy move — from the living thing that is eaten to the living thing that eats it</button>
+              <button class="mcq-opt" data-val="C">C &nbsp; Where each animal lives</button>
+            </div>
+            <div class="mcq-fb"><strong>Model answer:</strong> The arrows show the direction in which food (and so energy) is transferred — from the living thing that is eaten to the living thing that eats it.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 4 : DRAW FOOD CHAINS (LB Activity) ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="lb-badge">Learner's Book · Activity: Draw food chains, p. 99</div>
+        <h1 class="slide-title">Build the food chains</h1>
+        <p class="lede">Tap the living things <strong>in the right order</strong>, starting with the producer. Then press <em>Check</em>. Copy each correct chain into your book with arrows.</p>
+        <div id="builders"></div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 5 : FOOD WEBS — RAINFOREST EXPLORE ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="lb-badge">Learner's Book · Food webs, p. 100</div>
+        <h1 class="slide-title">From food chains to a food web</h1>
+        <p class="lede">Most animals eat more than one kind of food. A frog eats worms, flies, beetles and other insects. So most animals are part of <strong>more than one food chain</strong>. When food chains join together, they make a <span class="term" data-def="Many food chains in one habitat joined together. It shows all the feeding relationships.">food web</span>. A food web is a more <span class="term" data-def="Correct and close to real life.">accurate</span> (true to real life) way to show how energy moves between living things.</p>
+
+        <div class="web-layout">
+          <div>
+            <div class="web-box"><svg id="webRain" viewBox="0 0 620 440"></svg></div>
+            <div class="legend" style="margin-top:8px;"><span><i style="background:var(--green)"></i>its food</span><span><i style="background:var(--red)"></i>what eats it</span></div>
+          </div>
+          <div class="web-side">
+            <span class="hint" style="margin:0;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Tap any living thing in the Indonesian rainforest</span>
+            <div class="info-card" id="rainInfo"><h4>Rainforest in Indonesia</h4><p>Tap a living thing to see what it eats (green arrows) and what eats it (red arrows).</p></div>
+          </div>
+        </div>
+
+        <div class="lb-badge" style="margin-top:24px;">Learner's Book · Explain a food web, p. 101 — Questions 1–3</div>
+        <div class="wb-panel" style="background:var(--teal-light); border-color:var(--teal);">
+          <div class="wq" data-tapq="producers"><p class="wq-q">1a Name the producers in the food web. <span style="font-weight:500; color:var(--ink-soft);">(tap all that are correct, then Check)</span></p><div class="tapset"></div><button class="show-btn tapcheck">Check</button><div class="reveal-ans"><strong>Producers:</strong> palm shoot, fig, jack fruit. They are plants, so they make their own food.</div></div>
+          <div class="wq" data-tapq="herbivores"><p class="wq-q">1b Name the herbivores in the food web.</p><div class="tapset"></div><button class="show-btn tapcheck">Check</button><div class="reveal-ans"><strong>Herbivores:</strong> spotted deer, coconut palm beetle, fruit bat. They eat only plants.</div></div>
+          <div class="wq" data-tapq="carnivores"><p class="wq-q">1c Name the carnivores in the food web.</p><div class="tapset"></div><button class="show-btn tapcheck">Check</button><div class="reveal-ans"><strong>Carnivores:</strong> tiger, python, hawk. They eat only animals.</div></div>
+          <div class="wq" data-tapq="omnivores"><p class="wq-q">1d Name an omnivore in the food web.</p><div class="tapset"></div><button class="show-btn tapcheck">Check</button><div class="reveal-ans"><strong>Omnivore:</strong> orangutan. It eats plants (palm shoot, fig, jack fruit) <em>and</em> an animal (the coconut palm beetle).</div></div>
+          <div class="wq"><p class="wq-q">2 Name the foods the orangutan eats.</p><div class="wq-row"><textarea placeholder="Hint: tap the orangutan on the web above"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">The orangutan eats <strong>palm shoots, figs, jack fruit and coconut palm beetles</strong>.</div></div>
+          <div class="wq"><p class="wq-q">3a Which animals eat the orangutan? &nbsp; 3b Which other animals do they eat?</p><div class="wq-row"><textarea placeholder="Write your answer…"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">3a The <strong>tiger</strong> and the <strong>python</strong> eat the orangutan.<br>3b The tiger also eats the <strong>spotted deer</strong>. The python also eats the <strong>spotted deer</strong> and the <strong>fruit bat</strong>.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 6 : TRACE CHAINS IN RAINFOREST WEB ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="lb-badge">Learner's Book · Explain a food web, p. 101 — Questions 4–5</div>
+        <h1 class="slide-title">Find the food chains in the web</h1>
+        <p class="lede">Start at a <strong>producer</strong>. Then tap the next living thing along an arrow, and keep going. Press <em>Save chain</em> when you finish. Each living thing in the chain counts as <strong>one link</strong>.</p>
+        <div class="web-layout">
+          <div class="web-box"><svg id="webRainTrace" viewBox="0 0 620 440"></svg></div>
+          <div class="web-side">
+            <div class="trace-bar" id="rtBar"><span class="b-empty">Tap a producer to start…</span></div>
+            <div class="b-actions" style="margin:0;"><button class="btn" id="rtSave">Save chain</button><button class="btn ghost" id="rtClear">Clear</button></div>
+            <div class="msg" id="rtMsg"></div>
+            <div class="target-li" id="rtT3"><div class="tick">✓</div><div><strong>4a</strong> Find three food chains with <strong>three links</strong> <span id="rtC3">(0/3)</span></div></div>
+            <div class="target-li" id="rtT4"><div class="tick">✓</div><div><strong>4b</strong> Find one food chain with <strong>four links</strong> <span id="rtC4">(0/1)</span></div></div>
+            <div class="chain-list" id="rtList"></div>
+          </div>
+        </div>
+        <div class="wb-panel" style="background:var(--teal-light); border-color:var(--teal); margin-top:22px;">
+          <div class="wq"><p class="wq-q">4 Model answers</p><button class="show-btn">Show model answers</button><div class="reveal-ans"><strong>4a Three links (any three):</strong> palm shoot → spotted deer → tiger · palm shoot → spotted deer → python · palm shoot → orangutan → tiger · fig → orangutan → python · jack fruit → fruit bat → hawk · fig → fruit bat → python<br><strong>4b Four links:</strong> palm shoot → coconut palm beetle → orangutan → tiger (or → python)</div></div>
+          <div class="wq"><p class="wq-q">5 How does a food web help us to understand feeding relationships in nature?</p><div class="wq-row"><textarea placeholder="Write your answer…"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">A food web shows that most animals <strong>eat more than one kind of food</strong> and are <strong>eaten by more than one animal</strong>. It shows all the food chains in a habitat and how they link together, so it shows what really happens in nature better than one food chain.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 7 : OCEAN FOOD WEB (Workbook Focus 1a + Practice 2) ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="wb-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 4.1 Focus, question 1a</div>
+        <h1 class="slide-title">An ocean food web</h1>
+        <p class="lede">Find each food chain from the workbook in this ocean food web. Tap the living things in order, starting at the beginning of the chain, then press <em>Save chain</em>.</p>
+        <div class="web-layout">
+          <div class="web-box"><svg id="webOcean" viewBox="0 0 620 440"></svg></div>
+          <div class="web-side">
+            <div class="trace-bar" id="ocBar"><span class="b-empty">Tap the first living thing…</span></div>
+            <div class="b-actions" style="margin:0;"><button class="btn" id="ocSave">Save chain</button><button class="btn ghost" id="ocClear">Clear</button></div>
+            <div class="msg" id="ocMsg"></div>
+            <div id="ocTargets" style="display:flex; flex-direction:column; gap:6px;"></div>
+            <div class="target-li" id="ocT2a"><div class="tick">✓</div><div><strong>Practice 2a</strong> Find two <em>other</em> food chains with <strong>four links</strong> <span id="ocC4">(0/2)</span></div></div>
+          </div>
+        </div>
+
+        <div class="wb-badge" style="margin-top:24px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 4.1 Practice, question 2</div>
+        <div class="wb-panel">
+          <div class="wq"><p class="wq-q">2a Identify and draw two other food chains with four links.</p><button class="show-btn">Show model answer</button><div class="reveal-ans">plant plankton → prawn → small fish → great white shark<br>fish eggs → jelly fish → sea turtle → great white shark</div></div>
+          <div class="wq" data-tapq="o_producers"><p class="wq-q">2b Name the producers in the food web.</p><div class="tapset"></div><button class="show-btn tapcheck">Check</button><div class="reveal-ans"><strong>Producers:</strong> algae and plant plankton. They make their own food using sunlight.</div></div>
+          <div class="wq" data-tapq="o_herb"><p class="wq-q">2c i Name the herbivores.</p><div class="tapset"></div><button class="show-btn tapcheck">Check</button><div class="reveal-ans"><strong>Herbivore:</strong> prawn — it eats only plant plankton.</div></div>
+          <div class="wq" data-tapq="o_omni"><p class="wq-q">2c ii Name the omnivores.</p><div class="tapset"></div><button class="show-btn tapcheck">Check</button><div class="reveal-ans"><strong>Omnivores:</strong> small fish (eats algae and prawns) and jelly fish (eats plant plankton and fish eggs).</div></div>
+          <div class="wq" data-tapq="o_carn"><p class="wq-q">2c iii Name the carnivores.</p><div class="tapset"></div><button class="show-btn tapcheck">Check</button><div class="reveal-ans"><strong>Carnivores:</strong> sea turtle (eats jelly fish) and great white shark (eats small fish and sea turtles).</div></div>
+          <div class="mcq-item" data-answer="C">
+            <p class="mcq-q">2d What is the source of energy for all food chains and food webs?</p>
+            <div class="mcq-opts">
+              <button class="mcq-opt" data-val="A">A &nbsp; The sea water</button>
+              <button class="mcq-opt" data-val="B">B &nbsp; The great white shark</button>
+              <button class="mcq-opt" data-val="C">C &nbsp; The Sun</button>
+            </div>
+            <div class="mcq-fb"><strong>Model answer:</strong> The Sun. Producers use the Sun's energy to make food, and this energy then passes along every food chain.</div>
+          </div>
+          <div class="wq"><p class="wq-q">2e Predict what would happen to the sea turtles if all the great white sharks were killed.</p><div class="wq-row"><textarea placeholder="Write your prediction…"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">The number of sea turtles would <strong>increase</strong>, because nothing would eat them any more. Later, there might not be enough jelly fish for so many turtles, so some turtles could <strong>die from lack of food</strong> and the number would go down again.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 8 : ENERGY TRANSFERS ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="lb-badge">Learner's Book · Energy transfers, pp. 101–102</div>
+        <h1 class="slide-title">Follow the energy</h1>
+        <p class="lede">Energy is <span class="term" data-def="Moved or passed on from one living thing to the next.">transferred</span> (passed on) from one living thing to the next in a food chain. Press <em>Next step</em> to follow the energy from the Sun to the hawk.</p>
+
+        <div class="energy-wrap">
+          <div class="e-row" id="eRow"></div>
+          <div class="e-caption" id="eCaption">☀️ Every food chain starts with the <strong>Sun</strong>. Press <em>Next step</em>.</div>
+          <div class="e-split" id="eSplit" style="display:none;">
+            <div class="used"><b id="eUsed">–</b>used to stay alive (move, breathe, grow)</div>
+            <div class="heat"><b id="eHeat">–</b>lost to the surroundings as heat</div>
+            <div class="stored"><b id="eStored">–</b>stored in its body → passed on to the next link</div>
+          </div>
+          <div class="e-controls"><button class="btn orange" id="eNext">Next step ➜</button><button class="btn ghost" id="eReset">↺ Start again</button>
+            <span style="font-size:12px; color:var(--ink-soft);">Energy units are example numbers to show the pattern.</span></div>
+        </div>
+
+        <div class="two-col" style="margin-top:22px;">
+          <div class="box sun"><div class="box-head">☀️ Where does the energy go?</div><div class="box-body">
+            <p>When a herbivore eats a plant, it does not keep all of the energy:</p>
+            <p>• some energy is <strong>used</strong> by the herbivore to stay alive<br>• some energy is <strong>stored</strong> in its body<br>• some energy goes into the surroundings as <strong>heat</strong></p>
+            <p style="margin:0">A carnivore that eats the herbivore only gets the <strong>stored</strong> energy. The rest is lost from the food chain.</p>
+          </div></div>
+          <div class="box red"><div class="box-head">📉 The big pattern</div><div class="box-body">
+            <p>Energy is lost at <strong>every link</strong>. So the amount of energy passed on gets <strong>less and less</strong> along the chain.</p>
+            <p style="margin:0">This is why food chains are usually short, and why there are fewer hawks than grasshoppers.</p>
+          </div></div>
+        </div>
+
+        <div class="lb-badge" style="margin-top:24px;">Learner's Book · Questions 1–5, p. 102</div>
+        <div class="wb-panel" style="background:var(--teal-light); border-color:var(--teal);">
+          <div class="mcq-item" data-answer="A"><p class="mcq-q">1 Where does the energy in a food chain or food web come from?</p><div class="mcq-opts"><button class="mcq-opt" data-val="A">A &nbsp; The Sun</button><button class="mcq-opt" data-val="B">B &nbsp; The soil</button><button class="mcq-opt" data-val="C">C &nbsp; The top carnivore</button></div><div class="mcq-fb"><strong>Model answer:</strong> All the energy comes from the Sun.</div></div>
+          <div class="wq"><p class="wq-q">2 How do producers use this energy?</p><div class="wq-row"><textarea placeholder="Write your answer…"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">Producers use the Sun's energy to <strong>make their own food</strong>.</div></div>
+          <div class="wq"><p class="wq-q">3 How is the energy in a producer transferred to a consumer?</p><div class="wq-row"><textarea placeholder="Write your answer…"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">The consumer <strong>eats the producer</strong>. The energy stored in the producer's food passes into the consumer's body.</div></div>
+          <div class="wq"><p class="wq-q">4 How does a consumer, such as a hawk, depend on producers?</p><div class="wq-row"><textarea placeholder="Write your answer…"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">The hawk eats the lizard, the lizard eats the grasshopper, and the grasshopper eats the bean plant. All the hawk's energy first came from the <strong>producer</strong>. Without producers, there would be no food or energy for the hawk.</div></div>
+          <div class="wq"><p class="wq-q">5a What happens to the amount of energy as it is transferred through a food chain? &nbsp; 5b Say why this happens.</p><div class="wq-row"><textarea placeholder="Write your answer…"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">5a The amount of energy <strong>gets less and less</strong> at each link.<br>5b Each living thing <strong>uses some energy to stay alive</strong> and <strong>loses some as heat</strong>. Only the energy stored in its body is passed on to the next link.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 9 : NAMIB DESERT CHALLENGE ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="wb-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 4.1 Challenge, question 3</div>
+        <h1 class="slide-title">Build a desert food web</h1>
+        <div class="passage">
+          <h4>📄 The Namib Desert</h4>
+          The Namib Desert stretches for over 1000 km along the coast of Namibia in southern Africa. Very little rain falls there. Many animals live on the sand dunes of the desert. <strong>Ants, beetles and termites eat seeds and bits of grass</strong> that wind carries from the coast. <strong>Antlions eat ants, spiders eat termites, and scorpions eat beetles and spiders. Sunspiders eat scorpions and beetles. Lizards eat spiders, termites, beetles and sunspiders. The sidewinder adder eats lizards.</strong>
+        </div>
+        <p class="lede" style="margin-bottom:14px;"><strong>3a</strong> Use the passage to build <strong>ten food chains</strong>. One must have <strong>six links</strong>. Start at a producer and tap along. <strong>3b</strong> Every correct chain draws its arrows on the web — after ten chains, you have built a food web!</p>
+        <div class="web-layout">
+          <div class="web-box"><svg id="webNamib" viewBox="0 0 620 500"></svg></div>
+          <div class="web-side">
+            <div class="trace-bar" id="nmBar"><span class="b-empty">Tap grasses or seeds to start…</span></div>
+            <div class="b-actions" style="margin:0;"><button class="btn" id="nmSave">Save chain</button><button class="btn ghost" id="nmClear">Clear</button></div>
+            <div class="msg" id="nmMsg"></div>
+            <div class="target-li" id="nmT10"><div class="tick">✓</div><div>Ten food chains <span id="nmC10">(0/10)</span></div></div>
+            <div class="target-li" id="nmT6"><div class="tick">✓</div><div>One food chain with six links</div></div>
+            <div class="chain-list" id="nmList"></div>
+          </div>
+        </div>
+        <div class="wb-panel" style="margin-top:22px;">
+          <div class="wq"><p class="wq-q">3a Model answer — ten food chains</p><button class="show-btn">Show model answer</button><div class="reveal-ans">
+            1 seeds → ant → antlion<br>2 grasses → ant → antlion<br>3 grasses → termite → spider<br>4 seeds → termite → lizard → sidewinder adder<br>5 grasses → beetle → scorpion<br>6 seeds → beetle → sunspider → lizard → sidewinder adder<br>7 grasses → termite → spider → scorpion<br>8 seeds → beetle → lizard → sidewinder adder<br>9 grasses → termite → spider → lizard → sidewinder adder<br>10 <strong>(six links)</strong> seeds → beetle → scorpion → sunspider → lizard → sidewinder adder<br><em>Other correct chains are also fine if every arrow matches the passage.</em></div></div>
+          <div class="wq"><p class="wq-q">3c Explain why a food web is more like what happens in nature than a food chain.</p><div class="wq-row"><textarea placeholder="Write your answer…"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">In nature, most animals eat <strong>more than one kind of food</strong> and are eaten by <strong>more than one kind of animal</strong>. For example, the lizard eats spiders, termites, beetles and sunspiders. A food chain shows only one path, but a food web shows <strong>all the links</strong> between the living things in a habitat.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 10 : SELF-CHECK ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Look what I can do!</div>
+        <h1 class="slide-title">Self-check &amp; recap</h1>
+        <div class="progress-bar-track"><div class="progress-bar-fill" id="assessFill"></div></div>
+        <div class="assess-list" id="assessList"></div>
+
+        <h3 class="mini-title" style="margin-top:28px;">How am I doing? (Learner's Book p. 101)</h3>
+        <div id="reflectList"></div>
+
+        <h3 class="mini-title" style="margin-top:22px;">Key vocabulary — tap a card to flip it</h3>
+        <div class="gloss-grid" id="glossGrid"></div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 11 : WRAP UP ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Think about your learning</div>
+        <h1 class="slide-title">What did I find difficult?</h1>
+        <p class="lede">Answer these two questions in your book (Learner's Book p. 103).</p>
+        <div class="wq"><p class="wq-q">What did I find difficult?</p><textarea style="width:100%;" placeholder="Write here…"></textarea></div>
+        <div class="wq"><p class="wq-q">What can I do to understand food webs better?</p><textarea style="width:100%;" placeholder="Write here…"></textarea></div>
+        <div class="box teal" style="margin-top:20px;"><div class="box-head">🔑 Remember</div><div class="box-body">
+          <p>☀️ The <strong>Sun</strong> is the source of energy for all food chains.</p>
+          <p>🌱 Food chains <strong>start with a producer</strong>. Arrows point to the eater.</p>
+          <p>🕸️ A <strong>food web</strong> is many food chains joined together — it is more accurate.</p>
+          <p style="margin:0">📉 Energy gets <strong>less and less</strong> at each link, because some is used and some is lost as heat.</p>
+        </div></div>
+        <p style="margin-top:20px; font-size:14px; color:var(--ink-soft);">Next topic: <strong>4.2 Harm to food chains and food webs</strong>.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <button class="navbtn" id="prevBtn" onclick="prevSlide()" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <button class="navbtn" id="nextBtn" onclick="nextSlide()" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg></button>
+  <div class="term-pop" id="termPop"></div>
+</div>
+
+<script>
+/* ============ navigation ============ */
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let idx = 0;
+const dotsWrap = document.getElementById('dots');
+slides.forEach((s,i)=>{
+  const d = document.createElement('button');
+  d.className = 'dot';
+  d.setAttribute('aria-label','Go to slide '+(i+1));
+  d.onclick = ()=>goTo(i);
+  dotsWrap.appendChild(d);
+});
+function render(){
+  slides.forEach((s,i)=> s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.dot').forEach((d,i)=> d.classList.toggle('active', i===idx));
+  document.getElementById('counter').textContent = (idx+1)+' / '+total;
+  document.getElementById('prevBtn').classList.toggle('disabled', idx===0);
+  document.getElementById('nextBtn').classList.toggle('disabled', idx===total-1);
+  slides[idx].scrollTop = 0;
+}
+function goTo(i){ idx = Math.max(0, Math.min(total-1, i)); render(); }
+function nextSlide(){ goTo(idx+1); }
+function prevSlide(){ goTo(idx-1); }
+document.addEventListener('keydown', e=>{
+  if(e.target.tagName==='TEXTAREA') return;
+  if(e.key==='ArrowRight') nextSlide();
+  if(e.key==='ArrowLeft') prevSlide();
+});
+render();
+
+/* ============ objectives ============ */
+document.querySelectorAll('.obj-card').forEach(c=> c.addEventListener('click', ()=> c.classList.toggle('done')));
+
+/* ============ term popups ============ */
+const termPop = document.getElementById('termPop');
+document.querySelectorAll('.term').forEach(t=>{
+  t.addEventListener('click', e=>{
+    e.stopPropagation();
+    const r = t.getBoundingClientRect();
+    termPop.textContent = t.dataset.def;
+    termPop.style.left = Math.min(r.left, window.innerWidth-300)+'px';
+    termPop.style.top = (r.bottom+8)+'px';
+    termPop.classList.add('show');
+  });
+});
+document.addEventListener('click', ()=> termPop.classList.remove('show'));
+
+/* ============ MCQ ============ */
+document.querySelectorAll('.mcq-item').forEach(item=>{
+  const ans = item.dataset.answer;
+  item.querySelectorAll('.mcq-opt').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      item.querySelectorAll('.mcq-opt').forEach(b=>{ b.disabled = true; if(b.dataset.val===ans) b.classList.add('correct'); });
+      if(btn.dataset.val!==ans) btn.classList.add('wrong');
+      item.querySelector('.mcq-fb').classList.add('show');
+    });
+  });
+});
+
+/* ============ show model answer buttons ============ */
+document.querySelectorAll('.wq').forEach(wq=>{
+  const btn = wq.querySelector('.show-btn:not(.tapcheck)');
+  if(btn) btn.addEventListener('click', ()=>{
+    const a = wq.querySelector('.reveal-ans');
+    a.classList.toggle('show');
+    btn.textContent = a.classList.contains('show') ? 'Hide model answer' : (btn.textContent.indexOf('answers')>-1 ? 'Show model answers' : 'Show model answer');
+  });
+});
+
+/* ============ tap-select questions ============ */
+const tapQs = {
+  producers:  {opts:['palm shoot','fig','jack fruit','spotted deer','orangutan','fruit bat'], ans:['palm shoot','fig','jack fruit']},
+  herbivores: {opts:['spotted deer','coconut palm beetle','fruit bat','orangutan','tiger','hawk'], ans:['spotted deer','coconut palm beetle','fruit bat']},
+  carnivores: {opts:['tiger','python','hawk','orangutan','spotted deer','fruit bat'], ans:['tiger','python','hawk']},
+  omnivores:  {opts:['orangutan','tiger','fruit bat','spotted deer'], ans:['orangutan']},
+  o_producers:{opts:['algae','plant plankton','prawn','fish eggs','jelly fish'], ans:['algae','plant plankton']},
+  o_herb:     {opts:['prawn','small fish','jelly fish','sea turtle','great white shark'], ans:['prawn']},
+  o_omni:     {opts:['prawn','small fish','jelly fish','sea turtle','great white shark'], ans:['small fish','jelly fish']},
+  o_carn:     {opts:['prawn','small fish','jelly fish','sea turtle','great white shark'], ans:['sea turtle','great white shark']}
+};
+document.querySelectorAll('[data-tapq]').forEach(wq=>{
+  const q = tapQs[wq.dataset.tapq];
+  const set = wq.querySelector('.tapset');
+  q.opts.forEach(o=>{
+    const b = document.createElement('button');
+    b.className = 'tap'; b.textContent = o; b.dataset.v = o;
+    b.addEventListener('click', ()=>{ if(!wq.classList.contains('checked')) b.classList.toggle('on'); });
+    set.appendChild(b);
+  });
+  const chk = wq.querySelector('.tapcheck');
+  chk.addEventListener('click', ()=>{
+    if(wq.classList.contains('checked')){
+      wq.classList.remove('checked');
+      set.querySelectorAll('.tap').forEach(b=> b.className='tap');
+      wq.querySelector('.reveal-ans').classList.remove('show');
+      chk.textContent = 'Check';
+      return;
+    }
+    wq.classList.add('checked');
+    set.querySelectorAll('.tap').forEach(b=>{
+      const isAns = q.ans.includes(b.dataset.v), on = b.classList.contains('on');
+      b.className = 'tap ' + (on && isAns ? 'good' : on && !isAns ? 'bad' : !on && isAns ? 'missed' : '');
+    });
+    wq.querySelector('.reveal-ans').classList.add('show');
+    chk.textContent = 'Try again';
+  });
+});
+
+/* ============ sorting game (Getting started) ============ */
+const sortItems = [
+  {n:'fern', e:'🌿', d:'makes its own food from sunlight', a:'P'},
+  {n:'bean plant', e:'🌱', d:'makes its own food from sunlight', a:'P'},
+  {n:'palm tree', e:'🌴', d:'makes its own food from sunlight', a:'P'},
+  {n:'zebra', e:'🦓', d:'eats grass', a:'H'},
+  {n:'locust', e:'🦗', d:'eats leaves and crops', a:'H'},
+  {n:'sheep', e:'🐑', d:'eats grass', a:'H'},
+  {n:'crocodile', e:'🐊', d:'eats fish, birds and mammals', a:'C'},
+  {n:'tiger', e:'🐅', d:'eats deer and wild pigs', a:'C'},
+  {n:'eagle', e:'🦅', d:'eats rabbits, snakes and fish', a:'C'},
+  {n:'monkey', e:'🐒', d:'eats fruit, leaves and insects', a:'O'},
+  {n:'bear', e:'🐻', d:'eats berries, roots and fish', a:'O'}
+];
+const sortLabels = {P:'Producer', H:'Herbivore', C:'Carnivore', O:'Omnivore'};
+const vennPos = {
+  zebra:[22,38], locust:[17,58], sheep:[24,76],
+  crocodile:[78,38], tiger:[83,58], eagle:[76,76],
+  monkey:[50,40], bear:[50,66]
+};
+const venn = document.getElementById('venn');
+Object.keys(vennPos).forEach(k=>{
+  const it = sortItems.find(s=>s.n===k);
+  const el = document.createElement('div');
+  el.className = 'venn-slot'; el.id = 'venn-'+k;
+  el.style.left = vennPos[k][0]+'%'; el.style.top = vennPos[k][1]+'%';
+  el.innerHTML = '<span class="vi">'+it.e+'</span><span class="vl">'+k+'</span>';
+  venn.appendChild(el);
+});
+let sorted = 0;
+const sortGrid = document.getElementById('sortGrid');
+sortItems.forEach(it=>{
+  const c = document.createElement('div');
+  c.className = 'sort-card';
+  c.innerHTML = '<div class="emo">'+it.e+'</div><div class="nm">'+it.n+'</div><div class="diet">'+it.d+'</div><div class="sort-btns"></div>';
+  const btns = c.querySelector('.sort-btns');
+  Object.keys(sortLabels).forEach(k=>{
+    const b = document.createElement('button');
+    b.className = 'sort-btn'; b.textContent = sortLabels[k];
+    b.addEventListener('click', ()=>{
+      if(k===it.a){
+        btns.querySelectorAll('.sort-btn').forEach(x=>x.classList.remove('wrong'));
+        b.classList.add('right'); c.classList.add('correct');
+        sorted++;
+        document.getElementById('sortScore').textContent = sorted+' of 11 sorted'+(sorted===11?' — excellent!':'');
+        const v = document.getElementById('venn-'+it.n); if(v) v.classList.add('on');
+      } else { b.classList.add('wrong'); }
+    });
+    btns.appendChild(b);
+  });
+  sortGrid.appendChild(c);
+});
+
+/* ============ chain builders (LB Activity p.99) ============ */
+const chainTasks = [
+  {title:'1', items:[['corn plant','🌽'],['mouse','🐭'],['snake','🐍']], order:['corn plant','mouse','snake'], note:'The corn plant is the producer. The mouse eats the corn, and the snake eats the mouse.'},
+  {title:'2', items:[['cabbage','🥬'],['snail','🐌'],['duck','🦆'],['fox','🦊']], order:['cabbage','snail','duck','fox'], note:'The snail eats the cabbage, the duck eats the snail, and the fox eats the duck.'},
+  {title:'3 (a pond)', items:[['pond weed','🌿'],['tadpole','〰️'],['fish','🐟'],['frog','🐸'],['person','🧍']], order:['pond weed','tadpole','fish','frog','person'], note:'Tadpoles eat pond weed, fish eat tadpoles, big frogs eat small fish, and people catch and eat frogs. (Another answer your teacher may accept: pond weed → tadpole → fish → person.)'}
+];
+const buildersWrap = document.getElementById('builders');
+chainTasks.forEach(task=>{
+  const box = document.createElement('div');
+  box.className = 'builder';
+  const shuffled = task.items.slice().sort(()=>Math.random()-.5);
+  box.innerHTML = '<h4>Food chain '+task.title+'</h4><div class="b-pool"></div><div class="b-slots"><span class="b-empty">Tap the producer first…</span></div><div class="b-actions"><button class="btn">Check</button><button class="btn ghost">↺ Reset</button></div><div class="b-fb"></div>';
+  const pool = box.querySelector('.b-pool'), slots = box.querySelector('.b-slots'), fb = box.querySelector('.b-fb');
+  let picked = [];
+  function drawSlots(){
+    if(!picked.length){ slots.innerHTML = '<span class="b-empty">Tap the producer first…</span>'; return; }
+    slots.innerHTML = picked.map((p,i)=>(i?'<span class="b-arr">➜</span>':'')+'<span class="b-slot"><span class="emo">'+p[1]+'</span>'+p[0]+'</span>').join('');
+  }
+  shuffled.forEach(it=>{
+    const ch = document.createElement('button');
+    ch.className = 'b-chip'; ch.innerHTML = '<span class="emo">'+it[1]+'</span>'+it[0];
+    ch.addEventListener('click', ()=>{ picked.push(it); ch.classList.add('used'); fb.className='b-fb'; drawSlots(); });
+    pool.appendChild(ch);
+  });
+  const [checkBtn, resetBtn] = box.querySelectorAll('.b-actions .btn');
+  checkBtn.addEventListener('click', ()=>{
+    if(picked.length < task.order.length){ fb.className='b-fb no'; fb.textContent='Use all the living things first.'; return; }
+    const ok = picked.every((p,i)=>p[0]===task.order[i]);
+    if(ok){ fb.className='b-fb ok'; fb.innerHTML='✅ Correct! '+task.note; slots.classList.add('done'); }
+    else if(picked[0][0]!==task.order[0]){ fb.className='b-fb no'; fb.textContent='Not yet. Remember: a food chain always starts with the producer (the plant).'; }
+    else { fb.className='b-fb no'; fb.textContent='Not yet. Ask: who eats who? The arrow points to the eater.'; }
+  });
+  resetBtn.addEventListener('click', ()=>{ picked=[]; pool.querySelectorAll('.b-chip').forEach(c=>c.classList.remove('used')); fb.className='b-fb'; slots.classList.remove('done'); drawSlots(); });
+  buildersWrap.appendChild(box);
+});
+
+/* ============ food web engine ============ */
+const NS = 'http://www.w3.org/2000/svg';
+const typeColour = {P:'#E7F5EC', H:'#FCF3D9', O:'#FBEADB', C:'#FBE7E4', F:'#E9F1FC'};
+const typeStroke = {P:'#3F8F5C', H:'#C7951A', O:'#DD7A2E', C:'#C0392B', F:'#2B71C9'};
+function buildWeb(svgId, nodes, links, opts){
+  opts = opts || {};
+  const svg = document.getElementById(svgId);
+  const R = opts.r || 30;
+  const markerId = svgId+'-arr';
+  svg.innerHTML = '<defs>'+
+    ['grey:#9AA8A6','food:#3F8F5C','eaten:#C0392B','trace:#DD7A2E','found:#146C7A'].map(s=>{
+      const [n,c] = s.split(':');
+      return '<marker id="'+markerId+'-'+n+'" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L9,4 L0,8 Z" fill="'+c+'"/></marker>';
+    }).join('')+'</defs>';
+  const byId = {}; nodes.forEach(n=>byId[n.id]=n);
+  const linkEls = {};
+  const gLinks = document.createElementNS(NS,'g'); svg.appendChild(gLinks);
+  links.forEach(([a,b])=>{
+    const A = byId[a], B = byId[b];
+    const dx = B.x-A.x, dy = B.y-A.y, L = Math.hypot(dx,dy);
+    const ux = dx/L, uy = dy/L;
+    const x1 = A.x+ux*R, y1 = A.y+uy*R, x2 = B.x-ux*(R+4), y2 = B.y-uy*(R+4);
+    const p = document.createElementNS(NS,'line');
+    p.setAttribute('x1',x1); p.setAttribute('y1',y1); p.setAttribute('x2',x2); p.setAttribute('y2',y2);
+    p.setAttribute('class','web-link'+(opts.hideLinks?' hidden':''));
+    p.setAttribute('marker-end','url(#'+markerId+'-grey)');
+    gLinks.appendChild(p);
+    linkEls[a+'>'+b] = p;
+  });
+  const nodeEls = {};
+  nodes.forEach(n=>{
+    const g = document.createElementNS(NS,'g');
+    g.setAttribute('class','web-node'); g.setAttribute('transform','translate('+n.x+','+n.y+')');
+    g.innerHTML = '<circle r="'+R+'" fill="'+typeColour[n.t]+'" stroke="'+typeStroke[n.t]+'" stroke-width="2.5"/>'+
+      '<text class="e" text-anchor="middle" dy="9">'+n.e+'</text>'+
+      '<text class="l" text-anchor="middle" y="'+(R+14)+'">'+n.label+'</text>';
+    g.addEventListener('click', ()=> opts.onTap && opts.onTap(n.id));
+    svg.appendChild(g);
+    nodeEls[n.id] = g;
+  });
+  function setLink(k, cls){
+    const el = linkEls[k]; if(!el) return;
+    el.setAttribute('class','web-link'+(cls?' '+cls:''));
+    el.setAttribute('marker-end','url(#'+markerId+'-'+(cls && cls!=='hidden' ? cls : 'grey')+')');
+  }
+  return {byId, linkEls, nodeEls, setLink, links};
+}
+function chainText(path, byId){ return path.map(id=>byId[id].label).join(' → '); }
+
+/* ---- rainforest data (Learner's Book p.100) ---- */
+const rainNodes = [
+  {id:'tiger', label:'tiger', e:'🐅', x:90, y:60, t:'C'},
+  {id:'python', label:'python', e:'🐍', x:310, y:50, t:'C'},
+  {id:'hawk', label:'hawk', e:'🦅', x:540, y:70, t:'C'},
+  {id:'deer', label:'spotted deer', e:'🦌', x:75, y:230, t:'H'},
+  {id:'beetle', label:'coconut palm beetle', e:'🪲', x:220, y:215, t:'H'},
+  {id:'orang', label:'orangutan', e:'🦧', x:360, y:175, t:'O'},
+  {id:'bat', label:'fruit bat', e:'🦇', x:530, y:225, t:'H'},
+  {id:'palm', label:'palm shoot', e:'🌿', x:200, y:370, t:'P'},
+  {id:'fig', label:'fig', e:'🟣', x:370, y:375, t:'P'},
+  {id:'jack', label:'jack fruit', e:'🍈', x:530, y:375, t:'P'}
+];
+const rainLinks = [['palm','deer'],['palm','beetle'],['palm','orang'],['palm','bat'],['fig','orang'],['fig','bat'],['jack','orang'],['jack','bat'],['beetle','orang'],['deer','tiger'],['deer','python'],['orang','tiger'],['orang','python'],['bat','python'],['bat','hawk']];
+const typeWord = {P:'a producer', H:'a herbivore', C:'a carnivore', O:'an omnivore'};
+
+/* explore mode */
+const rainExplore = buildWeb('webRain', rainNodes, rainLinks, {onTap: id=>{
+  const W = rainExplore;
+  const eats = rainLinks.filter(l=>l[1]===id).map(l=>l[0]);
+  const eatenBy = rainLinks.filter(l=>l[0]===id).map(l=>l[1]);
+  rainLinks.forEach(([a,b])=>{
+    const k = a+'>'+b;
+    W.setLink(k, b===id ? 'food' : a===id ? 'eaten' : '');
+  });
+  Object.keys(W.nodeEls).forEach(n=>{
+    const on = n===id || eats.includes(n) || eatenBy.includes(n);
+    W.nodeEls[n].classList.toggle('dim', !on);
+    W.nodeEls[n].classList.toggle('sel', n===id);
+  });
+  const n = W.byId[id];
+  const lab = x=>W.byId[x].label;
+  document.getElementById('rainInfo').innerHTML = '<h4>'+n.e+' '+n.label+'</h4><p>This is <strong>'+typeWord[n.t]+'</strong>.</p>'+
+    '<p><strong style="color:var(--green)">Eats:</strong> '+(eats.length? eats.map(lab).join(', ') : 'nothing — it makes its own food using sunlight')+'</p>'+
+    '<p style="margin:0"><strong style="color:var(--red)">Eaten by:</strong> '+(eatenBy.length? eatenBy.map(lab).join(', ') : 'nothing in this food web — it is a top predator')+'</p>';
+}});
+
+/* generic trace controller */
+function makeTracer(cfg){
+  let path = [];
+  const W = buildWeb(cfg.svg, cfg.nodes, cfg.links, {r:cfg.r, hideLinks:cfg.hideLinks, onTap: tap});
+  const linkSet = new Set(cfg.links.map(l=>l[0]+'>'+l[1]));
+  const bar = document.getElementById(cfg.bar), msg = document.getElementById(cfg.msg);
+  const saved = [];
+  function show(text, kind){ msg.className = 'msg '+kind; msg.innerHTML = text; }
+  function paint(){
+    cfg.links.forEach(([a,b])=>{
+      const k = a+'>'+b;
+      let cls = cfg.hideLinks ? 'hidden' : '';
+      if(cfg.foundLinks && cfg.foundLinks.has(k)) cls = 'found';
+      for(let i=0;i<path.length-1;i++) if(path[i]===a && path[i+1]===b) cls = 'trace';
+      W.setLink(k, cls);
+    });
+    Object.keys(W.nodeEls).forEach(n=> W.nodeEls[n].classList.toggle('inpath', path.includes(n)));
+    bar.innerHTML = path.length ? '<strong>'+chainText(path, W.byId)+'</strong>&nbsp;<span style="color:var(--ink-soft)">('+path.length+(path.length===1?' link':' links')+')</span>' : '<span class="b-empty">'+cfg.startHint+'</span>';
+  }
+  function tap(id){
+    if(!path.length){
+      if(cfg.mustStartProducer && W.byId[id].t!=='P'){ show('Start with a <strong>producer</strong> (a plant). Food chains always begin with a producer.','no'); return; }
+      path=[id]; msg.className='msg'; paint(); return;
+    }
+    const last = path[path.length-1];
+    if(id===last){ path.pop(); paint(); return; }
+    if(cfg.validLink(last,id)){ path.push(id); msg.className='msg'; paint(); }
+    else show('The '+W.byId[id].label+' does <strong>not eat</strong> the '+W.byId[last].label+'. Look again'+(cfg.hideLinks?' at the passage.':' at the arrows.'),'no');
+  }
+  document.getElementById(cfg.clear).addEventListener('click', ()=>{ path=[]; msg.className='msg'; paint(); });
+  document.getElementById(cfg.save).addEventListener('click', ()=>{
+    if(path.length<2){ show('A food chain needs at least two living things.','no'); return; }
+    const key = path.join('>');
+    if(saved.includes(key)){ show('You have already saved this chain. Try a different one!','info'); return; }
+    const res = cfg.onSave(path.slice(), W);
+    if(res.ok){ saved.push(key); show(res.text,'ok'); path=[]; paint(); }
+    else show(res.text, res.kind||'no');
+  });
+  paint();
+  return {W, saved, paint, linkSet};
+}
+
+/* rainforest trace (LB Q4) */
+let r3=0, r4=0;
+const rainTrace = makeTracer({
+  svg:'webRainTrace', nodes:rainNodes, links:rainLinks, bar:'rtBar', msg:'rtMsg', save:'rtSave', clear:'rtClear',
+  startHint:'Tap a producer to start…', mustStartProducer:true,
+  validLink:(a,b)=> rainLinks.some(l=>l[0]===a && l[1]===b),
+  onSave:(path,W)=>{
+    const last = path[path.length-1];
+    const li = document.createElement('div'); li.className='chain-li';
+    li.textContent = chainText(path,W.byId)+' ('+path.length+' links)';
+    document.getElementById('rtList').prepend(li);
+    if(path.length===3){ r3++; }
+    if(path.length===4){ r4++; }
+    document.getElementById('rtC3').textContent='('+Math.min(r3,3)+'/3)';
+    document.getElementById('rtC4').textContent='('+Math.min(r4,1)+'/1)';
+    document.getElementById('rtT3').classList.toggle('hit', r3>=3);
+    document.getElementById('rtT4').classList.toggle('hit', r4>=1);
+    const top = !rainLinks.some(l=>l[0]===last);
+    return {ok:true, text:'✅ Saved! This chain has <strong>'+path.length+' links</strong>.'+(top?'':' (Tip: you could keep going — something eats the '+W.byId[last].label+'.)')};
+  }
+});
+
+/* ---- ocean web (Workbook p.51) ---- */
+const oceanNodes = [
+  {id:'shark', label:'great white shark', e:'🦈', x:320, y:55, t:'C'},
+  {id:'turtle', label:'sea turtle', e:'🐢', x:190, y:165, t:'C'},
+  {id:'smallfish', label:'small fish', e:'🐟', x:470, y:175, t:'O'},
+  {id:'jelly', label:'jelly fish', e:'🪼', x:115, y:290, t:'O'},
+  {id:'prawn', label:'prawn', e:'🦐', x:400, y:290, t:'H'},
+  {id:'eggs', label:'fish eggs', e:'🫧', x:45, y:385, t:'F'},
+  {id:'plankton', label:'plant plankton', e:'🦠', x:275, y:385, t:'P'},
+  {id:'algae', label:'algae', e:'🌱', x:550, y:330, t:'P'}
+];
+const oceanLinks = [['plankton','prawn'],['plankton','jelly'],['eggs','jelly'],['algae','smallfish'],['prawn','smallfish'],['jelly','turtle'],['smallfish','shark'],['turtle','shark']];
+const oceanTargets = [
+  {key:'eggs>jelly>turtle', text:'fish eggs → jelly fish → sea turtle'},
+  {key:'algae>smallfish>shark', text:'algae → small fish → great white shark'},
+  {key:'plankton>jelly>turtle>shark', text:'plant plankton → jelly fish → sea turtle → great white shark'}
+];
+const ocT = document.getElementById('ocTargets');
+oceanTargets.forEach((t,i)=>{
+  const d = document.createElement('div'); d.className='target-li'; d.id='ocTarget'+i;
+  d.innerHTML = '<div class="tick">✓</div><div>'+t.text+'</div>'; ocT.appendChild(d);
+});
+let oc4 = 0;
+makeTracer({
+  svg:'webOcean', nodes:oceanNodes, links:oceanLinks, bar:'ocBar', msg:'ocMsg', save:'ocSave', clear:'ocClear',
+  startHint:'Tap the first living thing…', mustStartProducer:false,
+  validLink:(a,b)=> oceanLinks.some(l=>l[0]===a && l[1]===b),
+  onSave:(path,W)=>{
+    const key = path.join('>');
+    const ti = oceanTargets.findIndex(t=>t.key===key);
+    if(ti>-1){ document.getElementById('ocTarget'+ti).classList.add('hit'); return {ok:true, text:'✅ Found it! In your workbook, circle this chain in its own colour.'}; }
+    if(path.length===4){ oc4++; document.getElementById('ocC4').textContent='('+Math.min(oc4,2)+'/2)'; document.getElementById('ocT2a').classList.toggle('hit', oc4>=2); return {ok:true, text:'✅ A new four-link food chain! Draw it for Practice 2a.'}; }
+    return {ok:true, text:'✅ That is a real food chain with '+path.length+' links, but it is not one of the workbook targets. Try another!'};
+  }
+});
+
+/* ---- Namib desert (Workbook Challenge 3) ---- */
+const namibNodes = [
+  {id:'adder', label:'sidewinder adder', e:'🐍', x:310, y:42, t:'C'},
+  {id:'lizard', label:'lizard', e:'🦎', x:310, y:135, t:'C'},
+  {id:'sunspider', label:'sunspider', e:'🕷️', x:490, y:195, t:'C'},
+  {id:'scorpion', label:'scorpion', e:'🦂', x:400, y:285, t:'C'},
+  {id:'spider', label:'spider', e:'🕸️', x:170, y:270, t:'C'},
+  {id:'antlion', label:'antlion', e:'🪰', x:560, y:330, t:'C'},
+  {id:'termite', label:'termite', e:'🐜', x:90, y:375, t:'H'},
+  {id:'beetle', label:'beetle', e:'🪲', x:280, y:375, t:'H'},
+  {id:'ant', label:'ant', e:'🐜', x:470, y:395, t:'H'},
+  {id:'grass', label:'grasses', e:'🌾', x:200, y:458, t:'P'},
+  {id:'seeds', label:'seeds', e:'🌰', x:390, y:458, t:'P'}
+];
+const namibLinks = [['grass','ant'],['seeds','ant'],['grass','beetle'],['seeds','beetle'],['grass','termite'],['seeds','termite'],['ant','antlion'],['termite','spider'],['beetle','scorpion'],['spider','scorpion'],['scorpion','sunspider'],['beetle','sunspider'],['spider','lizard'],['termite','lizard'],['beetle','lizard'],['sunspider','lizard'],['lizard','adder']];
+const namibFound = new Set();
+let nmCount = 0, nmSix = false;
+const namibTracer = makeTracer({
+  svg:'webNamib', nodes:namibNodes, links:namibLinks, r:27, hideLinks:true, foundLinks:namibFound,
+  bar:'nmBar', msg:'nmMsg', save:'nmSave', clear:'nmClear',
+  startHint:'Tap grasses or seeds to start…', mustStartProducer:true,
+  validLink:(a,b)=> namibLinks.some(l=>l[0]===a && l[1]===b),
+  onSave:(path,W)=>{
+    if(path.length<3) return {ok:false, text:'Make each chain at least three links long for this challenge.', kind:'info'};
+    for(let i=0;i<path.length-1;i++) namibFound.add(path[i]+'>'+path[i+1]);
+    nmCount++;
+    const li = document.createElement('div'); li.className='chain-li'+(path.length===6?' six':'');
+    li.textContent = nmCount+'. '+chainText(path,W.byId)+' ('+path.length+' links)';
+    document.getElementById('nmList').appendChild(li);
+    if(path.length===6) nmSix = true;
+    document.getElementById('nmC10').textContent='('+Math.min(nmCount,10)+'/10)';
+    document.getElementById('nmT10').classList.toggle('hit', nmCount>=10);
+    document.getElementById('nmT6').classList.toggle('hit', nmSix);
+    let t = '✅ Chain '+nmCount+' saved — its arrows are now on the web.';
+    if(nmCount>=10 && nmSix) t = '🎉 Ten chains including a six-link chain! Look at the arrows — you have built a food web (3b).';
+    return {ok:true, text:t};
+  }
+});
+
+/* ============ energy simulation ============ */
+const eSteps = [
+  {n:'Sun', e:'☀️', role:'source of energy', val:null},
+  {n:'bean plant', e:'🌱', role:'producer', val:1000},
+  {n:'grasshopper', e:'🦗', role:'consumer (herbivore)', val:100},
+  {n:'lizard', e:'🦎', role:'consumer (carnivore)', val:10},
+  {n:'hawk', e:'🦅', role:'consumer (carnivore)', val:1}
+];
+const eCaps = [
+  '☀️ Every food chain starts with the <strong>Sun</strong>. Press <em>Next step</em>.',
+  '🌱 The <strong>bean plant</strong> (producer) uses energy from the Sun to make its own food. Its body now stores <strong>1000 units</strong> of energy.',
+  '🦗 The <strong>grasshopper</strong> eats the bean plant. Energy is transferred — but the plant had already used some energy and lost some as heat. Only about <strong>100 units</strong> reach the grasshopper.',
+  '🦎 The <strong>lizard</strong> eats grasshoppers. Again, energy is used and lost as heat at this link. Only about <strong>10 units</strong> are passed on.',
+  '🦅 The <strong>hawk</strong> eats the lizard. Only about <strong>1 unit</strong> of the original 1000 is left. Energy gets <strong>less and less</strong> along the food chain!'
+];
+const eRow = document.getElementById('eRow');
+eSteps.forEach((s,i)=>{
+  const c = document.createElement('div'); c.className='e-col'; c.id='eCol'+i;
+  c.innerHTML = '<div class="e-val" id="eVal'+i+'"></div>'+
+    (i===0 ? '<div class="e-barbox" style="background:var(--sun-light);border-color:#EADFC2;display:flex;align-items:center;justify-content:center;font-size:12px;color:#8A6410;font-weight:700;">energy<br>source</div>' : '<div class="e-barbox"><div class="e-bar" id="eBar'+i+'"></div></div>')+
+    '<div class="e-emo">'+s.e+'</div><div class="e-name">'+s.n+'</div><div class="e-role">'+s.role+'</div>';
+  eRow.appendChild(c);
+});
+let eStep = 0;
+function units(v){ return v+(v===1?' unit':' units'); }
+function eRender(){
+  eSteps.forEach((s,i)=>{
+    document.getElementById('eCol'+i).classList.toggle('dimmed', i>eStep);
+    if(i>0){
+      const shown = i<=eStep;
+      document.getElementById('eBar'+i).style.height = shown ? Math.max(2, s.val/10)+'%' : '0';
+      document.getElementById('eVal'+i).textContent = shown ? units(s.val) : '';
+    }
+  });
+  document.getElementById('eCaption').innerHTML = eCaps[eStep];
+  const split = document.getElementById('eSplit');
+  if(eStep>=2){
+    const prev = eSteps[eStep-1].val;
+    split.style.display='grid';
+    document.getElementById('eUsed').textContent = units(Math.round(prev*0.6));
+    document.getElementById('eHeat').textContent = units(Math.round(prev*0.3));
+    document.getElementById('eStored').textContent = units(eSteps[eStep].val);
+    split.querySelector('.used').lastChild.textContent = ' used by the '+eSteps[eStep-1].n+' to stay alive';
+    split.querySelector('.heat').lastChild.textContent = ' lost from the '+eSteps[eStep-1].n+' as heat';
+    split.querySelector('.stored').lastChild.textContent = ' stored in the '+eSteps[eStep-1].n+' → passed to the '+eSteps[eStep].n;
+  } else split.style.display='none';
+  document.getElementById('eNext').disabled = eStep>=eSteps.length-1;
+}
+document.getElementById('eNext').addEventListener('click', ()=>{ if(eStep<eSteps.length-1){ eStep++; eRender(); } });
+document.getElementById('eReset').addEventListener('click', ()=>{ eStep=0; eRender(); });
+eRender();
+
+/* ============ self-check ============ */
+const assessItems = [
+  'I can draw food chains.',
+  'I can explain a food web and identify food chains in a food web.',
+  'I can explain how a food web shows feeding relationships in nature.',
+  'I can identify the source of energy in food chains and food webs.',
+  'I can describe how energy is transferred in food chains and food webs.'
+];
+const assessList = document.getElementById('assessList');
+assessItems.forEach(text=>{
+  const item = document.createElement('div'); item.className='assess-item';
+  item.innerHTML = '<div class="assess-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>'+text+'</p>';
+  item.addEventListener('click', ()=>{ item.classList.toggle('checked'); const n=document.querySelectorAll('.assess-item.checked').length; document.getElementById('assessFill').style.width=(n/assessItems.length*100)+'%'; });
+  assessList.appendChild(item);
+});
+const reflectQs = [
+  'How well can I identify producers and different consumers in a food web?',
+  'How well can I identify and draw the food chains in a food web?',
+  'How well can I explain the way a food chain or food web helps us to understand feeding relationships in nature?'
+];
+const reflectList = document.getElementById('reflectList');
+reflectQs.forEach(q=>{
+  const d = document.createElement('div');
+  d.innerHTML = '<p style="font-size:14px; margin:8px 0 4px; font-weight:600;">'+q+'</p><div class="reflect-row"><button class="reflect-btn r1">Very well</button><button class="reflect-btn r2">Quite well</button><button class="reflect-btn r3">I need help</button></div>';
+  const btns = d.querySelectorAll('.reflect-btn');
+  btns.forEach(b=> b.addEventListener('click', ()=>{ btns.forEach(x=>x.classList.remove('on')); b.classList.add('on'); }));
+  reflectList.appendChild(d);
+});
+const glossary = [
+  {term:'Producer', def:'A living thing that makes its own food using energy from the Sun (plants).'},
+  {term:'Consumer', def:'A living thing that eats other living things to get energy.'},
+  {term:'Herbivore', def:'An animal that eats only plants.'},
+  {term:'Carnivore', def:'An animal that eats only other animals.'},
+  {term:'Omnivore', def:'An animal that eats plants and animals.'},
+  {term:'Food chain', def:'A diagram that shows what eats what, joined by arrows.'},
+  {term:'Food web', def:'Many food chains in one habitat joined together.'},
+  {term:'Arrow', def:'Points from the food to the eater. Shows the direction food and energy move.'},
+  {term:'Represent', def:'To show or stand for something.'},
+  {term:'Accurate', def:'Correct and close to real life.'},
+  {term:'Energy transfer', def:'Energy moving from one living thing to the next when it is eaten.'},
+  {term:'The Sun', def:'The source of energy for all food chains and food webs.'}
+];
+const glossGrid = document.getElementById('glossGrid');
+glossary.forEach(g=>{
+  const card = document.createElement('div'); card.className='gloss-card';
+  card.innerHTML = '<div class="gloss-inner"><div class="gloss-face front">'+g.term+'</div><div class="gloss-face back">'+g.def+'</div></div>';
+  card.addEventListener('click', ()=> card.classList.toggle('flip'));
+  glossGrid.appendChild(card);
+});
+</script>
+</body>
+</html>
