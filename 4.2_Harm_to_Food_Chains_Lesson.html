@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4.2 Harm to Food Chains and Food Webs — Interactive Lesson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#146C7A; --teal-dark:#0D4F5A; --teal-light:#E3F1F2; --teal-mid:#59A6AE;
+  --orange:#DD7A2E; --orange-light:#FBEADB;
+  --purple:#5B3E96; --purple-light:#F0EAFA;
+  --red:#C0392B; --red-light:#FBE7E4;
+  --blue:#2B71C9; --blue-light:#E9F1FC;
+  --green:#3F8F5C; --green-light:#E7F5EC;
+  --sun:#E9B323; --sun-light:#FCF3D9;
+  --ink:#1D2B32; --ink-soft:#4B5B62;
+  --paper:#FFFFFF; --cream:#F6F4EF; --line:#DDE4E3;
+  --r-lg:22px; --r-md:14px; --r-sm:8px;
+  --shadow:0 10px 30px rgba(13,79,90,.14);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{margin:0; background:var(--cream); color:var(--ink); font-family:'Inter',system-ui,sans-serif; overflow:hidden;}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;}
+
+#app{position:relative; width:100vw; height:100vh; display:flex; flex-direction:column;}
+.topbar{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 28px; background:var(--paper); border-bottom:1px solid var(--line); flex:0 0 auto; z-index:20;}
+.crumb{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft); font-weight:600;}
+.crumb .tag{background:var(--teal); color:#fff; font-family:'Poppins'; font-weight:700; font-size:12px; padding:5px 12px; border-radius:100px; letter-spacing:.3px;}
+.crumb .sep{color:#B9C4C3;}
+.crumb .current{color:var(--teal-dark);}
+.dots{display:flex; gap:6px; align-items:center; flex-wrap:wrap; max-width:40vw;}
+.dot{width:9px; height:9px; border-radius:50%; background:#D7DEDD; border:none; cursor:pointer; transition:all .25s;}
+.dot.active{background:var(--teal); width:22px; border-radius:6px;}
+.dot:hover{background:var(--teal-mid);}
+.counter{font-size:12px; color:var(--ink-soft); font-weight:600; font-variant-numeric:tabular-nums; min-width:44px; text-align:right;}
+
+.stage{position:relative; flex:1 1 auto; overflow:hidden;}
+.slide{position:absolute; inset:0; opacity:0; pointer-events:none; transform:translateX(30px) scale(.99); transition:opacity .45s ease, transform .45s ease; overflow-y:auto;}
+.slide.active{opacity:1; pointer-events:auto; transform:translateX(0) scale(1);}
+.slide-inner{max-width:1180px; margin:0 auto; padding:40px 44px 90px; min-height:100%;}
+
+.navbtn{position:absolute; top:50%; transform:translateY(-50%); z-index:15; width:46px; height:46px; border-radius:50%; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--teal-dark); transition:.2s;}
+.navbtn:hover{background:var(--teal); color:#fff; border-color:var(--teal);}
+.navbtn.disabled{opacity:.25; pointer-events:none;}
+#prevBtn{left:16px;} #nextBtn{right:16px;}
+.navbtn svg{width:20px; height:20px;}
+
+.chevron-badge{display:inline-flex; align-items:center; gap:10px; background:var(--teal); color:#fff; padding:9px 20px 9px 16px; font-family:'Poppins'; font-weight:700; font-size:15px; clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%); margin-bottom:16px;}
+.eyebrow{font-family:'Poppins'; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--orange); margin-bottom:8px;}
+h1.slide-title{font-size:33px; font-weight:800; color:var(--teal-dark); margin:0 0 6px; line-height:1.15;}
+h3.mini-title{font-size:17px; font-weight:700; color:var(--ink); margin:0 0 8px;}
+p{line-height:1.65; font-size:15.5px; color:var(--ink); margin:0 0 12px;}
+.lede{font-size:17px; color:var(--ink-soft); margin-bottom:22px; max-width:760px;}
+.term{color:var(--orange); font-weight:700; cursor:help; border-bottom:1.5px dotted var(--orange); position:relative;}
+.term-pop{position:fixed; z-index:100; max-width:280px; background:var(--ink); color:#fff; font-size:13px; line-height:1.45; padding:10px 14px; border-radius:10px; box-shadow:var(--shadow); display:none;}
+.term-pop.show{display:block; animation:fadein .2s;}
+
+.box{border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--paper); box-shadow:var(--shadow);}
+.box-head{padding:12px 20px; font-family:'Poppins'; font-weight:700; font-size:14px; color:#fff; display:flex; align-items:center; gap:8px;}
+.box-body{padding:18px 20px;}
+.box.green .box-head{background:var(--green);} .box.teal .box-head{background:var(--teal);} .box.orange .box-head{background:var(--orange);} .box.red .box-head{background:var(--red);} .box.purple .box-head{background:var(--purple);} .box.sun .box-head{background:#C7951A;}
+
+.two-col{display:grid; grid-template-columns:1.05fr .95fr; gap:36px; align-items:start;}
+.pill{display:inline-block; padding:4px 12px; border-radius:100px; font-size:12px; font-weight:700; background:var(--teal-light); color:var(--teal-dark); margin:2px 4px 2px 0;}
+.pill.orange{background:var(--orange-light); color:#8A4A16;}
+.pill.purple{background:var(--purple-light); color:var(--purple);}
+.pill.green{background:var(--green-light); color:#245A38;}
+.pill.red{background:var(--red-light); color:var(--red);}
+
+.btn{border:none; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:14px; padding:10px 20px; border-radius:100px; background:var(--teal); color:#fff; transition:.2s;}
+.btn:hover{background:var(--teal-dark);}
+.btn.ghost{background:transparent; border:1.5px solid var(--teal); color:var(--teal);}
+.btn.ghost:hover{background:var(--teal-light);}
+.btn.orange{background:var(--orange);} .btn.orange:hover{background:#B9611F;}
+.btn[disabled]{opacity:.45; cursor:default;}
+
+.wb-badge{display:inline-flex; align-items:center; gap:7px; background:var(--purple-light); color:var(--purple); font-family:'Poppins'; font-weight:700; font-size:11.5px; letter-spacing:.3px; text-transform:uppercase; padding:5px 12px; border-radius:100px; margin-bottom:12px;}
+.wb-badge svg{width:13px; height:13px;}
+.wb-panel{border:1.5px dashed var(--purple); background:var(--purple-light); border-radius:var(--r-lg); padding:20px 22px; margin-top:8px; margin-bottom:22px;}
+.lb-badge{display:inline-flex; align-items:center; gap:7px; background:var(--teal-light); color:var(--teal-dark); font-family:'Poppins'; font-weight:700; font-size:11.5px; letter-spacing:.3px; text-transform:uppercase; padding:5px 12px; border-radius:100px; margin-bottom:12px;}
+.hint{font-size:12.5px; color:var(--ink-soft); background:var(--teal-light); border-radius:100px; padding:6px 14px; display:inline-flex; gap:6px; align-items:center; margin-bottom:18px; font-weight:600;}
+.hint svg{width:14px; height:14px;}
+
+/* cover */
+.cover{height:100%; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;
+  background:radial-gradient(ellipse at 80% 10%, rgba(255,214,90,.35), transparent 40%), linear-gradient(160deg, #2F7D4F 0%, var(--teal-dark) 65%, #0A3840 100%);}
+.cover-leaf{position:absolute; border-radius:0 70% 0 70%; opacity:.12; background:#fff;}
+.cover-content{position:relative; z-index:2; text-align:center; color:#fff; max-width:800px; padding:0 30px;}
+.cover-content .unit{font-family:'Poppins'; font-weight:700; letter-spacing:3px; font-size:13px; text-transform:uppercase; color:#CDEBD8; margin-bottom:14px;}
+.cover-content h1{font-size:46px; font-weight:800; margin:0 0 10px; line-height:1.08;}
+.cover-content .sub{font-size:19px; color:#E1F2EA; font-weight:500; margin-bottom:30px;}
+.cover-chain{display:flex; justify-content:center; align-items:center; gap:10px; font-size:40px; margin-bottom:26px; flex-wrap:wrap;}
+.cover-chain .arr{font-size:24px; color:#FFD65A; font-weight:800;}
+.cover-chip-row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:34px;}
+.cover-chip{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff; padding:8px 16px; border-radius:100px; font-size:13px; font-weight:600;}
+.cover-start{background:var(--orange); color:#fff; border:none; font-family:'Poppins'; font-weight:700; font-size:16px; padding:15px 34px; border-radius:100px; cursor:pointer; box-shadow:0 12px 26px rgba(221,122,46,.4); display:inline-flex; align-items:center; gap:10px; transition:.2s;}
+.cover-start:hover{transform:translateY(-2px);}
+
+/* objectives */
+.obj-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 22px; margin-top:6px;}
+.obj-card{display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:var(--r-md); background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.2s;}
+.obj-card:hover{border-color:var(--teal-mid); box-shadow:var(--shadow);}
+.obj-num{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--teal-light); color:var(--teal-dark); font-family:'Poppins'; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;}
+.obj-card.done .obj-num{background:var(--teal); color:#fff;}
+.obj-card.done p{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:#B9C4C3;}
+.obj-card p{margin:0; font-size:14px; line-height:1.5;}
+
+/* MCQ */
+.mcq-item{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:16px 18px; margin-bottom:12px;}
+.mcq-q{font-size:15px; margin:0 0 10px; font-weight:600;}
+.mcq-opts{display:flex; flex-direction:column; gap:8px;}
+.mcq-opt{text-align:left; border:1.5px solid var(--purple); background:#fff; color:var(--ink); font-family:'Inter'; font-weight:500; font-size:14px; padding:10px 16px; border-radius:10px; cursor:pointer; transition:.15s;}
+.mcq-opt:hover{background:var(--purple-light);}
+.mcq-opt.correct{background:var(--green-light); border-color:var(--green); color:#245A38; font-weight:700;}
+.mcq-opt.wrong{background:var(--red-light); border-color:var(--red); color:var(--red);}
+.mcq-opt[disabled]{cursor:default;}
+.mcq-fb,.reveal-ans{display:none; margin-top:10px; font-size:13.8px; color:var(--ink); background:var(--teal-light); border-radius:10px; padding:10px 14px; line-height:1.55;}
+.mcq-fb.show,.reveal-ans.show{display:block; animation:fadein .3s;}
+@keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+/* written question with model answer */
+.wq{background:var(--paper); border:1px solid var(--line); border-radius:var(--r-md); padding:14px 18px; margin-bottom:10px;}
+.wq-q{font-size:15px; font-weight:600; margin:0 0 8px;}
+.wq-row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+.wq textarea{flex:1 1 300px; min-height:44px; border:1.5px solid var(--line); border-radius:10px; padding:9px 12px; font-family:'Inter'; font-size:14px; resize:vertical;}
+.wq textarea:focus{outline:none; border-color:var(--purple);}
+.show-btn{border:1.5px solid var(--purple); background:#fff; color:var(--purple); font-family:'Poppins'; font-weight:600; font-size:12.5px; padding:8px 14px; border-radius:100px; cursor:pointer;}
+.show-btn:hover{background:var(--purple-light);}
+.reveal-ans strong{color:var(--teal-dark);}
+
+/* sorting game */
+.sort-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(205px,1fr)); gap:12px;}
+.sort-card{background:#fff; border:1.5px solid var(--line); border-radius:var(--r-md); padding:12px; text-align:center; transition:.2s;}
+.sort-card .emo{font-size:36px; line-height:1.1;}
+.sort-card .nm{font-family:'Poppins'; font-weight:700; font-size:14px; margin:4px 0 2px;}
+.sort-card .diet{font-size:11.5px; color:var(--ink-soft); min-height:30px; line-height:1.35;}
+.sort-btns{display:flex; flex-wrap:wrap; gap:5px; justify-content:center; margin-top:8px;}
+.sort-btn{border:1.5px solid var(--line); background:#fff; border-radius:100px; font-size:11.5px; font-weight:700; padding:5px 9px; cursor:pointer; color:var(--ink-soft);}
+.sort-btn:hover{border-color:var(--teal-mid);}
+.sort-card.correct{border-color:var(--green); background:var(--green-light);}
+.sort-card.correct .sort-btn{pointer-events:none;}
+.sort-btn.right{background:var(--green); border-color:var(--green); color:#fff;}
+.sort-btn.wrong{background:var(--red-light); border-color:var(--red); color:var(--red);}
+.score-line{margin-top:14px; font-weight:700; color:var(--ink-soft); font-size:14px;}
+
+/* venn */
+.venn-wrap{display:flex; justify-content:center; margin-top:18px;}
+.venn{position:relative; width:560px; max-width:100%; aspect-ratio:560/330;}
+.venn svg{position:absolute; inset:0; width:100%; height:100%;}
+.venn-slot{position:absolute; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:2px; font-size:12px; font-weight:700; text-align:center;}
+.venn-slot .vi{font-size:22px; opacity:.15; transition:.3s;}
+.venn-slot .vl{opacity:.15; transition:.3s;}
+.venn-slot.on .vi,.venn-slot.on .vl{opacity:1;}
+
+/* arrow explainer */
+.chain-demo{display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; margin:12px 0 6px;}
+.cd-node{background:#fff; border:1.5px solid var(--line); border-radius:var(--r-md); padding:10px 14px; text-align:center; min-width:100px; box-shadow:0 4px 12px rgba(13,79,90,.08);}
+.cd-node .emo{font-size:32px;}
+.cd-node .nm{font-family:'Poppins'; font-weight:700; font-size:13px;}
+.cd-node .role{font-size:11px; color:var(--ink-soft); font-weight:600;}
+.cd-arrow{display:flex; flex-direction:column; align-items:center; color:var(--orange); font-weight:800; font-size:26px;}
+.cd-arrow span{font-size:10px; color:var(--ink-soft); font-family:'Poppins'; text-transform:uppercase; letter-spacing:.4px;}
+.cd-arrow.pulse{animation:pulse 1.6s infinite;}
+@keyframes pulse{0%,100%{transform:translateX(0);} 50%{transform:translateX(6px);}}
+
+/* chain builder */
+.builder{background:#fff; border:1px solid var(--line); border-radius:var(--r-lg); padding:18px 20px; margin-bottom:16px; box-shadow:var(--shadow);}
+.builder h4{margin:0 0 10px; font-family:'Poppins'; font-size:15px; color:var(--teal-dark);}
+.b-pool{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;}
+.b-chip{border:1.5px solid var(--teal); background:#fff; border-radius:12px; padding:8px 12px; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:'Poppins'; font-weight:600; font-size:13.5px; color:var(--teal-dark); transition:.15s;}
+.b-chip .emo{font-size:22px;}
+.b-chip:hover{background:var(--teal-light);}
+.b-chip.used{opacity:.25; pointer-events:none;}
+.b-slots{display:flex; align-items:center; gap:6px; flex-wrap:wrap; min-height:56px; padding:10px; border-radius:12px; background:var(--cream); border:1.5px dashed var(--line);}
+.b-slot{display:flex; align-items:center; gap:6px; background:#fff; border:1.5px solid var(--teal-mid); border-radius:10px; padding:6px 10px; font-family:'Poppins'; font-weight:600; font-size:13px;}
+.b-slot .emo{font-size:20px;}
+.b-arr{color:var(--orange); font-weight:800; font-size:20px;}
+.b-empty{color:#9AA8A6; font-size:13px; font-style:italic;}
+.b-actions{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; align-items:center;}
+.b-fb{font-size:13.8px; padding:8px 12px; border-radius:10px; display:none;}
+.b-fb.ok{display:block; background:var(--green-light); color:#245A38;}
+.b-fb.no{display:block; background:var(--red-light); color:var(--red);}
+.b-slots.done{border-style:solid; border-color:var(--green); background:var(--green-light);}
+
+/* food web */
+.web-layout{display:grid; grid-template-columns:1.25fr .75fr; gap:24px; align-items:start;}
+.web-box{background:#fff; border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow); padding:10px; position:relative;}
+.web-box svg{width:100%; height:auto; display:block; touch-action:manipulation;}
+.web-node{cursor:pointer;}
+.web-node circle{transition:.2s;}
+.web-node text.e{font-size:26px; pointer-events:none;}
+.web-node text.l{font-family:'Poppins'; font-weight:700; font-size:11px; fill:#1D2B32; pointer-events:none;}
+.web-link{stroke:#9AA8A6; stroke-width:2; fill:none; transition:.2s;}
+.web-link.food{stroke:var(--green); stroke-width:3.5;}
+.web-link.eaten{stroke:var(--red); stroke-width:3.5;}
+.web-link.trace{stroke:var(--orange); stroke-width:4.5;}
+.web-link.found{stroke:var(--teal); stroke-width:2.6;}
+.web-link.hidden{opacity:0;}
+.web-node.dim{opacity:.3;}
+.web-node.sel circle{stroke:var(--orange); stroke-width:4;}
+.web-node.inpath circle{stroke:var(--orange); stroke-width:4;}
+.web-side{display:flex; flex-direction:column; gap:12px;}
+.info-card{background:#fff; border:1px solid var(--line); border-left:4px solid var(--orange); border-radius:var(--r-md); padding:14px 16px; min-height:120px;}
+.info-card h4{margin:0 0 6px; font-family:'Poppins'; font-size:15px; color:var(--teal-dark);}
+.info-card p{font-size:13.8px; margin:0 0 6px;}
+.legend{display:flex; gap:12px; flex-wrap:wrap; font-size:12px; color:var(--ink-soft); font-weight:600;}
+.legend i{display:inline-block; width:18px; height:4px; border-radius:2px; vertical-align:middle; margin-right:4px;}
+.mode-row{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;}
+.mode-btn{padding:8px 14px; border-radius:100px; border:1.5px solid var(--line); background:#fff; cursor:pointer; font-family:'Poppins'; font-weight:600; font-size:12.5px; color:var(--ink-soft);}
+.mode-btn.active{background:var(--teal); border-color:var(--teal); color:#fff;}
+.trace-bar{background:var(--cream); border-radius:12px; padding:10px 12px; font-size:13.5px; min-height:44px; display:flex; flex-wrap:wrap; gap:4px; align-items:center;}
+.chain-list{display:flex; flex-direction:column; gap:6px; max-height:260px; overflow-y:auto;}
+.chain-li{background:var(--teal-light); border-radius:10px; padding:7px 10px; font-size:13px; font-weight:600; color:var(--teal-dark);}
+.chain-li.six{background:var(--orange-light); color:#8A4A16;}
+.target-li{display:flex; gap:8px; align-items:flex-start; font-size:13.5px; padding:8px 10px; border-radius:10px; background:#fff; border:1.5px solid var(--line);}
+.target-li .tick{flex:0 0 auto; width:20px; height:20px; border-radius:50%; border:2px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:12px; color:#fff;}
+.target-li.hit{border-color:var(--green); background:var(--green-light);}
+.target-li.hit .tick{background:var(--green); border-color:var(--green);}
+.msg{font-size:13.5px; padding:8px 12px; border-radius:10px; display:none; margin-top:6px;}
+.msg.ok{display:block; background:var(--green-light); color:#245A38;}
+.msg.no{display:block; background:var(--red-light); color:var(--red);}
+.msg.info{display:block; background:var(--sun-light); color:#7A5A0E;}
+
+/* tap select (multi) */
+.tapset{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 4px;}
+.tap{border:1.5px solid var(--purple); background:#fff; color:var(--purple); font-family:'Poppins'; font-weight:600; font-size:13px; padding:7px 14px; border-radius:100px; cursor:pointer;}
+.tap.on{background:var(--purple); color:#fff;}
+.tap.good{background:var(--green); border-color:var(--green); color:#fff;}
+.tap.bad{background:var(--red-light); border-color:var(--red); color:var(--red);}
+.tap.missed{border-style:dashed; border-color:var(--green); color:var(--green);}
+
+/* energy simulation */
+.energy-wrap{background:#fff; border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow); padding:20px;}
+.e-row{display:grid; grid-template-columns:repeat(5,1fr); gap:10px; align-items:end;}
+.e-col{display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center;}
+.e-emo{font-size:38px; transition:.3s;}
+.e-name{font-family:'Poppins'; font-weight:700; font-size:13px;}
+.e-role{font-size:11px; color:var(--ink-soft); font-weight:600;}
+.e-barbox{width:58px; height:180px; background:var(--cream); border-radius:10px; position:relative; overflow:hidden; border:1px solid var(--line);}
+.e-bar{position:absolute; left:0; right:0; bottom:0; height:0; background:linear-gradient(0deg,#E9B323,#F6D66B); transition:height .8s ease;}
+.e-val{font-family:'Poppins'; font-weight:800; font-size:15px; color:#8A6410; min-height:22px;}
+.e-col.dimmed{opacity:.35;}
+.e-split{margin-top:16px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+.e-split div{border-radius:12px; padding:10px 12px; font-size:13px; line-height:1.4;}
+.e-split .used{background:var(--blue-light); color:#1E4F8F;}
+.e-split .heat{background:var(--red-light); color:var(--red);}
+.e-split .stored{background:var(--green-light); color:#245A38;}
+.e-split b{display:block; font-family:'Poppins'; font-size:18px;}
+.e-controls{display:flex; gap:10px; margin-top:16px; align-items:center; flex-wrap:wrap;}
+.e-caption{font-size:14px; color:var(--ink); background:var(--sun-light); border-radius:12px; padding:10px 14px; margin-top:12px; min-height:46px;}
+
+/* passage */
+.passage{background:#FFFDF6; border:1px solid #EADFC2; border-radius:var(--r-md); padding:16px 18px; font-size:14.5px; line-height:1.65; margin-bottom:16px;}
+.passage h4{margin:0 0 6px; font-family:'Poppins'; color:#8A6410; font-size:14px;}
+
+/* checklist + glossary */
+.assess-list{display:flex; flex-direction:column; gap:2px;}
+.assess-item{display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px; cursor:pointer; transition:.15s;}
+.assess-item:hover{background:var(--teal-light);}
+.assess-box{flex:0 0 auto; width:22px; height:22px; border-radius:6px; border:2px solid var(--teal); position:relative;}
+.assess-item.checked .assess-box{background:var(--teal);}
+.assess-box svg{position:absolute; inset:0; margin:auto; width:14px; height:14px; color:#fff; opacity:0;}
+.assess-item.checked .assess-box svg{opacity:1;}
+.assess-item p{margin:0; font-size:14px;}
+.progress-bar-track{height:10px; background:var(--teal-light); border-radius:100px; overflow:hidden; margin:16px 0 22px;}
+.progress-bar-fill{height:100%; width:0%; background:linear-gradient(90deg,var(--teal),var(--orange)); border-radius:100px; transition:width .4s;}
+.reflect-row{display:flex; gap:8px; flex-wrap:wrap; margin:4px 0 12px;}
+.reflect-btn{border:1.5px solid var(--line); background:#fff; border-radius:100px; padding:6px 14px; font-size:12.5px; font-weight:700; cursor:pointer; color:var(--ink-soft);}
+.reflect-btn.on.r1{background:var(--green); border-color:var(--green); color:#fff;}
+.reflect-btn.on.r2{background:var(--sun); border-color:var(--sun); color:#fff;}
+.reflect-btn.on.r3{background:var(--red); border-color:var(--red); color:#fff;}
+.gloss-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:16px;}
+.gloss-card{background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:14px; cursor:pointer; perspective:800px; height:110px; position:relative;}
+.gloss-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+.gloss-card.flip .gloss-inner{transform:rotateY(180deg);}
+.gloss-face{position:absolute; inset:0; backface-visibility:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;}
+.gloss-face.front{font-family:'Poppins'; font-weight:700; color:var(--teal-dark); font-size:14px;}
+.gloss-face.back{transform:rotateY(180deg); font-size:12px; color:var(--ink-soft); padding:4px; line-height:1.4;}
+
+::-webkit-scrollbar{width:8px;}
+::-webkit-scrollbar-thumb{background:#C9D6D5; border-radius:10px;}
+@media(max-width:900px){.two-col,.web-layout{grid-template-columns:1fr;} .gloss-grid{grid-template-columns:repeat(2,1fr);} }
+@media(max-width:760px){
+  .obj-grid{grid-template-columns:1fr;}
+  .cover-content h1{font-size:28px;}
+  h1.slide-title{font-size:23px;}
+  .slide-inner{padding:26px 18px 90px;}
+  .e-barbox{width:40px;}
+  .dots{display:none;}
+}
+
+/* ===== 4.2 additions ===== */
+.cover42{background:radial-gradient(ellipse at 80% 10%, rgba(255,140,90,.30), transparent 40%), linear-gradient(160deg, #7A3B2A 0%, #5A2F3A 35%, var(--teal-dark) 80%, #0A3840 100%);}
+.idea-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+.idea{background:#fff; border:1px solid var(--line); border-radius:12px; padding:10px 12px; font-size:13.5px; font-weight:600; display:flex; gap:8px; align-items:center;}
+.idea span{font-size:22px;}
+.wq textarea#brainstorm{min-height:60px;}
+.flip-row{display:grid; grid-template-columns:repeat(4,1fr); gap:12px;}
+.info-flip{perspective:900px; height:150px; cursor:pointer;}
+.if-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+.info-flip.flip .if-inner{transform:rotateY(180deg);}
+.if-face{position:absolute; inset:0; backface-visibility:hidden; border-radius:var(--r-md); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:12px; gap:4px;}
+.if-face.front{background:#fff; border:1.5px solid var(--line); font-family:'Poppins'; color:var(--teal-dark);}
+.if-face.front .big{font-size:36px;}
+.if-face.front small{font-family:'Inter'; font-size:11px; color:var(--ink-soft);}
+.if-face.back{transform:rotateY(180deg); background:var(--orange-light); border:1.5px solid var(--orange); font-size:13px; line-height:1.45; color:#5C3410;}
+
+.pest-chain,.river-chain{display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; margin:10px 0;}
+.pc-node{background:#fff; border:2px solid var(--line); border-radius:var(--r-md); padding:12px 14px; text-align:center; min-width:120px; transition:.3s; opacity:.45;}
+.pc-node.on{opacity:1; border-color:var(--red); box-shadow:0 6px 18px rgba(192,57,43,.18);}
+.pc-node.on.clean{border-color:var(--green); box-shadow:none;}
+.pc-node .emo{font-size:38px;}
+.pc-node .nm{font-family:'Poppins'; font-weight:700; font-size:14px;}
+.pc-dose{min-height:22px; font-size:12px; font-weight:700; color:var(--red); margin-top:4px;}
+.pc-arr{font-size:24px; color:var(--orange); font-weight:800;}
+.rc-n{background:#fff; border:1.5px solid var(--line); border-radius:var(--r-md); padding:10px 14px; text-align:center; display:flex; flex-direction:column; gap:2px; min-width:120px;}
+.rc-n .emo{font-size:32px;} .rc-n b{font-family:'Poppins'; font-size:13px;} .rc-n span{color:var(--red); font-weight:700; font-size:13px;}
+.chart-box{background:#fff; border:1px solid var(--line); border-radius:var(--r-lg); padding:12px; margin:14px 0 18px; box-shadow:var(--shadow);}
+.chart-box svg{width:100%; height:auto; display:block;}
+
+.acc-wrap{display:flex; align-items:stretch; justify-content:center; gap:10px; flex-wrap:wrap;}
+.acc-col{background:#fff; border:2px solid var(--line); border-radius:var(--r-md); padding:12px; width:230px; display:flex; flex-direction:column; align-items:center; gap:6px; opacity:.4; transition:.3s;}
+.acc-col.on{opacity:1; border-color:var(--red);}
+.acc-title{font-family:'Poppins'; font-weight:700; font-size:16px;}
+.acc-eats{font-size:12px; color:var(--ink-soft); font-weight:600;}
+.acc-box{display:flex; flex-wrap:wrap; gap:4px; justify-content:center; min-height:70px; align-content:flex-start; width:100%;}
+.acc-dot{width:13px; height:13px; border-radius:50%; background:var(--red); animation:pop .35s ease both;}
+@keyframes pop{from{transform:scale(0);} to{transform:scale(1);}}
+.acc-num{font-family:'Poppins'; font-weight:800; color:var(--red); font-size:18px; min-height:26px;}
+.acc-arr{display:flex; align-items:center; font-size:26px; color:var(--orange); font-weight:800;}
+
+.ws-layout{display:flex; gap:24px; flex-wrap:wrap; align-items:flex-start;}
+.ws-grid{display:grid; grid-template-columns:repeat(11, 34px); gap:3px; user-select:none;}
+.ws-cell{width:34px; height:34px; border-radius:7px; border:1px solid var(--line); background:#fff; font-family:'Poppins'; font-weight:600; font-size:15px; text-transform:uppercase; cursor:pointer; color:var(--ink); padding:0;}
+.ws-cell.start{background:var(--orange); color:#fff; border-color:var(--orange);}
+.ws-cell.found{background:var(--green); color:#fff; border-color:var(--green);}
+.ws-clues{flex:1 1 260px; display:flex; flex-direction:column; gap:8px;}
+.ws-clue{background:#fff; border:1.5px solid var(--line); border-radius:10px; padding:9px 12px; font-size:13.5px;}
+.ws-clue b{color:var(--purple);}
+.ws-clue .ans{float:right; font-family:'Poppins'; font-weight:700; color:var(--green);}
+.ws-clue.done{border-color:var(--green); background:var(--green-light);}
+
+.tf-item{background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:12px 16px; margin-bottom:10px;}
+.tf-row{display:flex; gap:8px; margin-top:8px;}
+.tf-fb{display:none; margin-top:8px; font-size:13.5px; background:var(--teal-light); border-radius:10px; padding:8px 12px;}
+.tf-fb.show{display:block;}
+
+.num-in{width:90px; border:1.5px solid var(--line); border-radius:10px; padding:8px 10px; font-family:'Poppins'; font-size:15px;}
+.num-in.good{border-color:var(--green); background:var(--green-light);}
+.num-in.bad{border-color:var(--red); background:var(--red-light);}
+
+.rules{margin:0; padding-left:20px; font-size:14px; line-height:1.6;}
+.rules li{margin-bottom:6px;}
+.team-row{display:flex; flex-wrap:wrap; gap:8px;}
+.team{padding:6px 12px; border-radius:100px; font-weight:700; font-size:12.5px;}
+.t1{background:#E7F5EC; color:#245A38;} .t2{background:#FCF3D9; color:#7A5A0E;} .t3{background:var(--blue-light); color:#1E4F8F;} .t4{background:var(--orange-light); color:#8A4A16;}
+.game-board{display:grid; grid-template-columns:repeat(4,1fr); gap:10px;}
+.gb-col{background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:10px;}
+.gb-col h5{margin:0 0 8px; font-family:'Poppins'; font-size:13px; text-align:center;}
+.gb-cups{display:flex; flex-wrap:wrap; gap:6px; justify-content:center;}
+.cup{width:46px; height:52px; border-radius:6px 6px 14px 14px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'Poppins'; font-weight:800; font-size:14px; position:relative; transition:.3s;}
+.cup small{font-size:15px; line-height:1;}
+.cup.c1{background:#E7F5EC; border:2px solid #3F8F5C;} .cup.c2{background:#FCF3D9; border:2px solid #C7951A;} .cup.c3{background:var(--blue-light); border:2px solid var(--blue);} .cup.c4{background:var(--orange-light); border:2px solid var(--orange);}
+.cup.out{opacity:.3;}
+.cup.flash{transform:scale(1.15); box-shadow:0 0 0 4px rgba(221,122,46,.35);}
+.res-layout{display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start;}
+.tablebox{overflow-x:auto;}
+.res-table{width:100%; border-collapse:collapse; background:#fff; border-radius:var(--r-md); overflow:hidden; font-size:14px; box-shadow:var(--shadow);}
+.res-table th{background:var(--teal); color:#fff; font-family:'Poppins'; font-weight:600; font-size:12.5px; padding:9px 10px; text-align:left;}
+.res-table td{padding:8px 10px; border-top:1px solid var(--line);}
+.res-table input{width:80px; border:1.5px solid var(--line); border-radius:8px; padding:6px 8px; font-family:'Poppins'; font-size:14px;}
+.res-table td.avg{font-family:'Poppins'; font-weight:800; color:var(--red);}
+.res-table.small{max-width:420px;}
+.small-note{font-size:12px; color:var(--ink-soft); margin-top:8px;}
+.research-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+.research-grid textarea{width:100%; min-height:70px; border:1.5px solid var(--line); border-radius:10px; padding:9px 12px; font-family:'Inter'; font-size:14px; margin-bottom:8px;}
+.ddt-demo{display:flex; justify-content:center; align-items:center; gap:10px; flex-wrap:wrap; margin:6px 0 4px;}
+.ddt-col{background:#fff; border:2px solid var(--line); border-radius:var(--r-md); padding:10px 14px; text-align:center; display:flex; flex-direction:column; gap:2px; min-width:150px;}
+.ddt-col.bad{border-color:var(--red); background:var(--red-light);}
+.ddt-emo{font-size:30px;} .ddt-col b{font-family:'Poppins'; font-size:13px;} .ddt-col span{font-size:12.5px; color:var(--red); font-weight:700;}
+@media(max-width:900px){.res-layout,.research-grid{grid-template-columns:1fr;} .flip-row,.game-board{grid-template-columns:repeat(2,1fr);} .idea-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:520px){.ws-grid{grid-template-columns:repeat(11, 26px);} .ws-cell{width:26px; height:26px; font-size:12px;}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="crumb">
+      <span class="tag">Unit 4</span>
+      <span>Food chains and food webs</span>
+      <span class="sep">/</span>
+      <span class="current">4.2 Harm to food chains and food webs</span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="counter" id="counter">1 / 12</div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- ===== SLIDE 1 : COVER ===== -->
+    <section class="slide">
+      <div class="cover cover42">
+        <div class="cover-leaf" style="width:240px;height:240px; top:-60px; left:-60px;"></div>
+        <div class="cover-leaf" style="width:180px;height:180px; bottom:-50px; right:-40px;"></div>
+        <div class="cover-content">
+          <div class="unit">Unit 4 &middot; Food chains and food webs</div>
+          <h1>Harm to Food Chains &amp; Food Webs</h1>
+          <div class="sub">Some substances are harmful. When they get into a food chain, they move along it — and they build up in the animals at the top.</div>
+          <div class="cover-chain"><span>🌽</span><span class="arr">➜</span><span>🐌</span><span class="arr">➜</span><span>🐦</span><span class="arr">➜</span><span>🐈</span></div>
+          <div class="cover-chip-row">
+            <span class="cover-chip">☠️ Toxic substances</span>
+            <span class="cover-chip">🧪 Pesticides</span>
+            <span class="cover-chip">📈 Accumulation</span>
+            <span class="cover-chip">🎲 Food chain game</span>
+            <span class="cover-chip">📘 Workbook activities</span>
+          </div>
+          <button class="cover-start" onclick="goTo(1)">Start the lesson
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 2 : OBJECTIVES ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="chevron-badge">4.2</div>
+        <h1 class="slide-title">We are going to…</h1>
+        <p class="lede">Tap each goal when you have met it. <strong>Lesson 3</strong> covers slides 3–6. <strong>Lesson 4</strong> covers slides 7–12.</p>
+        <div class="obj-grid">
+          <div class="obj-card"><div class="obj-num">1</div><p>Learn that some substances can harm living things, and that these substances can move through a food chain or food web</p></div>
+          <div class="obj-card"><div class="obj-num">2</div><p>Play a game to show how harmful substances can move through a food chain or food web</p></div>
+          <div class="obj-card"><div class="obj-num">3</div><p>Explain how the game shows the way harmful substances move through a food chain or food web</p></div>
+          <div class="obj-card"><div class="obj-num">4</div><p>Record results in a table, draw a graph and describe a pattern in the results</p></div>
+          <div class="obj-card"><div class="obj-num">5</div><p>Research information to answer questions about a harmful substance in food chains</p></div>
+        </div>
+        <div style="margin-top:22px;">
+          <span class="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Key words: accumulate · environment · microplastics · pesticides · toxic</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 3 : HARMFUL SUBSTANCES ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="lb-badge">Learner's Book · Getting started, p. 104</div>
+        <h1 class="slide-title">What can harm a food chain?</h1>
+        <p class="lede">In your group, think of things that could harm the plants and animals in a food chain or food web. Write your ideas, then compare them with the idea cards.</p>
+        <div class="wq"><p class="wq-q">Our group's ideas</p><div class="wq-row"><textarea id="brainstorm" placeholder="e.g. rubbish in the sea…"></textarea><button class="show-btn">Show idea cards</button></div>
+          <div class="reveal-ans"><div class="idea-grid">
+            <div class="idea"><span>🧪</span>Pesticides sprayed on crops</div>
+            <div class="idea"><span>🛍️</span>Plastic rubbish and microplastics</div>
+            <div class="idea"><span>🏭</span>Waste from factories in rivers</div>
+            <div class="idea"><span>⚗️</span>Harmful metals like mercury</div>
+            <div class="idea"><span>🛢️</span>Oil spills in the sea</div>
+            <div class="idea"><span>🪓</span>Cutting down forests (homes are lost)</div>
+          </div></div>
+        </div>
+
+        <h3 class="mini-title" style="margin-top:22px;">Harmful substances in the environment</h3>
+        <p>The <span class="term" data-def="Everything around us: air, water, soil and other living things.">environment</span> is everything around us. It includes air, water, soil and other living things. Some substances in the environment are harmful, or <span class="term" data-def="Harmful or poisonous to living things.">toxic</span>, to living things. Tap each card to learn more.</p>
+        <div class="flip-row">
+          <div class="info-flip"><div class="if-inner"><div class="if-face front"><span class="big">⚗️</span><b>Mercury</b><small>tap to flip</small></div><div class="if-face back">A metal. Almost everything that contains mercury is toxic, even in very small amounts.</div></div></div>
+          <div class="info-flip"><div class="if-inner"><div class="if-face front"><span class="big">🔩</span><b>Cadmium</b><small>tap to flip</small></div><div class="if-face back">Another toxic metal. It can get into soil and water from factories and old batteries.</div></div></div>
+          <div class="info-flip"><div class="if-inner"><div class="if-face front"><span class="big">🫧</span><b>Microplastics</b><small>tap to flip</small></div><div class="if-face back">Very tiny pieces of plastic. They can be toxic, especially in ocean food chains.</div></div></div>
+          <div class="info-flip"><div class="if-inner"><div class="if-face front"><span class="big">🧪</span><b>Pesticides</b><small>tap to flip</small></div><div class="if-face back">Chemicals farmers use to kill pests (insects, snails, worms) that eat their crops.</div></div></div>
+        </div>
+        <div class="box orange" style="margin-top:20px;"><div class="box-head">👥 How do they get there?</div><div class="box-body"><p style="margin:0">People put harmful substances into the environment. Sometimes it happens <strong>by accident</strong> (a factory leak, plastic blown into the sea). Sometimes it happens <strong>on purpose</strong> (a farmer sprays pesticide on crops).</p></div></div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 4 : PESTICIDES MOVE THROUGH A FOOD CHAIN ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="lb-badge">Learner's Book · pp. 104–106</div>
+        <h1 class="slide-title">Pesticides in a food chain</h1>
+        <p class="lede">Farmers don't like pests that eat their plants, so they often spray <span class="term" data-def="Chemicals farmers and gardeners use to kill pests that eat their plants.">pesticides</span>. The pest dies. But pesticides can also harm <strong>other</strong> living things — for example, a butterfly can die if it drinks nectar from a sprayed flower. Press <em>Next step</em> to follow the pesticide.</p>
+
+        <div class="pest-chain" id="pestChain">
+          <div class="pc-node" data-i="0"><div class="emo">🌽</div><div class="nm">corn</div><div class="pc-dose"></div></div>
+          <div class="pc-arr">➜</div>
+          <div class="pc-node" data-i="1"><div class="emo">🐌</div><div class="nm">snails</div><div class="pc-dose"></div></div>
+          <div class="pc-arr">➜</div>
+          <div class="pc-node" data-i="2"><div class="emo">🐦</div><div class="nm">bird</div><div class="pc-dose"></div></div>
+          <div class="pc-arr">➜</div>
+          <div class="pc-node" data-i="3"><div class="emo">🐈</div><div class="nm">wildcat</div><div class="pc-dose"></div></div>
+        </div>
+        <div class="e-caption" id="pcCaption">The farmer has corn plants. Press <em>Next step</em>.</div>
+        <div class="e-controls"><button class="btn orange" id="pcNext">Next step ➜</button><button class="btn ghost" id="pcReset">↺ Start again</button></div>
+
+        <div class="lb-badge" style="margin-top:24px;">Learner's Book · Questions 1–3, p. 106</div>
+        <div class="wb-panel" style="background:var(--teal-light); border-color:var(--teal);">
+          <div class="wq"><p class="wq-q">1 How does the pesticide get into the food chain in the picture?</p><div class="wq-row"><textarea placeholder="Write your answer…"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">The farmer <strong>sprays the pesticide on the corn</strong> (the producer). This is how it enters the food chain.</div></div>
+          <div class="wq"><p class="wq-q">2 How does the pesticide move through the food chain?</p><div class="wq-row"><textarea placeholder="Write your answer…"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">It moves <strong>when one living thing eats another</strong>. The snails eat corn leaves covered with pesticide. The bird eats the snails, so the pesticide goes into the bird. The wildcat eats the bird and takes in any pesticide still in the bird's body.</div></div>
+          <div class="wq"><p class="wq-q">3 Redraw the food chain to show how the pesticide could be passed to people.</p><div class="wq-row"><textarea placeholder="Write your food chain with arrows…"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">corn → snails → bird → <strong>person</strong> (for example, a farm chicken or duck eats the snails, and people eat the bird). People could also eat the sprayed corn: corn → <strong>person</strong>.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 5 : ACCUMULATION + WORKBOOK FOCUS ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="lb-badge">Learner's Book · p. 106</div>
+        <h1 class="slide-title">Toxic substances build up</h1>
+        <p class="lede">Some toxic substances break down into harmless substances in the soil or water. Others <strong>do not break down</strong>. They stay in the bodies of living things and <span class="term" data-def="To build up or increase over time.">accumulate</span> (build up) along the food chain. The predator at the end of the chain gets the most.</p>
+
+        <div class="acc-wrap">
+          <div class="acc-col" id="acc0"><div class="acc-title">🪲 bug</div><div class="acc-eats">eats sprayed plant</div><div class="acc-box"></div><div class="acc-num"></div></div>
+          <div class="acc-arr">➜</div>
+          <div class="acc-col" id="acc1"><div class="acc-title">🦎 lizard</div><div class="acc-eats">eats 3 bugs</div><div class="acc-box"></div><div class="acc-num"></div></div>
+          <div class="acc-arr">➜</div>
+          <div class="acc-col" id="acc2"><div class="acc-title">🦅 eagle</div><div class="acc-eats">eats 2 lizards</div><div class="acc-box"></div><div class="acc-num"></div></div>
+        </div>
+        <div class="e-caption" id="accCaption">🌿 Pesticide is sprayed on a plant. Press <em>Next step</em>. Each red dot = 1 unit of pesticide.</div>
+        <div class="e-controls"><button class="btn orange" id="accNext">Next step ➜</button><button class="btn ghost" id="accReset">↺ Start again</button></div>
+
+        <div class="wb-badge" style="margin-top:26px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 4.2 Focus, question 1</div>
+        <div class="wb-panel">
+          <p style="font-size:14.5px;">Find each word in the word search. Tap its <strong>first letter</strong>, then its <strong>last letter</strong>. Words go across or down.</p>
+          <div class="ws-layout">
+            <div class="ws-grid" id="wsGrid"></div>
+            <div class="ws-clues" id="wsClues"></div>
+          </div>
+          <div class="msg" id="wsMsg"></div>
+        </div>
+
+        <div class="wb-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 4.2 Focus, question 2</div>
+        <div class="wb-panel" id="tfPanel"></div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 6 : WORKBOOK PRACTICE Q3 RIVER ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="wb-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 4.2 Practice, question 3</div>
+        <h1 class="slide-title">Chemical X in the river</h1>
+        <p class="lede">A factory has dumped a harmful chemical into a river. The food chain shows how many units of chemical X are in each living thing.</p>
+        <div class="river-chain">
+          <div class="rc-n"><div class="emo">🌿</div><b>leaf of pond weed</b><span>4 units</span></div><div class="pc-arr">➜</div>
+          <div class="rc-n"><div class="emo">〰️</div><b>tadpole</b><span>20 units</span></div><div class="pc-arr">➜</div>
+          <div class="rc-n"><div class="emo">🐟</div><b>fish</b><span>240 units</span></div><div class="pc-arr">➜</div>
+          <div class="rc-n"><div class="emo">🪶</div><b>heron</b><span>500 units</span></div>
+        </div>
+        <div class="chart-box"><svg id="riverChart" viewBox="0 0 560 260" role="img" aria-label="Bar graph of chemical X in each living thing"></svg></div>
+
+        <div class="wb-panel">
+          <div class="wq"><p class="wq-q">a Suggest a way that chemical X entered the food chain.</p><div class="wq-row"><textarea placeholder="Write your answer…"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">The factory dumped chemical X into the river water. The <strong>pond weed took it in from the water</strong>, so it entered the food chain through the producer.</div></div>
+          <div class="mcq-item" data-answer="D"><p class="mcq-q">b Which living thing contained the most units of chemical X?</p><div class="mcq-opts"><button class="mcq-opt" data-val="A">A &nbsp; pond weed</button><button class="mcq-opt" data-val="B">B &nbsp; tadpole</button><button class="mcq-opt" data-val="C">C &nbsp; fish</button><button class="mcq-opt" data-val="D">D &nbsp; heron</button></div><div class="mcq-fb"><strong>Model answer:</strong> The heron, with 500 units. It is the predator at the end of the food chain.</div></div>
+          <div class="wq"><p class="wq-q">c How many times more units are there in the fish than in a pond weed leaf?</p><div class="wq-row"><input class="num-in" type="number" id="riverC" placeholder="?"> <span>times</span><button class="show-btn" id="riverCbtn">Check</button></div><div class="reveal-ans" id="riverCans">240 ÷ 4 = <strong>60 times</strong> more.</div></div>
+          <div class="wq"><p class="wq-q">d i What do you notice about the amount of chemical X and the position of the living thing in the food chain? &nbsp; ii Explain why this is so.</p><div class="wq-row"><textarea placeholder="Write your answer…"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">i The <strong>further along the food chain</strong> a living thing is, the <strong>more</strong> chemical X it contains.<br>ii Each animal eats <strong>many</strong> of the living things before it in the chain. Chemical X does not break down, so it stays in the body and <strong>accumulates</strong> (builds up). The heron gets the chemical from all the fish it eats.</div></div>
+        </div>
+        <div class="hint">End of Lesson 3 · Homework: Workbook 4.2 Challenge Q4 (DDT), see slide 10</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 7 : FOOD CHAIN GAME ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="lb-badge">Learner's Book · Think like a scientist, pp. 106–107</div>
+        <h1 class="slide-title">Play the food chain game</h1>
+        <p class="lede">You will pretend to be producers and consumers in a rice field food chain. Pesticide “particles” show how toxic substances move through a food chain. <strong>No equipment is needed.</strong> Use your fingers and your notebook.</p>
+        <div class="two-col">
+          <div class="box teal"><div class="box-head">🙋 Act it out: no equipment needed</div><div class="box-body">
+            <ol class="rules">
+              <li>Your teacher puts you in a group: <b>12 rice plants</b>, <b>6 caterpillars</b>, <b>3 frogs</b> and <b>1 kingfisher</b>. Everyone else is a scientist who records the results on the board.</li>
+              <li><b>Rice plants</b> take in pesticide from the field: each rice plant holds up some fingers (1 to 10). That is your number of particles. Say it out loud.</li>
+              <li>Each <b>caterpillar</b> taps 2 rice plants (tapping = eating). Add their numbers together. The rice plants sit down.</li>
+              <li>Each <b>frog</b> taps 2 caterpillars and adds their totals. Then the <b>kingfisher</b> taps all 3 frogs and adds their totals.</li>
+              <li>Before each round, everyone <b>predicts</b>. After each round, the scientists write every player's total on the board.</li>
+            </ol>
+          </div></div>
+          <div class="box purple"><div class="box-head">🔮 Predict in your notebook first</div><div class="box-body">
+            <p>Will a caterpillar have <b>more</b> or <b>fewer</b> particles than a rice plant? Why?</p>
+            <p>Which living thing do you think will end up with the <b>most</b> particles?</p>
+            <div class="team-row"><span class="team t1">🌾 rice plants</span><span class="team t2">🐛 caterpillars</span><span class="team t3">🐸 frogs</span><span class="team t4">🐦 kingfisher</span></div>
+          </div></div>
+        </div>
+
+        <h3 class="mini-title" style="margin-top:24px;">Or play it on the board</h3>
+        <p style="font-size:14px; color:var(--ink-soft);">The same game, run on the screen: 12 rice plants, 6 caterpillars, 3 frogs and 1 kingfisher. Press <em>Next round</em>. The number on each player is the particles that player has collected.</p>
+        <div class="game-board" id="gameBoard"></div>
+        <div class="e-caption" id="gameCaption">Press <em>Next round</em> to start.</div>
+        <div class="e-controls"><button class="btn orange" id="gameNext">Next round ➜</button><button class="btn ghost" id="gameReset">↺ New game</button></div>
+
+        <div class="lb-badge" style="margin-top:24px;">Learner's Book · Questions 1–3, p. 107</div>
+        <div class="wb-panel" style="background:var(--teal-light); border-color:var(--teal);">
+          <div class="wq"><p class="wq-q">1 In the game, which living thing represents the: a producer? b first consumer? c second consumer? d third consumer?</p><div class="wq-row"><textarea placeholder="a … b … c … d …"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">a producer: <strong>rice plant</strong> · b first consumer: <strong>caterpillar</strong> · c second consumer: <strong>frog</strong> · d third consumer: <strong>kingfisher</strong></div></div>
+          <div class="mcq-item" data-answer="B"><p class="mcq-q">2 What does tapping (tagging) another player represent in the game?</p><div class="mcq-opts"><button class="mcq-opt" data-val="A">A &nbsp; Running away from a predator</button><button class="mcq-opt" data-val="B">B &nbsp; One living thing eating another</button><button class="mcq-opt" data-val="C">C &nbsp; Spraying pesticide</button></div><div class="mcq-fb"><strong>Model answer:</strong> Tapping represents <strong>eating</strong>. When you are tapped, all your particles pass to the player who tapped you, just like a toxic substance passes to the animal that eats you.</div></div>
+          <div class="wq"><p class="wq-q">3 Draw the food chain represented in the game.</p><div class="wq-row"><textarea placeholder="… → … → … → …"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">rice plant → caterpillar → frog → kingfisher</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 8 : RESULTS TABLE + GRAPH ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="lb-badge">Learner's Book · Think like a scientist, steps 3–5, p. 107</div>
+        <h1 class="slide-title">Record the results</h1>
+        <p class="lede"><strong>In your notebook:</strong> copy the results table, then draw the bar graph. If you acted out the game, type your class's totals from the board into the table. If you played on the board, the numbers fill in by themselves. The average and the bar graph update automatically.</p>
+        <div class="res-layout">
+          <div class="tablebox">
+            <table class="res-table">
+              <thead><tr><th>Living thing</th><th>Total particles</th><th>Number of players</th><th>Average particles per player</th></tr></thead>
+              <tbody id="resBody"></tbody>
+            </table>
+            <p class="small-note">Average = total particles ÷ number of players</p>
+          </div>
+          <div class="chart-box"><svg id="resChart" viewBox="0 0 520 300" role="img" aria-label="Bar graph of average particles"></svg></div>
+        </div>
+        <div class="wb-panel" style="background:var(--teal-light); border-color:var(--teal); margin-top:20px;">
+          <div class="wq"><p class="wq-q">4b Which living thing in the game food chain received the biggest amount of “pesticide”? Why?</p><div class="wq-row"><textarea placeholder="Write your answer…"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">The <strong>kingfisher</strong>. It is at the end of the food chain. It ate several frogs, each frog had eaten several caterpillars, and each caterpillar had eaten several rice plants. So it collected the pesticide from all of them.</div></div>
+          <div class="wq"><p class="wq-q">5 Describe the pattern you can see in the results.</p><div class="wq-row"><textarea placeholder="The further along the food chain…"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">The <strong>further along the food chain</strong> a living thing is, the <strong>more pesticide particles</strong> it has. The amount builds up (accumulates) at each link.</div></div>
+          <div class="wq"><p class="wq-q">4 (p. 107 Questions) Explain to a partner how the game shows the way toxic substances, like pesticides, move through a food chain.</p><div class="wq-row"><textarea placeholder="Write what you said…"></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">The particles are like a pesticide. The rice plants take it in from the environment. Each time a player is tapped (eaten), all their particles pass to the eater. Each consumer eats many players, so the particles <strong>build up</strong> as they move along the chain, and the top predator ends up with the most.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 9 : MERCURY FACT FILE ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="lb-badge">Learner's Book · Activity, p. 108</div>
+        <h1 class="slide-title">Fact file: mercury in food chains</h1>
+        <p class="lede">Almost all substances that contain mercury are toxic and can be dangerous, even at very low levels. Read the fact file together. Then answer the four questions in your notebook, and draw a food chain to help explain your answers.</p>
+        <div class="passage">
+          <h4>📄 Mercury fact file</h4>
+          <p><b>Where does it come from?</b> Mercury is a metal. It gets into the environment when people burn coal in power stations, from mining (especially gold mining) and from factory waste. Volcanoes also release some mercury. Mercury in the air falls into rivers, lakes and the sea with the rain.</p>
+          <p><b>Into the food chain:</b> In water, tiny living things change mercury into a form that is easily taken in by living things. Plant plankton and algae take it in from the water. This is how it enters the food chain, through the producers.</p>
+          <p><b>Moving along the chain:</b> Animal plankton eat the plant plankton. Small fish eat the animal plankton. Big fish, such as tuna and sharks, eat many small fish. The body cannot get rid of mercury easily, so it <b>accumulates</b>. Big predator fish have the most mercury.</p>
+          <p style="margin:0"><b>Why is it harmful?</b> Mercury damages the brain and nerves. It is especially dangerous for babies and young children. People who eat a lot of big fish can take in a lot of mercury.</p>
+        </div>
+        <div class="research-grid">
+          <div class="wq"><p class="wq-q">1 How does mercury get into the environment?</p><textarea placeholder="Answer in your notebook…"></textarea><button class="show-btn">Show model answer</button><div class="reveal-ans">From <strong>burning coal</strong> in power stations, from <strong>mining</strong>, from <strong>factory waste</strong> and from <strong>volcanoes</strong>. It falls into water with the rain.</div></div>
+          <div class="wq"><p class="wq-q">2 How does mercury get into food chains?</p><textarea placeholder="Answer in your notebook…"></textarea><button class="show-btn">Show model answer</button><div class="reveal-ans"><strong>Plant plankton and algae</strong> (the producers) take it in from the water.</div></div>
+          <div class="wq"><p class="wq-q">3 How does mercury move through food chains?</p><textarea placeholder="Answer in your notebook…"></textarea><button class="show-btn">Show model answer</button><div class="reveal-ans">By <strong>eating</strong>. Each animal eats many of the living things before it. The body cannot get rid of mercury, so it <strong>accumulates</strong>, and big predator fish have the most.<br><em>Food chain:</em> plant plankton → animal plankton → small fish → tuna → person</div></div>
+          <div class="wq"><p class="wq-q">4 Why is mercury harmful to living things?</p><textarea placeholder="Answer in your notebook…"></textarea><button class="show-btn">Show model answer</button><div class="reveal-ans">It damages the <strong>brain and nerves</strong>. It is especially dangerous for babies and young children.</div></div>
+        </div>
+        <div class="box teal" style="margin-top:12px;"><div class="box-head">✅ My notebook checklist</div><div class="box-body">
+          <div class="assess-list" id="mercuryCheck"></div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 10 : DDT CHALLENGE ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="wb-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/></svg> Workbook · 4.2 Challenge, question 4 · Homework</div>
+        <h1 class="slide-title">The story of DDT</h1>
+        <div class="passage">
+          <h4>📄 DDT</h4>
+          DDT was one of the first and most powerful pesticides developed to kill insects. It was widely used to control the spread of malaria. Mosquitoes spread the malaria parasite when they bite people. DDT was also used a lot in the 1960s to spray crops, mostly in Europe and North America.<br><br>
+          Much later, scientists discovered that DDT can move through food chains because animals' bodies cannot get rid of it. DDT is stored mainly in body fat. It also remains in the environment for a long time before it breaks down. Scientists also found that birds of prey, such as eagles and hawks, which are affected by DDT, lay eggs with very thin shells. Humans who eat plants or animals that contain DDT are more likely to develop cancer and other serious diseases.<br><br>
+          DDT was banned in the 1980s and is no longer used as a pesticide.
+        </div>
+
+        <div class="ddt-demo">
+          <div class="ddt-col"><div class="ddt-emo">🦗🦗🦗</div><b>3 locusts</b><span>1 unit each</span></div>
+          <div class="pc-arr">➜</div>
+          <div class="ddt-col"><div class="ddt-emo">🐸</div><b>1 frog eats 3 locusts</b><span>3 units — the frog lives</span></div>
+          <div class="pc-arr">➜</div>
+          <div class="ddt-col bad"><div class="ddt-emo">🦉</div><b>1 owl eats 3 frogs</b><span>9 units — enough to kill it</span></div>
+        </div>
+        <p class="small-note" style="text-align:center;">Example numbers to show how DDT builds up for question d.</p>
+
+        <div class="wb-panel">
+          <div class="wq"><p class="wq-q">a Why was DDT used a lot in the past?</p><div class="wq-row"><textarea></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">To kill <strong>mosquitoes</strong> and stop the spread of malaria, and to kill <strong>insect pests on crops</strong>.</div></div>
+          <div class="wq"><p class="wq-q">b i Explain how DDT can enter a food chain. &nbsp; ii Why can DDT move through food chains?</p><div class="wq-row"><textarea></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">i DDT was <strong>sprayed on crops</strong> and water. Plants and insects took it in, and then animals ate them.<br>ii Animals' bodies <strong>cannot get rid of DDT</strong>. It is stored in body fat, so it passes to the next animal when it is eaten.</div></div>
+          <div class="wq"><p class="wq-q">c i Suggest two reasons why arctic animals such as seals and polar bears often have high levels of DDT in their bodies, even though DDT is no longer used. &nbsp; ii Some people living in arctic regions eat seals. Why can this be dangerous for them?</p><div class="wq-row"><textarea></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">i (1) DDT <strong>stays in the environment for a long time</strong> before it breaks down, and it can be carried to the Arctic by water and wind. (2) Seals and polar bears are <strong>near the top of long ocean food chains</strong> and eat many fish, so DDT stored in fat <strong>accumulates</strong> in their bodies.<br>ii The DDT in the seals passes into the people who eat them. People who take in DDT are <strong>more likely to develop cancer and other serious diseases</strong>.</div></div>
+          <div class="wq"><p class="wq-q">d In a food chain affected by DDT, explain why a frog that eats three locusts does not die, but an owl that eats three frogs dies. What is the word that describes this?</p><div class="wq-row"><textarea></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">The frog takes in the DDT from only 3 locusts, which is not enough to kill it. The owl eats 3 frogs, so it takes in the DDT from <strong>9 locusts</strong>. The DDT builds up to a level that kills the owl. The word is <strong>accumulation</strong> (bioaccumulation).</div></div>
+          <div class="wq"><p class="wq-q">e Why do you think the number of birds of prey in Europe and North America decreased a lot in the 1960s?</p><div class="wq-row"><textarea></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">DDT was sprayed a lot on crops in the 1960s. It accumulated in birds of prey at the top of food chains. They laid eggs with <strong>very thin shells</strong> that broke easily, so <strong>fewer chicks hatched</strong>.</div></div>
+          <div class="wq"><p class="wq-q">f Do some research to find out the full name of DDT.</p><div class="wq-row"><textarea></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans"><strong>Dichlorodiphenyltrichloroethane</strong></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 11 : CHECK YOUR PROGRESS ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="lb-badge">Learner's Book · Check your progress, p. 111</div>
+        <h1 class="slide-title">Check your progress</h1>
+        <p class="lede"><strong>1</strong> Look at the food web from an African grassland. Tap a living thing to see what it eats and what eats it. Then switch to <em>Find chains</em>.</p>
+        <div class="mode-row"><button class="mode-btn active" data-mode="explore">Explore</button><button class="mode-btn" data-mode="trace">Find chains</button></div>
+        <div class="web-layout">
+          <div><div class="web-box"><svg id="webGrass" viewBox="0 0 620 440"></svg></div>
+            <div class="legend" style="margin-top:8px;"><span><i style="background:var(--green)"></i>its food</span><span><i style="background:var(--red)"></i>what eats it</span><span><i style="background:repeating-linear-gradient(90deg,#9AA8A6 0 4px,transparent 4px 7px)"></i>baboons eat termites (added)</span></div></div>
+          <div class="web-side">
+            <div id="grassExplore"><div class="info-card" id="grassInfo"><h4>African grassland</h4><p>Tap a living thing.</p></div></div>
+            <div id="grassTrace" hidden>
+              <div class="trace-bar" id="gtBar"></div>
+              <div class="b-actions" style="margin:6px 0 0;"><button class="btn" id="gtSave">Save chain</button><button class="btn ghost" id="gtClear">Clear</button></div>
+              <div class="msg" id="gtMsg"></div>
+              <div class="target-li" id="gt3"><div class="tick">✓</div><div><b>e</b> Three chains with three links <span id="gt3c">(0/3)</span></div></div>
+              <div class="target-li" id="gt4"><div class="tick">✓</div><div><b>f</b> Two chains with four links <span id="gt4c">(0/2)</span></div></div>
+              <div class="target-li" id="gt5"><div class="tick">✓</div><div><b>g</b> One chain with five links</div></div>
+              <div class="chain-list" id="gtList"></div>
+            </div>
+          </div>
+        </div>
+        <div class="wb-panel" style="background:var(--teal-light); border-color:var(--teal); margin-top:18px;">
+          <div class="wq" data-tapq="g_prod"><p class="wq-q">1a Name two producers.</p><div class="tapset"></div><button class="show-btn tapcheck">Check</button><div class="reveal-ans"><strong>Producers:</strong> acacia and grasses.</div></div>
+          <div class="wq" data-tapq="g_herb"><p class="wq-q">1b Name three herbivores.</p><div class="tapset"></div><button class="show-btn tapcheck">Check</button><div class="reveal-ans"><strong>Herbivores:</strong> impala, zebra and termite.</div></div>
+          <div class="wq" data-tapq="g_omni"><p class="wq-q">1c Name any omnivores.</p><div class="tapset"></div><button class="show-btn tapcheck">Check</button><div class="reveal-ans"><strong>Omnivore:</strong> baboon. It eats grasses and also eats insects such as termites.</div></div>
+          <div class="wq" data-tapq="g_carn"><p class="wq-q">1d How many carnivores are shown? Name them.</p><div class="tapset"></div><button class="show-btn tapcheck">Check</button><div class="reveal-ans"><strong>Three carnivores:</strong> lion, leopard and hyena.</div></div>
+          <div class="wq"><p class="wq-q">1e–g Model answers</p><button class="show-btn">Show model answers</button><div class="reveal-ans"><strong>e Three links (any three):</strong> acacia → impala → lion · grasses → zebra → lion · grasses → zebra → leopard · grasses → zebra → hyena · grasses → baboon → leopard<br><strong>f Four links:</strong> grasses → zebra → hyena → lion · grasses → baboon → hyena → lion<br><strong>g Five links:</strong> grasses → termite → baboon → hyena → lion (or acacia → termite → baboon → hyena → lion)</div></div>
+        </div>
+
+        <h3 class="mini-title" style="margin-top:24px;">2 Class 6's game results</h3>
+        <div class="two-col">
+          <div>
+            <table class="res-table small"><thead><tr><th>Living thing in food chain</th><th>Number of toxic particles taken in</th></tr></thead>
+              <tbody><tr><td>green algae</td><td>2</td></tr><tr><td>shrimp</td><td>8</td></tr><tr><td>small fish</td><td>24</td></tr></tbody></table>
+            <div class="wq" style="margin-top:12px;"><p class="wq-q">a Draw a dot plot of the results.</p><button class="show-btn">Show model dot plot</button><div class="reveal-ans"><svg id="dotPlot" viewBox="0 0 360 220" style="width:100%; max-width:360px; display:block;"></svg></div></div>
+          </div>
+          <div>
+            <div class="wq"><p class="wq-q">b How many algae did the shrimp eat?</p><div class="wq-row"><input class="num-in" type="number" id="cq2b"><button class="show-btn numcheck" data-in="cq2b" data-ans="4">Check</button></div><div class="reveal-ans">8 ÷ 2 = <strong>4 algae</strong></div></div>
+            <div class="wq"><p class="wq-q">c How many shrimps did the small fish eat?</p><div class="wq-row"><input class="num-in" type="number" id="cq2c"><button class="show-btn numcheck" data-in="cq2c" data-ans="3">Check</button></div><div class="reveal-ans">24 ÷ 8 = <strong>3 shrimps</strong></div></div>
+            <div class="wq"><p class="wq-q">d A big fish ate five small fish. How many harmful particles did it take in?</p><div class="wq-row"><input class="num-in" type="number" id="cq2d"><button class="show-btn numcheck" data-in="cq2d" data-ans="120">Check</button></div><div class="reveal-ans">5 × 24 = <strong>120 particles</strong></div></div>
+            <div class="wq"><p class="wq-q">e Name two toxic substances in food chains that you have learned about.</p><div class="wq-row"><textarea></textarea><button class="show-btn">Show model answer</button></div><div class="reveal-ans">Any two from: <strong>pesticides (such as DDT), mercury, cadmium, microplastics</strong>.</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 12 : SELF-CHECK ===== -->
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">Look what I can do!</div>
+        <h1 class="slide-title">Self-check &amp; recap</h1>
+        <div class="progress-bar-track"><div class="progress-bar-fill" id="assessFill"></div></div>
+        <div class="assess-list" id="assessList"></div>
+
+        <h3 class="mini-title" style="margin-top:26px;">How are we doing? (Learner's Book p. 107)</h3>
+        <div id="reflectList"></div>
+
+        <div class="two-col" style="margin-top:14px;">
+          <div class="wq"><p class="wq-q">What did I do well in this topic?</p><textarea style="width:100%;"></textarea></div>
+          <div class="wq"><p class="wq-q">What could I do better next time?</p><textarea style="width:100%;"></textarea></div>
+        </div>
+
+        <h3 class="mini-title" style="margin-top:22px;">Key vocabulary — tap a card to flip it</h3>
+        <div class="gloss-grid" id="glossGrid"></div>
+        <div class="box teal" style="margin-top:22px;"><div class="box-head">🌍 Think about it: plastics in food chains</div><div class="box-body"><p style="margin:0">Read <strong>Learner's Book p. 109</strong> about microplastics and ecobricks. Discuss with a partner: How do plastics cause problems in ocean food chains? How can we reduce plastic waste at school and at home?</p></div></div>
+      </div>
+    </section>
+
+  </div>
+
+  <button class="navbtn" id="prevBtn" onclick="prevSlide()" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <button class="navbtn" id="nextBtn" onclick="nextSlide()" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg></button>
+  <div class="term-pop" id="termPop"></div>
+</div>
+
+<script>
+/* ============ navigation ============ */
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let idx = 0;
+const dotsWrap = document.getElementById('dots');
+slides.forEach((s,i)=>{
+  const d = document.createElement('button');
+  d.className = 'dot';
+  d.setAttribute('aria-label','Go to slide '+(i+1));
+  d.onclick = ()=>goTo(i);
+  dotsWrap.appendChild(d);
+});
+function render(){
+  slides.forEach((s,i)=> s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.dot').forEach((d,i)=> d.classList.toggle('active', i===idx));
+  document.getElementById('counter').textContent = (idx+1)+' / '+total;
+  document.getElementById('prevBtn').classList.toggle('disabled', idx===0);
+  document.getElementById('nextBtn').classList.toggle('disabled', idx===total-1);
+  slides[idx].scrollTop = 0;
+}
+function goTo(i){ idx = Math.max(0, Math.min(total-1, i)); render(); }
+function nextSlide(){ goTo(idx+1); }
+function prevSlide(){ goTo(idx-1); }
+document.addEventListener('keydown', e=>{
+  if(e.target.tagName==='TEXTAREA') return;
+  if(e.key==='ArrowRight') nextSlide();
+  if(e.key==='ArrowLeft') prevSlide();
+});
+render();
+
+/* ============ objectives ============ */
+document.querySelectorAll('.obj-card').forEach(c=> c.addEventListener('click', ()=> c.classList.toggle('done')));
+
+/* ============ term popups ============ */
+const termPop = document.getElementById('termPop');
+document.querySelectorAll('.term').forEach(t=>{
+  t.addEventListener('click', e=>{
+    e.stopPropagation();
+    const r = t.getBoundingClientRect();
+    termPop.textContent = t.dataset.def;
+    termPop.style.left = Math.min(r.left, window.innerWidth-300)+'px';
+    termPop.style.top = (r.bottom+8)+'px';
+    termPop.classList.add('show');
+  });
+});
+document.addEventListener('click', ()=> termPop.classList.remove('show'));
+
+/* ============ MCQ ============ */
+document.querySelectorAll('.mcq-item').forEach(item=>{
+  const ans = item.dataset.answer;
+  item.querySelectorAll('.mcq-opt').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      item.querySelectorAll('.mcq-opt').forEach(b=>{ b.disabled = true; if(b.dataset.val===ans) b.classList.add('correct'); });
+      if(btn.dataset.val!==ans) btn.classList.add('wrong');
+      item.querySelector('.mcq-fb').classList.add('show');
+    });
+  });
+});
+
+/* ============ food web engine ============ */
+const NS = 'http://www.w3.org/2000/svg';
+const typeColour = {P:'#E7F5EC', H:'#FCF3D9', O:'#FBEADB', C:'#FBE7E4', F:'#E9F1FC'};
+const typeStroke = {P:'#3F8F5C', H:'#C7951A', O:'#DD7A2E', C:'#C0392B', F:'#2B71C9'};
+function buildWeb(svgId, nodes, links, opts){
+  opts = opts || {};
+  const svg = document.getElementById(svgId);
+  const R = opts.r || 30;
+  const markerId = svgId+'-arr';
+  svg.innerHTML = '<defs>'+
+    ['grey:#9AA8A6','food:#3F8F5C','eaten:#C0392B','trace:#DD7A2E','found:#146C7A'].map(s=>{
+      const [n,c] = s.split(':');
+      return '<marker id="'+markerId+'-'+n+'" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L9,4 L0,8 Z" fill="'+c+'"/></marker>';
+    }).join('')+'</defs>';
+  const byId = {}; nodes.forEach(n=>byId[n.id]=n);
+  const linkEls = {};
+  const gLinks = document.createElementNS(NS,'g'); svg.appendChild(gLinks);
+  links.forEach(([a,b])=>{
+    const A = byId[a], B = byId[b];
+    const dx = B.x-A.x, dy = B.y-A.y, L = Math.hypot(dx,dy);
+    const ux = dx/L, uy = dy/L;
+    const x1 = A.x+ux*R, y1 = A.y+uy*R, x2 = B.x-ux*(R+4), y2 = B.y-uy*(R+4);
+    const p = document.createElementNS(NS,'line');
+    p.setAttribute('x1',x1); p.setAttribute('y1',y1); p.setAttribute('x2',x2); p.setAttribute('y2',y2);
+    p.setAttribute('class','web-link'+(opts.hideLinks?' hidden':''));
+    p.setAttribute('marker-end','url(#'+markerId+'-grey)');
+    gLinks.appendChild(p);
+    linkEls[a+'>'+b] = p;
+  });
+  const nodeEls = {};
+  nodes.forEach(n=>{
+    const g = document.createElementNS(NS,'g');
+    g.setAttribute('class','web-node'); g.setAttribute('transform','translate('+n.x+','+n.y+')');
+    g.innerHTML = '<circle r="'+R+'" fill="'+typeColour[n.t]+'" stroke="'+typeStroke[n.t]+'" stroke-width="2.5"/>'+
+      '<text class="e" text-anchor="middle" dy="9">'+n.e+'</text>'+
+      '<text class="l" text-anchor="middle" y="'+(R+14)+'">'+n.label+'</text>';
+    g.addEventListener('click', ()=> opts.onTap && opts.onTap(n.id));
+    svg.appendChild(g);
+    nodeEls[n.id] = g;
+  });
+  function setLink(k, cls){
+    const el = linkEls[k]; if(!el) return;
+    el.setAttribute('class','web-link'+(cls?' '+cls:''));
+    el.setAttribute('marker-end','url(#'+markerId+'-'+(cls && cls!=='hidden' ? cls : 'grey')+')');
+  }
+  return {byId, linkEls, nodeEls, setLink, links};
+}
+function chainText(path, byId){ return path.map(id=>byId[id].label).join(' → '); }
+
+
+/* ============ show / hide model answers ============ */
+document.querySelectorAll('.wq').forEach(wq=>{
+  const btn = wq.querySelector('.show-btn:not(.tapcheck):not(.numcheck)');
+  if(!btn) return;
+  const label = btn.textContent;
+  btn.addEventListener('click', ()=>{
+    const a = wq.querySelector('.reveal-ans');
+    a.classList.toggle('show');
+    btn.textContent = a.classList.contains('show') ? 'Hide' : label;
+    if(a.classList.contains('show') && a.querySelector('#dotPlot')) drawDotPlot();
+  });
+});
+
+/* ============ number checks ============ */
+document.querySelectorAll('.numcheck').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const inp = document.getElementById(btn.dataset.in);
+    const ok = Number(inp.value) === Number(btn.dataset.ans);
+    inp.classList.remove('good','bad'); inp.classList.add(ok?'good':'bad');
+    btn.closest('.wq').querySelector('.reveal-ans').classList.add('show');
+  });
+});
+
+/* ============ info flip cards ============ */
+document.querySelectorAll('.info-flip').forEach(c=> c.addEventListener('click', ()=> c.classList.toggle('flip')));
+
+/* ============ tap-select questions ============ */
+const tapQs = {
+  g_prod:{opts:['acacia','grasses','termite','zebra','impala'], ans:['acacia','grasses']},
+  g_herb:{opts:['impala','zebra','termite','baboon','hyena','lion'], ans:['impala','zebra','termite']},
+  g_omni:{opts:['baboon','zebra','lion','termite','leopard'], ans:['baboon']},
+  g_carn:{opts:['lion','leopard','hyena','baboon','impala','zebra'], ans:['lion','leopard','hyena']}
+};
+document.querySelectorAll('[data-tapq]').forEach(wq=>{
+  const q = tapQs[wq.dataset.tapq];
+  const set = wq.querySelector('.tapset');
+  q.opts.forEach(o=>{
+    const b = document.createElement('button');
+    b.className='tap'; b.textContent=o; b.dataset.v=o;
+    b.addEventListener('click', ()=>{ if(!wq.classList.contains('checked')) b.classList.toggle('on'); });
+    set.appendChild(b);
+  });
+  const chk = wq.querySelector('.tapcheck');
+  chk.addEventListener('click', ()=>{
+    if(wq.classList.contains('checked')){
+      wq.classList.remove('checked'); set.querySelectorAll('.tap').forEach(b=>b.className='tap');
+      wq.querySelector('.reveal-ans').classList.remove('show'); chk.textContent='Check'; return;
+    }
+    wq.classList.add('checked');
+    set.querySelectorAll('.tap').forEach(b=>{
+      const isAns=q.ans.includes(b.dataset.v), on=b.classList.contains('on');
+      b.className='tap '+(on&&isAns?'good':on&&!isAns?'bad':!on&&isAns?'missed':'');
+    });
+    wq.querySelector('.reveal-ans').classList.add('show'); chk.textContent='Try again';
+  });
+});
+
+/* ============ pesticide chain stepper (LB p.105) ============ */
+const pcSteps = [
+  {cap:'The farmer has corn plants. Press <em>Next step</em>.', on:[], dose:[]},
+  {cap:'🧪 The farmer <strong>sprays pesticide</strong> on the corn to kill pests. The pesticide is now in the food chain.', on:[0], dose:['pesticide on leaves']},
+  {cap:'🐌 <strong>Snails eat the leaves</strong> covered with pesticide. Many snails die — but some pesticide is still in their bodies.', on:[0,1], dose:['pesticide on leaves','pesticide in body']},
+  {cap:'🐦 A <strong>bird eats the snails</strong>. The pesticide enters the bird\'s body. The bird may not die, but its bones may get weaker.', on:[0,1,2], dose:['pesticide on leaves','pesticide in body','pesticide in body']},
+  {cap:'🐈 A <strong>wildcat eats the bird</strong>. It takes in any pesticide still in the bird\'s body. The pesticide has moved all the way along the food chain.', on:[0,1,2,3], dose:['pesticide on leaves','pesticide in body','pesticide in body','pesticide in body']}
+];
+let pcStep = 0;
+function pcRender(){
+  const s = pcSteps[pcStep];
+  document.querySelectorAll('#pestChain .pc-node').forEach((n,i)=>{
+    n.classList.toggle('on', s.on.includes(i) || pcStep===0 && i===0);
+    n.classList.toggle('clean', pcStep===0 && i===0);
+    n.querySelector('.pc-dose').textContent = s.dose[i] ? '☠️ '+s.dose[i] : '';
+  });
+  document.getElementById('pcCaption').innerHTML = s.cap;
+  document.getElementById('pcNext').disabled = pcStep>=pcSteps.length-1;
+}
+document.getElementById('pcNext').addEventListener('click', ()=>{ if(pcStep<pcSteps.length-1){pcStep++; pcRender();} });
+document.getElementById('pcReset').addEventListener('click', ()=>{ pcStep=0; pcRender(); });
+pcRender();
+
+/* ============ accumulation stepper (LB p.106) ============ */
+const accSteps = [
+  {cap:'🌿 Pesticide is sprayed on a plant. Press <em>Next step</em>. Each red dot = 1 unit of pesticide.', vals:[0,0,0]},
+  {cap:'🪲 A <strong>bug eats the sprayed plant</strong>. It now has <strong>5 units</strong> of pesticide in its body.', vals:[5,0,0]},
+  {cap:'🦎 A <strong>lizard eats 3 bugs</strong>. 3 × 5 = <strong>15 units</strong>. The pesticide does not break down, so it builds up in the lizard.', vals:[5,15,0]},
+  {cap:'🦅 An <strong>eagle eats 2 lizards</strong>. 2 × 15 = <strong>30 units</strong>. The pesticide makes the eagle\'s eggshells weak, so they crack. The top predator is harmed the most.', vals:[5,15,30]}
+];
+let accStep = 0;
+function accRender(){
+  const s = accSteps[accStep];
+  s.vals.forEach((v,i)=>{
+    const col = document.getElementById('acc'+i);
+    col.classList.toggle('on', v>0);
+    const box = col.querySelector('.acc-box');
+    if(box.children.length !== v){ box.innerHTML = ''; for(let k=0;k<v;k++){ const d=document.createElement('span'); d.className='acc-dot'; d.style.animationDelay=(k*0.03)+'s'; box.appendChild(d);} }
+    col.querySelector('.acc-num').textContent = v ? v+' units' : '';
+  });
+  document.getElementById('accCaption').innerHTML = s.cap;
+  document.getElementById('accNext').disabled = accStep>=accSteps.length-1;
+}
+document.getElementById('accNext').addEventListener('click', ()=>{ if(accStep<accSteps.length-1){accStep++; accRender();} });
+document.getElementById('accReset').addEventListener('click', ()=>{ accStep=0; accRender(); });
+accRender();
+
+/* ============ word search (Workbook 4.2 Focus Q1) ============ */
+const wsRows = ['pwertynumoa','environment','sdfghgftrnl','tdgutoxicet','ivbnmelhujx','cfdtweiurmj','iqahcvbdypr','dfmjyddcjau','eaccumulate'];
+const wsClues = [
+  {k:'a', clue:'harmful or poisonous', word:'toxic'},
+  {k:'b', clue:'to build up or increase', word:'accumulate'},
+  {k:'c', clue:'chemicals used by farmers to get rid of insects and other living things that eat their crops', word:'pesticide'},
+  {k:'d', clue:'the air, land and water around us', word:'environment'},
+  {k:'e', clue:'a harmful metal in food chains', word:'mercury'}
+];
+const wsGrid = document.getElementById('wsGrid');
+const wsCells = [];
+wsRows.forEach((row,r)=>{ [...row].forEach((ch,c)=>{
+  const b = document.createElement('button'); b.className='ws-cell'; b.textContent=ch; b.type='button';
+  b.addEventListener('click', ()=> wsTap(r,c));
+  wsGrid.appendChild(b); wsCells.push({r,c,el:b});
+}); });
+const wsCluesEl = document.getElementById('wsClues');
+wsClues.forEach(cl=>{
+  const d = document.createElement('div'); d.className='ws-clue'; d.id='wsc-'+cl.word;
+  d.innerHTML = '<b>'+cl.k+'</b> '+cl.clue+' <span class="ans"></span>';
+  wsCluesEl.appendChild(d);
+});
+let wsStart = null; let wsFound = 0;
+const cellAt = (r,c)=> wsCells.find(x=>x.r===r && x.c===c);
+function wsTap(r,c){
+  const msg = document.getElementById('wsMsg');
+  if(!wsStart){ wsStart=[r,c]; cellAt(r,c).el.classList.add('start'); msg.className='msg'; return; }
+  const [r0,c0] = wsStart; cellAt(r0,c0).el.classList.remove('start'); wsStart=null;
+  const dr=Math.sign(r-r0), dc=Math.sign(c-c0);
+  const len = Math.max(Math.abs(r-r0), Math.abs(c-c0))+1;
+  if(!(r===r0 || c===c0 || Math.abs(r-r0)===Math.abs(c-c0)) || len<2){ msg.className='msg no'; msg.textContent='Tap the first letter, then the last letter, in a straight line.'; return; }
+  let s=''; const path=[];
+  for(let i=0;i<len;i++){ const rr=r0+dr*i, cc=c0+dc*i; s+=wsRows[rr][cc]; path.push(cellAt(rr,cc)); }
+  const rev = [...s].reverse().join('');
+  const hit = wsClues.find(cl=> cl.word===s || cl.word===rev);
+  const card = hit && document.getElementById('wsc-'+hit.word);
+  if(hit && !card.classList.contains('done')){
+    path.forEach(p=>p.el.classList.add('found'));
+    card.classList.add('done'); card.querySelector('.ans').textContent = hit.word;
+    wsFound++;
+    msg.className='msg ok'; msg.textContent = wsFound===5 ? '🎉 All five words found!' : '✅ You found "'+hit.word+'". '+(5-wsFound)+' to go.';
+  } else if(hit){ msg.className='msg info'; msg.textContent='You already found that word.'; }
+  else { msg.className='msg no'; msg.textContent='"'+s+'" is not one of the words. Try again.'; }
+}
+
+/* ============ true / false (Workbook 4.2 Focus Q2) ============ */
+const tfItems = [
+  {q:'a Harmful substances can damage living things in food chains.', a:true, fb:'True. Toxic substances can kill living things or harm them, for example by making bones or eggshells weak.'},
+  {q:'b Harmful substances move through food chains instead of energy.', a:false, fb:'False. Harmful substances move through food chains <strong>as well as</strong> energy, not instead of it. Both pass on when one living thing eats another.'},
+  {q:'c Harmful substances in food chains cannot affect humans.', a:false, fb:'False. Humans are part of food chains too. If we eat plants or animals that contain toxic substances, they can harm us.'},
+  {q:'d Some harmful substances in a food chain break down in the bodies of the living things.', a:true, fb:'True. Some toxic substances break down into harmless substances. Others, like DDT and mercury, do not, so they build up.'}
+];
+const tfPanel = document.getElementById('tfPanel');
+tfItems.forEach(it=>{
+  const d = document.createElement('div'); d.className='tf-item';
+  d.innerHTML = '<p class="mcq-q" style="margin:0">'+it.q+'</p><div class="tf-row"><button class="mcq-opt" data-v="true">True</button><button class="mcq-opt" data-v="false">False</button></div><div class="tf-fb">'+it.fb+'</div>';
+  d.querySelectorAll('.mcq-opt').forEach(b=> b.addEventListener('click', ()=>{
+    d.querySelectorAll('.mcq-opt').forEach(x=>{ x.disabled=true; if((x.dataset.v==='true')===it.a) x.classList.add('correct'); });
+    if((b.dataset.v==='true')!==it.a) b.classList.add('wrong');
+    d.querySelector('.tf-fb').classList.add('show');
+  }));
+  tfPanel.appendChild(d);
+});
+
+/* ============ simple bar chart (SVG) ============ */
+function barChart(svgId, data, opts){
+  const svg = document.getElementById(svgId);
+  const W = +svg.getAttribute('viewBox').split(' ')[2], H = +svg.getAttribute('viewBox').split(' ')[3];
+  const m = {l:56, r:14, t:18, b:56};
+  const iw = W-m.l-m.r, ih = H-m.t-m.b;
+  const maxV = Math.max(1, ...data.map(d=>d.v));
+  const step = niceStep(maxV/5); const top = Math.ceil(maxV/step)*step;
+  let out = '';
+  for(let v=0; v<=top+1e-9; v+=step){
+    const y = m.t + ih - v/top*ih;
+    out += '<line x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+y+'" y2="'+y+'" stroke="#DDE4E3" stroke-width="1"/>';
+    out += '<text x="'+(m.l-8)+'" y="'+(y+4)+'" text-anchor="end" font-family="Inter" font-size="11" fill="#4B5B62">'+(Math.round(v*10)/10)+'</text>';
+  }
+  const bw = iw/data.length*0.6;
+  data.forEach((d,i)=>{
+    const x = m.l + iw/data.length*(i+0.5) - bw/2;
+    const h = d.v/top*ih; const y = m.t+ih-h;
+    out += '<rect x="'+x+'" y="'+y+'" width="'+bw+'" height="'+Math.max(0,h)+'" rx="4" fill="'+(d.c||'#C0392B')+'"/>';
+    out += '<text x="'+(x+bw/2)+'" y="'+(y-6)+'" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="12" fill="#1D2B32">'+(Math.round(d.v*10)/10)+'</text>';
+    out += '<text x="'+(x+bw/2)+'" y="'+(m.t+ih+18)+'" text-anchor="middle" font-family="Poppins" font-weight="600" font-size="11.5" fill="#1D2B32">'+d.label+'</text>';
+  });
+  out += '<line x1="'+m.l+'" x2="'+m.l+'" y1="'+m.t+'" y2="'+(m.t+ih)+'" stroke="#4B5B62"/>';
+  out += '<line x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+(m.t+ih)+'" y2="'+(m.t+ih)+'" stroke="#4B5B62"/>';
+  out += '<text x="14" y="'+(m.t+ih/2)+'" transform="rotate(-90 14 '+(m.t+ih/2)+')" text-anchor="middle" font-family="Inter" font-size="11.5" fill="#4B5B62">'+opts.yLabel+'</text>';
+  out += '<text x="'+(m.l+iw/2)+'" y="'+(H-10)+'" text-anchor="middle" font-family="Inter" font-size="11.5" fill="#4B5B62">'+opts.xLabel+'</text>';
+  svg.innerHTML = out;
+}
+function niceStep(raw){ const p=Math.pow(10,Math.floor(Math.log10(raw||1))); const n=raw/p; return (n<=1?1:n<=2?2:n<=5?5:10)*p; }
+barChart('riverChart', [
+  {label:'pond weed', v:4, c:'#3F8F5C'}, {label:'tadpole', v:20, c:'#C7951A'}, {label:'fish', v:240, c:'#2B71C9'}, {label:'heron', v:500, c:'#C0392B'}
+], {yLabel:'Units of chemical X', xLabel:'Living thing in the food chain'});
+document.getElementById('riverCbtn').classList.add('numcheck');
+document.getElementById('riverCbtn').dataset.in='riverC';
+document.getElementById('riverCbtn').dataset.ans='60';
+document.getElementById('riverCbtn').addEventListener('click', ()=>{
+  const inp=document.getElementById('riverC'); const ok=Number(inp.value)===60;
+  inp.classList.remove('good','bad'); inp.classList.add(ok?'good':'bad');
+  document.getElementById('riverCans').classList.add('show');
+});
+
+/* ============ food chain game simulation ============ */
+const teams = [
+  {key:'rice', name:'rice plants', emo:'🌾', n:12, cls:'c1', colour:'#3F8F5C'},
+  {key:'cat', name:'caterpillars', emo:'🐛', n:6, cls:'c2', colour:'#C7951A'},
+  {key:'frog', name:'frogs', emo:'🐸', n:3, cls:'c3', colour:'#2B71C9'},
+  {key:'king', name:'kingfishers', emo:'🐦', n:1, cls:'c4', colour:'#DD7A2E'}
+];
+let game, gameRound;
+function newGame(){
+  game = teams.map(t=> Array.from({length:t.n}, ()=>({got:0, out:false})));
+  gameRound = 0; drawGame();
+  document.getElementById('gameCaption').innerHTML = 'Press <em>Next round</em> to start.';
+  document.getElementById('gameNext').disabled = false;
+}
+function drawGame(flashTeam){
+  const board = document.getElementById('gameBoard');
+  board.innerHTML = teams.map((t,ti)=> '<div class="gb-col"><h5>'+t.emo+' '+t.name+'</h5><div class="gb-cups">'+
+    game[ti].map(p=> '<div class="cup '+t.cls+(p.out?' out':'')+(flashTeam===ti?' flash':'')+'"><small>'+t.emo+'</small>'+(gameRound>ti?p.got:'')+'</div>').join('')+'</div></div>').join('');
+}
+function feed(predTeam){
+  // each predator tags an equal share of the prey team; prey empties all particles into predator cup
+  const prey = game[predTeam-1], preds = game[predTeam];
+  const per = prey.length / preds.length;
+  preds.forEach((p,i)=>{ for(let k=0;k<per;k++){ const v = prey[i*per+k]; p.got += v.got; v.out = true; } });
+}
+function nextRound(){
+  const cap = document.getElementById('gameCaption');
+  if(gameRound===0){
+    const total = 60; game[0].forEach(p=>p.got=0);
+    for(let i=0;i<total;i++) game[0][Math.floor(Math.random()*game[0].length)].got++;
+    cap.innerHTML = '🌾 Round 1: the <strong>rice plants</strong> collect 60 pesticide particles from the field. Each one takes in a few.<br><strong>Predict:</strong> each caterpillar will eat 2 rice plants. Will it have more or fewer particles than a rice plant?';
+  } else if(gameRound===1){ feed(1); cap.innerHTML = '🐛 Round 2: each <strong>caterpillar</strong> eats (tags) 2 rice plants and takes all their particles. The rice plants sit down.<br><strong>Predict:</strong> each frog will eat 2 caterpillars. About how many particles will a frog have?'; }
+  else if(gameRound===2){ feed(2); cap.innerHTML = '🐸 Round 3: each <strong>frog</strong> eats (tags) 2 caterpillars and takes all their particles.<br><strong>Predict:</strong> the kingfisher will eat all 3 frogs. How many particles will it have?'; }
+  else if(gameRound===3){ feed(3); cap.innerHTML = '🐦 Round 4: the <strong>kingfisher</strong> eats (tags) all 3 frogs. It now has <strong>every particle</strong> from the whole food chain! Copy the results table on the next slide into your notebook.'; document.getElementById('gameNext').disabled = true; }
+  gameRound++;
+  drawGame(gameRound-1);
+  fillResultsFromGame();
+}
+document.getElementById('gameNext').addEventListener('click', nextRound);
+document.getElementById('gameReset').addEventListener('click', ()=>{ newGame(); fillResultsFromGame(true); });
+
+/* ============ results table + graph ============ */
+const resBody = document.getElementById('resBody');
+teams.forEach(t=>{
+  const tr = document.createElement('tr');
+  tr.innerHTML = '<td><b>'+t.emo+' '+t.name+'</b></td><td><input type="number" min="0" id="tot-'+t.key+'"></td><td><input type="number" min="1" id="num-'+t.key+'" value="'+t.n+'"></td><td class="avg" id="avg-'+t.key+'">–</td>';
+  resBody.appendChild(tr);
+});
+function updateResults(){
+  const data = teams.map(t=>{
+    const tot = parseFloat(document.getElementById('tot-'+t.key).value);
+    const n = parseFloat(document.getElementById('num-'+t.key).value);
+    const avg = (isFinite(tot) && n>0) ? tot/n : 0;
+    document.getElementById('avg-'+t.key).textContent = (isFinite(tot) && n>0) ? (Math.round(avg*10)/10) : '–';
+    return {label:t.name, v:avg, c:t.colour};
+  });
+  barChart('resChart', data, {yLabel:'Average particles per player', xLabel:'Living thing in the game food chain'});
+}
+function fillResultsFromGame(blank){
+  teams.forEach((t,ti)=>{
+    const tot = game[ti].reduce((s,p)=>s+p.got,0);
+    document.getElementById('tot-'+t.key).value = (blank || gameRound<=ti) ? '' : tot;
+    document.getElementById('num-'+t.key).value = t.n;
+  });
+  updateResults();
+}
+document.querySelectorAll('#resBody input').forEach(i=> i.addEventListener('input', updateResults));
+newGame();
+/* example numbers so the results slide is never empty */
+(function(){
+  const example = [60,60,60,60];
+  teams.forEach((t,ti)=>{ document.getElementById('tot-'+t.key).value = example[ti]; });
+  updateResults();
+})();
+
+/* ============ mercury checklist ============ */
+const mercuryItems = ['I answered all four questions in my notebook.','I drew a food chain that shows how mercury moves.','I used my own words.'];
+const mc = document.getElementById('mercuryCheck');
+mercuryItems.forEach(text=>{
+  const item = document.createElement('div'); item.className='assess-item';
+  item.innerHTML = '<div class="assess-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>'+text+'</p>';
+  item.addEventListener('click', ()=> item.classList.toggle('checked'));
+  mc.appendChild(item);
+});
+
+/* ============ grassland food web (LB p.111) ============ */
+const grassNodes = [
+  {id:'lion', label:'lion', e:'🦁', x:110, y:60, t:'C'},
+  {id:'leopard', label:'leopard', e:'🐆', x:540, y:70, t:'C'},
+  {id:'hyena', label:'hyena', e:'🐺', x:370, y:115, t:'C'},
+  {id:'impala', label:'impala', e:'🦌', x:70, y:240, t:'H'},
+  {id:'zebra', label:'zebra', e:'🦓', x:240, y:250, t:'H'},
+  {id:'baboon', label:'baboon', e:'🐒', x:545, y:290, t:'O'},
+  {id:'acacia', label:'acacia', e:'🌳', x:110, y:385, t:'P'},
+  {id:'grass', label:'grasses', e:'🌾', x:470, y:380, t:'P'},
+  {id:'termite', label:'termite', e:'🐜', x:290, y:395, t:'H'}
+];
+const grassLinks = [['acacia','impala'],['acacia','termite'],['grass','zebra'],['grass','termite'],['grass','baboon'],['termite','baboon'],['impala','lion'],['zebra','lion'],['zebra','leopard'],['zebra','hyena'],['hyena','lion'],['baboon','hyena'],['baboon','leopard'],['baboon','lion']];
+const typeWord = {P:'a producer', H:'a herbivore', C:'a carnivore', O:'an omnivore'};
+const gExplore = buildWeb('webGrass', grassNodes, grassLinks, {onTap: id=>{ if(grassMode==='explore') exploreTap(id); else gTracer.tapExternal(id); }});
+gExplore.linkEls['termite>baboon'].style.strokeDasharray = '6 5';
+function exploreTap(id){
+  const W = gExplore;
+  const eats = grassLinks.filter(l=>l[1]===id).map(l=>l[0]);
+  const eatenBy = grassLinks.filter(l=>l[0]===id).map(l=>l[1]);
+  grassLinks.forEach(([a,b])=> W.setLink(a+'>'+b, b===id?'food':a===id?'eaten':''));
+  Object.keys(W.nodeEls).forEach(n=>{ const on = n===id||eats.includes(n)||eatenBy.includes(n); W.nodeEls[n].classList.toggle('dim',!on); W.nodeEls[n].classList.toggle('sel', n===id); W.nodeEls[n].classList.remove('inpath'); });
+  const n = W.byId[id], lab = x=>W.byId[x].label;
+  document.getElementById('grassInfo').innerHTML = '<h4>'+n.e+' '+n.label+'</h4><p>This is <strong>'+typeWord[n.t]+'</strong>.</p><p><strong style="color:var(--green)">Eats:</strong> '+(eats.length?eats.map(lab).join(', '):'nothing — it makes its own food using sunlight')+'</p><p style="margin:0"><strong style="color:var(--red)">Eaten by:</strong> '+(eatenBy.length?eatenBy.map(lab).join(', '):'nothing in this food web')+'</p>';
+}
+/* trace mode on the same svg */
+let grassMode = 'explore';
+const gTracer = (function(){
+  let path = []; const saved = []; let c3=0, c4=0, c5=false;
+  const W = gExplore; const bar = document.getElementById('gtBar'), msg = document.getElementById('gtMsg');
+  function show(t,k){ msg.className='msg '+k; msg.innerHTML=t; }
+  function paint(){
+    grassLinks.forEach(([a,b])=>{ let cls=''; for(let i=0;i<path.length-1;i++) if(path[i]===a&&path[i+1]===b) cls='trace'; W.setLink(a+'>'+b, cls); });
+    Object.keys(W.nodeEls).forEach(n=>{ W.nodeEls[n].classList.remove('dim','sel'); W.nodeEls[n].classList.toggle('inpath', path.includes(n)); });
+    bar.innerHTML = path.length ? '<strong>'+chainText(path,W.byId)+'</strong>&nbsp;<span style="color:var(--ink-soft)">('+path.length+(path.length===1?' link':' links')+')</span>' : '<span class="b-empty">Tap a producer to start…</span>';
+  }
+  function tap(id){
+    if(!path.length){ if(W.byId[id].t!=='P'){ show('Start with a <strong>producer</strong> (acacia or grasses).','no'); return; } path=[id]; msg.className='msg'; paint(); return; }
+    const last = path[path.length-1];
+    if(id===last){ path.pop(); paint(); return; }
+    if(grassLinks.some(l=>l[0]===last&&l[1]===id)){ path.push(id); msg.className='msg'; paint(); }
+    else show('The '+W.byId[id].label+' does <strong>not eat</strong> the '+W.byId[last].label+'. Follow the arrows.','no');
+  }
+  document.getElementById('gtClear').addEventListener('click', ()=>{ path=[]; msg.className='msg'; paint(); });
+  document.getElementById('gtSave').addEventListener('click', ()=>{
+    if(path.length<3){ show('Make a chain with at least three links.','info'); return; }
+    const key=path.join('>'); if(saved.includes(key)){ show('Already saved. Try a different chain!','info'); return; }
+    saved.push(key);
+    if(path.length===3) c3++; if(path.length===4) c4++; if(path.length===5) c5=true;
+    document.getElementById('gt3c').textContent='('+Math.min(c3,3)+'/3)'; document.getElementById('gt4c').textContent='('+Math.min(c4,2)+'/2)';
+    document.getElementById('gt3').classList.toggle('hit', c3>=3); document.getElementById('gt4').classList.toggle('hit', c4>=2); document.getElementById('gt5').classList.toggle('hit', c5);
+    const li=document.createElement('div'); li.className='chain-li'; li.textContent=chainText(path,W.byId)+' ('+path.length+' links)'; document.getElementById('gtList').prepend(li);
+    show('✅ Saved a chain with <strong>'+path.length+' links</strong>. Draw it in your book.','ok'); path=[]; paint();
+  });
+  return {tapExternal:tap, paint, reset:()=>{ path=[]; msg.className='msg'; }};
+})();
+document.querySelectorAll('.mode-btn').forEach(b=> b.addEventListener('click', ()=>{
+  document.querySelectorAll('.mode-btn').forEach(x=>x.classList.toggle('active', x===b));
+  grassMode = b.dataset.mode;
+  document.getElementById('grassExplore').hidden = grassMode!=='explore';
+  document.getElementById('grassTrace').hidden = grassMode!=='trace';
+  if(grassMode==='trace'){ gTracer.reset(); gTracer.paint(); }
+  else { grassLinks.forEach(([a,c])=>gExplore.setLink(a+'>'+c,'')); Object.values(gExplore.nodeEls).forEach(n=>n.classList.remove('dim','sel','inpath')); }
+}));
+
+/* ============ dot plot (Check your progress Q2a) ============ */
+function drawDotPlot(){
+  const svg = document.getElementById('dotPlot');
+  const data = [['green algae',2],['shrimp',8],['small fish',24]];
+  const m={l:46,r:12,t:14,b:40}, W=360, H=220, ih=H-m.t-m.b, iw=W-m.l-m.r, top=25;
+  let o='';
+  for(let v=0; v<=top; v+=5){ const y=m.t+ih-v/top*ih; o+='<line x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+y+'" y2="'+y+'" stroke="#DDE4E3"/><text x="'+(m.l-6)+'" y="'+(y+4)+'" text-anchor="end" font-size="10.5" font-family="Inter" fill="#4B5B62">'+v+'</text>'; }
+  data.forEach((d,i)=>{ const x=m.l+iw/3*(i+0.5), y=m.t+ih-d[1]/top*ih;
+    o+='<circle cx="'+x+'" cy="'+y+'" r="7" fill="#C0392B"/><text x="'+x+'" y="'+(y-11)+'" text-anchor="middle" font-size="11" font-weight="700" font-family="Poppins" fill="#1D2B32">'+d[1]+'</text><text x="'+x+'" y="'+(m.t+ih+16)+'" text-anchor="middle" font-size="11" font-family="Poppins" fill="#1D2B32">'+d[0]+'</text>'; });
+  o+='<line x1="'+m.l+'" x2="'+m.l+'" y1="'+m.t+'" y2="'+(m.t+ih)+'" stroke="#4B5B62"/><line x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+(m.t+ih)+'" y2="'+(m.t+ih)+'" stroke="#4B5B62"/>';
+  o+='<text x="12" y="'+(m.t+ih/2)+'" transform="rotate(-90 12 '+(m.t+ih/2)+')" text-anchor="middle" font-size="10.5" font-family="Inter" fill="#4B5B62">Toxic particles taken in</text>';
+  svg.innerHTML=o;
+}
+
+/* ============ self-check, reflection, glossary ============ */
+const assessItems = [
+  'I can understand that some substances can harm living things, and that these substances can move through a food chain or food web.',
+  'I can play a game to show how harmful substances can move through a food chain or food web.',
+  'I can explain how a game can show the way harmful substances can move through a food chain or food web.',
+  'I can record results in a table.',
+  'I can draw a graph of results.',
+  'I can describe a pattern in results.',
+  'I can research information to answer questions about a harmful substance in food chains.'
+];
+const assessList = document.getElementById('assessList');
+assessItems.forEach(text=>{
+  const item = document.createElement('div'); item.className='assess-item';
+  item.innerHTML = '<div class="assess-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div><p>'+text+'</p>';
+  item.addEventListener('click', ()=>{ item.classList.toggle('checked'); const n=document.querySelectorAll('#assessList .assess-item.checked').length; document.getElementById('assessFill').style.width=(n/assessItems.length*100)+'%'; });
+  assessList.appendChild(item);
+});
+const reflectQs = ['Could we follow the instructions to play the game?','Could we record results in a table and draw a graph?','Could we explain how the game shows the way toxic substances move through a food chain?'];
+const reflectList = document.getElementById('reflectList');
+reflectQs.forEach(q=>{
+  const d = document.createElement('div');
+  d.innerHTML = '<p style="font-size:14px; margin:8px 0 4px; font-weight:600;">'+q+'</p><div class="reflect-row"><button class="reflect-btn r1">Yes</button><button class="reflect-btn r2">A little</button><button class="reflect-btn r3">Not yet</button></div>';
+  const btns = d.querySelectorAll('.reflect-btn');
+  btns.forEach(b=> b.addEventListener('click', ()=>{ btns.forEach(x=>x.classList.remove('on')); b.classList.add('on'); }));
+  reflectList.appendChild(d);
+});
+const glossary = [
+  {term:'Environment', def:'Everything around us: air, water, soil and other living things.'},
+  {term:'Toxic', def:'Harmful or poisonous to living things.'},
+  {term:'Pesticide', def:'A chemical used to kill pests that eat crops.'},
+  {term:'Accumulate', def:'To build up or increase over time.'},
+  {term:'Microplastics', def:'Very tiny pieces of plastic, less than 5 mm across.'},
+  {term:'Mercury', def:'A toxic metal that builds up in food chains, especially in big fish.'},
+  {term:'Cadmium', def:'A toxic metal that can get into soil and water.'},
+  {term:'DDT', def:'A powerful pesticide, now banned, that builds up in food chains.'},
+  {term:'Predator', def:'An animal that hunts and eats other animals.'},
+  {term:'Average', def:'Total ÷ number of things. It gives one typical value.'},
+  {term:'Bar graph', def:'A graph that uses bars to compare amounts.'},
+  {term:'Pattern', def:'A trend in the results, e.g. the further along the chain, the more pesticide.'}
+];
+const glossGrid = document.getElementById('glossGrid');
+glossary.forEach(g=>{
+  const card = document.createElement('div'); card.className='gloss-card';
+  card.innerHTML = '<div class="gloss-inner"><div class="gloss-face front">'+g.term+'</div><div class="gloss-face back">'+g.def+'</div></div>';
+  card.addEventListener('click', ()=> card.classList.toggle('flip'));
+  glossGrid.appendChild(card);
+});
+</script>
+</body>
+</html>
