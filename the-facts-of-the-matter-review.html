@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Facts of the Matter — Unit 5 Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#0F8B8D; --teal-dark:#0B4F5C; --teal-light:#E2F4F3; --teal-mid:#4DB3B0;
+  --orange:#E8792B; --orange-light:#FDEFE3;
+  --purple:#6C4AB6; --purple-light:#EEE9FA;
+  --green:#2E9E64; --green-light:#E3F5EB;
+  --red:#D9483B; --red-light:#FCE8E6;
+  --amber:#C9962A; --amber-light:#FBF3DE;
+  --ink:#20232B; --ink-soft:#5A6070; --paper:#FFFFFF; --cream:#F6F5F1; --line:#E1E3EA;
+  --r-lg:22px; --r-md:14px; --r-sm:9px; --shadow:0 10px 30px rgba(11,79,92,.13);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:'Inter',system-ui,sans-serif;overflow:hidden;font-size:17px;line-height:1.5;}
+h1,h2,h3,.disp{font-family:'Poppins',system-ui,sans-serif;}
+button{font-family:inherit;font-size:inherit;color:inherit;}
+#app{position:relative;width:100vw;height:100vh;height:100dvh;display:flex;flex-direction:column;}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 24px;background:var(--paper);border-bottom:1px solid var(--line);flex:0 0 auto;z-index:20;}
+.crumb{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-soft);font-weight:600;min-width:0;}
+.crumb .tag{background:var(--teal);color:#fff;font-family:'Poppins';font-weight:700;font-size:12px;padding:5px 12px;border-radius:100px;white-space:nowrap;}
+.crumb .cur{color:var(--teal-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap;justify-content:flex-end;max-width:42vw;}
+.dot{width:9px;height:9px;border-radius:50%;background:#D6E4E4;border:none;cursor:pointer;padding:0;transition:all .25s;}
+.dot.active{background:var(--teal);width:22px;border-radius:6px;}
+.counter{font-size:12px;color:var(--ink-soft);font-weight:600;min-width:44px;text-align:right;font-variant-numeric:tabular-nums;}
+.stage{position:relative;flex:1 1 auto;overflow:hidden;}
+.slide{position:absolute;inset:0;opacity:0;pointer-events:none;transform:translateX(30px);transition:opacity .4s ease,transform .4s ease;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.slide.active{opacity:1;pointer-events:auto;transform:none;}
+.inner{max-width:1100px;margin:0 auto;padding:34px 36px 110px;}
+.navbtns{position:fixed;bottom:18px;right:22px;display:flex;gap:10px;z-index:30;}
+.navbtn{width:54px;height:54px;border-radius:50%;border:none;background:var(--teal);color:#fff;font-size:24px;cursor:pointer;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;}
+.navbtn.prev{background:#fff;color:var(--teal-dark);border:2px solid var(--line);}
+.navbtn.disabled{opacity:.3;pointer-events:none;}
+
+/* type */
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Poppins';font-weight:700;font-size:13px;letter-spacing:.4px;text-transform:uppercase;color:var(--teal);margin-bottom:6px;}
+.eyebrow .num{background:var(--teal);color:#fff;width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px;}
+.eyebrow.or{color:var(--orange);} .eyebrow.or .num{background:var(--orange);}
+.eyebrow.pu{color:var(--purple);} .eyebrow.pu .num{background:var(--purple);}
+h2{font-size:clamp(26px,3.4vw,38px);line-height:1.15;margin:0 0 10px;color:var(--teal-dark);}
+.lead{font-size:18px;color:var(--ink-soft);max-width:820px;margin:0 0 22px;}
+.how{display:flex;gap:10px;align-items:flex-start;background:var(--purple-light);border-radius:var(--r-md);padding:12px 16px;margin:0 0 20px;font-size:15.5px;color:#3D2B78;}
+.how b{font-family:'Poppins';}
+.term{font-weight:700;color:var(--teal-dark);background:var(--teal-light);padding:1px 7px;border-radius:6px;white-space:nowrap;}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);padding:22px;box-shadow:0 2px 10px rgba(0,0,0,.04);}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.progress{display:inline-block;font-family:'Poppins';font-weight:700;font-size:14px;background:var(--teal-light);color:var(--teal-dark);padding:6px 14px;border-radius:100px;margin-bottom:14px;}
+.progress.done{background:var(--green);color:#fff;}
+.btn{border:none;border-radius:12px;padding:11px 20px;font-weight:700;cursor:pointer;background:var(--teal);color:#fff;font-family:'Poppins';font-size:15px;transition:transform .15s;}
+.btn:active{transform:scale(.97);}
+.btn.ghost{background:#fff;color:var(--ink-soft);border:2px solid var(--line);}
+.btn.or{background:var(--orange);} .btn.pu{background:var(--purple);}
+.shake{animation:shake .4s;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+
+/* cover */
+.cover{min-height:100%;background:radial-gradient(circle at 20% 20%,rgba(255,255,255,.12) 0 2px,transparent 3px),radial-gradient(circle at 70% 35%,rgba(255,255,255,.1) 0 2px,transparent 3px),radial-gradient(circle at 40% 80%,rgba(255,255,255,.1) 0 2px,transparent 3px),linear-gradient(135deg,#0B4F5C 0%,#0F8B8D 55%,#6C4AB6 100%);background-size:180px 180px,240px 240px,210px 210px,100% 100%;color:#fff;display:flex;align-items:center;}
+.cover .inner{padding-top:50px;}
+.cover .badge{display:inline-block;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);padding:6px 14px;border-radius:100px;font-family:'Poppins';font-weight:600;font-size:14px;margin-bottom:18px;}
+.cover h1{font-size:clamp(38px,6vw,68px);line-height:1.05;margin:0 0 16px;}
+.cover p{font-size:19px;max-width:640px;opacity:.93;}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 30px;}
+.chip{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:100px;padding:8px 15px;font-weight:600;font-size:15px;}
+.startbtn{background:var(--orange);color:#fff;border:none;border-radius:14px;padding:15px 30px;font-family:'Poppins';font-weight:700;font-size:18px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.2);}
+
+/* goals */
+.goal{display:flex;gap:14px;align-items:center;padding:14px 18px;background:#fff;border:2px solid var(--line);border-radius:var(--r-md);margin-bottom:10px;cursor:pointer;transition:all .2s;}
+.goal .tick{flex:0 0 32px;height:32px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:800;color:transparent;}
+.goal.done{border-color:var(--green);background:var(--green-light);}
+.goal.done .tick{background:var(--green);border-color:var(--green);color:#fff;}
+.stations{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px;}
+.station{border-radius:var(--r-md);padding:14px;color:#fff;font-weight:600;font-size:15px;}
+.station b{display:block;font-family:'Poppins';font-size:17px;margin-bottom:2px;}
+
+/* flip cards */
+.flips{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;}
+.flip{position:relative;min-height:168px;border-radius:var(--r-md);cursor:pointer;border:2px solid var(--line);background:#fff;padding:16px;transition:all .25s;text-align:left;}
+.flip .front{display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%;min-height:132px;text-align:center;}
+.flip .front .em{font-size:34px;}
+.flip .front .w{font-family:'Poppins';font-weight:700;font-size:21px;color:var(--teal-dark);margin-top:4px;}
+.flip .front .h{font-size:12.5px;color:var(--ink-soft);margin-top:4px;}
+.flip .back{display:none;font-size:15px;}
+.flip .back .w{font-family:'Poppins';font-weight:700;color:var(--teal);font-size:16px;}
+.flip .back .ex{margin-top:8px;background:var(--amber-light);border-radius:8px;padding:7px 10px;font-size:14px;font-style:italic;}
+.flip.open{border-color:var(--teal);background:var(--teal-light);}
+.flip.open .front{display:none;} .flip.open .back{display:block;}
+
+/* match */
+.match{display:grid;grid-template-columns:1fr 1.6fr;gap:16px;}
+.mcol{display:flex;flex-direction:column;gap:9px;}
+.mitem{border:2px solid var(--line);background:#fff;border-radius:12px;padding:11px 14px;cursor:pointer;text-align:left;font-size:15.5px;transition:all .2s;}
+.mitem.term-i{font-family:'Poppins';font-weight:700;color:var(--teal-dark);}
+.mitem.sel{border-color:var(--orange);background:var(--orange-light);}
+.mitem.ok{border-color:var(--green);background:var(--green-light);color:#1d6b43;cursor:default;opacity:.75;}
+
+/* choice rows */
+.rows{display:flex;flex-direction:column;gap:10px;}
+.row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;background:#fff;border:2px solid var(--line);border-radius:var(--r-md);padding:12px 16px;transition:all .2s;}
+.row .txt{font-size:16.5px;}
+.row .opts{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end;}
+.opt{border:2px solid var(--line);background:var(--cream);border-radius:10px;padding:8px 13px;font-weight:700;font-size:14px;cursor:pointer;}
+.opt:hover{border-color:var(--teal-mid);}
+.row.ok{border-color:var(--green);background:var(--green-light);}
+.row.ok .opt{pointer-events:none;opacity:.45;}
+.row.ok .opt.picked{opacity:1;background:var(--green);border-color:var(--green);color:#fff;}
+.row .why{grid-column:1/-1;display:none;font-size:14.5px;color:#1d6b43;border-top:1px dashed #9fd3b6;padding-top:8px;}
+.row .why.try{color:var(--red);border-color:#f0b4ad;}
+.row.ok .why,.row .why.show{display:block;}
+.rewrite{grid-column:1/-1;display:none;}
+.row.ok .rewrite{display:block;}
+.rewrite button{background:none;border:2px dashed var(--purple);color:var(--purple);border-radius:10px;padding:6px 12px;font-weight:700;font-size:14px;cursor:pointer;}
+.rewrite .r{display:none;margin-top:8px;background:var(--purple-light);border-radius:10px;padding:9px 12px;font-size:15px;color:#3D2B78;}
+.rewrite.open .r{display:block;} .rewrite.open button{display:none;}
+
+/* texts */
+.textbox{background:#fff;border:1px solid var(--line);border-left:6px solid var(--teal);border-radius:var(--r-md);padding:22px 26px;font-size:17px;line-height:1.7;}
+.textbox.pu{border-left-color:var(--purple);}
+.textbox .head{font-family:'Poppins';font-weight:800;font-size:23px;line-height:1.25;color:var(--ink);display:inline;}
+.textbox .by{font-size:13px;color:var(--ink-soft);margin:4px 0 12px;font-weight:600;}
+.textbox h4{font-family:'Poppins';margin:14px 0 4px;color:var(--purple);font-size:16px;}
+.textbox p{margin:0 0 12px;}
+.s{border-radius:6px;padding:1px 2px;transition:background .2s;}
+.hunt .s{cursor:pointer;}
+.hunt .s:hover{background:#FFF6D9;}
+.s.found{background:#CDEFD9;box-shadow:0 0 0 2px #CDEFD9;}
+.s.miss{background:var(--red-light);}
+.mission{display:flex;gap:14px;align-items:center;background:var(--orange-light);border:2px solid var(--orange);border-radius:var(--r-md);padding:14px 18px;margin-bottom:16px;}
+.mission .mn{font-family:'Poppins';font-weight:800;color:var(--orange);font-size:14px;white-space:nowrap;}
+.mission .mt{font-weight:600;font-size:17px;}
+.mission.alldone{background:var(--green-light);border-color:var(--green);}
+.feedback{min-height:24px;font-weight:600;font-size:15px;margin:-6px 0 12px;}
+.feedback.good{color:var(--green);} .feedback.bad{color:var(--red);}
+.vocabnote{margin-top:14px;font-size:14px;color:var(--ink-soft);}
+
+/* think questions */
+.q{background:#fff;border:1px solid var(--line);border-radius:var(--r-md);padding:16px 18px;margin-bottom:12px;}
+.q .qt{font-weight:700;font-size:17px;margin-bottom:8px;display:flex;gap:10px;}
+.q .qt .n{flex:0 0 28px;height:28px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Poppins';font-size:14px;}
+textarea{width:100%;min-height:70px;border:2px solid var(--line);border-radius:10px;padding:10px 12px;font-family:inherit;font-size:16px;resize:vertical;background:var(--cream);}
+textarea:focus{outline:none;border-color:var(--teal-mid);background:#fff;}
+.reveal{margin-top:8px;}
+.reveal>button{background:var(--teal-light);border:none;color:var(--teal-dark);font-weight:700;border-radius:10px;padding:8px 14px;cursor:pointer;font-size:14.5px;}
+.reveal .ans{display:none;margin-top:8px;background:var(--green-light);border-left:4px solid var(--green);border-radius:8px;padding:10px 14px;font-size:15.5px;}
+.reveal.open .ans{display:block;} .reveal.open>button{display:none;}
+.hint{font-size:14px;color:var(--ink-soft);margin-top:6px;}
+
+/* buckets */
+.pool{display:flex;flex-wrap:wrap;gap:9px;min-height:54px;padding:14px;background:#fff;border:2px dashed var(--line);border-radius:var(--r-md);margin-bottom:16px;}
+.wchip{border:2px solid var(--teal-mid);background:#fff;color:var(--teal-dark);border-radius:100px;padding:8px 15px;font-weight:700;cursor:pointer;font-size:15.5px;}
+.wchip.sel{background:var(--orange);border-color:var(--orange);color:#fff;transform:scale(1.05);}
+.wchip.placed{cursor:default;border-color:var(--green);background:var(--green-light);color:#1d6b43;font-size:14.5px;padding:6px 12px;}
+.buckets{display:grid;gap:14px;}
+.bucket{border-radius:var(--r-md);padding:14px;min-height:150px;cursor:pointer;border:3px solid transparent;transition:all .2s;}
+.bucket h3{margin:0 0 4px;font-size:18px;}
+.bucket .bd{font-size:13.5px;margin-bottom:10px;opacity:.85;}
+.bucket .in{display:flex;flex-wrap:wrap;gap:7px;}
+.bucket.ready{border-style:dashed;}
+.b1{background:var(--teal-light);color:var(--teal-dark);} .b1.ready{border-color:var(--teal);}
+.b2{background:var(--orange-light);color:#8A3F0C;} .b2.ready{border-color:var(--orange);}
+.b3{background:var(--purple-light);color:#3D2B78;} .b3.ready{border-color:var(--purple);}
+.b4{background:var(--amber-light);color:#6E5113;} .b4.ready{border-color:var(--amber);}
+
+/* builder */
+.builder{background:#fff;border:1px solid var(--line);border-radius:var(--r-md);padding:16px 18px;margin-bottom:14px;}
+.builder .line{min-height:52px;border-bottom:3px solid var(--teal-mid);display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:6px 0;margin:6px 0 12px;font-size:18px;}
+.builder .line .ph{color:#aab;font-size:15px;}
+.bchip{border:2px solid var(--line);background:var(--cream);border-radius:10px;padding:8px 13px;font-weight:600;cursor:pointer;font-size:16px;}
+.bchip.comma{font-weight:900;font-size:20px;padding:4px 16px;color:var(--orange);border-color:var(--orange);}
+.bchip.used{visibility:hidden;}
+.line .bchip{background:var(--teal-light);border-color:var(--teal-mid);}
+.builder .acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.builder.ok{border-color:var(--green);background:var(--green-light);}
+.builder.ok .bank,.builder.ok .acts .btn{display:none;}
+
+/* order */
+.ordlist{display:flex;flex-direction:column;gap:10px;}
+.ord{display:flex;gap:14px;align-items:flex-start;background:#fff;border:2px solid var(--line);border-radius:var(--r-md);padding:14px 16px;cursor:pointer;text-align:left;font-size:16px;transition:all .2s;}
+.ord .on{flex:0 0 34px;height:34px;border-radius:50%;border:2px dashed var(--line);display:flex;align-items:center;justify-content:center;font-family:'Poppins';font-weight:800;color:var(--teal);}
+.ord.picked{border-color:var(--teal-mid);}
+.ord.picked .on{border:none;background:var(--teal);color:#fff;}
+.ord.good{border-color:var(--green);background:var(--green-light);}
+.ord.good .on{background:var(--green);}
+.ord.wrong{border-color:var(--red);background:var(--red-light);}
+.ord .lbl{display:none;font-family:'Poppins';font-weight:700;font-size:13px;color:var(--green);text-transform:uppercase;letter-spacing:.4px;}
+.ord.good .lbl{display:block;}
+
+/* proofread */
+.proof{background:#fff;border:1px solid var(--line);border-left:6px solid var(--orange);border-radius:var(--r-md);padding:22px 24px;font-size:19px;line-height:2;}
+.tok{cursor:pointer;border-radius:6px;padding:2px 3px;}
+.tok:hover{background:#FFF6D9;}
+.tok.fixed{background:#CDEFD9;}
+.tok.fine{background:#EEF0F4;}
+.fixlist{margin-top:14px;display:flex;flex-direction:column;gap:8px;}
+.fix{background:var(--green-light);border-left:4px solid var(--green);border-radius:8px;padding:9px 13px;font-size:15px;}
+
+/* planner */
+.topics{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:16px;}
+.topic{border:2px solid var(--line);background:#fff;border-radius:100px;padding:9px 16px;font-weight:600;cursor:pointer;font-size:15px;}
+.topic.sel{background:var(--teal);border-color:var(--teal);color:#fff;}
+.plan{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.pbox{border-radius:var(--r-md);padding:14px 16px;}
+.pbox h3{margin:0 0 6px;font-size:17px;}
+.pbox .starters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.st{border:1.5px solid currentColor;background:rgba(255,255,255,.7);border-radius:100px;padding:4px 10px;font-size:13px;font-weight:600;cursor:pointer;}
+.pbox textarea{background:#fff;min-height:96px;}
+.check{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border-radius:10px;cursor:pointer;font-size:15.5px;}
+.check .bx{flex:0 0 24px;height:24px;border-radius:7px;border:2px solid var(--teal-mid);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;}
+.check.on{background:var(--green-light);} .check.on .bx{background:var(--green);border-color:var(--green);}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:12px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:50;}
+.toast.show{opacity:1;}
+.big-cel{text-align:center;padding:24px;background:linear-gradient(135deg,var(--teal) 0%,var(--purple) 100%);color:#fff;border-radius:var(--r-lg);margin-top:18px;}
+.big-cel h3{font-size:24px;margin:0 0 6px;}
+
+@media (max-width:820px){
+  .inner{padding:24px 18px 110px;}
+  .grid2,.grid3,.match,.plan,.stations{grid-template-columns:1fr;}
+  .row{grid-template-columns:1fr;} .row .opts{justify-content:flex-start;}
+  .dots{display:none;}
+  .topbar{padding:10px 16px;}
+  .buckets{grid-template-columns:1fr !important;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="crumb"><span class="tag">English · Unit 5</span><span class="cur" id="crumbTitle">The Facts of the Matter</span></div>
+    <div style="display:flex;align-items:center;gap:14px;"><div class="dots" id="dots"></div><div class="counter" id="counter">1 / 1</div></div>
+  </div>
+  <div class="stage" id="stage">
+
+<!-- 1 COVER -->
+<section class="slide cover" data-title="Welcome">
+  <div class="inner">
+    <div class="badge">Year 6 English · Unit 5 Review</div>
+    <h1>The Facts of the Matter</h1>
+    <p>Reports, arguments and the special words writers use to talk about them. Work through each station at your own pace. Tap, sort, build and write!</p>
+    <div class="chips"><span class="chip">📚 Word Bank</span><span class="chip">📰 Read a report</span><span class="chip">⚖️ Balanced arguments</span><span class="chip">🔗 Connectives</span><span class="chip">✏️ Plan your own</span></div>
+    <button class="startbtn" onclick="nextSlide()">Let's go →</button>
+  </div>
+</section>
+
+<!-- 2 GOALS -->
+<section class="slide" data-title="Today's goals">
+  <div class="inner">
+    <div class="eyebrow"><span class="num">★</span>Today's goals</div>
+    <h2>What we're practising</h2>
+    <p class="lead">Tap each goal when you feel confident with it. You can come back and tap more at the end!</p>
+    <div id="goals"></div>
+    <div class="stations">
+      <div class="station" style="background:var(--teal)"><b>1 · Words</b>Learn and match the key terms</div>
+      <div class="station" style="background:var(--orange)"><b>2 · Reports</b>Facts, impersonal language, a news report</div>
+      <div class="station" style="background:var(--purple)"><b>3 · Arguments</b>Compare texts, connectives, clauses</div>
+      <div class="station" style="background:var(--amber)"><b>4 · Write</b>Sort, order, proofread, plan</div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 WORD BANK 1 -->
+<section class="slide" data-title="Word Bank 1">
+  <div class="inner">
+    <div class="eyebrow"><span class="num">1</span>Word Bank · Part 1</div>
+    <h2>Words about texts</h2>
+    <p class="lead">These words help us <b>talk about</b> reports and arguments. Tap each card to see what it means.</p>
+    <div class="how">👆 <span><b>Tip:</b> Say the word out loud, read the meaning, then read the example. Tap again to flip it back.</span></div>
+    <div class="flips" id="flips1"></div>
+  </div>
+</section>
+
+<!-- 4 WORD BANK 2 -->
+<section class="slide" data-title="Word Bank 2">
+  <div class="inner">
+    <div class="eyebrow"><span class="num">1</span>Word Bank · Part 2</div>
+    <h2>Words about writing</h2>
+    <p class="lead">These words help us talk about <b>how</b> a writer builds sentences and organises an argument.</p>
+    <div class="flips" id="flips2"></div>
+  </div>
+</section>
+
+<!-- 5 MATCH -->
+<section class="slide" data-title="Match the terms">
+  <div class="inner">
+    <div class="eyebrow"><span class="num">1</span>Word match</div>
+    <h2>Match each word to its meaning</h2>
+    <div class="how">👆 <span><b>How:</b> Tap a word on the left, then tap its meaning on the right. Need help? Go back to the Word Bank!</span></div>
+    <div class="progress" id="matchProg">0 of 8 matched</div>
+    <div class="match"><div class="mcol" id="mTerms"></div><div class="mcol" id="mDefs"></div></div>
+    <div style="margin-top:14px"><button class="btn ghost" onclick="buildMatch()">🔀 New set of words</button></div>
+  </div>
+</section>
+
+<!-- 6 FACT / OPINION -->
+<section class="slide" data-title="Fact or opinion?">
+  <div class="inner">
+    <div class="eyebrow or"><span class="num">2</span>Reports</div>
+    <h2>Fact or opinion?</h2>
+    <p class="lead">A <span class="term">fact</span> can be checked and proved. An <span class="term">opinion</span> is what someone thinks or feels. Reports use mostly facts.</p>
+    <div class="how">🔍 <span><b>Clue:</b> Opinion words often describe feelings or judgements, like <i>beautiful, boring, best, worst, should feel</i>.</span></div>
+    <div class="progress" id="foProg">0 of 8 sorted</div>
+    <div class="rows" id="foRows"></div>
+  </div>
+</section>
+
+<!-- 7 PERSONAL / IMPERSONAL -->
+<section class="slide" data-title="Personal or impersonal?">
+  <div class="inner">
+    <div class="eyebrow or"><span class="num">2</span>Reports</div>
+    <h2>Personal or impersonal?</h2>
+    <div class="grid2" style="margin-bottom:18px">
+      <div class="card" style="border-left:6px solid var(--orange)"><b style="font-family:Poppins;color:var(--orange)">Personal 🙋</b><br>Uses <b>I, me, my, we, you</b>. Shares feelings. Sounds like someone chatting.</div>
+      <div class="card" style="border-left:6px solid var(--teal)"><b style="font-family:Poppins;color:var(--teal)">Impersonal 🏛️</b><br>No I or you. Uses phrases like <b>It is believed that…</b>, <b>Scientists have found…</b> and the <span class="term">passive voice</span>. Sounds formal.</div>
+    </div>
+    <div class="progress" id="piProg">0 of 6 sorted</div>
+    <div class="rows" id="piRows"></div>
+  </div>
+</section>
+
+<!-- 8 READ THE REPORT (hunt) -->
+<section class="slide" data-title="Read a report">
+  <div class="inner">
+    <div class="eyebrow or"><span class="num">2</span>Read a news report</div>
+    <h2>Feature hunt 🔎</h2>
+    <p class="lead">Read the report first. Then follow the missions and tap the right sentence in the text.</p>
+    <div class="mission" id="mission"><span class="mn" id="mNum">Mission 1 of 7</span><span class="mt" id="mText"></span></div>
+    <div class="feedback" id="huntFb"></div>
+    <div class="textbox hunt" id="report">
+      <span class="s" data-tags="headline"><span class="head">Warmer Seas Put the World's Coral Reefs in Danger</span></span>
+      <div class="by">Science and Environment Desk</div>
+      <p><span class="s" data-tags="intro">A new report from a team of ocean scientists warns that coral reefs around the world are losing their colour faster than ever before.</span> <span class="s" data-tags="audience passive">The report was written for governments and world leaders, who make decisions about the environment.</span></p>
+      <p><span class="s" data-tags="">When the sea becomes too warm, corals push out the tiny algae that live inside them and give them their colour.</span> <span class="s" data-tags="">The coral then turns white.</span> <span class="s" data-tags="technical">This is called coral bleaching.</span> <span class="s" data-tags="reason">Sea temperatures are rising mainly because of greenhouse gases from burning coal, oil and gas.</span> <span class="s" data-tags="reason">Pollution from farms and cities is also harming many reefs.</span></p>
+      <p><span class="s" data-tags="passive fact">Around half of the world's coral reefs have already been damaged.</span> <span class="s" data-tags="quote conditional">"If we act now, many reefs can still recover," said Dr Lena Park, who led the research.</span></p>
+      <p><span class="s" data-tags="action">The report states that governments must cut greenhouse gases quickly.</span> <span class="s" data-tags="action">It also says that countries should protect reefs from pollution and overfishing.</span></p>
+    </div>
+    <p class="vocabnote">📖 <b>algae</b> = tiny plant-like living things · <b>greenhouse gases</b> = gases that trap heat around the Earth · <b>overfishing</b> = catching too many fish</p>
+  </div>
+</section>
+
+<!-- 9 THINK ABOUT THE REPORT -->
+<section class="slide" data-title="Think about the report">
+  <div class="inner">
+    <div class="eyebrow or"><span class="num">2</span>Read a news report</div>
+    <h2>Think about the coral report</h2>
+    <p class="lead">Type or write your answer first. Then tap to compare with a model answer. Use the report on the last slide to help.</p>
+    <div class="q"><div class="qt"><span class="n">1</span>What type of text is it, and who was the scientists' report written for?</div>
+      <textarea placeholder="It is a… It was written for…"></textarea>
+      <div class="reveal"><button>Show a model answer</button><div class="ans">It is a <b>news report</b> about a scientific report. The scientists' report was written for <b>governments and world leaders</b>, who make decisions about the environment.</div></div></div>
+    <div class="q"><div class="qt"><span class="n">2</span>Give two reasons why coral reefs are in danger.</div>
+      <textarea placeholder="One reason is… Another reason is…"></textarea>
+      <div class="reveal"><button>Show a model answer</button><div class="ans">1. Sea temperatures are rising because of <b>greenhouse gases from burning coal, oil and gas</b>.<br>2. <b>Pollution from farms and cities</b> is harming the reefs.</div></div></div>
+    <div class="q"><div class="qt"><span class="n">3</span>According to the report, who must do what to help?</div>
+      <textarea placeholder="Governments must… Countries should…"></textarea>
+      <div class="reveal"><button>Show a model answer</button><div class="ans"><b>Governments</b> must cut greenhouse gases quickly. <b>Countries</b> should protect reefs from pollution and overfishing.<div class="hint">Notice how the answer names WHO and says WHAT they must do.</div></div></div></div>
+    <div class="q"><div class="qt"><span class="n">4</span>Based on the facts, what could <u>you</u> do now to help?</div>
+      <textarea placeholder="I could…"></textarea>
+      <div class="reveal"><button>Show some ideas</button><div class="ans">Your own idea is welcome! For example: turn off lights and fans to save energy · walk, cycle or take the bus instead of a car · use less plastic so less pollution reaches the sea · never buy coral as a souvenir.</div></div></div>
+  </div>
+</section>
+
+<!-- 10 BALANCED ARGUMENT TEXT -->
+<section class="slide" data-title="Read an argument">
+  <div class="inner">
+    <div class="eyebrow pu"><span class="num">3</span>Balanced arguments</div>
+    <h2>Read a balanced argument ⚖️</h2>
+    <p class="lead">A <span class="term">balanced argument</span> gives reasons <b>for</b> and <b>against</b> an idea, then ends with a <span class="term">conclusion</span>. Tap the coloured words to see the job they do.</p>
+    <div class="textbox pu">
+      <span class="head">Should Homework Be Banned in Primary Schools?</span>
+      <p style="margin-top:12px"><span class="tagged" data-j="Introduction: says what the topic is and why people are talking about it.">Homework has been part of school life for many years. However, some people now question whether young learners need it at all.</span></p>
+      <h4>Reasons for a ban</h4>
+      <p>Supporters of a ban argue that children need time to rest, play and be with their families. Some studies suggest that homework has little effect on learning for children under eleven. <span class="cj" data-j="ADDING connective: adds another point on the same side.">Furthermore</span>, not every child has a quiet place to work at home.</p>
+      <h4>Reasons against a ban</h4>
+      <p><span class="cj" data-j="CONTRASTING connective: switches to the other side of the argument.">On the other hand</span>, many teachers believe homework helps children practise skills learned in class. It can also build good habits, such as planning time and working independently. <span class="cj" data-j="ADDING connective: adds another point on the same side.">In addition</span>, homework lets parents see what their children are learning.</p>
+      <h4>Conclusion</h4>
+      <p><span class="cj" data-j="CONCLUDING connective: shows the argument is being summed up.">In conclusion</span>, there are strong points on both sides. <span class="cj" data-j="The writer's VIEW, based on the evidence. Notice it is careful and fair, not bossy.">Perhaps the best answer is a small amount of useful homework, rather than none at all.</span></p>
+    </div>
+    <div class="feedback good" id="cjFb" style="margin-top:12px">👆 Tap a coloured phrase.</div>
+  </div>
+</section>
+
+<!-- 11 COMPARE -->
+<section class="slide" data-title="Compare the texts">
+  <div class="inner">
+    <div class="eyebrow pu"><span class="num">3</span>Compare two texts</div>
+    <h2>Report or argument, or both?</h2>
+    <p class="lead">Think about the <b>coral report</b> 📰 and the <b>homework argument</b> ⚖️. Which text has each feature?</p>
+    <div class="how">💡 <span><b>Remember:</b> Both texts share the same <span class="term" style="background:#fff">purpose</span>: to inform the reader using facts. But only one shows both sides.</span></div>
+    <div class="progress" id="cmpProg">0 of 9 sorted</div>
+    <div class="rows" id="cmpRows"></div>
+  </div>
+</section>
+
+<!-- 12 CONNECTIVES -->
+<section class="slide" data-title="Connectives">
+  <div class="inner">
+    <div class="eyebrow pu"><span class="num">3</span>Connectives</div>
+    <h2>Sort the connectives 🔗</h2>
+    <p class="lead"><span class="term">Connectives</span> link ideas and guide the reader through an argument. What job does each one do?</p>
+    <div class="how">👆 <span><b>How:</b> Tap a word, then tap the box where it belongs.</span></div>
+    <div class="progress" id="cnProg">0 of 12 sorted</div>
+    <div class="pool" id="cnPool"></div>
+    <div class="buckets" id="cnBuckets" style="grid-template-columns:repeat(3,1fr)"></div>
+  </div>
+</section>
+
+<!-- 13 CONDITIONAL -->
+<section class="slide" data-title="Conditional clauses">
+  <div class="inner">
+    <div class="eyebrow pu"><span class="num">3</span>Express possibility</div>
+    <h2>Conditional clauses and commas</h2>
+    <div class="grid2" style="margin-bottom:16px">
+      <div class="card"><b style="font-family:Poppins;color:var(--orange)">Conditional clause first → comma</b><br><span style="font-size:18px"><u>If it keeps raining</u><b style="color:var(--orange);font-size:22px">,</b> the river will flood.</span></div>
+      <div class="card"><b style="font-family:Poppins;color:var(--teal)">Main clause first → no comma</b><br><span style="font-size:18px">The river will flood <u>if it keeps raining</u>.</span></div>
+    </div>
+    <p class="lead" style="margin-bottom:10px"><b>Build it!</b> Tap the pieces in order. Only use the comma if it's needed.</p>
+    <div id="builders"></div>
+    <p class="lead" style="margin:18px 0 10px"><b>Comma or no comma?</b> Choose what goes in the gap.</p>
+    <div class="progress" id="cmProg">0 of 4 sorted</div>
+    <div class="rows" id="cmRows"></div>
+  </div>
+</section>
+
+<!-- 14 FOR / AGAINST -->
+<section class="slide" data-title="For or against?">
+  <div class="inner">
+    <div class="eyebrow" style="color:var(--amber)"><span class="num" style="background:var(--amber)">4</span>Plan an argument</div>
+    <h2>Should our town build a new swimming pool? 🏊</h2>
+    <p class="lead">Sort each reason. Is it a point <b>for</b> building the pool, or a point <b>against</b>?</p>
+    <div class="how">👆 <span><b>How:</b> Tap a reason, then tap <b>For</b> or <b>Against</b>.</span></div>
+    <div class="progress" id="faProg">0 of 8 sorted</div>
+    <div class="pool" id="faPool"></div>
+    <div class="buckets" id="faBuckets" style="grid-template-columns:1fr 1fr"></div>
+  </div>
+</section>
+
+<!-- 15 ORDER -->
+<section class="slide" data-title="Put it in order">
+  <div class="inner">
+    <div class="eyebrow" style="color:var(--amber)"><span class="num" style="background:var(--amber)">4</span>Structure</div>
+    <h2>Put the argument in order</h2>
+    <p class="lead">A balanced argument has four parts: <span class="term">introduction</span> → points <b>for</b> → points <b>against</b> → <span class="term">conclusion</span>. Tap the paragraphs in the right order.</p>
+    <div class="feedback" id="ordFb"></div>
+    <div class="ordlist" id="ordList"></div>
+    <div style="margin-top:14px"><button class="btn ghost" onclick="buildOrder()">↺ Start again</button></div>
+  </div>
+</section>
+
+<!-- 16 PROOFREAD -->
+<section class="slide" data-title="Proofread">
+  <div class="inner">
+    <div class="eyebrow" style="color:var(--amber)"><span class="num" style="background:var(--amber)">4</span>Proofread</div>
+    <h2>Be the editor ✏️</h2>
+    <p class="lead">This conclusion has <b>4 parts</b> that need fixing: commas, spelling and language that is too personal or chatty. Tap each part you think needs fixing.</p>
+    <div class="progress" id="prProg">0 of 4 fixed</div>
+    <div class="proof" id="proof"></div>
+    <div class="fixlist" id="fixlist"></div>
+  </div>
+</section>
+
+<!-- 17 PLANNER -->
+<section class="slide" data-title="Plan your own">
+  <div class="inner">
+    <div class="eyebrow" style="color:var(--amber)"><span class="num" style="background:var(--amber)">4</span>Your turn</div>
+    <h2>Plan your own balanced argument</h2>
+    <p class="lead">Choose a topic. Use the sentence starters to help. Then check your plan with the checklist.</p>
+    <div class="topics" id="topics"></div>
+    <div class="card" style="margin-bottom:14px;padding:14px 18px"><b>My topic:</b> <span id="myTopic" style="font-family:Poppins;font-weight:700;color:var(--teal-dark)">Tap a topic above</span>
+      <input id="ownTopic" placeholder="Type your own topic question here…" style="display:none;width:100%;margin-top:8px;border:2px solid var(--line);border-radius:10px;padding:10px;font-size:16px;font-family:inherit"></div>
+    <div class="plan">
+      <div class="pbox b1"><h3>1 · Introduction</h3><div class="starters" data-for="p1"></div><textarea id="p1" placeholder="Introduce the topic in an interesting way…"></textarea></div>
+      <div class="pbox b2"><h3>2 · Points for</h3><div class="starters" data-for="p2"></div><textarea id="p2" placeholder="Give facts and reasons FOR…"></textarea></div>
+      <div class="pbox b3"><h3>3 · Points against</h3><div class="starters" data-for="p3"></div><textarea id="p3" placeholder="Give facts and reasons AGAINST…"></textarea></div>
+      <div class="pbox b4"><h3>4 · Conclusion</h3><div class="starters" data-for="p4"></div><textarea id="p4" placeholder="Sum up both sides, then give your view based on the evidence…"></textarea></div>
+    </div>
+    <h3 style="margin:22px 0 8px;color:var(--teal-dark)">Proofreading checklist ✅</h3>
+    <div id="checklist"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+      <button class="btn" onclick="copyPlan()">📋 Copy my plan</button>
+    </div>
+    <p class="hint">Copy your plan and paste it into Seesaw, or write it neatly in your notebook and post a photo.</p>
+  </div>
+</section>
+
+<!-- 18 WRAP UP -->
+<section class="slide" data-title="Wrap up">
+  <div class="inner">
+    <div class="eyebrow"><span class="num">★</span>Wrap up</div>
+    <h2>How did it go?</h2>
+    <p class="lead">Tap the goals you feel confident with now. Any you didn't tap? Go back to that station for another try.</p>
+    <div id="goals2"></div>
+    <div class="q" style="margin-top:16px"><div class="qt"><span class="n">💬</span>Explain to someone at home: what is the difference between a <u>report</u> and a <u>balanced argument</u>?</div>
+      <textarea placeholder="A report… but a balanced argument…"></textarea>
+      <div class="reveal"><button>Show a model answer</button><div class="ans">A <b>report</b> gives facts about one topic to inform the reader. A <b>balanced argument</b> also uses facts, but it gives reasons <b>for and against</b> an idea and ends with a conclusion.</div></div></div>
+    <div class="big-cel"><h3>📤 Share on Seesaw</h3>Post your argument plan (copied or a photo of your notebook) and one new word you can now explain.</div>
+  </div>
+</section>
+
+  </div>
+  <div class="navbtns"><button class="navbtn prev" id="prevBtn" onclick="prevSlide()" aria-label="Previous">‹</button><button class="navbtn" id="nextBtn" onclick="nextSlide()" aria-label="Next">›</button></div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* ===== helpers ===== */
+const $=s=>document.querySelector(s);
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const shake=e=>{e.classList.remove('shake');void e.offsetWidth;e.classList.add('shake');};
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1800);}
+function setProg(id,n,tot,word){const p=$(id);p.textContent=(n>=tot?'⭐ ':'')+n+' of '+tot+' '+word;p.classList.toggle('done',n>=tot);}
+
+/* ===== navigation ===== */
+const slides=document.querySelectorAll('.slide');const total=slides.length;let idx=0;
+const dotsWrap=$('#dots');
+slides.forEach((s,i)=>{const d=el('button','dot');d.setAttribute('aria-label','Go to slide '+(i+1));d.onclick=()=>goTo(i);dotsWrap.appendChild(d);});
+function render(){slides.forEach((s,i)=>s.classList.toggle('active',i===idx));
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  $('#counter').textContent=(idx+1)+' / '+total;
+  $('#crumbTitle').textContent='The Facts of the Matter · '+slides[idx].dataset.title;
+  $('#prevBtn').classList.toggle('disabled',idx===0);$('#nextBtn').classList.toggle('disabled',idx===total-1);slides[idx].scrollTop=0;}
+function goTo(i){idx=Math.max(0,Math.min(total-1,i));render();}
+function nextSlide(){goTo(idx+1);} function prevSlide(){goTo(idx-1);}
+document.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA'].includes(e.target.tagName))return;if(e.key==='ArrowRight')nextSlide();if(e.key==='ArrowLeft')prevSlide();});
+render();
+
+/* ===== goals ===== */
+const GOALS=['I can explain key words like <b>impersonal</b>, <b>factual</b>, <b>persuasive</b> and <b>balanced</b>','I can tell the difference between a <b>fact</b> and an <b>opinion</b>','I can find the purpose, audience and main facts in a <b>report</b>','I can compare a report and a <b>balanced argument</b>','I can use <b>connectives</b> and commas after <b>conditional clauses</b>','I can plan a balanced argument with an <b>introduction</b>, points for and against, and a <b>conclusion</b>'];
+['#goals','#goals2'].forEach(id=>GOALS.forEach(g=>{const d=el('div','goal','<span class="tick">✓</span><span>'+g+'</span>');d.onclick=()=>d.classList.toggle('done');$(id).appendChild(d);}));
+
+/* ===== word bank ===== */
+const WORDS1=[
+ {e:'📰',w:'report',d:'A non-fiction text that gives facts and information about a topic.',x:'A news report about rising sea levels.'},
+ {e:'🎯',w:'purpose',d:'The reason a text was written: to inform, to persuade, to explain, to entertain…',x:'The purpose of a report is to inform.'},
+ {e:'👥',w:'audience',d:'The people a text is written for.',x:'This leaflet is written for parents.'},
+ {e:'🧵',w:'theme',d:'The big idea or topic that runs through a text, or that two texts share.',x:'Both texts share the theme of protecting the environment.'},
+ {e:'✅',w:'fact',d:'Something that is true and can be checked or proved.',x:'Water freezes at 0°C.'},
+ {e:'💭',w:'opinion',d:'What someone thinks, feels or believes. Others may disagree.',x:'Summer is the best season.'},
+ {e:'🎩',w:'formal',d:'Serious, careful language. No slang or chatty words.',x:'"Many people are concerned" (not "Loads of people are freaking out").'},
+ {e:'🏛️',w:'impersonal',d:'Writing that does not use I, me or you. It sounds neutral and objective.',x:'"It is believed that…" instead of "I think that…"'},
+ {e:'🙋',w:'personal',d:'Writing that uses I, me, my, we or you and shares the writer\'s own feelings.',x:'"I love swimming and you will too!"'},
+ {e:'📊',w:'factual',d:'Based on facts, not feelings.',x:'A factual text includes numbers, dates and research.'}];
+const WORDS2=[
+ {e:'📣',w:'persuasive',d:'Trying to make the reader agree with ONE point of view.',x:'"You MUST visit this amazing zoo!"'},
+ {e:'⚖️',w:'balanced argument',d:'A text that gives points for AND against an idea, then a conclusion.',x:'"Should phones be allowed at school?" with both sides.'},
+ {e:'👍👎',w:'pros and cons',d:'Pros are points for (advantages). Cons are points against (disadvantages).',x:'Pro: a pool helps people exercise. Con: it is expensive.'},
+ {e:'🔎',w:'evidence',d:'Facts, numbers or expert quotes that support a point.',x:'"A study of 2,000 children found that…"'},
+ {e:'🔗',w:'connective',d:'A word or phrase that links ideas.',x:'however · furthermore · in conclusion'},
+ {e:'🔄',w:'passive voice',d:'The sentence focuses on what happened, not who did it. Useful in impersonal writing.',x:'"The report was published." (not "They published the report.")'},
+ {e:'🧩',w:'main clause',d:'A group of words with a verb that can stand alone as a sentence.',x:'"the river will flood."'},
+ {e:'❓',w:'conditional clause',d:'A clause that says what might happen, often starting with if or unless. It cannot stand alone.',x:'"If it keeps raining, …"'},
+ {e:'🚪',w:'introduction',d:'The opening paragraph. It tells the reader what the topic is.',x:'"Many people are asking whether…"'},
+ {e:'🏁',w:'conclusion',d:'The final paragraph. It sums up both sides and may give the writer\'s view based on the evidence.',x:'"In conclusion, … On balance, …"'},
+ {e:'✏️',w:'proofread',d:'To read your work carefully to find and fix mistakes.',x:'Check commas, spelling and formal language.'}];
+function buildFlips(id,arr){arr.forEach(o=>{const c=el('button','flip','<div class="front"><div class="em">'+o.e+'</div><div class="w">'+o.w+'</div><div class="h">tap to flip</div></div><div class="back"><div class="w">'+o.w+'</div>'+o.d+'<div class="ex">'+o.x+'</div></div>');c.onclick=()=>c.classList.toggle('open');$(id).appendChild(c);});}
+buildFlips('#flips1',WORDS1);buildFlips('#flips2',WORDS2);
+
+/* ===== match game ===== */
+const ALLW=WORDS1.concat(WORDS2);let mSel=null,mDone=0;
+function buildMatch(){const set=shuffle(ALLW).slice(0,8);mSel=null;mDone=0;setProg('#matchProg',0,8,'matched');
+ const T=$('#mTerms'),D=$('#mDefs');T.innerHTML='';D.innerHTML='';
+ set.forEach(o=>{const b=el('button','mitem term-i',o.e+' '+o.w);b.dataset.k=o.w;b.onclick=()=>{if(b.classList.contains('ok'))return;T.querySelectorAll('.mitem').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');mSel=b;};T.appendChild(b);});
+ shuffle(set).forEach(o=>{const b=el('button','mitem',o.d);b.dataset.k=o.w;b.onclick=()=>{if(b.classList.contains('ok'))return;if(!mSel){toast('Tap a word on the left first');return;}
+   if(mSel.dataset.k===b.dataset.k){mSel.classList.remove('sel');mSel.classList.add('ok');b.classList.add('ok');mSel=null;mDone++;setProg('#matchProg',mDone,8,'matched');if(mDone===8)toast('🎉 All matched!');}
+   else{shake(b);shake(mSel);}};D.appendChild(b);});}
+buildMatch();
+
+/* ===== generic choice rows ===== */
+function buildRows(id,progId,items,opts,word){let done=0;const wrap=$(id);
+ items.forEach(it=>{const r=el('div','row');r.appendChild(el('div','txt',it.t));const o=el('div','opts');const why=el('div','why');
+  opts.forEach(op=>{const b=el('button','opt',op);b.onclick=()=>{if(r.classList.contains('ok'))return;
+    if(op===it.a){r.classList.add('ok');b.classList.add('picked');why.classList.remove('try');why.innerHTML='✓ '+it.why;done++;setProg(progId,done,items.length,word);if(done===items.length)toast('🎉 Great sorting!');}
+    else{shake(r);why.className='why try show';why.innerHTML='Not quite. '+(it.hint||'Read it again and try another answer.');}};o.appendChild(b);});
+  r.appendChild(o);r.appendChild(why);
+  if(it.rw){const rw=el('div','rewrite','<button>✨ Make it impersonal</button><div class="r">'+it.rw+'</div>');rw.querySelector('button').onclick=()=>rw.classList.add('open');r.appendChild(rw);}
+  wrap.appendChild(r);});}
+
+buildRows('#foRows','#foProg',shuffle([
+ {t:'Coral reefs are found in warm, shallow seas.',a:'Fact',why:'This can be checked in a science book or atlas.'},
+ {t:'Coral reefs are the most beautiful places on Earth.',a:'Opinion',why:'"Most beautiful" is a feeling. Not everyone would agree.',hint:'Look for a describing word that shows a feeling.'},
+ {t:'Burning coal, oil and gas releases greenhouse gases.',a:'Fact',why:'Scientists have measured and proved this.'},
+ {t:'Homework is boring and a waste of time.',a:'Opinion',why:'"Boring" and "waste of time" are judgements.',hint:'Would everyone agree with this?'},
+ {t:'The report was published in March.',a:'Fact',why:'A date can be checked.'},
+ {t:'Everyone should feel terrible about plastic pollution.',a:'Opinion',why:'This tells us how the writer thinks we should feel.',hint:'Look for "should feel".'},
+ {t:'Sea levels have risen over the last 100 years.',a:'Fact',why:'This has been measured by scientists.'},
+ {t:'Cars are the worst invention ever.',a:'Opinion',why:'"Worst" is a judgement. Many people would disagree!',hint:'Look for a "best/worst" word.'}]),['Fact','Opinion'],'sorted');
+
+buildRows('#piRows','#piProg',[
+ {t:'I really think the ocean is in big trouble.',a:'Personal',why:'It uses <b>I</b> and shares the writer\'s feelings.',rw:'"It is believed that the ocean is in serious danger."'},
+ {t:'Scientists have found that sea temperatures are rising.',a:'Impersonal',why:'No I or you. It reports what experts found.'},
+ {t:'You won\'t believe how much plastic we throw away!',a:'Personal',why:'It speaks to <b>you</b>, uses <b>we</b>, and sounds chatty.',rw:'"Large amounts of plastic are thrown away every year." (passive voice!)'},
+ {t:'It is thought that cars cause much of the air pollution in cities.',a:'Impersonal',why:'"It is thought that…" is a classic impersonal phrase.'},
+ {t:'My friends and I hate doing homework.',a:'Personal',why:'It uses <b>my</b> and <b>I</b> and gives a feeling.',rw:'"Some children do not enjoy doing homework."'},
+ {t:'The new park was opened in 2024.',a:'Impersonal',why:'This is the <b>passive voice</b>. We don\'t know who opened it, and that\'s fine!'}],['Personal','Impersonal'],'sorted');
+
+/* ===== report hunt ===== */
+const MISSIONS=[
+ {tag:'headline',t:'Tap the headline.',ok:'Yes! The headline tells us the main idea in a few words.'},
+ {tag:'audience',t:'Tap the sentence that tells us the AUDIENCE of the scientists\' report.',ok:'Correct. The audience is governments and world leaders.'},
+ {tag:'technical',t:'Tap the sentence that names a TECHNICAL TERM.',ok:'Yes! "Coral bleaching" is a technical (subject-specific) term. Reports often explain these.'},
+ {tag:'reason',t:'Tap a sentence that gives a REASON the reefs are in danger.',ok:'Well spotted! There are two reasons: greenhouse gases and pollution.'},
+ {tag:'quote',t:'Tap the QUOTE from an expert.',ok:'Yes! Quoting an expert makes a report more reliable.'},
+ {tag:'passive',t:'Tap a sentence written in the PASSIVE VOICE.',ok:'Correct! The passive voice ("was written", "have been damaged") helps keep a report impersonal.'},
+ {tag:'action',t:'Tap a sentence that says WHO must do WHAT.',ok:'Yes! Governments must cut greenhouse gases; countries should protect reefs.'}];
+let mi=0;
+function showMission(){if(mi>=MISSIONS.length){$('#mission').classList.add('alldone');$('#mNum').textContent='All done!';$('#mText').textContent='🎉 You found every feature. Now try the questions on the next slide.';return;}
+ $('#mNum').textContent='Mission '+(mi+1)+' of '+MISSIONS.length;$('#mText').textContent=MISSIONS[mi].t;}
+showMission();
+document.querySelectorAll('#report .s').forEach(s=>{s.onclick=()=>{if(mi>=MISSIONS.length)return;const m=MISSIONS[mi];const fb=$('#huntFb');
+ if((s.dataset.tags||'').split(' ').includes(m.tag)){document.querySelectorAll('#report .s').forEach(x=>x.classList.remove('found','miss'));s.classList.add('found');fb.className='feedback good';fb.textContent='✓ '+m.ok;mi++;setTimeout(showMission,300);}
+ else{s.classList.add('miss');setTimeout(()=>s.classList.remove('miss'),700);fb.className='feedback bad';fb.textContent='Not that one. Read the mission again and look carefully.';}};});
+
+/* ===== reveals ===== */
+document.querySelectorAll('.reveal>button').forEach(b=>b.onclick=()=>b.parentElement.classList.add('open'));
+
+/* ===== balanced argument tagged phrases ===== */
+document.querySelectorAll('.cj,.tagged').forEach(c=>{c.style.cssText='cursor:pointer;border-radius:6px;padding:1px 4px;font-weight:600;background:'+(c.classList.contains('tagged')?'var(--teal-light)':'var(--purple-light)')+';color:'+(c.classList.contains('tagged')?'var(--teal-dark)':'#4B2F9A');
+ c.onclick=()=>{$('#cjFb').innerHTML='💡 <b>'+c.textContent.split(' ').slice(0,4).join(' ')+(c.textContent.split(' ').length>4?'…':'')+'</b>: '+c.dataset.j;};});
+
+/* ===== compare ===== */
+const CO=['Both','Report only','Argument only','Neither'];
+buildRows('#cmpRows','#cmpProg',shuffle([
+ {t:'Impersonal: no I, me or you',a:'Both',why:'Both texts sound neutral and objective.'},
+ {t:'Factual: based on facts and research',a:'Both',why:'Both use facts (scientists\' findings; studies about homework).'},
+ {t:'Organised into clear paragraphs',a:'Both',why:'Both are carefully organised so the reader can follow them.'},
+ {t:'Formal language',a:'Both',why:'Neither uses slang or chatty words.'},
+ {t:'Shows both sides: for AND against',a:'Argument only',why:'Only the homework text gives reasons for and against.',hint:'Which text has headings for both sides?'},
+ {t:'Quotes a named expert',a:'Report only',why:'The report quotes Dr Lena Park.'},
+ {t:'Has a news headline',a:'Report only',why:'News reports have headlines. The argument has a question as its title.'},
+ {t:'Personal: shares the writer\'s own feelings with "I"',a:'Neither',why:'Neither text is personal. Both are impersonal.',hint:'Did either writer say "I feel…"?'},
+ {t:'Persuasive: tries to make you agree with ONE side',a:'Neither',why:'The report informs, and the argument is balanced. Neither one pushes just one side with strong feelings.',hint:'A balanced argument gives BOTH sides fairly.'}]),CO,'sorted');
+
+/* ===== bucket sort ===== */
+function buildBuckets(poolId,bId,progId,buckets,items,word){let sel=null,done=0;const pool=$(poolId),B=$(bId);pool.innerHTML='';B.innerHTML='';
+ const bEls=buckets.map((b,i)=>{const d=el('div','bucket '+b.c,'<h3>'+b.h+'</h3><div class="bd">'+b.d+'</div><div class="in"></div>');d.dataset.k=b.k;
+  d.onclick=()=>{if(!sel){toast('Tap a word first');return;}
+   if(sel.dataset.k===b.k){sel.classList.remove('sel');sel.classList.add('placed');d.querySelector('.in').appendChild(sel);sel=null;done++;setProg(progId,done,items.length,word);bEls.forEach(x=>x.classList.remove('ready'));if(done===items.length)toast('🎉 All sorted!');}
+   else{shake(d);shake(sel);toast(sel.dataset.h||'Not that one. Try again!');}};B.appendChild(d);return d;});
+ shuffle(items).forEach(it=>{const c=el('button','wchip',it.t);c.dataset.k=it.k;if(it.h)c.dataset.h=it.h;c.onclick=()=>{if(c.classList.contains('placed'))return;pool.querySelectorAll('.wchip').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');sel=c;bEls.forEach(x=>x.classList.add('ready'));};pool.appendChild(c);});}
+
+buildBuckets('#cnPool','#cnBuckets','#cnProg',[
+ {k:'add',c:'b1',h:'➕ Adding',d:'Add another point on the same side'},
+ {k:'con',c:'b2',h:'↔️ Contrasting',d:'Switch to the other side'},
+ {k:'sum',c:'b3',h:'🏁 Concluding',d:'Sum up the argument'}],
+ [{t:'Furthermore',k:'add'},{t:'In addition',k:'add'},{t:'Moreover',k:'add'},{t:'Also',k:'add'},
+  {t:'However',k:'con'},{t:'On the other hand',k:'con'},{t:'In contrast',k:'con'},{t:'Although',k:'con'},
+  {t:'In conclusion',k:'sum'},{t:'To sum up',k:'sum'},{t:'Overall',k:'sum'},{t:'On balance',k:'sum'}],'sorted');
+
+/* ===== conditional builders ===== */
+const BUILD=[
+ {pieces:['more reefs will turn white.','If sea temperatures keep rising',','],ans:['If sea temperatures keep rising',',','more reefs will turn white.'],ok:'Conditional clause first, so we need a comma. ✓'},
+ {pieces:['unless we cut pollution.',',','Reefs will not recover'],ans:['Reefs will not recover','unless we cut pollution.'],ok:'Main clause first, so no comma is needed. ✓',noComma:true},
+ {pieces:['you help reduce air pollution.',',','If you walk to school'],ans:['If you walk to school',',','you help reduce air pollution.'],ok:'Conditional clause first, then a comma, then the main clause. ✓'}];
+BUILD.forEach((bd,bi)=>{const w=el('div','builder','<b>Sentence '+(bi+1)+'</b>');const line=el('div','line','<span class="ph">Tap the pieces below…</span>');const bank=el('div','bank');bank.style.cssText='display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px';
+ const acts=el('div','acts');const fb=el('span','feedback');fb.style.margin='0';let built=[];
+ function draw(){line.innerHTML='';if(!built.length)line.innerHTML='<span class="ph">Tap the pieces below…</span>';built.forEach(b=>{const c=el('button','bchip'+(b.t===','?' comma':''),b.t);c.onclick=()=>{if(w.classList.contains('ok'))return;built=built.filter(x=>x!==b);b.src.classList.remove('used');draw();};line.appendChild(c);});}
+ bd.pieces.forEach(p=>{const c=el('button','bchip'+(p===','?' comma':''),p);c.onclick=()=>{if(c.classList.contains('used'))return;c.classList.add('used');built.push({t:p,src:c});draw();};bank.appendChild(c);});
+ const chk=el('button','btn','Check');chk.onclick=()=>{const seq=built.map(b=>b.t);
+  if(JSON.stringify(seq)===JSON.stringify(bd.ans)){w.classList.add('ok');fb.className='feedback good';fb.textContent=bd.ok;}
+  else{shake(w);fb.className='feedback bad';fb.textContent=(bd.noComma&&seq.includes(','))?'When the main clause comes first, we don\'t need a comma.':(!seq.includes(',')&&!bd.noComma&&seq[0]===bd.ans[0])?'Almost! The conditional clause comes first, so what do we need after it?':'Not yet. Which part can\'t stand alone? Where should it go?';}};
+ const rs=el('button','btn ghost','↺');rs.onclick=()=>{built=[];bank.querySelectorAll('.bchip').forEach(x=>x.classList.remove('used'));draw();fb.textContent='';};
+ acts.append(chk,rs,fb);w.append(line,bank,acts);$('#builders').appendChild(w);});
+
+buildRows('#cmRows','#cmProg',[
+ {t:'If it rains tomorrow ___ the trip will be cancelled.',a:'Comma',why:'The conditional clause comes first → comma.'},
+ {t:'The trip will be cancelled ___ if it rains tomorrow.',a:'No comma',why:'The main clause comes first → no comma.'},
+ {t:'Unless we recycle more ___ our rubbish will keep growing.',a:'Comma',why:'"Unless…" is a conditional clause at the start → comma.'},
+ {t:'Plants grow faster ___ when they get more sunlight.',a:'No comma',why:'The main clause "Plants grow faster" comes first → no comma.'}],['Comma','No comma'],'sorted');
+function setProgSafe(){}
+
+/* ===== for / against ===== */
+buildBuckets('#faPool','#faBuckets','#faProg',[
+ {k:'for',c:'b1',h:'👍 For',d:'Reasons to build the pool'},
+ {k:'ag',c:'b2',h:'👎 Against',d:'Reasons not to build the pool'}],
+ [{t:'It gives people a safe place to exercise.',k:'for'},{t:'Children could learn to swim, an important life skill.',k:'for'},{t:'It would create new jobs for local people.',k:'for'},{t:'There is no public pool within 20 km.',k:'for'},
+  {t:'It would cost a lot of money to build.',k:'ag'},{t:'A pool uses lots of water and electricity.',k:'ag'},{t:'The land could be used for a park instead.',k:'ag'},{t:'Building work would cause traffic and noise.',k:'ag'}],'sorted');
+
+/* ===== order ===== */
+const ORD=[
+ {k:0,l:'Introduction',t:'Many people in our town love to swim, but the nearest public pool is 20 km away. So, should the town build a new swimming pool?'},
+ {k:1,l:'Points for',t:'Supporters argue that a pool would give people a safe place to exercise. Furthermore, children could learn to swim, which is an important life skill.'},
+ {k:2,l:'Points against',t:'However, others point out that a pool would be very expensive. In addition, it would use large amounts of water and electricity.'},
+ {k:3,l:'Conclusion',t:'In conclusion, there are strong arguments on both sides. On balance, a pool would benefit the town if it could be run in an eco-friendly way.'}];
+let oPicked=[];
+function buildOrder(){oPicked=[];const L=$('#ordList');L.innerHTML='';$('#ordFb').textContent='';
+ shuffle(ORD).forEach(o=>{const b=el('button','ord','<span class="on"></span><span><span class="lbl">'+o.l+'</span>'+o.t+'</span>');b.dataset.k=o.k;
+  b.onclick=()=>{if(b.classList.contains('picked'))return;b.classList.add('picked');oPicked.push(b);b.querySelector('.on').textContent=oPicked.length;
+   if(oPicked.length===4){let all=true;oPicked.forEach((x,i)=>{const g=+x.dataset.k===i;x.classList.add(g?'good':'wrong');if(!g)all=false;});
+    const fb=$('#ordFb');if(all){fb.className='feedback good';fb.textContent='🎉 Perfect order! Notice the connectives: Furthermore, However, In addition, In conclusion.';}
+    else{fb.className='feedback bad';fb.textContent='Some are in the wrong place. Clue: look at the first word of each paragraph. Tap "Start again".';}}};L.appendChild(b);});}
+buildOrder();
+
+/* ===== proofread ===== */
+const PROOF=[
+ {t:'In conclusion',e:'Add a comma after a concluding connective: <b>In conclusion,</b> there are…'},
+ {t:' there are good reasons on both sides. '},
+ {t:'I think its totally awesome to swim.',e:'Too <b>personal</b> and <b>informal</b> ("I think", "totally awesome"). Also <i>its</i> should be <i>it\'s</i>. Better: <b>Swimming is a healthy activity that many people enjoy.</b>'},
+ {t:' The pool would cost '},
+ {t:'alot',e:'Spelling: <b>a lot</b> is always two words.'},
+ {t:' of money, but it would help people stay healthy. If the town builds the '},
+ {t:'pool more',e:'The conditional clause comes first, so add a comma: <b>If the town builds the pool, more</b> people will exercise.'},
+ {t:' people will exercise.'}];
+let prDone=0;
+PROOF.forEach(p=>{if(!p.e){p.t.split(/(\s+)/).forEach(w=>{if(!w.trim()){$('#proof').appendChild(document.createTextNode(w));return;}const s=el('span','tok',w);s.onclick=()=>{s.classList.add('fine');setTimeout(()=>s.classList.remove('fine'),700);toast('That part looks fine 👍');};$('#proof').appendChild(s);});return;}
+ const s=el('span','tok',p.t);s.onclick=()=>{if(s.classList.contains('fixed'))return;s.classList.add('fixed');$('#fixlist').appendChild(el('div','fix','✓ '+p.e));prDone++;setProg('#prProg',prDone,4,'fixed');if(prDone===4)toast('🎉 Great editing!');};$('#proof').appendChild(s);});
+
+/* ===== planner ===== */
+const TOPICS=['Should our town build a new swimming pool?','Should children have a four-day school week?','Should mobile phones be allowed at school?','Should every school have a vegetable garden?','✏️ My own topic'];
+TOPICS.forEach(t=>{const b=el('button','topic',t);b.onclick=()=>{document.querySelectorAll('.topic').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');
+ const own=t.startsWith('✏️');$('#ownTopic').style.display=own?'block':'none';$('#myTopic').textContent=own?'':t;if(own)$('#ownTopic').focus();};$('#topics').appendChild(b);});
+$('#ownTopic').oninput=e=>$('#myTopic').textContent=e.target.value;
+const STARTERS={p1:['Many people are asking whether…','Have you ever wondered…','This is an important question because…'],
+ p2:['Supporters argue that…','One reason for this is…','Furthermore,…','Research shows that…'],
+ p3:['On the other hand,…','However, others believe…','In addition,…','A further concern is…'],
+ p4:['In conclusion,…','To sum up,…','On balance, the evidence suggests…','Overall,…']};
+document.querySelectorAll('.starters').forEach(s=>{STARTERS[s.dataset.for].forEach(st=>{const b=el('button','st',st);b.onclick=()=>{const ta=$('#'+s.dataset.for);ta.value+=(ta.value&&!/\s$/.test(ta.value)?' ':'')+st.replace('…',' ');ta.focus();};s.appendChild(b);});});
+const CHECKS=['My introduction tells the reader what the topic is','I gave at least two points FOR and two points AGAINST','I used facts or evidence, not just feelings','My writing is impersonal and formal (no "I think", no slang)','I used connectives (furthermore, however, in conclusion…)','I put a comma after a conditional clause at the start of a sentence','My conclusion sums up both sides and gives a view based on the evidence','I checked my spelling and punctuation'];
+CHECKS.forEach(c=>{const d=el('div','check','<span class="bx">✓</span><span>'+c+'</span>');d.onclick=()=>d.classList.toggle('on');$('#checklist').appendChild(d);});
+function copyPlan(){const txt='Balanced argument plan\nTopic: '+($('#myTopic').textContent||'')+'\n\nIntroduction:\n'+$('#p1').value+'\n\nPoints for:\n'+$('#p2').value+'\n\nPoints against:\n'+$('#p3').value+'\n\nConclusion:\n'+$('#p4').value;
+ const done=()=>toast('📋 Copied! Paste it into Seesaw.');
+ if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(txt).then(done,fallback);}else fallback();
+ function fallback(){const t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();try{document.execCommand('copy');done();}catch(e){toast('Copy didn\'t work. Take a screenshot instead!');}t.remove();}}
+
+/* ===== swipe ===== */
+let sx=null,sy=null;$('#stage').addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+$('#stage').addEventListener('touchend',e=>{if(sx===null)return;const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(Math.abs(dx)>90&&Math.abs(dx)>Math.abs(dy)*2){dx<0?nextSlide():prevSlide();}sx=null;},{passive:true});
+</script>
+</body>
+</html>
