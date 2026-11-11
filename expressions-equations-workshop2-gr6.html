@@ -170,7 +170,7 @@
   .eq-step-box {
     background: var(--lavender-pale); border-left: 4px solid var(--lavender);
     border-radius: 0 12px 12px 0; padding: 1rem 1.2rem; margin: 0.8rem 0;
-    font-family: 'DM Mono', monospace; font-size: 0.85rem; line-height: 1.9; color: var(--sky);
+    font-family: 'DM Mono', monospace; font-size: 0.85rem; line-height: 1.9; color: var(--sky); white-space: pre-line;
   }
   .eq-step-label { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--lavender); margin-bottom: 0.4rem; }
 
@@ -400,7 +400,7 @@
         <button class="btn btn-coral" onclick="testScale()">Test ▶</button>
       </div>
 
-      <div id="scaleResult" style="background:#f5f7fa;border-radius:12px;padding:1.2rem;margin-bottom:1rem;font-family:'DM Mono',monospace;font-size:0.88rem;line-height:2;color:var(--sky);min-height:3rem;"></div>
+      <div id="scaleResult" style="background:#f5f7fa;border-radius:12px;padding:1.2rem;margin-bottom:1rem;font-family:'DM Mono',monospace;font-size:0.88rem;line-height:2;color:var(--sky);min-height:3rem;white-space:pre-line;"></div>
 
       <div id="scaleVerdict" style="font-family:'Fredoka One',cursive;font-size:1.2rem;min-height:1.5rem;text-align:center;"></div>
     </div>
@@ -862,9 +862,20 @@ function revealTerm(key) {
 // ══════════════════════════════════════
 function safeEval(expr, x) {
   try {
-    const e = expr.replace(/²/g,'**2').replace(/x/g,`(${x})`);
-    return Math.round(Function('"use strict";return('+e+')')() * 1000) / 1000;
+    let e = String(expr).replace(/[\u2212\u2013\u2014]/g,'-').replace(/[\u00d7\u00b7]/g,'*').replace(/\u00f7/g,'/').replace(/\^/g,'**').replace(/\u00b2/g,'**2').replace(/\u00b3/g,'**3');
+    e = e.replace(/x/gi,`(${x})`);
+    e = e.replace(/(\d|\))\s*\(/g,'$1*(').replace(/\)\s*(\d)/g,')*$1');
+    if (!/^[\d+\-*/().\s]+$/.test(e)) return null;
+    const v = Function('"use strict";return('+e+')')();
+    return (typeof v === 'number' && isFinite(v)) ? Math.round(v * 1000) / 1000 : null;
   } catch { return null; }
+}
+
+function showSub(str, v) {
+  return str.replace(/x/g, (m, off) => {
+    const prev = str.slice(0, off).trim().slice(-1), next = str.slice(off + 1).trim().charAt(0);
+    return (/[\d)]/.test(prev) || /[\d(]/.test(next) || v < 0) ? `(${v})` : `${v}`;
+  });
 }
 
 function testScale() {
@@ -881,7 +892,7 @@ function testScale() {
   const balanced = lVal !== null && rVal !== null && lVal === rVal;
 
   document.getElementById('scaleResult').textContent =
-    `Substituting x = ${val}:\nLeft side: ${lhs} → ${lhs.replace(/x/g,val)} = ${lVal}\nRight side: ${rhs} → ${rhs.replace(/x/g,val)} = ${rVal}\n\n${lVal} ${balanced ? '=' : '≠'} ${rVal}`;
+    `Substituting x = ${val}:\nLeft side: ${lhs} → ${showSub(lhs,val)} = ${lVal}\nRight side: ${rhs} → ${showSub(rhs,val)} = ${rVal}\n\n${lVal} ${balanced ? '=' : '≠'} ${rVal}`;
 
   const verdict = document.getElementById('scaleVerdict');
   verdict.textContent = balanced ? '⚖️ Balanced! x = ' + val + ' is a solution.' : '⚠️ Not balanced. x = ' + val + ' is not a solution.';
@@ -930,7 +941,7 @@ function testSubOption(val, btn) {
   const fb = document.getElementById('subFeedback');
   fb.style.color = isCorrect ? 'var(--mint)' : 'var(--coral)';
   fb.textContent = isCorrect
-    ? `✓ x = ${val} is the solution! Substituting: ${lhs.replace(/x/g,val)} = ${lVal} and right side = ${rVal}. Both equal ${lVal}!`
+    ? `✓ x = ${val} is the solution! Substituting: ${showSub(lhs,val)} = ${lVal} and right side = ${rVal}. Both equal ${lVal}!`
     : `✗ x = ${val}: left side = ${lVal}, right side = ${rVal}. Not equal — keep testing!`;
 }
 newSubChallenge();
@@ -1016,13 +1027,13 @@ function newSolveQuiz() {
   solveQuizData = Array.from({length:6}, () => {
     const t = types[Math.floor(Math.random()*4)];
     const p = Math.floor(Math.random()*9)+2;
-    const x = Math.floor(Math.random()*10)+1;
+    let x = Math.floor(Math.random()*10)+1;
     let q, eq;
     switch(t) {
       case 'add': q=x+p; eq=`x + ${p} = ${q}`; break;
-      case 'sub': q=x-p; eq=`x − ${p} = ${q}`; break;
+      case 'sub': x=x+p; q=x-p; eq=`x − ${p} = ${q}`; break;
       case 'mul': q=x*p; eq=`${p}x = ${q}`; break;
-      case 'div': q=x/p; eq=`x ÷ ${p} = ${q}`; break;
+      case 'div': q=x; x=q*p; eq=`x ÷ ${p} = ${q}`; break;
     }
     return { eq, answer: x };
   });
@@ -1078,7 +1089,7 @@ function drawIneq() {
   for (let i=-10;i<=10;i++) {
     const x = pad + (i+10)*unitW;
     const major = i%5===0;
-    ctx.strokeStyle = major ? 'var(--sky)' : '#dde4ee';
+    ctx.strokeStyle = major ? '#1e3a5f' : '#dde4ee';
     ctx.lineWidth = major ? 1.5 : 1;
     ctx.beginPath(); ctx.moveTo(x,mid-(major?10:6)); ctx.lineTo(x,mid+(major?10:6)); ctx.stroke();
     if (major) {
@@ -1098,7 +1109,7 @@ function drawIneq() {
   else { ctx.fillRect(pad, mid-14, cx-pad, 28); }
 
   // arrow
-  ctx.strokeStyle = 'var(--mint)'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+  ctx.strokeStyle = '#3aaf85'; ctx.lineWidth = 3; ctx.lineCap = 'round';
   ctx.beginPath();
   if (isGt) {
     ctx.moveTo(cx, mid); ctx.lineTo(W-pad, mid);
@@ -1111,11 +1122,11 @@ function drawIneq() {
 
   // point
   ctx.beginPath(); ctx.arc(cx, mid, 8, 0, 2*Math.PI);
-  if (inclusive) { ctx.fillStyle='var(--mint)'; ctx.fill(); ctx.strokeStyle='white'; ctx.lineWidth=2; ctx.stroke(); }
-  else { ctx.strokeStyle='var(--mint)'; ctx.lineWidth=3; ctx.stroke(); ctx.fillStyle='white'; ctx.fill(); }
+  if (inclusive) { ctx.fillStyle='#3aaf85'; ctx.fill(); ctx.strokeStyle='white'; ctx.lineWidth=2; ctx.stroke(); }
+  else { ctx.strokeStyle='#3aaf85'; ctx.lineWidth=3; ctx.stroke(); ctx.fillStyle='white'; ctx.fill(); }
 
   // value label
-  ctx.fillStyle='var(--sky)'; ctx.font='bold 11px Nunito,sans-serif'; ctx.textAlign='center';
+  ctx.fillStyle='#1e3a5f'; ctx.font='bold 11px Nunito,sans-serif'; ctx.textAlign='center';
   ctx.fillText(val, cx, mid-18);
 
   // symbol labels
@@ -1226,7 +1237,7 @@ function drawScenarioGraph(s) {
   ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(pad,pad); ctx.stroke();
 
   // axis labels
-  ctx.fillStyle='var(--muted)'; ctx.font='8px DM Mono,monospace'; ctx.textAlign='center';
+  ctx.fillStyle='#7a8899'; ctx.font='8px DM Mono,monospace'; ctx.textAlign='center';
   for (let i=0;i<=5;i++) {
     const x=pad+i*scaleX;
     ctx.fillText(i, x, H-pad+12);
@@ -1239,13 +1250,13 @@ function drawScenarioGraph(s) {
   }
 
   // axis titles
-  ctx.fillStyle='var(--sky)'; ctx.font='bold 9px Nunito,sans-serif'; ctx.textAlign='center';
+  ctx.fillStyle='#1e3a5f'; ctx.font='bold 9px Nunito,sans-serif'; ctx.textAlign='center';
   ctx.fillText(s.indepLabel, pad+(W-pad*2)/2, H-2);
   ctx.save(); ctx.translate(10, pad+(H-pad*2)/2); ctx.rotate(-Math.PI/2);
   ctx.fillText(s.depLabel, 0, 0); ctx.restore();
 
   // line
-  ctx.strokeStyle='var(--coral)'; ctx.lineWidth=2.5; ctx.setLineDash([]);
+  ctx.strokeStyle='#e8603c'; ctx.lineWidth=2.5; ctx.setLineDash([]);
   ctx.beginPath();
   for (let xi=0;xi<=50;xi++) {
     const x=xi/10;
@@ -1260,7 +1271,7 @@ function drawScenarioGraph(s) {
     const y=s.fn(x);
     const px=pad+x*scaleX, py=H-pad-y*scaleY;
     ctx.beginPath(); ctx.arc(px,py,5,0,2*Math.PI);
-    ctx.fillStyle='var(--lavender)'; ctx.fill();
+    ctx.fillStyle='#7c6fcd'; ctx.fill();
     ctx.strokeStyle='white'; ctx.lineWidth=1.5; ctx.stroke();
   });
 }

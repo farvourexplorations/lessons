@@ -157,6 +157,9 @@
   .share-btn.copy{background:var(--mint);color:white;} .share-btn.email{background:var(--lavender);color:white;} .share-btn.print{background:var(--sky);color:white;}
   .copy-confirm { text-align:center; font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--mint); min-height:1.2rem; margin-top:0.6rem; }
 
+  /* multi-line text blocks */
+  #sqTopicHint,#sqCheckFb,#statInsight,#outlierResult { white-space:pre-line; }
+
   @media (max-width:560px) { .hero{padding:2.5rem 1.2rem 1.5rem;} .section{padding:2rem 1.2rem 0;} .nav-row{padding:2rem 1.2rem 0;} }
   @media print {
     .hero,.nav-row,.share-buttons,.copy-confirm{display:none !important;}
@@ -714,7 +717,6 @@ function checkSQ() {
   if (!input) { fb.textContent = '⚠️ Type your question first!'; fb.style.color='var(--coral)'; return; }
   const hasVariability = /how many|how much|how long|how far|how often|what are the typical|what is the average|how tall|how heavy|how fast/i.test(input);
   const hasGroup = /students|players|people|class|school|team|animals|trees|cities|countries/i.test(input);
-  const isQuestion = input.includes('?') || /^(how|what|which|when|where|why)/i.test(input);
   if (hasVariability && hasGroup) {
     fb.style.color='var(--mint)';
     fb.textContent='✓ Great statistical question! It expects variability (different answers) and asks about a group.\n\nKey words that make it statistical: ' + (hasVariability?'variability language (how many/much/long/tall...) ':'') + (hasGroup?'+ a group (students/players/people...)':'');
@@ -725,6 +727,33 @@ function checkSQ() {
     fb.style.color='var(--coral)';
     fb.textContent='Not quite statistical yet. Add words that suggest variability (how many, how much, how long...) and make sure you\'re asking about a group of people or things.';
   }
+}
+
+// ══════════════════════════════════════
+// SHARED STATS HELPERS
+// ══════════════════════════════════════
+// Chart colours (canvas can't read CSS variables)
+const C = { sky:'#1e3a5f', coral:'#e8603c', mint:'#3aaf85', lavender:'#7c6fcd', muted:'#7a8899' };
+
+function medianOf(arr) {
+  const n = arr.length;
+  return n % 2 === 0 ? (arr[n/2-1] + arr[n/2]) / 2 : arr[Math.floor(n/2)];
+}
+// Grade 6 method: Q1 = median of lower half, Q3 = median of upper half (median excluded when n is odd)
+function quartiles(sorted) {
+  const n = sorted.length;
+  const lower = sorted.slice(0, Math.floor(n/2));
+  const upper = sorted.slice(Math.ceil(n/2));
+  return { q1: medianOf(lower), med: medianOf(sorted), q3: medianOf(upper) };
+}
+// Crisp canvas on high-DPI screens
+function setupCanvas(cvs, H) {
+  const W = cvs.offsetWidth || 700;
+  const dpr = Math.max(window.devicePixelRatio || 1, 2);
+  cvs.width = W * dpr; cvs.height = H * dpr;
+  const ctx = cvs.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return { ctx, W };
 }
 
 // ══════════════════════════════════════
@@ -755,22 +784,17 @@ function calcStats() {
   const sorted = [...data].sort((a,b) => a-b);
   const n = data.length;
   const mean = Math.round(data.reduce((a,b)=>a+b,0)/n*100)/100;
-  const median = n%2===0 ? (sorted[n/2-1]+sorted[n/2])/2 : sorted[Math.floor(n/2)];
+  const median = medianOf(sorted);
 
-  // Mode
   const freq = {};
   data.forEach(v => freq[v]=(freq[v]||0)+1);
   const maxFreq = Math.max(...Object.values(freq));
   const modes = maxFreq > 1 ? Object.keys(freq).filter(k=>freq[k]===maxFreq).map(Number) : [];
 
-  // IQR
-  const q1idx = Math.floor(n/4);
-  const q3idx = Math.floor(3*n/4);
-  const q1 = n%4===0 ? (sorted[n/4-1]+sorted[n/4])/2 : sorted[q1idx];
-  const q3 = n%4===0 ? (sorted[3*n/4-1]+sorted[3*n/4])/2 : sorted[q3idx];
+  let q1 = sorted[0], q3 = sorted[n-1];
+  if (n >= 2) { const q = quartiles(sorted); q1 = q.q1; q3 = q.q3; }
   const iqr = Math.round((q3-q1)*100)/100;
 
-  // MAD
   const mad = Math.round(data.reduce((a,b)=>a+Math.abs(b-mean),0)/n*100)/100;
   const range = sorted[n-1]-sorted[0];
 
@@ -795,16 +819,12 @@ calcStats();
 let baseOutlierData = [5,6,7,7,6,8,7,5,6,7];
 function addOutlier() {
   const val = parseFloat(document.getElementById('outlierVal').value);
+  if (isNaN(val)) return;
   const augmented = [...baseOutlierData, val];
   const mean1 = Math.round(baseOutlierData.reduce((a,b)=>a+b,0)/baseOutlierData.length*100)/100;
-  const sorted1 = [...baseOutlierData].sort((a,b)=>a-b);
-  const n1 = baseOutlierData.length;
-  const med1 = n1%2===0?(sorted1[n1/2-1]+sorted1[n1/2])/2:sorted1[Math.floor(n1/2)];
-
+  const med1 = medianOf([...baseOutlierData].sort((a,b)=>a-b));
   const mean2 = Math.round(augmented.reduce((a,b)=>a+b,0)/augmented.length*100)/100;
-  const sorted2 = [...augmented].sort((a,b)=>a-b);
-  const n2 = augmented.length;
-  const med2 = n2%2===0?(sorted2[n2/2-1]+sorted2[n2/2])/2:sorted2[Math.floor(n2/2)];
+  const med2 = medianOf([...augmented].sort((a,b)=>a-b));
 
   document.getElementById('outlierResult').textContent =
     `Original data: ${baseOutlierData.join(', ')}\n` +
@@ -830,25 +850,20 @@ function drawDotPlot() {
   const data = parseData(document.getElementById('dotData').value);
   if (!data.length) return;
   const cvs = document.getElementById('dotCanvas');
-  const W = cvs.offsetWidth || 700;
-  cvs.width = W;
-  const ctx = cvs.getContext('2d');
   const H = 140, pad = 50;
+  const { ctx, W } = setupCanvas(cvs, H);
   ctx.clearRect(0,0,W,H); ctx.fillStyle='#fafbfc'; ctx.fillRect(0,0,W,H);
 
   const min = Math.min(...data), max = Math.max(...data);
   const range = max - min || 1;
   const unitW = (W-pad*2)/range;
 
-  // count frequencies
   const freq = {};
   data.forEach(v => freq[v]=(freq[v]||0)+1);
 
-  // axis
   ctx.strokeStyle='#b8c4cc'; ctx.lineWidth=1.5;
   ctx.beginPath(); ctx.moveTo(pad,H-30); ctx.lineTo(W-pad,H-30); ctx.stroke();
 
-  // dots
   Object.entries(freq).forEach(([val,count]) => {
     const x = pad + (parseFloat(val)-min)*unitW;
     for (let i=0;i<count;i++) {
@@ -857,17 +872,13 @@ function drawDotPlot() {
       ctx.fillStyle='rgba(232,96,60,0.8)'; ctx.fill();
       ctx.strokeStyle='white'; ctx.lineWidth=1.5; ctx.stroke();
     }
-    // label
-    ctx.fillStyle='var(--sky)'; ctx.font='bold 10px DM Mono,monospace'; ctx.textAlign='center';
-    ctx.fillText(val, x, H-14);
+    ctx.fillStyle=C.sky; ctx.font='bold 11px DM Mono,monospace'; ctx.textAlign='center';
+    ctx.fillText(val, x, H-12);
   });
 
-  // axis arrows
   ctx.fillStyle='#b8c4cc';
   ctx.beginPath(); ctx.moveTo(W-pad+8,H-30); ctx.lineTo(W-pad,H-35); ctx.lineTo(W-pad,H-25); ctx.closePath(); ctx.fill();
 
-  // insight
-  const sorted = [...data].sort((a,b)=>a-b);
   const mean = Math.round(data.reduce((a,b)=>a+b,0)/data.length*10)/10;
   document.getElementById('dotInsight').textContent =
     `${data.length} data points · Range: ${min}–${max} · Mean ≈ ${mean} · Each dot = 1 data point`;
@@ -879,42 +890,38 @@ function drawHistogram() {
   const binSize = parseInt(document.getElementById('binSize').value) || 10;
   if (!data.length) return;
   const cvs = document.getElementById('histCanvas');
-  const W = cvs.offsetWidth || 700;
-  cvs.width = W;
-  const ctx = cvs.getContext('2d');
   const H = 200, padL=50, padB=35, padT=20, padR=20;
+  const { ctx, W } = setupCanvas(cvs, H);
   ctx.clearRect(0,0,W,H); ctx.fillStyle='#fafbfc'; ctx.fillRect(0,0,W,H);
 
   const min = Math.floor(Math.min(...data)/binSize)*binSize;
-  const max = Math.ceil(Math.max(...data)/binSize)*binSize;
+  let max = Math.ceil(Math.max(...data)/binSize)*binSize;
+  if (max === min) max = min + binSize;
   const bins = [];
   for (let b=min; b<max; b+=binSize) {
     bins.push({ start:b, end:b+binSize, count:data.filter(v=>v>=b&&v<b+binSize).length });
   }
-  const maxCount = Math.max(...bins.map(b=>b.count));
+  const maxCount = Math.max(1, ...bins.map(b=>b.count));
   const bW = (W-padL-padR)/bins.length;
   const scaleY = (H-padT-padB)/maxCount;
 
-  // grid
   ctx.strokeStyle='#e8eef4'; ctx.lineWidth=1;
   for (let i=0;i<=maxCount;i++) {
     const y=H-padB-i*scaleY;
     ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
-    ctx.fillStyle='var(--muted)'; ctx.font='8px DM Mono,monospace'; ctx.textAlign='right';
+    ctx.fillStyle=C.muted; ctx.font='10px DM Mono,monospace'; ctx.textAlign='right';
     ctx.fillText(i, padL-4, y+3);
   }
 
-  // bars
   bins.forEach((b,i) => {
     const x=padL+i*bW, y=H-padB-b.count*scaleY, barH=b.count*scaleY;
     ctx.fillStyle='rgba(58,175,133,0.7)'; ctx.fillRect(x+1,y,bW-2,barH);
-    ctx.strokeStyle='var(--mint)'; ctx.lineWidth=1.5; ctx.strokeRect(x+1,y,bW-2,barH);
-    ctx.fillStyle='var(--sky)'; ctx.font='8px DM Mono,monospace'; ctx.textAlign='center';
-    ctx.fillText(b.start, x+bW/2, H-padB+12);
-    if (b.count>0) { ctx.fillStyle='white'; ctx.font='bold 9px Nunito,monospace'; ctx.fillText(b.count, x+bW/2, y+14); }
+    ctx.strokeStyle=C.mint; ctx.lineWidth=1.5; ctx.strokeRect(x+1,y,bW-2,barH);
+    ctx.fillStyle=C.sky; ctx.font='10px DM Mono,monospace'; ctx.textAlign='center';
+    ctx.fillText(b.start, x+bW/2, H-padB+14);
+    if (b.count>0) { ctx.fillStyle='white'; ctx.font='bold 11px Nunito,sans-serif'; ctx.fillText(b.count, x+bW/2, y+15); }
   });
 
-  // axes
   ctx.strokeStyle='#b8c4cc'; ctx.lineWidth=1.5;
   ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,H-padB); ctx.lineTo(W-padR,H-padB); ctx.stroke();
 
@@ -927,57 +934,45 @@ function drawBoxPlot() {
   const data = parseData(document.getElementById('boxData').value);
   if (data.length < 4) return;
   const cvs = document.getElementById('boxCanvas');
-  const W = cvs.offsetWidth || 700;
-  cvs.width = W;
-  const ctx = cvs.getContext('2d');
   const H = 130, padL=60, padR=40, mid=65;
+  const { ctx, W } = setupCanvas(cvs, H);
   ctx.clearRect(0,0,W,H); ctx.fillStyle='#fafbfc'; ctx.fillRect(0,0,W,H);
 
   const sorted = [...data].sort((a,b)=>a-b);
   const n = sorted.length;
   const minV=sorted[0], maxV=sorted[n-1];
-  const q1 = n%4===0?(sorted[n/4-1]+sorted[n/4])/2:sorted[Math.floor(n/4)];
-  const med = n%2===0?(sorted[n/2-1]+sorted[n/2])/2:sorted[Math.floor(n/2)];
-  const q3 = n%4===0?(sorted[3*n/4-1]+sorted[3*n/4])/2:sorted[Math.floor(3*n/4)];
+  const { q1, med, q3 } = quartiles(sorted);
 
   const range = maxV-minV||1;
   const toX = v => padL + (v-minV)/range*(W-padL-padR);
 
-  // axis
   ctx.strokeStyle='#b8c4cc'; ctx.lineWidth=1.5;
   ctx.beginPath(); ctx.moveTo(padL,mid+25); ctx.lineTo(W-padR,mid+25); ctx.stroke();
 
-  // whiskers
-  ctx.strokeStyle='var(--sky)'; ctx.lineWidth=2;
+  ctx.strokeStyle=C.sky; ctx.lineWidth=2;
   ctx.beginPath(); ctx.moveTo(toX(minV),mid); ctx.lineTo(toX(q1),mid); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(toX(q3),mid); ctx.lineTo(toX(maxV),mid); ctx.stroke();
-  // whisker caps
   [minV,maxV].forEach(v => {
     ctx.beginPath(); ctx.moveTo(toX(v),mid-12); ctx.lineTo(toX(v),mid+12); ctx.stroke();
   });
 
-  // box
   ctx.fillStyle='rgba(58,175,133,0.2)';
   ctx.fillRect(toX(q1),mid-18,toX(q3)-toX(q1),36);
-  ctx.strokeStyle='var(--mint)'; ctx.lineWidth=2;
+  ctx.strokeStyle=C.mint; ctx.lineWidth=2;
   ctx.strokeRect(toX(q1),mid-18,toX(q3)-toX(q1),36);
 
-  // median line
-  ctx.strokeStyle='var(--coral)'; ctx.lineWidth=3;
+  ctx.strokeStyle=C.coral; ctx.lineWidth=3;
   ctx.beginPath(); ctx.moveTo(toX(med),mid-18); ctx.lineTo(toX(med),mid+18); ctx.stroke();
 
-  // tick labels
-  ctx.fillStyle='var(--sky)'; ctx.font='bold 9px DM Mono,monospace'; ctx.textAlign='center';
+  ctx.fillStyle=C.sky; ctx.font='bold 11px DM Mono,monospace'; ctx.textAlign='center';
   [minV,q1,med,q3,maxV].forEach(v => {
-    ctx.fillText(v, toX(v), mid+38);
+    ctx.fillText(v, toX(v), mid+42);
   });
 
-  // labels above
   const lbls = [[minV,'Min'],[q1,'Q1'],[med,'Med'],[q3,'Q3'],[maxV,'Max']];
-  ctx.font='8px DM Mono,monospace'; ctx.fillStyle='var(--muted)';
+  ctx.font='10px DM Mono,monospace'; ctx.fillStyle=C.muted;
   lbls.forEach(([v,l]) => ctx.fillText(l, toX(v), mid-26));
 
-  // stat chips
   const iqr = Math.round((q3-q1)*100)/100;
   document.getElementById('boxStats').innerHTML = [
     ['Min',minV,'var(--sky)'], ['Q1',q1,'var(--lavender)'], ['Median',med,'var(--coral)'],
@@ -1000,7 +995,7 @@ const realProblemsData = [
   { q:`Ages of people at a community centre: 12, 15, 14, 67, 13, 16, 14, 15, 12, 14.\nCompare the mean and median. Which better represents this group and why?`,
     work:`Mean = 192÷10 = 19.2 yrs\nSorted: 12,12,13,14,14,14,15,15,16,67\nMedian = (14+14)÷2 = 14 yrs\n67 is an outlier that pulls the mean up to 19.2 — which doesn't represent any actual person well!\nMedian (14 yrs) better reflects the typical person here.`, ans:'Median = 14 yrs is better — the outlier (67) skews the mean.' },
   { q:`A class of 6 students scored: 72, 85, 91, 68, 74, 88. Display these in a box plot. Find min, Q1, median, Q3, max.`,
-    work:`Sorted: 68, 72, 74, 85, 88, 91\nMin=68, Max=91\nQ1=(72+74)÷2=73, Q3=(85+88)÷2=86.5\nMedian=(74+85)÷2=79.5\nBox plot: whisker from 68 to 73, box from 73 to 86.5, median line at 79.5, whisker to 91`, ans:'Min=68, Q1=73, Median=79.5, Q3=86.5, Max=91' },
+    work:`Sorted: 68, 72, 74, 85, 88, 91\nMin=68, Max=91\nMedian=(74+85)÷2=79.5\nLower half: 68, 72, 74 → Q1 = 72\nUpper half: 85, 88, 91 → Q3 = 88\nBox plot: whisker from 68 to 72, box from 72 to 88, median line at 79.5, whisker to 91`, ans:'Min=68, Q1=72, Median=79.5, Q3=88, Max=91' },
 ];
 
 function buildRealProblems() {
@@ -1123,6 +1118,9 @@ window.addEventListener('load', () => {
   drawHistogram();
   drawBoxPlot();
   buildRealProblems();
+});
+window.addEventListener('resize', () => {
+  if (currentSection === 4) { drawDotPlot(); drawHistogram(); drawBoxPlot(); }
 });
 </script>
 </body>
