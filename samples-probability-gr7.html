@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Samples, Spreads & Chances 🎲 · Grade 7 Statistics & Probability</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #1e3a5f; --sky-mid: #2d5282;
+    --sun: #f6c343; --sun-pale: #fef9e7;
+    --coral: #e8603c; --coral-pale: #fdf0ec;
+    --mint: #3aaf85; --mint-pale: #e8f8f2;
+    --lavender: #7c6fcd; --lavender-pale: #f0eefb;
+    --paper: #fffef9; --ink: #1a2332;
+    --muted: #7a8899; --border: rgba(0,0,0,0.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:linear-gradient(160deg,#0f2540 0%,#1e3a5f 40%,#2d5282 100%); min-height:100vh; font-family:'Nunito',sans-serif; color:var(--ink); overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image: radial-gradient(1px 1px at 10% 15%,rgba(255,255,255,0.6) 0%,transparent 100%), radial-gradient(1.5px 1.5px at 25% 40%,rgba(255,255,255,0.4) 0%,transparent 100%), radial-gradient(1px 1px at 45% 8%,rgba(255,255,255,0.5) 0%,transparent 100%), radial-gradient(2px 2px at 65% 22%,rgba(255,255,255,0.3) 0%,transparent 100%), radial-gradient(1px 1px at 80% 5%,rgba(255,255,255,0.6) 0%,transparent 100%), radial-gradient(1.5px 1.5px at 92% 35%,rgba(255,255,255,0.4) 0%,transparent 100%); pointer-events:none; z-index:0; }
+
+  /* ── HERO ── */
+  .hero { position:relative; z-index:1; text-align:center; padding:3.5rem 2rem 2rem; color:white; }
+  .hero-badge { display:inline-block; background:var(--sun); color:var(--sky); font-family:'Fredoka One',cursive; font-size:0.85rem; letter-spacing:0.05em; padding:0.35rem 1.2rem; border-radius:20px; margin-bottom:1.2rem; box-shadow:0 2px 12px rgba(246,195,67,0.4); }
+  .hero h1 { font-family:'Fredoka One',cursive; font-size:clamp(2.4rem,6vw,4rem); line-height:1.1; margin-bottom:0.8rem; text-shadow:0 2px 20px rgba(0,0,0,0.3); }
+  .hero h1 .accent { color:var(--sun); }
+  .hero p.intro { font-size:1.05rem; line-height:1.7; opacity:0.88; max-width:560px; margin:0 auto 2rem; }
+  .name-bar { background:rgba(255,255,255,0.1); border:1.5px solid rgba(255,255,255,0.25); border-radius:12px; padding:0.6rem 1rem; display:flex; align-items:center; gap:0.8rem; max-width:420px; margin:0 auto 1rem; }
+  .name-bar label { font-size:0.78rem; font-weight:700; color:rgba(255,255,255,0.8); white-space:nowrap; font-family:'DM Mono',monospace; }
+  .name-bar input { flex:1; background:rgba(255,255,255,0.15); border:none; border-radius:8px; padding:0.4rem 0.8rem; font-family:'Nunito',sans-serif; font-size:0.9rem; font-weight:700; color:white; outline:none; }
+  .name-bar input::placeholder { color:rgba(255,255,255,0.45); font-weight:400; }
+  .progress-wrap { display:flex; justify-content:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.5rem; }
+  .prog-step { display:flex; align-items:center; gap:0.4rem; background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.2); border-radius:20px; padding:0.35rem 0.9rem; font-size:0.78rem; font-weight:700; color:rgba(255,255,255,0.7); cursor:pointer; transition:all 0.2s; }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,0.22); color:white; border-color:rgba(255,255,255,0.4); }
+  .prog-step.active { background:var(--sun); color:var(--sky); border-color:var(--sun); box-shadow:0 2px 12px rgba(246,195,67,0.4); }
+
+  /* ── SHEET ── */
+  .sheet { position:relative; z-index:1; background:var(--paper); border-radius:24px 24px 0 0; margin-top:1.5rem; padding:0 0 6rem; min-height:80vh; box-shadow:0 -8px 40px rgba(0,0,0,0.25); }
+  .section { padding:3rem 2rem 0; max-width:820px; margin:0 auto; display:none; }
+  .section.active { display:block; }
+  .section-eyebrow { display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem; }
+  .eyebrow-num { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Fredoka One',cursive; font-size:1rem; color:white; flex-shrink:0; }
+  .num-coral{background:var(--coral);} .num-mint{background:var(--mint);} .num-sun{background:var(--sun);color:var(--sky);} .num-lav{background:var(--lavender);} .num-sky{background:var(--sky-mid);}
+  .eyebrow-label { font-size:0.72rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); font-family:'DM Mono',monospace; }
+  .section h2 { font-family:'Fredoka One',cursive; font-size:clamp(1.6rem,3.5vw,2.2rem); color:var(--sky); margin-bottom:0.6rem; line-height:1.2; }
+  .section .lead { font-size:1rem; line-height:1.75; color:#3a4a5a; margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+
+  /* ── WONDER BOX ── */
+  .wonder-box { background:linear-gradient(135deg,var(--sky) 0%,var(--sky-mid) 100%); color:white; border-radius:16px; padding:1.8rem 2rem; margin-bottom:1.8rem; position:relative; overflow:hidden; }
+  .wonder-box::after { content:'🤔'; position:absolute; right:1.5rem; top:50%; transform:translateY(-50%); font-size:3rem; opacity:0.3; }
+  .wonder-box p { font-size:1rem; line-height:1.7; font-style:italic; opacity:0.95; max-width:85%; }
+  .wonder-box strong { color:var(--sun); font-style:normal; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,var(--mint) 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'📊'; }
+
+  /* ── CHIPS ── */
+  .chip-row { display:flex; flex-wrap:wrap; gap:0.6rem; margin-bottom:1.5rem; }
+  .chip { padding:0.45rem 1rem; border-radius:20px; font-size:0.82rem; font-weight:700; cursor:pointer; transition:all 0.2s; border:2px solid transparent; }
+  .chip.coral{background:var(--coral-pale);color:var(--coral);border-color:#f8c5b8;} .chip.mint{background:var(--mint-pale);color:var(--mint);border-color:#b8ebd8;} .chip.sun{background:var(--sun-pale);color:#b8860b;border-color:#f8e0a0;} .chip.lav{background:var(--lavender-pale);color:var(--lavender);border-color:#d0caef;} .chip.sky{background:#e8f0f8;color:var(--sky-mid);border-color:#c0d4ea;}
+  .chip:hover { transform:scale(1.05); }
+  .concept-reveal { background:var(--paper); border-left:4px solid var(--coral); border-radius:0 10px 10px 0; padding:1rem 1.2rem; font-size:0.88rem; line-height:1.7; margin-top:0.5rem; display:none; animation:fadeIn 0.3s ease; }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border{border-color:var(--mint);} .concept-reveal.sun-border{border-color:var(--sun);} .concept-reveal.lav-border{border-color:var(--lavender);} .concept-reveal.sky-border{border-color:var(--sky-mid);}
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);} }
+
+  /* ── PREDICT BOX ── */
+  .predict-box { background:var(--sun-pale); border:2px dashed var(--sun); border-radius:14px; padding:1.4rem 1.6rem; margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive; font-size:1rem; color:#b8860b; margin-bottom:0.8rem; }
+  .predict-box textarea { width:100%; border:1.5px solid rgba(0,0,0,0.12); border-radius:8px; padding:0.7rem; font-family:'Nunito',sans-serif; font-size:0.88rem; resize:vertical; min-height:64px; background:white; color:var(--ink); outline:none; transition:border-color 0.2s; }
+  .predict-box textarea:focus { border-color:var(--sun); }
+
+  /* ── DEMO ZONE ── */
+  .demo-zone { background:white; border:2px solid var(--border); border-radius:16px; padding:1.8rem; margin-bottom:1.5rem; }
+  .demo-zone h3 { font-family:'Fredoka One',cursive; font-size:1.2rem; color:var(--sky); margin-bottom:0.3rem; }
+  .demo-zone .hint { font-size:0.78rem; color:var(--muted); font-family:'DM Mono',monospace; margin-bottom:1.3rem; }
+
+  /* ── BUTTONS ── */
+  .btn { border:none; border-radius:10px; padding:0.65rem 1.3rem; font-family:'Nunito',sans-serif; font-size:0.88rem; font-weight:800; cursor:pointer; transition:all 0.15s; }
+  .btn:hover { transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,0.15); }
+  .btn:active { transform:translateY(0); }
+  .btn-coral{background:var(--coral);color:white;} .btn-mint{background:var(--mint);color:white;} .btn-sun{background:var(--sun);color:var(--sky);} .btn-lav{background:var(--lavender);color:white;} .btn-ghost{background:#f0f2f5;color:var(--muted);} .btn-sky{background:var(--sky);color:white;}
+  .action-row { display:flex; gap:0.8rem; flex-wrap:wrap; align-items:center; margin-bottom:0.8rem; }
+
+  /* ── INPUT GROUP ── */
+  .input-group { display:flex; flex-direction:column; gap:0.3rem; }
+  .input-group label { font-size:0.78rem; font-weight:700; color:var(--muted); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.05em; }
+  .input-group input[type=number] { border:2px solid var(--border); border-radius:8px; padding:0.5rem 0.8rem; font-family:'Nunito',sans-serif; font-size:1rem; width:100px; outline:none; transition:border-color 0.2s; font-weight:700; color:var(--sky); background:white; }
+  .input-group input[type=number]:focus { border-color:var(--coral); }
+
+  /* ── STAT RESULT PANEL ── */
+  .stat-panel { background:var(--lavender-pale); border:2px solid rgba(124,111,205,0.3); border-radius:12px; padding:1.2rem 1.4rem; margin-top:1rem; }
+  .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:0.6rem; margin-top:0.6rem; }
+  .stat-card { background:white; border-radius:10px; padding:0.8rem; text-align:center; }
+  .stat-card .stat-val { font-family:'Fredoka One',cursive; font-size:1.5rem; color:var(--sky); }
+  .stat-card .stat-lbl { font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--muted); margin-top:0.2rem; }
+  .stat-card.coral-card .stat-val { color:var(--coral); }
+  .stat-card.mint-card  .stat-val { color:var(--mint); }
+  .stat-card.sun-card   .stat-val { color:#b8860b; }
+  .stat-card.lav-card   .stat-val { color:var(--lavender); }
+
+  /* ── CANVASES ── */
+  canvas.chart-canvas { border-radius:10px; border:2px solid var(--border); display:block; background:white; width:100%; }
+
+  /* ── DATA INPUT AREA ── */
+  .data-input-wrap { margin-bottom:1rem; }
+  .data-input-wrap label { font-size:0.78rem; font-weight:700; color:var(--muted); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:0.4rem; }
+  .data-input-wrap input[type=text] { width:100%; border:2px solid var(--lavender); border-radius:8px; padding:0.6rem 0.9rem; font-family:'DM Mono',monospace; font-size:0.95rem; font-weight:700; color:var(--sky); outline:none; transition:border-color 0.2s; background:white; }
+  .data-input-wrap input[type=text]:focus { border-color:var(--coral); }
+
+  /* ── DATASET BUTTONS ── */
+  .dataset-btn { background:var(--sky); color:white; border:none; border-radius:8px; padding:0.4rem 0.8rem; font-family:'Nunito',sans-serif; font-size:0.78rem; font-weight:700; cursor:pointer; transition:all 0.15s; margin:0.2rem; }
+  .dataset-btn:hover { background:var(--sky-mid); }
+
+  /* ── WORLD CARDS ── */
+  .world-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+  .world-card { border-radius:14px; padding:1.4rem; }
+  .world-card.coral-bg{background:var(--coral-pale);} .world-card.mint-bg{background:var(--mint-pale);} .world-card.lav-bg{background:var(--lavender-pale);} .world-card.sun-bg{background:var(--sun-pale);}
+  .world-card .wc-icon { font-size:2rem; margin-bottom:0.6rem; }
+  .world-card h4 { font-family:'Fredoka One',cursive; font-size:1rem; margin-bottom:0.4rem; color:var(--sky); }
+  .world-card p  { font-size:0.82rem; line-height:1.6; color:#3a4a5a; }
+
+  /* ── REFLECTION ── */
+  .reflection-card { background:white; border:2px solid var(--border); border-radius:14px; padding:1.4rem; margin-bottom:1rem; }
+  .reflection-card .q { font-family:'Fredoka One',cursive; font-size:1rem; color:var(--sky); margin-bottom:0.7rem; display:flex; gap:0.5rem; align-items:baseline; }
+  .reflection-card .q .qnum { font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--muted); flex-shrink:0; }
+  .reflection-card textarea { width:100%; border:1.5px solid rgba(0,0,0,0.1); border-radius:8px; padding:0.7rem; font-family:'Nunito',sans-serif; font-size:0.88rem; resize:vertical; min-height:72px; background:#fafbfc; color:var(--ink); outline:none; transition:border-color 0.2s; }
+  .reflection-card textarea:focus { border-color:var(--lavender); }
+
+  /* ── CONGRATS ── */
+  .congrats { text-align:center; padding:2rem 1rem; }
+  .congrats .trophy { font-size:4rem; margin-bottom:1rem; animation:bounce 0.8s ease infinite alternate; }
+  @keyframes bounce { from{transform:translateY(0);}to{transform:translateY(-10px);} }
+  .congrats h2 { font-family:'Fredoka One',cursive; font-size:2rem; color:var(--sky); margin-bottom:0.8rem; }
+  .congrats p  { font-size:0.95rem; line-height:1.7; color:#3a4a5a; max-width:500px; margin:0 auto 1.5rem; }
+  .summary-chips { display:flex; flex-wrap:wrap; gap:0.6rem; justify-content:center; }
+  .summary-chip { padding:0.5rem 1.1rem; border-radius:20px; font-size:0.82rem; font-weight:700; background:var(--sun-pale); color:#b8860b; border:1.5px solid #f8e0a0; }
+  .divider { height:1px; background:linear-gradient(90deg,transparent,var(--border),transparent); margin:1.5rem 0; }
+
+  /* ── NAV ── */
+  .nav-row { display:flex; justify-content:space-between; align-items:center; padding:2.5rem 2rem 0; max-width:820px; margin:0 auto; }
+  .btn-next { background:var(--sky); color:white; border:none; border-radius:50px; padding:0.9rem 2rem; font-family:'Fredoka One',cursive; font-size:1rem; cursor:pointer; display:flex; align-items:center; gap:0.6rem; transition:all 0.2s; box-shadow:0 4px 16px rgba(30,58,95,0.25); }
+  .btn-next:hover { background:var(--sky-mid); transform:translateY(-2px); }
+  .btn-prev { background:transparent; color:var(--muted); border:2px solid var(--border); border-radius:50px; padding:0.9rem 1.6rem; font-family:'Fredoka One',cursive; font-size:0.95rem; cursor:pointer; transition:all 0.2s; }
+  .btn-prev:hover { border-color:var(--muted); color:var(--ink); }
+  .btn-prev:disabled,.btn-next:disabled { opacity:0.3; cursor:not-allowed; transform:none; }
+
+  /* ── SUMMARY ── */
+  .summary-section { background:white; border-radius:16px; padding:1.8rem; margin-bottom:1.2rem; border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive; font-size:1.05rem; color:var(--sky); margin-bottom:0.8rem; }
+  .summary-answer { background:#f5f7fa; border-radius:8px; padding:0.7rem 1rem; font-size:0.85rem; line-height:1.6; color:var(--ink); margin-bottom:0.5rem; font-style:italic; border-left:3px solid var(--lavender); min-height:2rem; }
+  .summary-answer.empty { color:var(--muted); font-style:normal; border-left-color:var(--border); }
+  .sum-label { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.4rem; margin-top:0.6rem; text-transform:uppercase; letter-spacing:0.06em; }
+  .share-buttons { display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:1.5rem; justify-content:center; }
+  .share-btn { border:none; border-radius:12px; padding:0.85rem 1.6rem; font-family:'Fredoka One',cursive; font-size:1rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:0.5rem; }
+  .share-btn:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.15); }
+  .share-btn.copy{background:var(--mint);color:white;} .share-btn.email{background:var(--lavender);color:white;} .share-btn.print{background:var(--sky);color:white;}
+  .copy-confirm { text-align:center; font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--mint); min-height:1.2rem; margin-top:0.6rem; }
+
+  /* multi-line text blocks */
+  #sqTopicHint,#sqCheckFb,#statInsight,#outlierResult { white-space:pre-line; }
+
+  @media (max-width:560px) { .hero{padding:2.5rem 1.2rem 1.5rem;} .section{padding:2rem 1.2rem 0;} .nav-row{padding:2rem 1.2rem 0;} }
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm{display:none !important;}
+    .sheet{box-shadow:none;border-radius:0;}
+    .section{display:none !important;}
+    #sec-7{display:block !important;}
+  }
+  /* ── G7 stats & probability extras ── */
+  .steps { white-space:pre-line; font-family:'DM Mono',monospace; font-size:0.85rem; line-height:1.9; color:var(--sky); background:var(--lavender-pale); border-left:4px solid var(--lavender); border-radius:0 12px 12px 0; padding:1rem 1.2rem; margin-top:0.8rem; }
+  canvas.cv { width:100%; border:2px solid var(--border); border-radius:10px; background:white; display:block; }
+  .big-eq { font-family:'Fredoka One',cursive; font-size:1.4rem; color:var(--sky); text-align:center; margin:0.8rem 0 0.3rem; }
+  .sl { font-family:'DM Mono',monospace; font-size:0.8rem; color:var(--muted); flex:1; min-width:150px; }
+  .sl input { width:100%; accent-color:var(--coral); }
+  .dgrid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; max-width:430px; font-family:'DM Mono',monospace; font-size:0.85rem; }
+  .dgrid div { text-align:center; padding:0.35rem 0; border-radius:6px; background:#f5f7fa; color:var(--sky); }
+  .dgrid div.h { background:var(--sky); color:white; font-weight:700; }
+  .dgrid div.hit { background:var(--coral); color:white; font-weight:700; }
+  .twocol { display:grid; grid-template-columns:1fr 1fr; gap:1rem; align-items:start; }
+  @media (max-width:700px){ .twocol { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">✨ Grade 7 · Statistics & Probability</div>
+  <h1>Samples, Spreads<br>& <span class="accent">Chances</span> 🎲</h1>
+  <p class="intro">How can 1,000 people predict an election for millions? How do you know if two groups are really different? And what are the actual odds of rolling a 7? Today you'll sample, compare and simulate like a real data scientist.</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <a class="prog-step active" id="pill-0" onclick="goTo(0)">🎲 Wonder</a>
+    <a class="prog-step" id="pill-1" onclick="goTo(1)">📚 Discover</a>
+    <a class="prog-step" id="pill-2" onclick="goTo(2)">🎯 Sampling</a>
+    <a class="prog-step" id="pill-3" onclick="goTo(3)">⚖️ Compare</a>
+    <a class="prog-step" id="pill-4" onclick="goTo(4)">🎰 Probability</a>
+    <a class="prog-step" id="pill-5" onclick="goTo(5)">🌍 Real Life</a>
+    <a class="prog-step" id="pill-6" onclick="goTo(6)">💭 Reflect</a>
+    <a class="prog-step" id="pill-7" onclick="goTo(7)">📤 Submit</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+  <!-- ══ SECTION 0: WONDER ══ -->
+  <div class="section active" id="sec-0">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">The Big Question</span></div>
+    <h2>Can a small group tell you about everyone?</h2>
+    <p class="lead">Your school has 500 students. You want to know their favourite lunch, but you can't ask everyone. If you ask <strong>40 students</strong>, can you trust the answer? It depends completely on <strong>how you choose them</strong>.</p>
+    <div class="wonder-box">
+      <p>Roll two dice and add them. Is every total from 2 to 12 equally likely? Most people guess yes. But roll them 100 times and <strong>7</strong> shows up about six times as often as <strong>2</strong>. By the end of today you'll know exactly why.</p>
+    </div>
+    <p style="font-size:0.9rem;font-weight:700;color:var(--sky);margin-bottom:0.8rem;">🧠 Warm-up — fair sample or biased?</p>
+    <div style="background:white;border:2px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;">
+      <div id="warmupGrid" style="display:flex;flex-direction:column;gap:0.6rem;"></div>
+      <div id="warmupFb" style="margin-top:1rem;font-family:'DM Mono',monospace;font-size:0.82rem;min-height:1.2rem;color:var(--mint);"></div>
+    </div>
+    <div class="wonder-box mint-box">
+      <p>Statistics and probability are about <strong>uncertainty</strong>: making good decisions when you can't know everything for sure.</p>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 1: DISCOVER ══ -->
+  <div class="section" id="sec-1">
+    <div class="section-eyebrow"><div class="eyebrow-num num-lav">2</div><span class="eyebrow-label">Discover the Vocabulary</span></div>
+    <h2>📚 Words data scientists use</h2>
+    <p class="lead">Click each word to reveal its meaning.</p>
+    <div class="chip-row">
+      <span class="chip coral" onclick="revealTerm('pop')">👥 Population & Sample</span>
+      <span class="chip lav"   onclick="revealTerm('rand')">🎯 Random Sample</span>
+      <span class="chip sun"   onclick="revealTerm('bias')">⚠️ Bias</span>
+      <span class="chip mint"  onclick="revealTerm('mad')">📏 MAD</span>
+      <span class="chip sky"   onclick="revealTerm('prob')">🎲 Probability</span>
+    </div>
+    <div class="concept-reveal" id="cr-pop"><strong>Population & Sample</strong> — the population is the whole group you want to know about; a sample is the part you actually measure.<br><br><em>Population: all 500 students. Sample: the 40 you survey.</em></div>
+    <div class="concept-reveal lav-border" id="cr-rand"><strong>Random Sample</strong> — every member of the population has an equal chance of being chosen. Random samples tend to represent the population.<br><br><em>Drawing 40 names from a hat of all 500 students.</em></div>
+    <div class="concept-reveal sun-border" id="cr-bias"><strong>Bias</strong> — a sampling method that favours some results over others.<br><br><em>Asking only the basketball team about favourite sports is biased.</em></div>
+    <div class="concept-reveal mint-border" id="cr-mad"><strong>Mean Absolute Deviation (MAD)</strong> — the average distance of the data from the mean. Used to measure how far apart two groups really are.<br><br><em>If two means differ by 3 MADs, the groups are clearly different.</em></div>
+    <div class="concept-reveal sky-border" id="cr-prob"><strong>Probability</strong> — a number from 0 (impossible) to 1 (certain) for how likely an event is. Theoretical = what should happen; experimental = what did happen.<br><br><em>P(heads) = ½ in theory; you might get 48 heads in 100 flips.</em></div>
+  </div>
+
+  <!-- ══ SECTION 2: SAMPLING ══ -->
+  <div class="section" id="sec-2">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">3</div><span class="eyebrow-label">Investigation 1 · 7.SP.A.1–2</span></div>
+    <h2>🎯 Random Samples vs Biased Samples</h2>
+    <p class="lead">This school has 500 students. The <strong>coral</strong> dots love pizza most. You don't know the real percentage — take samples to estimate it. Then compare with a <strong>biased</strong> sample. <strong>Predict first!</strong></p>
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="sa-prediction" placeholder="I think a random sample of 40 will give an estimate that is close / far from the real percentage because... If I take many samples, I think the estimates will..."></textarea>
+    </div>
+    <div class="demo-zone">
+      <h3>🏫 The Sampling Machine</h3>
+      <div class="hint">CHOOSE A SAMPLE SIZE · TAKE RANDOM OR BIASED SAMPLES · EACH ESTIMATE IS ADDED TO THE DOT PLOT</div>
+      <div class="action-row">
+        <label class="sl" style="max-width:240px;">Sample size n = <b id="nV"></b><input type="range" id="sn" min="10" max="100" step="10" value="40" oninput="document.getElementById('nV').textContent=this.value"></label>
+        <button class="btn btn-mint" onclick="takeSample(false)">🎯 Random sample</button>
+        <button class="btn btn-coral" onclick="takeSample(true)">⚠️ Biased sample (pizza-club corner)</button>
+        <button class="btn btn-sun" onclick="for(let i=0;i<20;i++) takeSample(false,true); takeSample(false)">×20 random</button>
+        <button class="btn btn-ghost" onclick="resetSamples()">↺ Clear</button>
+      </div>
+      <div class="twocol">
+        <canvas class="cv" id="popCanvas" width="400" height="260"></canvas>
+        <canvas class="cv" id="estCanvas" width="400" height="260"></canvas>
+      </div>
+      <div id="sampOut" class="steps"></div>
+      <div class="action-row" style="margin-top:0.6rem;"><button class="btn btn-ghost" onclick="revealTruth()">👀 Reveal the true percentage</button><span id="truth" style="font-family:'DM Mono',monospace;font-size:0.85rem;color:var(--coral);"></span></div>
+    </div>
+    <div class="predict-box" style="border-color:var(--mint);background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="sa-reflection" placeholder="Random samples gave estimates that... Bigger samples were... The biased sample was always too high because... I would trust a sample when..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 3: COMPARE ══ -->
+  <div class="section" id="sec-3">
+    <div class="section-eyebrow"><div class="eyebrow-num num-mint">4</div><span class="eyebrow-label">Investigation 2 · 7.SP.B.3–4</span></div>
+    <h2>⚖️ Are Two Groups Really Different?</h2>
+    <p class="lead">Two groups can have different means just by chance. To judge, compare the <strong>difference in means</strong> to the <strong>spread (MAD)</strong>. A difference of <strong>2 or more MADs</strong> is a strong sign the groups really differ.</p>
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="co-prediction" placeholder="I think basketball players and soccer players have heights that are very different / similar because... A difference in means is meaningful when..."></textarea>
+    </div>
+    <div class="demo-zone">
+      <h3>📊 Dot Plot Comparer</h3>
+      <div class="hint">PICK TWO GROUPS · SEE BOTH DOT PLOTS · COMPARE CENTRES WITH SPREADS</div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.8rem;">
+        <button class="dataset-btn" onclick="setCmp('height')">🏀 vs ⚽ heights</button>
+        <button class="dataset-btn" onclick="setCmp('sleep')">😴 Grade 7 vs Grade 12 sleep</button>
+        <button class="dataset-btn" onclick="setCmp('plants')">🌱 Plant growth: light vs shade</button>
+        <button class="dataset-btn" onclick="setCmp('quiz')">📝 Class A vs Class B quiz</button>
+      </div>
+      <canvas class="cv" id="cmpCanvas" width="700" height="260"></canvas>
+      <div id="cmpOut" class="steps"></div>
+    </div>
+    <div class="predict-box" style="border-color:var(--lavender);background:var(--lavender-pale);">
+      <h4 style="color:var(--lavender);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="co-reflection" placeholder="When the dot plots overlapped a lot, the difference was ___ MADs... A big difference compared to the MAD means... The quiz classes were / weren't really different because..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 4: PROBABILITY ══ -->
+  <div class="section" id="sec-4">
+    <div class="section-eyebrow"><div class="eyebrow-num num-sun">5</div><span class="eyebrow-label">Investigation 3 · 7.SP.C.5–8</span></div>
+    <h2>🎰 Probability: Theory vs Experiment</h2>
+    <p class="lead">Theoretical probability = favourable outcomes ÷ total equally likely outcomes. Run experiments and watch the <strong>experimental</strong> probability get closer to theory as trials increase. Then explore <strong>compound events</strong> with two dice.</p>
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="pr-prediction" placeholder="If I spin a spinner that is ¼ red 100 times, I expect about ___ reds. The most likely total with two dice is ___ because..."></textarea>
+    </div>
+    <div class="demo-zone">
+      <h3>🎡 Spinner Lab</h3>
+      <div class="hint">SET THE SPINNER SECTIONS · SPIN 1, 10, 100 OR 1000 TIMES · COMPARE EXPERIMENT (BARS) TO THEORY (DASHES)</div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:0.6rem;">
+        <label class="sl">🟥 Red sections: <b id="s1V"></b><input type="range" id="s1" min="0" max="6" step="1" value="1" oninput="resetSpin()"></label>
+        <label class="sl">🟩 Green sections: <b id="s2V"></b><input type="range" id="s2" min="0" max="6" step="1" value="2" oninput="resetSpin()"></label>
+        <label class="sl">🟪 Purple sections: <b id="s3V"></b><input type="range" id="s3" min="0" max="6" step="1" value="1" oninput="resetSpin()"></label>
+      </div>
+      <div class="action-row"><button class="btn btn-coral" onclick="spin(1)">Spin ×1</button><button class="btn btn-coral" onclick="spin(10)">×10</button><button class="btn btn-coral" onclick="spin(100)">×100</button><button class="btn btn-coral" onclick="spin(1000)">×1000</button><button class="btn btn-ghost" onclick="resetSpin()">↺ Reset</button></div>
+      <div class="twocol">
+        <canvas class="cv" id="spinCanvas" width="320" height="260"></canvas>
+        <canvas class="cv" id="barCanvas" width="400" height="260"></canvas>
+      </div>
+      <div id="spinOut" class="steps"></div>
+    </div>
+    <div class="demo-zone">
+      <h3>🎲 Two-Dice Sample Space</h3>
+      <div class="hint">CHOOSE A TARGET TOTAL · THE GRID HIGHLIGHTS EVERY WAY TO GET IT · THEN SIMULATE</div>
+      <label class="sl" style="display:block;max-width:300px;margin-bottom:0.6rem;">Target sum = <b id="tsV"></b><input type="range" id="ts" min="2" max="12" step="1" value="7" oninput="drawDice()"></label>
+      <div class="twocol">
+        <div class="dgrid" id="diceGrid"></div>
+        <div>
+          <div id="diceOut" class="steps" style="margin-top:0;"></div>
+          <div class="action-row" style="margin-top:0.6rem;"><button class="btn btn-lav" onclick="rollDice(500)">Roll 500 times</button></div>
+          <div id="diceSim" style="font-family:'DM Mono',monospace;font-size:0.85rem;color:var(--sky);line-height:1.7;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="predict-box" style="border-color:var(--mint);background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="pr-reflection" placeholder="With only 10 spins, the results were... With 1000 spins... 7 is the most likely total because... P(sum = 7) = ___/36 because..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 5: REAL LIFE ══ -->
+  <div class="section" id="sec-5">
+    <div class="section-eyebrow"><div class="eyebrow-num num-sky">6</div><span class="eyebrow-label">Real-World Connections</span></div>
+    <h2>Data and chance in the real world 🌍</h2>
+    <p class="lead">Every poll, weather forecast and medical trial depends on the ideas from today.</p>
+    <div class="world-grid">
+      <div class="world-card coral-bg"><div class="wc-icon">🗳️</div><h4>Election Polls</h4><p>Pollsters randomly sample about 1,000 voters. A random sample that size usually lands within a few percent of the truth.</p></div>
+      <div class="world-card mint-bg"><div class="wc-icon">💊</div><h4>Medical Trials</h4><p>Researchers compare a treatment group to a control group. If the difference is many MADs, the medicine probably works.</p></div>
+      <div class="world-card lav-bg"><div class="wc-icon">🌦️</div><h4>Weather</h4><p>"70% chance of rain" comes from simulations of many possible tomorrows.</p></div>
+      <div class="world-card sun-bg"><div class="wc-icon">🏭</div><h4>Quality Control</h4><p>Factories test a random sample of products to estimate how many in a batch are faulty.</p></div>
+    </div>
+    <div class="divider"></div>
+    <div class="demo-zone">
+      <h3>🎯 Real-World Problem Solver</h3>
+      <div class="hint">SOLVE · THEN REVEAL</div>
+      <div id="realProblems" style="display:flex;flex-direction:column;gap:0.8rem;"></div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 6: REFLECT ══ -->
+  <div class="section" id="sec-6">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">7</div><span class="eyebrow-label">Synthesis & Wonder</span></div>
+    <h2>💭 Let's think it through</h2>
+    <p class="lead">Explain your thinking in full sentences.</p>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q1 /</span> Describe a way to survey your school that would be biased, and a way that would be random.</div><textarea placeholder="Biased: asking only... because... Random: ..."></textarea></div>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q2 /</span> Two classes' quiz means differ by 4 points, and each MAD is 8 points. Are the classes really different? Explain.</div><textarea placeholder="4 ÷ 8 = ___ MADs, which is... so..."></textarea></div>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q3 /</span> You flip a coin 10 times and get 7 heads. Is the coin unfair? What would you do to find out?</div><textarea placeholder="With only 10 flips... I would flip it ___ times because..."></textarea></div>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q4 /</span> Design a fair game with two dice. Explain why it's fair using the sample space.</div><textarea placeholder="Player A wins if... Player B wins if... Each has ___/36 because..."></textarea></div>
+    <div class="divider"></div>
+    <div class="congrats">
+      <div class="trophy">🎉</div>
+      <h2>You think like a data scientist!</h2>
+      <p>Today you covered all of Grade 7 Statistics & Probability — random sampling and inference, comparing populations with MAD, and theoretical, experimental and compound probability.</p>
+      <div class="summary-chips">
+        <span class="summary-chip">Random → representative</span>
+        <span class="summary-chip">Bigger samples → less variation</span>
+        <span class="summary-chip">Difference ÷ MAD</span>
+        <span class="summary-chip">P = favourable ÷ total</span>
+        <span class="summary-chip">More trials → closer to theory</span>
+        <span class="summary-chip">P(sum 7) = 6/36</span>
+        <span class="summary-chip">7.SP.A · B · C</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 7: SUBMIT ══ -->
+  <div class="section" id="sec-7">
+    <div class="section-eyebrow"><div class="eyebrow-num num-mint">8</div><span class="eyebrow-label">Your Completed Work</span></div>
+    <h2>📤 Ready to Share</h2>
+    <p class="lead">Here's everything you worked on today. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> directly to your teacher.</p>
+    <div class="summary-section" style="background:var(--sky);color:white;border-color:var(--sky);">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;align-items:center;">
+        <div><div style="font-family:'DM Mono',monospace;font-size:0.7rem;opacity:0.6;margin-bottom:0.3rem;">STUDENT</div><div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div></div>
+        <div style="text-align:right;"><div style="font-family:'DM Mono',monospace;font-size:0.7rem;opacity:0.6;margin-bottom:0.3rem;">LESSON</div><div style="font-family:'Fredoka One',cursive;font-size:1rem;">Samples, Spreads & Chances 🎲</div><div style="font-family:'DM Mono',monospace;font-size:0.72rem;opacity:0.6;" id="summaryDate"></div></div>
+      </div>
+    </div>
+    <div class="summary-section"><h3>🎯 Section 3 — Sampling</h3><div class="sum-label">Prediction</div><div class="summary-answer" id="sum-sa-pred"></div><div class="sum-label">Reflection</div><div class="summary-answer" id="sum-sa-ref"></div></div>
+    <div class="summary-section"><h3>⚖️ Section 4 — Comparing Populations</h3><div class="sum-label">Prediction</div><div class="summary-answer" id="sum-co-pred"></div><div class="sum-label">Reflection</div><div class="summary-answer" id="sum-co-ref"></div></div>
+    <div class="summary-section"><h3>🎰 Section 5 — Probability</h3><div class="sum-label">Prediction</div><div class="summary-answer" id="sum-pr-pred"></div><div class="sum-label">Reflection</div><div class="summary-answer" id="sum-pr-ref"></div></div>
+    <div class="summary-section"><h3>💭 Section 7 — Reflections</h3>
+      <div class="sum-label">Q1 — Biased vs random survey</div><div class="summary-answer" id="sum-q1"></div>
+      <div class="sum-label">Q2 — Are the classes different?</div><div class="summary-answer" id="sum-q2"></div>
+      <div class="sum-label">Q3 — 7 heads in 10 flips</div><div class="summary-answer" id="sum-q3"></div>
+      <div class="sum-label">Q4 — My fair dice game</div><div class="summary-answer" id="sum-q4"></div>
+    </div>
+    <div class="share-buttons">
+      <button class="share-btn copy" onclick="copyResults()">📋 Copy My Results</button>
+      <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+      <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+    <div class="copy-confirm" id="copyConfirm"></div>
+    <div style="margin-top:1.5rem;background:var(--sun-pale);border:2px dashed var(--sun);border-radius:12px;padding:1.2rem 1.4rem;">
+      <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#b8860b;margin-bottom:0.8rem;">📋 How to submit your work:</p>
+      <p style="font-size:0.82rem;color:#b8860b;font-family:'DM Mono',monospace;line-height:2;">
+        <strong>📋 Copy My Results</strong> — Copies all your answers. Open Google Classroom, click your assignment, paste, and submit.<br>
+        <strong>📧 Email to Teacher</strong> — Opens your email app with your answers already typed. Add your teacher's address and send.<br>
+        <strong>🖨️ Print / Save PDF</strong> — Mac: "Save as PDF" bottom left · Windows: "Microsoft Print to PDF".
+      </p>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" id="prevBtn" onclick="navigate(-1)" disabled>← Back</button>
+    <button class="btn-next" id="nextBtn" onclick="navigate(1)">Next <span>→</span></button>
+  </div>
+</div>
+
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+
+<script>
+const C = { sky:'#1e3a5f', coral:'#e8603c', mint:'#3aaf85', lav:'#7c6fcd', sun:'#f6c343', gold:'#c9962a', muted:'#7a8899', grid:'#e8eef4', axis:'#b8c4cc' };
+let currentSection=0; const totalSections=8;
+function goTo(n){
+  document.querySelectorAll('.section').forEach((s,i)=>s.classList.toggle('active',i===n));
+  document.querySelectorAll('.prog-step').forEach((p,i)=>{p.classList.toggle('active',i===n);p.classList.toggle('done',i<n);});
+  currentSection=n; document.getElementById('prevBtn').disabled=n===0;
+  const nb=document.getElementById('nextBtn');
+  if(n===totalSections-1){nb.textContent='✓ Complete!';nb.disabled=true;buildSummary();} else {nb.innerHTML='Next <span>→</span>';nb.disabled=false;}
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n===2) drawPop();
+  if(n===3) drawCmp();
+  if(n===4){ drawSpin(); drawDice(); }
+}
+function navigate(d){ goTo(Math.min(Math.max(currentSection+d,0),totalSections-1)); }
+const r2=x=>Math.round(x*100)/100;
+function clr(cv){ const ctx=cv.getContext('2d'); ctx.clearRect(0,0,cv.width,cv.height); ctx.fillStyle='#fafbfc'; ctx.fillRect(0,0,cv.width,cv.height); return ctx; }
+const mean=a=>a.reduce((s,x)=>s+x,0)/a.length, mad=a=>{ const m=mean(a); return mean(a.map(x=>Math.abs(x-m))); };
+
+// ══ WARM-UP ══
+const warm=[
+  {t:'Asking every 10th student who walks through the main entrance.',f:true,e:'Fairly random — everyone uses the entrance.'},
+  {t:'Asking the chess club which club is the best.',f:false,e:'Biased — chess players favour chess club.'},
+  {t:'Drawing 50 names from a hat with every student\'s name.',f:true,e:'Random — everyone has an equal chance.'},
+  {t:'An online poll that only people who care a lot will answer.',f:false,e:'Biased — volunteers have strong opinions.'},
+];
+let wDone=0,wOk=0;
+document.getElementById('warmupGrid').innerHTML=warm.map((q,i)=>`<div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;background:#f5f7fa;border-radius:10px;padding:0.7rem 1rem;"><div style="flex:1;min-width:220px;font-size:0.88rem;font-weight:600;color:#3a4a5a;">${q.t}</div><div style="display:flex;gap:0.4rem;"><button onclick="ansWarm(${i},true)" style="background:var(--mint-pale);border:2px solid #b8ebd8;border-radius:8px;padding:0.35rem 0.8rem;font-family:'Fredoka One',cursive;font-size:0.85rem;color:var(--mint);cursor:pointer;">Fair</button><button onclick="ansWarm(${i},false)" style="background:var(--coral-pale);border:2px solid #f8c5b8;border-radius:8px;padding:0.35rem 0.8rem;font-family:'Fredoka One',cursive;font-size:0.85rem;color:var(--coral);cursor:pointer;">Biased</button></div><div id="wfb-${i}" style="font-family:'DM Mono',monospace;font-size:0.72rem;width:100%;min-height:1rem;"></div></div>`).join('');
+function ansWarm(i,a){ const fb=document.getElementById('wfb-'+i); if(fb.textContent) return; wDone++; const ok=a===warm[i].f; if(ok) wOk++; fb.textContent=(ok?'✓ ':'✗ ')+warm[i].e; fb.style.color=ok?C.mint:C.coral;
+  if(wDone===warm.length){ const el=document.getElementById('warmupFb'); el.style.color=wOk===warm.length?C.mint:C.coral; el.textContent= wOk===warm.length?'🎉 Perfect! You can spot bias.':`${wOk}/${warm.length}. Ask: does everyone have an equal chance of being picked?`; } }
+
+let openTerm=null;
+function revealTerm(k){ if(openTerm) document.getElementById('cr-'+openTerm).classList.remove('show'); if(openTerm===k){openTerm=null;return;} document.getElementById('cr-'+k).classList.add('show'); openTerm=k; }
+
+// ══ SAMPLING ══
+let seed=7; const rnd=()=>{ seed=(seed*16807)%2147483647; return (seed-1)/2147483646; };
+const POP=[]; (function(){ for(let i=0;i<500;i++){ const col=i%25, row=Math.floor(i/25); const corner= col<7 && row<7; POP.push({col,row,pizza: rnd() < (corner?0.85:0.30)}); } })();
+const TRUE_P = POP.filter(p=>p.pizza).length/500;
+let lastSample=[], estimates=[];
+function drawPop(){
+  const cv=document.getElementById('popCanvas'), ctx=clr(cv); const dx=15, ox=14, oy=14;
+  ctx.fillStyle='rgba(246,195,67,0.18)'; ctx.fillRect(ox-6,oy-6,7*dx+2,7*dx+2); ctx.fillStyle=C.gold; ctx.font='10px DM Mono, monospace'; ctx.fillText('pizza club corner',ox,oy+7*dx+12);
+  POP.forEach((p,i)=>{ const x=ox+p.col*dx, y=oy+p.row*dx*0.62+ (p.row>=7?14:0); ctx.beginPath(); ctx.arc(x,y,4,0,7); ctx.fillStyle=p.pizza?'rgba(232,96,60,0.75)':'rgba(124,111,205,0.45)'; ctx.fill(); if(lastSample.includes(i)){ ctx.strokeStyle=C.sky; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(x,y,6.5,0,7); ctx.stroke(); } });
+  const cv2=document.getElementById('estCanvas'), c2=clr(cv2); const pad=30, W=cv2.width, base=cv2.height-36, X=v=>pad+v/100*(W-2*pad);
+  c2.strokeStyle=C.axis; c2.lineWidth=2; c2.beginPath(); c2.moveTo(pad,base); c2.lineTo(W-pad,base); c2.stroke(); c2.fillStyle=C.muted; c2.font='10px DM Mono, monospace'; c2.textAlign='center';
+  for(let v=0;v<=100;v+=10){ c2.fillText(v+'%',X(v),base+16); }
+  c2.fillStyle=C.sky; c2.font='bold 12px Nunito, sans-serif'; c2.fillText('sample estimates of % who love pizza',W/2,18);
+  const stacks={}; estimates.forEach(e=>{ const b=Math.round(e.v/2)*2; stacks[b]=(stacks[b]||0)+1; const h=stacks[b]; c2.beginPath(); c2.arc(X(b),base-6-(h-1)*9,4,0,7); c2.fillStyle=e.biased?C.coral:C.mint; c2.fill(); });
+  if(document.getElementById('truth').textContent){ c2.strokeStyle=C.sky; c2.setLineDash([4,3]); c2.beginPath(); c2.moveTo(X(TRUE_P*100),30); c2.lineTo(X(TRUE_P*100),base); c2.stroke(); c2.setLineDash([]); }
+}
+function takeSample(biased,quiet){
+  const n=+document.getElementById('sn').value; let pool=[...POP.keys()];
+  if(biased){ const corner=pool.filter(i=>POP[i].col<7&&POP[i].row<7); const near=pool.filter(i=>POP[i].col<10&&POP[i].row<10); pool= corner.length>=n? corner : near; }
+  const pick=[]; const copy=[...pool]; for(let k=0;k<n && copy.length;k++){ const j=Math.floor(Math.random()*copy.length); pick.push(copy.splice(j,1)[0]); }
+  lastSample=pick; const yes=pick.filter(i=>POP[i].pizza).length, pct=yes/n*100; estimates.push({v:pct,biased});
+  if(quiet) return;
+  const rnd=estimates.filter(e=>!e.biased).map(e=>e.v), bia=estimates.filter(e=>e.biased).map(e=>e.v);
+  document.getElementById('sampOut').textContent=`Latest ${biased?'BIASED':'random'} sample: ${yes} of ${n} love pizza → estimate ${r2(pct)}%\nEstimate for the whole school: about ${Math.round(pct/100*500)} of 500 students\n\nRandom samples so far: ${rnd.length}${rnd.length?` · mean estimate ${r2(mean(rnd))}% · range ${r2(Math.min(...rnd))}–${r2(Math.max(...rnd))}%`:''}\nBiased samples so far: ${bia.length}${bia.length?` · mean estimate ${r2(mean(bia))}%`:''}`;
+  drawPop();
+}
+function resetSamples(){ estimates=[]; lastSample=[]; document.getElementById('sampOut').textContent='Take a sample to begin.'; drawPop(); }
+function revealTruth(){ document.getElementById('truth').textContent=`True percentage: ${r2(TRUE_P*100)}% (${Math.round(TRUE_P*500)} of 500). Random estimates cluster around it; biased ones don't.`; drawPop(); }
+
+// ══ COMPARE ══
+const cmpSets={
+  height:{u:'cm',a:{n:'🏀 Basketball',d:[188,192,185,196,201,190,187,194,198,183,191,195]},b:{n:'⚽ Soccer',d:[175,180,172,178,183,176,181,174,179,185,177,173]}},
+  sleep:{u:'hrs',a:{n:'Grade 7',d:[9,8.5,9.5,8,9,10,8.5,9,9.5,8,9,8.5]},b:{n:'Grade 12',d:[7,6.5,7.5,8,6,7,7.5,6.5,8,7,6,7.5]}},
+  plants:{u:'cm',a:{n:'🌞 Light',d:[14,16,15,13,17,15,16,14,18,15,13,16]},b:{n:'🌥 Shade',d:[11,13,12,14,10,12,13,11,15,12,14,12]}},
+  quiz:{u:'pts',a:{n:'Class A',d:[72,85,64,90,78,58,81,69,94,75,66,88]},b:{n:'Class B',d:[70,82,61,92,74,63,79,71,86,68,77,80]}},
+};
+let cmpKey='height';
+function setCmp(k){ cmpKey=k; drawCmp(); }
+function drawCmp(){
+  const S=cmpSets[cmpKey], A=S.a.d, B=S.b.d, all=[...A,...B]; const lo=Math.floor(Math.min(...all))-1, hi=Math.ceil(Math.max(...all))+1;
+  const cv=document.getElementById('cmpCanvas'), ctx=clr(cv), pad=40, W=cv.width, X=v=>pad+(v-lo)/(hi-lo)*(W-2*pad);
+  const row=(data,y,col,name)=>{ ctx.strokeStyle=C.axis; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(W-pad,y); ctx.stroke(); const st={}; data.forEach(v=>{ st[v]=(st[v]||0)+1; ctx.beginPath(); ctx.arc(X(v),y-6-(st[v]-1)*10,5,0,7); ctx.fillStyle=col; ctx.fill(); });
+    const m=mean(data); ctx.strokeStyle=col; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(X(m),y-60); ctx.lineTo(X(m),y+6); ctx.stroke(); ctx.fillStyle=col; ctx.font='bold 12px Nunito, sans-serif'; ctx.textAlign='left'; ctx.fillText(`${name}  (mean ${r2(m)})`,pad,y-66);
+    ctx.fillStyle=C.muted; ctx.font='10px DM Mono, monospace'; ctx.textAlign='center'; const step=Math.max(1,Math.round((hi-lo)/12)); for(let v=Math.ceil(lo);v<=hi;v+=step) ctx.fillText(v,X(v),y+16); };
+  row(A,110,C.coral,S.a.n); row(B,225,C.lav,S.b.n);
+  const mA=mean(A), mB=mean(B), dA=mad(A), dB=mad(B), diff=Math.abs(mA-mB), madAvg=(dA+dB)/2, ratio=diff/madAvg;
+  document.getElementById('cmpOut').textContent=`${S.a.n}: mean ${r2(mA)} ${S.u}, MAD ${r2(dA)}\n${S.b.n}: mean ${r2(mB)} ${S.u}, MAD ${r2(dB)}\nDifference in means = ${r2(diff)} ${S.u}\nDifference ÷ typical MAD = ${r2(diff)} ÷ ${r2(madAvg)} ≈ ${r2(ratio)} MADs\n→ ${ratio>=2?'Very little overlap: the groups are clearly different.':ratio>=1?'Some overlap: there is probably a real difference, but be cautious.':'Lots of overlap: the difference could easily be due to chance.'}`;
+}
+
+// ══ SPINNER ══
+let spins=[0,0,0], spinAngle=0;
+function sects(){ return [+document.getElementById('s1').value,+document.getElementById('s2').value,+document.getElementById('s3').value]; }
+function resetSpin(){ spins=[0,0,0]; drawSpin(); }
+function drawSpin(){
+  const s=sects(); ['s1','s2','s3'].forEach((id,i)=>document.getElementById(id+'V').textContent=s[i]); const tot=s.reduce((a,b)=>a+b,0);
+  const cv=document.getElementById('spinCanvas'), ctx=clr(cv), cx=cv.width/2, cy=cv.height/2+6, R=100, cols=[C.coral,C.mint,C.lav];
+  if(!tot){ ctx.fillStyle=C.muted; ctx.textAlign='center'; ctx.font='13px Nunito'; ctx.fillText('Add some sections!',cx,cy); }
+  else { let a0=-Math.PI/2; s.forEach((k,ci)=>{ for(let j=0;j<k;j++){ const a1=a0+2*Math.PI/tot; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,R,a0,a1); ctx.closePath(); ctx.fillStyle=cols[ci]; ctx.globalAlpha=0.8; ctx.fill(); ctx.globalAlpha=1; ctx.strokeStyle='white'; ctx.lineWidth=2; ctx.stroke(); a0=a1; } });
+    ctx.strokeStyle=C.sky; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+80*Math.cos(spinAngle),cy+80*Math.sin(spinAngle)); ctx.stroke(); ctx.beginPath(); ctx.arc(cx,cy,7,0,7); ctx.fillStyle=C.sky; ctx.fill(); }
+  const cv2=document.getElementById('barCanvas'), c2=clr(cv2), N=spins.reduce((a,b)=>a+b,0), base=cv2.height-34, top=30, H=base-top, names=['Red','Green','Purple'];
+  c2.strokeStyle=C.axis; c2.beginPath(); c2.moveTo(40,top); c2.lineTo(40,base); c2.lineTo(cv2.width-14,base); c2.stroke(); c2.fillStyle=C.muted; c2.font='10px DM Mono, monospace'; c2.textAlign='right';
+  for(let p=0;p<=100;p+=25){ const y=base-p/100*H; c2.fillText(p+'%',36,y+3); }
+  names.forEach((nm,i)=>{ const x=70+i*110, th= tot? s[i]/tot : 0, ex= N? spins[i]/N : 0; c2.fillStyle=cols[i]; c2.globalAlpha=0.75; c2.fillRect(x,base-ex*H,60,ex*H); c2.globalAlpha=1;
+    c2.strokeStyle=C.sky; c2.lineWidth=2; c2.setLineDash([5,3]); c2.beginPath(); c2.moveTo(x-8,base-th*H); c2.lineTo(x+68,base-th*H); c2.stroke(); c2.setLineDash([]);
+    c2.fillStyle=C.sky; c2.textAlign='center'; c2.font='bold 11px Nunito'; c2.fillText(nm,x+30,base+16); c2.font='10px DM Mono, monospace'; c2.fillText(N?r2(ex*100)+'%':'',x+30,base-ex*H-6); });
+  c2.textAlign='left'; c2.fillStyle=C.muted; c2.fillText('bars = experiment · dashes = theory',46,18);
+  const lines= names.map((nm,i)=>`P(${nm}) theory = ${s[i]}/${tot||'?'} = ${tot?r2(s[i]/tot*100):0}%   experiment = ${spins[i]}/${N} = ${N?r2(spins[i]/N*100):0}%`);
+  document.getElementById('spinOut').textContent=`Total spins: ${N}\n${lines.join('\n')}\n${N>=500?'With many trials, experiment gets close to theory (the Law of Large Numbers).':N>0?'Few trials → results can be far from theory. Keep spinning!':'Press a spin button to start.'}`;
+}
+function spin(k){ const s=sects(), tot=s.reduce((a,b)=>a+b,0); if(!tot) return; for(let i=0;i<k;i++){ const r=Math.random()*tot; const idx= r<s[0]?0 : r<s[0]+s[1]?1 : 2; spins[idx]++; spinAngle=-Math.PI/2+r/tot*2*Math.PI; } drawSpin(); }
+
+// ══ DICE ══
+function drawDice(){
+  const t=+document.getElementById('ts').value; document.getElementById('tsV').textContent=t;
+  let html='<div class="h">+</div>'; for(let j=1;j<=6;j++) html+=`<div class="h">${j}</div>`; let hits=0;
+  for(let i=1;i<=6;i++){ html+=`<div class="h">${i}</div>`; for(let j=1;j<=6;j++){ const h=i+j===t; if(h) hits++; html+=`<div class="${h?'hit':''}">${i+j}</div>`; } }
+  document.getElementById('diceGrid').innerHTML=html;
+  document.getElementById('diceOut').textContent=`Sample space: 6 × 6 = 36 equally likely outcomes\nWays to roll a total of ${t}: ${hits}\nP(sum = ${t}) = ${hits}/36 ≈ ${r2(hits/36*100)}%\n${t===7?'7 has the MOST ways — it\'s the most likely total!':hits===1?'Only one way — very unlikely.':''}`;
+  document.getElementById('diceSim').textContent='';
+}
+function rollDice(n){ const t=+document.getElementById('ts').value; let c=0; for(let i=0;i<n;i++){ if(1+Math.floor(Math.random()*6)+1+Math.floor(Math.random()*6)===t) c++; }
+  let hits=0; for(let i=1;i<=6;i++) for(let j=1;j<=6;j++) if(i+j===t) hits++;
+  document.getElementById('diceSim').textContent=`Simulated ${n} rolls: total ${t} came up ${c} times = ${r2(c/n*100)}%\nTheory predicted about ${Math.round(hits/36*n)} times (${r2(hits/36*100)}%).`; }
+
+// ══ REAL LIFE ══
+const realP=[
+  {q:'A random sample of 60 students found 18 walk to school. About how many of the school\'s 900 students walk?', w:'18/60 = 30%\n30% of 900 = 270', a:'About 270 students'},
+  {q:'A bag has 3 red, 5 blue and 2 green marbles. What is P(not blue)?', w:'Not blue = 3 + 2 = 5 marbles\n5/10 = 1/2', a:'1/2 (50%)'},
+  {q:'You flip a coin and roll a die. What is P(heads and a 6)?', w:'Sample space: 2 × 6 = 12 outcomes\nOnly H6 works → 1/12', a:'1/12 ≈ 8.3%'},
+  {q:'A spinner landed on yellow 37 times in 200 spins. Estimate P(yellow) and predict yellows in 1,000 spins.', w:'37/200 = 18.5%\n18.5% × 1000 = 185', a:'About 18.5%; about 185 yellows'},
+  {q:'Team A\'s mean score is 82 (MAD 4); Team B\'s is 70 (MAD 5). How many MADs apart are they?', w:'Difference = 12\nTypical MAD ≈ 4.5\n12 ÷ 4.5 ≈ 2.7 MADs', a:'About 2.7 MADs — a clear difference'},
+];
+document.getElementById('realProblems').innerHTML=realP.map((p,i)=>`<div style="background:#f5f7fa;border-radius:12px;padding:1.2rem;"><p style="font-size:0.9rem;line-height:1.65;color:#3a4a5a;margin-bottom:0.8rem;"><strong>Problem ${i+1}:</strong> ${p.q}</p><button id="rpb${i}" onclick="revealRP(${i})" style="background:var(--lavender);color:white;border:none;border-radius:8px;padding:0.5rem 1.1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;cursor:pointer;">Show solution</button><div id="rpa${i}" style="display:none;margin-top:0.8rem;font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--mint);line-height:1.8;white-space:pre-line;"></div></div>`).join('');
+function revealRP(i){ const el=document.getElementById('rpa'+i); el.style.display='block'; el.textContent=`Working:\n${realP[i].w}\n\n✓ Answer: ${realP[i].a}`; document.getElementById('rpb'+i).style.display='none'; }
+
+// ══ SUMMARY ══
+const val=id=>(document.getElementById(id).value||'').trim();
+function fill(id,t){ const el=document.getElementById(id); el.textContent=t||'Not answered'; el.classList.toggle('empty',!t); }
+function refls(){ return [...document.querySelectorAll('#sec-6 .reflection-card textarea')].map(t=>t.value.trim()); }
+const dateStr=()=>new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+function buildSummary(){ document.getElementById('summaryName').textContent=val('studentName')||'Student'; document.getElementById('summaryDate').textContent=dateStr();
+  [['sum-sa-pred','sa-prediction'],['sum-sa-ref','sa-reflection'],['sum-co-pred','co-prediction'],['sum-co-ref','co-reflection'],['sum-pr-pred','pr-prediction'],['sum-pr-ref','pr-reflection']].forEach(([s,i])=>fill(s,val(i)));
+  refls().forEach((t,i)=>fill('sum-q'+(i+1),t)); }
+function buildPlainText(){ const r=refls(), na=x=>x||'Not answered';
+  return `SAMPLES, SPREADS & CHANCES 🎲 — STUDENT SUBMISSION
+===================================================
+Student: ${val('studentName')||'Student'}
+Date: ${dateStr()}
+Lesson: Grade 7 · Statistics & Probability
+Standards: 7.SP.A.1–2 · 7.SP.B.3–4 · 7.SP.C.5–8
+
+── SECTION 3: SAMPLING ──
+Prediction:
+${na(val('sa-prediction'))}
+Reflection:
+${na(val('sa-reflection'))}
+
+── SECTION 4: COMPARING POPULATIONS ──
+Prediction:
+${na(val('co-prediction'))}
+Reflection:
+${na(val('co-reflection'))}
+
+── SECTION 5: PROBABILITY ──
+Prediction:
+${na(val('pr-prediction'))}
+Reflection:
+${na(val('pr-reflection'))}
+
+── REFLECTIONS ──
+Q1 — Biased vs random survey
+${na(r[0])}
+Q2 — Are the classes different?
+${na(r[1])}
+Q3 — 7 heads in 10 flips
+${na(r[2])}
+Q4 — My fair dice game
+${na(r[3])}
+
+===================================================
+© 2026 Farvour Explorations
+Submitted via Samples, Spreads & Chances · Interactive Digital Lesson`; }
+function copyResults(){ buildSummary(); navigator.clipboard.writeText(buildPlainText()).then(()=>{ const el=document.getElementById('copyConfirm'); el.textContent='✓ Copied! Now paste into Google Classroom or your assignment.'; setTimeout(()=>el.textContent='',4000); }).catch(()=>{ document.getElementById('copyConfirm').textContent='⚠️ Could not copy — try selecting manually.'; }); }
+function emailResults(){ const n=val('studentName')||'Student'; window.location.href=`mailto:?subject=${encodeURIComponent('Samples, Spreads & Chances — '+n)}&body=${encodeURIComponent(buildPlainText())}`; }
+
+window.addEventListener('load',()=>{ document.getElementById('nV').textContent=40; for(let i=0;i<12;i++) takeSample(false,true); takeSample(true,true); takeSample(false); drawCmp(); spin(100); drawDice(); });
+</script>
+</body>
+</html>
