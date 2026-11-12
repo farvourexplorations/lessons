@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opposites Attract ➕➖ · Grade 7 Adding & Subtracting Integers</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #1e3a5f; --sky-mid: #2d5282;
+    --sun: #f6c343; --sun-pale: #fef9e7;
+    --coral: #e8603c; --coral-pale: #fdf0ec;
+    --mint: #3aaf85; --mint-pale: #e8f8f2;
+    --lavender: #7c6fcd; --lavender-pale: #f0eefb;
+    --paper: #fffef9; --ink: #1a2332;
+    --muted: #7a8899; --border: rgba(0,0,0,0.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:linear-gradient(160deg,#0f2540 0%,#1e3a5f 40%,#2d5282 100%); min-height:100vh; font-family:'Nunito',sans-serif; color:var(--ink); overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image: radial-gradient(1px 1px at 10% 15%,rgba(255,255,255,0.6) 0%,transparent 100%), radial-gradient(1.5px 1.5px at 25% 40%,rgba(255,255,255,0.4) 0%,transparent 100%), radial-gradient(1px 1px at 45% 8%,rgba(255,255,255,0.5) 0%,transparent 100%), radial-gradient(2px 2px at 65% 22%,rgba(255,255,255,0.3) 0%,transparent 100%), radial-gradient(1px 1px at 80% 5%,rgba(255,255,255,0.6) 0%,transparent 100%), radial-gradient(1.5px 1.5px at 92% 35%,rgba(255,255,255,0.4) 0%,transparent 100%); pointer-events:none; z-index:0; }
+
+  /* ── HERO ── */
+  .hero { position:relative; z-index:1; text-align:center; padding:3.5rem 2rem 2rem; color:white; }
+  .hero-badge { display:inline-block; background:var(--sun); color:var(--sky); font-family:'Fredoka One',cursive; font-size:0.85rem; letter-spacing:0.05em; padding:0.35rem 1.2rem; border-radius:20px; margin-bottom:1.2rem; box-shadow:0 2px 12px rgba(246,195,67,0.4); }
+  .hero h1 { font-family:'Fredoka One',cursive; font-size:clamp(2.4rem,6vw,4rem); line-height:1.1; margin-bottom:0.8rem; text-shadow:0 2px 20px rgba(0,0,0,0.3); }
+  .hero h1 .accent { color:var(--sun); }
+  .hero p.intro { font-size:1.05rem; line-height:1.7; opacity:0.88; max-width:560px; margin:0 auto 2rem; }
+  .name-bar { background:rgba(255,255,255,0.1); border:1.5px solid rgba(255,255,255,0.25); border-radius:12px; padding:0.6rem 1rem; display:flex; align-items:center; gap:0.8rem; max-width:420px; margin:0 auto 1rem; }
+  .name-bar label { font-size:0.78rem; font-weight:700; color:rgba(255,255,255,0.8); white-space:nowrap; font-family:'DM Mono',monospace; }
+  .name-bar input { flex:1; background:rgba(255,255,255,0.15); border:none; border-radius:8px; padding:0.4rem 0.8rem; font-family:'Nunito',sans-serif; font-size:0.9rem; font-weight:700; color:white; outline:none; }
+  .name-bar input::placeholder { color:rgba(255,255,255,0.45); font-weight:400; }
+  .progress-wrap { display:flex; justify-content:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.5rem; }
+  .prog-step { display:flex; align-items:center; gap:0.4rem; background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.2); border-radius:20px; padding:0.35rem 0.9rem; font-size:0.78rem; font-weight:700; color:rgba(255,255,255,0.7); cursor:pointer; transition:all 0.2s; }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,0.22); color:white; border-color:rgba(255,255,255,0.4); }
+  .prog-step.active { background:var(--sun); color:var(--sky); border-color:var(--sun); box-shadow:0 2px 12px rgba(246,195,67,0.4); }
+
+  /* ── SHEET ── */
+  .sheet { position:relative; z-index:1; background:var(--paper); border-radius:24px 24px 0 0; margin-top:1.5rem; padding:0 0 6rem; min-height:80vh; box-shadow:0 -8px 40px rgba(0,0,0,0.25); }
+  .section { padding:3rem 2rem 0; max-width:820px; margin:0 auto; display:none; }
+  .section.active { display:block; }
+  .section-eyebrow { display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem; }
+  .eyebrow-num { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Fredoka One',cursive; font-size:1rem; color:white; flex-shrink:0; }
+  .num-coral{background:var(--coral);} .num-mint{background:var(--mint);} .num-sun{background:var(--sun);color:var(--sky);} .num-lav{background:var(--lavender);} .num-sky{background:var(--sky-mid);}
+  .eyebrow-label { font-size:0.72rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); font-family:'DM Mono',monospace; }
+  .section h2 { font-family:'Fredoka One',cursive; font-size:clamp(1.6rem,3.5vw,2.2rem); color:var(--sky); margin-bottom:0.6rem; line-height:1.2; }
+  .section .lead { font-size:1rem; line-height:1.75; color:#3a4a5a; margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+
+  /* ── WONDER BOX ── */
+  .wonder-box { background:linear-gradient(135deg,var(--sky) 0%,var(--sky-mid) 100%); color:white; border-radius:16px; padding:1.8rem 2rem; margin-bottom:1.8rem; position:relative; overflow:hidden; }
+  .wonder-box::after { content:'🤔'; position:absolute; right:1.5rem; top:50%; transform:translateY(-50%); font-size:3rem; opacity:0.3; }
+  .wonder-box p { font-size:1rem; line-height:1.7; font-style:italic; opacity:0.95; max-width:85%; }
+  .wonder-box strong { color:var(--sun); font-style:normal; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,var(--mint) 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'📊'; }
+
+  /* ── CHIPS ── */
+  .chip-row { display:flex; flex-wrap:wrap; gap:0.6rem; margin-bottom:1.5rem; }
+  .chip { padding:0.45rem 1rem; border-radius:20px; font-size:0.82rem; font-weight:700; cursor:pointer; transition:all 0.2s; border:2px solid transparent; }
+  .chip.coral{background:var(--coral-pale);color:var(--coral);border-color:#f8c5b8;} .chip.mint{background:var(--mint-pale);color:var(--mint);border-color:#b8ebd8;} .chip.sun{background:var(--sun-pale);color:#b8860b;border-color:#f8e0a0;} .chip.lav{background:var(--lavender-pale);color:var(--lavender);border-color:#d0caef;} .chip.sky{background:#e8f0f8;color:var(--sky-mid);border-color:#c0d4ea;}
+  .chip:hover { transform:scale(1.05); }
+  .concept-reveal { background:var(--paper); border-left:4px solid var(--coral); border-radius:0 10px 10px 0; padding:1rem 1.2rem; font-size:0.88rem; line-height:1.7; margin-top:0.5rem; display:none; animation:fadeIn 0.3s ease; }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border{border-color:var(--mint);} .concept-reveal.sun-border{border-color:var(--sun);} .concept-reveal.lav-border{border-color:var(--lavender);} .concept-reveal.sky-border{border-color:var(--sky-mid);}
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);} }
+
+  /* ── PREDICT BOX ── */
+  .predict-box { background:var(--sun-pale); border:2px dashed var(--sun); border-radius:14px; padding:1.4rem 1.6rem; margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive; font-size:1rem; color:#b8860b; margin-bottom:0.8rem; }
+  .predict-box textarea { width:100%; border:1.5px solid rgba(0,0,0,0.12); border-radius:8px; padding:0.7rem; font-family:'Nunito',sans-serif; font-size:0.88rem; resize:vertical; min-height:64px; background:white; color:var(--ink); outline:none; transition:border-color 0.2s; }
+  .predict-box textarea:focus { border-color:var(--sun); }
+
+  /* ── DEMO ZONE ── */
+  .demo-zone { background:white; border:2px solid var(--border); border-radius:16px; padding:1.8rem; margin-bottom:1.5rem; }
+  .demo-zone h3 { font-family:'Fredoka One',cursive; font-size:1.2rem; color:var(--sky); margin-bottom:0.3rem; }
+  .demo-zone .hint { font-size:0.78rem; color:var(--muted); font-family:'DM Mono',monospace; margin-bottom:1.3rem; }
+
+  /* ── BUTTONS ── */
+  .btn { border:none; border-radius:10px; padding:0.65rem 1.3rem; font-family:'Nunito',sans-serif; font-size:0.88rem; font-weight:800; cursor:pointer; transition:all 0.15s; }
+  .btn:hover { transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,0.15); }
+  .btn:active { transform:translateY(0); }
+  .btn-coral{background:var(--coral);color:white;} .btn-mint{background:var(--mint);color:white;} .btn-sun{background:var(--sun);color:var(--sky);} .btn-lav{background:var(--lavender);color:white;} .btn-ghost{background:#f0f2f5;color:var(--muted);} .btn-sky{background:var(--sky);color:white;}
+  .action-row { display:flex; gap:0.8rem; flex-wrap:wrap; align-items:center; margin-bottom:0.8rem; }
+
+  /* ── INPUT GROUP ── */
+  .input-group { display:flex; flex-direction:column; gap:0.3rem; }
+  .input-group label { font-size:0.78rem; font-weight:700; color:var(--muted); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.05em; }
+  .input-group input[type=number] { border:2px solid var(--border); border-radius:8px; padding:0.5rem 0.8rem; font-family:'Nunito',sans-serif; font-size:1rem; width:100px; outline:none; transition:border-color 0.2s; font-weight:700; color:var(--sky); background:white; }
+  .input-group input[type=number]:focus { border-color:var(--coral); }
+
+  /* ── STAT RESULT PANEL ── */
+  .stat-panel { background:var(--lavender-pale); border:2px solid rgba(124,111,205,0.3); border-radius:12px; padding:1.2rem 1.4rem; margin-top:1rem; }
+  .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:0.6rem; margin-top:0.6rem; }
+  .stat-card { background:white; border-radius:10px; padding:0.8rem; text-align:center; }
+  .stat-card .stat-val { font-family:'Fredoka One',cursive; font-size:1.5rem; color:var(--sky); }
+  .stat-card .stat-lbl { font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--muted); margin-top:0.2rem; }
+  .stat-card.coral-card .stat-val { color:var(--coral); }
+  .stat-card.mint-card  .stat-val { color:var(--mint); }
+  .stat-card.sun-card   .stat-val { color:#b8860b; }
+  .stat-card.lav-card   .stat-val { color:var(--lavender); }
+
+  /* ── CANVASES ── */
+  canvas.chart-canvas { border-radius:10px; border:2px solid var(--border); display:block; background:white; width:100%; }
+
+  /* ── DATA INPUT AREA ── */
+  .data-input-wrap { margin-bottom:1rem; }
+  .data-input-wrap label { font-size:0.78rem; font-weight:700; color:var(--muted); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:0.4rem; }
+  .data-input-wrap input[type=text] { width:100%; border:2px solid var(--lavender); border-radius:8px; padding:0.6rem 0.9rem; font-family:'DM Mono',monospace; font-size:0.95rem; font-weight:700; color:var(--sky); outline:none; transition:border-color 0.2s; background:white; }
+  .data-input-wrap input[type=text]:focus { border-color:var(--coral); }
+
+  /* ── DATASET BUTTONS ── */
+  .dataset-btn { background:var(--sky); color:white; border:none; border-radius:8px; padding:0.4rem 0.8rem; font-family:'Nunito',sans-serif; font-size:0.78rem; font-weight:700; cursor:pointer; transition:all 0.15s; margin:0.2rem; }
+  .dataset-btn:hover { background:var(--sky-mid); }
+
+  /* ── WORLD CARDS ── */
+  .world-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+  .world-card { border-radius:14px; padding:1.4rem; }
+  .world-card.coral-bg{background:var(--coral-pale);} .world-card.mint-bg{background:var(--mint-pale);} .world-card.lav-bg{background:var(--lavender-pale);} .world-card.sun-bg{background:var(--sun-pale);}
+  .world-card .wc-icon { font-size:2rem; margin-bottom:0.6rem; }
+  .world-card h4 { font-family:'Fredoka One',cursive; font-size:1rem; margin-bottom:0.4rem; color:var(--sky); }
+  .world-card p  { font-size:0.82rem; line-height:1.6; color:#3a4a5a; }
+
+  /* ── REFLECTION ── */
+  .reflection-card { background:white; border:2px solid var(--border); border-radius:14px; padding:1.4rem; margin-bottom:1rem; }
+  .reflection-card .q { font-family:'Fredoka One',cursive; font-size:1rem; color:var(--sky); margin-bottom:0.7rem; display:flex; gap:0.5rem; align-items:baseline; }
+  .reflection-card .q .qnum { font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--muted); flex-shrink:0; }
+  .reflection-card textarea { width:100%; border:1.5px solid rgba(0,0,0,0.1); border-radius:8px; padding:0.7rem; font-family:'Nunito',sans-serif; font-size:0.88rem; resize:vertical; min-height:72px; background:#fafbfc; color:var(--ink); outline:none; transition:border-color 0.2s; }
+  .reflection-card textarea:focus { border-color:var(--lavender); }
+
+  /* ── CONGRATS ── */
+  .congrats { text-align:center; padding:2rem 1rem; }
+  .congrats .trophy { font-size:4rem; margin-bottom:1rem; animation:bounce 0.8s ease infinite alternate; }
+  @keyframes bounce { from{transform:translateY(0);}to{transform:translateY(-10px);} }
+  .congrats h2 { font-family:'Fredoka One',cursive; font-size:2rem; color:var(--sky); margin-bottom:0.8rem; }
+  .congrats p  { font-size:0.95rem; line-height:1.7; color:#3a4a5a; max-width:500px; margin:0 auto 1.5rem; }
+  .summary-chips { display:flex; flex-wrap:wrap; gap:0.6rem; justify-content:center; }
+  .summary-chip { padding:0.5rem 1.1rem; border-radius:20px; font-size:0.82rem; font-weight:700; background:var(--sun-pale); color:#b8860b; border:1.5px solid #f8e0a0; }
+  .divider { height:1px; background:linear-gradient(90deg,transparent,var(--border),transparent); margin:1.5rem 0; }
+
+  /* ── NAV ── */
+  .nav-row { display:flex; justify-content:space-between; align-items:center; padding:2.5rem 2rem 0; max-width:820px; margin:0 auto; }
+  .btn-next { background:var(--sky); color:white; border:none; border-radius:50px; padding:0.9rem 2rem; font-family:'Fredoka One',cursive; font-size:1rem; cursor:pointer; display:flex; align-items:center; gap:0.6rem; transition:all 0.2s; box-shadow:0 4px 16px rgba(30,58,95,0.25); }
+  .btn-next:hover { background:var(--sky-mid); transform:translateY(-2px); }
+  .btn-prev { background:transparent; color:var(--muted); border:2px solid var(--border); border-radius:50px; padding:0.9rem 1.6rem; font-family:'Fredoka One',cursive; font-size:0.95rem; cursor:pointer; transition:all 0.2s; }
+  .btn-prev:hover { border-color:var(--muted); color:var(--ink); }
+  .btn-prev:disabled,.btn-next:disabled { opacity:0.3; cursor:not-allowed; transform:none; }
+
+  /* ── SUMMARY ── */
+  .summary-section { background:white; border-radius:16px; padding:1.8rem; margin-bottom:1.2rem; border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive; font-size:1.05rem; color:var(--sky); margin-bottom:0.8rem; }
+  .summary-answer { background:#f5f7fa; border-radius:8px; padding:0.7rem 1rem; font-size:0.85rem; line-height:1.6; color:var(--ink); margin-bottom:0.5rem; font-style:italic; border-left:3px solid var(--lavender); min-height:2rem; }
+  .summary-answer.empty { color:var(--muted); font-style:normal; border-left-color:var(--border); }
+  .sum-label { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.4rem; margin-top:0.6rem; text-transform:uppercase; letter-spacing:0.06em; }
+  .share-buttons { display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:1.5rem; justify-content:center; }
+  .share-btn { border:none; border-radius:12px; padding:0.85rem 1.6rem; font-family:'Fredoka One',cursive; font-size:1rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:0.5rem; }
+  .share-btn:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.15); }
+  .share-btn.copy{background:var(--mint);color:white;} .share-btn.email{background:var(--lavender);color:white;} .share-btn.print{background:var(--sky);color:white;}
+  .copy-confirm { text-align:center; font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--mint); min-height:1.2rem; margin-top:0.6rem; }
+
+  /* multi-line text blocks */
+  #sqTopicHint,#sqCheckFb,#statInsight,#outlierResult { white-space:pre-line; }
+
+  @media (max-width:560px) { .hero{padding:2.5rem 1.2rem 1.5rem;} .section{padding:2rem 1.2rem 0;} .nav-row{padding:2rem 1.2rem 0;} }
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm{display:none !important;}
+    .sheet{box-shadow:none;border-radius:0;}
+    .section{display:none !important;}
+    #sec-7{display:block !important;}
+  }
+  /* ── G7 integers extras ── */
+  canvas.nl { width:100%; border:2px solid var(--border); border-radius:10px; background:white; display:block; }
+  .steps { white-space:pre-line; font-family:'DM Mono',monospace; font-size:0.85rem; line-height:1.9; color:var(--sky); background:var(--lavender-pale); border-left:4px solid var(--lavender); border-radius:0 12px 12px 0; padding:1rem 1.2rem; margin-top:0.8rem; }
+  .quiz-row { display:flex; align-items:center; gap:0.8rem; flex-wrap:wrap; background:#f5f7fa; border-radius:10px; padding:0.7rem 1rem; }
+  .quiz-row .qtext { flex:1; min-width:200px; font-family:'DM Mono',monospace; font-size:0.95rem; font-weight:500; color:var(--sky); }
+  .quiz-row input { width:90px; border:2px solid var(--lavender); border-radius:6px; padding:0.35rem 0.6rem; font-family:'DM Mono',monospace; font-weight:700; color:var(--sky); outline:none; text-align:center; }
+  .chips-board { min-height:130px; background:#f5f7fa; border-radius:12px; padding:1rem; display:flex; flex-wrap:wrap; gap:8px; align-content:flex-start; }
+  .counter { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Fredoka One',cursive; font-size:1.4rem; color:white; box-shadow:0 2px 6px rgba(0,0,0,0.15); transition:all 0.35s; }
+  .counter.pos { background:var(--mint); } .counter.neg { background:var(--coral); }
+  .counter.gone { opacity:0; transform:scale(0.3); }
+  .counter.pair { outline:3px dashed var(--sun); outline-offset:2px; }
+  .big-eq { font-family:'Fredoka One',cursive; font-size:1.7rem; color:var(--sky); text-align:center; margin:0.8rem 0 0.3rem; }
+  input[type=range] { accent-color: var(--coral); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">✨ Grade 7 · The Number System · Workshop 1 of 2</div>
+  <h1>Opposites<br><span class="accent">Attract</span> ➕➖</h1>
+  <p class="intro">A hot-air balloon rises 8 metres, then sinks 8 metres. Where is it? Right back where it started. Today you'll discover why opposites make zero — and use that one idea to add and subtract any integers, fractions or decimals.</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <a class="prog-step active" id="pill-0" onclick="goTo(0)">🎈 Wonder</a>
+    <a class="prog-step" id="pill-1" onclick="goTo(1)">📚 Discover</a>
+    <a class="prog-step" id="pill-2" onclick="goTo(2)">➕ Adding</a>
+    <a class="prog-step" id="pill-3" onclick="goTo(3)">➖ Subtracting</a>
+    <a class="prog-step" id="pill-4" onclick="goTo(4)">½ Rationals</a>
+    <a class="prog-step" id="pill-5" onclick="goTo(5)">🌍 Real Life</a>
+    <a class="prog-step" id="pill-6" onclick="goTo(6)">💭 Reflect</a>
+    <a class="prog-step" id="pill-7" onclick="goTo(7)">📤 Submit</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+  <!-- ══ SECTION 0: WONDER ══ -->
+  <div class="section active" id="sec-0">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">The Big Question</span></div>
+    <h2>When do two things add up to nothing?</h2>
+    <p class="lead">You earn $15 and spend $15. A diver goes down 20 m and swims up 20 m. A hydrogen atom has one proton (+1) and one electron (−1). In each case the total is <strong>zero</strong>. Numbers that cancel like this are called <strong>opposites</strong>.</p>
+    <div class="wonder-box">
+      <p>The temperature at dawn is <strong>−7°C</strong>. By noon it has risen <strong>12 degrees</strong>. Is it above or below zero? And if it then drops <strong>9 degrees</strong> by night — where does it end up? By the end of today, you'll solve this in your head.</p>
+    </div>
+    <p style="font-size:0.9rem;font-weight:700;color:var(--sky);margin-bottom:0.8rem;">🧠 Warm-up — does each situation end at zero?</p>
+    <div style="background:white;border:2px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;">
+      <div id="warmupGrid" style="display:flex;flex-direction:column;gap:0.6rem;"></div>
+      <div id="warmupFb" style="margin-top:1rem;font-family:'DM Mono',monospace;font-size:0.82rem;min-height:1.2rem;color:var(--mint);"></div>
+    </div>
+    <div class="wonder-box mint-box">
+      <p>Every number has an <strong>opposite</strong> the same distance from zero on the other side. Together they make a <strong>zero pair</strong>. This one idea explains every rule for adding and subtracting signed numbers.</p>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 1: DISCOVER ══ -->
+  <div class="section" id="sec-1">
+    <div class="section-eyebrow"><div class="eyebrow-num num-lav">2</div><span class="eyebrow-label">Discover the Vocabulary</span></div>
+    <h2>📚 Words number explorers use</h2>
+    <p class="lead">Click each word to reveal its meaning.</p>
+    <div class="chip-row">
+      <span class="chip coral" onclick="revealTerm('integer')">🔢 Integer</span>
+      <span class="chip lav"   onclick="revealTerm('opposite')">↔ Opposite</span>
+      <span class="chip sun"   onclick="revealTerm('inverse')">0️⃣ Additive Inverse</span>
+      <span class="chip mint"  onclick="revealTerm('abs')">📏 Absolute Value</span>
+      <span class="chip sky"   onclick="revealTerm('rational')">½ Rational Number</span>
+    </div>
+    <div class="concept-reveal" id="cr-integer"><strong>Integer</strong> — a whole number or its opposite: …, −3, −2, −1, 0, 1, 2, 3, …<br><br><em>−15 and 42 are integers. 2.5 and ⅓ are not.</em></div>
+    <div class="concept-reveal lav-border" id="cr-opposite"><strong>Opposite</strong> — the number the same distance from 0 on the other side.<br><br><em>The opposite of 6 is −6. The opposite of −2.5 is 2.5. The opposite of 0 is 0.</em></div>
+    <div class="concept-reveal sun-border" id="cr-inverse"><strong>Additive Inverse</strong> — another name for the opposite, because a number plus its additive inverse equals <strong>0</strong>.<br><br><em>9 + (−9) = 0. These two make a zero pair.</em></div>
+    <div class="concept-reveal mint-border" id="cr-abs"><strong>Absolute Value</strong> — a number's distance from 0. It is never negative.<br><br><em>|−8| = 8 and |8| = 8. The distance between two numbers a and b is |a − b|.</em></div>
+    <div class="concept-reveal sky-border" id="cr-rational"><strong>Rational Number</strong> — any number that can be written as a fraction a/b of integers (b ≠ 0). Includes integers, fractions, terminating and repeating decimals, and their opposites.<br><br><em>−¾, 2.6, −5 and 0.333… are all rational.</em></div>
+    <div class="divider"></div>
+    <div style="background:var(--lavender-pale);border:2px solid rgba(124,111,205,0.3);border-radius:14px;padding:1.4rem;margin-bottom:1.5rem;">
+      <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:var(--lavender);margin-bottom:0.8rem;">🔑 Two big ideas for today</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;">
+        <div style="background:white;border-radius:10px;padding:1rem;"><div style="font-family:'Fredoka One',cursive;color:var(--coral);margin-bottom:0.3rem;">Adding = moving</div><div style="font-family:'DM Mono',monospace;font-size:0.78rem;color:#3a4a5a;line-height:1.7;">p + q: start at p, move |q| units — right if q is positive, left if q is negative.</div></div>
+        <div style="background:white;border-radius:10px;padding:1rem;"><div style="font-family:'Fredoka One',cursive;color:var(--mint);margin-bottom:0.3rem;">Subtracting = adding the opposite</div><div style="font-family:'DM Mono',monospace;font-size:0.78rem;color:#3a4a5a;line-height:1.7;">p − q = p + (−q). And |p − q| is the distance between them.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 2: ADDING ══ -->
+  <div class="section" id="sec-2">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">3</div><span class="eyebrow-label">Investigation 1 · 7.NS.A.1a–b</span></div>
+    <h2>➕ Adding on the Number Line</h2>
+    <p class="lead">To find p + q, start at p and move a distance of <strong>|q|</strong> — to the right if q is positive, to the left if q is negative. <strong>Predict the answer before you press Go!</strong></p>
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="add-prediction" placeholder="I think −7 + 12 = ___ because... When I add a negative number, the answer gets bigger / smaller because... A number plus its opposite always equals..."></textarea>
+    </div>
+    <div class="demo-zone">
+      <h3>🦘 The Number Line Jumper</h3>
+      <div class="hint">SET p AND q · PRESS GO · WATCH THE JUMP · DECIMALS ALLOWED</div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem;">
+        <button class="dataset-btn" onclick="setAdd(-7,12)">🌡️ −7 + 12</button>
+        <button class="dataset-btn" onclick="setAdd(5,-8)">💸 5 + (−8)</button>
+        <button class="dataset-btn" onclick="setAdd(-3,-4)">🤿 −3 + (−4)</button>
+        <button class="dataset-btn" onclick="setAdd(6,-6)">🎈 6 + (−6)</button>
+        <button class="dataset-btn" onclick="setAdd(-2.5,4)">½ −2.5 + 4</button>
+      </div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1rem;">
+        <div class="input-group"><label>p (start)</label><input type="number" id="ap" value="-7" step="0.5" style="border-color:var(--sky);"></div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.6rem;color:var(--muted);padding-bottom:0.3rem;">+</div>
+        <div class="input-group"><label>q (move)</label><input type="number" id="aq" value="12" step="0.5" style="border-color:var(--coral);"></div>
+        <button class="btn btn-coral" onclick="animateAdd()">Go ▶</button>
+      </div>
+      <canvas class="nl" id="addCanvas" width="760" height="150"></canvas>
+      <div class="big-eq" id="addEq"></div>
+      <div id="addWhy" style="font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--lavender);line-height:1.7;text-align:center;"></div>
+    </div>
+    <div class="demo-zone">
+      <h3>🟢🔴 Zero-Pair Counters</h3>
+      <div class="hint">ADD GREEN (+1) AND RED (−1) COUNTERS · PRESS CANCEL PAIRS · WHAT'S LEFT IS THE ANSWER</div>
+      <div class="action-row">
+        <button class="btn btn-mint" onclick="addChip(1)">+ Add +1</button>
+        <button class="btn btn-coral" onclick="addChip(-1)">+ Add −1</button>
+        <button class="btn btn-sun" onclick="cancelPairs()">✨ Cancel zero pairs</button>
+        <button class="btn btn-ghost" onclick="resetChips()">↺ Clear</button>
+      </div>
+      <div class="chips-board" id="chipBoard"></div>
+      <div id="chipInfo" style="margin-top:0.7rem;font-family:'DM Mono',monospace;font-size:0.85rem;color:var(--sky);line-height:1.7;"></div>
+    </div>
+    <div class="predict-box" style="border-color:var(--mint);background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="add-reflection" placeholder="When the signs are the same I... When the signs are different I... A zero pair is... My prediction for −7 + 12 was right / wrong because..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 3: SUBTRACTING ══ -->
+  <div class="section" id="sec-3">
+    <div class="section-eyebrow"><div class="eyebrow-num num-mint">4</div><span class="eyebrow-label">Investigation 2 · 7.NS.A.1c</span></div>
+    <h2>➖ Subtracting = Adding the Opposite</h2>
+    <p class="lead">Every subtraction can be rewritten as an addition: <strong>p − q = p + (−q)</strong>. And the <strong>distance</strong> between two numbers on the line is the absolute value of their difference, <strong>|p − q|</strong>.</p>
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="sub-prediction" placeholder="I think 3 − (−5) = ___ because... Subtracting a negative is like... The distance between −4 and 6 is ___..."></textarea>
+    </div>
+    <div class="demo-zone">
+      <h3>🔄 The Subtraction Flipper</h3>
+      <div class="hint">ENTER p − q · SEE IT REWRITTEN AS p + (−q) · WATCH THE JUMP</div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem;">
+        <button class="dataset-btn" onclick="setSub(3,-5)">3 − (−5)</button>
+        <button class="dataset-btn" onclick="setSub(-2,6)">−2 − 6</button>
+        <button class="dataset-btn" onclick="setSub(-4,-9)">−4 − (−9)</button>
+        <button class="dataset-btn" onclick="setSub(1.5,4)">1.5 − 4</button>
+      </div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1rem;">
+        <div class="input-group"><label>p</label><input type="number" id="sp" value="3" step="0.5" oninput="drawSub()" style="border-color:var(--sky);"></div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.6rem;color:var(--muted);padding-bottom:0.3rem;">−</div>
+        <div class="input-group"><label>q</label><input type="number" id="sq" value="-5" step="0.5" oninput="drawSub()" style="border-color:var(--coral);"></div>
+      </div>
+      <div id="subRewrite" class="steps"></div>
+      <canvas class="nl" id="subCanvas" width="760" height="150" style="margin-top:0.8rem;"></canvas>
+      <div class="big-eq" id="subEq"></div>
+    </div>
+    <div class="demo-zone">
+      <h3>📏 Distance Finder</h3>
+      <div class="hint">DRAG BOTH SLIDERS · THE DISTANCE IS ALWAYS |a − b| · IT'S NEVER NEGATIVE</div>
+      <div style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:0.6rem;">
+        <label style="font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--mint);flex:1;min-width:200px;">a = <span id="daV"></span><br><input type="range" id="da" min="-10" max="10" step="0.5" value="-4" oninput="drawDist()" style="width:100%;"></label>
+        <label style="font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--coral);flex:1;min-width:200px;">b = <span id="dbV"></span><br><input type="range" id="db" min="-10" max="10" step="0.5" value="6" oninput="drawDist()" style="width:100%;"></label>
+      </div>
+      <canvas class="nl" id="distCanvas" width="760" height="120"></canvas>
+      <div id="distInfo" style="margin-top:0.6rem;font-family:'DM Mono',monospace;font-size:0.85rem;color:var(--sky);line-height:1.8;"></div>
+    </div>
+    <div class="predict-box" style="border-color:var(--lavender);background:var(--lavender-pale);">
+      <h4 style="color:var(--lavender);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="sub-reflection" placeholder="Subtracting a negative number is the same as... To find the distance between two numbers I... a − b and b − a are related because..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 4: RATIONALS ══ -->
+  <div class="section" id="sec-4">
+    <div class="section-eyebrow"><div class="eyebrow-num num-sun">5</div><span class="eyebrow-label">Investigation 3 · 7.NS.A.1d</span></div>
+    <h2>½ Fractions, Decimals & Properties</h2>
+    <p class="lead">The same rules work for <strong>all rational numbers</strong> — negative fractions and decimals too. Properties like the <strong>commutative</strong> and <strong>associative</strong> properties let you regroup numbers to make zero pairs and friendly sums.</p>
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="rat-prediction" placeholder="I think −¾ + ½ = ___. To add 4.6 + (−2.3) + (−4.6) quickly, I would... Changing the order of numbers in an addition does / doesn't change the sum because..."></textarea>
+    </div>
+    <div class="demo-zone">
+      <h3>🧩 Smart Regrouping</h3>
+      <div class="hint">PICK A SUM · SPOT THE ZERO PAIRS OR FRIENDLY NUMBERS · REGROUP TO SOLVE</div>
+      <div id="regroup" style="display:flex;flex-direction:column;gap:0.8rem;"></div>
+    </div>
+    <div class="demo-zone">
+      <h3>📝 Rational Number Practice</h3>
+      <div class="hint">ADD OR SUBTRACT · TYPE A DECIMAL OR A FRACTION LIKE -3/4 · CHECK INSTANTLY</div>
+      <div id="ratQuiz" style="display:flex;flex-direction:column;gap:0.6rem;"></div>
+      <div class="action-row" style="margin-top:0.8rem;"><button class="btn btn-coral" onclick="checkRatQuiz()">✓ Check all</button><button class="btn btn-ghost" onclick="newRatQuiz()">↺ New set</button></div>
+      <div id="ratQuizFb" style="font-family:'DM Mono',monospace;font-size:0.82rem;min-height:1.2rem;color:var(--mint);"></div>
+    </div>
+    <div class="predict-box" style="border-color:var(--mint);background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="rat-reflection" placeholder="Adding negative fractions works the same as integers because... Regrouping helped me because... A strategy I will use again is..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 5: REAL LIFE ══ -->
+  <div class="section" id="sec-5">
+    <div class="section-eyebrow"><div class="eyebrow-num num-sky">6</div><span class="eyebrow-label">Real-World Connections</span></div>
+    <h2>Positive and negative everywhere 🌍</h2>
+    <p class="lead">Signed numbers describe direction and change: above and below, gain and loss, forward and back.</p>
+    <div class="world-grid">
+      <div class="world-card coral-bg"><div class="wc-icon">🌡️</div><h4>Weather</h4><p>Temperatures rise and fall across zero. Meteorologists add and subtract signed changes every day.</p></div>
+      <div class="world-card mint-bg"><div class="wc-icon">🏦</div><h4>Money</h4><p>Deposits are positive, withdrawals are negative. A bank balance below zero is an overdraft.</p></div>
+      <div class="world-card lav-bg"><div class="wc-icon">🌊</div><h4>Elevation</h4><p>Sea level is zero. Mountains are positive, ocean trenches negative. The distance between them uses |a − b|.</p></div>
+      <div class="world-card sun-bg"><div class="wc-icon">⚛️</div><h4>Science</h4><p>Protons (+1) and electrons (−1) cancel to make neutral atoms — real-life zero pairs.</p></div>
+    </div>
+    <div class="divider"></div>
+    <div class="demo-zone">
+      <h3>🎯 Real-World Problem Solver</h3>
+      <div class="hint">WRITE AN EXPRESSION · SOLVE · THEN REVEAL</div>
+      <div id="realProblems" style="display:flex;flex-direction:column;gap:0.8rem;"></div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 6: REFLECT ══ -->
+  <div class="section" id="sec-6">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">7</div><span class="eyebrow-label">Synthesis & Wonder</span></div>
+    <h2>💭 Let's think it through</h2>
+    <p class="lead">Explain your thinking in full sentences — use words like <em>opposite</em>, <em>zero pair</em> and <em>distance</em>.</p>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q1 /</span> Explain why −7 + 12 is positive, using the idea of zero pairs.</div><textarea placeholder="−7 and 7 of the 12 make ___ zero pairs. That leaves..."></textarea></div>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q2 /</span> Why does subtracting a negative number make the answer bigger? Use a real-life example.</div><textarea placeholder="Taking away a debt is like... For example, 3 − (−5) means..."></textarea></div>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q3 /</span> The lowest point in a city is −12 m and the highest is 85 m. How far apart are they? Show how you know.</div><textarea placeholder="The distance is |85 − (−12)| = ... because..."></textarea></div>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q4 /</span> Write your own story that matches the expression −20 + 35 − 15.</div><textarea placeholder="A submarine starts at... then... then..."></textarea></div>
+    <div class="divider"></div>
+    <div class="congrats">
+      <div class="trophy">🎉</div>
+      <h2>You've mastered adding and subtracting signed numbers!</h2>
+      <p>Today you covered all four parts of 7.NS.A.1 — opposites and zero pairs, adding on the number line, subtracting as adding the inverse, and applying properties to rational numbers.</p>
+      <div class="summary-chips">
+        <span class="summary-chip">p + (−p) = 0</span>
+        <span class="summary-chip">p + q: move |q| from p</span>
+        <span class="summary-chip">p − q = p + (−q)</span>
+        <span class="summary-chip">Distance = |p − q|</span>
+        <span class="summary-chip">Regroup to make zero pairs</span>
+        <span class="summary-chip">7.NS.A.1a · b · c · d</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 7: SUBMIT ══ -->
+  <div class="section" id="sec-7">
+    <div class="section-eyebrow"><div class="eyebrow-num num-mint">8</div><span class="eyebrow-label">Your Completed Work</span></div>
+    <h2>📤 Ready to Share</h2>
+    <p class="lead">Here's everything you worked on today. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> directly to your teacher.</p>
+    <div class="summary-section" style="background:var(--sky);color:white;border-color:var(--sky);">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;align-items:center;">
+        <div><div style="font-family:'DM Mono',monospace;font-size:0.7rem;opacity:0.6;margin-bottom:0.3rem;">STUDENT</div><div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div></div>
+        <div style="text-align:right;"><div style="font-family:'DM Mono',monospace;font-size:0.7rem;opacity:0.6;margin-bottom:0.3rem;">LESSON</div><div style="font-family:'Fredoka One',cursive;font-size:1rem;">Opposites Attract ➕➖</div><div style="font-family:'DM Mono',monospace;font-size:0.72rem;opacity:0.6;" id="summaryDate"></div></div>
+      </div>
+    </div>
+    <div class="summary-section"><h3>➕ Section 3 — Adding</h3><div class="sum-label">Prediction</div><div class="summary-answer" id="sum-add-pred"></div><div class="sum-label">Reflection</div><div class="summary-answer" id="sum-add-ref"></div></div>
+    <div class="summary-section"><h3>➖ Section 4 — Subtracting</h3><div class="sum-label">Prediction</div><div class="summary-answer" id="sum-sub-pred"></div><div class="sum-label">Reflection</div><div class="summary-answer" id="sum-sub-ref"></div></div>
+    <div class="summary-section"><h3>½ Section 5 — Rational Numbers</h3><div class="sum-label">Prediction</div><div class="summary-answer" id="sum-rat-pred"></div><div class="sum-label">Reflection</div><div class="summary-answer" id="sum-rat-ref"></div></div>
+    <div class="summary-section"><h3>💭 Section 7 — Reflections</h3>
+      <div class="sum-label">Q1 — −7 + 12 with zero pairs</div><div class="summary-answer" id="sum-q1"></div>
+      <div class="sum-label">Q2 — Subtracting a negative</div><div class="summary-answer" id="sum-q2"></div>
+      <div class="sum-label">Q3 — Distance between −12 and 85</div><div class="summary-answer" id="sum-q3"></div>
+      <div class="sum-label">Q4 — My story for −20 + 35 − 15</div><div class="summary-answer" id="sum-q4"></div>
+    </div>
+    <div class="share-buttons">
+      <button class="share-btn copy" onclick="copyResults()">📋 Copy My Results</button>
+      <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+      <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+    <div class="copy-confirm" id="copyConfirm"></div>
+    <div style="margin-top:1.5rem;background:var(--sun-pale);border:2px dashed var(--sun);border-radius:12px;padding:1.2rem 1.4rem;">
+      <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#b8860b;margin-bottom:0.8rem;">📋 How to submit your work:</p>
+      <p style="font-size:0.82rem;color:#b8860b;font-family:'DM Mono',monospace;line-height:2;">
+        <strong>📋 Copy My Results</strong> — Copies all your answers. Open Google Classroom, click your assignment, paste, and submit.<br>
+        <strong>📧 Email to Teacher</strong> — Opens your email app with your answers already typed. Add your teacher's address and send.<br>
+        <strong>🖨️ Print / Save PDF</strong> — Mac: "Save as PDF" bottom left · Windows: "Microsoft Print to PDF".
+      </p>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" id="prevBtn" onclick="navigate(-1)" disabled>← Back</button>
+    <button class="btn-next" id="nextBtn" onclick="navigate(1)">Next <span>→</span></button>
+  </div>
+</div>
+
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+
+<script>
+const C = { sky:'#1e3a5f', coral:'#e8603c', mint:'#3aaf85', lav:'#7c6fcd', sun:'#f6c343', gold:'#c9962a', muted:'#7a8899', grid:'#e8eef4', axis:'#b8c4cc' };
+let currentSection=0; const totalSections=8;
+function goTo(n){
+  document.querySelectorAll('.section').forEach((s,i)=>s.classList.toggle('active',i===n));
+  document.querySelectorAll('.prog-step').forEach((p,i)=>{p.classList.toggle('active',i===n);p.classList.toggle('done',i<n);});
+  currentSection=n; document.getElementById('prevBtn').disabled=n===0;
+  const nb=document.getElementById('nextBtn');
+  if(n===totalSections-1){nb.textContent='✓ Complete!';nb.disabled=true;buildSummary();} else {nb.innerHTML='Next <span>→</span>';nb.disabled=false;}
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n===2){ drawAdd(1); renderChips(); }
+  if(n===3){ drawSub(); drawDist(); }
+}
+function navigate(d){ goTo(Math.min(Math.max(currentSection+d,0),totalSections-1)); }
+const r2=x=>Math.round(x*100)/100;
+const fmt=x=>{ x=r2(x); return x<0? '−'+Math.abs(x) : ''+x; };
+const paren=x=> x<0? '('+fmt(x)+')' : fmt(x);
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a||1;};
+function parseAns(s){ s=String(s).trim().replace(/[−–]/g,'-').replace(/\s/g,''); if(!s) return NaN; if(s.includes('/')){const [a,b]=s.split('/').map(Number); return b? a/b : NaN;} return parseFloat(s); }
+
+// ── number line drawing ──
+function nlBase(cv,lo,hi){
+  const ctx=cv.getContext('2d'), W=cv.width, H=cv.height, pad=30, mid=H-42;
+  ctx.clearRect(0,0,W,H); ctx.fillStyle='#fafbfc'; ctx.fillRect(0,0,W,H);
+  const X=v=>pad+(v-lo)/(hi-lo)*(W-2*pad);
+  ctx.strokeStyle=C.axis; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(pad-10,mid); ctx.lineTo(W-pad+10,mid); ctx.stroke();
+  ctx.font='11px DM Mono, monospace'; ctx.textAlign='center';
+  for(let v=Math.ceil(lo); v<=hi; v++){ const x=X(v), major=v%5===0;
+    ctx.strokeStyle= v===0? C.sky : major? '#9aa8b8' : '#d3dbe5'; ctx.lineWidth= v===0?2.5:1.2;
+    ctx.beginPath(); ctx.moveTo(x,mid-(major?10:6)); ctx.lineTo(x,mid+(major?10:6)); ctx.stroke();
+    ctx.fillStyle= v===0? C.sky : v<0? C.coral : C.mint; if(major||hi-lo<=20) ctx.fillText(v<0?'−'+(-v):v, x, mid+24); }
+  return {ctx,X,mid,W,H};
+}
+function arrow(ctx,x1,x2,y,color,label){
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=3;
+  const h=Math.min(46,Math.abs(x2-x1)/2+14);
+  ctx.beginPath(); ctx.moveTo(x1,y); ctx.quadraticCurveTo((x1+x2)/2,y-h*1.6,x2,y); ctx.stroke();
+  const dir=x2>x1?1:-1; ctx.beginPath(); ctx.moveTo(x2,y); ctx.lineTo(x2-dir*10,y-9); ctx.lineTo(x2-dir*3,y-12); ctx.closePath(); ctx.fill();
+  if(label){ ctx.font='bold 12px Nunito, sans-serif'; ctx.textAlign='center'; ctx.fillText(label,(x1+x2)/2,y-h*0.85-6); }
+}
+function dot(ctx,x,y,color,r=7){ ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fillStyle=color; ctx.fill(); ctx.strokeStyle='white'; ctx.lineWidth=2; ctx.stroke(); }
+function rangeFor(...vals){ const lo=Math.min(-10,Math.floor(Math.min(...vals))-1), hi=Math.max(10,Math.ceil(Math.max(...vals))+1); return [lo,hi]; }
+
+// ══ WARM-UP ══
+const warm=[
+  {t:'Earn $15, then spend $15.',z:true,e:'15 + (−15) = 0. Opposites cancel.'},
+  {t:'Walk 6 steps forward, then 4 steps back.',z:false,e:'6 + (−4) = 2. You end 2 steps forward.'},
+  {t:'A diver goes down 20 m, then up 20 m.',z:true,e:'−20 + 20 = 0. Back at the surface.'},
+  {t:'Temperature drops 5°, then drops 5° again from 0°C.',z:false,e:'−5 + (−5) = −10. Both moves go the same way!'},
+];
+let wDone=0,wOk=0;
+document.getElementById('warmupGrid').innerHTML=warm.map((q,i)=>`<div style="display:flex;align-items:flex-start;gap:0.8rem;flex-wrap:wrap;background:#f5f7fa;border-radius:10px;padding:0.8rem 1rem;"><div style="flex:1;min-width:200px;font-size:0.88rem;font-weight:600;color:#3a4a5a;padding-top:0.2rem;">${q.t}</div><div style="display:flex;gap:0.4rem;"><button onclick="ansWarm(${i},true)" style="background:var(--mint-pale);border:2px solid #b8ebd8;border-radius:8px;padding:0.35rem 0.8rem;font-family:'Fredoka One',cursive;font-size:0.82rem;color:var(--mint);cursor:pointer;">Ends at 0</button><button onclick="ansWarm(${i},false)" style="background:var(--coral-pale);border:2px solid #f8c5b8;border-radius:8px;padding:0.35rem 0.8rem;font-family:'Fredoka One',cursive;font-size:0.82rem;color:var(--coral);cursor:pointer;">Not 0</button></div><div id="wfb-${i}" style="font-family:'DM Mono',monospace;font-size:0.72rem;width:100%;min-height:1rem;"></div></div>`).join('');
+function ansWarm(i,a){ const fb=document.getElementById('wfb-'+i); if(fb.textContent) return; wDone++; const ok=a===warm[i].z; if(ok) wOk++; fb.textContent=(ok?'✓ ':'✗ ')+warm[i].e; fb.style.color=ok?C.mint:C.coral;
+  if(wDone===warm.length){ const el=document.getElementById('warmupFb'); el.style.color=wOk===warm.length?C.mint:C.coral; el.textContent=wOk===warm.length?'🎉 Perfect! You already understand opposites.':`${wOk}/${warm.length} correct. Only OPPOSITE moves of the SAME size cancel to zero.`; } }
+
+let openTerm=null;
+function revealTerm(k){ if(openTerm) document.getElementById('cr-'+openTerm).classList.remove('show'); if(openTerm===k){openTerm=null;return;} document.getElementById('cr-'+k).classList.add('show'); openTerm=k; }
+
+// ══ ADDING ══
+function setAdd(p,q){ document.getElementById('ap').value=p; document.getElementById('aq').value=q; animateAdd(); }
+let addAnim=null;
+function drawAdd(t){
+  const p=parseFloat(document.getElementById('ap').value)||0, q=parseFloat(document.getElementById('aq').value)||0, s=p+q;
+  const [lo,hi]=rangeFor(0,p,s); const {ctx,X,mid}=nlBase(document.getElementById('addCanvas'),lo,hi);
+  dot(ctx,X(0),mid,C.muted,4);
+  arrow(ctx,X(0),X(p),mid,C.sky,'start '+fmt(p));
+  if(t>0){ const end=p+q*Math.min(t,1); arrow(ctx,X(p),X(end),mid-2,q>=0?C.mint:C.coral,(q>=0?'right ':'left ')+r2(Math.abs(q))); }
+  dot(ctx,X(p),mid,C.sky);
+  if(t>=1) dot(ctx,X(s),mid,C.lav,9);
+  document.getElementById('addEq').textContent= t>=1? `${fmt(p)} + ${paren(q)} = ${fmt(s)}` : `${fmt(p)} + ${paren(q)} = ?`;
+  let why='';
+  if(t>=1){ if(s===0) why='A number plus its opposite = 0. That\'s a zero pair!';
+    else if(p===0||q===0) why='Adding zero changes nothing.';
+    else if((p>0)===(q>0)) why=`Same signs → add the distances (${r2(Math.abs(p))} + ${r2(Math.abs(q))} = ${r2(Math.abs(s))}) and keep the sign.`;
+    else why=`Different signs → ${r2(Math.min(Math.abs(p),Math.abs(q)))} zero pairs cancel. ${r2(Math.abs(s))} is left over, with the sign of the number farther from 0.`; }
+  document.getElementById('addWhy').textContent=why;
+}
+function animateAdd(){ if(addAnim) cancelAnimationFrame(addAnim); const t0=performance.now(); drawAdd(0);
+  const step=now=>{ const t=(now-t0)/900; drawAdd(t); if(t<1.05) addAnim=requestAnimationFrame(step); }; setTimeout(()=>addAnim=requestAnimationFrame(step),250); }
+
+// ── chips ──
+let chips=[3,-1,-1,-1,-1,-1].map(v=>({v,gone:false}));
+function addChip(v){ chips=chips.filter(c=>!c.gone); chips.push({v,gone:false}); renderChips(); }
+function resetChips(){ chips=[]; renderChips(); }
+function renderChips(){
+  const live=chips.filter(c=>!c.gone);
+  document.getElementById('chipBoard').innerHTML=chips.map(c=>`<div class="counter ${c.v>0?'pos':'neg'} ${c.gone?'gone':''}">${c.v>0?'+':'−'}</div>`).join('') || '<span style="color:var(--muted);font-size:0.85rem;">Add some counters…</span>';
+  const pos=live.filter(c=>c.v>0).length, neg=live.filter(c=>c.v<0).length;
+  document.getElementById('chipInfo').innerHTML=`Positives: <strong style="color:${C.mint}">${pos}</strong> · Negatives: <strong style="color:${C.coral}">${neg}</strong> · Zero pairs available: <strong>${Math.min(pos,neg)}</strong><br>Expression: ${pos} + (−${neg}) = <strong>${pos-neg<0?'−'+(neg-pos):pos-neg}</strong>`;
+}
+chips=[1,1,1,-1,-1,-1,-1,-1].map(v=>({v,gone:false}));
+function cancelPairs(){
+  let pos=chips.filter(c=>!c.gone&&c.v>0), neg=chips.filter(c=>!c.gone&&c.v<0); const k=Math.min(pos.length,neg.length);
+  for(let i=0;i<k;i++){ pos[i].gone=true; neg[i].gone=true; }
+  renderChips(); setTimeout(()=>{ chips=chips.filter(c=>!c.gone); renderChips(); },600);
+}
+
+// ══ SUBTRACTING ══
+function setSub(p,q){ document.getElementById('sp').value=p; document.getElementById('sq').value=q; drawSub(); }
+function drawSub(){
+  const p=parseFloat(document.getElementById('sp').value)||0, q=parseFloat(document.getElementById('sq').value)||0, s=p-q;
+  document.getElementById('subRewrite').textContent=`${fmt(p)} − ${paren(q)}\n= ${fmt(p)} + ${paren(-q)}      ← subtracting ${fmt(q)} is the same as adding its opposite, ${fmt(-q)}\n= ${fmt(s)}`;
+  const [lo,hi]=rangeFor(0,p,s); const {ctx,X,mid}=nlBase(document.getElementById('subCanvas'),lo,hi);
+  arrow(ctx,X(0),X(p),mid,C.sky,'start '+fmt(p)); arrow(ctx,X(p),X(s),mid-2,-q>=0?C.mint:C.coral,'add '+fmt(-q));
+  dot(ctx,X(p),mid,C.sky); dot(ctx,X(s),mid,C.lav,9);
+  document.getElementById('subEq').textContent=`${fmt(p)} − ${paren(q)} = ${fmt(s)}`;
+}
+function drawDist(){
+  const a=parseFloat(document.getElementById('da').value), b=parseFloat(document.getElementById('db').value);
+  document.getElementById('daV').textContent=fmt(a); document.getElementById('dbV').textContent=fmt(b);
+  const {ctx,X,mid}=nlBase(document.getElementById('distCanvas'),-10,10);
+  ctx.strokeStyle=C.sun; ctx.lineWidth=8; ctx.globalAlpha=0.7; ctx.beginPath(); ctx.moveTo(X(a),mid); ctx.lineTo(X(b),mid); ctx.stroke(); ctx.globalAlpha=1;
+  dot(ctx,X(a),mid,C.mint,9); dot(ctx,X(b),mid,C.coral,9);
+  ctx.fillStyle=C.sky; ctx.font='bold 13px Nunito, sans-serif'; ctx.textAlign='center'; ctx.fillText(`distance = ${r2(Math.abs(a-b))}`,(X(a)+X(b))/2,mid-20);
+  document.getElementById('distInfo').innerHTML=`|a − b| = |${fmt(a)} − ${paren(b)}| = |${fmt(a-b)}| = <strong>${r2(Math.abs(a-b))}</strong><br>|b − a| = |${fmt(b)} − ${paren(a)}| = |${fmt(b-a)}| = <strong>${r2(Math.abs(b-a))}</strong> &nbsp;← same distance either way!`;
+}
+
+// ══ RATIONALS ══
+const regroupQs=[
+  {e:'4.6 + (−2.3) + (−4.6)', h:'Spot the zero pair: 4.6 and −4.6.', s:'(4.6 + (−4.6)) + (−2.3)\n= 0 + (−2.3)\n= −2.3', a:-2.3},
+  {e:'−⅓ + 5 + ⅓ + (−8)', h:'−⅓ and ⅓ cancel. Then combine the integers.', s:'(−⅓ + ⅓) + (5 + (−8))\n= 0 + (−3)\n= −3', a:-3},
+  {e:'17 + (−9) + (−17) + 9', h:'Two zero pairs!', s:'(17 + (−17)) + ((−9) + 9)\n= 0 + 0\n= 0', a:0},
+  {e:'−2.75 + 6.5 + (−3.25)', h:'Make a friendly sum: −2.75 + (−3.25) = −6.', s:'(−2.75 + (−3.25)) + 6.5\n= −6 + 6.5\n= 0.5', a:0.5},
+];
+document.getElementById('regroup').innerHTML=regroupQs.map((q,i)=>`<div style="background:#f5f7fa;border-radius:12px;padding:1rem 1.2rem;"><div style="font-family:'DM Mono',monospace;font-size:1rem;color:var(--sky);font-weight:500;margin-bottom:0.5rem;">${q.e} = ?</div><div class="action-row"><input id="rg${i}" placeholder="?" style="width:90px;border:2px solid var(--lavender);border-radius:6px;padding:0.35rem;font-family:'DM Mono',monospace;font-weight:700;color:var(--sky);text-align:center;outline:none;"><button class="btn btn-lav" onclick="checkRG(${i})">Check</button><button class="btn btn-ghost" onclick="hintRG(${i})">💡 Hint</button></div><div id="rgf${i}" style="white-space:pre-line;font-family:'DM Mono',monospace;font-size:0.8rem;line-height:1.7;min-height:1rem;"></div></div>`).join('');
+function hintRG(i){ const f=document.getElementById('rgf'+i); f.style.color=C.gold; f.textContent='💡 '+regroupQs[i].h; }
+function checkRG(i){ const v=parseAns(document.getElementById('rg'+i).value), q=regroupQs[i], f=document.getElementById('rgf'+i);
+  if(Math.abs(v-q.a)<0.006){ f.style.color=C.mint; f.textContent='✓ Correct!\n'+q.s; } else { f.style.color=C.coral; f.textContent='✗ Not yet — try the hint, then regroup.'; } }
+let rq=[];
+function newRatQuiz(){
+  const R=(a,b)=>a+Math.floor(Math.random()*(b-a+1)), sg=()=>Math.random()<0.5?-1:1;
+  const fr=()=>{ const d=[2,3,4,5,6,8][R(0,5)]; let n=R(1,d*2-1); while(gcd(n,d)!==1) n=R(1,d*2-1); return {n:sg()*n,d}; };
+  const ftxt=f=>{ const s=f.n<0?'−':''; return `${s}${Math.abs(f.n)}/${f.d}`; };
+  rq=Array.from({length:6},(_,i)=>{
+    const op=Math.random()<0.5?'+':'−';
+    if(i%2===0){ const a=sg()*R(1,90)/10, b=sg()*R(1,90)/10; return {t:`${fmt(a)} ${op} ${paren(b)}`, a: op==='+'?a+b:a-b}; }
+    const a=fr(), b=fr(); const fb=b.n<0?`(${ftxt(b)})`:ftxt(b); return {t:`${ftxt(a)} ${op} ${fb}`, a: op==='+'? a.n/a.d+b.n/b.d : a.n/a.d-b.n/b.d};
+  });
+  document.getElementById('ratQuiz').innerHTML=rq.map((q,i)=>`<div class="quiz-row"><span class="qtext">${q.t} =</span><input id="rq${i}" placeholder="?"><span id="rqf${i}" style="font-family:'DM Mono',monospace;font-size:0.78rem;min-width:80px;"></span></div>`).join('');
+  document.getElementById('ratQuizFb').textContent='';
+}
+function toFrac(x){ for(const d of [1,2,3,4,5,6,8,10,12,15,16,20,24,30,40,48]){ const n=Math.round(x*d); if(Math.abs(n/d-x)<1e-9){ const g=gcd(n,d); const N=n/g, D=d/g; return D===1?fmt(N):(N<0?'−':'')+Math.abs(N)+'/'+D; } } return fmt(x); }
+function checkRatQuiz(){ let ok=0; rq.forEach((q,i)=>{ const v=parseAns(document.getElementById('rq'+i).value), f=document.getElementById('rqf'+i);
+  if(Math.abs(v-q.a)<0.006){ f.textContent='✓'; f.style.color=C.mint; ok++; } else { f.textContent='✗ '+toFrac(q.a); f.style.color=C.coral; } });
+  const el=document.getElementById('ratQuizFb'); el.style.color=ok===6?C.mint:C.coral; el.textContent=ok===6?'🎉 All correct! The rules work for every rational number.':`${ok}/6 correct. Rewrite subtraction as adding the opposite, then use the number line idea.`; }
+newRatQuiz();
+
+// ══ REAL LIFE ══
+const realP=[
+  {q:'At dawn it is −7°C. It rises 12° by noon, then drops 9° by night. What is the night temperature?', w:'−7 + 12 + (−9)\n= 5 + (−9)\n= −4', a:'−4°C'},
+  {q:'A submarine at −250 m rises 85 m, then dives 40 m. What is its new depth?', w:'−250 + 85 + (−40)\n= −165 + (−40)\n= −205', a:'−205 m (205 m below sea level)'},
+  {q:'Death Valley\'s lowest point is −86 m. Mount Whitney is 4,421 m. How far apart vertically are they?', w:'|4421 − (−86)|\n= |4421 + 86|\n= 4507', a:'4,507 m'},
+  {q:'Maya has $32.50. She spends $47.25 using an overdraft, then deposits $20. What is her balance?', w:'32.50 + (−47.25) + 20\n= −14.75 + 20\n= 5.25', a:'$5.25'},
+  {q:'A football team gains 7 yards, loses 12, gains 3½, then loses 4½. Net change?', w:'7 + (−12) + 3.5 + (−4.5)\nRegroup: (7 + 3.5) + (−12 + (−4.5))\n= 10.5 + (−16.5)\n= −6', a:'−6 yards (a loss of 6 yards)'},
+];
+document.getElementById('realProblems').innerHTML=realP.map((p,i)=>`<div style="background:#f5f7fa;border-radius:12px;padding:1.2rem;"><p style="font-size:0.9rem;line-height:1.65;color:#3a4a5a;margin-bottom:0.8rem;"><strong>Problem ${i+1}:</strong> ${p.q}</p><button id="rpb${i}" onclick="revealRP(${i})" style="background:var(--lavender);color:white;border:none;border-radius:8px;padding:0.5rem 1.1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;cursor:pointer;">Show solution</button><div id="rpa${i}" style="display:none;margin-top:0.8rem;font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--mint);line-height:1.8;white-space:pre-line;"></div></div>`).join('');
+function revealRP(i){ const el=document.getElementById('rpa'+i); el.style.display='block'; el.textContent=`Working:\n${realP[i].w}\n\n✓ Answer: ${realP[i].a}`; document.getElementById('rpb'+i).style.display='none'; }
+
+// ══ SUMMARY ══
+const val=id=>(document.getElementById(id).value||'').trim();
+function fill(id,t){ const el=document.getElementById(id); el.textContent=t||'Not answered'; el.classList.toggle('empty',!t); }
+function refls(){ return [...document.querySelectorAll('#sec-6 .reflection-card textarea')].map(t=>t.value.trim()); }
+const dateStr=()=>new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+function buildSummary(){ document.getElementById('summaryName').textContent=val('studentName')||'Student'; document.getElementById('summaryDate').textContent=dateStr();
+  [['sum-add-pred','add-prediction'],['sum-add-ref','add-reflection'],['sum-sub-pred','sub-prediction'],['sum-sub-ref','sub-reflection'],['sum-rat-pred','rat-prediction'],['sum-rat-ref','rat-reflection']].forEach(([s,i])=>fill(s,val(i)));
+  refls().forEach((t,i)=>fill('sum-q'+(i+1),t)); }
+function buildPlainText(){ const r=refls(), na=x=>x||'Not answered';
+  return `OPPOSITES ATTRACT ➕➖ — STUDENT SUBMISSION
+==========================================
+Student: ${val('studentName')||'Student'}
+Date: ${dateStr()}
+Lesson: Grade 7 · The Number System · Workshop 1 of 2
+Standards: 7.NS.A.1a · 7.NS.A.1b · 7.NS.A.1c · 7.NS.A.1d
+
+── SECTION 3: ADDING ──
+Prediction:
+${na(val('add-prediction'))}
+Reflection:
+${na(val('add-reflection'))}
+
+── SECTION 4: SUBTRACTING ──
+Prediction:
+${na(val('sub-prediction'))}
+Reflection:
+${na(val('sub-reflection'))}
+
+── SECTION 5: RATIONAL NUMBERS ──
+Prediction:
+${na(val('rat-prediction'))}
+Reflection:
+${na(val('rat-reflection'))}
+
+── REFLECTIONS ──
+Q1 — −7 + 12 with zero pairs
+${na(r[0])}
+Q2 — Subtracting a negative
+${na(r[1])}
+Q3 — Distance between −12 and 85
+${na(r[2])}
+Q4 — My story for −20 + 35 − 15
+${na(r[3])}
+
+==========================================
+© 2026 Farvour Explorations
+Submitted via Opposites Attract · Interactive Digital Lesson`; }
+function copyResults(){ buildSummary(); navigator.clipboard.writeText(buildPlainText()).then(()=>{ const el=document.getElementById('copyConfirm'); el.textContent='✓ Copied! Now paste into Google Classroom or your assignment.'; setTimeout(()=>el.textContent='',4000); }).catch(()=>{ document.getElementById('copyConfirm').textContent='⚠️ Could not copy — try selecting manually.'; }); }
+function emailResults(){ const n=val('studentName')||'Student'; window.location.href=`mailto:?subject=${encodeURIComponent('Opposites Attract — '+n)}&body=${encodeURIComponent(buildPlainText())}`; }
+
+window.addEventListener('load',()=>{ drawAdd(1); renderChips(); drawSub(); drawDist(); });
+</script>
+</body>
+</html>
