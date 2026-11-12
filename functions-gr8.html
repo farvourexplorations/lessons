@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Function Machines ⚙️ · Grade 8 Functions</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #1e3a5f; --sky-mid: #2d5282;
+    --sun: #f6c343; --sun-pale: #fef9e7;
+    --coral: #e8603c; --coral-pale: #fdf0ec;
+    --mint: #3aaf85; --mint-pale: #e8f8f2;
+    --lavender: #7c6fcd; --lavender-pale: #f0eefb;
+    --paper: #fffef9; --ink: #1a2332;
+    --muted: #7a8899; --border: rgba(0,0,0,0.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:linear-gradient(160deg,#0f2540 0%,#1e3a5f 40%,#2d5282 100%); min-height:100vh; font-family:'Nunito',sans-serif; color:var(--ink); overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image: radial-gradient(1px 1px at 10% 15%,rgba(255,255,255,0.6) 0%,transparent 100%), radial-gradient(1.5px 1.5px at 25% 40%,rgba(255,255,255,0.4) 0%,transparent 100%), radial-gradient(1px 1px at 45% 8%,rgba(255,255,255,0.5) 0%,transparent 100%), radial-gradient(2px 2px at 65% 22%,rgba(255,255,255,0.3) 0%,transparent 100%), radial-gradient(1px 1px at 80% 5%,rgba(255,255,255,0.6) 0%,transparent 100%), radial-gradient(1.5px 1.5px at 92% 35%,rgba(255,255,255,0.4) 0%,transparent 100%); pointer-events:none; z-index:0; }
+
+  /* ── HERO ── */
+  .hero { position:relative; z-index:1; text-align:center; padding:3.5rem 2rem 2rem; color:white; }
+  .hero-badge { display:inline-block; background:var(--sun); color:var(--sky); font-family:'Fredoka One',cursive; font-size:0.85rem; letter-spacing:0.05em; padding:0.35rem 1.2rem; border-radius:20px; margin-bottom:1.2rem; box-shadow:0 2px 12px rgba(246,195,67,0.4); }
+  .hero h1 { font-family:'Fredoka One',cursive; font-size:clamp(2.4rem,6vw,4rem); line-height:1.1; margin-bottom:0.8rem; text-shadow:0 2px 20px rgba(0,0,0,0.3); }
+  .hero h1 .accent { color:var(--sun); }
+  .hero p.intro { font-size:1.05rem; line-height:1.7; opacity:0.88; max-width:560px; margin:0 auto 2rem; }
+  .name-bar { background:rgba(255,255,255,0.1); border:1.5px solid rgba(255,255,255,0.25); border-radius:12px; padding:0.6rem 1rem; display:flex; align-items:center; gap:0.8rem; max-width:420px; margin:0 auto 1rem; }
+  .name-bar label { font-size:0.78rem; font-weight:700; color:rgba(255,255,255,0.8); white-space:nowrap; font-family:'DM Mono',monospace; }
+  .name-bar input { flex:1; background:rgba(255,255,255,0.15); border:none; border-radius:8px; padding:0.4rem 0.8rem; font-family:'Nunito',sans-serif; font-size:0.9rem; font-weight:700; color:white; outline:none; }
+  .name-bar input::placeholder { color:rgba(255,255,255,0.45); font-weight:400; }
+  .progress-wrap { display:flex; justify-content:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.5rem; }
+  .prog-step { display:flex; align-items:center; gap:0.4rem; background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.2); border-radius:20px; padding:0.35rem 0.9rem; font-size:0.78rem; font-weight:700; color:rgba(255,255,255,0.7); cursor:pointer; transition:all 0.2s; }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,0.22); color:white; border-color:rgba(255,255,255,0.4); }
+  .prog-step.active { background:var(--sun); color:var(--sky); border-color:var(--sun); box-shadow:0 2px 12px rgba(246,195,67,0.4); }
+
+  /* ── SHEET ── */
+  .sheet { position:relative; z-index:1; background:var(--paper); border-radius:24px 24px 0 0; margin-top:1.5rem; padding:0 0 6rem; min-height:80vh; box-shadow:0 -8px 40px rgba(0,0,0,0.25); }
+  .section { padding:3rem 2rem 0; max-width:820px; margin:0 auto; display:none; }
+  .section.active { display:block; }
+  .section-eyebrow { display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem; }
+  .eyebrow-num { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Fredoka One',cursive; font-size:1rem; color:white; flex-shrink:0; }
+  .num-coral{background:var(--coral);} .num-mint{background:var(--mint);} .num-sun{background:var(--sun);color:var(--sky);} .num-lav{background:var(--lavender);} .num-sky{background:var(--sky-mid);}
+  .eyebrow-label { font-size:0.72rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); font-family:'DM Mono',monospace; }
+  .section h2 { font-family:'Fredoka One',cursive; font-size:clamp(1.6rem,3.5vw,2.2rem); color:var(--sky); margin-bottom:0.6rem; line-height:1.2; }
+  .section .lead { font-size:1rem; line-height:1.75; color:#3a4a5a; margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+
+  /* ── WONDER BOX ── */
+  .wonder-box { background:linear-gradient(135deg,var(--sky) 0%,var(--sky-mid) 100%); color:white; border-radius:16px; padding:1.8rem 2rem; margin-bottom:1.8rem; position:relative; overflow:hidden; }
+  .wonder-box::after { content:'🤔'; position:absolute; right:1.5rem; top:50%; transform:translateY(-50%); font-size:3rem; opacity:0.3; }
+  .wonder-box p { font-size:1rem; line-height:1.7; font-style:italic; opacity:0.95; max-width:85%; }
+  .wonder-box strong { color:var(--sun); font-style:normal; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,var(--mint) 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'📊'; }
+
+  /* ── CHIPS ── */
+  .chip-row { display:flex; flex-wrap:wrap; gap:0.6rem; margin-bottom:1.5rem; }
+  .chip { padding:0.45rem 1rem; border-radius:20px; font-size:0.82rem; font-weight:700; cursor:pointer; transition:all 0.2s; border:2px solid transparent; }
+  .chip.coral{background:var(--coral-pale);color:var(--coral);border-color:#f8c5b8;} .chip.mint{background:var(--mint-pale);color:var(--mint);border-color:#b8ebd8;} .chip.sun{background:var(--sun-pale);color:#b8860b;border-color:#f8e0a0;} .chip.lav{background:var(--lavender-pale);color:var(--lavender);border-color:#d0caef;} .chip.sky{background:#e8f0f8;color:var(--sky-mid);border-color:#c0d4ea;}
+  .chip:hover { transform:scale(1.05); }
+  .concept-reveal { background:var(--paper); border-left:4px solid var(--coral); border-radius:0 10px 10px 0; padding:1rem 1.2rem; font-size:0.88rem; line-height:1.7; margin-top:0.5rem; display:none; animation:fadeIn 0.3s ease; }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border{border-color:var(--mint);} .concept-reveal.sun-border{border-color:var(--sun);} .concept-reveal.lav-border{border-color:var(--lavender);} .concept-reveal.sky-border{border-color:var(--sky-mid);}
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);} }
+
+  /* ── PREDICT BOX ── */
+  .predict-box { background:var(--sun-pale); border:2px dashed var(--sun); border-radius:14px; padding:1.4rem 1.6rem; margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive; font-size:1rem; color:#b8860b; margin-bottom:0.8rem; }
+  .predict-box textarea { width:100%; border:1.5px solid rgba(0,0,0,0.12); border-radius:8px; padding:0.7rem; font-family:'Nunito',sans-serif; font-size:0.88rem; resize:vertical; min-height:64px; background:white; color:var(--ink); outline:none; transition:border-color 0.2s; }
+  .predict-box textarea:focus { border-color:var(--sun); }
+
+  /* ── DEMO ZONE ── */
+  .demo-zone { background:white; border:2px solid var(--border); border-radius:16px; padding:1.8rem; margin-bottom:1.5rem; }
+  .demo-zone h3 { font-family:'Fredoka One',cursive; font-size:1.2rem; color:var(--sky); margin-bottom:0.3rem; }
+  .demo-zone .hint { font-size:0.78rem; color:var(--muted); font-family:'DM Mono',monospace; margin-bottom:1.3rem; }
+
+  /* ── BUTTONS ── */
+  .btn { border:none; border-radius:10px; padding:0.65rem 1.3rem; font-family:'Nunito',sans-serif; font-size:0.88rem; font-weight:800; cursor:pointer; transition:all 0.15s; }
+  .btn:hover { transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,0.15); }
+  .btn:active { transform:translateY(0); }
+  .btn-coral{background:var(--coral);color:white;} .btn-mint{background:var(--mint);color:white;} .btn-sun{background:var(--sun);color:var(--sky);} .btn-lav{background:var(--lavender);color:white;} .btn-ghost{background:#f0f2f5;color:var(--muted);} .btn-sky{background:var(--sky);color:white;}
+  .action-row { display:flex; gap:0.8rem; flex-wrap:wrap; align-items:center; margin-bottom:0.8rem; }
+
+  /* ── INPUT GROUP ── */
+  .input-group { display:flex; flex-direction:column; gap:0.3rem; }
+  .input-group label { font-size:0.78rem; font-weight:700; color:var(--muted); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.05em; }
+  .input-group input[type=number] { border:2px solid var(--border); border-radius:8px; padding:0.5rem 0.8rem; font-family:'Nunito',sans-serif; font-size:1rem; width:100px; outline:none; transition:border-color 0.2s; font-weight:700; color:var(--sky); background:white; }
+  .input-group input[type=number]:focus { border-color:var(--coral); }
+
+  /* ── STAT RESULT PANEL ── */
+  .stat-panel { background:var(--lavender-pale); border:2px solid rgba(124,111,205,0.3); border-radius:12px; padding:1.2rem 1.4rem; margin-top:1rem; }
+  .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:0.6rem; margin-top:0.6rem; }
+  .stat-card { background:white; border-radius:10px; padding:0.8rem; text-align:center; }
+  .stat-card .stat-val { font-family:'Fredoka One',cursive; font-size:1.5rem; color:var(--sky); }
+  .stat-card .stat-lbl { font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--muted); margin-top:0.2rem; }
+  .stat-card.coral-card .stat-val { color:var(--coral); }
+  .stat-card.mint-card  .stat-val { color:var(--mint); }
+  .stat-card.sun-card   .stat-val { color:#b8860b; }
+  .stat-card.lav-card   .stat-val { color:var(--lavender); }
+
+  /* ── CANVASES ── */
+  canvas.chart-canvas { border-radius:10px; border:2px solid var(--border); display:block; background:white; width:100%; }
+
+  /* ── DATA INPUT AREA ── */
+  .data-input-wrap { margin-bottom:1rem; }
+  .data-input-wrap label { font-size:0.78rem; font-weight:700; color:var(--muted); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:0.4rem; }
+  .data-input-wrap input[type=text] { width:100%; border:2px solid var(--lavender); border-radius:8px; padding:0.6rem 0.9rem; font-family:'DM Mono',monospace; font-size:0.95rem; font-weight:700; color:var(--sky); outline:none; transition:border-color 0.2s; background:white; }
+  .data-input-wrap input[type=text]:focus { border-color:var(--coral); }
+
+  /* ── DATASET BUTTONS ── */
+  .dataset-btn { background:var(--sky); color:white; border:none; border-radius:8px; padding:0.4rem 0.8rem; font-family:'Nunito',sans-serif; font-size:0.78rem; font-weight:700; cursor:pointer; transition:all 0.15s; margin:0.2rem; }
+  .dataset-btn:hover { background:var(--sky-mid); }
+
+  /* ── WORLD CARDS ── */
+  .world-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+  .world-card { border-radius:14px; padding:1.4rem; }
+  .world-card.coral-bg{background:var(--coral-pale);} .world-card.mint-bg{background:var(--mint-pale);} .world-card.lav-bg{background:var(--lavender-pale);} .world-card.sun-bg{background:var(--sun-pale);}
+  .world-card .wc-icon { font-size:2rem; margin-bottom:0.6rem; }
+  .world-card h4 { font-family:'Fredoka One',cursive; font-size:1rem; margin-bottom:0.4rem; color:var(--sky); }
+  .world-card p  { font-size:0.82rem; line-height:1.6; color:#3a4a5a; }
+
+  /* ── REFLECTION ── */
+  .reflection-card { background:white; border:2px solid var(--border); border-radius:14px; padding:1.4rem; margin-bottom:1rem; }
+  .reflection-card .q { font-family:'Fredoka One',cursive; font-size:1rem; color:var(--sky); margin-bottom:0.7rem; display:flex; gap:0.5rem; align-items:baseline; }
+  .reflection-card .q .qnum { font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--muted); flex-shrink:0; }
+  .reflection-card textarea { width:100%; border:1.5px solid rgba(0,0,0,0.1); border-radius:8px; padding:0.7rem; font-family:'Nunito',sans-serif; font-size:0.88rem; resize:vertical; min-height:72px; background:#fafbfc; color:var(--ink); outline:none; transition:border-color 0.2s; }
+  .reflection-card textarea:focus { border-color:var(--lavender); }
+
+  /* ── CONGRATS ── */
+  .congrats { text-align:center; padding:2rem 1rem; }
+  .congrats .trophy { font-size:4rem; margin-bottom:1rem; animation:bounce 0.8s ease infinite alternate; }
+  @keyframes bounce { from{transform:translateY(0);}to{transform:translateY(-10px);} }
+  .congrats h2 { font-family:'Fredoka One',cursive; font-size:2rem; color:var(--sky); margin-bottom:0.8rem; }
+  .congrats p  { font-size:0.95rem; line-height:1.7; color:#3a4a5a; max-width:500px; margin:0 auto 1.5rem; }
+  .summary-chips { display:flex; flex-wrap:wrap; gap:0.6rem; justify-content:center; }
+  .summary-chip { padding:0.5rem 1.1rem; border-radius:20px; font-size:0.82rem; font-weight:700; background:var(--sun-pale); color:#b8860b; border:1.5px solid #f8e0a0; }
+  .divider { height:1px; background:linear-gradient(90deg,transparent,var(--border),transparent); margin:1.5rem 0; }
+
+  /* ── NAV ── */
+  .nav-row { display:flex; justify-content:space-between; align-items:center; padding:2.5rem 2rem 0; max-width:820px; margin:0 auto; }
+  .btn-next { background:var(--sky); color:white; border:none; border-radius:50px; padding:0.9rem 2rem; font-family:'Fredoka One',cursive; font-size:1rem; cursor:pointer; display:flex; align-items:center; gap:0.6rem; transition:all 0.2s; box-shadow:0 4px 16px rgba(30,58,95,0.25); }
+  .btn-next:hover { background:var(--sky-mid); transform:translateY(-2px); }
+  .btn-prev { background:transparent; color:var(--muted); border:2px solid var(--border); border-radius:50px; padding:0.9rem 1.6rem; font-family:'Fredoka One',cursive; font-size:0.95rem; cursor:pointer; transition:all 0.2s; }
+  .btn-prev:hover { border-color:var(--muted); color:var(--ink); }
+  .btn-prev:disabled,.btn-next:disabled { opacity:0.3; cursor:not-allowed; transform:none; }
+
+  /* ── SUMMARY ── */
+  .summary-section { background:white; border-radius:16px; padding:1.8rem; margin-bottom:1.2rem; border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive; font-size:1.05rem; color:var(--sky); margin-bottom:0.8rem; }
+  .summary-answer { background:#f5f7fa; border-radius:8px; padding:0.7rem 1rem; font-size:0.85rem; line-height:1.6; color:var(--ink); margin-bottom:0.5rem; font-style:italic; border-left:3px solid var(--lavender); min-height:2rem; }
+  .summary-answer.empty { color:var(--muted); font-style:normal; border-left-color:var(--border); }
+  .sum-label { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.4rem; margin-top:0.6rem; text-transform:uppercase; letter-spacing:0.06em; }
+  .share-buttons { display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:1.5rem; justify-content:center; }
+  .share-btn { border:none; border-radius:12px; padding:0.85rem 1.6rem; font-family:'Fredoka One',cursive; font-size:1rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:0.5rem; }
+  .share-btn:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.15); }
+  .share-btn.copy{background:var(--mint);color:white;} .share-btn.email{background:var(--lavender);color:white;} .share-btn.print{background:var(--sky);color:white;}
+  .copy-confirm { text-align:center; font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--mint); min-height:1.2rem; margin-top:0.6rem; }
+
+  /* multi-line text blocks */
+  #sqTopicHint,#sqCheckFb,#statInsight,#outlierResult { white-space:pre-line; }
+
+  @media (max-width:560px) { .hero{padding:2.5rem 1.2rem 1.5rem;} .section{padding:2rem 1.2rem 0;} .nav-row{padding:2rem 1.2rem 0;} }
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm{display:none !important;}
+    .sheet{box-shadow:none;border-radius:0;}
+    .section{display:none !important;}
+    #sec-7{display:block !important;}
+  }
+  .fbtn.on, .gbtn.on, .mdbtn.on { background:var(--coral) !important; color:white !important; border-color:var(--coral) !important; }
+  .story { background:#f5f7fa; border-radius:12px; padding:0.8rem 1rem; display:flex; gap:0.8rem; align-items:center; flex-wrap:wrap; font-size:0.88rem; color:#3a4a5a; font-weight:600; }
+  .story select { margin-left:auto; width:130px; }
+  #myTable { white-space:pre; overflow-x:auto; }
+  #gType { width:130px; }
+  .g3 { display:grid; grid-template-columns:repeat(3,1fr); gap:0.8rem; margin-bottom:0.8rem; }
+  @media (max-width:700px){ .g3 { grid-template-columns:1fr; } }
+  /* ── G8 shared extras ── */
+  .steps { white-space:pre-line; font-family:'DM Mono',monospace; font-size:0.85rem; line-height:1.9; color:var(--sky); background:var(--lavender-pale); border-left:4px solid var(--lavender); border-radius:0 12px 12px 0; padding:1rem 1.2rem; margin-top:0.8rem; }
+  canvas.cv { width:100%; border:2px solid var(--border); border-radius:10px; background:white; display:block; }
+  .big-eq { font-family:'Fredoka One',cursive; font-size:1.4rem; color:var(--sky); text-align:center; margin:0.8rem 0 0.3rem; }
+  .sl { font-family:'DM Mono',monospace; font-size:0.8rem; color:var(--muted); flex:1; min-width:150px; }
+  .sl input { width:100%; accent-color:var(--coral); }
+  .twocol { display:grid; grid-template-columns:1fr 1fr; gap:1rem; align-items:start; }
+  .slrow { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:0.6rem; }
+  .ninput { width:80px; padding:0.45rem 0.6rem; border:2px solid var(--border); border-radius:8px; font-family:'DM Mono',monospace; font-size:0.9rem; color:var(--sky); }
+  .ninput.wide { width:180px; }
+  .tbl { border-collapse:collapse; font-family:'DM Mono',monospace; font-size:0.85rem; margin-top:0.5rem; }
+  .tbl td,.tbl th { border:1.5px solid #dde4ea; padding:0.35rem 0.7rem; text-align:center; color:var(--sky); }
+  .tbl th { background:var(--sky); color:white; }
+  .tag { display:inline-block; padding:0.2rem 0.7rem; border-radius:20px; font-family:'DM Mono',monospace; font-size:0.75rem; font-weight:700; }
+  @media (max-width:700px){ .twocol { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">✨ Grade 8 · Functions</div>
+  <h1>Function<br><span class="accent">Machines</span> ⚙️</h1>
+  <p class="intro">Put a number in, get exactly one number out. That simple rule powers everything from vending machines to video games. Today you'll test what is and isn't a function, crack mystery rules, and read the stories hidden inside graphs.</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <a class="prog-step active" id="pill-0" onclick="goTo(0)">⚙️ Wonder</a>
+    <a class="prog-step" id="pill-1" onclick="goTo(1)">📚 Discover</a>
+    <a class="prog-step" id="pill-2" onclick="goTo(2)">🔍 Function?</a>
+    <a class="prog-step" id="pill-3" onclick="goTo(3)">🕵️ Mystery Rule</a>
+    <a class="prog-step" id="pill-4" onclick="goTo(4)">📖 Graph Stories</a>
+    <a class="prog-step" id="pill-5" onclick="goTo(5)">🌍 Real Life</a>
+    <a class="prog-step" id="pill-6" onclick="goTo(6)">💭 Reflect</a>
+    <a class="prog-step" id="pill-7" onclick="goTo(7)">📤 Submit</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+  <!-- ══ SECTION 0: WONDER ══ -->
+  <div class="section active" id="sec-0">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">The Big Question</span></div>
+    <h2>What makes a rule a function?</h2>
+    <p class="lead">Press B4 on a vending machine and you always get the same snack. Imagine a machine where B4 sometimes gives chips and sometimes gives a drink. You couldn't trust it. A <strong>function</strong> is a rule you can trust: each input gives <strong>exactly one</strong> output.</p>
+    <div class="wonder-box">
+      <p>Your height depends on your age. Your phone bill depends on how much data you use. A ball's height depends on time. Some of these relationships make straight-line graphs and some make curves. How can you tell which is which, just from a table?</p>
+    </div>
+    <p style="font-size:0.9rem;font-weight:700;color:var(--sky);margin-bottom:0.8rem;">🧠 Warm-up — is it a function?</p>
+    <div style="background:white;border:2px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;">
+      <div id="warmupGrid" style="display:flex;flex-direction:column;gap:0.6rem;"></div>
+      <div id="warmupFb" style="margin-top:1rem;font-family:'DM Mono',monospace;font-size:0.82rem;min-height:1.2rem;color:var(--mint);"></div>
+    </div>
+    <div class="wonder-box mint-box">
+      <p>Different outputs can repeat. What can't happen is <strong>one input with two different outputs</strong>.</p>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 1: DISCOVER ══ -->
+  <div class="section" id="sec-1">
+    <div class="section-eyebrow"><div class="eyebrow-num num-lav">2</div><span class="eyebrow-label">Discover the Vocabulary</span></div>
+    <h2>📚 The language of functions</h2>
+    <p class="lead">Click each word to reveal its meaning.</p>
+    <div class="chip-row">
+      <span class="chip coral" onclick="revealTerm('fn')">⚙️ Function</span>
+      <span class="chip lav"   onclick="revealTerm('io')">↔️ Input & Output</span>
+      <span class="chip sun"   onclick="revealTerm('lin')">📏 Linear Function</span>
+      <span class="chip mint"  onclick="revealTerm('roc')">⏱️ Rate of Change</span>
+      <span class="chip sky"   onclick="revealTerm('iv')">🎯 Initial Value</span>
+    </div>
+    <div class="concept-reveal" id="cr-fn"><strong>Function</strong> — a rule that assigns each input exactly one output. Its graph passes the vertical line test.<br><br><em>y = 3x + 1 is a function; x² + y² = 25 is not.</em></div>
+    <div class="concept-reveal lav-border" id="cr-io"><strong>Input & Output</strong> — the input (x) goes into the rule; the output (y) comes out. A function's graph is the set of all (input, output) pairs.<br><br><em>input 4 → rule "double it" → output 8</em></div>
+    <div class="concept-reveal sun-border" id="cr-lin"><strong>Linear Function</strong> — a function y = mx + b. Its graph is a straight line and its table has a constant rate of change.<br><br><em>A = s² (area of a square) is NOT linear.</em></div>
+    <div class="concept-reveal mint-border" id="cr-roc"><strong>Rate of Change</strong> — how much the output changes for each 1-unit change in input. For a linear function it's the slope m.<br><br><em>$4 per ticket → rate of change 4</em></div>
+    <div class="concept-reveal sky-border" id="cr-iv"><strong>Initial Value</strong> — the output when the input is 0. For a linear function it's the y-intercept b.<br><br><em>A $25 sign-up fee is the initial value.</em></div>
+  </div>
+
+  <!-- ══ SECTION 2: FUNCTION? ══ -->
+  <div class="section" id="sec-2">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">3</div><span class="eyebrow-label">Investigation 1 · 8.F.A.1</span></div>
+    <h2>🔍 The Function Detector</h2>
+    <p class="lead">Test relationships two ways: a <strong>mapping diagram</strong> shows each input's arrows, and the <strong>vertical line test</strong> sweeps across a graph. If any input hits two outputs, it's not a function. <strong>Predict first!</strong></p>
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="fd-prediction" placeholder="I think a circle is / isn't a function because... I think y = x² is / isn't a function because..."></textarea>
+    </div>
+    <div class="demo-zone">
+      <h3>🏹 Mapping Diagrams</h3>
+      <div class="hint">PICK A RELATION · EACH INPUT SHOULD HAVE ONLY ONE ARROW</div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.6rem;" id="mapBtns"></div>
+      <div class="twocol">
+        <canvas class="cv" id="mapCanvas" width="400" height="280"></canvas>
+        <div id="mapOut" class="steps" style="margin-top:0;"></div>
+      </div>
+    </div>
+    <div class="demo-zone">
+      <h3>📏 Vertical Line Test</h3>
+      <div class="hint">PICK A GRAPH · SLIDE THE VERTICAL LINE · COUNT THE HITS</div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.6rem;" id="vltBtns"></div>
+      <label class="sl" style="display:block;max-width:420px;margin-bottom:0.6rem;">vertical line at x = <b id="vxV"></b><input type="range" id="vx" min="-6" max="6" step="0.1" value="2" oninput="drawVLT()"></label>
+      <div class="twocol">
+        <canvas class="cv" id="vltCanvas" width="400" height="340"></canvas>
+        <div id="vltOut" class="steps" style="margin-top:0;"></div>
+      </div>
+    </div>
+    <div class="predict-box" style="border-color:var(--mint);background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="fd-reflection" placeholder="A relation is NOT a function when... The vertical line test works because... Two inputs CAN share an output because..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 3: MYSTERY ══ -->
+  <div class="section" id="sec-3">
+    <div class="section-eyebrow"><div class="eyebrow-num num-mint">4</div><span class="eyebrow-label">Investigation 2 · 8.F.A.2–3</span></div>
+    <h2>🕵️ Crack the Mystery Rule</h2>
+    <p class="lead">The machine has a secret rule. Feed it inputs and watch the table and graph. If the outputs change by the <strong>same amount</strong> each step, the rule is <strong>linear</strong>: find m and b. If not, it's <strong>nonlinear</strong>.</p>
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="my-prediction" placeholder="I think the best inputs to try first are ___ because... I can find b by... I can tell a rule is nonlinear when..."></textarea>
+    </div>
+    <div class="demo-zone">
+      <h3>⚙️ Mystery Machine #<span id="myNum">1</span></h3>
+      <div class="hint">TYPE AN INPUT · PRESS RUN · THEN GUESS THE RULE</div>
+      <div class="action-row" style="font-family:'DM Mono',monospace;color:var(--sky);">
+        input x = <input class="ninput" type="number" id="myIn" value="0"> <button class="btn btn-coral" onclick="runMy()">⚙️ Run</button>
+        <button class="btn btn-sun" onclick="for(let i=0;i<=4;i++){$('myIn').value=i;runMy();}">Run 0 to 4</button>
+        <button class="btn btn-ghost" onclick="newMy(1)">🔀 Next machine</button>
+      </div>
+      <div class="twocol">
+        <div><div id="myTable" class="steps" style="margin-top:0;"></div></div>
+        <canvas class="cv" id="myCanvas" width="400" height="300"></canvas>
+      </div>
+      <div class="action-row" style="margin-top:0.8rem;font-family:'DM Mono',monospace;color:var(--sky);">
+        My guess:
+        <select class="ninput" id="gType" onchange="$('gLin').style.display=this.value==='lin'?'inline':'none'"><option value="lin">linear</option><option value="non">nonlinear</option></select>
+        <span id="gLin">y = <input class="ninput" id="gm" style="width:56px" value="">x + <input class="ninput" id="gb" style="width:56px" value=""></span>
+        <button class="btn btn-mint" onclick="checkMy()">Check ✓</button><button class="btn btn-ghost" onclick="revealMy()">Reveal</button>
+      </div>
+      <div id="myOut" class="steps"></div>
+    </div>
+    <div class="predict-box" style="border-color:var(--lavender);background:var(--lavender-pale);">
+      <h4 style="color:var(--lavender);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="my-reflection" placeholder="To find b, input ___ because... To find m, I looked at... A nonlinear rule showed itself when... My fastest strategy was..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 4: STORIES ══ -->
+  <div class="section" id="sec-4">
+    <div class="section-eyebrow"><div class="eyebrow-num num-sun">5</div><span class="eyebrow-label">Investigation 3 · 8.F.B.4–5</span></div>
+    <h2>📖 Graphs Tell Stories</h2>
+    <p class="lead">A graph shows <strong>how</strong> one quantity changes as another does: increasing, decreasing, staying constant, linear or curved. Match each story to its graph. Then build a linear model from two facts.</p>
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="gs-prediction" placeholder="I think a flat section of a graph means... A steeper section means... A line going down means..."></textarea>
+    </div>
+    <div class="demo-zone">
+      <h3>📖 Match the Story</h3>
+      <div class="hint">EACH GRAPH SHOWS DISTANCE FROM HOME OVER TIME · CHOOSE THE MATCHING GRAPH FOR EACH STORY</div>
+      <div class="g3"><canvas class="cv" id="sg0" width="240" height="170"></canvas><canvas class="cv" id="sg1" width="240" height="170"></canvas><canvas class="cv" id="sg2" width="240" height="170"></canvas></div>
+      <div id="stories" style="display:flex;flex-direction:column;gap:0.5rem;"></div>
+      <div class="action-row" style="margin-top:0.6rem;"><button class="btn btn-sun" onclick="checkStories()">Check my matches ✓</button><button class="btn btn-ghost" onclick="newStories()">🔀 New set</button></div>
+      <div id="stOut" class="steps"></div>
+    </div>
+    <div class="demo-zone">
+      <h3>🛠️ Model Builder</h3>
+      <div class="hint">PICK A SITUATION · TWO FACTS ARE ENOUGH TO BUILD A LINEAR FUNCTION</div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.6rem;" id="mdBtns"></div>
+      <div class="twocol">
+        <div id="mdOut" class="steps" style="margin-top:0;"></div>
+        <canvas class="cv" id="mdCanvas" width="400" height="280"></canvas>
+      </div>
+    </div>
+    <div class="predict-box" style="border-color:var(--mint);background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="gs-reflection" placeholder="I matched the stories by looking for... The rate of change in the candle model means... The initial value means..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 5: REAL LIFE ══ -->
+  <div class="section" id="sec-5">
+    <div class="section-eyebrow"><div class="eyebrow-num num-sky">6</div><span class="eyebrow-label">Real-World Connections</span></div>
+    <h2>Functions all around you 🌍</h2>
+    <p class="lead">Any time one quantity determines another, you're looking at a function.</p>
+    <div class="world-grid">
+      <div class="world-card coral-bg"><div class="wc-icon">🎮</div><h4>Video Games</h4><p>Every frame, a game uses functions to turn time into a character's position on screen.</p></div>
+      <div class="world-card mint-bg"><div class="wc-icon">🌡️</div><h4>Temperature</h4><p>°F = 1.8 × °C + 32 is a linear function: rate 1.8, initial value 32.</p></div>
+      <div class="world-card lav-bg"><div class="wc-icon">📦</div><h4>Shipping</h4><p>Cost depends on weight. Each weight gives exactly one price.</p></div>
+      <div class="world-card sun-bg"><div class="wc-icon">⚽</div><h4>Sports</h4><p>A kicked ball's height over time is a nonlinear function: it curves up, then down.</p></div>
+    </div>
+    <div class="divider"></div>
+    <div class="demo-zone">
+      <h3>🎯 Real-World Problem Solver</h3>
+      <div class="hint">SOLVE · THEN REVEAL</div>
+      <div id="realProblems" style="display:flex;flex-direction:column;gap:0.8rem;"></div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 6: REFLECT ══ -->
+  <div class="section" id="sec-6">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">7</div><span class="eyebrow-label">Synthesis & Wonder</span></div>
+    <h2>💭 Let's think it through</h2>
+    <p class="lead">Explain your thinking in full sentences.</p>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q1 /</span> Is "student → their birthday month" a function? Is "month → students born that month"? Explain both.</div><textarea placeholder="Each student has... but each month..."></textarea></div>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q2 /</span> Function A is y = 3x + 2. Function B has the table (0, 5), (1, 7), (2, 9). Which has the greater rate of change? Which has the greater initial value?</div><textarea placeholder="A: rate ___, initial ___. B: rate ___, initial ___. So..."></textarea></div>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q3 /</span> How can you tell from a table that a function is nonlinear? Give an example.</div><textarea placeholder="The outputs change by... for example y = x²: 0, 1, 4, 9 changes by..."></textarea></div>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q4 /</span> Sketch (in words) a graph of your trip to school. Describe where it increases, decreases and is constant.</div><textarea placeholder="First the graph rises steadily while I walk... then it is flat when I wait for the bus..."></textarea></div>
+    <div class="divider"></div>
+    <div class="congrats">
+      <div class="trophy">🎉</div>
+      <h2>You speak function!</h2>
+      <p>Today you covered all of Grade 8 Functions — defining functions, comparing them across representations, telling linear from nonlinear, building linear models, and describing graphs qualitatively.</p>
+      <div class="summary-chips">
+        <span class="summary-chip">1 input → 1 output</span>
+        <span class="summary-chip">Vertical line test</span>
+        <span class="summary-chip">y = mx + b</span>
+        <span class="summary-chip">Constant change → linear</span>
+        <span class="summary-chip">Initial value = b</span>
+        <span class="summary-chip">Increasing · decreasing · constant</span>
+        <span class="summary-chip">8.F.A · 8.F.B</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="sec-7"></div>
+
+  <div class="nav-row">
+    <button class="btn-prev" id="prevBtn" onclick="navigate(-1)" disabled>← Back</button>
+    <button class="btn-next" id="nextBtn" onclick="navigate(1)">Next <span>→</span></button>
+  </div>
+</div>
+
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+
+<script>
+
+const LESSON={name:'Function Machines',emoji:'⚙️',grade:'Grade 8 · Functions',stds:'8.F.A.1 · 8.F.A.2 · 8.F.A.3 · 8.F.B.4 · 8.F.B.5',
+  inv:[['fd','🔍','Section 3 — The Function Detector'],['my','🕵️','Section 4 — Mystery Rules'],['gs','📖','Section 5 — Graph Stories & Models']],
+  qs:['Q1 — Birthday months','Q2 — Comparing two functions','Q3 — Spotting nonlinear tables','Q4 — My trip-to-school graph']};
+const WARM={opts:['Function','Not'],done:'🎉 Perfect! One input, one output.',fail:'Look for any input that has two different outputs.',items:[
+  {t:'{(1, 4), (2, 5), (3, 6), (4, 7)}',a:0,e:'Function: every input appears once.'},
+  {t:'{(2, 3), (2, 5), (4, 1)}',a:1,e:'Not: input 2 gives both 3 and 5.'},
+  {t:'{(1, 9), (2, 9), (3, 9)}',a:0,e:'Function: outputs may repeat; each input has one output.'},
+  {t:'Person → their phone number(s), when one person has two phones',a:1,e:'Not: one input gives two outputs.'},
+  {t:'y = 5 − 2x',a:0,e:'Function: each x gives exactly one y.'},
+]};
+function onSection(n){ if(n===2){ drawMap(); drawVLT(); } if(n===3) drawMy(); if(n===4){ drawStories(); drawMd(); } }
+
+// ══ MAPPING ══
+const MAPS=[
+  {n:'Squares',p:[[-2,4],[-1,1],[0,0],[1,1],[2,4]]},
+  {n:'Square roots ±',p:[[0,0],[1,1],[1,-1],[4,2],[4,-2]]},
+  {n:'Shoe size → height',p:[[6,150],[7,158],[8,163],[8,170],[9,175]]},
+  {n:'Hours → pay',p:[[1,12],[2,24],[3,36],[4,48]]},
+];
+let mapI=0;
+function setMap(i){ mapI=i; document.querySelectorAll('.fbtn').forEach((b,j)=>b.classList.toggle('on',j===i)); drawMap(); }
+function drawMap(){
+  const M=MAPS[mapI], ins=[...new Set(M.p.map(p=>p[0]))], outs=[...new Set(M.p.map(p=>p[1]))].sort((a,b)=>a-b), cv=$('mapCanvas'), ctx=clr(cv);
+  const yi=i=>40+i*(220/Math.max(1,ins.length-1||1)), yo=i=>40+i*(220/Math.max(1,outs.length-1||1));
+  const bad=ins.filter(x=>new Set(M.p.filter(p=>p[0]===x).map(p=>p[1])).size>1);
+  [[80,'INPUTS'],[320,'OUTPUTS']].forEach(([x,t])=>{ ctx.fillStyle='rgba(124,111,205,0.12)'; ctx.beginPath(); ctx.ellipse(x,150,48,128,0,0,7); ctx.fill(); ctx.fillStyle=C.sky; ctx.font='bold 11px DM Mono'; ctx.textAlign='center'; ctx.fillText(t,x,16); });
+  M.p.forEach(([x,y])=>{ const a=ins.indexOf(x), b=outs.indexOf(y), isBad=bad.includes(x); ctx.strokeStyle=isBad?C.coral:C.mint; ctx.lineWidth=isBad?3:2; ctx.beginPath(); ctx.moveTo(100,yi(a)); ctx.lineTo(298,yo(b)); ctx.stroke(); const ang=Math.atan2(yo(b)-yi(a),198); ctx.fillStyle=ctx.strokeStyle; ctx.beginPath(); ctx.moveTo(298,yo(b)); ctx.lineTo(298-10*Math.cos(ang-0.4),yo(b)-10*Math.sin(ang-0.4)); ctx.lineTo(298-10*Math.cos(ang+0.4),yo(b)-10*Math.sin(ang+0.4)); ctx.fill(); });
+  ctx.font='bold 14px DM Mono'; ins.forEach((x,i)=>{ ctx.fillStyle=bad.includes(x)?C.coral:C.sky; ctx.fillText(fmt(x),80,yi(i)+5); }); outs.forEach((y,i)=>{ ctx.fillStyle=C.sky; ctx.fillText(fmt(y),320,yo(i)+5); });
+  $('mapOut').textContent=`${M.n}\nPairs: ${M.p.map(([x,y])=>`(${fmt(x)}, ${fmt(y)})`).join(', ')}\n\n${bad.length?`✗ NOT a function.\nInput ${bad.map(fmt).join(' and ')} ${bad.length>1?'each have':'has'} TWO different outputs (red arrows).`:`✓ A FUNCTION.\nEvery input has exactly one arrow.${outs.length<ins.length?'\nSome outputs are shared, and that is allowed!':''}`}`;
+}
+// ══ VLT ══
+const GR=[
+  {n:'y = 2x − 1',f:x=>[2*x-1],fn:true},
+  {n:'y = x²',f:x=>[x*x],fn:true},
+  {n:'circle x² + y² = 25',f:x=>Math.abs(x)<=5?(Math.abs(x)===5?[0]:[Math.sqrt(25-x*x),-Math.sqrt(25-x*x)]):[],fn:false},
+  {n:'x = y²',f:x=>x<0?[]:x===0?[0]:[Math.sqrt(x),-Math.sqrt(x)],fn:false},
+  {n:'y = |x|',f:x=>[Math.abs(x)],fn:true},
+  {n:'sideways V: x = |y|',f:x=>x<0?[]:x===0?[0]:[x,-x],fn:false},
+];
+let vltI=0;
+function setVLT(i){ vltI=i; document.querySelectorAll('.gbtn').forEach((b,j)=>b.classList.toggle('on',j===i)); drawVLT(); }
+function drawVLT(){
+  const G=GR[vltI], vx=num('vx'); $('vxV').textContent=fmt(vx);
+  const P=plane($('vltCanvas'),-7,7,-7,7,{pad:20,sx:1,sy:1}), {ctx,X,Y}=P;
+  ctx.strokeStyle=C.lav; ctx.lineWidth=3; for(let br=0;br<2;br++){ ctx.beginPath(); let first=true; for(let i=0;i<=600;i++){ const x=-7+14*i/600, ys=G.f(x); const y=ys[br]!==undefined?ys[br]:(ys.length===1&&br===1?ys[0]:undefined); if(y===undefined||Math.abs(y)>7.5){ first=true; continue; } if(first){ ctx.moveTo(X(x),Y(y)); first=false; } else ctx.lineTo(X(x),Y(y)); } ctx.stroke(); }
+  const hits=G.f(vx).filter(y=>Math.abs(y)<=7.5);
+  ctx.strokeStyle=hits.length>1?C.coral:C.mint; ctx.lineWidth=2.5; ctx.setLineDash([6,4]); ctx.beginPath(); ctx.moveTo(X(vx),Y(-7)); ctx.lineTo(X(vx),Y(7)); ctx.stroke(); ctx.setLineDash([]);
+  hits.forEach(y=>dot(ctx,X(vx),Y(y),hits.length>1?C.coral:C.mint,6));
+  $('vltOut').textContent=`${G.n}\n\nAt x = ${fmt(vx)} the line hits the graph ${hits.length} time${hits.length===1?'':'s'}${hits.length?': y = '+hits.map(y=>fmt(r2(y))).join(' and '):''}.\n\n${G.fn?'✓ FUNCTION: every vertical line hits the graph at most once.':'✗ NOT A FUNCTION: some vertical lines hit it twice, so one input has two outputs.'}${!G.fn&&hits.length<2?'\nKeep sliding to find a spot with 2 hits!':''}`;
+}
+
+// ══ MYSTERY MACHINE ══
+const MY=[
+  {f:x=>3*x+2,lin:true,m:3,b:2,s:'y = 3x + 2'},
+  {f:x=>x*x,lin:false,s:'y = x²'},
+  {f:x=>-2*x+10,lin:true,m:-2,b:10,s:'y = −2x + 10'},
+  {f:x=>0.5*x-1,lin:true,m:0.5,b:-1,s:'y = 0.5x − 1'},
+  {f:x=>Math.pow(2,x),lin:false,s:'y = 2ˣ'},
+  {f:x=>5*x,lin:true,m:5,b:0,s:'y = 5x'},
+  {f:x=>x*x*x-x,lin:false,s:'y = x³ − x'},
+];
+let myI=0, myData=[];
+function newMy(d){ myI=(myI+d+MY.length)%MY.length; myData=[]; $('myNum').textContent=myI+1; $('gm').value=''; $('gb').value=''; $('myOut').textContent='Feed the machine some inputs, then make your guess.'; drawMy(); }
+function runMy(){ const x=num('myIn'); if(!isFinite(x)) return; if(!myData.some(d=>d[0]===x)) myData.push([x,MY[myI].f(x)]); myData.sort((a,b)=>a[0]-b[0]); drawMy(); }
+function drawMy(){
+  const d=myData; let t='  x  |   y   | change in y per step of 1\n─────┼───────┼──────────────\n';
+  d.forEach((p,i)=>{ const prev=d[i-1]; const ch= prev&&p[0]-prev[0]===1 ? fmt(r3(p[1]-prev[1])) : prev? '(x gap ≠ 1)':''; t+=`${String(fmt(p[0])).padStart(4)} | ${String(fmt(r3(p[1]))).padStart(5)} | ${ch}\n`; });
+  const diffs=d.slice(1).map((p,i)=>d[i+1][0]-d[i][0]===1?r3(p[1]-d[i][1]):null).filter(v=>v!==null);
+  if(diffs.length>=2) t+= diffs.every(v=>v===diffs[0]) ? `\nChanges so far are all ${fmt(diffs[0])} → looks LINEAR` : `\nChanges are NOT constant → NONLINEAR`;
+  $('myTable').textContent=d.length?t:'No inputs yet. Try x = 0 first. Why might that help?';
+  const ys=d.map(p=>p[1]), lo=Math.min(-2,...ys,0), hi=Math.max(10,...ys);
+  const P=plane($('myCanvas'),-5,5,Math.floor(lo-1),Math.ceil(hi+1),{pad:26,sx:1}); d.forEach(([x,y])=>{ if(Math.abs(x)<=5) dot(P.ctx,P.X(x),P.Y(y),C.coral,6); });
+}
+function checkMy(){ const F=MY[myI], t=$('gType').value;
+  if(t==='non'){ $('myOut').textContent= F.lin? '✗ Not quite: this machine IS linear. Check the change column.' : `✓ Correct: it's nonlinear! The rule is ${F.s}.`; return; }
+  if(!F.lin){ $('myOut').textContent='✗ This machine is NONLINEAR. Look at the change column: is it constant?'; return; }
+  const m=num('gm'), b=num('gb'); const ok=Math.abs(m-F.m)<1e-9&&Math.abs(b-F.b)<1e-9;
+  $('myOut').textContent= ok? `✓ Cracked it! ${F.s}\nRate of change m = ${fmt(F.m)} · initial value b = ${fmt(F.b)}` : `✗ Not yet.${Math.abs(m-F.m)<1e-9?' Your m is right!':' Hint for m: what does y change by when x goes up 1?'}${Math.abs(b-F.b)<1e-9?' Your b is right!':' Hint for b: what comes out when x = 0?'}`; }
+function revealMy(){ const F=MY[myI]; $('myOut').textContent=`The secret rule: ${F.s}\n${F.lin?`Linear: rate of change ${fmt(F.m)}, initial value ${fmt(F.b)}.`:'Nonlinear: the outputs do not change by a constant amount.'}`; }
+
+// ══ STORIES ══
+const SHAPES={
+  walkStop:{d:'walks to the park, rests, then walks home',pts:[[0,0],[3,4],[6,4],[9,0]]},
+  runWalk:{d:'runs to a friend\'s house, then walks the rest of the way',pts:[[0,0],[2,5],[9,8]]},
+  stay:{d:'stays at home for a while, then rides a bike far away',pts:[[0,0],[4,0],[7,8]]},
+  slowFast:{d:'walks slowly, then speeds up into a run',pts:[[0,0],[5,2],[8,8]]},
+  awayBack:{d:'goes to the shop quickly and comes back slowly',pts:[[0,0],[2,6],[9,0]]},
+  steady:{d:'walks away from home at a steady pace the whole time',pts:[[0,0],[9,7]]},
+};
+let stSet=['walkStop','runWalk','stay'], stOrder=[0,1,2];
+function newStories(){ const k=Object.keys(SHAPES).sort(()=>Math.random()-0.5).slice(0,3); stSet=k; stOrder=[0,1,2].sort(()=>Math.random()-0.5); drawStories(); $('stOut').textContent=''; }
+function drawStories(){
+  stSet.forEach((k,gi)=>{ const cv=$('sg'+gi), ctx=clr(cv), W=cv.width, H=cv.height, X=x=>24+x/9*(W-40), Y=y=>H-22-y/8*(H-44);
+    ctx.strokeStyle=C.axis; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(24,10); ctx.lineTo(24,H-22); ctx.lineTo(W-10,H-22); ctx.stroke();
+    ctx.fillStyle=C.muted; ctx.font='9px DM Mono'; ctx.textAlign='right'; ctx.fillText('time →',W-12,H-8); ctx.save(); ctx.translate(12,H/2); ctx.rotate(-Math.PI/2); ctx.textAlign='center'; ctx.fillText('distance',0,0); ctx.restore();
+    ctx.strokeStyle=[C.coral,C.lav,C.mint][gi]; ctx.lineWidth=3; ctx.beginPath(); SHAPES[k].pts.forEach(([x,y],i)=>i?ctx.lineTo(X(x),Y(y)):ctx.moveTo(X(x),Y(y))); ctx.stroke();
+    ctx.fillStyle=C.sky; ctx.font='bold 16px Fredoka One, cursive'; ctx.textAlign='left'; ctx.fillText('Graph '+'ABC'[gi],32,24); });
+  $('stories').innerHTML=stOrder.map((gi,i)=>`<div class="story">📖 Maya ${SHAPES[stSet[gi]].d}. <select class="ninput" id="sel${i}"><option value="">choose…</option><option value="0">Graph A</option><option value="1">Graph B</option><option value="2">Graph C</option></select></div>`).join('');
+}
+function checkStories(){ let ok=0; const lines=stOrder.map((gi,i)=>{ const v=$('sel'+i).value; const good=v!==''&&+v===gi; if(good) ok++; return `${good?'✓':'✗'} "${SHAPES[stSet[gi]].d}" → ${v===''?'not chosen':'Graph '+'ABC'[+v]}${good?'':' (look for: '+hintStory(stSet[gi])+')'}`; });
+  $('stOut').textContent=lines.join('\n')+`\n\n${ok}/3 correct${ok===3?' 🎉':''}\nRemember: steeper = faster · flat = not moving · going down = coming back toward home.`; }
+function hintStory(k){ return {walkStop:'up, flat, down',runWalk:'steep then less steep',stay:'flat first, then up',slowFast:'gentle then steep',awayBack:'steep up, gentle down',steady:'one straight line up'}[k]; }
+// ══ MODEL BUILDER ══
+const MD=[
+  {n:'🕯️ Candle',f:'After 2 hours a candle is 18 cm tall. After 5 hours it is 12 cm tall.',p:[[2,18],[5,12]],x:'hours',y:'height (cm)',rm:'cm per hour (it burns 2 cm each hour)',bm:'cm: the height before it was lit'},
+  {n:'🎟️ Fair',f:'A fair costs $31 for 3 rides and $43 for 7 rides (entry + rides).',p:[[3,31],[7,43]],x:'rides',y:'total cost ($)',rm:'dollars per ride',bm:'dollars: the entry fee'},
+  {n:'🌱 Plant',f:'A plant is 9 cm tall after 3 weeks and 21 cm tall after 9 weeks.',p:[[3,9],[9,21]],x:'weeks',y:'height (cm)',rm:'cm per week of growth',bm:'cm: the height when planted'},
+  {n:'🚰 Pool',f:'A pool has 4,100 L after 4 min of draining and 2,900 L after 10 min.',p:[[4,4100],[10,2900]],x:'minutes',y:'water (L)',rm:'litres per minute (it drains 200 L each minute)',bm:'litres: the water at the start'},
+];
+let mdI=0;
+function setMd(i){ mdI=i; document.querySelectorAll('.mdbtn').forEach((b,j)=>b.classList.toggle('on',j===i)); drawMd(); }
+function drawMd(){
+  const M=MD[mdI], [[x1,y1],[x2,y2]]=M.p, m=(y2-y1)/(x2-x1), b=y1-m*x1;
+  $('mdOut').textContent=`${M.f}\n\nPoints: (${x1}, ${y1}) and (${x2}, ${y2})\nRate of change m = (${y2} − ${y1}) ÷ (${x2} − ${x1}) = ${fmt(y2-y1)} ÷ ${x2-x1} = ${fmt(m)}\nInitial value b: ${y1} = ${fmt(m)}(${x1}) + b → b = ${fmt(b)}\n\nMODEL: y = ${fmt(m)}x + ${fmt(b)}\nm = ${fmt(m)} ${M.rm}\nb = ${fmt(b)} ${M.bm}\n${m<0?`It reaches 0 when x = ${fmt(r2(-b/m))} ${M.x}.`:'The function is increasing.'}`;
+  const xmax=m<0?Math.ceil(-b/m)+1:Math.max(x2*1.4,10), ymax=Math.max(b,m*xmax+b)*1.1;
+  const P=plane($('mdCanvas'),0,xmax,0,ymax,{pad:40,xl:M.x,yl:M.y}); lineFn({...P,xmin:0,xmax:m<0?-b/m:xmax},x=>m*x+b,C.coral,3); dot(P.ctx,P.X(0),P.Y(b),C.gold,7); M.p.forEach(([x,y])=>dot(P.ctx,P.X(x),P.Y(y),C.lav,6));
+  P.ctx.fillStyle=C.gold; P.ctx.font='bold 11px Nunito'; P.ctx.textAlign='left'; P.ctx.fillText(`initial value ${fmt(b)}`,P.X(0)+10,P.Y(b)-6);
+}
+function init(){
+  $('mapBtns').innerHTML=MAPS.map((m,i)=>`<button class="dataset-btn fbtn${i===0?' on':''}" onclick="setMap(${i})">${m.n}</button>`).join('');
+  $('vltBtns').innerHTML=GR.map((g,i)=>`<button class="dataset-btn gbtn${i===0?' on':''}" onclick="setVLT(${i})">${g.n}</button>`).join('');
+  $('mdBtns').innerHTML=MD.map((m,i)=>`<button class="dataset-btn mdbtn${i===0?' on':''}" onclick="setMd(${i})">${m.n}</button>`).join('');
+  setMap(1); setVLT(2); [0,1,2,3].forEach(x=>{ $('myIn').value=x; runMy(); }); drawStories(); drawMd(); $('myOut').textContent='Feed the machine some inputs, then make your guess.';
+}
+const realP=[
+  {q:'A phone plan costs $20 a month plus $5 per GB of data. Write the function and find the cost for 7 GB.', w:'y = 5x + 20\ny = 5(7) + 20 = 55', a:'y = 5x + 20; $55'},
+  {q:'Function A: y = 4x − 1. Function B passes through (0, 2) and (3, 11). Which has the greater rate of change?', w:'A: rate 4\nB: (11 − 2) ÷ (3 − 0) = 3\n4 > 3', a:'Function A (4 vs 3)'},
+  {q:'Is the area of a square, A = s², a linear function? Use a table to explain.', w:'s: 1, 2, 3, 4\nA: 1, 4, 9, 16\nchanges: 3, 5, 7 → not constant', a:'No, it is nonlinear'},
+  {q:'A taxi meter shows $7.50 after 2 miles and $13.50 after 6 miles. Find the rate and the initial fee.', w:'m = (13.50 − 7.50) ÷ (6 − 2) = 1.50\n7.50 = 1.50(2) + b → b = 4.50', a:'$1.50 per mile, $4.50 initial fee'},
+  {q:'Convert 25 °C to °F using F = 1.8C + 32. What do 1.8 and 32 mean?', w:'F = 1.8(25) + 32 = 45 + 32', a:'77 °F; 1.8 = °F per °C, 32 = °F at 0 °C'},
+];
+// ══ SHARED WORKSHOP ENGINE (Farvour Explorations · Grade 8) ══
+const C = { sky:'#1e3a5f', coral:'#e8603c', mint:'#3aaf85', lav:'#7c6fcd', sun:'#f6c343', gold:'#c9962a', muted:'#7a8899', grid:'#e8eef4', axis:'#b8c4cc' };
+let currentSection=0; const totalSections=8;
+function goTo(n){
+  document.querySelectorAll('.section').forEach((s,i)=>s.classList.toggle('active',i===n));
+  document.querySelectorAll('.prog-step').forEach((p,i)=>{p.classList.toggle('active',i===n);p.classList.toggle('done',i<n);});
+  currentSection=n; document.getElementById('prevBtn').disabled=n===0;
+  const nb=document.getElementById('nextBtn');
+  if(n===totalSections-1){nb.textContent='✓ Complete!';nb.disabled=true;buildSummary();} else {nb.innerHTML='Next <span>→</span>';nb.disabled=false;}
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(typeof onSection==='function') onSection(n);
+}
+function navigate(d){ goTo(Math.min(Math.max(currentSection+d,0),totalSections-1)); }
+const r2=x=>Math.round(x*100)/100, r3=x=>Math.round(x*1000)/1000;
+const fmt=x=>{ const v=Math.round(x*1000)/1000; return (v<0?'−':'')+Math.abs(v); };
+function clr(cv){ const ctx=cv.getContext('2d'); ctx.clearRect(0,0,cv.width,cv.height); ctx.fillStyle='#fafbfc'; ctx.fillRect(0,0,cv.width,cv.height); return ctx; }
+const $=id=>document.getElementById(id), num=id=>+document.getElementById(id).value;
+function niceStep(range,target){ const raw=range/(target||10), p=Math.pow(10,Math.floor(Math.log10(raw))), m=raw/p; return (m<1.5?1:m<3?2:m<7?5:10)*p; }
+// coordinate-plane helper: returns {X,Y,ctx} mapping maths coords to canvas
+function plane(cv,xmin,xmax,ymin,ymax,opt={}){
+  const ctx=clr(cv), pad=opt.pad||30, W=cv.width, H=cv.height;
+  const X=x=>pad+(x-xmin)/(xmax-xmin)*(W-2*pad), Y=y=>H-pad-(y-ymin)/(ymax-ymin)*(H-2*pad);
+  const sx=opt.sx||niceStep(xmax-xmin,10), sy=opt.sy||niceStep(ymax-ymin,8);
+  ctx.strokeStyle=C.grid; ctx.lineWidth=1;
+  for(let x=Math.ceil(xmin/sx)*sx;x<=xmax+1e-9;x+=sx){ ctx.beginPath(); ctx.moveTo(X(x),Y(ymin)); ctx.lineTo(X(x),Y(ymax)); ctx.stroke(); }
+  for(let y=Math.ceil(ymin/sy)*sy;y<=ymax+1e-9;y+=sy){ ctx.beginPath(); ctx.moveTo(X(xmin),Y(y)); ctx.lineTo(X(xmax),Y(y)); ctx.stroke(); }
+  ctx.strokeStyle=C.axis; ctx.lineWidth=2; const ax=Math.min(Math.max(0,xmin),xmax), ay=Math.min(Math.max(0,ymin),ymax);
+  ctx.beginPath(); ctx.moveTo(X(xmin),Y(ay)); ctx.lineTo(X(xmax),Y(ay)); ctx.moveTo(X(ax),Y(ymin)); ctx.lineTo(X(ax),Y(ymax)); ctx.stroke();
+  ctx.fillStyle=C.muted; ctx.font='10px DM Mono, monospace'; ctx.textAlign='center';
+  for(let x=Math.ceil(xmin/sx)*sx;x<=xmax+1e-9;x+=sx){ if(Math.abs(x)>1e-9) ctx.fillText(fmt(x),X(x),Y(ay)+13); }
+  ctx.textAlign='right'; for(let y=Math.ceil(ymin/sy)*sy;y<=ymax+1e-9;y+=sy){ if(Math.abs(y)>1e-9) ctx.fillText(fmt(y),X(ax)-4,Y(y)+3); }
+  if(opt.xl){ ctx.textAlign='right'; ctx.fillStyle=C.sky; ctx.font='bold 11px Nunito, sans-serif'; ctx.fillText(opt.xl,W-pad,Y(ay)-6); }
+  if(opt.yl){ ctx.textAlign='left'; ctx.fillStyle=C.sky; ctx.font='bold 11px Nunito, sans-serif'; ctx.fillText(opt.yl,X(ax)+6,pad-8); }
+  return {ctx,X,Y,xmin,xmax,ymin,ymax};
+}
+function dot(ctx,x,y,col,r=5){ ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fillStyle=col; ctx.fill(); }
+function lineFn(P,f,col,w=3,dash){ const {ctx,X,Y,xmin,xmax}=P; ctx.strokeStyle=col; ctx.lineWidth=w; if(dash) ctx.setLineDash(dash); ctx.beginPath(); let first=true; for(let i=0;i<=300;i++){ const x=xmin+(xmax-xmin)*i/300, y=f(x); if(!isFinite(y)){first=true;continue;} if(first){ctx.moveTo(X(x),Y(y));first=false;} else ctx.lineTo(X(x),Y(y)); } ctx.stroke(); ctx.setLineDash([]); }
+
+// ══ VOCAB ══
+let openTerm=null;
+function revealTerm(k){ if(openTerm) $('cr-'+openTerm).classList.remove('show'); if(openTerm===k){openTerm=null;return;} $('cr-'+k).classList.add('show'); openTerm=k; }
+
+// ══ WARM-UP (WARM = {opts:['A','B'], items:[{t,a:0|1,e}], done, fail}) ══
+let wDone=0,wOk=0;
+function buildWarm(){ if(typeof WARM==='undefined') return; const o=WARM.opts;
+  $('warmupGrid').innerHTML=WARM.items.map((q,i)=>`<div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;background:#f5f7fa;border-radius:10px;padding:0.7rem 1rem;"><div style="flex:1;min-width:220px;font-size:0.88rem;font-weight:600;color:#3a4a5a;">${q.t}</div><div style="display:flex;gap:0.4rem;">${o.map((lab,k)=>`<button onclick="ansWarm(${i},${k})" style="background:${k?'var(--coral-pale)':'var(--mint-pale)'};border:2px solid ${k?'#f8c5b8':'#b8ebd8'};border-radius:8px;padding:0.35rem 0.8rem;font-family:'Fredoka One',cursive;font-size:0.85rem;color:${k?'var(--coral)':'var(--mint)'};cursor:pointer;">${lab}</button>`).join('')}</div><div id="wfb-${i}" style="font-family:'DM Mono',monospace;font-size:0.72rem;width:100%;min-height:1rem;"></div></div>`).join(''); }
+function ansWarm(i,a){ const fb=$('wfb-'+i); if(fb.textContent) return; wDone++; const ok=a===WARM.items[i].a; if(ok) wOk++; fb.textContent=(ok?'✓ ':'✗ ')+WARM.items[i].e; fb.style.color=ok?C.mint:C.coral;
+  if(wDone===WARM.items.length){ const el=$('warmupFb'); el.style.color=wOk===wDone?C.mint:C.coral; el.textContent= wOk===wDone?WARM.done:`${wOk}/${wDone}. ${WARM.fail}`; } }
+
+// ══ REAL-WORLD PROBLEMS (realP = [{q,w,a}]) ══
+function buildReal(){ if(typeof realP==='undefined') return;
+  $('realProblems').innerHTML=realP.map((p,i)=>`<div style="background:#f5f7fa;border-radius:12px;padding:1.2rem;"><p style="font-size:0.9rem;line-height:1.65;color:#3a4a5a;margin-bottom:0.8rem;"><strong>Problem ${i+1}:</strong> ${p.q}</p><button id="rpb${i}" onclick="revealRP(${i})" style="background:var(--lavender);color:white;border:none;border-radius:8px;padding:0.5rem 1.1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;cursor:pointer;">Show solution</button><div id="rpa${i}" style="display:none;margin-top:0.8rem;font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--mint);line-height:1.8;white-space:pre-line;"></div></div>`).join(''); }
+function revealRP(i){ const el=$('rpa'+i); el.style.display='block'; el.textContent=`Working:\n${realP[i].w}\n\n✓ Answer: ${realP[i].a}`; $('rpb'+i).style.display='none'; }
+
+// ══ SUBMIT PAGE (LESSON = {name, emoji, grade, stds, inv:[[prefix,icon,title]], qs:[label]}) ══
+function buildSubmit(){ const L=LESSON;
+  $('sec-7').innerHTML=`<div class="section-eyebrow"><div class="eyebrow-num num-mint">8</div><span class="eyebrow-label">Your Completed Work</span></div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Here's everything you worked on today. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> directly to your teacher.</p>
+  <div class="summary-section" style="background:var(--sky);color:white;border-color:var(--sky);"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;align-items:center;">
+    <div><div style="font-family:'DM Mono',monospace;font-size:0.7rem;opacity:0.6;margin-bottom:0.3rem;">STUDENT</div><div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div></div>
+    <div style="text-align:right;"><div style="font-family:'DM Mono',monospace;font-size:0.7rem;opacity:0.6;margin-bottom:0.3rem;">LESSON</div><div style="font-family:'Fredoka One',cursive;font-size:1rem;">${L.name} ${L.emoji}</div><div style="font-family:'DM Mono',monospace;font-size:0.72rem;opacity:0.6;" id="summaryDate"></div></div></div></div>
+  ${L.inv.map(([p,ic,t])=>`<div class="summary-section"><h3>${ic} ${t}</h3><div class="sum-label">Prediction</div><div class="summary-answer" id="sum-${p}-pred"></div><div class="sum-label">Reflection</div><div class="summary-answer" id="sum-${p}-ref"></div></div>`).join('')}
+  <div class="summary-section"><h3>💭 Section 7 — Reflections</h3>${L.qs.map((q,i)=>`<div class="sum-label">${q}</div><div class="summary-answer" id="sum-q${i+1}"></div>`).join('')}</div>
+  <div class="share-buttons"><button class="share-btn copy" onclick="copyResults()">📋 Copy My Results</button><button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button><button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button></div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+  <div style="margin-top:1.5rem;background:var(--sun-pale);border:2px dashed var(--sun);border-radius:12px;padding:1.2rem 1.4rem;"><p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#b8860b;margin-bottom:0.8rem;">📋 How to submit your work:</p>
+  <p style="font-size:0.82rem;color:#b8860b;font-family:'DM Mono',monospace;line-height:2;"><strong>📋 Copy My Results</strong> — Copies all your answers. Open Google Classroom, click your assignment, paste, and submit.<br><strong>📧 Email to Teacher</strong> — Opens your email app with your answers already typed. Add your teacher's address and send.<br><strong>🖨️ Print / Save PDF</strong> — Mac: "Save as PDF" bottom left · Windows: "Microsoft Print to PDF".</p></div>`; }
+const val=id=>(($(id)||{}).value||'').trim();
+function fill(id,t){ const el=$(id); el.textContent=t||'Not answered'; el.classList.toggle('empty',!t); }
+function refls(){ return [...document.querySelectorAll('#sec-6 .reflection-card textarea')].map(t=>t.value.trim()); }
+const dateStr=()=>new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+function buildSummary(){ $('summaryName').textContent=val('studentName')||'Student'; $('summaryDate').textContent=dateStr();
+  LESSON.inv.forEach(([p])=>{ fill(`sum-${p}-pred`,val(p+'-prediction')); fill(`sum-${p}-ref`,val(p+'-reflection')); });
+  refls().forEach((t,i)=>{ if($('sum-q'+(i+1))) fill('sum-q'+(i+1),t); }); }
+function buildPlainText(){ const r=refls(), na=x=>x||'Not answered', L=LESSON, bar='===================================================';
+  return `${L.name.toUpperCase()} ${L.emoji} — STUDENT SUBMISSION\n${bar}\nStudent: ${val('studentName')||'Student'}\nDate: ${dateStr()}\nLesson: ${L.grade}\nStandards: ${L.stds}\n\n`+
+  L.inv.map(([p,ic,t])=>`── ${t.toUpperCase()} ──\nPrediction:\n${na(val(p+'-prediction'))}\nReflection:\n${na(val(p+'-reflection'))}\n`).join('\n')+
+  `\n── REFLECTIONS ──\n`+L.qs.map((q,i)=>`${q}\n${na(r[i])}`).join('\n')+`\n\n${bar}\n© 2026 Farvour Explorations\nSubmitted via ${L.name} · Interactive Digital Lesson`; }
+function copyResults(){ buildSummary(); navigator.clipboard.writeText(buildPlainText()).then(()=>{ const el=$('copyConfirm'); el.textContent='✓ Copied! Now paste into Google Classroom or your assignment.'; setTimeout(()=>el.textContent='',4000); }).catch(()=>{ $('copyConfirm').textContent='⚠️ Could not copy — try selecting manually.'; }); }
+function emailResults(){ const n=val('studentName')||'Student'; window.location.href=`mailto:?subject=${encodeURIComponent(LESSON.name+' — '+n)}&body=${encodeURIComponent(buildPlainText())}`; }
+window.addEventListener('load',()=>{ buildWarm(); buildReal(); buildSubmit(); if(typeof init==='function') init(); });
+</script>
+</body>
+</html>
+

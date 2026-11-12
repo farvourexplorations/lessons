@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Move It, Flip It, Scale It 🔄 · Grade 8 Transformations, Congruence & Similarity</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #1e3a5f; --sky-mid: #2d5282;
+    --sun: #f6c343; --sun-pale: #fef9e7;
+    --coral: #e8603c; --coral-pale: #fdf0ec;
+    --mint: #3aaf85; --mint-pale: #e8f8f2;
+    --lavender: #7c6fcd; --lavender-pale: #f0eefb;
+    --paper: #fffef9; --ink: #1a2332;
+    --muted: #7a8899; --border: rgba(0,0,0,0.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:linear-gradient(160deg,#0f2540 0%,#1e3a5f 40%,#2d5282 100%); min-height:100vh; font-family:'Nunito',sans-serif; color:var(--ink); overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image: radial-gradient(1px 1px at 10% 15%,rgba(255,255,255,0.6) 0%,transparent 100%), radial-gradient(1.5px 1.5px at 25% 40%,rgba(255,255,255,0.4) 0%,transparent 100%), radial-gradient(1px 1px at 45% 8%,rgba(255,255,255,0.5) 0%,transparent 100%), radial-gradient(2px 2px at 65% 22%,rgba(255,255,255,0.3) 0%,transparent 100%), radial-gradient(1px 1px at 80% 5%,rgba(255,255,255,0.6) 0%,transparent 100%), radial-gradient(1.5px 1.5px at 92% 35%,rgba(255,255,255,0.4) 0%,transparent 100%); pointer-events:none; z-index:0; }
+
+  /* ── HERO ── */
+  .hero { position:relative; z-index:1; text-align:center; padding:3.5rem 2rem 2rem; color:white; }
+  .hero-badge { display:inline-block; background:var(--sun); color:var(--sky); font-family:'Fredoka One',cursive; font-size:0.85rem; letter-spacing:0.05em; padding:0.35rem 1.2rem; border-radius:20px; margin-bottom:1.2rem; box-shadow:0 2px 12px rgba(246,195,67,0.4); }
+  .hero h1 { font-family:'Fredoka One',cursive; font-size:clamp(2.4rem,6vw,4rem); line-height:1.1; margin-bottom:0.8rem; text-shadow:0 2px 20px rgba(0,0,0,0.3); }
+  .hero h1 .accent { color:var(--sun); }
+  .hero p.intro { font-size:1.05rem; line-height:1.7; opacity:0.88; max-width:560px; margin:0 auto 2rem; }
+  .name-bar { background:rgba(255,255,255,0.1); border:1.5px solid rgba(255,255,255,0.25); border-radius:12px; padding:0.6rem 1rem; display:flex; align-items:center; gap:0.8rem; max-width:420px; margin:0 auto 1rem; }
+  .name-bar label { font-size:0.78rem; font-weight:700; color:rgba(255,255,255,0.8); white-space:nowrap; font-family:'DM Mono',monospace; }
+  .name-bar input { flex:1; background:rgba(255,255,255,0.15); border:none; border-radius:8px; padding:0.4rem 0.8rem; font-family:'Nunito',sans-serif; font-size:0.9rem; font-weight:700; color:white; outline:none; }
+  .name-bar input::placeholder { color:rgba(255,255,255,0.45); font-weight:400; }
+  .progress-wrap { display:flex; justify-content:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.5rem; }
+  .prog-step { display:flex; align-items:center; gap:0.4rem; background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.2); border-radius:20px; padding:0.35rem 0.9rem; font-size:0.78rem; font-weight:700; color:rgba(255,255,255,0.7); cursor:pointer; transition:all 0.2s; }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,0.22); color:white; border-color:rgba(255,255,255,0.4); }
+  .prog-step.active { background:var(--sun); color:var(--sky); border-color:var(--sun); box-shadow:0 2px 12px rgba(246,195,67,0.4); }
+
+  /* ── SHEET ── */
+  .sheet { position:relative; z-index:1; background:var(--paper); border-radius:24px 24px 0 0; margin-top:1.5rem; padding:0 0 6rem; min-height:80vh; box-shadow:0 -8px 40px rgba(0,0,0,0.25); }
+  .section { padding:3rem 2rem 0; max-width:820px; margin:0 auto; display:none; }
+  .section.active { display:block; }
+  .section-eyebrow { display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem; }
+  .eyebrow-num { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Fredoka One',cursive; font-size:1rem; color:white; flex-shrink:0; }
+  .num-coral{background:var(--coral);} .num-mint{background:var(--mint);} .num-sun{background:var(--sun);color:var(--sky);} .num-lav{background:var(--lavender);} .num-sky{background:var(--sky-mid);}
+  .eyebrow-label { font-size:0.72rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); font-family:'DM Mono',monospace; }
+  .section h2 { font-family:'Fredoka One',cursive; font-size:clamp(1.6rem,3.5vw,2.2rem); color:var(--sky); margin-bottom:0.6rem; line-height:1.2; }
+  .section .lead { font-size:1rem; line-height:1.75; color:#3a4a5a; margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+
+  /* ── WONDER BOX ── */
+  .wonder-box { background:linear-gradient(135deg,var(--sky) 0%,var(--sky-mid) 100%); color:white; border-radius:16px; padding:1.8rem 2rem; margin-bottom:1.8rem; position:relative; overflow:hidden; }
+  .wonder-box::after { content:'🤔'; position:absolute; right:1.5rem; top:50%; transform:translateY(-50%); font-size:3rem; opacity:0.3; }
+  .wonder-box p { font-size:1rem; line-height:1.7; font-style:italic; opacity:0.95; max-width:85%; }
+  .wonder-box strong { color:var(--sun); font-style:normal; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,var(--mint) 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'📊'; }
+
+  /* ── CHIPS ── */
+  .chip-row { display:flex; flex-wrap:wrap; gap:0.6rem; margin-bottom:1.5rem; }
+  .chip { padding:0.45rem 1rem; border-radius:20px; font-size:0.82rem; font-weight:700; cursor:pointer; transition:all 0.2s; border:2px solid transparent; }
+  .chip.coral{background:var(--coral-pale);color:var(--coral);border-color:#f8c5b8;} .chip.mint{background:var(--mint-pale);color:var(--mint);border-color:#b8ebd8;} .chip.sun{background:var(--sun-pale);color:#b8860b;border-color:#f8e0a0;} .chip.lav{background:var(--lavender-pale);color:var(--lavender);border-color:#d0caef;} .chip.sky{background:#e8f0f8;color:var(--sky-mid);border-color:#c0d4ea;}
+  .chip:hover { transform:scale(1.05); }
+  .concept-reveal { background:var(--paper); border-left:4px solid var(--coral); border-radius:0 10px 10px 0; padding:1rem 1.2rem; font-size:0.88rem; line-height:1.7; margin-top:0.5rem; display:none; animation:fadeIn 0.3s ease; }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border{border-color:var(--mint);} .concept-reveal.sun-border{border-color:var(--sun);} .concept-reveal.lav-border{border-color:var(--lavender);} .concept-reveal.sky-border{border-color:var(--sky-mid);}
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);} }
+
+  /* ── PREDICT BOX ── */
+  .predict-box { background:var(--sun-pale); border:2px dashed var(--sun); border-radius:14px; padding:1.4rem 1.6rem; margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive; font-size:1rem; color:#b8860b; margin-bottom:0.8rem; }
+  .predict-box textarea { width:100%; border:1.5px solid rgba(0,0,0,0.12); border-radius:8px; padding:0.7rem; font-family:'Nunito',sans-serif; font-size:0.88rem; resize:vertical; min-height:64px; background:white; color:var(--ink); outline:none; transition:border-color 0.2s; }
+  .predict-box textarea:focus { border-color:var(--sun); }
+
+  /* ── DEMO ZONE ── */
+  .demo-zone { background:white; border:2px solid var(--border); border-radius:16px; padding:1.8rem; margin-bottom:1.5rem; }
+  .demo-zone h3 { font-family:'Fredoka One',cursive; font-size:1.2rem; color:var(--sky); margin-bottom:0.3rem; }
+  .demo-zone .hint { font-size:0.78rem; color:var(--muted); font-family:'DM Mono',monospace; margin-bottom:1.3rem; }
+
+  /* ── BUTTONS ── */
+  .btn { border:none; border-radius:10px; padding:0.65rem 1.3rem; font-family:'Nunito',sans-serif; font-size:0.88rem; font-weight:800; cursor:pointer; transition:all 0.15s; }
+  .btn:hover { transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,0.15); }
+  .btn:active { transform:translateY(0); }
+  .btn-coral{background:var(--coral);color:white;} .btn-mint{background:var(--mint);color:white;} .btn-sun{background:var(--sun);color:var(--sky);} .btn-lav{background:var(--lavender);color:white;} .btn-ghost{background:#f0f2f5;color:var(--muted);} .btn-sky{background:var(--sky);color:white;}
+  .action-row { display:flex; gap:0.8rem; flex-wrap:wrap; align-items:center; margin-bottom:0.8rem; }
+
+  /* ── INPUT GROUP ── */
+  .input-group { display:flex; flex-direction:column; gap:0.3rem; }
+  .input-group label { font-size:0.78rem; font-weight:700; color:var(--muted); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.05em; }
+  .input-group input[type=number] { border:2px solid var(--border); border-radius:8px; padding:0.5rem 0.8rem; font-family:'Nunito',sans-serif; font-size:1rem; width:100px; outline:none; transition:border-color 0.2s; font-weight:700; color:var(--sky); background:white; }
+  .input-group input[type=number]:focus { border-color:var(--coral); }
+
+  /* ── STAT RESULT PANEL ── */
+  .stat-panel { background:var(--lavender-pale); border:2px solid rgba(124,111,205,0.3); border-radius:12px; padding:1.2rem 1.4rem; margin-top:1rem; }
+  .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:0.6rem; margin-top:0.6rem; }
+  .stat-card { background:white; border-radius:10px; padding:0.8rem; text-align:center; }
+  .stat-card .stat-val { font-family:'Fredoka One',cursive; font-size:1.5rem; color:var(--sky); }
+  .stat-card .stat-lbl { font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--muted); margin-top:0.2rem; }
+  .stat-card.coral-card .stat-val { color:var(--coral); }
+  .stat-card.mint-card  .stat-val { color:var(--mint); }
+  .stat-card.sun-card   .stat-val { color:#b8860b; }
+  .stat-card.lav-card   .stat-val { color:var(--lavender); }
+
+  /* ── CANVASES ── */
+  canvas.chart-canvas { border-radius:10px; border:2px solid var(--border); display:block; background:white; width:100%; }
+
+  /* ── DATA INPUT AREA ── */
+  .data-input-wrap { margin-bottom:1rem; }
+  .data-input-wrap label { font-size:0.78rem; font-weight:700; color:var(--muted); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:0.4rem; }
+  .data-input-wrap input[type=text] { width:100%; border:2px solid var(--lavender); border-radius:8px; padding:0.6rem 0.9rem; font-family:'DM Mono',monospace; font-size:0.95rem; font-weight:700; color:var(--sky); outline:none; transition:border-color 0.2s; background:white; }
+  .data-input-wrap input[type=text]:focus { border-color:var(--coral); }
+
+  /* ── DATASET BUTTONS ── */
+  .dataset-btn { background:var(--sky); color:white; border:none; border-radius:8px; padding:0.4rem 0.8rem; font-family:'Nunito',sans-serif; font-size:0.78rem; font-weight:700; cursor:pointer; transition:all 0.15s; margin:0.2rem; }
+  .dataset-btn:hover { background:var(--sky-mid); }
+
+  /* ── WORLD CARDS ── */
+  .world-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+  .world-card { border-radius:14px; padding:1.4rem; }
+  .world-card.coral-bg{background:var(--coral-pale);} .world-card.mint-bg{background:var(--mint-pale);} .world-card.lav-bg{background:var(--lavender-pale);} .world-card.sun-bg{background:var(--sun-pale);}
+  .world-card .wc-icon { font-size:2rem; margin-bottom:0.6rem; }
+  .world-card h4 { font-family:'Fredoka One',cursive; font-size:1rem; margin-bottom:0.4rem; color:var(--sky); }
+  .world-card p  { font-size:0.82rem; line-height:1.6; color:#3a4a5a; }
+
+  /* ── REFLECTION ── */
+  .reflection-card { background:white; border:2px solid var(--border); border-radius:14px; padding:1.4rem; margin-bottom:1rem; }
+  .reflection-card .q { font-family:'Fredoka One',cursive; font-size:1rem; color:var(--sky); margin-bottom:0.7rem; display:flex; gap:0.5rem; align-items:baseline; }
+  .reflection-card .q .qnum { font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--muted); flex-shrink:0; }
+  .reflection-card textarea { width:100%; border:1.5px solid rgba(0,0,0,0.1); border-radius:8px; padding:0.7rem; font-family:'Nunito',sans-serif; font-size:0.88rem; resize:vertical; min-height:72px; background:#fafbfc; color:var(--ink); outline:none; transition:border-color 0.2s; }
+  .reflection-card textarea:focus { border-color:var(--lavender); }
+
+  /* ── CONGRATS ── */
+  .congrats { text-align:center; padding:2rem 1rem; }
+  .congrats .trophy { font-size:4rem; margin-bottom:1rem; animation:bounce 0.8s ease infinite alternate; }
+  @keyframes bounce { from{transform:translateY(0);}to{transform:translateY(-10px);} }
+  .congrats h2 { font-family:'Fredoka One',cursive; font-size:2rem; color:var(--sky); margin-bottom:0.8rem; }
+  .congrats p  { font-size:0.95rem; line-height:1.7; color:#3a4a5a; max-width:500px; margin:0 auto 1.5rem; }
+  .summary-chips { display:flex; flex-wrap:wrap; gap:0.6rem; justify-content:center; }
+  .summary-chip { padding:0.5rem 1.1rem; border-radius:20px; font-size:0.82rem; font-weight:700; background:var(--sun-pale); color:#b8860b; border:1.5px solid #f8e0a0; }
+  .divider { height:1px; background:linear-gradient(90deg,transparent,var(--border),transparent); margin:1.5rem 0; }
+
+  /* ── NAV ── */
+  .nav-row { display:flex; justify-content:space-between; align-items:center; padding:2.5rem 2rem 0; max-width:820px; margin:0 auto; }
+  .btn-next { background:var(--sky); color:white; border:none; border-radius:50px; padding:0.9rem 2rem; font-family:'Fredoka One',cursive; font-size:1rem; cursor:pointer; display:flex; align-items:center; gap:0.6rem; transition:all 0.2s; box-shadow:0 4px 16px rgba(30,58,95,0.25); }
+  .btn-next:hover { background:var(--sky-mid); transform:translateY(-2px); }
+  .btn-prev { background:transparent; color:var(--muted); border:2px solid var(--border); border-radius:50px; padding:0.9rem 1.6rem; font-family:'Fredoka One',cursive; font-size:0.95rem; cursor:pointer; transition:all 0.2s; }
+  .btn-prev:hover { border-color:var(--muted); color:var(--ink); }
+  .btn-prev:disabled,.btn-next:disabled { opacity:0.3; cursor:not-allowed; transform:none; }
+
+  /* ── SUMMARY ── */
+  .summary-section { background:white; border-radius:16px; padding:1.8rem; margin-bottom:1.2rem; border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive; font-size:1.05rem; color:var(--sky); margin-bottom:0.8rem; }
+  .summary-answer { background:#f5f7fa; border-radius:8px; padding:0.7rem 1rem; font-size:0.85rem; line-height:1.6; color:var(--ink); margin-bottom:0.5rem; font-style:italic; border-left:3px solid var(--lavender); min-height:2rem; }
+  .summary-answer.empty { color:var(--muted); font-style:normal; border-left-color:var(--border); }
+  .sum-label { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.4rem; margin-top:0.6rem; text-transform:uppercase; letter-spacing:0.06em; }
+  .share-buttons { display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:1.5rem; justify-content:center; }
+  .share-btn { border:none; border-radius:12px; padding:0.85rem 1.6rem; font-family:'Fredoka One',cursive; font-size:1rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:0.5rem; }
+  .share-btn:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.15); }
+  .share-btn.copy{background:var(--mint);color:white;} .share-btn.email{background:var(--lavender);color:white;} .share-btn.print{background:var(--sky);color:white;}
+  .copy-confirm { text-align:center; font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--mint); min-height:1.2rem; margin-top:0.6rem; }
+
+  /* multi-line text blocks */
+  #sqTopicHint,#sqCheckFb,#statInsight,#outlierResult { white-space:pre-line; }
+
+  @media (max-width:560px) { .hero{padding:2.5rem 1.2rem 1.5rem;} .section{padding:2rem 1.2rem 0;} .nav-row{padding:2rem 1.2rem 0;} }
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm{display:none !important;}
+    .sheet{box-shadow:none;border-radius:0;}
+    .section{display:none !important;}
+    #sec-7{display:block !important;}
+  }
+  .tbtn.on, .abtn.on, .chbtn.on { background:var(--coral) !important; color:white !important; border-color:var(--coral) !important; }
+  .stepchip { display:inline-block; background:var(--sky); color:white; border-radius:16px; padding:0.25rem 0.7rem; margin:0.15rem; font-family:'DM Mono',monospace; font-size:0.78rem; }
+  /* ── G8 shared extras ── */
+  .steps { white-space:pre-line; font-family:'DM Mono',monospace; font-size:0.85rem; line-height:1.9; color:var(--sky); background:var(--lavender-pale); border-left:4px solid var(--lavender); border-radius:0 12px 12px 0; padding:1rem 1.2rem; margin-top:0.8rem; }
+  canvas.cv { width:100%; border:2px solid var(--border); border-radius:10px; background:white; display:block; }
+  .big-eq { font-family:'Fredoka One',cursive; font-size:1.4rem; color:var(--sky); text-align:center; margin:0.8rem 0 0.3rem; }
+  .sl { font-family:'DM Mono',monospace; font-size:0.8rem; color:var(--muted); flex:1; min-width:150px; }
+  .sl input { width:100%; accent-color:var(--coral); }
+  .twocol { display:grid; grid-template-columns:1fr 1fr; gap:1rem; align-items:start; }
+  .slrow { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:0.6rem; }
+  .ninput { width:80px; padding:0.45rem 0.6rem; border:2px solid var(--border); border-radius:8px; font-family:'DM Mono',monospace; font-size:0.9rem; color:var(--sky); }
+  .ninput.wide { width:180px; }
+  .tbl { border-collapse:collapse; font-family:'DM Mono',monospace; font-size:0.85rem; margin-top:0.5rem; }
+  .tbl td,.tbl th { border:1.5px solid #dde4ea; padding:0.35rem 0.7rem; text-align:center; color:var(--sky); }
+  .tbl th { background:var(--sky); color:white; }
+  .tag { display:inline-block; padding:0.2rem 0.7rem; border-radius:20px; font-family:'DM Mono',monospace; font-size:0.75rem; font-weight:700; }
+  @media (max-width:700px){ .twocol { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">✨ Grade 8 · Geometry</div>
+  <h1>Move It, Flip It,<br><span class="accent">Scale It</span> 🔄</h1>
+  <p class="intro">Slide it, flip it, spin it: the shape is still the same shape. Stretch it, and it's similar but not the same. Today you'll transform figures on the coordinate plane, build move sequences to land on targets, and discover the angle rules hiding in parallel lines and triangles.</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <a class="prog-step active" id="pill-0" onclick="goTo(0)">🔄 Wonder</a>
+    <a class="prog-step" id="pill-1" onclick="goTo(1)">📚 Discover</a>
+    <a class="prog-step" id="pill-2" onclick="goTo(2)">🧭 Transform</a>
+    <a class="prog-step" id="pill-3" onclick="goTo(3)">🎯 Sequences</a>
+    <a class="prog-step" id="pill-4" onclick="goTo(4)">📐 Angle Facts</a>
+    <a class="prog-step" id="pill-5" onclick="goTo(5)">🌍 Real Life</a>
+    <a class="prog-step" id="pill-6" onclick="goTo(6)">💭 Reflect</a>
+    <a class="prog-step" id="pill-7" onclick="goTo(7)">📤 Submit</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+  <!-- ══ SECTION 0: WONDER ══ -->
+  <div class="section active" id="sec-0">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">The Big Question</span></div>
+    <h2>When are two shapes "the same"?</h2>
+    <p class="lead">Two puzzle pieces fit the same hole if you can <strong>slide, turn or flip</strong> one onto the other. A photo and its enlargement aren't the same size, but they're clearly the same <strong>shape</strong>. Mathematicians make these ideas precise with transformations.</p>
+    <div class="wonder-box">
+      <p>Video game designers move characters by adding to their coordinates. Artists flip images across a line. Phones zoom photos by multiplying. Each is a rule that moves every point. Which rules keep sizes and angles exactly the same?</p>
+    </div>
+    <p style="font-size:0.9rem;font-weight:700;color:var(--sky);margin-bottom:0.8rem;">🧠 Warm-up — is the image congruent (same size and shape)?</p>
+    <div style="background:white;border:2px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;">
+      <div id="warmupGrid" style="display:flex;flex-direction:column;gap:0.6rem;"></div>
+      <div id="warmupFb" style="margin-top:1rem;font-family:'DM Mono',monospace;font-size:0.82rem;min-height:1.2rem;color:var(--mint);"></div>
+    </div>
+    <div class="wonder-box mint-box">
+      <p><strong>Rigid motions</strong> (translations, reflections, rotations) make <strong>congruent</strong> figures. Add a <strong>dilation</strong> and you get <strong>similar</strong> figures.</p>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 1: DISCOVER ══ -->
+  <div class="section" id="sec-1">
+    <div class="section-eyebrow"><div class="eyebrow-num num-lav">2</div><span class="eyebrow-label">Discover the Vocabulary</span></div>
+    <h2>📚 Words for moving shapes</h2>
+    <p class="lead">Click each word to reveal its meaning.</p>
+    <div class="chip-row">
+      <span class="chip coral" onclick="revealTerm('tr')">➡️ Translation</span>
+      <span class="chip lav"   onclick="revealTerm('rf')">🪞 Reflection</span>
+      <span class="chip sun"   onclick="revealTerm('ro')">🔄 Rotation</span>
+      <span class="chip mint"  onclick="revealTerm('di')">🔍 Dilation</span>
+      <span class="chip sky"   onclick="revealTerm('cs')">🟰 Congruent vs Similar</span>
+    </div>
+    <div class="concept-reveal" id="cr-tr"><strong>Translation</strong> — slides every point the same distance in the same direction.<br><br><em>(x, y) → (x + 3, y − 2)</em></div>
+    <div class="concept-reveal lav-border" id="cr-rf"><strong>Reflection</strong> — flips a figure over a line, like a mirror.<br><br><em>Over the x-axis: (x, y) → (x, −y)</em></div>
+    <div class="concept-reveal sun-border" id="cr-ro"><strong>Rotation</strong> — turns a figure around a point.<br><br><em>90° counterclockwise about the origin: (x, y) → (−y, x)</em></div>
+    <div class="concept-reveal mint-border" id="cr-di"><strong>Dilation</strong> — enlarges or shrinks a figure by a scale factor k from a centre.<br><br><em>From the origin: (x, y) → (kx, ky)</em></div>
+    <div class="concept-reveal sky-border" id="cr-cs"><strong>Congruent vs Similar</strong> — congruent figures match exactly after rigid motions. Similar figures match after rigid motions <em>and</em> a dilation: same angles, proportional sides.<br><br><em>Any two squares are similar.</em></div>
+  </div>
+
+  <!-- ══ SECTION 2: TRANSFORM ══ -->
+  <div class="section" id="sec-2">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">3</div><span class="eyebrow-label">Investigation 1 · 8.G.A.1, A.3</span></div>
+    <h2>🧭 The Transformation Lab</h2>
+    <p class="lead">Transform triangle ABC and watch the coordinates change. Every transformation has a <strong>coordinate rule</strong>. Check which ones keep lengths and angles the same. <strong>Predict first!</strong></p>
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="tl-prediction" placeholder="I think reflecting over the x-axis changes the coordinates by... I think a dilation by 2 makes the side lengths... and the angles..."></textarea>
+    </div>
+    <div class="demo-zone">
+      <h3>🧭 Transform Triangle ABC</h3>
+      <div class="hint">PICK A TRANSFORMATION · ADJUST IT · COMPARE THE ORIGINAL (CORAL) WITH THE IMAGE (PURPLE)</div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.6rem;">
+        <button class="dataset-btn tbtn on" id="tb-tr" onclick="setT('tr')">➡️ Translate</button>
+        <button class="dataset-btn tbtn" id="tb-rf" onclick="setT('rf')">🪞 Reflect</button>
+        <button class="dataset-btn tbtn" id="tb-ro" onclick="setT('ro')">🔄 Rotate</button>
+        <button class="dataset-btn tbtn" id="tb-di" onclick="setT('di')">🔍 Dilate</button>
+      </div>
+      <div class="slrow" id="tCtl"></div>
+      <div class="twocol">
+        <canvas class="cv" id="tCanvas" width="420" height="420"></canvas>
+        <div id="tOut" class="steps" style="margin-top:0;"></div>
+      </div>
+    </div>
+    <div class="predict-box" style="border-color:var(--mint);background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="tl-reflection" placeholder="Translations add... Reflecting over the y-axis... Rotating 90°... Lengths stayed the same for... Dilations changed lengths by... but angles..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 3: SEQUENCES ══ -->
+  <div class="section" id="sec-3">
+    <div class="section-eyebrow"><div class="eyebrow-num num-mint">4</div><span class="eyebrow-label">Investigation 2 · 8.G.A.2, A.4</span></div>
+    <h2>🎯 Land on the Target</h2>
+    <p class="lead">Two figures are <strong>congruent</strong> if a sequence of rigid motions maps one onto the other. They're <strong>similar</strong> if you also need a dilation. Build a sequence that moves the coral flag exactly onto the dashed target.</p>
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="sq-prediction" placeholder="For challenge 1, I think I need to... I think the order of the moves does / doesn't matter because..."></textarea>
+    </div>
+    <div class="demo-zone">
+      <h3>🚩 Sequence Challenge</h3>
+      <div class="hint">CHOOSE A CHALLENGE · ADD MOVES ONE AT A TIME · LAND EXACTLY ON THE DASHED TARGET</div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.6rem;" id="chBtns"></div>
+      <div class="action-row" style="font-family:'DM Mono',monospace;color:var(--sky);">
+        Translate by (<input class="ninput" id="qdx" value="0" style="width:52px">, <input class="ninput" id="qdy" value="0" style="width:52px">) <button class="btn btn-coral" onclick="addMove(['T',num('qdx'),num('qdy')])">Add</button>
+      </div>
+      <div class="action-row">
+        <button class="btn btn-lav" onclick="addMove(['Rx'])">🪞 over x-axis</button>
+        <button class="btn btn-lav" onclick="addMove(['Ry'])">🪞 over y-axis</button>
+        <button class="btn btn-sun" onclick="addMove(['R',90])">🔄 90° ccw</button>
+        <button class="btn btn-sun" onclick="addMove(['R',180])">🔄 180°</button>
+        <button class="btn btn-mint" onclick="addMove(['D',2])">🔍 × 2</button>
+        <button class="btn btn-mint" onclick="addMove(['D',0.5])">🔍 × ½</button>
+        <button class="btn btn-ghost" onclick="moves.pop();drawSeq()">↶ Undo</button>
+        <button class="btn btn-ghost" onclick="moves=[];drawSeq()">↺ Reset</button>
+      </div>
+      <div id="seqChips" style="margin-bottom:0.5rem;"></div>
+      <div class="twocol">
+        <canvas class="cv" id="sqCanvas" width="420" height="420"></canvas>
+        <div id="seqOut" class="steps" style="margin-top:0;"></div>
+      </div>
+    </div>
+    <div class="predict-box" style="border-color:var(--lavender);background:var(--lavender-pale);">
+      <h4 style="color:var(--lavender);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="sq-reflection" placeholder="To solve challenge ___ I used... The figures were congruent / similar because... Changing the order of moves..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 4: ANGLES ══ -->
+  <div class="section" id="sec-4">
+    <div class="section-eyebrow"><div class="eyebrow-num num-sun">5</div><span class="eyebrow-label">Investigation 3 · 8.G.A.5</span></div>
+    <h2>📐 Angle Facts You Can Prove</h2>
+    <p class="lead">When a transversal crosses two <strong>parallel lines</strong>, translation copies one set of angles onto the other. That's why so many angles match. Triangles hide another rule: their angles always add to <strong>180°</strong>.</p>
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="an-prediction" placeholder="I think corresponding angles are equal / supplementary because... I think a triangle's exterior angle equals..."></textarea>
+    </div>
+    <div class="demo-zone">
+      <h3>🛤️ Parallel Lines & a Transversal</h3>
+      <div class="hint">TILT THE TRANSVERSAL · PICK AN ANGLE PAIR · EQUAL PAIRS GLOW THE SAME COLOUR</div>
+      <div class="action-row">
+        <label class="sl" style="max-width:300px;">transversal angle = <b id="taV"></b>°<input type="range" id="ta" min="25" max="155" value="60" oninput="drawPar()"></label>
+        <button class="dataset-btn abtn on" id="ab-corr" onclick="setA('corr')">Corresponding</button>
+        <button class="dataset-btn abtn" id="ab-alt" onclick="setA('alt')">Alternate interior</button>
+        <button class="dataset-btn abtn" id="ab-co" onclick="setA('co')">Same-side interior</button>
+        <button class="dataset-btn abtn" id="ab-vert" onclick="setA('vert')">Vertical</button>
+      </div>
+      <div class="twocol">
+        <canvas class="cv" id="parCanvas" width="420" height="320"></canvas>
+        <div id="parOut" class="steps" style="margin-top:0;"></div>
+      </div>
+    </div>
+    <div class="demo-zone">
+      <h3>🔺 Triangle Angle Sum, Exterior Angles & AA Similarity</h3>
+      <div class="hint">CHANGE TWO ANGLES · THE THIRD IS FORCED · THE BIG TRIANGLE HAS THE SAME ANGLES → SIMILAR</div>
+      <div class="slrow">
+        <label class="sl">∠A = <b id="aAV"></b>°<input type="range" id="aA" min="20" max="120" value="50" oninput="drawTriA()"></label>
+        <label class="sl">∠B = <b id="aBV"></b>°<input type="range" id="aB" min="20" max="120" value="70" oninput="drawTriA()"></label>
+      </div>
+      <canvas class="cv" id="triCanvas" width="700" height="280"></canvas>
+      <div id="triOut" class="steps"></div>
+    </div>
+    <div class="predict-box" style="border-color:var(--mint);background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="an-reflection" placeholder="Corresponding angles were always... Same-side interior angles added to... The exterior angle equalled... Two triangles with two equal angles are..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 5: REAL LIFE ══ -->
+  <div class="section" id="sec-5">
+    <div class="section-eyebrow"><div class="eyebrow-num num-sky">6</div><span class="eyebrow-label">Real-World Connections</span></div>
+    <h2>Transformations in the real world 🌍</h2>
+    <p class="lead">Designers, engineers and artists use these ideas every day.</p>
+    <div class="world-grid">
+      <div class="world-card coral-bg"><div class="wc-icon">🎮</div><h4>Animation</h4><p>Game engines move, rotate and scale every sprite using exactly these coordinate rules.</p></div>
+      <div class="world-card mint-bg"><div class="wc-icon">🧩</div><h4>Tiling</h4><p>Floor tiles and quilts repeat one shape with translations, rotations and reflections.</p></div>
+      <div class="world-card lav-bg"><div class="wc-icon">🗺️</div><h4>Maps</h4><p>A map is a dilation of the real world: every distance is scaled by the same factor.</p></div>
+      <div class="world-card sun-bg"><div class="wc-icon">🌉</div><h4>Bridges</h4><p>Engineers use parallel-line angle rules and triangle angle sums to design strong trusses.</p></div>
+    </div>
+    <div class="divider"></div>
+    <div class="demo-zone">
+      <h3>🎯 Real-World Problem Solver</h3>
+      <div class="hint">SOLVE · THEN REVEAL</div>
+      <div id="realProblems" style="display:flex;flex-direction:column;gap:0.8rem;"></div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 6: REFLECT ══ -->
+  <div class="section" id="sec-6">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">7</div><span class="eyebrow-label">Synthesis & Wonder</span></div>
+    <h2>💭 Let's think it through</h2>
+    <p class="lead">Explain your thinking in full sentences.</p>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q1 /</span> Point (3, −4) is rotated 90° counterclockwise about the origin, then reflected over the y-axis. Where does it end up? Show each step.</div><textarea placeholder="Rotate: (x, y) → (−y, x) gives... Reflect over the y-axis: ..."></textarea></div>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q2 /</span> Explain the difference between congruent and similar using transformations.</div><textarea placeholder="Congruent figures can be mapped with... Similar figures also need..."></textarea></div>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q3 /</span> Use a straight line and parallel lines to explain why a triangle's angles add to 180°.</div><textarea placeholder="Draw a line through the top vertex parallel to the base. Then the alternate interior angles..."></textarea></div>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q4 /</span> Two triangles each have angles of 40° and 75°. Must they be congruent? Similar? Explain.</div><textarea placeholder="The third angles are both... so... but the sizes..."></textarea></div>
+    <div class="divider"></div>
+    <div class="congrats">
+      <div class="trophy">🎉</div>
+      <h2>You're a transformation pro!</h2>
+      <p>Today you covered Grade 8 Geometry cluster A — properties of rigid motions, congruence and similarity through sequences of transformations, coordinate rules, and angle facts for parallel lines, triangles and AA similarity.</p>
+      <div class="summary-chips">
+        <span class="summary-chip">(x + a, y + b)</span>
+        <span class="summary-chip">(x, −y) · (−x, y)</span>
+        <span class="summary-chip">90°: (−y, x)</span>
+        <span class="summary-chip">(kx, ky)</span>
+        <span class="summary-chip">Rigid → congruent</span>
+        <span class="summary-chip">+ dilation → similar</span>
+        <span class="summary-chip">Angles sum to 180°</span>
+        <span class="summary-chip">8.G.A.1–5</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="sec-7"></div>
+
+  <div class="nav-row">
+    <button class="btn-prev" id="prevBtn" onclick="navigate(-1)" disabled>← Back</button>
+    <button class="btn-next" id="nextBtn" onclick="navigate(1)">Next <span>→</span></button>
+  </div>
+</div>
+
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+
+<script>
+
+const LESSON={name:'Move It, Flip It, Scale It',emoji:'🔄',grade:'Grade 8 · Geometry',stds:'8.G.A.1 · 8.G.A.2 · 8.G.A.3 · 8.G.A.4 · 8.G.A.5',
+  inv:[['tl','🧭','Section 3 — The Transformation Lab'],['sq','🎯','Section 4 — Sequence Challenges'],['an','📐','Section 5 — Angle Facts']],
+  qs:['Q1 — Rotate then reflect (3, −4)','Q2 — Congruent vs similar','Q3 — Why triangles sum to 180°','Q4 — Two triangles with 40° and 75°']};
+const WARM={opts:['Congruent','Not'],done:'🎉 Perfect! Only dilations change size.',fail:'Rigid motions (slide, flip, turn) keep size. Dilations with k ≠ 1 do not.',items:[
+  {t:'Slide a triangle 5 units right',a:0,e:'Congruent: a translation keeps size and shape.'},
+  {t:'Enlarge a photo by a scale factor of 3',a:1,e:'Not congruent: similar (same shape, 3× the size).'},
+  {t:'Flip a letter F over a vertical line',a:0,e:'Congruent: a reflection is a rigid motion.'},
+  {t:'Turn a square 45° about its centre',a:0,e:'Congruent: a rotation keeps lengths and angles.'},
+  {t:'Shrink a map by a scale factor of ½',a:1,e:'Not congruent: similar, half the size.'},
+]};
+function onSection(n){ if(n===2) drawT(); if(n===3) drawSeq(); if(n===4){ drawPar(); drawTriA(); } }
+const ABC=[[1,1],[4,1],[2,4]], NM=['A','B','C'];
+const dist=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1]);
+function ang(a,b,c){ const v1=[a[0]-b[0],a[1]-b[1]], v2=[c[0]-b[0],c[1]-b[1]]; return Math.acos((v1[0]*v2[0]+v1[1]*v2[1])/(Math.hypot(...v1)*Math.hypot(...v2)))*180/Math.PI; }
+function drawPoly(P,pts,col,lab,dash,fillA){ const {ctx,X,Y}=P; ctx.beginPath(); pts.forEach(([x,y],i)=>i?ctx.lineTo(X(x),Y(y)):ctx.moveTo(X(x),Y(y))); ctx.closePath(); if(fillA!==0){ ctx.fillStyle=col; ctx.globalAlpha=fillA||0.22; ctx.fill(); ctx.globalAlpha=1; } ctx.strokeStyle=col; ctx.lineWidth=2.5; if(dash) ctx.setLineDash(dash); ctx.stroke(); ctx.setLineDash([]);
+  if(lab){ ctx.fillStyle=col; ctx.font='bold 12px Nunito'; ctx.textAlign='center'; pts.forEach(([x,y],i)=>{ dot(ctx,X(x),Y(y),col,3.5); ctx.fillText(lab[i],X(x)+(i===1?10:-10),Y(y)+(i===2?-8:14)); }); } }
+
+// ══ LAB ══
+let tMode='tr';
+const CTL={tr:`<label class="sl">move right/left a = <b id="pdxV"></b><input type="range" id="pdx" min="-8" max="6" value="-5" oninput="drawT()"></label><label class="sl">move up/down b = <b id="pdyV"></b><input type="range" id="pdy" min="-8" max="5" value="-6" oninput="drawT()"></label>`,
+  rf:`<label class="sl">mirror line: <select class="ninput" id="pml" onchange="drawT()" style="width:150px"><option value="x">x-axis</option><option value="y">y-axis</option><option value="yx">y = x</option></select></label>`,
+  ro:`<label class="sl">angle counterclockwise about the origin: <select class="ninput" id="pang" onchange="drawT()" style="width:110px"><option>90</option><option>180</option><option>270</option></select></label>`,
+  di:`<label class="sl">scale factor k = <b id="pkV"></b><input type="range" id="pk" min="0.5" max="2.5" step="0.25" value="2" oninput="drawT()"></label>`};
+function setT(m){ tMode=m; document.querySelectorAll('.tbtn').forEach(b=>b.classList.toggle('on',b.id==='tb-'+m)); $('tCtl').innerHTML=CTL[m]; drawT(); }
+function img(p){ const [x,y]=p; if(tMode==='tr') return [x+num('pdx'),y+num('pdy')]; if(tMode==='rf'){ const l=$('pml').value; return l==='x'?[x,-y]:l==='y'?[-x,y]:[y,x]; } if(tMode==='ro'){ const a=+$('pang').value; return a===90?[-y,x]:a===180?[-x,-y]:[y,-x]; } const k=num('pk'); return [k*x,k*y]; }
+function rule(){ if(tMode==='tr'){ const a=num('pdx'), b=num('pdy'); return `(x, y) → (x ${a<0?'− '+(-a):'+ '+a}, y ${b<0?'− '+(-b):'+ '+b})`; } if(tMode==='rf'){ const l=$('pml').value; return l==='x'?'(x, y) → (x, −y)':l==='y'?'(x, y) → (−x, y)':'(x, y) → (y, x)'; } if(tMode==='ro'){ const a=+$('pang').value; return a===90?'(x, y) → (−y, x)':a===180?'(x, y) → (−x, −y)':'(x, y) → (y, −x)'; } return `(x, y) → (${num('pk')}x, ${num('pk')}y)`; }
+function drawT(){
+  ['pdx','pdy','pk'].forEach(id=>{ if($(id)) $(id+'V').textContent=$(id).value; });
+  const P=plane($('tCanvas'),-10,10,-10,10,{pad:20,sx:1,sy:1}), I=ABC.map(img);
+  if(tMode==='rf'&&$('pml').value==='yx') lineFn(P,x=>x,C.gold,2,[6,4]);
+  if(tMode==='ro'||tMode==='di') dot(P.ctx,P.X(0),P.Y(0),C.gold,6);
+  drawPoly(P,ABC,C.coral,NM); drawPoly(P,I,C.lav,NM.map(n=>n+"′"));
+  const sides=(T)=>[dist(T[0],T[1]),dist(T[1],T[2]),dist(T[2],T[0])], s0=sides(ABC), s1=sides(I), a0=ang(ABC[2],ABC[0],ABC[1]), a1=ang(I[2],I[0],I[1]);
+  const rigid=tMode!=='di'||num('pk')===1;
+  $('tOut').textContent=`RULE: ${rule()}\n\n${NM.map((n,i)=>`${n}(${fmt(ABC[i][0])}, ${fmt(ABC[i][1])}) → ${n}′(${fmt(I[i][0])}, ${fmt(I[i][1])})`).join('\n')}\n\nSide AB: ${r2(s0[0])} → ${r2(s1[0])}\nSide BC: ${r2(s0[1])} → ${r2(s1[1])}\nSide CA: ${r2(s0[2])} → ${r2(s1[2])}\n∠A: ${Math.round(a0)}° → ${Math.round(a1)}°\n\n${rigid?'✓ RIGID MOTION: lengths and angles preserved → CONGRUENT.\nLines stay lines; parallel lines stay parallel.':`DILATION × ${num('pk')}: every length × ${num('pk')}, angles unchanged → SIMILAR (not congruent).`}${tMode==='rf'?'\nNote: the orientation flips (A→B→C goes the other way round).':''}`;
+}
+
+// ══ SEQUENCES ══
+const FLAG=[[1,1],[1,6],[4,5],[1,4]];
+const CH=[
+  {n:'1 · Slide',moves:[['T',-6,-5]]},
+  {n:'2 · Flip',moves:[['Ry'],['T',0,-3]]},
+  {n:'3 · Turn',moves:[['R',90],['T',2,0]]},
+  {n:'4 · Grow',moves:[['D',2],['T',-9,-10]]},
+  {n:'5 · Turn & flip',moves:[['R',180],['Rx'],['T',-1,2]]},
+];
+let chI=0, moves=[];
+function app(pts,m){ return pts.map(([x,y])=>{ switch(m[0]){ case 'T': return [x+m[1],y+m[2]]; case 'Rx': return [x,-y]; case 'Ry': return [-x,y]; case 'R': return m[1]===90?[-y,x]:m[1]===180?[-x,-y]:[y,-x]; case 'D': return [x*m[1],y*m[1]]; } }); }
+const label=m=>m[0]==='T'?`translate (${fmt(m[1])}, ${fmt(m[2])})`:m[0]==='Rx'?'reflect over x-axis':m[0]==='Ry'?'reflect over y-axis':m[0]==='R'?`rotate ${m[1]}°`:`dilate × ${m[1]===0.5?'½':m[1]}`;
+function setCh(i){ chI=i; moves=[]; document.querySelectorAll('.chbtn').forEach((b,j)=>b.classList.toggle('on',j===i)); drawSeq(); }
+function addMove(m){ if(moves.length<8) moves.push(m); drawSeq(); }
+function drawSeq(){
+  const target=CH[chI].moves.reduce(app,FLAG), cur=moves.reduce(app,FLAG);
+  const P=plane($('sqCanvas'),-10,10,-10,10,{pad:20,sx:1,sy:1});
+  drawPoly(P,target,C.mint,null,[7,5],0.12); drawPoly(P,FLAG,C.axis,null,[3,3],0.08); drawPoly(P,cur,C.coral,['P','Q','R','S']);
+  $('seqChips').innerHTML= moves.length? moves.map((m,i)=>`<span class="stepchip">${i+1}. ${label(m)}</span>`).join('') : '<span style="font-family:DM Mono;font-size:0.8rem;color:var(--muted)">No moves yet: the grey flag is the start.</span>';
+  const hit=cur.every((p,i)=>Math.abs(p[0]-target[i][0])<1e-9&&Math.abs(p[1]-target[i][1])<1e-9);
+  const dil=CH[chI].moves.some(m=>m[0]==='D');
+  $('seqOut').textContent=`Challenge ${CH[chI].n}\nStart flag: ${FLAG.map(p=>`(${p})`).join(' ')}\nYour flag now: ${cur.map(p=>`(${fmt(p[0])}, ${fmt(p[1])})`).join(' ')}\nTarget:        ${target.map(p=>`(${fmt(p[0])}, ${fmt(p[1])})`).join(' ')}\n\n${hit?`🎉 LANDED! Your ${moves.length}-move sequence maps the flag onto the target.\nThe figures are ${dil?'SIMILAR (a dilation was needed)':'CONGRUENT (rigid motions only)'}.`:`Not there yet. Compare one corner: P is at (${fmt(cur[0][0])}, ${fmt(cur[0][1])}), target P is at (${fmt(target[0][0])}, ${fmt(target[0][1])}).\nTip: fix the size and the way the flag faces first, then translate.`}`;
+}
+
+// ══ PARALLEL LINES ══
+let aMode='corr';
+function setA(m){ aMode=m; document.querySelectorAll('.abtn').forEach(b=>b.classList.toggle('on',b.id==='ab-'+m)); drawPar(); }
+function drawPar(){
+  const t=num('ta'); $('taV').textContent=t; const cv=$('parCanvas'), ctx=clr(cv), W=cv.width, y1=110, y2=220, cx=W/2, th=t*Math.PI/180, dx=Math.cos(th), dy=-Math.sin(th);
+  ctx.strokeStyle=C.sky; ctx.lineWidth=3; [y1,y2].forEach(y=>{ ctx.beginPath(); ctx.moveTo(20,y); ctx.lineTo(W-20,y); ctx.stroke(); ctx.fillStyle=C.sky; ctx.beginPath(); ctx.moveTo(W-30,y-6); ctx.lineTo(W-20,y); ctx.lineTo(W-30,y+6); ctx.fill(); });
+  const xi=y=>cx+(y-165)*(dx/dy); const P1=[xi(y1),y1], P2=[xi(y2),y2];
+  ctx.strokeStyle=C.coral; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(P1[0]+dx*100,P1[1]+dy*100); ctx.lineTo(P2[0]-dx*100,P2[1]-dy*100); ctx.stroke();
+  // 4 angles at each intersection: 1 top-right, 2 top-left, 3 bottom-left, 4 bottom-right (relative to transversal)
+  const A=t, B=180-t; const vals=[A,B,A,B];
+  const hl={corr:[[0,0],[1,0]],alt:[[0,3],[1,1]],co:[[0,3],[1,0]],vert:[[0,0],[0,2]]}[aMode];
+  const angArc=(P,k,col,lab)=>{ const starts=[ -th, -Math.PI, Math.PI-th, 0 ]; const ends=[ 0, -th, Math.PI, Math.PI-th ];
+    ctx.beginPath(); ctx.moveTo(P[0],P[1]); ctx.arc(P[0],P[1],26,starts[k],ends[k]); ctx.closePath(); ctx.fillStyle=col; ctx.globalAlpha=0.55; ctx.fill(); ctx.globalAlpha=1;
+    const mid=(starts[k]+ends[k])/2; ctx.fillStyle=C.sky; ctx.font='bold 11px DM Mono'; ctx.textAlign='center'; ctx.fillText(lab,P[0]+42*Math.cos(mid),P[1]+42*Math.sin(mid)+4); };
+  const names=[['1','2','3','4'],['5','6','7','8']];
+  [P1,P2].forEach((P,pi)=>[0,1,2,3].forEach(k=>{ const on=hl.some(([a,b])=>a===pi&&b===k); angArc(P,k,on?(aMode==='co'&&k!==hl[0][1]&&pi===1?C.lav:C.mint):'rgba(184,196,204,0.35)',`∠${names[pi][k]}`); }));
+  const v=(pi,k)=>Math.round(vals[k]);
+  const desc={corr:'Corresponding angles (∠1 and ∠5) sit in the SAME position at each crossing. A translation along the transversal maps one onto the other → EQUAL.',alt:'Alternate interior angles (∠4 and ∠6) are between the parallel lines on OPPOSITE sides of the transversal → EQUAL (a 180° rotation maps one to the other).',co:'Same-side interior angles (∠4 and ∠5) are between the lines on the SAME side → they ADD to 180° (supplementary).',vert:'Vertical angles (∠1 and ∠3) are opposite each other at one crossing → EQUAL.'}[aMode];
+  const [[p1,k1],[p2,k2]]=hl; const a1=v(p1,k1), a2=v(p2,k2);
+  $('parOut').textContent=`∠${names[p1][k1]} = ${a1}°   ∠${names[p2][k2]} = ${a2}°\n${aMode==='co'?`${a1}° + ${a2}° = ${a1+a2}°`:`${a1}° = ${a2}° ✓`}\n\n${desc}\n\nAll 8 angles: ${[0,1].map(pi=>[0,1,2,3].map(k=>`∠${names[pi][k]}=${v(pi,k)}°`).join(' ')).join('\n')}\nOnly TWO different sizes appear, and they add to 180°.`;
+}
+// ══ TRIANGLE ══
+function drawTriA(){
+  const A=num('aA'), B=num('aB'); $('aAV').textContent=A; $('aBV').textContent=B; const cv=$('triCanvas'), ctx=clr(cv);
+  if(A+B>155){ ctx.fillStyle=C.coral; ctx.font='bold 14px Nunito'; ctx.textAlign='center'; ctx.fillText(A+B>=180?'∠A + ∠B must be less than 180° to make a triangle!':'That triangle is too thin to draw clearly here. Keep ∠A + ∠B ≤ 155°.',cv.width/2,140); $('triOut').textContent=A+B>=180?`∠A + ∠B = ${A+B}°: too big. No triangle is possible (the third angle would be ${180-A-B}°).`:`∠A + ∠B = ${A+B}°, so ∠C = 180° − ${A+B}° = ${180-A-B}°. A real triangle, just very thin!`; return; }
+  const Cc=180-A-B, ra=A*Math.PI/180, rb=B*Math.PI/180;
+  const tri=(ox,oy,base,col,lab)=>{ const Bx=ox+base, h=base*Math.sin(ra)*Math.sin(rb)/Math.sin(ra+rb), cxp=ox+h/Math.tan(ra); const pts=[[ox,oy],[Bx,oy],[cxp,oy-h]];
+    ctx.beginPath(); pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y)); ctx.closePath(); ctx.fillStyle=col; ctx.globalAlpha=0.18; ctx.fill(); ctx.globalAlpha=1; ctx.strokeStyle=col; ctx.lineWidth=2.5; ctx.stroke();
+    const arc=(p,a0,a1,c,t)=>{ ctx.beginPath(); ctx.moveTo(p[0],p[1]); ctx.arc(p[0],p[1],20,a0,a1); ctx.closePath(); ctx.fillStyle=c; ctx.globalAlpha=0.6; ctx.fill(); ctx.globalAlpha=1; ctx.fillStyle=C.sky; ctx.font='bold 11px DM Mono'; ctx.textAlign='center'; const m=(a0+a1)/2; ctx.fillText(t,p[0]+36*Math.cos(m),p[1]+36*Math.sin(m)+4); };
+    arc(pts[0],-ra,0,C.coral,A+'°'); arc(pts[1],Math.PI,Math.PI+rb,C.lav,B+'°'); const a2=Math.atan2(pts[0][1]-pts[2][1],pts[0][0]-pts[2][0]), a3=Math.atan2(pts[1][1]-pts[2][1],pts[1][0]-pts[2][0]); arc(pts[2],a3,a2,C.gold,Math.round(Cc)+'°');
+    ctx.fillStyle=col; ctx.font='bold 13px Nunito'; ctx.textAlign='left'; ctx.fillText(lab,ox,oy+22); return pts; };
+  const hb=Math.sin(ra)*Math.sin(rb)/Math.sin(ra+rb), sb=Math.min(170,135/hb);
+  const p=tri(90,240,sb,C.coral,'small triangle');
+  ctx.strokeStyle=C.mint; ctx.lineWidth=2; ctx.setLineDash([5,4]); ctx.beginPath(); ctx.moveTo(p[1][0],p[1][1]); ctx.lineTo(p[1][0]+70,p[1][1]); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(p[1][0],p[1][1]); ctx.arc(p[1][0],p[1][1],30,-(Math.PI-rb),0); ctx.closePath(); ctx.fillStyle=C.mint; ctx.globalAlpha=0.35; ctx.fill(); ctx.globalAlpha=1; ctx.fillStyle=C.mint; ctx.font='bold 11px DM Mono'; ctx.fillText('ext '+(180-B)+'°',p[1][0]+20,p[1][1]-34);
+  tri(390,255,sb*1.6,C.lav,'big triangle (same angles, sides × 1.6)');
+  $('triOut').textContent=`∠A + ∠B + ∠C = ${A}° + ${B}° + ${Math.round(Cc)}° = 180°\nSo ∠C = 180° − ${A}° − ${B}° = ${Math.round(Cc)}°\n\nExterior angle at B = 180° − ${B}° = ${180-B}° = ∠A + ∠C = ${A}° + ${Math.round(Cc)}° ✓\n(an exterior angle equals the sum of the two remote interior angles)\n\nAA SIMILARITY: the big triangle has two equal angles (${A}° and ${B}°), so the third matches too.\nTwo equal angles are enough → the triangles are SIMILAR.`;
+}
+function init(){
+  $('chBtns').innerHTML=CH.map((c,i)=>`<button class="dataset-btn chbtn${i===0?' on':''}" onclick="setCh(${i})">🚩 ${c.n}</button>`).join('');
+  setT('tr'); setCh(2); moves=[['R',90]]; drawSeq(); drawPar(); drawTriA();
+}
+const realP=[
+  {q:'Triangle with vertices (2, 1), (5, 1), (2, 3) is translated by (x − 4, y + 2). Find the new vertices.', w:'(2 − 4, 1 + 2) = (−2, 3)\n(5 − 4, 1 + 2) = (1, 3)\n(2 − 4, 3 + 2) = (−2, 5)', a:'(−2, 3), (1, 3), (−2, 5)'},
+  {q:'Point (−3, 5) is reflected over the x-axis, then over the y-axis. Where does it land? What single transformation does the same thing?', w:'over x-axis: (−3, −5)\nover y-axis: (3, −5)\nsame as (x, y) → (−x, −y)', a:'(3, −5); a 180° rotation about the origin'},
+  {q:'A 4 cm × 6 cm photo is dilated by a factor of 2.5. What are the new dimensions? Are the photos congruent or similar?', w:'4 × 2.5 = 10\n6 × 2.5 = 15', a:'10 cm × 15 cm; similar, not congruent'},
+  {q:'Two parallel lines are cut by a transversal. One angle is 68°. Find its corresponding angle and its same-side interior angle.', w:'corresponding = equal = 68°\nsame-side interior = 180° − 68° = 112°', a:'68° and 112°'},
+  {q:'A triangle has angles of 35° and 85°. Find the third angle and the exterior angle next to the 85° angle.', w:'180 − 35 − 85 = 60\nexterior = 180 − 85 = 95 = 35 + 60', a:'60°; exterior angle 95°'},
+];
+// ══ SHARED WORKSHOP ENGINE (Farvour Explorations · Grade 8) ══
+const C = { sky:'#1e3a5f', coral:'#e8603c', mint:'#3aaf85', lav:'#7c6fcd', sun:'#f6c343', gold:'#c9962a', muted:'#7a8899', grid:'#e8eef4', axis:'#b8c4cc' };
+let currentSection=0; const totalSections=8;
+function goTo(n){
+  document.querySelectorAll('.section').forEach((s,i)=>s.classList.toggle('active',i===n));
+  document.querySelectorAll('.prog-step').forEach((p,i)=>{p.classList.toggle('active',i===n);p.classList.toggle('done',i<n);});
+  currentSection=n; document.getElementById('prevBtn').disabled=n===0;
+  const nb=document.getElementById('nextBtn');
+  if(n===totalSections-1){nb.textContent='✓ Complete!';nb.disabled=true;buildSummary();} else {nb.innerHTML='Next <span>→</span>';nb.disabled=false;}
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(typeof onSection==='function') onSection(n);
+}
+function navigate(d){ goTo(Math.min(Math.max(currentSection+d,0),totalSections-1)); }
+const r2=x=>Math.round(x*100)/100, r3=x=>Math.round(x*1000)/1000;
+const fmt=x=>{ const v=Math.round(x*1000)/1000; return (v<0?'−':'')+Math.abs(v); };
+function clr(cv){ const ctx=cv.getContext('2d'); ctx.clearRect(0,0,cv.width,cv.height); ctx.fillStyle='#fafbfc'; ctx.fillRect(0,0,cv.width,cv.height); return ctx; }
+const $=id=>document.getElementById(id), num=id=>+document.getElementById(id).value;
+function niceStep(range,target){ const raw=range/(target||10), p=Math.pow(10,Math.floor(Math.log10(raw))), m=raw/p; return (m<1.5?1:m<3?2:m<7?5:10)*p; }
+// coordinate-plane helper: returns {X,Y,ctx} mapping maths coords to canvas
+function plane(cv,xmin,xmax,ymin,ymax,opt={}){
+  const ctx=clr(cv), pad=opt.pad||30, W=cv.width, H=cv.height;
+  const X=x=>pad+(x-xmin)/(xmax-xmin)*(W-2*pad), Y=y=>H-pad-(y-ymin)/(ymax-ymin)*(H-2*pad);
+  const sx=opt.sx||niceStep(xmax-xmin,10), sy=opt.sy||niceStep(ymax-ymin,8);
+  ctx.strokeStyle=C.grid; ctx.lineWidth=1;
+  for(let x=Math.ceil(xmin/sx)*sx;x<=xmax+1e-9;x+=sx){ ctx.beginPath(); ctx.moveTo(X(x),Y(ymin)); ctx.lineTo(X(x),Y(ymax)); ctx.stroke(); }
+  for(let y=Math.ceil(ymin/sy)*sy;y<=ymax+1e-9;y+=sy){ ctx.beginPath(); ctx.moveTo(X(xmin),Y(y)); ctx.lineTo(X(xmax),Y(y)); ctx.stroke(); }
+  ctx.strokeStyle=C.axis; ctx.lineWidth=2; const ax=Math.min(Math.max(0,xmin),xmax), ay=Math.min(Math.max(0,ymin),ymax);
+  ctx.beginPath(); ctx.moveTo(X(xmin),Y(ay)); ctx.lineTo(X(xmax),Y(ay)); ctx.moveTo(X(ax),Y(ymin)); ctx.lineTo(X(ax),Y(ymax)); ctx.stroke();
+  ctx.fillStyle=C.muted; ctx.font='10px DM Mono, monospace'; ctx.textAlign='center';
+  for(let x=Math.ceil(xmin/sx)*sx;x<=xmax+1e-9;x+=sx){ if(Math.abs(x)>1e-9) ctx.fillText(fmt(x),X(x),Y(ay)+13); }
+  ctx.textAlign='right'; for(let y=Math.ceil(ymin/sy)*sy;y<=ymax+1e-9;y+=sy){ if(Math.abs(y)>1e-9) ctx.fillText(fmt(y),X(ax)-4,Y(y)+3); }
+  if(opt.xl){ ctx.textAlign='right'; ctx.fillStyle=C.sky; ctx.font='bold 11px Nunito, sans-serif'; ctx.fillText(opt.xl,W-pad,Y(ay)-6); }
+  if(opt.yl){ ctx.textAlign='left'; ctx.fillStyle=C.sky; ctx.font='bold 11px Nunito, sans-serif'; ctx.fillText(opt.yl,X(ax)+6,pad-8); }
+  return {ctx,X,Y,xmin,xmax,ymin,ymax};
+}
+function dot(ctx,x,y,col,r=5){ ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fillStyle=col; ctx.fill(); }
+function lineFn(P,f,col,w=3,dash){ const {ctx,X,Y,xmin,xmax}=P; ctx.strokeStyle=col; ctx.lineWidth=w; if(dash) ctx.setLineDash(dash); ctx.beginPath(); let first=true; for(let i=0;i<=300;i++){ const x=xmin+(xmax-xmin)*i/300, y=f(x); if(!isFinite(y)){first=true;continue;} if(first){ctx.moveTo(X(x),Y(y));first=false;} else ctx.lineTo(X(x),Y(y)); } ctx.stroke(); ctx.setLineDash([]); }
+
+// ══ VOCAB ══
+let openTerm=null;
+function revealTerm(k){ if(openTerm) $('cr-'+openTerm).classList.remove('show'); if(openTerm===k){openTerm=null;return;} $('cr-'+k).classList.add('show'); openTerm=k; }
+
+// ══ WARM-UP (WARM = {opts:['A','B'], items:[{t,a:0|1,e}], done, fail}) ══
+let wDone=0,wOk=0;
+function buildWarm(){ if(typeof WARM==='undefined') return; const o=WARM.opts;
+  $('warmupGrid').innerHTML=WARM.items.map((q,i)=>`<div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;background:#f5f7fa;border-radius:10px;padding:0.7rem 1rem;"><div style="flex:1;min-width:220px;font-size:0.88rem;font-weight:600;color:#3a4a5a;">${q.t}</div><div style="display:flex;gap:0.4rem;">${o.map((lab,k)=>`<button onclick="ansWarm(${i},${k})" style="background:${k?'var(--coral-pale)':'var(--mint-pale)'};border:2px solid ${k?'#f8c5b8':'#b8ebd8'};border-radius:8px;padding:0.35rem 0.8rem;font-family:'Fredoka One',cursive;font-size:0.85rem;color:${k?'var(--coral)':'var(--mint)'};cursor:pointer;">${lab}</button>`).join('')}</div><div id="wfb-${i}" style="font-family:'DM Mono',monospace;font-size:0.72rem;width:100%;min-height:1rem;"></div></div>`).join(''); }
+function ansWarm(i,a){ const fb=$('wfb-'+i); if(fb.textContent) return; wDone++; const ok=a===WARM.items[i].a; if(ok) wOk++; fb.textContent=(ok?'✓ ':'✗ ')+WARM.items[i].e; fb.style.color=ok?C.mint:C.coral;
+  if(wDone===WARM.items.length){ const el=$('warmupFb'); el.style.color=wOk===wDone?C.mint:C.coral; el.textContent= wOk===wDone?WARM.done:`${wOk}/${wDone}. ${WARM.fail}`; } }
+
+// ══ REAL-WORLD PROBLEMS (realP = [{q,w,a}]) ══
+function buildReal(){ if(typeof realP==='undefined') return;
+  $('realProblems').innerHTML=realP.map((p,i)=>`<div style="background:#f5f7fa;border-radius:12px;padding:1.2rem;"><p style="font-size:0.9rem;line-height:1.65;color:#3a4a5a;margin-bottom:0.8rem;"><strong>Problem ${i+1}:</strong> ${p.q}</p><button id="rpb${i}" onclick="revealRP(${i})" style="background:var(--lavender);color:white;border:none;border-radius:8px;padding:0.5rem 1.1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;cursor:pointer;">Show solution</button><div id="rpa${i}" style="display:none;margin-top:0.8rem;font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--mint);line-height:1.8;white-space:pre-line;"></div></div>`).join(''); }
+function revealRP(i){ const el=$('rpa'+i); el.style.display='block'; el.textContent=`Working:\n${realP[i].w}\n\n✓ Answer: ${realP[i].a}`; $('rpb'+i).style.display='none'; }
+
+// ══ SUBMIT PAGE (LESSON = {name, emoji, grade, stds, inv:[[prefix,icon,title]], qs:[label]}) ══
+function buildSubmit(){ const L=LESSON;
+  $('sec-7').innerHTML=`<div class="section-eyebrow"><div class="eyebrow-num num-mint">8</div><span class="eyebrow-label">Your Completed Work</span></div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Here's everything you worked on today. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> directly to your teacher.</p>
+  <div class="summary-section" style="background:var(--sky);color:white;border-color:var(--sky);"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;align-items:center;">
+    <div><div style="font-family:'DM Mono',monospace;font-size:0.7rem;opacity:0.6;margin-bottom:0.3rem;">STUDENT</div><div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div></div>
+    <div style="text-align:right;"><div style="font-family:'DM Mono',monospace;font-size:0.7rem;opacity:0.6;margin-bottom:0.3rem;">LESSON</div><div style="font-family:'Fredoka One',cursive;font-size:1rem;">${L.name} ${L.emoji}</div><div style="font-family:'DM Mono',monospace;font-size:0.72rem;opacity:0.6;" id="summaryDate"></div></div></div></div>
+  ${L.inv.map(([p,ic,t])=>`<div class="summary-section"><h3>${ic} ${t}</h3><div class="sum-label">Prediction</div><div class="summary-answer" id="sum-${p}-pred"></div><div class="sum-label">Reflection</div><div class="summary-answer" id="sum-${p}-ref"></div></div>`).join('')}
+  <div class="summary-section"><h3>💭 Section 7 — Reflections</h3>${L.qs.map((q,i)=>`<div class="sum-label">${q}</div><div class="summary-answer" id="sum-q${i+1}"></div>`).join('')}</div>
+  <div class="share-buttons"><button class="share-btn copy" onclick="copyResults()">📋 Copy My Results</button><button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button><button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button></div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+  <div style="margin-top:1.5rem;background:var(--sun-pale);border:2px dashed var(--sun);border-radius:12px;padding:1.2rem 1.4rem;"><p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#b8860b;margin-bottom:0.8rem;">📋 How to submit your work:</p>
+  <p style="font-size:0.82rem;color:#b8860b;font-family:'DM Mono',monospace;line-height:2;"><strong>📋 Copy My Results</strong> — Copies all your answers. Open Google Classroom, click your assignment, paste, and submit.<br><strong>📧 Email to Teacher</strong> — Opens your email app with your answers already typed. Add your teacher's address and send.<br><strong>🖨️ Print / Save PDF</strong> — Mac: "Save as PDF" bottom left · Windows: "Microsoft Print to PDF".</p></div>`; }
+const val=id=>(($(id)||{}).value||'').trim();
+function fill(id,t){ const el=$(id); el.textContent=t||'Not answered'; el.classList.toggle('empty',!t); }
+function refls(){ return [...document.querySelectorAll('#sec-6 .reflection-card textarea')].map(t=>t.value.trim()); }
+const dateStr=()=>new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+function buildSummary(){ $('summaryName').textContent=val('studentName')||'Student'; $('summaryDate').textContent=dateStr();
+  LESSON.inv.forEach(([p])=>{ fill(`sum-${p}-pred`,val(p+'-prediction')); fill(`sum-${p}-ref`,val(p+'-reflection')); });
+  refls().forEach((t,i)=>{ if($('sum-q'+(i+1))) fill('sum-q'+(i+1),t); }); }
+function buildPlainText(){ const r=refls(), na=x=>x||'Not answered', L=LESSON, bar='===================================================';
+  return `${L.name.toUpperCase()} ${L.emoji} — STUDENT SUBMISSION\n${bar}\nStudent: ${val('studentName')||'Student'}\nDate: ${dateStr()}\nLesson: ${L.grade}\nStandards: ${L.stds}\n\n`+
+  L.inv.map(([p,ic,t])=>`── ${t.toUpperCase()} ──\nPrediction:\n${na(val(p+'-prediction'))}\nReflection:\n${na(val(p+'-reflection'))}\n`).join('\n')+
+  `\n── REFLECTIONS ──\n`+L.qs.map((q,i)=>`${q}\n${na(r[i])}`).join('\n')+`\n\n${bar}\n© 2026 Farvour Explorations\nSubmitted via ${L.name} · Interactive Digital Lesson`; }
+function copyResults(){ buildSummary(); navigator.clipboard.writeText(buildPlainText()).then(()=>{ const el=$('copyConfirm'); el.textContent='✓ Copied! Now paste into Google Classroom or your assignment.'; setTimeout(()=>el.textContent='',4000); }).catch(()=>{ $('copyConfirm').textContent='⚠️ Could not copy — try selecting manually.'; }); }
+function emailResults(){ const n=val('studentName')||'Student'; window.location.href=`mailto:?subject=${encodeURIComponent(LESSON.name+' — '+n)}&body=${encodeURIComponent(buildPlainText())}`; }
+window.addEventListener('load',()=>{ buildWarm(); buildReal(); buildSubmit(); if(typeof init==='function') init(); });
+</script>
+</body>
+</html>
+

@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Power Up! ⚡ · Grade 8 Exponents, Roots & Scientific Notation</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #1e3a5f; --sky-mid: #2d5282;
+    --sun: #f6c343; --sun-pale: #fef9e7;
+    --coral: #e8603c; --coral-pale: #fdf0ec;
+    --mint: #3aaf85; --mint-pale: #e8f8f2;
+    --lavender: #7c6fcd; --lavender-pale: #f0eefb;
+    --paper: #fffef9; --ink: #1a2332;
+    --muted: #7a8899; --border: rgba(0,0,0,0.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:linear-gradient(160deg,#0f2540 0%,#1e3a5f 40%,#2d5282 100%); min-height:100vh; font-family:'Nunito',sans-serif; color:var(--ink); overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image: radial-gradient(1px 1px at 10% 15%,rgba(255,255,255,0.6) 0%,transparent 100%), radial-gradient(1.5px 1.5px at 25% 40%,rgba(255,255,255,0.4) 0%,transparent 100%), radial-gradient(1px 1px at 45% 8%,rgba(255,255,255,0.5) 0%,transparent 100%), radial-gradient(2px 2px at 65% 22%,rgba(255,255,255,0.3) 0%,transparent 100%), radial-gradient(1px 1px at 80% 5%,rgba(255,255,255,0.6) 0%,transparent 100%), radial-gradient(1.5px 1.5px at 92% 35%,rgba(255,255,255,0.4) 0%,transparent 100%); pointer-events:none; z-index:0; }
+
+  /* ── HERO ── */
+  .hero { position:relative; z-index:1; text-align:center; padding:3.5rem 2rem 2rem; color:white; }
+  .hero-badge { display:inline-block; background:var(--sun); color:var(--sky); font-family:'Fredoka One',cursive; font-size:0.85rem; letter-spacing:0.05em; padding:0.35rem 1.2rem; border-radius:20px; margin-bottom:1.2rem; box-shadow:0 2px 12px rgba(246,195,67,0.4); }
+  .hero h1 { font-family:'Fredoka One',cursive; font-size:clamp(2.4rem,6vw,4rem); line-height:1.1; margin-bottom:0.8rem; text-shadow:0 2px 20px rgba(0,0,0,0.3); }
+  .hero h1 .accent { color:var(--sun); }
+  .hero p.intro { font-size:1.05rem; line-height:1.7; opacity:0.88; max-width:560px; margin:0 auto 2rem; }
+  .name-bar { background:rgba(255,255,255,0.1); border:1.5px solid rgba(255,255,255,0.25); border-radius:12px; padding:0.6rem 1rem; display:flex; align-items:center; gap:0.8rem; max-width:420px; margin:0 auto 1rem; }
+  .name-bar label { font-size:0.78rem; font-weight:700; color:rgba(255,255,255,0.8); white-space:nowrap; font-family:'DM Mono',monospace; }
+  .name-bar input { flex:1; background:rgba(255,255,255,0.15); border:none; border-radius:8px; padding:0.4rem 0.8rem; font-family:'Nunito',sans-serif; font-size:0.9rem; font-weight:700; color:white; outline:none; }
+  .name-bar input::placeholder { color:rgba(255,255,255,0.45); font-weight:400; }
+  .progress-wrap { display:flex; justify-content:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.5rem; }
+  .prog-step { display:flex; align-items:center; gap:0.4rem; background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.2); border-radius:20px; padding:0.35rem 0.9rem; font-size:0.78rem; font-weight:700; color:rgba(255,255,255,0.7); cursor:pointer; transition:all 0.2s; }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,0.22); color:white; border-color:rgba(255,255,255,0.4); }
+  .prog-step.active { background:var(--sun); color:var(--sky); border-color:var(--sun); box-shadow:0 2px 12px rgba(246,195,67,0.4); }
+
+  /* ── SHEET ── */
+  .sheet { position:relative; z-index:1; background:var(--paper); border-radius:24px 24px 0 0; margin-top:1.5rem; padding:0 0 6rem; min-height:80vh; box-shadow:0 -8px 40px rgba(0,0,0,0.25); }
+  .section { padding:3rem 2rem 0; max-width:820px; margin:0 auto; display:none; }
+  .section.active { display:block; }
+  .section-eyebrow { display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem; }
+  .eyebrow-num { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Fredoka One',cursive; font-size:1rem; color:white; flex-shrink:0; }
+  .num-coral{background:var(--coral);} .num-mint{background:var(--mint);} .num-sun{background:var(--sun);color:var(--sky);} .num-lav{background:var(--lavender);} .num-sky{background:var(--sky-mid);}
+  .eyebrow-label { font-size:0.72rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); font-family:'DM Mono',monospace; }
+  .section h2 { font-family:'Fredoka One',cursive; font-size:clamp(1.6rem,3.5vw,2.2rem); color:var(--sky); margin-bottom:0.6rem; line-height:1.2; }
+  .section .lead { font-size:1rem; line-height:1.75; color:#3a4a5a; margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+
+  /* ── WONDER BOX ── */
+  .wonder-box { background:linear-gradient(135deg,var(--sky) 0%,var(--sky-mid) 100%); color:white; border-radius:16px; padding:1.8rem 2rem; margin-bottom:1.8rem; position:relative; overflow:hidden; }
+  .wonder-box::after { content:'🤔'; position:absolute; right:1.5rem; top:50%; transform:translateY(-50%); font-size:3rem; opacity:0.3; }
+  .wonder-box p { font-size:1rem; line-height:1.7; font-style:italic; opacity:0.95; max-width:85%; }
+  .wonder-box strong { color:var(--sun); font-style:normal; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,var(--mint) 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'📊'; }
+
+  /* ── CHIPS ── */
+  .chip-row { display:flex; flex-wrap:wrap; gap:0.6rem; margin-bottom:1.5rem; }
+  .chip { padding:0.45rem 1rem; border-radius:20px; font-size:0.82rem; font-weight:700; cursor:pointer; transition:all 0.2s; border:2px solid transparent; }
+  .chip.coral{background:var(--coral-pale);color:var(--coral);border-color:#f8c5b8;} .chip.mint{background:var(--mint-pale);color:var(--mint);border-color:#b8ebd8;} .chip.sun{background:var(--sun-pale);color:#b8860b;border-color:#f8e0a0;} .chip.lav{background:var(--lavender-pale);color:var(--lavender);border-color:#d0caef;} .chip.sky{background:#e8f0f8;color:var(--sky-mid);border-color:#c0d4ea;}
+  .chip:hover { transform:scale(1.05); }
+  .concept-reveal { background:var(--paper); border-left:4px solid var(--coral); border-radius:0 10px 10px 0; padding:1rem 1.2rem; font-size:0.88rem; line-height:1.7; margin-top:0.5rem; display:none; animation:fadeIn 0.3s ease; }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border{border-color:var(--mint);} .concept-reveal.sun-border{border-color:var(--sun);} .concept-reveal.lav-border{border-color:var(--lavender);} .concept-reveal.sky-border{border-color:var(--sky-mid);}
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);} }
+
+  /* ── PREDICT BOX ── */
+  .predict-box { background:var(--sun-pale); border:2px dashed var(--sun); border-radius:14px; padding:1.4rem 1.6rem; margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive; font-size:1rem; color:#b8860b; margin-bottom:0.8rem; }
+  .predict-box textarea { width:100%; border:1.5px solid rgba(0,0,0,0.12); border-radius:8px; padding:0.7rem; font-family:'Nunito',sans-serif; font-size:0.88rem; resize:vertical; min-height:64px; background:white; color:var(--ink); outline:none; transition:border-color 0.2s; }
+  .predict-box textarea:focus { border-color:var(--sun); }
+
+  /* ── DEMO ZONE ── */
+  .demo-zone { background:white; border:2px solid var(--border); border-radius:16px; padding:1.8rem; margin-bottom:1.5rem; }
+  .demo-zone h3 { font-family:'Fredoka One',cursive; font-size:1.2rem; color:var(--sky); margin-bottom:0.3rem; }
+  .demo-zone .hint { font-size:0.78rem; color:var(--muted); font-family:'DM Mono',monospace; margin-bottom:1.3rem; }
+
+  /* ── BUTTONS ── */
+  .btn { border:none; border-radius:10px; padding:0.65rem 1.3rem; font-family:'Nunito',sans-serif; font-size:0.88rem; font-weight:800; cursor:pointer; transition:all 0.15s; }
+  .btn:hover { transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,0.15); }
+  .btn:active { transform:translateY(0); }
+  .btn-coral{background:var(--coral);color:white;} .btn-mint{background:var(--mint);color:white;} .btn-sun{background:var(--sun);color:var(--sky);} .btn-lav{background:var(--lavender);color:white;} .btn-ghost{background:#f0f2f5;color:var(--muted);} .btn-sky{background:var(--sky);color:white;}
+  .action-row { display:flex; gap:0.8rem; flex-wrap:wrap; align-items:center; margin-bottom:0.8rem; }
+
+  /* ── INPUT GROUP ── */
+  .input-group { display:flex; flex-direction:column; gap:0.3rem; }
+  .input-group label { font-size:0.78rem; font-weight:700; color:var(--muted); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.05em; }
+  .input-group input[type=number] { border:2px solid var(--border); border-radius:8px; padding:0.5rem 0.8rem; font-family:'Nunito',sans-serif; font-size:1rem; width:100px; outline:none; transition:border-color 0.2s; font-weight:700; color:var(--sky); background:white; }
+  .input-group input[type=number]:focus { border-color:var(--coral); }
+
+  /* ── STAT RESULT PANEL ── */
+  .stat-panel { background:var(--lavender-pale); border:2px solid rgba(124,111,205,0.3); border-radius:12px; padding:1.2rem 1.4rem; margin-top:1rem; }
+  .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:0.6rem; margin-top:0.6rem; }
+  .stat-card { background:white; border-radius:10px; padding:0.8rem; text-align:center; }
+  .stat-card .stat-val { font-family:'Fredoka One',cursive; font-size:1.5rem; color:var(--sky); }
+  .stat-card .stat-lbl { font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--muted); margin-top:0.2rem; }
+  .stat-card.coral-card .stat-val { color:var(--coral); }
+  .stat-card.mint-card  .stat-val { color:var(--mint); }
+  .stat-card.sun-card   .stat-val { color:#b8860b; }
+  .stat-card.lav-card   .stat-val { color:var(--lavender); }
+
+  /* ── CANVASES ── */
+  canvas.chart-canvas { border-radius:10px; border:2px solid var(--border); display:block; background:white; width:100%; }
+
+  /* ── DATA INPUT AREA ── */
+  .data-input-wrap { margin-bottom:1rem; }
+  .data-input-wrap label { font-size:0.78rem; font-weight:700; color:var(--muted); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:0.4rem; }
+  .data-input-wrap input[type=text] { width:100%; border:2px solid var(--lavender); border-radius:8px; padding:0.6rem 0.9rem; font-family:'DM Mono',monospace; font-size:0.95rem; font-weight:700; color:var(--sky); outline:none; transition:border-color 0.2s; background:white; }
+  .data-input-wrap input[type=text]:focus { border-color:var(--coral); }
+
+  /* ── DATASET BUTTONS ── */
+  .dataset-btn { background:var(--sky); color:white; border:none; border-radius:8px; padding:0.4rem 0.8rem; font-family:'Nunito',sans-serif; font-size:0.78rem; font-weight:700; cursor:pointer; transition:all 0.15s; margin:0.2rem; }
+  .dataset-btn:hover { background:var(--sky-mid); }
+
+  /* ── WORLD CARDS ── */
+  .world-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+  .world-card { border-radius:14px; padding:1.4rem; }
+  .world-card.coral-bg{background:var(--coral-pale);} .world-card.mint-bg{background:var(--mint-pale);} .world-card.lav-bg{background:var(--lavender-pale);} .world-card.sun-bg{background:var(--sun-pale);}
+  .world-card .wc-icon { font-size:2rem; margin-bottom:0.6rem; }
+  .world-card h4 { font-family:'Fredoka One',cursive; font-size:1rem; margin-bottom:0.4rem; color:var(--sky); }
+  .world-card p  { font-size:0.82rem; line-height:1.6; color:#3a4a5a; }
+
+  /* ── REFLECTION ── */
+  .reflection-card { background:white; border:2px solid var(--border); border-radius:14px; padding:1.4rem; margin-bottom:1rem; }
+  .reflection-card .q { font-family:'Fredoka One',cursive; font-size:1rem; color:var(--sky); margin-bottom:0.7rem; display:flex; gap:0.5rem; align-items:baseline; }
+  .reflection-card .q .qnum { font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--muted); flex-shrink:0; }
+  .reflection-card textarea { width:100%; border:1.5px solid rgba(0,0,0,0.1); border-radius:8px; padding:0.7rem; font-family:'Nunito',sans-serif; font-size:0.88rem; resize:vertical; min-height:72px; background:#fafbfc; color:var(--ink); outline:none; transition:border-color 0.2s; }
+  .reflection-card textarea:focus { border-color:var(--lavender); }
+
+  /* ── CONGRATS ── */
+  .congrats { text-align:center; padding:2rem 1rem; }
+  .congrats .trophy { font-size:4rem; margin-bottom:1rem; animation:bounce 0.8s ease infinite alternate; }
+  @keyframes bounce { from{transform:translateY(0);}to{transform:translateY(-10px);} }
+  .congrats h2 { font-family:'Fredoka One',cursive; font-size:2rem; color:var(--sky); margin-bottom:0.8rem; }
+  .congrats p  { font-size:0.95rem; line-height:1.7; color:#3a4a5a; max-width:500px; margin:0 auto 1.5rem; }
+  .summary-chips { display:flex; flex-wrap:wrap; gap:0.6rem; justify-content:center; }
+  .summary-chip { padding:0.5rem 1.1rem; border-radius:20px; font-size:0.82rem; font-weight:700; background:var(--sun-pale); color:#b8860b; border:1.5px solid #f8e0a0; }
+  .divider { height:1px; background:linear-gradient(90deg,transparent,var(--border),transparent); margin:1.5rem 0; }
+
+  /* ── NAV ── */
+  .nav-row { display:flex; justify-content:space-between; align-items:center; padding:2.5rem 2rem 0; max-width:820px; margin:0 auto; }
+  .btn-next { background:var(--sky); color:white; border:none; border-radius:50px; padding:0.9rem 2rem; font-family:'Fredoka One',cursive; font-size:1rem; cursor:pointer; display:flex; align-items:center; gap:0.6rem; transition:all 0.2s; box-shadow:0 4px 16px rgba(30,58,95,0.25); }
+  .btn-next:hover { background:var(--sky-mid); transform:translateY(-2px); }
+  .btn-prev { background:transparent; color:var(--muted); border:2px solid var(--border); border-radius:50px; padding:0.9rem 1.6rem; font-family:'Fredoka One',cursive; font-size:0.95rem; cursor:pointer; transition:all 0.2s; }
+  .btn-prev:hover { border-color:var(--muted); color:var(--ink); }
+  .btn-prev:disabled,.btn-next:disabled { opacity:0.3; cursor:not-allowed; transform:none; }
+
+  /* ── SUMMARY ── */
+  .summary-section { background:white; border-radius:16px; padding:1.8rem; margin-bottom:1.2rem; border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive; font-size:1.05rem; color:var(--sky); margin-bottom:0.8rem; }
+  .summary-answer { background:#f5f7fa; border-radius:8px; padding:0.7rem 1rem; font-size:0.85rem; line-height:1.6; color:var(--ink); margin-bottom:0.5rem; font-style:italic; border-left:3px solid var(--lavender); min-height:2rem; }
+  .summary-answer.empty { color:var(--muted); font-style:normal; border-left-color:var(--border); }
+  .sum-label { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.4rem; margin-top:0.6rem; text-transform:uppercase; letter-spacing:0.06em; }
+  .share-buttons { display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:1.5rem; justify-content:center; }
+  .share-btn { border:none; border-radius:12px; padding:0.85rem 1.6rem; font-family:'Fredoka One',cursive; font-size:1rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:0.5rem; }
+  .share-btn:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.15); }
+  .share-btn.copy{background:var(--mint);color:white;} .share-btn.email{background:var(--lavender);color:white;} .share-btn.print{background:var(--sky);color:white;}
+  .copy-confirm { text-align:center; font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--mint); min-height:1.2rem; margin-top:0.6rem; }
+
+  /* multi-line text blocks */
+  #sqTopicHint,#sqCheckFb,#statInsight,#outlierResult { white-space:pre-line; }
+
+  @media (max-width:560px) { .hero{padding:2.5rem 1.2rem 1.5rem;} .section{padding:2rem 1.2rem 0;} .nav-row{padding:2rem 1.2rem 0;} }
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm{display:none !important;}
+    .sheet{box-shadow:none;border-radius:0;}
+    .section{display:none !important;}
+    #sec-7{display:block !important;}
+  }
+  .rulebtn.on { background:var(--coral) !important; color:white !important; border-color:var(--coral) !important; }
+  select.ninput { width:auto; }
+  /* ── G8 shared extras ── */
+  .steps { white-space:pre-line; font-family:'DM Mono',monospace; font-size:0.85rem; line-height:1.9; color:var(--sky); background:var(--lavender-pale); border-left:4px solid var(--lavender); border-radius:0 12px 12px 0; padding:1rem 1.2rem; margin-top:0.8rem; }
+  canvas.cv { width:100%; border:2px solid var(--border); border-radius:10px; background:white; display:block; }
+  .big-eq { font-family:'Fredoka One',cursive; font-size:1.4rem; color:var(--sky); text-align:center; margin:0.8rem 0 0.3rem; }
+  .sl { font-family:'DM Mono',monospace; font-size:0.8rem; color:var(--muted); flex:1; min-width:150px; }
+  .sl input { width:100%; accent-color:var(--coral); }
+  .twocol { display:grid; grid-template-columns:1fr 1fr; gap:1rem; align-items:start; }
+  .slrow { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:0.6rem; }
+  .ninput { width:80px; padding:0.45rem 0.6rem; border:2px solid var(--border); border-radius:8px; font-family:'DM Mono',monospace; font-size:0.9rem; color:var(--sky); }
+  .ninput.wide { width:180px; }
+  .tbl { border-collapse:collapse; font-family:'DM Mono',monospace; font-size:0.85rem; margin-top:0.5rem; }
+  .tbl td,.tbl th { border:1.5px solid #dde4ea; padding:0.35rem 0.7rem; text-align:center; color:var(--sky); }
+  .tbl th { background:var(--sky); color:white; }
+  .tag { display:inline-block; padding:0.2rem 0.7rem; border-radius:20px; font-family:'DM Mono',monospace; font-size:0.75rem; font-weight:700; }
+  @media (max-width:700px){ .twocol { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">✨ Grade 8 · Expressions & Equations</div>
+  <h1>Power<br><span class="accent">Up!</span> ⚡</h1>
+  <p class="intro">A virus is about 0.0000001 metres wide. The Milky Way is about 950,000,000,000,000,000,000 metres across. Today you'll learn the rules of exponents, undo squares and cubes with roots, and use scientific notation to tame numbers that are impossibly big or small.</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <a class="prog-step active" id="pill-0" onclick="goTo(0)">⚡ Wonder</a>
+    <a class="prog-step" id="pill-1" onclick="goTo(1)">📚 Discover</a>
+    <a class="prog-step" id="pill-2" onclick="goTo(2)">🧱 Exponent Rules</a>
+    <a class="prog-step" id="pill-3" onclick="goTo(3)">√ Roots</a>
+    <a class="prog-step" id="pill-4" onclick="goTo(4)">🔭 Sci Notation</a>
+    <a class="prog-step" id="pill-5" onclick="goTo(5)">🌍 Real Life</a>
+    <a class="prog-step" id="pill-6" onclick="goTo(6)">💭 Reflect</a>
+    <a class="prog-step" id="pill-7" onclick="goTo(7)">📤 Submit</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+  <!-- ══ SECTION 0: WONDER ══ -->
+  <div class="section active" id="sec-0">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">The Big Question</span></div>
+    <h2>How do scientists write numbers too big to say?</h2>
+    <p class="lead">Fold a piece of paper in half and it's 2 layers thick. Fold again: 4 layers. Again: 8. If you could fold it <strong>42 times</strong>, the stack would be 2⁴² layers thick — tall enough to reach the Moon.</p>
+    <div class="wonder-box">
+      <p>Exponents make numbers grow ridiculously fast. 2¹⁰ is about a thousand. 2²⁰ is about a million. 2³⁰ is about a billion. How can we compare, multiply and divide numbers like these without writing all the zeros?</p>
+    </div>
+    <p style="font-size:0.9rem;font-weight:700;color:var(--sky);margin-bottom:0.8rem;">🧠 Warm-up — true or false?</p>
+    <div style="background:white;border:2px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;">
+      <div id="warmupGrid" style="display:flex;flex-direction:column;gap:0.6rem;"></div>
+      <div id="warmupFb" style="margin-top:1rem;font-family:'DM Mono',monospace;font-size:0.82rem;min-height:1.2rem;color:var(--mint);"></div>
+    </div>
+    <div class="wonder-box mint-box">
+      <p>An exponent tells you how many times to <strong>multiply</strong> the base by itself. Every rule today comes from that one idea.</p>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 1: DISCOVER ══ -->
+  <div class="section" id="sec-1">
+    <div class="section-eyebrow"><div class="eyebrow-num num-lav">2</div><span class="eyebrow-label">Discover the Vocabulary</span></div>
+    <h2>📚 Words for powers</h2>
+    <p class="lead">Click each word to reveal its meaning.</p>
+    <div class="chip-row">
+      <span class="chip coral" onclick="revealTerm('pow')">⚡ Base & Exponent</span>
+      <span class="chip lav"   onclick="revealTerm('neg')">➖ Negative Exponent</span>
+      <span class="chip sun"   onclick="revealTerm('sq')">🟧 Square Root</span>
+      <span class="chip mint"  onclick="revealTerm('cb')">🧊 Cube Root</span>
+      <span class="chip sky"   onclick="revealTerm('sci')">🔭 Scientific Notation</span>
+    </div>
+    <div class="concept-reveal" id="cr-pow"><strong>Base & Exponent</strong> — in aⁿ, a is the base and n is the exponent: multiply a by itself n times.<br><br><em>5³ = 5 × 5 × 5 = 125</em></div>
+    <div class="concept-reveal lav-border" id="cr-neg"><strong>Negative Exponent</strong> — a⁻ⁿ means 1 ÷ aⁿ. A negative exponent makes a reciprocal, not a negative number.<br><br><em>2⁻³ = 1/2³ = 1/8</em></div>
+    <div class="concept-reveal sun-border" id="cr-sq"><strong>Square Root</strong> — √p is the side length of a square with area p. The equation x² = p has two solutions: ±√p.<br><br><em>x² = 49 → x = 7 or x = −7</em></div>
+    <div class="concept-reveal mint-border" id="cr-cb"><strong>Cube Root</strong> — ∛p is the edge of a cube with volume p. The equation x³ = p has exactly one solution.<br><br><em>x³ = 64 → x = 4</em></div>
+    <div class="concept-reveal sky-border" id="cr-sci"><strong>Scientific Notation</strong> — a number written as a × 10ⁿ, where 1 ≤ a &lt; 10 and n is an integer.<br><br><em>93,000,000 = 9.3 × 10⁷ · 0.00042 = 4.2 × 10⁻⁴</em></div>
+  </div>
+
+  <!-- ══ SECTION 2: RULES ══ -->
+  <div class="section" id="sec-2">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">3</div><span class="eyebrow-label">Investigation 1 · 8.EE.A.1</span></div>
+    <h2>🧱 Build the Exponent Rules</h2>
+    <p class="lead">Each tile is one factor of the base. Combine, divide and group the tiles and count what's left. The rules aren't magic. They're just <strong>counting factors</strong>. <strong>Predict first!</strong></p>
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="ru-prediction" placeholder="I think 2³ × 2⁴ = 2^___ because... I think 5⁶ ÷ 5² = 5^___ because... I think 3⁰ equals ___ because..."></textarea>
+    </div>
+    <div class="demo-zone">
+      <h3>🧱 Factor Tiles</h3>
+      <div class="hint">PICK A RULE · MOVE THE SLIDERS · WATCH THE FACTORS COMBINE, CANCEL OR GROUP</div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.8rem;">
+        <button class="dataset-btn rulebtn on" id="rb-prod" onclick="setRule('prod')">aᵐ × aⁿ</button>
+        <button class="dataset-btn rulebtn" id="rb-quot" onclick="setRule('quot')">aᵐ ÷ aⁿ</button>
+        <button class="dataset-btn rulebtn" id="rb-pow" onclick="setRule('pow')">(aᵐ)ⁿ</button>
+        <button class="dataset-btn rulebtn" id="rb-neg" onclick="setRule('neg')">a⁰ and a⁻ⁿ</button>
+      </div>
+      <div class="slrow">
+        <label class="sl">base a = <b id="baV"></b><input type="range" id="ba" min="2" max="10" value="2" oninput="drawRule()"></label>
+        <label class="sl">m = <b id="emV"></b><input type="range" id="em" min="0" max="6" value="3" oninput="drawRule()"></label>
+        <label class="sl">n = <b id="enV"></b><input type="range" id="en" min="0" max="6" value="4" oninput="drawRule()"></label>
+      </div>
+      <canvas class="cv" id="ruleCanvas" width="700" height="260"></canvas>
+      <div id="ruleOut" class="steps"></div>
+    </div>
+    <div class="predict-box" style="border-color:var(--mint);background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="ru-reflection" placeholder="When multiplying powers with the same base I... When dividing I... A power of a power... a⁰ = 1 because... a⁻ⁿ means..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 3: ROOTS ══ -->
+  <div class="section" id="sec-3">
+    <div class="section-eyebrow"><div class="eyebrow-num num-mint">4</div><span class="eyebrow-label">Investigation 2 · 8.EE.A.2</span></div>
+    <h2>√ Undo the Square, Undo the Cube</h2>
+    <p class="lead">Squaring makes an area from a side. A square root goes backwards: from an area to a side. Cube roots go from a volume back to an edge. Solve x² = p and x³ = p by thinking about shapes.</p>
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="rt-prediction" placeholder="I think x² = 36 has ___ solutions because... I think x³ = −8 has the solution ___ because..."></textarea>
+    </div>
+    <div class="demo-zone">
+      <h3>🟧 Area → Side · 🧊 Volume → Edge</h3>
+      <div class="hint">SLIDE THE AREA OR VOLUME · PERFECT SQUARES AND CUBES SHOW A GRID · OTHERS ARE IRRATIONAL</div>
+      <div class="slrow">
+        <label class="sl">Square area p = <b id="saV"></b><input type="range" id="sa" min="1" max="144" value="49" oninput="drawRoots()"></label>
+        <label class="sl">Cube volume p = <b id="cvV"></b><input type="range" id="cvol" min="1" max="216" value="64" oninput="drawRoots()"></label>
+      </div>
+      <canvas class="cv" id="rootCanvas" width="700" height="280"></canvas>
+      <div id="rootOut" class="steps"></div>
+      <div class="action-row" style="margin-top:0.8rem;font-family:'DM Mono',monospace;color:var(--sky);">Solve: x <select class="ninput" id="rtPow"><option value="2">²</option><option value="3">³</option></select> = <input class="ninput" type="number" id="rtP" value="81"><button class="btn btn-mint" onclick="solveRoot()">Solve ➜</button></div>
+      <div id="solveOut" class="steps"></div>
+    </div>
+    <div class="predict-box" style="border-color:var(--lavender);background:var(--lavender-pale);">
+      <h4 style="color:var(--lavender);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="rt-reflection" placeholder="x² = p has two answers because... x³ = p has only one because... The perfect squares up to 144 are... The perfect cubes up to 216 are..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 4: SCI NOTATION ══ -->
+  <div class="section" id="sec-4">
+    <div class="section-eyebrow"><div class="eyebrow-num num-sun">5</div><span class="eyebrow-label">Investigation 3 · 8.EE.A.3–4</span></div>
+    <h2>🔭 From Atoms to Galaxies</h2>
+    <p class="lead">Scientific notation puts every number in the form <strong>a × 10ⁿ</strong>. The exponent tells you the <strong>size</strong> at a glance. Compare objects, convert numbers and calculate with powers of ten.</p>
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="sn-prediction" placeholder="I think the Earth is about 10^___ times wider than a person. I think multiplying (2 × 10³)(4 × 10⁵) gives... because..."></textarea>
+    </div>
+    <div class="demo-zone">
+      <h3>📏 The Scale of the Universe</h3>
+      <div class="hint">EVERY STEP ON THIS LINE IS 10 TIMES BIGGER · PICK TWO OBJECTS TO COMPARE</div>
+      <div class="action-row" style="font-family:'DM Mono',monospace;color:var(--sky);">How many times bigger is <select class="ninput" id="obA" onchange="drawScale()"></select> than <select class="ninput" id="obB" onchange="drawScale()"></select>?</div>
+      <canvas class="cv" id="scaleCanvas" width="700" height="230"></canvas>
+      <div id="scaleOut" class="steps"></div>
+    </div>
+    <div class="demo-zone">
+      <h3>🧮 Scientific Notation Calculator</h3>
+      <div class="hint">CONVERT ANY NUMBER · OR MULTIPLY / DIVIDE TWO NUMBERS IN SCIENTIFIC NOTATION AND SEE EVERY STEP</div>
+      <div class="action-row" style="font-family:'DM Mono',monospace;color:var(--sky);">Convert: <input class="ninput wide" id="cvIn" value="0.00042"><button class="btn btn-lav" onclick="convertSci()">Convert ➜</button></div>
+      <div id="cvOut" class="steps"></div>
+      <div class="action-row" style="margin-top:0.8rem;font-family:'DM Mono',monospace;color:var(--sky);">
+        (<input class="ninput" id="ca" value="6"> × 10^<input class="ninput" id="ce" value="8" style="width:60px">)
+        <select class="ninput" id="cop"><option>×</option><option>÷</option><option>+</option><option>−</option></select>
+        (<input class="ninput" id="cb" value="3" > × 10^<input class="ninput" id="cf" value="5" style="width:60px">)
+        <button class="btn btn-coral" onclick="calcSci()">= ➜</button>
+      </div>
+      <div id="calcOut" class="steps"></div>
+    </div>
+    <div class="predict-box" style="border-color:var(--mint);background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="sn-reflection" placeholder="To compare two numbers in scientific notation I look at... To multiply I... To divide I... When adding I had to..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 5: REAL LIFE ══ -->
+  <div class="section" id="sec-5">
+    <div class="section-eyebrow"><div class="eyebrow-num num-sky">6</div><span class="eyebrow-label">Real-World Connections</span></div>
+    <h2>Powers of ten in the real world 🌍</h2>
+    <p class="lead">Scientists, engineers and programmers use exponents every day.</p>
+    <div class="world-grid">
+      <div class="world-card coral-bg"><div class="wc-icon">💾</div><h4>Computer Memory</h4><p>Storage doubles in powers of 2: 2¹⁰ bytes ≈ 1 kilobyte, 2³⁰ ≈ 1 gigabyte.</p></div>
+      <div class="world-card mint-bg"><div class="wc-icon">🦠</div><h4>Biology</h4><p>A bacterium is about 2 × 10⁻⁶ m long. Bacteria that double every 20 minutes grow by powers of 2.</p></div>
+      <div class="world-card lav-bg"><div class="wc-icon">🚀</div><h4>Space</h4><p>Light travels 3 × 10⁸ m every second. A light-year is about 9.46 × 10¹⁵ m.</p></div>
+      <div class="world-card sun-bg"><div class="wc-icon">🌎</div><h4>Population</h4><p>About 8.1 × 10⁹ people live on Earth. That's 8,100,000,000.</p></div>
+    </div>
+    <div class="divider"></div>
+    <div class="demo-zone">
+      <h3>🎯 Real-World Problem Solver</h3>
+      <div class="hint">SOLVE · THEN REVEAL</div>
+      <div id="realProblems" style="display:flex;flex-direction:column;gap:0.8rem;"></div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 6: REFLECT ══ -->
+  <div class="section" id="sec-6">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">7</div><span class="eyebrow-label">Synthesis & Wonder</span></div>
+    <h2>💭 Let's think it through</h2>
+    <p class="lead">Explain your thinking in full sentences.</p>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q1 /</span> A classmate says 2³ × 2⁴ = 4⁷. Explain the mistake using factor tiles.</div><textarea placeholder="2³ means... and 2⁴ means... altogether there are ___ factors of ___ so..."></textarea></div>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q2 /</span> Use a pattern to explain why 5⁰ = 1 and 5⁻² = 1/25.</div><textarea placeholder="5³ = 125, 5² = 25, 5¹ = 5... each step divides by ___ so..."></textarea></div>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q3 /</span> Why does x² = 25 have two solutions but x³ = 27 has only one?</div><textarea placeholder="(−5)² = ___ but (−3)³ = ___ so..."></textarea></div>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q4 /</span> Which is bigger: 3 × 10⁸ or 9 × 10⁷? By how many times? Explain how you know.</div><textarea placeholder="I compare the exponents first... 3 × 10⁸ = 30 × 10⁷ so..."></textarea></div>
+    <div class="divider"></div>
+    <div class="congrats">
+      <div class="trophy">🎉</div>
+      <h2>You've powered up!</h2>
+      <p>Today you covered all of Grade 8 Expressions & Equations cluster A — the properties of integer exponents, square and cube roots, and scientific notation for estimating, comparing and calculating.</p>
+      <div class="summary-chips">
+        <span class="summary-chip">aᵐ·aⁿ = aᵐ⁺ⁿ</span>
+        <span class="summary-chip">aᵐ ÷ aⁿ = aᵐ⁻ⁿ</span>
+        <span class="summary-chip">(aᵐ)ⁿ = aᵐⁿ</span>
+        <span class="summary-chip">a⁰ = 1</span>
+        <span class="summary-chip">a⁻ⁿ = 1/aⁿ</span>
+        <span class="summary-chip">x² = p → ±√p</span>
+        <span class="summary-chip">a × 10ⁿ</span>
+        <span class="summary-chip">8.EE.A.1–4</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="sec-7"></div>
+
+  <div class="nav-row">
+    <button class="btn-prev" id="prevBtn" onclick="navigate(-1)" disabled>← Back</button>
+    <button class="btn-next" id="nextBtn" onclick="navigate(1)">Next <span>→</span></button>
+  </div>
+</div>
+
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+
+<script>
+
+const LESSON={name:'Power Up!',emoji:'⚡',grade:'Grade 8 · Expressions & Equations',stds:'8.EE.A.1 · 8.EE.A.2 · 8.EE.A.3 · 8.EE.A.4',
+  inv:[['ru','🧱','Section 3 — Exponent Rules'],['rt','√','Section 4 — Square & Cube Roots'],['sn','🔭','Section 5 — Scientific Notation']],
+  qs:['Q1 — The 4⁷ mistake','Q2 — Why 5⁰ = 1','Q3 — Two solutions vs one','Q4 — Comparing powers of ten']};
+const WARM={opts:['True','False'],done:'🎉 Perfect! You already know your powers.',fail:'Remember: an exponent counts repeated multiplication.',items:[
+  {t:'2³ = 6',a:1,e:'False: 2³ = 2 × 2 × 2 = 8.'},
+  {t:'7⁰ = 1',a:0,e:'True: any non-zero number to the power 0 is 1.'},
+  {t:'10⁻² = 0.01',a:0,e:'True: 10⁻² = 1/10² = 1/100.'},
+  {t:'3² × 3⁴ = 3⁸',a:1,e:'False: 2 factors + 4 factors = 3⁶.'},
+  {t:'4.5 × 10³ = 4,500',a:0,e:'True: move the decimal 3 places right.'},
+]};
+const SUP={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻'};
+const sup=n=>String(n).split('').map(c=>SUP[c]||c).join('');
+function onSection(n){ if(n===2) drawRule(); if(n===3){ drawRoots(); solveRoot(); } if(n===4){ drawScale(); convertSci(); calcSci(); } }
+
+// ══ RULES ══
+let rule='prod';
+function setRule(r){ rule=r; document.querySelectorAll('.rulebtn').forEach(b=>b.classList.toggle('on',b.id==='rb-'+r)); drawRule(); }
+function tile(ctx,x,y,a,col,crossed){ ctx.fillStyle=col; ctx.globalAlpha=crossed?0.25:0.85; ctx.beginPath(); ctx.roundRect(x,y,40,40,8); ctx.fill(); ctx.globalAlpha=1; ctx.fillStyle='white'; ctx.font='bold 16px Nunito'; ctx.textAlign='center'; ctx.fillText(a,x+20,y+26); if(crossed){ ctx.strokeStyle=C.coral; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(x+4,y+4); ctx.lineTo(x+36,y+36); ctx.stroke(); } }
+function drawRule(){
+  const a=num('ba'), m=num('em'), n=num('en'); $('baV').textContent=a; $('emV').textContent=m; $('enV').textContent=n;
+  const cv=$('ruleCanvas'), ctx=clr(cv); ctx.textAlign='left'; let out='';
+  const label=(t,y)=>{ ctx.fillStyle=C.sky; ctx.font='bold 13px Nunito'; ctx.textAlign='left'; ctx.fillText(t,16,y); };
+  const val=k=> k>=0? Math.pow(a,k).toLocaleString() : '1/'+Math.pow(a,-k).toLocaleString();
+  if(rule==='prod'){
+    label(`${a}${sup(m)} × ${a}${sup(n)}`,30);
+    for(let i=0;i<m;i++) tile(ctx,16+i*46,50,a,C.coral); for(let j=0;j<n;j++) tile(ctx,16+(m+j)*46+(m?14:0),50,a,C.lav);
+    label(`= ${m+n} factors of ${a} = ${a}${sup(m+n)}`,130);
+    for(let i=0;i<m+n;i++) tile(ctx,16+i*46,150,a,i<m?C.coral:C.lav);
+    out=`${a}${sup(m)} × ${a}${sup(n)} = (${Array(m).fill(a).join('·')||'1'}) × (${Array(n).fill(a).join('·')||'1'})\n= ${a}${sup(m)}⁺${sup(n)} = ${a}${sup(m+n)} = ${val(m+n)}\n\nRULE: same base, MULTIPLY → ADD the exponents.  aᵐ × aⁿ = aᵐ⁺ⁿ`;
+  } else if(rule==='quot'){
+    label(`${a}${sup(m)}  (top)`,30); label(`${a}${sup(n)}  (bottom)`,140);
+    const c=Math.min(m,n);
+    for(let i=0;i<m;i++) tile(ctx,150+i*46,40,a,C.coral,i<c); ctx.strokeStyle=C.sky; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(140,100); ctx.lineTo(150+Math.max(m,n,1)*46,100); ctx.stroke();
+    for(let j=0;j<n;j++) tile(ctx,150+j*46,110,a,C.lav,j<c);
+    const k=m-n; label(`${c} pair${c===1?'':'s'} cancel (${a}/${a} = 1) → ${k>=0? `${k} factor${k===1?'':'s'} left on top` : `${-k} factor${k===-1?'':'s'} left on the bottom`}`,200);
+    out=`${a}${sup(m)} ÷ ${a}${sup(n)}: ${c} matching factor${c===1?'':'s'} cancel\n= ${a}${sup(m)}⁻${sup(n)} = ${a}${sup(k)} = ${val(k)}\n${k===0?'Everything cancelled → the answer is 1. That is why a⁰ = 1!\n':k<0?`More factors on the bottom → ${a}${sup(k)} = 1/${a}${sup(-k)}. That is what a negative exponent means!\n`:''}\nRULE: same base, DIVIDE → SUBTRACT the exponents.  aᵐ ÷ aⁿ = aᵐ⁻ⁿ`;
+  } else if(rule==='pow'){
+    label(`(${a}${sup(m)})${sup(n)}  =  ${n} group${n===1?'':'s'} of ${a}${sup(m)}`,30);
+    const cols=[C.coral,C.lav,C.mint,C.gold,C.sky,'#d26aa6'];
+    for(let g=0;g<n;g++) for(let i=0;i<m;i++){ const idx=g*m+i, row=Math.floor(idx/14), col=idx%14; tile(ctx,16+col*48,46+row*48,a,cols[g%6]); }
+    out=`(${a}${sup(m)})${sup(n)} = ${Array(n).fill(a+sup(m)).join(' × ')||'1'}\n= ${n} groups × ${m} factors = ${m*n} factors\n= ${a}${sup(m*n)} = ${m*n>15?Math.pow(a,m*n).toExponential(3):val(m*n)}\n\nRULE: power of a power → MULTIPLY the exponents.  (aᵐ)ⁿ = aᵐⁿ`;
+  } else {
+    label(`Watch the pattern: each step to the right DIVIDES by ${a}`,26);
+    const ks=[3,2,1,0,-1,-2,-3]; ks.forEach((k,i)=>{ const x=20+i*96; ctx.fillStyle=k>0?C.coral:k===0?C.gold:C.lav; ctx.globalAlpha=0.15; ctx.fillRect(x,50,86,150); ctx.globalAlpha=1; ctx.fillStyle=C.sky; ctx.textAlign='center'; ctx.font='bold 20px Fredoka One, cursive'; ctx.fillText(a+sup(k),x+43,90); ctx.font='14px DM Mono, monospace'; ctx.fillText(val(k),x+43,130); if(i<6){ ctx.fillStyle=C.muted; ctx.font='11px DM Mono'; ctx.fillText('÷'+a,x+91,175); } });
+    ctx.textAlign='left'; ctx.fillStyle=C.muted; ctx.font='11px DM Mono'; ctx.fillText('(slider n picks the negative exponent below)',20,230);
+    out=`${a}¹ ÷ ${a} = ${a}⁰ = 1   (any non-zero base)\n${a}⁰ ÷ ${a} = ${a}⁻¹ = 1/${a}\n${a}${sup(-n)} = 1/${a}${sup(n)} = ${val(-n)}${n?' = '+r3(Math.pow(a,-n)):''}\n\nRULES: a⁰ = 1 · a⁻ⁿ = 1/aⁿ  (negative exponent → reciprocal, NOT a negative number)`;
+  }
+  $('ruleOut').textContent=out;
+}
+
+// ══ ROOTS ══
+function drawRoots(){
+  const p=num('sa'), v=num('cvol'); $('saV').textContent=p; $('cvV').textContent=v;
+  const cv=$('rootCanvas'), ctx=clr(cv), s=Math.sqrt(p), e=Math.cbrt(v), ps=Number.isInteger(s), pc=Math.abs(e-Math.round(e))<1e-9;
+  const S=200, sz=S*s/12, x0=40, y0=250-sz;
+  ctx.fillStyle='rgba(232,96,60,0.25)'; ctx.fillRect(x0,y0,sz,sz); ctx.strokeStyle=C.coral; ctx.lineWidth=2.5; ctx.strokeRect(x0,y0,sz,sz);
+  if(ps){ ctx.strokeStyle='rgba(232,96,60,0.5)'; ctx.lineWidth=1; for(let i=1;i<s;i++){ ctx.beginPath(); ctx.moveTo(x0+i*sz/s,y0); ctx.lineTo(x0+i*sz/s,y0+sz); ctx.moveTo(x0,y0+i*sz/s); ctx.lineTo(x0+sz,y0+i*sz/s); ctx.stroke(); } }
+  ctx.fillStyle=C.sky; ctx.font='bold 13px Nunito'; ctx.textAlign='center'; ctx.fillText(`side = √${p} ${ps?'= '+s:'≈ '+r2(s)}`,x0+sz/2,y0-8); ctx.fillText(`area ${p}`,x0+sz/2,y0+sz/2+5);
+  // cube (oblique)
+  const k=150*e/6, cx=430, cy=250, d=k*0.45;
+  const F=[[cx,cy],[cx+k,cy],[cx+k,cy-k],[cx,cy-k]], B=F.map(([x,y])=>[x+d,y-d]);
+  const poly=(pts,col)=>{ ctx.beginPath(); pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y)); ctx.closePath(); ctx.fillStyle=col; ctx.fill(); ctx.strokeStyle=C.mint; ctx.lineWidth=2; ctx.stroke(); };
+  poly([F[3],F[2],B[2],B[3]],'rgba(58,175,133,0.35)'); poly([F[1],B[1],B[2],F[2]],'rgba(58,175,133,0.5)'); poly(F,'rgba(58,175,133,0.2)');
+  if(pc){ const n=Math.round(e); ctx.strokeStyle='rgba(58,175,133,0.6)'; ctx.lineWidth=1; for(let i=1;i<n;i++){ const t=i*k/n; ctx.beginPath(); ctx.moveTo(cx+t,cy); ctx.lineTo(cx+t,cy-k); ctx.lineTo(cx+t+d,cy-k-d); ctx.moveTo(cx,cy-t); ctx.lineTo(cx+k,cy-t); ctx.lineTo(cx+k+d,cy-t-d); ctx.stroke(); } }
+  ctx.fillStyle=C.sky; ctx.fillText(`edge = ∛${v} ${pc?'= '+Math.round(e):'≈ '+r2(e)}`,cx+k/2,cy+20); ctx.fillText(`volume ${v}`,cx+k/2+d/2,cy-k-d-8);
+  $('rootOut').textContent=`Square: area ${p} → side √${p} ${ps?`= ${s} exactly (perfect square, ${s} × ${s} = ${p})`:`≈ ${r3(s)} (not a perfect square → irrational)`}\nCube:   volume ${v} → edge ∛${v} ${pc?`= ${Math.round(e)} exactly (perfect cube, ${Math.round(e)}³ = ${v})`:`≈ ${r3(e)} (not a perfect cube → irrational)`}\n\nPerfect squares: 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144\nPerfect cubes:   1, 8, 27, 64, 125, 216`;
+}
+function solveRoot(){
+  const k=+$('rtPow').value, p=num('rtP'); let s;
+  if(k===2){ if(p<0) s=`x² = ${fmt(p)}\nNo real solution: any number squared is 0 or positive.`; else { const r=Math.sqrt(p), ex=Number.isInteger(r); s=`x² = ${p}\nx = √${p}  or  x = −√${p}\nx = ${ex?r:'≈ '+r3(r)}  or  x = ${ex?'−'+r:'≈ −'+r3(r)}\nCheck: (${ex?r:r3(r)})² = ${p} and (−${ex?r:r3(r)})² = ${p} ✓  → TWO solutions${p===0?' (both 0)':''}`; } }
+  else { const r=Math.cbrt(p), ex=Math.abs(r-Math.round(r))<1e-9; s=`x³ = ${fmt(p)}\nx = ∛${fmt(p)} = ${ex?fmt(Math.round(r)):'≈ '+fmt(r3(r))}\nCheck: (${ex?fmt(Math.round(r)):fmt(r3(r))})³ = ${fmt(p)} ✓ → ONE solution${p<0?' (a negative cubed stays negative!)':''}`; }
+  $('solveOut').textContent=s;
+}
+
+// ══ SCALE ══
+const OBJ=[['Hydrogen atom',1.1e-10],['Virus',1e-7],['Red blood cell',8e-6],['Grain of sand',5e-4],['Ant',4e-3],['Person',1.7],['Blue whale',30],['Mount Everest',8.8e3],['Earth (diameter)',1.27e7],['Earth → Moon',3.84e8],['Earth → Sun',1.5e11],['Milky Way',9.5e20]];
+function sciParts(x){ if(x===0) return [0,0]; let e=Math.floor(Math.log10(Math.abs(x))); let a=x/Math.pow(10,e); a=Math.round(a*1000)/1000; if(Math.abs(a)>=10){ a/=10; e++; } return [a,e]; }
+const sciStr=(x)=>{ const [a,e]=sciParts(x); return `${a} × 10${sup(e)}`; };
+function drawScale(){
+  const A=+$('obA').value, B=+$('obB').value, cv=$('scaleCanvas'), ctx=clr(cv), pad=30, W=cv.width, X=v=>pad+(v+11)/(22+11)*(W-2*pad), y=150;
+  ctx.strokeStyle=C.axis; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(W-pad,y); ctx.stroke();
+  ctx.font='9px DM Mono, monospace'; ctx.textAlign='center'; for(let e=-10;e<=21;e++){ const x=X(e); ctx.strokeStyle=C.axis; ctx.beginPath(); ctx.moveTo(x,y-4); ctx.lineTo(x,y+4); ctx.stroke(); if(e%2===0){ ctx.fillStyle=C.muted; ctx.fillText('10'+sup(e),x,y+18); } }
+  OBJ.forEach(([nm,v],i)=>{ const x=X(Math.log10(v)), hi=i===A||i===B; dot(ctx,x,y,hi?(i===A?C.coral:C.lav):C.axis,hi?7:4); ctx.save(); ctx.translate(x,y-12); ctx.rotate(-Math.PI/4); ctx.fillStyle=hi?(i===A?C.coral:C.lav):C.muted; ctx.font=(hi?'bold 11px':'10px')+' Nunito'; ctx.textAlign='left'; ctx.fillText(nm,0,0); ctx.restore(); });
+  ctx.fillStyle=C.sky; ctx.font='bold 11px Nunito'; ctx.textAlign='left'; ctx.fillText('size in metres (log scale)',pad,y+40);
+  const [a1,e1]=sciParts(OBJ[A][1]), [a2,e2]=sciParts(OBJ[B][1]), ratio=OBJ[A][1]/OBJ[B][1];
+  $('scaleOut').textContent=`${OBJ[A][0]}: ${a1} × 10${sup(e1)} m\n${OBJ[B][0]}: ${a2} × 10${sup(e2)} m\n\n(${a1} × 10${sup(e1)}) ÷ (${a2} × 10${sup(e2)}) = (${a1} ÷ ${a2}) × (10${sup(e1)} ÷ 10${sup(e2)})\n= ${r3(a1/a2)} × 10${sup(e1-e2)} ≈ ${sciStr(ratio)}\n→ ${ratio>=1?`The ${OBJ[A][0]} is about ${sciStr(ratio)} times as big.`:`The ${OBJ[A][0]} is SMALLER: the ${OBJ[B][0]} is about ${sciStr(1/ratio)} times as big.`}\nEstimate with powers of ten only: 10${sup(e1)} ÷ 10${sup(e2)} = 10${sup(e1-e2)}`;
+}
+function convertSci(){
+  const raw=$('cvIn').value.replace(/,/g,'').trim(), x=parseFloat(raw);
+  if(!isFinite(x)||x===0){ $('cvOut').textContent='Type a non-zero number like 93000000 or 0.00042.'; return; }
+  const [a,e]=sciParts(x);
+  $('cvOut').textContent=`${raw}\nMove the decimal point ${Math.abs(e)} place${Math.abs(e)===1?'':'s'} ${e>=0?'LEFT':'RIGHT'} to get a number between 1 and 10: ${a}\n${e>=0?'The number was big → positive exponent':'The number was small (less than 1) → negative exponent'}\n= ${a} × 10${sup(e)}`;
+}
+function calcSci(){
+  const a=num('ca'), e=Math.round(num('ce')), b=num('cb'), f=Math.round(num('cf')), op=$('cop').value; let s;
+  const A=a*Math.pow(10,e), B=b*Math.pow(10,f);
+  if(op==='×'){ const p=a*b, [na,ne]=sciParts(p); s=`(${a} × 10${sup(e)}) × (${b} × 10${sup(f)})\n= (${a} × ${b}) × (10${sup(e)} × 10${sup(f)})   ← regroup\n= ${r3(p)} × 10${sup(e+f)}   ← add exponents\n${(Math.abs(p)>=10||Math.abs(p)<1)?`= ${na} × 10${sup(ne)} × 10${sup(e+f)}\n= ${na} × 10${sup(ne+e+f)}   ← adjust so the first part is between 1 and 10`:'✓ already in scientific notation'}`; }
+  else if(op==='÷'){ if(!b){ $('calcOut').textContent='Cannot divide by 0.'; return; } const q=a/b, [na,ne]=sciParts(q); s=`(${a} × 10${sup(e)}) ÷ (${b} × 10${sup(f)})\n= (${a} ÷ ${b}) × (10${sup(e)} ÷ 10${sup(f)})   ← regroup\n= ${r3(q)} × 10${sup(e-f)}   ← subtract exponents\n${(Math.abs(q)>=10||Math.abs(q)<1)?`= ${na} × 10${sup(ne+e-f)}   ← adjust so the first part is between 1 and 10`:'✓ already in scientific notation'}`; }
+  else { const big=Math.max(e,f), aa=a*Math.pow(10,e-big), bb=b*Math.pow(10,f-big), t=op==='+'?aa+bb:aa-bb; s=`To ${op==='+'?'add':'subtract'}, the powers of ten must MATCH first.\nRewrite both with 10${sup(big)}: ${r3(aa)} × 10${sup(big)} ${op} ${r3(bb)} × 10${sup(big)}\n= ${r3(t)} × 10${sup(big)}\n= ${sciStr(op==='+'?A+B:A-B)}`; }
+  $('calcOut').textContent=s;
+}
+function init(){
+  $('obA').innerHTML=$('obB').innerHTML=OBJ.map((o,i)=>`<option value="${i}">${o[0]}</option>`).join(''); $('obA').value=8; $('obB').value=5;
+  drawRule(); drawRoots(); solveRoot(); drawScale(); convertSci(); calcSci();
+}
+const realP=[
+  {q:'Simplify (2⁵ × 2³) ÷ 2⁶. Give the answer as a power and as a number.', w:'2⁵ × 2³ = 2⁸\n2⁸ ÷ 2⁶ = 2²', a:'2² = 4'},
+  {q:'A cube-shaped box has a volume of 125 cm³. How long is each edge? What is the area of one face?', w:'∛125 = 5 cm\nface area = 5² = 25 cm²', a:'Edge 5 cm, face 25 cm²'},
+  {q:'The US population is about 3 × 10⁸ and the world population is about 8 × 10⁹. About how many times larger is the world population?', w:'(8 × 10⁹) ÷ (3 × 10⁸)\n= (8 ÷ 3) × 10¹\n≈ 2.7 × 10 = 27', a:'About 27 times larger'},
+  {q:'Light travels 3 × 10⁸ m per second. How far does it travel in one minute? Write the answer in scientific notation.', w:'60 s = 6 × 10¹\n(3 × 10⁸)(6 × 10¹) = 18 × 10⁹\n= 1.8 × 10¹⁰', a:'1.8 × 10¹⁰ metres'},
+  {q:'A human hair is 0.00008 m wide. Write this in scientific notation. Is it wider than a red blood cell (8 × 10⁻⁶ m)?', w:'0.00008 = 8 × 10⁻⁵\n(8 × 10⁻⁵) ÷ (8 × 10⁻⁶) = 10¹', a:'8 × 10⁻⁵ m; it is 10 times wider'},
+];
+// ══ SHARED WORKSHOP ENGINE (Farvour Explorations · Grade 8) ══
+const C = { sky:'#1e3a5f', coral:'#e8603c', mint:'#3aaf85', lav:'#7c6fcd', sun:'#f6c343', gold:'#c9962a', muted:'#7a8899', grid:'#e8eef4', axis:'#b8c4cc' };
+let currentSection=0; const totalSections=8;
+function goTo(n){
+  document.querySelectorAll('.section').forEach((s,i)=>s.classList.toggle('active',i===n));
+  document.querySelectorAll('.prog-step').forEach((p,i)=>{p.classList.toggle('active',i===n);p.classList.toggle('done',i<n);});
+  currentSection=n; document.getElementById('prevBtn').disabled=n===0;
+  const nb=document.getElementById('nextBtn');
+  if(n===totalSections-1){nb.textContent='✓ Complete!';nb.disabled=true;buildSummary();} else {nb.innerHTML='Next <span>→</span>';nb.disabled=false;}
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(typeof onSection==='function') onSection(n);
+}
+function navigate(d){ goTo(Math.min(Math.max(currentSection+d,0),totalSections-1)); }
+const r2=x=>Math.round(x*100)/100, r3=x=>Math.round(x*1000)/1000;
+const fmt=x=>{ const v=Math.round(x*1000)/1000; return (v<0?'−':'')+Math.abs(v); };
+function clr(cv){ const ctx=cv.getContext('2d'); ctx.clearRect(0,0,cv.width,cv.height); ctx.fillStyle='#fafbfc'; ctx.fillRect(0,0,cv.width,cv.height); return ctx; }
+const $=id=>document.getElementById(id), num=id=>+document.getElementById(id).value;
+function niceStep(range,target){ const raw=range/(target||10), p=Math.pow(10,Math.floor(Math.log10(raw))), m=raw/p; return (m<1.5?1:m<3?2:m<7?5:10)*p; }
+// coordinate-plane helper: returns {X,Y,ctx} mapping maths coords to canvas
+function plane(cv,xmin,xmax,ymin,ymax,opt={}){
+  const ctx=clr(cv), pad=opt.pad||30, W=cv.width, H=cv.height;
+  const X=x=>pad+(x-xmin)/(xmax-xmin)*(W-2*pad), Y=y=>H-pad-(y-ymin)/(ymax-ymin)*(H-2*pad);
+  const sx=opt.sx||niceStep(xmax-xmin,10), sy=opt.sy||niceStep(ymax-ymin,8);
+  ctx.strokeStyle=C.grid; ctx.lineWidth=1;
+  for(let x=Math.ceil(xmin/sx)*sx;x<=xmax+1e-9;x+=sx){ ctx.beginPath(); ctx.moveTo(X(x),Y(ymin)); ctx.lineTo(X(x),Y(ymax)); ctx.stroke(); }
+  for(let y=Math.ceil(ymin/sy)*sy;y<=ymax+1e-9;y+=sy){ ctx.beginPath(); ctx.moveTo(X(xmin),Y(y)); ctx.lineTo(X(xmax),Y(y)); ctx.stroke(); }
+  ctx.strokeStyle=C.axis; ctx.lineWidth=2; const ax=Math.min(Math.max(0,xmin),xmax), ay=Math.min(Math.max(0,ymin),ymax);
+  ctx.beginPath(); ctx.moveTo(X(xmin),Y(ay)); ctx.lineTo(X(xmax),Y(ay)); ctx.moveTo(X(ax),Y(ymin)); ctx.lineTo(X(ax),Y(ymax)); ctx.stroke();
+  ctx.fillStyle=C.muted; ctx.font='10px DM Mono, monospace'; ctx.textAlign='center';
+  for(let x=Math.ceil(xmin/sx)*sx;x<=xmax+1e-9;x+=sx){ if(Math.abs(x)>1e-9) ctx.fillText(fmt(x),X(x),Y(ay)+13); }
+  ctx.textAlign='right'; for(let y=Math.ceil(ymin/sy)*sy;y<=ymax+1e-9;y+=sy){ if(Math.abs(y)>1e-9) ctx.fillText(fmt(y),X(ax)-4,Y(y)+3); }
+  if(opt.xl){ ctx.textAlign='right'; ctx.fillStyle=C.sky; ctx.font='bold 11px Nunito, sans-serif'; ctx.fillText(opt.xl,W-pad,Y(ay)-6); }
+  if(opt.yl){ ctx.textAlign='left'; ctx.fillStyle=C.sky; ctx.font='bold 11px Nunito, sans-serif'; ctx.fillText(opt.yl,X(ax)+6,pad-8); }
+  return {ctx,X,Y,xmin,xmax,ymin,ymax};
+}
+function dot(ctx,x,y,col,r=5){ ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fillStyle=col; ctx.fill(); }
+function lineFn(P,f,col,w=3,dash){ const {ctx,X,Y,xmin,xmax}=P; ctx.strokeStyle=col; ctx.lineWidth=w; if(dash) ctx.setLineDash(dash); ctx.beginPath(); let first=true; for(let i=0;i<=300;i++){ const x=xmin+(xmax-xmin)*i/300, y=f(x); if(!isFinite(y)){first=true;continue;} if(first){ctx.moveTo(X(x),Y(y));first=false;} else ctx.lineTo(X(x),Y(y)); } ctx.stroke(); ctx.setLineDash([]); }
+
+// ══ VOCAB ══
+let openTerm=null;
+function revealTerm(k){ if(openTerm) $('cr-'+openTerm).classList.remove('show'); if(openTerm===k){openTerm=null;return;} $('cr-'+k).classList.add('show'); openTerm=k; }
+
+// ══ WARM-UP (WARM = {opts:['A','B'], items:[{t,a:0|1,e}], done, fail}) ══
+let wDone=0,wOk=0;
+function buildWarm(){ if(typeof WARM==='undefined') return; const o=WARM.opts;
+  $('warmupGrid').innerHTML=WARM.items.map((q,i)=>`<div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;background:#f5f7fa;border-radius:10px;padding:0.7rem 1rem;"><div style="flex:1;min-width:220px;font-size:0.88rem;font-weight:600;color:#3a4a5a;">${q.t}</div><div style="display:flex;gap:0.4rem;">${o.map((lab,k)=>`<button onclick="ansWarm(${i},${k})" style="background:${k?'var(--coral-pale)':'var(--mint-pale)'};border:2px solid ${k?'#f8c5b8':'#b8ebd8'};border-radius:8px;padding:0.35rem 0.8rem;font-family:'Fredoka One',cursive;font-size:0.85rem;color:${k?'var(--coral)':'var(--mint)'};cursor:pointer;">${lab}</button>`).join('')}</div><div id="wfb-${i}" style="font-family:'DM Mono',monospace;font-size:0.72rem;width:100%;min-height:1rem;"></div></div>`).join(''); }
+function ansWarm(i,a){ const fb=$('wfb-'+i); if(fb.textContent) return; wDone++; const ok=a===WARM.items[i].a; if(ok) wOk++; fb.textContent=(ok?'✓ ':'✗ ')+WARM.items[i].e; fb.style.color=ok?C.mint:C.coral;
+  if(wDone===WARM.items.length){ const el=$('warmupFb'); el.style.color=wOk===wDone?C.mint:C.coral; el.textContent= wOk===wDone?WARM.done:`${wOk}/${wDone}. ${WARM.fail}`; } }
+
+// ══ REAL-WORLD PROBLEMS (realP = [{q,w,a}]) ══
+function buildReal(){ if(typeof realP==='undefined') return;
+  $('realProblems').innerHTML=realP.map((p,i)=>`<div style="background:#f5f7fa;border-radius:12px;padding:1.2rem;"><p style="font-size:0.9rem;line-height:1.65;color:#3a4a5a;margin-bottom:0.8rem;"><strong>Problem ${i+1}:</strong> ${p.q}</p><button id="rpb${i}" onclick="revealRP(${i})" style="background:var(--lavender);color:white;border:none;border-radius:8px;padding:0.5rem 1.1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;cursor:pointer;">Show solution</button><div id="rpa${i}" style="display:none;margin-top:0.8rem;font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--mint);line-height:1.8;white-space:pre-line;"></div></div>`).join(''); }
+function revealRP(i){ const el=$('rpa'+i); el.style.display='block'; el.textContent=`Working:\n${realP[i].w}\n\n✓ Answer: ${realP[i].a}`; $('rpb'+i).style.display='none'; }
+
+// ══ SUBMIT PAGE (LESSON = {name, emoji, grade, stds, inv:[[prefix,icon,title]], qs:[label]}) ══
+function buildSubmit(){ const L=LESSON;
+  $('sec-7').innerHTML=`<div class="section-eyebrow"><div class="eyebrow-num num-mint">8</div><span class="eyebrow-label">Your Completed Work</span></div>
+  <h2>📤 Ready to Share</h2>
+  <p class="lead">Here's everything you worked on today. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> directly to your teacher.</p>
+  <div class="summary-section" style="background:var(--sky);color:white;border-color:var(--sky);"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;align-items:center;">
+    <div><div style="font-family:'DM Mono',monospace;font-size:0.7rem;opacity:0.6;margin-bottom:0.3rem;">STUDENT</div><div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div></div>
+    <div style="text-align:right;"><div style="font-family:'DM Mono',monospace;font-size:0.7rem;opacity:0.6;margin-bottom:0.3rem;">LESSON</div><div style="font-family:'Fredoka One',cursive;font-size:1rem;">${L.name} ${L.emoji}</div><div style="font-family:'DM Mono',monospace;font-size:0.72rem;opacity:0.6;" id="summaryDate"></div></div></div></div>
+  ${L.inv.map(([p,ic,t])=>`<div class="summary-section"><h3>${ic} ${t}</h3><div class="sum-label">Prediction</div><div class="summary-answer" id="sum-${p}-pred"></div><div class="sum-label">Reflection</div><div class="summary-answer" id="sum-${p}-ref"></div></div>`).join('')}
+  <div class="summary-section"><h3>💭 Section 7 — Reflections</h3>${L.qs.map((q,i)=>`<div class="sum-label">${q}</div><div class="summary-answer" id="sum-q${i+1}"></div>`).join('')}</div>
+  <div class="share-buttons"><button class="share-btn copy" onclick="copyResults()">📋 Copy My Results</button><button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button><button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button></div>
+  <div class="copy-confirm" id="copyConfirm"></div>
+  <div style="margin-top:1.5rem;background:var(--sun-pale);border:2px dashed var(--sun);border-radius:12px;padding:1.2rem 1.4rem;"><p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#b8860b;margin-bottom:0.8rem;">📋 How to submit your work:</p>
+  <p style="font-size:0.82rem;color:#b8860b;font-family:'DM Mono',monospace;line-height:2;"><strong>📋 Copy My Results</strong> — Copies all your answers. Open Google Classroom, click your assignment, paste, and submit.<br><strong>📧 Email to Teacher</strong> — Opens your email app with your answers already typed. Add your teacher's address and send.<br><strong>🖨️ Print / Save PDF</strong> — Mac: "Save as PDF" bottom left · Windows: "Microsoft Print to PDF".</p></div>`; }
+const val=id=>(($(id)||{}).value||'').trim();
+function fill(id,t){ const el=$(id); el.textContent=t||'Not answered'; el.classList.toggle('empty',!t); }
+function refls(){ return [...document.querySelectorAll('#sec-6 .reflection-card textarea')].map(t=>t.value.trim()); }
+const dateStr=()=>new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+function buildSummary(){ $('summaryName').textContent=val('studentName')||'Student'; $('summaryDate').textContent=dateStr();
+  LESSON.inv.forEach(([p])=>{ fill(`sum-${p}-pred`,val(p+'-prediction')); fill(`sum-${p}-ref`,val(p+'-reflection')); });
+  refls().forEach((t,i)=>{ if($('sum-q'+(i+1))) fill('sum-q'+(i+1),t); }); }
+function buildPlainText(){ const r=refls(), na=x=>x||'Not answered', L=LESSON, bar='===================================================';
+  return `${L.name.toUpperCase()} ${L.emoji} — STUDENT SUBMISSION\n${bar}\nStudent: ${val('studentName')||'Student'}\nDate: ${dateStr()}\nLesson: ${L.grade}\nStandards: ${L.stds}\n\n`+
+  L.inv.map(([p,ic,t])=>`── ${t.toUpperCase()} ──\nPrediction:\n${na(val(p+'-prediction'))}\nReflection:\n${na(val(p+'-reflection'))}\n`).join('\n')+
+  `\n── REFLECTIONS ──\n`+L.qs.map((q,i)=>`${q}\n${na(r[i])}`).join('\n')+`\n\n${bar}\n© 2026 Farvour Explorations\nSubmitted via ${L.name} · Interactive Digital Lesson`; }
+function copyResults(){ buildSummary(); navigator.clipboard.writeText(buildPlainText()).then(()=>{ const el=$('copyConfirm'); el.textContent='✓ Copied! Now paste into Google Classroom or your assignment.'; setTimeout(()=>el.textContent='',4000); }).catch(()=>{ $('copyConfirm').textContent='⚠️ Could not copy — try selecting manually.'; }); }
+function emailResults(){ const n=val('studentName')||'Student'; window.location.href=`mailto:?subject=${encodeURIComponent(LESSON.name+' — '+n)}&body=${encodeURIComponent(buildPlainText())}`; }
+window.addEventListener('load',()=>{ buildWarm(); buildReal(); buildSubmit(); if(typeof init==='function') init(); });
+</script>
+</body>
+</html>
+
