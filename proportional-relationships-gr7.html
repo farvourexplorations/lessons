@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Hidden Constant 🔑 · Grade 7 Proportional Relationships</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Fredoka+One&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #1e3a5f; --sky-mid: #2d5282;
+    --sun: #f6c343; --sun-pale: #fef9e7;
+    --coral: #e8603c; --coral-pale: #fdf0ec;
+    --mint: #3aaf85; --mint-pale: #e8f8f2;
+    --lavender: #7c6fcd; --lavender-pale: #f0eefb;
+    --paper: #fffef9; --ink: #1a2332;
+    --muted: #7a8899; --border: rgba(0,0,0,0.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:linear-gradient(160deg,#0f2540 0%,#1e3a5f 40%,#2d5282 100%); min-height:100vh; font-family:'Nunito',sans-serif; color:var(--ink); overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image: radial-gradient(1px 1px at 10% 15%,rgba(255,255,255,0.6) 0%,transparent 100%), radial-gradient(1.5px 1.5px at 25% 40%,rgba(255,255,255,0.4) 0%,transparent 100%), radial-gradient(1px 1px at 45% 8%,rgba(255,255,255,0.5) 0%,transparent 100%), radial-gradient(2px 2px at 65% 22%,rgba(255,255,255,0.3) 0%,transparent 100%), radial-gradient(1px 1px at 80% 5%,rgba(255,255,255,0.6) 0%,transparent 100%), radial-gradient(1.5px 1.5px at 92% 35%,rgba(255,255,255,0.4) 0%,transparent 100%); pointer-events:none; z-index:0; }
+
+  /* ── HERO ── */
+  .hero { position:relative; z-index:1; text-align:center; padding:3.5rem 2rem 2rem; color:white; }
+  .hero-badge { display:inline-block; background:var(--sun); color:var(--sky); font-family:'Fredoka One',cursive; font-size:0.85rem; letter-spacing:0.05em; padding:0.35rem 1.2rem; border-radius:20px; margin-bottom:1.2rem; box-shadow:0 2px 12px rgba(246,195,67,0.4); }
+  .hero h1 { font-family:'Fredoka One',cursive; font-size:clamp(2.4rem,6vw,4rem); line-height:1.1; margin-bottom:0.8rem; text-shadow:0 2px 20px rgba(0,0,0,0.3); }
+  .hero h1 .accent { color:var(--sun); }
+  .hero p.intro { font-size:1.05rem; line-height:1.7; opacity:0.88; max-width:560px; margin:0 auto 2rem; }
+  .name-bar { background:rgba(255,255,255,0.1); border:1.5px solid rgba(255,255,255,0.25); border-radius:12px; padding:0.6rem 1rem; display:flex; align-items:center; gap:0.8rem; max-width:420px; margin:0 auto 1rem; }
+  .name-bar label { font-size:0.78rem; font-weight:700; color:rgba(255,255,255,0.8); white-space:nowrap; font-family:'DM Mono',monospace; }
+  .name-bar input { flex:1; background:rgba(255,255,255,0.15); border:none; border-radius:8px; padding:0.4rem 0.8rem; font-family:'Nunito',sans-serif; font-size:0.9rem; font-weight:700; color:white; outline:none; }
+  .name-bar input::placeholder { color:rgba(255,255,255,0.45); font-weight:400; }
+  .progress-wrap { display:flex; justify-content:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.5rem; }
+  .prog-step { display:flex; align-items:center; gap:0.4rem; background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.2); border-radius:20px; padding:0.35rem 0.9rem; font-size:0.78rem; font-weight:700; color:rgba(255,255,255,0.7); cursor:pointer; transition:all 0.2s; }
+  .prog-step:hover,.prog-step.done { background:rgba(255,255,255,0.22); color:white; border-color:rgba(255,255,255,0.4); }
+  .prog-step.active { background:var(--sun); color:var(--sky); border-color:var(--sun); box-shadow:0 2px 12px rgba(246,195,67,0.4); }
+
+  /* ── SHEET ── */
+  .sheet { position:relative; z-index:1; background:var(--paper); border-radius:24px 24px 0 0; margin-top:1.5rem; padding:0 0 6rem; min-height:80vh; box-shadow:0 -8px 40px rgba(0,0,0,0.25); }
+  .section { padding:3rem 2rem 0; max-width:820px; margin:0 auto; display:none; }
+  .section.active { display:block; }
+  .section-eyebrow { display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem; }
+  .eyebrow-num { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Fredoka One',cursive; font-size:1rem; color:white; flex-shrink:0; }
+  .num-coral{background:var(--coral);} .num-mint{background:var(--mint);} .num-sun{background:var(--sun);color:var(--sky);} .num-lav{background:var(--lavender);} .num-sky{background:var(--sky-mid);}
+  .eyebrow-label { font-size:0.72rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); font-family:'DM Mono',monospace; }
+  .section h2 { font-family:'Fredoka One',cursive; font-size:clamp(1.6rem,3.5vw,2.2rem); color:var(--sky); margin-bottom:0.6rem; line-height:1.2; }
+  .section .lead { font-size:1rem; line-height:1.75; color:#3a4a5a; margin-bottom:1.8rem; }
+  .section .lead strong { color:var(--coral); }
+
+  /* ── WONDER BOX ── */
+  .wonder-box { background:linear-gradient(135deg,var(--sky) 0%,var(--sky-mid) 100%); color:white; border-radius:16px; padding:1.8rem 2rem; margin-bottom:1.8rem; position:relative; overflow:hidden; }
+  .wonder-box::after { content:'🤔'; position:absolute; right:1.5rem; top:50%; transform:translateY(-50%); font-size:3rem; opacity:0.3; }
+  .wonder-box p { font-size:1rem; line-height:1.7; font-style:italic; opacity:0.95; max-width:85%; }
+  .wonder-box strong { color:var(--sun); font-style:normal; }
+  .wonder-box.mint-box { background:linear-gradient(135deg,var(--mint) 0%,#2d9970 100%); }
+  .wonder-box.mint-box::after { content:'📊'; }
+
+  /* ── CHIPS ── */
+  .chip-row { display:flex; flex-wrap:wrap; gap:0.6rem; margin-bottom:1.5rem; }
+  .chip { padding:0.45rem 1rem; border-radius:20px; font-size:0.82rem; font-weight:700; cursor:pointer; transition:all 0.2s; border:2px solid transparent; }
+  .chip.coral{background:var(--coral-pale);color:var(--coral);border-color:#f8c5b8;} .chip.mint{background:var(--mint-pale);color:var(--mint);border-color:#b8ebd8;} .chip.sun{background:var(--sun-pale);color:#b8860b;border-color:#f8e0a0;} .chip.lav{background:var(--lavender-pale);color:var(--lavender);border-color:#d0caef;} .chip.sky{background:#e8f0f8;color:var(--sky-mid);border-color:#c0d4ea;}
+  .chip:hover { transform:scale(1.05); }
+  .concept-reveal { background:var(--paper); border-left:4px solid var(--coral); border-radius:0 10px 10px 0; padding:1rem 1.2rem; font-size:0.88rem; line-height:1.7; margin-top:0.5rem; display:none; animation:fadeIn 0.3s ease; }
+  .concept-reveal.show { display:block; }
+  .concept-reveal.mint-border{border-color:var(--mint);} .concept-reveal.sun-border{border-color:var(--sun);} .concept-reveal.lav-border{border-color:var(--lavender);} .concept-reveal.sky-border{border-color:var(--sky-mid);}
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);} }
+
+  /* ── PREDICT BOX ── */
+  .predict-box { background:var(--sun-pale); border:2px dashed var(--sun); border-radius:14px; padding:1.4rem 1.6rem; margin-bottom:1.5rem; }
+  .predict-box h4 { font-family:'Fredoka One',cursive; font-size:1rem; color:#b8860b; margin-bottom:0.8rem; }
+  .predict-box textarea { width:100%; border:1.5px solid rgba(0,0,0,0.12); border-radius:8px; padding:0.7rem; font-family:'Nunito',sans-serif; font-size:0.88rem; resize:vertical; min-height:64px; background:white; color:var(--ink); outline:none; transition:border-color 0.2s; }
+  .predict-box textarea:focus { border-color:var(--sun); }
+
+  /* ── DEMO ZONE ── */
+  .demo-zone { background:white; border:2px solid var(--border); border-radius:16px; padding:1.8rem; margin-bottom:1.5rem; }
+  .demo-zone h3 { font-family:'Fredoka One',cursive; font-size:1.2rem; color:var(--sky); margin-bottom:0.3rem; }
+  .demo-zone .hint { font-size:0.78rem; color:var(--muted); font-family:'DM Mono',monospace; margin-bottom:1.3rem; }
+
+  /* ── BUTTONS ── */
+  .btn { border:none; border-radius:10px; padding:0.65rem 1.3rem; font-family:'Nunito',sans-serif; font-size:0.88rem; font-weight:800; cursor:pointer; transition:all 0.15s; }
+  .btn:hover { transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,0.15); }
+  .btn:active { transform:translateY(0); }
+  .btn-coral{background:var(--coral);color:white;} .btn-mint{background:var(--mint);color:white;} .btn-sun{background:var(--sun);color:var(--sky);} .btn-lav{background:var(--lavender);color:white;} .btn-ghost{background:#f0f2f5;color:var(--muted);} .btn-sky{background:var(--sky);color:white;}
+  .action-row { display:flex; gap:0.8rem; flex-wrap:wrap; align-items:center; margin-bottom:0.8rem; }
+
+  /* ── INPUT GROUP ── */
+  .input-group { display:flex; flex-direction:column; gap:0.3rem; }
+  .input-group label { font-size:0.78rem; font-weight:700; color:var(--muted); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.05em; }
+  .input-group input[type=number] { border:2px solid var(--border); border-radius:8px; padding:0.5rem 0.8rem; font-family:'Nunito',sans-serif; font-size:1rem; width:100px; outline:none; transition:border-color 0.2s; font-weight:700; color:var(--sky); background:white; }
+  .input-group input[type=number]:focus { border-color:var(--coral); }
+
+  /* ── STAT RESULT PANEL ── */
+  .stat-panel { background:var(--lavender-pale); border:2px solid rgba(124,111,205,0.3); border-radius:12px; padding:1.2rem 1.4rem; margin-top:1rem; }
+  .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:0.6rem; margin-top:0.6rem; }
+  .stat-card { background:white; border-radius:10px; padding:0.8rem; text-align:center; }
+  .stat-card .stat-val { font-family:'Fredoka One',cursive; font-size:1.5rem; color:var(--sky); }
+  .stat-card .stat-lbl { font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--muted); margin-top:0.2rem; }
+  .stat-card.coral-card .stat-val { color:var(--coral); }
+  .stat-card.mint-card  .stat-val { color:var(--mint); }
+  .stat-card.sun-card   .stat-val { color:#b8860b; }
+  .stat-card.lav-card   .stat-val { color:var(--lavender); }
+
+  /* ── CANVASES ── */
+  canvas.chart-canvas { border-radius:10px; border:2px solid var(--border); display:block; background:white; width:100%; }
+
+  /* ── DATA INPUT AREA ── */
+  .data-input-wrap { margin-bottom:1rem; }
+  .data-input-wrap label { font-size:0.78rem; font-weight:700; color:var(--muted); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:0.4rem; }
+  .data-input-wrap input[type=text] { width:100%; border:2px solid var(--lavender); border-radius:8px; padding:0.6rem 0.9rem; font-family:'DM Mono',monospace; font-size:0.95rem; font-weight:700; color:var(--sky); outline:none; transition:border-color 0.2s; background:white; }
+  .data-input-wrap input[type=text]:focus { border-color:var(--coral); }
+
+  /* ── DATASET BUTTONS ── */
+  .dataset-btn { background:var(--sky); color:white; border:none; border-radius:8px; padding:0.4rem 0.8rem; font-family:'Nunito',sans-serif; font-size:0.78rem; font-weight:700; cursor:pointer; transition:all 0.15s; margin:0.2rem; }
+  .dataset-btn:hover { background:var(--sky-mid); }
+
+  /* ── WORLD CARDS ── */
+  .world-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+  .world-card { border-radius:14px; padding:1.4rem; }
+  .world-card.coral-bg{background:var(--coral-pale);} .world-card.mint-bg{background:var(--mint-pale);} .world-card.lav-bg{background:var(--lavender-pale);} .world-card.sun-bg{background:var(--sun-pale);}
+  .world-card .wc-icon { font-size:2rem; margin-bottom:0.6rem; }
+  .world-card h4 { font-family:'Fredoka One',cursive; font-size:1rem; margin-bottom:0.4rem; color:var(--sky); }
+  .world-card p  { font-size:0.82rem; line-height:1.6; color:#3a4a5a; }
+
+  /* ── REFLECTION ── */
+  .reflection-card { background:white; border:2px solid var(--border); border-radius:14px; padding:1.4rem; margin-bottom:1rem; }
+  .reflection-card .q { font-family:'Fredoka One',cursive; font-size:1rem; color:var(--sky); margin-bottom:0.7rem; display:flex; gap:0.5rem; align-items:baseline; }
+  .reflection-card .q .qnum { font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--muted); flex-shrink:0; }
+  .reflection-card textarea { width:100%; border:1.5px solid rgba(0,0,0,0.1); border-radius:8px; padding:0.7rem; font-family:'Nunito',sans-serif; font-size:0.88rem; resize:vertical; min-height:72px; background:#fafbfc; color:var(--ink); outline:none; transition:border-color 0.2s; }
+  .reflection-card textarea:focus { border-color:var(--lavender); }
+
+  /* ── CONGRATS ── */
+  .congrats { text-align:center; padding:2rem 1rem; }
+  .congrats .trophy { font-size:4rem; margin-bottom:1rem; animation:bounce 0.8s ease infinite alternate; }
+  @keyframes bounce { from{transform:translateY(0);}to{transform:translateY(-10px);} }
+  .congrats h2 { font-family:'Fredoka One',cursive; font-size:2rem; color:var(--sky); margin-bottom:0.8rem; }
+  .congrats p  { font-size:0.95rem; line-height:1.7; color:#3a4a5a; max-width:500px; margin:0 auto 1.5rem; }
+  .summary-chips { display:flex; flex-wrap:wrap; gap:0.6rem; justify-content:center; }
+  .summary-chip { padding:0.5rem 1.1rem; border-radius:20px; font-size:0.82rem; font-weight:700; background:var(--sun-pale); color:#b8860b; border:1.5px solid #f8e0a0; }
+  .divider { height:1px; background:linear-gradient(90deg,transparent,var(--border),transparent); margin:1.5rem 0; }
+
+  /* ── NAV ── */
+  .nav-row { display:flex; justify-content:space-between; align-items:center; padding:2.5rem 2rem 0; max-width:820px; margin:0 auto; }
+  .btn-next { background:var(--sky); color:white; border:none; border-radius:50px; padding:0.9rem 2rem; font-family:'Fredoka One',cursive; font-size:1rem; cursor:pointer; display:flex; align-items:center; gap:0.6rem; transition:all 0.2s; box-shadow:0 4px 16px rgba(30,58,95,0.25); }
+  .btn-next:hover { background:var(--sky-mid); transform:translateY(-2px); }
+  .btn-prev { background:transparent; color:var(--muted); border:2px solid var(--border); border-radius:50px; padding:0.9rem 1.6rem; font-family:'Fredoka One',cursive; font-size:0.95rem; cursor:pointer; transition:all 0.2s; }
+  .btn-prev:hover { border-color:var(--muted); color:var(--ink); }
+  .btn-prev:disabled,.btn-next:disabled { opacity:0.3; cursor:not-allowed; transform:none; }
+
+  /* ── SUMMARY ── */
+  .summary-section { background:white; border-radius:16px; padding:1.8rem; margin-bottom:1.2rem; border:2px solid var(--border); }
+  .summary-section h3 { font-family:'Fredoka One',cursive; font-size:1.05rem; color:var(--sky); margin-bottom:0.8rem; }
+  .summary-answer { background:#f5f7fa; border-radius:8px; padding:0.7rem 1rem; font-size:0.85rem; line-height:1.6; color:var(--ink); margin-bottom:0.5rem; font-style:italic; border-left:3px solid var(--lavender); min-height:2rem; }
+  .summary-answer.empty { color:var(--muted); font-style:normal; border-left-color:var(--border); }
+  .sum-label { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:0.4rem; margin-top:0.6rem; text-transform:uppercase; letter-spacing:0.06em; }
+  .share-buttons { display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:1.5rem; justify-content:center; }
+  .share-btn { border:none; border-radius:12px; padding:0.85rem 1.6rem; font-family:'Fredoka One',cursive; font-size:1rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:0.5rem; }
+  .share-btn:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.15); }
+  .share-btn.copy{background:var(--mint);color:white;} .share-btn.email{background:var(--lavender);color:white;} .share-btn.print{background:var(--sky);color:white;}
+  .copy-confirm { text-align:center; font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--mint); min-height:1.2rem; margin-top:0.6rem; }
+
+  /* multi-line text blocks */
+  #sqTopicHint,#sqCheckFb,#statInsight,#outlierResult { white-space:pre-line; }
+
+  @media (max-width:560px) { .hero{padding:2.5rem 1.2rem 1.5rem;} .section{padding:2rem 1.2rem 0;} .nav-row{padding:2rem 1.2rem 0;} }
+  @media print {
+    .hero,.nav-row,.share-buttons,.copy-confirm{display:none !important;}
+    .sheet{box-shadow:none;border-radius:0;}
+    .section{display:none !important;}
+    #sec-7{display:block !important;}
+  }
+  /* ── G7 RP extras ── */
+  .frac-in { display:inline-flex; flex-direction:column; align-items:center; gap:2px; }
+  .frac-in input { width:64px; text-align:center; border:2px solid var(--border); border-radius:8px; padding:0.35rem; font-family:'DM Mono',monospace; font-size:1rem; font-weight:700; color:var(--sky); outline:none; background:white; }
+  .frac-in input:focus { border-color:var(--coral); }
+  .frac-in .bar { width:64px; height:3px; background:var(--sky); border-radius:2px; }
+  .ptable { border-collapse:collapse; font-family:'DM Mono',monospace; font-size:0.9rem; margin:0.6rem 0; }
+  .ptable th { background:var(--sky); color:white; padding:0.5rem 0.9rem; font-size:0.72rem; letter-spacing:0.06em; }
+  .ptable td { border-bottom:1px solid var(--border); padding:0.3rem 0.5rem; text-align:center; }
+  .ptable input { width:70px; text-align:center; border:2px solid var(--border); border-radius:6px; padding:0.3rem; font-family:'DM Mono',monospace; font-weight:700; color:var(--sky); outline:none; }
+  .ptable td.ratio { color:var(--lavender); font-weight:700; min-width:70px; }
+  .verdict { font-family:'Fredoka One',cursive; font-size:1.15rem; margin-top:0.6rem; min-height:1.5rem; }
+  .pct-bar { height:34px; border-radius:10px; background:#eef1f6; position:relative; overflow:hidden; margin:0.8rem 0 0.3rem; }
+  .pct-bar .fill { position:absolute; top:0; bottom:0; left:0; background:var(--mint); transition:width 0.3s; }
+  .pct-bar .extra { position:absolute; top:0; bottom:0; background:var(--coral); opacity:0.85; transition:all 0.3s; }
+  .steps { white-space:pre-line; font-family:'DM Mono',monospace; font-size:0.85rem; line-height:1.9; color:var(--sky); background:var(--lavender-pale); border-left:4px solid var(--lavender); border-radius:0 12px 12px 0; padding:1rem 1.2rem; margin-top:0.8rem; }
+  .quiz-row { display:flex; align-items:center; gap:0.8rem; flex-wrap:wrap; background:#f5f7fa; border-radius:10px; padding:0.7rem 1rem; }
+  .quiz-row .qtext { flex:1; min-width:220px; font-size:0.88rem; font-weight:600; color:#3a4a5a; }
+  .quiz-row input { width:90px; border:2px solid var(--lavender); border-radius:6px; padding:0.35rem 0.6rem; font-family:'DM Mono',monospace; font-weight:700; color:var(--sky); outline:none; text-align:center; }
+  input[type=range] { accent-color: var(--coral); }
+  @media print { #sec-7{display:block !important;} }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">✨ Grade 7 · Ratios & Proportional Relationships</div>
+  <h1>The Hidden<br><span class="accent">Constant</span> 🔑</h1>
+  <p class="intro">Some pairs of numbers are secretly locked together by one special number. Find it, and you can predict anything — prices, speeds, recipes, even sales tax. Today you'll learn to hunt for it.</p>
+  <div class="name-bar">
+    <label>👤 YOUR NAME:</label>
+    <input type="text" id="studentName" placeholder="Type your name here...">
+  </div>
+  <div class="progress-wrap">
+    <a class="prog-step active" id="pill-0" onclick="goTo(0)">🔑 Wonder</a>
+    <a class="prog-step" id="pill-1" onclick="goTo(1)">📚 Discover</a>
+    <a class="prog-step" id="pill-2" onclick="goTo(2)">🐢 Unit Rates</a>
+    <a class="prog-step" id="pill-3" onclick="goTo(3)">📈 Proportional?</a>
+    <a class="prog-step" id="pill-4" onclick="goTo(4)">💯 Percents</a>
+    <a class="prog-step" id="pill-5" onclick="goTo(5)">🌍 Real Life</a>
+    <a class="prog-step" id="pill-6" onclick="goTo(6)">💭 Reflect</a>
+    <a class="prog-step" id="pill-7" onclick="goTo(7)">📤 Submit</a>
+  </div>
+</div>
+
+<div class="sheet">
+
+  <!-- ══ SECTION 0: WONDER ══ -->
+  <div class="section active" id="sec-0">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">1</div><span class="eyebrow-label">The Big Question</span></div>
+    <h2>When are two quantities secretly locked together?</h2>
+    <p class="lead">If 2 tacos cost $5, then 4 tacos cost $10 and 6 tacos cost $15. Every price is the number of tacos times <strong>2.5</strong>. That 2.5 is a hidden constant — and once you know it, you can price <em>any</em> order instantly.</p>
+    <div class="wonder-box">
+      <p>A snail crawls <strong>½ mile in ¼ hour</strong>. How fast is that in miles per <em>hour</em>? Your brain might say "½ mile"… but the real answer is <strong>2 miles per hour</strong>. By the end of today you'll be able to explain exactly why.</p>
+    </div>
+    <p style="font-size:0.9rem;font-weight:700;color:var(--sky);margin-bottom:0.8rem;">🧠 Warm-up — is each table proportional?</p>
+    <div style="background:white;border:2px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;">
+      <div id="warmupGrid" style="display:flex;flex-direction:column;gap:0.6rem;"></div>
+      <div id="warmupFb" style="margin-top:1rem;font-family:'DM Mono',monospace;font-size:0.82rem;min-height:1.2rem;color:var(--mint);"></div>
+    </div>
+    <div class="wonder-box mint-box">
+      <p>A relationship is <strong>proportional</strong> when one quantity is always the other multiplied by the <strong>same number</strong>. That number is called the <strong>constant of proportionality</strong>, and in Grade 7 you'll find it hiding in tables, graphs, equations and stories.</p>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 1: DISCOVER ══ -->
+  <div class="section" id="sec-1">
+    <div class="section-eyebrow"><div class="eyebrow-num num-lav">2</div><span class="eyebrow-label">Discover the Vocabulary</span></div>
+    <h2>📚 Words proportional thinkers use</h2>
+    <p class="lead">Click each word to reveal its meaning. You'll use every one of these in today's investigations.</p>
+    <div class="chip-row">
+      <span class="chip coral" onclick="revealTerm('unit')">⏱ Unit Rate</span>
+      <span class="chip lav"   onclick="revealTerm('complex')">➗ Complex Fraction</span>
+      <span class="chip sun"   onclick="revealTerm('prop')">📈 Proportional</span>
+      <span class="chip mint"  onclick="revealTerm('k')">🔑 Constant k</span>
+      <span class="chip sky"   onclick="revealTerm('pchange')">💯 Percent Change</span>
+    </div>
+    <div class="concept-reveal" id="cr-unit">
+      <strong>Unit Rate</strong> — how much of one quantity for exactly <strong>1</strong> of another.<br><br>
+      <em>$12 for 4 notebooks → $12 ÷ 4 = $3 per notebook.</em><br><br>
+      <em>Your turn: 150 km in 2 hours is how many km per hour?</em>
+    </div>
+    <div class="concept-reveal lav-border" id="cr-complex">
+      <strong>Complex Fraction</strong> — a fraction with a fraction in its numerator, denominator, or both.<br><br>
+      <em>(½) ÷ (¼) can be written as a complex fraction. Divide by multiplying by the reciprocal: ½ × 4 = 2.</em><br><br>
+      <em>Your turn: what is (¾) ÷ (½)?</em>
+    </div>
+    <div class="concept-reveal sun-border" id="cr-prop">
+      <strong>Proportional Relationship</strong> — y is always x times the same number. Its table has equal ratios y/x, and its graph is a <strong>straight line through the origin (0, 0)</strong>.<br><br>
+      <em>Cost of apples at $2/lb is proportional. A taxi with a $3 starting fee is NOT — the graph doesn't start at 0.</em>
+    </div>
+    <div class="concept-reveal mint-border" id="cr-k">
+      <strong>Constant of Proportionality (k)</strong> — the number in y = kx. It equals the unit rate, the ratio y/x, and the y-value at the point <strong>(1, k)</strong> on the graph.<br><br>
+      <em>y = 2.5x → every x is multiplied by 2.5. The graph passes through (1, 2.5).</em>
+    </div>
+    <div class="concept-reveal sky-border" id="cr-pchange">
+      <strong>Percent Change</strong> — how much something grew or shrank compared with where it started.<br><br>
+      <em>Percent change = (new − original) ÷ original × 100%. A $40 game on sale for $30 changed by −25%.</em>
+    </div>
+    <div class="divider"></div>
+    <div style="background:var(--lavender-pale);border:2px solid rgba(124,111,205,0.3);border-radius:14px;padding:1.4rem;margin-bottom:1.5rem;">
+      <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:var(--lavender);margin-bottom:0.8rem;">🔑 Four places the constant hides</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0.7rem;">
+        <div style="background:white;border-radius:10px;padding:0.9rem;"><div style="font-family:'Fredoka One',cursive;color:var(--coral);">Table</div><div style="font-family:'DM Mono',monospace;font-size:0.75rem;color:#3a4a5a;">every y ÷ x is equal</div></div>
+        <div style="background:white;border-radius:10px;padding:0.9rem;"><div style="font-family:'Fredoka One',cursive;color:var(--mint);">Graph</div><div style="font-family:'DM Mono',monospace;font-size:0.75rem;color:#3a4a5a;">straight line through (0,0); k is the y at x = 1</div></div>
+        <div style="background:white;border-radius:10px;padding:0.9rem;"><div style="font-family:'Fredoka One',cursive;color:var(--lavender);">Equation</div><div style="font-family:'DM Mono',monospace;font-size:0.75rem;color:#3a4a5a;">y = kx</div></div>
+        <div style="background:white;border-radius:10px;padding:0.9rem;"><div style="font-family:'Fredoka One',cursive;color:#b8860b;">Story</div><div style="font-family:'DM Mono',monospace;font-size:0.75rem;color:#3a4a5a;">"per", "each", "for every"</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 2: UNIT RATES WITH FRACTIONS ══ -->
+  <div class="section" id="sec-2">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">3</div><span class="eyebrow-label">Investigation 1 · 7.RP.A.1</span></div>
+    <h2>🐢 Unit Rates with Fractions</h2>
+    <p class="lead">When both quantities are fractions, the unit rate is a <strong>complex fraction</strong>. Divide the first quantity by the second to find how much for <strong>one whole</strong> unit. <strong>Predict before you calculate!</strong></p>
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="ur-prediction" placeholder="A snail goes ½ mile in ¼ hour. I think its speed in miles per hour is ___ because... Dividing by a fraction less than 1 makes the answer bigger / smaller because..."></textarea>
+    </div>
+    <div class="demo-zone">
+      <h3>➗ Complex Fraction Unit Rate Machine</h3>
+      <div class="hint">ENTER TWO FRACTIONS · SEE THE COMPLEX FRACTION · WATCH IT SIMPLIFY TO A UNIT RATE</div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem;">
+        <button class="dataset-btn" onclick="loadUR(1,2,1,4,'miles','hour')">🐢 Snail</button>
+        <button class="dataset-btn" onclick="loadUR(3,4,1,3,'cups of flour','batch')">🧁 Baking</button>
+        <button class="dataset-btn" onclick="loadUR(2,3,5,6,'of the lawn','hour')">🌱 Mowing</button>
+        <button class="dataset-btn" onclick="loadUR(5,2,3,4,'km','hour')">🚲 Cycling</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;margin-bottom:1rem;">
+        <div class="frac-in"><input type="number" id="ua" value="1" oninput="calcUR()"><div class="bar"></div><input type="number" id="ub" value="2" oninput="calcUR()"></div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.85rem;color:var(--muted);"><input type="text" id="uLabel1" value="miles" oninput="calcUR()" style="width:120px;border:2px solid var(--border);border-radius:8px;padding:0.35rem;font-family:'Nunito',sans-serif;font-weight:700;color:var(--sky);"><br>in</div>
+        <div class="frac-in"><input type="number" id="uc" value="1" oninput="calcUR()"><div class="bar"></div><input type="number" id="ud" value="4" oninput="calcUR()"></div>
+        <input type="text" id="uLabel2" value="hour" oninput="calcUR()" style="width:100px;border:2px solid var(--border);border-radius:8px;padding:0.35rem;font-family:'Nunito',sans-serif;font-weight:700;color:var(--sky);">
+      </div>
+      <div class="result-wrap" style="background:var(--mint-pale);border:2px solid #b8ebd8;border-radius:12px;padding:1.2rem 1.4rem;">
+        <div id="urBig" style="font-family:'Fredoka One',cursive;font-size:1.7rem;color:var(--sky);"></div>
+        <div id="urSteps" class="steps"></div>
+      </div>
+    </div>
+    <div class="demo-zone">
+      <h3>📝 Unit Rate Practice</h3>
+      <div class="hint">FIND EACH UNIT RATE · TYPE A DECIMAL OR A FRACTION LIKE 3/2 · CHECK INSTANTLY</div>
+      <div id="urQuiz" style="display:flex;flex-direction:column;gap:0.6rem;"></div>
+      <div class="action-row" style="margin-top:0.8rem;"><button class="btn btn-coral" onclick="checkURQuiz()">✓ Check all</button><button class="btn btn-ghost" onclick="newURQuiz()">↺ New set</button></div>
+      <div id="urQuizFb" style="font-family:'DM Mono',monospace;font-size:0.82rem;min-height:1.2rem;color:var(--mint);"></div>
+    </div>
+    <div class="predict-box" style="border-color:var(--mint);background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="ur-reflection" placeholder="To find a unit rate with fractions I... Dividing by ¼ is the same as multiplying by ___ because... My prediction was right / wrong because..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 3: PROPORTIONAL? ══ -->
+  <div class="section" id="sec-3">
+    <div class="section-eyebrow"><div class="eyebrow-num num-mint">4</div><span class="eyebrow-label">Investigation 2 · 7.RP.A.2</span></div>
+    <h2>📈 Is It Proportional?</h2>
+    <p class="lead">A relationship is proportional when <strong>every ratio y ÷ x is the same</strong> and the graph is a <strong>straight line through the origin</strong>. Test tables, find k, and write the equation y = kx.</p>
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="prop-prediction" placeholder="A taxi charges $3 plus $2 per mile. I think this is / isn't proportional because... On a graph, a proportional relationship always looks like... The point (1, k) tells me..."></textarea>
+    </div>
+    <div class="demo-zone">
+      <h3>🧪 Proportionality Tester</h3>
+      <div class="hint">EDIT THE TABLE OR LOAD A STORY · EVERY RATIO AND THE GRAPH UPDATE LIVE</div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.8rem;">
+        <button class="dataset-btn" onclick="loadTable('tacos')">🌮 Tacos</button>
+        <button class="dataset-btn" onclick="loadTable('taxi')">🚕 Taxi</button>
+        <button class="dataset-btn" onclick="loadTable('walk')">🚶 Walking</button>
+        <button class="dataset-btn" onclick="loadTable('squares')">⬛ Square areas</button>
+        <button class="dataset-btn" onclick="loadTable('paint')">🎨 Paint</button>
+      </div>
+      <div id="tableStory" style="font-size:0.88rem;color:#3a4a5a;margin-bottom:0.4rem;"></div>
+      <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-start;">
+        <table class="ptable"><thead><tr><th>x</th><th>y</th><th>y ÷ x</th></tr></thead><tbody id="ptBody"></tbody></table>
+        <canvas id="propCanvas" width="300" height="260" style="border:2px solid var(--border);border-radius:10px;background:white;"></canvas>
+      </div>
+      <div class="verdict" id="propVerdict"></div>
+      <div id="propWhy" style="font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--lavender);line-height:1.7;"></div>
+    </div>
+    <div class="demo-zone">
+      <h3>🔑 The k-Slider</h3>
+      <div class="hint">DRAG k · WATCH THE LINE ROTATE AROUND (0,0) · FIND THE POINT (1, k)</div>
+      <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:0.6rem;">
+        <label style="font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--muted);">k =</label>
+        <input type="range" id="kSlider" min="0.25" max="5" step="0.25" value="2.5" oninput="drawK()" style="flex:1;min-width:200px;">
+        <span id="kVal" style="font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--coral);min-width:60px;"></span>
+      </div>
+      <canvas id="kCanvas" width="640" height="260" style="width:100%;border:2px solid var(--border);border-radius:10px;background:white;"></canvas>
+      <div id="kInfo" style="margin-top:0.6rem;font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--sky);line-height:1.7;"></div>
+    </div>
+    <div class="predict-box" style="border-color:var(--lavender);background:var(--lavender-pale);">
+      <h4 style="color:var(--lavender);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="prop-reflection" placeholder="I can tell a table is proportional when... The taxi table was not proportional because... On the graph, k is... The equation for the tacos is y = ___x."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 4: PERCENTS ══ -->
+  <div class="section" id="sec-4">
+    <div class="section-eyebrow"><div class="eyebrow-num num-sun">5</div><span class="eyebrow-label">Investigation 3 · 7.RP.A.3</span></div>
+    <h2>💯 Percents in the Real World</h2>
+    <p class="lead">Tax, tips, discounts, markups, interest and percent error are all <strong>proportional relationships</strong> in disguise. The percent is the constant k! <strong>Predict before you calculate.</strong></p>
+    <div class="predict-box">
+      <h4>📝 Before you start — predict:</h4>
+      <textarea id="pct-prediction" placeholder="A $60 jacket is 25% off. I think the sale price is ___. A 20% markup on $50 gives ___. If a price goes up 10% and then down 10%, I think it ends up..."></textarea>
+    </div>
+    <div class="demo-zone">
+      <h3>🛒 The Percent Machine</h3>
+      <div class="hint">CHOOSE A SITUATION · SET THE NUMBERS · SEE THE BAR MODEL AND EVERY STEP</div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem;" id="pctTypes"></div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:0.5rem;">
+        <div class="input-group"><label id="pLab1">Original price ($)</label><input type="number" id="pA" value="60" oninput="calcPct()"></div>
+        <div class="input-group"><label id="pLab2">Percent (%)</label><input type="number" id="pB" value="25" oninput="calcPct()"></div>
+        <div class="input-group" id="pCWrap" style="display:none;"><label id="pLab3">Years</label><input type="number" id="pC" value="3" oninput="calcPct()"></div>
+      </div>
+      <div class="pct-bar"><div class="fill" id="pFill"></div><div class="extra" id="pExtra"></div></div>
+      <div id="pLegend" style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);"></div>
+      <div id="pBig" style="font-family:'Fredoka One',cursive;font-size:1.6rem;color:var(--sky);margin-top:0.6rem;"></div>
+      <div id="pSteps" class="steps"></div>
+    </div>
+    <div class="demo-zone">
+      <h3>🎯 Percent Challenge</h3>
+      <div class="hint">SOLVE EACH PROBLEM · ROUND MONEY TO THE NEAREST CENT · CHECK INSTANTLY</div>
+      <div id="pctQuiz" style="display:flex;flex-direction:column;gap:0.6rem;"></div>
+      <div class="action-row" style="margin-top:0.8rem;"><button class="btn btn-coral" onclick="checkPctQuiz()">✓ Check all</button><button class="btn btn-ghost" onclick="newPctQuiz()">↺ New set</button></div>
+      <div id="pctQuizFb" style="font-family:'DM Mono',monospace;font-size:0.82rem;min-height:1.2rem;color:var(--mint);"></div>
+    </div>
+    <div class="predict-box" style="border-color:var(--mint);background:var(--mint-pale);">
+      <h4 style="color:var(--mint);">🔍 After exploring — what did you discover?</h4>
+      <textarea id="pct-reflection" placeholder="A discount and a markup are similar because... To find a percent change I... Going up 10% then down 10% does / doesn't return to the start because..."></textarea>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 5: REAL LIFE ══ -->
+  <div class="section" id="sec-5">
+    <div class="section-eyebrow"><div class="eyebrow-num num-sky">6</div><span class="eyebrow-label">Real-World Connections</span></div>
+    <h2>Proportions run the world 🌍</h2>
+    <p class="lead">Every receipt, recipe, map and speedometer depends on the ideas you used today. Here's where the hidden constant shows up.</p>
+    <div class="world-grid">
+      <div class="world-card coral-bg"><div class="wc-icon">🛍️</div><h4>Shopping</h4><p>Sales tax is proportional: tax = rate × price. Stores use markups to set prices and discounts to sell more — all percents.</p></div>
+      <div class="world-card mint-bg"><div class="wc-icon">🗺️</div><h4>Maps & Models</h4><p>A map scale like 1 cm : 5 km is a constant of proportionality. Architects and game designers use the same idea.</p></div>
+      <div class="world-card lav-bg"><div class="wc-icon">💊</div><h4>Medicine</h4><p>Nurses calculate doses per kilogram of body weight — a unit rate. A small error in the constant can be dangerous.</p></div>
+      <div class="world-card sun-bg"><div class="wc-icon">🏦</div><h4>Banking</h4><p>Simple interest = principal × rate × time. Savings accounts and loans start with this proportional idea.</p></div>
+    </div>
+    <div class="divider"></div>
+    <div class="demo-zone">
+      <h3>🎯 Real-World Problem Solver</h3>
+      <div class="hint">READ THE SCENARIO · DECIDE WHICH TOOL YOU NEED · SOLVE · THEN REVEAL</div>
+      <div id="realProblems" style="display:flex;flex-direction:column;gap:0.8rem;"></div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 6: REFLECT ══ -->
+  <div class="section" id="sec-6">
+    <div class="section-eyebrow"><div class="eyebrow-num num-coral">7</div><span class="eyebrow-label">Synthesis & Wonder</span></div>
+    <h2>💭 Let's think it through</h2>
+    <p class="lead">Strong mathematicians explain <em>why</em>, not just <em>what</em>. Answer in full sentences.</p>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q1 /</span> Explain why ½ mile in ¼ hour is 2 miles per hour. Use the idea of "how many quarter-hours in an hour".</div><textarea placeholder="There are ___ quarter-hours in one hour, so... Dividing by ¼ is the same as..."></textarea></div>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q2 /</span> Give one relationship that IS proportional and one that is NOT. How could you prove it with a table or graph?</div><textarea placeholder="___ is proportional because every y ÷ x equals... ___ is not because the graph..."></textarea></div>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q3 /</span> A store raises a price by 20% and later lowers it by 20%. Is the final price the same as the original? Explain with numbers.</div><textarea placeholder="Start with $100. Up 20% → ___. Down 20% of that → ___. So..."></textarea></div>
+    <div class="reflection-card"><div class="q"><span class="qnum">Q4 /</span> Where have you seen a "hidden constant" in your own life this week?</div><textarea placeholder="I noticed... The constant was... per..."></textarea></div>
+    <div class="divider"></div>
+    <div class="congrats">
+      <div class="trophy">🎉</div>
+      <h2>You found the hidden constant!</h2>
+      <p>Today you covered all three Grade 7 Ratios & Proportional Relationships standards — unit rates with fractions, recognising and representing proportional relationships, and multistep percent problems.</p>
+      <div class="summary-chips">
+        <span class="summary-chip">Unit rate = amount for 1</span>
+        <span class="summary-chip">÷ fraction = × reciprocal</span>
+        <span class="summary-chip">Proportional: y = kx</span>
+        <span class="summary-chip">Graph through (0,0) and (1,k)</span>
+        <span class="summary-chip">% change = change ÷ original</span>
+        <span class="summary-chip">7.RP.A.1 · A.2 · A.3</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 7: SUBMIT ══ -->
+  <div class="section" id="sec-7">
+    <div class="section-eyebrow"><div class="eyebrow-num num-mint">8</div><span class="eyebrow-label">Your Completed Work</span></div>
+    <h2>📤 Ready to Share</h2>
+    <p class="lead">Here's everything you worked on today. <strong>Copy it</strong> and paste into Google Classroom, or <strong>email it</strong> directly to your teacher.</p>
+    <div class="summary-section" style="background:var(--sky);color:white;border-color:var(--sky);">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;align-items:center;">
+        <div><div style="font-family:'DM Mono',monospace;font-size:0.7rem;opacity:0.6;margin-bottom:0.3rem;">STUDENT</div><div style="font-family:'Fredoka One',cursive;font-size:1.4rem;" id="summaryName">—</div></div>
+        <div style="text-align:right;"><div style="font-family:'DM Mono',monospace;font-size:0.7rem;opacity:0.6;margin-bottom:0.3rem;">LESSON</div><div style="font-family:'Fredoka One',cursive;font-size:1rem;">The Hidden Constant 🔑</div><div style="font-family:'DM Mono',monospace;font-size:0.72rem;opacity:0.6;" id="summaryDate"></div></div>
+      </div>
+    </div>
+    <div class="summary-section"><h3>🐢 Section 3 — Unit Rates with Fractions</h3><div class="sum-label">Prediction</div><div class="summary-answer" id="sum-ur-pred"></div><div class="sum-label">Reflection</div><div class="summary-answer" id="sum-ur-ref"></div></div>
+    <div class="summary-section"><h3>📈 Section 4 — Is It Proportional?</h3><div class="sum-label">Prediction</div><div class="summary-answer" id="sum-prop-pred"></div><div class="sum-label">Reflection</div><div class="summary-answer" id="sum-prop-ref"></div></div>
+    <div class="summary-section"><h3>💯 Section 5 — Percents</h3><div class="sum-label">Prediction</div><div class="summary-answer" id="sum-pct-pred"></div><div class="sum-label">Reflection</div><div class="summary-answer" id="sum-pct-ref"></div></div>
+    <div class="summary-section"><h3>💭 Section 7 — Reflections</h3>
+      <div class="sum-label">Q1 — ½ mile in ¼ hour</div><div class="summary-answer" id="sum-q1"></div>
+      <div class="sum-label">Q2 — Proportional or not</div><div class="summary-answer" id="sum-q2"></div>
+      <div class="sum-label">Q3 — Up 20%, down 20%</div><div class="summary-answer" id="sum-q3"></div>
+      <div class="sum-label">Q4 — Hidden constants in my life</div><div class="summary-answer" id="sum-q4"></div>
+    </div>
+    <div class="share-buttons">
+      <button class="share-btn copy" onclick="copyResults()">📋 Copy My Results</button>
+      <button class="share-btn email" onclick="emailResults()">📧 Email to Teacher</button>
+      <button class="share-btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+    <div class="copy-confirm" id="copyConfirm"></div>
+    <div style="margin-top:1.5rem;background:var(--sun-pale);border:2px dashed var(--sun);border-radius:12px;padding:1.2rem 1.4rem;">
+      <p style="font-family:'Fredoka One',cursive;font-size:1rem;color:#b8860b;margin-bottom:0.8rem;">📋 How to submit your work:</p>
+      <p style="font-size:0.82rem;color:#b8860b;font-family:'DM Mono',monospace;line-height:2;">
+        <strong>📋 Copy My Results</strong> — Copies all your answers. Open Google Classroom, click your assignment, paste, and submit.<br>
+        <strong>📧 Email to Teacher</strong> — Opens your email app with your answers already typed. Add your teacher's address and send.<br>
+        <strong>🖨️ Print / Save PDF</strong> — Mac: "Save as PDF" bottom left · Windows: "Microsoft Print to PDF".
+      </p>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" id="prevBtn" onclick="navigate(-1)" disabled>← Back</button>
+    <button class="btn-next" id="nextBtn" onclick="navigate(1)">Next <span>→</span></button>
+  </div>
+</div>
+
+<div style="position:relative;z-index:1;text-align:center;padding:1.5rem 2rem 2rem;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;font-size:0.7rem;line-height:1.8;">
+  © 2026 Farvour Explorations · All Rights Reserved<br>
+  This interactive digital lesson is licensed for single-classroom use only.<br>
+  Not for redistribution, resale, or sharing without written permission.
+</div>
+
+<script>
+const C = { sky:'#1e3a5f', skyMid:'#2d5282', coral:'#e8603c', mint:'#3aaf85', lav:'#7c6fcd', sun:'#f6c343', muted:'#7a8899', grid:'#e8eef4', axis:'#b8c4cc' };
+let currentSection = 0; const totalSections = 8;
+function goTo(n) {
+  document.querySelectorAll('.section').forEach((s,i)=>s.classList.toggle('active',i===n));
+  document.querySelectorAll('.prog-step').forEach((p,i)=>{ p.classList.toggle('active',i===n); p.classList.toggle('done',i<n); });
+  currentSection = n;
+  document.getElementById('prevBtn').disabled = n===0;
+  const nb = document.getElementById('nextBtn');
+  if (n===totalSections-1) { nb.textContent='✓ Complete!'; nb.disabled=true; buildSummary(); }
+  else { nb.innerHTML='Next <span>→</span>'; nb.disabled=false; }
+  window.scrollTo({top:0,behavior:'smooth'});
+  if (n===2) calcUR();
+  if (n===3) { renderTable(); drawK(); }
+  if (n===4) calcPct();
+}
+function navigate(d){ goTo(Math.min(Math.max(currentSection+d,0),totalSections-1)); }
+
+// ── helpers ──
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a||1;};
+const r2=x=>Math.round(x*100)/100;
+const money=x=>'$'+(Math.round(x*100)/100).toFixed(2);
+function fracStr(n,d){ if(d<0){n=-n;d=-d;} const g=gcd(n,d); n/=g; d/=g; return d===1?`${n}`:`${n}/${d}`; }
+function parseAns(s){ s=String(s).trim().replace(/[$,%\s]/g,''); if(!s) return NaN; if(s.includes('/')){const [a,b]=s.split('/').map(Number); return b? a/b : NaN;} return parseFloat(s); }
+function close(a,b,tol=0.011){ return Math.abs(a-b)<=tol; }
+
+// ══ WARM-UP ══
+const warm=[
+  {t:'Pencils: 2 → $1, 4 → $2, 6 → $3', p:true, e:'Every price ÷ pencils = 0.5. Same ratio → proportional.'},
+  {t:'Phone plan: 0 GB → $20, 1 GB → $25, 2 GB → $30', p:false, e:'At 0 GB you still pay $20, so it doesn\'t pass through (0, 0). Not proportional.'},
+  {t:'Running: 1 min → 200 m, 3 min → 600 m, 5 min → 1000 m', p:true, e:'Every distance ÷ time = 200. Proportional with k = 200.'},
+  {t:'Square side 1 → area 1, side 2 → area 4, side 3 → area 9', p:false, e:'Ratios 1, 2, 3 are not equal. Area grows faster than side. Not proportional.'},
+];
+let wDone=0,wOk=0;
+document.getElementById('warmupGrid').innerHTML=warm.map((q,i)=>`
+  <div style="display:flex;align-items:flex-start;gap:0.8rem;flex-wrap:wrap;background:#f5f7fa;border-radius:10px;padding:0.8rem 1rem;">
+    <div style="flex:1;min-width:220px;font-family:'DM Mono',monospace;font-size:0.84rem;font-weight:500;color:var(--sky);padding-top:0.2rem;">${q.t}</div>
+    <div style="display:flex;gap:0.4rem;">
+      <button onclick="ansWarm(${i},true)" style="background:var(--mint-pale);border:2px solid #b8ebd8;border-radius:8px;padding:0.35rem 0.8rem;font-family:'Fredoka One',cursive;font-size:0.82rem;color:var(--mint);cursor:pointer;">Proportional</button>
+      <button onclick="ansWarm(${i},false)" style="background:var(--coral-pale);border:2px solid #f8c5b8;border-radius:8px;padding:0.35rem 0.8rem;font-family:'Fredoka One',cursive;font-size:0.82rem;color:var(--coral);cursor:pointer;">Not</button>
+    </div>
+    <div id="wfb-${i}" style="font-family:'DM Mono',monospace;font-size:0.72rem;width:100%;min-height:1rem;"></div>
+  </div>`).join('');
+function ansWarm(i,a){ const fb=document.getElementById('wfb-'+i); if(fb.textContent) return; wDone++; const ok=a===warm[i].p; if(ok) wOk++;
+  fb.textContent=(ok?'✓ ':'✗ ')+warm[i].e; fb.style.color=ok?C.mint:C.coral;
+  if(wDone===warm.length){ const el=document.getElementById('warmupFb'); el.style.color=wOk===warm.length?C.mint:C.coral;
+    el.textContent= wOk===warm.length ? '🎉 Perfect! You already have a feel for proportional relationships.' : `${wOk}/${warm.length} correct. Key test: is y ÷ x the same every time, and does it start at (0, 0)?`; } }
+
+// ══ VOCAB ══
+let openTerm=null;
+function revealTerm(k){ if(openTerm) document.getElementById('cr-'+openTerm).classList.remove('show'); if(openTerm===k){openTerm=null;return;} document.getElementById('cr-'+k).classList.add('show'); openTerm=k; }
+
+// ══ INVESTIGATION 1: UNIT RATES ══
+function loadUR(a,b,c,d,l1,l2){ ['ua','ub','uc','ud'].forEach((id,i)=>document.getElementById(id).value=[a,b,c,d][i]); document.getElementById('uLabel1').value=l1; document.getElementById('uLabel2').value=l2; calcUR(); }
+function calcUR(){
+  const a=parseInt(document.getElementById('ua').value), b=parseInt(document.getElementById('ub').value), c=parseInt(document.getElementById('uc').value), d=parseInt(document.getElementById('ud').value);
+  const l1=document.getElementById('uLabel1').value||'units', l2=document.getElementById('uLabel2').value||'unit';
+  if(!a||!b||!c||!d){ document.getElementById('urBig').textContent='Enter four whole numbers (no zeros).'; document.getElementById('urSteps').textContent=''; return; }
+  const n=a*d, m=b*c, val=n/m;
+  document.getElementById('urBig').textContent=`${fracStr(n,m)} ${l1} per ${l2}${m/gcd(n,m)!==1?'  ≈ '+r2(val):''}`;
+  document.getElementById('urSteps').textContent=
+`Unit rate = (${a}/${b} ${l1}) ÷ (${c}/${d} ${l2})
+As a complex fraction: (${a}/${b}) ÷ (${c}/${d})
+Multiply by the reciprocal of ${c}/${d}:
+${a}/${b} × ${d}/${c} = ${n}/${m} = ${fracStr(n,m)}
+So in ONE whole ${l2}: ${fracStr(n,m)} ${l1}  (${r2(val)} as a decimal)
+Check: ${fracStr(n,m)} × ${c}/${d} = ${fracStr(n*c,m*d)} = ${fracStr(a,b)} ✓`;
+}
+let urQ=[];
+function newURQuiz(){
+  const ctx=[['miles','hour'],['pages','minute'],['cups','batch'],['laps','minute'],['litres','hour']];
+  urQ=Array.from({length:5},()=>{ let a,b,c,d; do{ b=[2,3,4,5,6,8][Math.floor(Math.random()*6)]; a=1+Math.floor(Math.random()*(b+2)); d=[2,3,4,5,6][Math.floor(Math.random()*5)]; c=1+Math.floor(Math.random()*(d-1)); }while(gcd(a,b)!==1||gcd(c,d)!==1);
+    const k=ctx[Math.floor(Math.random()*ctx.length)]; return {a,b,c,d,ans:(a*d)/(b*c),txt:`${a}/${b} ${k[0]} in ${c}/${d} ${k[1]} → ${k[0]} per ${k[1]}?`,frac:fracStr(a*d,b*c)}; });
+  document.getElementById('urQuiz').innerHTML=urQ.map((q,i)=>`<div class="quiz-row"><span class="qtext">${q.txt}</span><input id="urq${i}" placeholder="?"><span id="urqf${i}" style="font-family:'DM Mono',monospace;font-size:0.78rem;min-width:70px;"></span></div>`).join('');
+  document.getElementById('urQuizFb').textContent='';
+}
+function checkURQuiz(){ let ok=0; urQ.forEach((q,i)=>{ const v=parseAns(document.getElementById('urq'+i).value); const f=document.getElementById('urqf'+i); if(close(v,q.ans,0.006)){f.textContent='✓';f.style.color=C.mint;ok++;} else {f.textContent='✗ '+q.frac;f.style.color=C.coral;} });
+  const el=document.getElementById('urQuizFb'); el.style.color=ok===5?C.mint:C.coral; el.textContent= ok===5?'🎉 All correct! You can divide fractions to find unit rates.':`${ok}/5 correct. Multiply the first fraction by the reciprocal of the second.`; }
+newURQuiz();
+
+// ══ INVESTIGATION 2: PROPORTIONAL? ══
+const tables={
+  tacos:{s:'🌮 Tacos cost the same amount each. x = tacos, y = total cost ($).', x:[1,2,3,4,6], y:[2.5,5,7.5,10,15]},
+  taxi:{s:'🚕 A taxi charges $3 to start plus $2 per mile. x = miles, y = fare ($).', x:[1,2,3,4,5], y:[5,7,9,11,13]},
+  walk:{s:'🚶 Walking at a steady pace. x = minutes, y = metres.', x:[2,5,8,10,15], y:[160,400,640,800,1200]},
+  squares:{s:'⬛ x = side length of a square, y = its area.', x:[1,2,3,4,5], y:[1,4,9,16,25]},
+  paint:{s:'🎨 Mixing paint: x = cups of blue, y = cups of white.', x:[2,3,4,6,9], y:[3,4.5,6,9,13.5]},
+};
+let T={x:[...tables.tacos.x],y:[...tables.tacos.y],s:tables.tacos.s};
+function loadTable(k){ T={x:[...tables[k].x],y:[...tables[k].y],s:tables[k].s}; renderTable(); }
+function renderTable(){
+  document.getElementById('tableStory').textContent=T.s;
+  document.getElementById('ptBody').innerHTML=T.x.map((x,i)=>`<tr><td><input type="number" value="${x}" oninput="T.x[${i}]=parseFloat(this.value);updateProp()"></td><td><input type="number" value="${T.y[i]}" oninput="T.y[${i}]=parseFloat(this.value);updateProp()"></td><td class="ratio" id="rt${i}"></td></tr>`).join('');
+  updateProp();
+}
+function updateProp(){
+  const ratios=T.x.map((x,i)=> x? T.y[i]/x : NaN);
+  ratios.forEach((r,i)=>{ document.getElementById('rt'+i).textContent=isFinite(r)? r2(r): '—'; });
+  const valid=ratios.filter(isFinite); const k=valid[0];
+  const same=valid.length>1 && valid.every(r=>Math.abs(r-k)<1e-9);
+  ratios.forEach((r,i)=>{ document.getElementById('rt'+i).style.color= same? C.mint : C.coral; });
+  const v=document.getElementById('propVerdict'), w=document.getElementById('propWhy');
+  if(same){ v.textContent=`✓ Proportional!  k = ${r2(k)}   →   y = ${r2(k)}x`; v.style.color=C.mint;
+    w.textContent=`Every y ÷ x equals ${r2(k)}. The graph is a straight line through (0, 0) and (1, ${r2(k)}).`; }
+  else { v.textContent='✗ Not proportional'; v.style.color=C.coral;
+    const lin = valid.length>2 && (()=>{ const m=(T.y[1]-T.y[0])/(T.x[1]-T.x[0]); return T.x.every((x,i)=>Math.abs((T.y[i]-T.y[0])-m*(x-T.x[0]))<1e-9); })();
+    w.textContent= lin ? 'The points make a straight line, but it does NOT pass through (0, 0) — there is a starting amount. The ratios y ÷ x are not equal.' : 'The ratios y ÷ x are not equal, and the points do not make a straight line through the origin.'; }
+  drawProp(same,k);
+}
+function drawProp(same,k){
+  const cv=document.getElementById('propCanvas'), ctx=cv.getContext('2d'), W=cv.width, H=cv.height, p=34;
+  ctx.clearRect(0,0,W,H); ctx.fillStyle='#fafbfc'; ctx.fillRect(0,0,W,H);
+  const xs=T.x.filter(isFinite), ys=T.y.filter(isFinite); const nice=v=>{const t=v*1.05; for(const st of [0.2,0.5,1,2,3,4,5,10,20,25,50,100,200,250,500,1000]){ if(st*5>=t) return st*5; } return Math.ceil(t/1000)*1000;}; const mx=nice(Math.max(1,...xs)), my=nice(Math.max(1,...ys));
+  const X=x=>p+x/mx*(W-p-12), Y=y=>H-p-y/my*(H-p-12);
+  ctx.strokeStyle=C.grid; ctx.lineWidth=1; for(let i=1;i<=5;i++){ ctx.beginPath(); ctx.moveTo(X(mx*i/5),12); ctx.lineTo(X(mx*i/5),H-p); ctx.stroke(); ctx.beginPath(); ctx.moveTo(p,Y(my*i/5)); ctx.lineTo(W-12,Y(my*i/5)); ctx.stroke(); }
+  ctx.strokeStyle=C.axis; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(p,12); ctx.lineTo(p,H-p); ctx.lineTo(W-12,H-p); ctx.stroke();
+  ctx.fillStyle=C.muted; ctx.font='10px DM Mono, monospace'; ctx.textAlign='center';
+  for(let i=0;i<=5;i++){ ctx.fillText(r2(mx*i/5).toString(),X(mx*i/5),H-p+14); }
+  ctx.textAlign='right'; for(let i=1;i<=5;i++){ ctx.fillText(r2(my*i/5).toString(),p-4,Y(my*i/5)+3); }
+  if(same){ ctx.strokeStyle=C.mint; ctx.lineWidth=2; ctx.setLineDash([5,4]); ctx.beginPath(); ctx.moveTo(X(0),Y(0)); ctx.lineTo(X(mx),Y(k*mx)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.beginPath(); ctx.arc(X(0),Y(0),4,0,7); ctx.fillStyle=C.sky; ctx.fill(); }
+  T.x.forEach((x,i)=>{ if(!isFinite(x)||!isFinite(T.y[i])) return; ctx.beginPath(); ctx.arc(X(x),Y(T.y[i]),6,0,7); ctx.fillStyle=same?C.mint:C.coral; ctx.fill(); ctx.strokeStyle='white'; ctx.lineWidth=1.5; ctx.stroke(); });
+}
+function drawK(){
+  const k=parseFloat(document.getElementById('kSlider').value); document.getElementById('kVal').textContent=k;
+  const cv=document.getElementById('kCanvas'); const W=cv.width,H=cv.height,p=36; const ctx=cv.getContext('2d');
+  ctx.clearRect(0,0,W,H); ctx.fillStyle='#fafbfc'; ctx.fillRect(0,0,W,H);
+  const mx=10,my=25; const X=x=>p+x/mx*(W-p-14), Y=y=>H-p-y/my*(H-p-14);
+  ctx.strokeStyle=C.grid; for(let i=1;i<=10;i++){ ctx.beginPath(); ctx.moveTo(X(i),14); ctx.lineTo(X(i),H-p); ctx.stroke(); } for(let j=5;j<=25;j+=5){ ctx.beginPath(); ctx.moveTo(p,Y(j)); ctx.lineTo(W-14,Y(j)); ctx.stroke(); }
+  ctx.strokeStyle=C.axis; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(p,14); ctx.lineTo(p,H-p); ctx.lineTo(W-14,H-p); ctx.stroke();
+  ctx.fillStyle=C.muted; ctx.font='10px DM Mono, monospace'; ctx.textAlign='center'; for(let i=0;i<=10;i++) ctx.fillText(i,X(i),H-p+14);
+  ctx.textAlign='right'; for(let j=5;j<=25;j+=5) ctx.fillText(j,p-5,Y(j)+3);
+  const xEnd=Math.min(mx,my/k); ctx.strokeStyle=C.coral; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(X(0),Y(0)); ctx.lineTo(X(xEnd),Y(k*xEnd)); ctx.stroke();
+  ctx.setLineDash([4,4]); ctx.strokeStyle=C.lav; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(X(1),Y(0)); ctx.lineTo(X(1),Y(k)); ctx.lineTo(X(0),Y(k)); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.arc(X(1),Y(k),7,0,7); ctx.fillStyle=C.lav; ctx.fill();
+  ctx.fillStyle=C.sky; ctx.font='bold 12px Nunito, sans-serif'; ctx.textAlign='left'; ctx.fillText(`(1, ${k})`,X(1)+10,Y(k)-6);
+  ctx.beginPath(); ctx.arc(X(0),Y(0),5,0,7); ctx.fillStyle=C.sky; ctx.fill(); ctx.fillText('(0, 0)',X(0)+6,Y(0)-8);
+  document.getElementById('kInfo').innerHTML=`Equation: <strong>y = ${k}x</strong> · Unit rate: <strong>${k}</strong> y-units for every 1 x-unit · ${k>1?'Steeper than y = x':'Flatter than y = x'}<br>Try: x = 4 → y = ${k} × 4 = <strong>${r2(k*4)}</strong>`;
+}
+
+// ══ INVESTIGATION 3: PERCENTS ══
+const pctTypes={
+  tax:{n:'🧾 Sales tax',l:['Price ($)','Tax rate (%)'],d:[48,8]},
+  tip:{n:'🍽️ Tip',l:['Bill ($)','Tip (%)'],d:[36,18]},
+  disc:{n:'🏷️ Discount',l:['Original price ($)','Discount (%)'],d:[60,25]},
+  mark:{n:'📦 Markup',l:['Store cost ($)','Markup (%)'],d:[50,40]},
+  int:{n:'🏦 Simple interest',l:['Principal ($)','Rate per year (%)','Years'],d:[500,4,3]},
+  chg:{n:'📊 Percent change',l:['Original value','New value'],d:[40,30]},
+  err:{n:'🎯 Percent error',l:['Actual value','Measured / estimated value'],d:[250,230]},
+};
+let pType='disc';
+document.getElementById('pctTypes').innerHTML=Object.entries(pctTypes).map(([k,v])=>`<button class="btn ${k===pType?'btn-coral':'btn-ghost'}" id="pt-${k}" onclick="setPct('${k}')">${v.n}</button>`).join('');
+function setPct(k){ pType=k; Object.keys(pctTypes).forEach(t=>document.getElementById('pt-'+t).className='btn '+(t===k?'btn-coral':'btn-ghost'));
+  const t=pctTypes[k]; document.getElementById('pLab1').textContent=t.l[0]; document.getElementById('pLab2').textContent=t.l[1];
+  document.getElementById('pA').value=t.d[0]; document.getElementById('pB').value=t.d[1];
+  const three=t.l.length===3; document.getElementById('pCWrap').style.display=three?'flex':'none'; if(three){document.getElementById('pLab3').textContent=t.l[2]; document.getElementById('pC').value=t.d[2];}
+  calcPct(); }
+function setBar(base,extra,mode){ // mode: 'add' extra to the right, 'sub' remove part of base
+  const total= mode==='add'? base+extra : base; const sc=100/Math.max(total,1e-9);
+  const f=document.getElementById('pFill'), e=document.getElementById('pExtra');
+  if(mode==='add'){ f.style.width=(base*sc)+'%'; e.style.left=(base*sc)+'%'; e.style.width=(extra*sc)+'%'; }
+  else { f.style.width=((base-extra)*sc)+'%'; e.style.left=((base-extra)*sc)+'%'; e.style.width=(extra*sc)+'%'; } }
+function calcPct(){
+  const a=parseFloat(document.getElementById('pA').value)||0, b=parseFloat(document.getElementById('pB').value)||0, c=parseFloat(document.getElementById('pC').value)||0;
+  const big=document.getElementById('pBig'), st=document.getElementById('pSteps'), lg=document.getElementById('pLegend');
+  if(pType==='tax'||pType==='tip'||pType==='mark'){ const add=a*b/100; setBar(a,add,'add');
+    const word={tax:'Tax',tip:'Tip',mark:'Markup'}[pType], tot={tax:'Total with tax',tip:'Total with tip',mark:'Selling price'}[pType];
+    lg.innerHTML=`<span style="color:${C.mint}">■</span> original ${money(a)} &nbsp; <span style="color:${C.coral}">■</span> ${word.toLowerCase()} ${money(add)}`;
+    big.textContent=`${tot}: ${money(a+add)}`;
+    st.textContent=`${b}% = ${b}/100 = ${b/100}\n${word} = ${b/100} × ${money(a)} = ${money(add)}\n${tot} = ${money(a)} + ${money(add)} = ${money(a+add)}\nShortcut: ${money(a)} × ${r2(1+b/100)} = ${money(a*(1+b/100))}  (100% + ${b}% = ${100+b}%)`; }
+  else if(pType==='disc'){ const off=a*b/100; setBar(a,off,'sub');
+    lg.innerHTML=`<span style="color:${C.mint}">■</span> you pay ${money(a-off)} &nbsp; <span style="color:${C.coral}">■</span> discount ${money(off)}`;
+    big.textContent=`Sale price: ${money(a-off)}`;
+    st.textContent=`${b}% = ${b/100}\nDiscount = ${b/100} × ${money(a)} = ${money(off)}\nSale price = ${money(a)} − ${money(off)} = ${money(a-off)}\nShortcut: ${money(a)} × ${r2(1-b/100)} = ${money(a*(1-b/100))}  (100% − ${b}% = ${100-b}%)`; }
+  else if(pType==='int'){ const I=a*b/100*c; setBar(a,I,'add');
+    lg.innerHTML=`<span style="color:${C.mint}">■</span> principal ${money(a)} &nbsp; <span style="color:${C.coral}">■</span> interest ${money(I)}`;
+    big.textContent=`Interest: ${money(I)} · Balance: ${money(a+I)}`;
+    st.textContent=`Simple interest  I = P × r × t\nI = ${money(a)} × ${b/100} × ${c}\nI = ${money(I)}\nBalance after ${c} year(s) = ${money(a)} + ${money(I)} = ${money(a+I)}`; }
+  else if(pType==='chg'){ const ch=b-a, pc= a? ch/a*100 : 0;
+    if(ch>=0){ setBar(a,ch,'add'); } else { setBar(a,-ch,'sub'); }
+    lg.innerHTML= ch>=0 ? `<span style="color:${C.mint}">■</span> original ${r2(a)} &nbsp; <span style="color:${C.coral}">■</span> increase ${r2(ch)}` : `<span style="color:${C.mint}">■</span> new ${r2(b)} &nbsp; <span style="color:${C.coral}">■</span> decrease ${r2(-ch)}`;
+    big.textContent=`Percent change: ${pc>=0?'+':''}${r2(pc)}% (${pc>=0?'increase':'decrease'})`;
+    st.textContent=`Change = new − original = ${r2(b)} − ${r2(a)} = ${r2(ch)}\nPercent change = change ÷ original × 100%\n= ${r2(ch)} ÷ ${r2(a)} × 100% = ${r2(pc)}%\nAlways divide by the ORIGINAL value.`; }
+  else if(pType==='err'){ const diff=Math.abs(b-a), pe= a? diff/Math.abs(a)*100 : 0; setBar(Math.max(a,b),diff,'sub');
+    lg.innerHTML=`<span style="color:${C.coral}">■</span> error ${r2(diff)}`;
+    big.textContent=`Percent error: ${r2(pe)}%`;
+    st.textContent=`Error = |measured − actual| = |${r2(b)} − ${r2(a)}| = ${r2(diff)}\nPercent error = error ÷ actual × 100%\n= ${r2(diff)} ÷ ${r2(a)} × 100% = ${r2(pe)}%`; }
+}
+let pQ=[];
+function newPctQuiz(){
+  const R=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+  const gens=[
+    ()=>{const p=R(2,12)*5,r=[10,15,20,25,30,40][R(0,5)];return {t:`A $${p} hoodie is ${r}% off. Sale price?`,a:p*(1-r/100)};},
+    ()=>{const p=R(10,40)*2,r=[6,7,8,9][R(0,3)];return {t:`A $${p} game plus ${r}% sales tax. Total?`,a:p*(1+r/100)};},
+    ()=>{const p=R(4,16)*5,r=[15,18,20][R(0,2)];return {t:`A $${p} dinner bill with a ${r}% tip. Total?`,a:p*(1+r/100)};},
+    ()=>{const p=R(4,20)*5,r=[20,25,40,50][R(0,3)];return {t:`A store buys a lamp for $${p} and marks it up ${r}%. Selling price?`,a:p*(1+r/100)};},
+    ()=>{const o=R(4,20)*5,n=o+R(-3,4)*5||o+5;return {t:`A value changes from ${o} to ${n}. Percent change? (use − for a decrease)`,a:(n-o)/o*100};},
+    ()=>{const P=R(2,10)*100,r=R(2,6),y=R(2,5);return {t:`$${P} earns ${r}% simple interest for ${y} years. Interest earned?`,a:P*r/100*y};},
+  ];
+  pQ=gens.sort(()=>Math.random()-0.5).slice(0,5).map(g=>g());
+  document.getElementById('pctQuiz').innerHTML=pQ.map((q,i)=>`<div class="quiz-row"><span class="qtext">${q.t}</span><input id="pq${i}" placeholder="?"><span id="pqf${i}" style="font-family:'DM Mono',monospace;font-size:0.78rem;min-width:80px;"></span></div>`).join('');
+  document.getElementById('pctQuizFb').textContent='';
+}
+function checkPctQuiz(){ let ok=0; pQ.forEach((q,i)=>{ const v=parseAns(document.getElementById('pq'+i).value); const f=document.getElementById('pqf'+i); if(close(v,q.a,0.051)){f.textContent='✓';f.style.color=C.mint;ok++;} else {f.textContent='✗ '+r2(q.a);f.style.color=C.coral;} });
+  const el=document.getElementById('pctQuizFb'); el.style.color=ok===5?C.mint:C.coral; el.textContent= ok===5?'🎉 All correct! You can solve multistep percent problems.':`${ok}/5 correct. Use the Percent Machine above to check your method.`; }
+newPctQuiz();
+
+// ══ REAL LIFE ══
+const realP=[
+  {q:'A recipe uses ⅔ cup of sugar for every ½ cup of butter. How much sugar per 1 cup of butter?', w:'(⅔) ÷ (½) = ⅔ × 2 = 4/3\n= 1⅓ cups of sugar per cup of butter', a:'1⅓ cups sugar per cup of butter'},
+  {q:'A car travels 135 miles on 4.5 gallons. Write an equation for distance d after g gallons. How far on 12 gallons?', w:'k = 135 ÷ 4.5 = 30 miles per gallon\nd = 30g\nd = 30 × 12 = 360 miles', a:'d = 30g; 360 miles'},
+  {q:'A $80 pair of shoes is 30% off, then 8% tax is added to the sale price. What do you pay?', w:'Sale price = 80 × 0.70 = $56.00\nWith tax = 56 × 1.08 = $60.48', a:'$60.48'},
+  {q:'A class estimated a jar held 420 beans. It really held 480. What was the percent error?', w:'Error = |420 − 480| = 60\n60 ÷ 480 = 0.125\n= 12.5%', a:'12.5% error'},
+  {q:'Town A grew from 2,000 to 2,300 people. Town B grew from 8,000 to 8,600. Which grew by a larger percent?', w:'A: 300 ÷ 2000 = 15%\nB: 600 ÷ 8000 = 7.5%\nB added more people, but A grew by a larger PERCENT.', a:'Town A (15% vs 7.5%)'},
+];
+document.getElementById('realProblems').innerHTML=realP.map((p,i)=>`
+  <div style="background:#f5f7fa;border-radius:12px;padding:1.2rem;">
+    <p style="font-size:0.9rem;line-height:1.65;color:#3a4a5a;margin-bottom:0.8rem;"><strong>Problem ${i+1}:</strong> ${p.q}</p>
+    <button id="rpb${i}" onclick="revealRP(${i})" style="background:var(--lavender);color:white;border:none;border-radius:8px;padding:0.5rem 1.1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;cursor:pointer;">Show solution</button>
+    <div id="rpa${i}" style="display:none;margin-top:0.8rem;font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--mint);line-height:1.8;white-space:pre-line;"></div>
+  </div>`).join('');
+function revealRP(i){ const el=document.getElementById('rpa'+i); el.style.display='block'; el.textContent=`Working:\n${realP[i].w}\n\n✓ Answer: ${realP[i].a}`; document.getElementById('rpb'+i).style.display='none'; }
+
+// ══ SUMMARY & SUBMIT ══
+const val=id=>(document.getElementById(id).value||'').trim();
+function fill(id,t){ const el=document.getElementById(id); el.textContent=t||'Not answered'; el.classList.toggle('empty',!t); }
+function refls(){ return [...document.querySelectorAll('#sec-6 .reflection-card textarea')].map(t=>t.value.trim()); }
+function buildSummary(){
+  document.getElementById('summaryName').textContent=val('studentName')||'Student';
+  document.getElementById('summaryDate').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  [['sum-ur-pred','ur-prediction'],['sum-ur-ref','ur-reflection'],['sum-prop-pred','prop-prediction'],['sum-prop-ref','prop-reflection'],['sum-pct-pred','pct-prediction'],['sum-pct-ref','pct-reflection']].forEach(([s,i])=>fill(s,val(i)));
+  refls().forEach((t,i)=>fill('sum-q'+(i+1),t));
+}
+function buildPlainText(){
+  const r=refls(), na=x=>x||'Not answered';
+  return `THE HIDDEN CONSTANT 🔑 — STUDENT SUBMISSION
+============================================
+Student: ${val('studentName')||'Student'}
+Date: ${new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}
+Lesson: Grade 7 · Ratios & Proportional Relationships
+Standards: 7.RP.A.1 · 7.RP.A.2 · 7.RP.A.3
+
+── SECTION 3: UNIT RATES WITH FRACTIONS ──
+Prediction:
+${na(val('ur-prediction'))}
+Reflection:
+${na(val('ur-reflection'))}
+
+── SECTION 4: IS IT PROPORTIONAL? ──
+Prediction:
+${na(val('prop-prediction'))}
+Reflection:
+${na(val('prop-reflection'))}
+
+── SECTION 5: PERCENTS ──
+Prediction:
+${na(val('pct-prediction'))}
+Reflection:
+${na(val('pct-reflection'))}
+
+── REFLECTIONS ──
+Q1 — ½ mile in ¼ hour
+${na(r[0])}
+Q2 — Proportional or not
+${na(r[1])}
+Q3 — Up 20%, down 20%
+${na(r[2])}
+Q4 — Hidden constants in my life
+${na(r[3])}
+
+============================================
+© 2026 Farvour Explorations
+Submitted via The Hidden Constant · Interactive Digital Lesson`;
+}
+function copyResults(){ buildSummary(); navigator.clipboard.writeText(buildPlainText()).then(()=>{ const el=document.getElementById('copyConfirm'); el.textContent='✓ Copied! Now paste into Google Classroom or your assignment.'; setTimeout(()=>el.textContent='',4000); }).catch(()=>{ document.getElementById('copyConfirm').textContent='⚠️ Could not copy — try selecting manually.'; }); }
+function emailResults(){ const n=val('studentName')||'Student'; window.location.href=`mailto:?subject=${encodeURIComponent('The Hidden Constant — '+n)}&body=${encodeURIComponent(buildPlainText())}`; }
+
+window.addEventListener('load',()=>{ calcUR(); renderTable(); drawK(); setPct('disc'); });
+</script>
+</body>
+</html>
