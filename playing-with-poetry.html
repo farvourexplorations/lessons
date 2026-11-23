@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Playing with Poetry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: friendly Year 6 classroom, EAL-first, short chunks
+   IDEA: a poetry workshop notebook, stations you tap through
+   PICTURE: the cinquain diamond, built live from the learner's own lines
+   COLOUR and TYPE: teal / orange / purple; Poppins headings, Inter body
+   LAYOUT: star-field hero, sticky station nav, one card column per station */
+:root{color-scheme:light dark;--bg:light-dark(#f4f8f9,#0d1b1e);--card:light-dark(#fff,#15292d);--ink:light-dark(#1f2a37,#e6f1f2);--mut:light-dark(#5b6b78,#9fb4ba);--line:light-dark(#e1e9ec,#24414a);
+--teal:#0f9488;--tealD:light-dark(#0f766e,#5eead4);--org:#f07a1a;--orgD:light-dark(#c2410c,#fdba74);--pur:#7c3aed;--purD:light-dark(#6d28d9,#c4b5fd);
+--tS:light-dark(#ccfbf1,#123f3b);--oS:light-dark(#ffedd5,#3d2814);--pS:light-dark(#ede9fe,#2b2147);--good:light-dark(#ecfdf5,#11332a);--try:light-dark(#fff7ed,#3a2614)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Poppins,Inter,sans-serif;line-height:1.1;margin:0}
+html{scroll-padding-top:72px;scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+.hero{color:#fff;padding:clamp(36px,6vw,80px) max(5vw,16px);display:grid;grid-template-columns:1.1fr 1fr;gap:32px;align-items:center;
+background:radial-gradient(1.5px 1.5px at 10% 20%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 30% 70%,#fff 50%,transparent 51%),radial-gradient(2px 2px at 55% 15%,#fde68a 50%,transparent 51%),radial-gradient(1px 1px at 70% 55%,#fff 50%,transparent 51%),radial-gradient(1.5px 1.5px at 85% 30%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 92% 80%,#fff 50%,transparent 51%),radial-gradient(2px 2px at 8% 60%,#99f6e4 50%,transparent 51%),radial-gradient(1px 1px at 45% 90%,#fff 50%,transparent 51%),linear-gradient(135deg,#0b3b3a,#134e4a 40%,#4c1d95)}
+.hero h1{font-size:clamp(36px,6vw,58px);margin:14px 0 12px}
+.hero p{color:#ccfbf1;font-size:19px;max-width:34em;margin:0}
+.badge{display:inline-flex;font:600 14px Poppins,sans-serif;color:#fff;padding:6px 24px 6px 14px;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,0 100%);background:var(--teal)}
+.b-o{background:var(--org)}.b-p{background:var(--pur)}
+.dia{display:flex;flex-direction:column;align-items:center;gap:8px;font-family:Poppins,sans-serif;text-align:center}
+.dia span{border-radius:999px;padding:8px 18px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3)}
+nav{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);display:flex;gap:6px;padding:8px max(5vw,12px);overflow-x:auto}
+nav a{flex:none;text-decoration:none;color:var(--ink);font-weight:600;font-size:15px;padding:10px 14px;border-radius:999px;min-height:44px;display:flex;align-items:center}
+nav a:hover,nav a:focus-visible{background:var(--tS)}
+main{max-width:980px;margin:0 auto;padding:0 16px 60px}
+section{padding-top:40px}
+section>h2{font-size:clamp(26px,4vw,34px);margin:12px 0 8px}
+.intro{color:var(--mut);margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin:12px 0}
+.card h3{font-size:19px;margin-bottom:6px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+button{font:600 16px Inter,sans-serif;min-height:44px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);padding:8px 16px;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--org);outline-offset:2px}
+.reveal{background:var(--teal);color:#fff;border-color:var(--teal)}
+.hide{display:none}
+.ans{background:var(--good);border-left:6px solid #10b981;border-radius:10px;padding:12px 16px;margin-top:10px}
+.tryag{background:var(--try);border-left:6px solid var(--org)}
+.t{color:var(--tealD)}.o{color:var(--orgD)}.p{color:var(--purD)}
+.poem{font-family:'Courier New',monospace;white-space:pre;overflow-x:auto;font-size:16px}
+.pline{display:block;width:100%;text-align:left;font:inherit;white-space:pre;border:0;border-radius:8px;min-height:36px;padding:4px 10px;background:transparent}
+.pline:hover{background:var(--tS)}.pline.on{background:var(--oS)}
+.pnote{font-family:Inter,sans-serif;white-space:normal;margin:2px 0 8px 10px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sel{border-color:var(--org)!important;background:var(--oS)!important}
+.yes{border-color:#10b981!important;background:var(--good)!important}
+.no{border-color:var(--org)!important}
+.bins{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.bin{min-height:130px;border:2px dashed var(--line);border-radius:16px;padding:12px;text-align:left;display:block;width:100%}
+.bin b{display:block;margin-bottom:8px;font-family:Poppins}
+.chip{display:inline-block;margin:3px;padding:6px 12px;border-radius:999px;font-weight:600}
+.cq{font-family:Poppins,sans-serif;text-align:center;line-height:1.7;font-size:19px}
+label{font-weight:600;display:block;margin:10px 0 4px}
+input,textarea{width:100%;font:16px Inter,sans-serif;padding:10px 12px;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
+textarea{min-height:80px;resize:vertical}
+.bank{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.lrow{display:grid;grid-template-columns:120px minmax(0,1fr);gap:10px;align-items:center;margin:8px 0}
+.lrow small{display:block;color:var(--mut);font-weight:400}
+.st{font-size:14px;margin:-2px 0 6px 130px;min-height:20px}
+.ok{color:light-dark(#047857,#6ee7b7)}.hint{color:var(--orgD)}
+.out{background:linear-gradient(135deg,#0b3b3a,#4c1d95);color:#fff;border-radius:20px;padding:28px 16px;margin-top:14px}
+.out .dia span:nth-child(odd){background:rgba(153,246,228,.15)}
+.out h3{text-align:center;margin-bottom:14px;color:#99f6e4}
+@media(max-width:700px){.hero{grid-template-columns:1fr}.bank{grid-template-columns:1fr}.lrow{grid-template-columns:1fr}.st{margin-left:0}.bins{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div><span class="badge b-o">Unit 6 · Poetry</span>
+  <h1>Playing with Poetry</h1>
+  <p>Breaking the rules on purpose, finding the voice, and building your own cinquain. Tap, think and write!</p></div>
+  <div class="dia" aria-label="Example cinquain in a diamond shape">
+    <span style="width:38%">Poems</span><span style="width:60%">Bold, free</span><span style="width:86%">Bending, shaping, playing</span><span style="width:100%">Make me feel brave</span><span style="width:38%">Verse</span>
+  </div>
+</header>
+<nav aria-label="Stations">
+  <a href="#licence">1 Poetic licence</a><a href="#voice">2 Poet &amp; voice</a><a href="#cinquain">3 Cinquains</a><a href="#classes">4 Word classes</a><a href="#lines">5 Lines 1 &amp; 5</a><a href="#fix">6 Fix it</a><a href="#write">7 Write!</a>
+</nav>
+<main>
+
+<section id="licence">
+  <span class="badge">Station 1</span><h2>Poetic licence</h2>
+  <p class="intro">Poets are allowed to break the rules of language. But they do it on purpose, for a reason.</p>
+  <div class="card"><h3>What is poetic licence?</h3><p>Think first, then tap.</p>
+    <button class="reveal" data-r="r1">Show me</button>
+    <div id="r1" class="ans hide"><b>Poetic licence</b> is the <b>freedom</b> a poet has to <b>change or break the rules</b> of language (spelling, punctuation, capital letters, grammar, layout) <b>for effect</b>. A licence is <i>permission</i>.</div></div>
+  <div class="card"><h3>Spot the poetic licence</h3><p>Tap each line. Which rule is broken? Why might the poet do that?</p>
+    <div class="poem" id="poem"></div></div>
+  <div class="card"><h3>Explain it like a poet</h3>
+    <p>A strong answer says <b class="t">what</b> the poet did and <b class="o">why</b>.</p>
+    <p style="background:var(--try);padding:10px 14px;border-radius:10px">The poet uses poetic licence by <b>______</b>. This makes the reader <b>______</b> / This shows that <b>______</b>.</p>
+    <button class="reveal" data-r="r2">See an example</button>
+    <div id="r2" class="ans hide">In <i>According to My Mood</i> (Learner’s Book 6.1), the poet uses wrong spelling and punctuation <b>on purpose</b>. This makes a big visual impact and shows that poetry does not have to follow the normal rules: he writes <b>according to his mood</b>.</div></div>
+</section>
+
+<section id="voice">
+  <span class="badge b-o">Station 2</span><h2>Poet and voice</h2>
+  <p class="intro">The <b>poet</b> is the real person who wrote the poem. The <b>voice</b> is the “I” speaking in the poem. Are they the same person?</p>
+  <div id="voiceQs"></div>
+</section>
+
+<section id="cinquain">
+  <span class="badge b-p">Station 3</span><h2>Cinquain facts</h2>
+  <div class="card"><h3>Where does the word <i>cinq</i> come from? What does it mean?</h3>
+    <button class="reveal" data-r="r3">Show me</button>
+    <div id="r3" class="ans hide"><b>Cinq</b> is a <b>French</b> word meaning <b>five</b> (say it: <i>sank</i>). A cinquain is a poem with <b>five lines</b>.</div></div>
+  <div class="card"><h3>Two kinds of cinquain</h3>
+    <div class="grid">
+      <div><b class="t">Word-count: 1-2-3-4-1 words</b><div class="cq">Rain<br>Cool, silver<br>Tapping, dripping, splashing<br>Making me feel calm<br>Downpour</div></div>
+      <div><b class="p">Syllable: 2-4-6-8-2 syllables</b><div class="cq">Moon·light<br>sil·ver and still<br>it drifts a·cross the lake<br>paint·ing the wa·ter with soft light<br>then fades</div></div>
+    </div></div>
+  <div class="card"><h3>True or not true?</h3><p>Tap your choice for each one.</p><div id="tf"></div></div>
+</section>
+
+<section id="classes">
+  <span class="badge">Station 4</span><h2>Word classes: line 2 or line 3?</h2>
+  <p class="intro">Line 2 needs <b class="o">adjectives</b> (describing words). Line 3 needs <b class="p">–ing verbs</b> (action words ending in -ing). Tap a word, then tap the box where it belongs.</p>
+  <div class="card"><div class="row" id="words"></div>
+    <div class="bins">
+      <button class="bin" data-bin="adj"><b class="o">Line 2 · Adjectives</b><span id="bin-adj"></span></button>
+      <button class="bin" data-bin="ing"><b class="p">Line 3 · –ing verbs</b><span id="bin-ing"></span></button>
+    </div>
+    <div id="sortMsg" class="ans hide"></div></div>
+</section>
+
+<section id="lines">
+  <span class="badge b-o">Station 5</span><h2>How do lines 1 and 5 connect?</h2>
+  <div class="card"><div class="grid">
+    <div class="cq"><b class="t">Storm</b><br>Dark, wild<br>Crashing, flashing, roaring<br>Makes my heart race<br><b class="t">Tempest</b></div>
+    <div><button class="reveal" data-r="r4">How are Storm and Tempest connected?</button>
+    <div id="r4" class="ans hide">Both are about the <b>same topic</b>. Both are <b>nouns</b>, and <i>Tempest</i> is a <b>synonym</b> of <i>Storm</i>. Line 1 <b>introduces</b> the topic; line 5 <b>concludes</b> it.</div></div></div></div>
+  <div class="card"><h3>Choose the best line 5</h3><div id="match"></div></div>
+</section>
+
+<section id="fix">
+  <span class="badge b-p">Station 6</span><h2>Fix the cinquain</h2>
+  <p class="intro">Tap each line to check it against the recipe.</p>
+  <div class="card" id="fixList"></div>
+</section>
+
+<section id="write">
+  <span class="badge">Station 7</span><h2>Write your own cinquain</h2>
+  <p class="intro">Plan → draft → check → present. Your work stays on this device only.</p>
+  <div class="card"><h3>Step 1 · Plan</h3>
+    <label for="topic">Topic (a noun you can picture)</label><input id="topic" placeholder="e.g. Ocean">
+    <label for="title">Title</label><input id="title" placeholder="e.g. The Sea at Night">
+    <div class="bank">
+      <div><label for="bn">Nouns</label><textarea id="bn" placeholder="sea, waves, moon"></textarea></div>
+      <div><label for="ba">Adjectives</label><textarea id="ba" placeholder="deep, dark, salty"></textarea></div>
+      <div><label for="bv">–ing verbs</label><textarea id="bv" placeholder="crashing, rolling"></textarea></div>
+    </div></div>
+  <div class="card"><h3>Step 2 · Draft and check</h3>
+    <div id="lineInputs"></div>
+    <div class="row"><button id="example">Show an example</button><button id="clear">Start again</button></div></div>
+  <div class="card"><h3>Step 3 · Present as a diamond</h3>
+    <div class="out"><h3 id="outTitle">Your title</h3><div class="dia" id="outDia"></div></div>
+    <div class="row"><button class="reveal" id="copy">Copy my poem</button><span id="copied" class="ok" style="align-self:center"></span></div></div>
+</section>
+</main>
+
+<script>
+{
+const $=s=>document.querySelector(s);
+document.querySelectorAll('[data-r]').forEach(b=>{const t0=b.textContent;b.addEventListener('click',()=>{const r=document.getElementById(b.dataset.r);r.classList.toggle('hide');b.textContent=r.classList.contains('hide')?t0:'Hide';});});
+
+/* Station 1: poem lines */
+const poem=[
+ ['rainy day brain','No capital letters at the start. The poem feels quiet and sleepy.'],
+ ['',''],
+ ['my thoughts go    d r i p','<b>Layout:</b> the letters are spread out. They look like slow raindrops.'],
+ ['                       d r o p','<b>Layout:</b> the words fall down the page, like rain dripping.'],
+ ['                            drip',''],
+ ['',''],
+ ['i dont want capitals today','<b>Capitals and punctuation:</b> lowercase <i>i</i> and no apostrophe in <i>dont</i>. The speaker can’t be bothered with rules today!'],
+ ['they are too LOUD and too proud','<b>Capitals:</b> LOUD is in capitals, so the word looks and sounds loud.'],
+ ['so i will whisper','<b>Punctuation:</b> no full stop. The thought just fades away.'],
+ ['',''],
+ ['teecher says sit up straight','<b>Spelling:</b> <i>teecher</i> is spelled how it sounds. It feels casual, like real speech.'],
+ ['but the clouds are sitting down',''],
+ ['and so ...      do      i','<b>Layout:</b> big gaps slow us down, like the speaker sinking into the chair.']];
+$('#poem').innerHTML=poem.map((l,i)=>l[1]?`<button class="pline" data-i="${i}">${l[0]}</button><div class="pnote ans hide" id="pn${i}">${l[1]}</div>`:`<div style="padding:4px 10px;min-height:${l[0]?36:14}px">${l[0]}</div>`).join('')+'<div style="font-family:Inter;font-size:13px;color:var(--mut);margin-top:8px;white-space:normal">Poem written for this lesson.</div>';
+$('#poem').addEventListener('click',e=>{const b=e.target.closest('.pline');if(!b)return;b.classList.toggle('on');$('#pn'+b.dataset.i).classList.toggle('hide');});
+
+/* Station 2 */
+const vq=[
+ ['A poet writes: <i>“I am an old oak tree. I have stood here for three hundred years.”</i>','diff','A person wrote it, but the voice is a <b>tree</b>. The poet is playing a character.'],
+ ['A poet writes about how <b>she</b> felt on her first day in a new country, using “I” and “my”.','same','She shares her <b>own</b> real feelings and experience.'],
+ ['A 60-year-old poet writes: <i>“I’m seven and I am NOT eating my broccoli!”</i>','diff','The poet is an adult <b>pretending</b> to be a child.'],
+ ['A poet writes about <b>his own</b> bad moods and how he wants to write however he likes (like <i>According to My Mood</i>).','same','He is expressing his <b>own</b> feelings and personal experience.']];
+$('#voiceQs').innerHTML=vq.map((q,i)=>`<div class="card"><p style="margin-top:0">${q[0]}</p><div class="row"><button data-v="${i}" data-a="same">Same person</button><button data-v="${i}" data-a="diff">Different</button></div><div id="vf${i}" class="ans hide"></div></div>`).join('')+`<div class="card" style="background:var(--try)">Say it in a sentence: <b>I think the poet and the voice are the same / different because ______.</b></div>`;
+$('#voiceQs').addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(!b)return;const i=b.dataset.v,ok=b.dataset.a===vq[i][1],f=$('#vf'+i);
+ b.parentNode.querySelectorAll('button').forEach(x=>x.classList.remove('yes','no'));b.classList.add(ok?'yes':'no');
+ f.className='ans'+(ok?'':' tryag');f.innerHTML=ok?'Yes! '+vq[i][2]:'Think again. Who is the “I” in this poem? Is it the real poet?';});
+
+/* Station 3 true/false */
+const tf=[['A cinquain has five lines.',1,'<i>Cinq</i> means five, so five lines.'],['A cinquain must rhyme.',0,'It can rhyme or not. Rhyme is not needed.'],['Every line of a cinquain has five words.',0,'Watch out! The lines have 1-2-3-4-1 words (or 2-4-6-8-2 syllables).'],['A cinquain captures one image or moment.',1,'Like a photo in words.'],['Some cinquains count syllables: 2-4-6-8-2.',1,'That is a syllable cinquain.'],['A cinquain can use punctuation, like commas.',1,'Commas are common on lines 2 and 3.']];
+$('#tf').innerHTML=tf.map((q,i)=>`<div style="border-top:1px solid var(--line);padding:10px 0"><b>${i+1}.</b> ${q[0]}<div class="row"><button data-t="${i}" data-a="1">True</button><button data-t="${i}" data-a="0">Not true</button></div><div id="tff${i}" class="ans hide"></div></div>`).join('');
+$('#tf').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(!b)return;const i=b.dataset.t,ok=+b.dataset.a===tf[i][1],f=$('#tff'+i);
+ b.parentNode.querySelectorAll('button').forEach(x=>x.classList.remove('yes','no'));b.classList.add(ok?'yes':'no');
+ f.className='ans'+(ok?'':' tryag');f.innerHTML=ok?(tf[i][1]?'Yes, true. ':'Yes, not true. ')+tf[i][2]:'Have another look at the two kinds of cinquain above.';});
+
+/* Station 4 sort */
+const W=[['silver','adj'],['splashing','ing'],['gentle','adj'],['tapping','ing'],['enormous','adj'],['whispering','ing'],['frosty','adj'],['galloping','ing'],['sleepy','adj'],['crunching','ing'],['shiny','adj'],['glowing','ing']];
+let pick=null,done=0;
+$('#words').innerHTML=W.map((w,i)=>`<button class="wd" data-w="${i}">${w[0]}</button>`).join('');
+$('#words').addEventListener('click',e=>{const b=e.target.closest('.wd');if(!b)return;document.querySelectorAll('.wd').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');pick=b;});
+document.querySelectorAll('.bin').forEach(bin=>bin.addEventListener('click',()=>{const m=$('#sortMsg');if(!pick){m.className='ans tryag';m.textContent='First tap a word, then tap a box.';return;}
+ const w=W[pick.dataset.w];
+ if(w[1]===bin.dataset.bin){$('#bin-'+w[1]).insertAdjacentHTML('beforeend',`<span class="chip" style="background:${w[1]==='adj'?'var(--oS)':'var(--pS)'}">${w[0]}</span>`);pick.remove();pick=null;done++;
+  m.className='ans';m.textContent=done===W.length?'All sorted! Did you notice sleepy, frosty and shiny? They describe, so they are adjectives, not –ing verbs.':'Yes! '+w[0]+(w[1]==='adj'?' is a describing word.':' is an action ending in -ing.');}
+ else{m.className='ans tryag';m.innerHTML=w[1]==='adj'?`Hmm. Is <b>${w[0]}</b> an action ending in -ing, or a describing word?`:`<b>${w[0]}</b> ends in -ing and shows an action. Try the other box.`;}
+}));
+
+/* Station 5 match */
+const M=[['Ocean',['Sea','Sand','Swimming'],'Sea'],['Night',['Sleeping','Darkness','Morning'],'Darkness'],['Friend',['Companion','Kind','Laughing'],'Companion'],['Puppy',['Furry','Pup','Barking'],'Pup']];
+$('#match').innerHTML=M.map((m,i)=>`<div style="border-top:1px solid var(--line);padding:10px 0">Line 1: <b class="t">${m[0]}</b> → line 5?<div class="row">${m[1].map(o=>`<button data-m="${i}" data-o="${o}">${o}</button>`).join('')}</div><div id="mf${i}" class="ans hide"></div></div>`).join('');
+$('#match').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(!b)return;const i=b.dataset.m,ok=b.dataset.o===M[i][2],f=$('#mf'+i);
+ b.parentNode.querySelectorAll('button').forEach(x=>x.classList.remove('yes','no'));b.classList.add(ok?'yes':'no');
+ f.className='ans'+(ok?'':' tryag');f.innerHTML=ok?`Yes! <b>${M[i][2]}</b> is a noun with a similar meaning to <b>${M[i][0]}</b>.`:(/ing$/.test(b.dataset.o)?'That is an –ing verb. Line 5 should be a noun.':'Close, but look for a noun that means almost the same thing.');});
+
+/* Station 6 fix */
+const F=[['Football','Line 1 ✔ <i>Football</i> is a noun. This line is fine!'],['Running, fast','Line 2 needs <b>two adjectives</b>. <i>Running</i> is an –ing verb. Try: <i>Muddy, fast</i>'],['Kicking, scoring','Line 3 needs <b>three</b> –ing verbs. Try: <i>Kicking, passing, scoring</i>'],['I feel so happy and proud','Line 4 has <b>six</b> words. It needs four. Try: <i>Makes me feel proud</i>'],['Pizza','Line 5 must connect to line 1. Try: <i>Soccer</i>']];
+$('#fixList').innerHTML=F.map((f,i)=>`<button class="pline cq" style="text-align:center" data-f="${i}">${f[0]}</button><div id="ff${i}" class="ans hide">${f[1]}</div>`).join('');
+$('#fixList').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(!b)return;b.classList.toggle('on');$('#ff'+b.dataset.f).classList.toggle('hide');});
+
+/* Station 7 builder */
+const L=[['Line 1','1 noun',1],['Line 2','2 adjectives',2],['Line 3','3 –ing verbs',3],['Line 4','4-word feeling phrase',4],['Line 5','1 word that links to line 1',1]];
+$('#lineInputs').innerHTML=L.map((l,i)=>`<div class="lrow"><label for="l${i}" style="margin:0">${l[0]}<small>${l[1]}</small></label><input id="l${i}" autocomplete="off"></div><div class="st" id="s${i}"></div>`).join('');
+const ids=['topic','title','bn','ba','bv','l0','l1','l2','l3','l4'];
+const words=s=>s.trim().split(/[\s,]+/).filter(Boolean);
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function check(){
+ const v=ids.map(id=>document.getElementById(id).value);
+ L.forEach((l,i)=>{const w=words(v[5+i]),s=$('#s'+i);let msg='',ok=false;
+  if(!w.length){s.innerHTML='';return;}
+  if(w.length!==l[2])msg=`${w.length} word${w.length>1?'s':''}. This line needs ${l[2]}.`;
+  else if(i===2&&!w.every(x=>/ing$/i.test(x)))msg='Each word on line 3 should be an action ending in -ing.';
+  else if(i===1&&w.some(x=>/ing$/i.test(x)))msg='Is that an adjective? Line 2 needs describing words, not –ing verbs.';
+  else if(i===4&&words(v[5])[0]&&w[0].toLowerCase()===words(v[5])[0].toLowerCase())msg='Try a different word (a synonym) so line 5 sums up line 1.';
+  else{ok=true;msg='✔ Looks good! '+['Is it a noun?','Are they describing words?','Great actions!','Does it show a feeling?','Does it link to line 1?'][i];}
+  s.className='st '+(ok?'ok':'hint');s.textContent=msg;});
+ $('#outTitle').textContent=v[1].trim()||'Your title';
+ const widths=[34,56,82,100,34];
+ $('#outDia').innerHTML=L.map((l,i)=>`<span style="width:${widths[i]}%">${esc(v[5+i].trim())||'&nbsp;'}</span>`).join('');
+ try{localStorage.setItem('cinq-draft',JSON.stringify(v));}catch(e){}
+}
+ids.forEach(id=>document.getElementById(id).addEventListener('input',check));
+try{const d=JSON.parse(localStorage.getItem('cinq-draft')||'null');if(d)ids.forEach((id,i)=>document.getElementById(id).value=d[i]||'');}catch(e){}
+$('#example').addEventListener('click',()=>{const ex=['Ocean','The Sea at Night','sea, waves, moon, shells','deep, dark, endless, salty','crashing, rolling, whispering, sparkling','Ocean','Dark, endless','Crashing, rolling, whispering','Makes me feel peaceful','Sea'];ids.forEach((id,i)=>document.getElementById(id).value=ex[i]);check();});
+$('#clear').addEventListener('click',()=>{ids.forEach(id=>document.getElementById(id).value='');check();});
+$('#copy').addEventListener('click',async()=>{const t=[ $('#title').value.trim(),'',...L.map((l,i)=>document.getElementById('l'+i).value.trim())].join('\n');
+ try{await navigator.clipboard.writeText(t);$('#copied').textContent='Copied!';}catch(e){$('#copied').textContent='Copy did not work here. Select and copy your lines instead.';}});
+check();
+}
+</script>
+</body>
+</html>
